@@ -1,0 +1,3060 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "PBL6 Home Renter API Schemas",
+    "description": "Toàn bộ Data Models / Schemas theo database-design.md của dự án PBL6 Smart Home Rental Management.",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000"
+    }
+  ],
+  "paths": {},
+  "components": {
+    "schemas": {
+      "BaseEntity": {
+        "type": "object",
+        "title": "BaseEntity",
+        "description": "Quy ước các trường chung áp dụng cho mọi entity (trừ AuditLog append-only)",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Khóa chính duy nhất (UUID v4)",
+            "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Thời điểm tạo bản ghi (UTC)",
+            "example": "2026-09-05T10:00:00Z"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Thời điểm cập nhật bản ghi gần nhất (UTC)",
+            "example": "2026-09-05T10:00:00Z"
+          },
+          "is_deleted": {
+            "type": "boolean",
+            "description": "Trạng thái soft-delete: false = đang tồn tại; true = đã xóa mềm",
+            "default": false,
+            "example": false
+          }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "updated_at",
+          "is_deleted"
+        ]
+      },
+      "User": {
+        "type": "object",
+        "title": "User",
+        "description": "Tài khoản người dùng (Tenant, Landlord, Admin). Một tài khoản có đúng một role bất biến.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Khóa chính duy nhất (UUID v4)",
+            "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Thời điểm tạo bản ghi (UTC)",
+            "example": "2026-09-05T10:00:00Z"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Thời điểm cập nhật bản ghi gần nhất (UTC)",
+            "example": "2026-09-05T10:00:00Z"
+          },
+          "is_deleted": {
+            "type": "boolean",
+            "description": "Trạng thái soft-delete: false = đang tồn tại; true = đã xóa mềm",
+            "default": false,
+            "example": false
+          },
+          "phone": {
+            "type": "string",
+            "description": "Số điện thoại định danh chính tại VN",
+            "minLength": 10,
+            "maxLength": 12,
+            "pattern": "^0[0-9]{9}$|^\\+84[0-9]{9}$",
+            "example": "0901234567"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "description": "Email người dùng",
+            "minLength": 5,
+            "maxLength": 254,
+            "pattern": "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$",
+            "example": "lan@example.com"
+          },
+          "password_hash": {
+            "type": "string",
+            "description": "Mật khẩu băm (bcrypt / argon2). Không trả về qua client API thông thường.",
+            "minLength": 60,
+            "maxLength": 255,
+            "example": "$2a$10$N9qo8uLOickgx2ZMRZoMye..."
+          },
+          "full_name": {
+            "type": "string",
+            "description": "Họ và tên đầy đủ",
+            "minLength": 1,
+            "maxLength": 254,
+            "example": "Lê Văn An"
+          },
+          "role": {
+            "type": "string",
+            "description": "Vai trò tài khoản (bất biến)",
+            "enum": [
+              "landlord",
+              "tenant",
+              "admin"
+            ],
+            "example": "landlord"
+          },
+          "user_status": {
+            "type": "string",
+            "description": "Trạng thái hoạt động của tài khoản",
+            "enum": [
+              "active",
+              "locked"
+            ],
+            "default": "active",
+            "example": "active"
+          },
+          "lock_reason": {
+            "type": "string",
+            "nullable": true,
+            "description": "Lý do admin khóa tài khoản",
+            "minLength": 1,
+            "maxLength": 500,
+            "example": "Spam listing"
+          },
+          "locked_at": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "description": "Thời điểm bị khóa",
+            "example": null
+          }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "updated_at",
+          "is_deleted",
+          "phone",
+          "email",
+          "password_hash",
+          "full_name",
+          "role",
+          "user_status"
+        ],
+        "examples": [
+          {
+            "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+            "created_at": "2026-09-05T10:00:00Z",
+            "updated_at": "2026-09-05T10:00:00Z",
+            "is_deleted": false,
+            "phone": "0901234567",
+            "email": "lan@example.com",
+            "password_hash": "$2a$10$N9qo8uLOickgx2ZMRZoMye...",
+            "full_name": "Lê Văn An",
+            "role": "landlord",
+            "user_status": "active",
+            "lock_reason": null,
+            "locked_at": null
+          }
+        ]
+      },
+      "FavoriteRoom": {
+        "type": "object",
+        "title": "FavoriteRoom",
+        "description": "Danh sách phòng yêu thích được lưu bởi tenant",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Khóa chính duy nhất (UUID v4)",
+            "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Thời điểm tạo bản ghi (UTC)",
+            "example": "2026-09-05T10:00:00Z"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Thời điểm cập nhật bản ghi gần nhất (UTC)",
+            "example": "2026-09-05T10:00:00Z"
+          },
+          "is_deleted": {
+            "type": "boolean",
+            "description": "Trạng thái soft-delete: false = đang tồn tại; true = đã xóa mềm",
+            "default": false,
+            "example": false
+          },
+          "user_id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "FK -> User (Tenant)",
+            "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+          },
+          "room_id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "FK -> Room",
+            "example": "4fa85f64-5717-4562-b3fc-2c963f66afb7"
+          }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "updated_at",
+          "is_deleted",
+          "user_id",
+          "room_id"
+        ],
+        "examples": [
+          {
+            "id": "1fa85f64-5717-4562-b3fc-2c963f66af11",
+            "created_at": "2026-09-05T10:00:00Z",
+            "updated_at": "2026-09-05T10:00:00Z",
+            "is_deleted": false,
+            "user_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+            "room_id": "4fa85f64-5717-4562-b3fc-2c963f66afb7"
+          }
+        ]
+      },
+      "LandlordProfile": {
+        "type": "object",
+        "title": "LandlordProfile",
+        "description": "Hồ sơ mở rộng cho chủ nhà (1-1 với User có role landlord)",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Khóa chính duy nhất (UUID v4)",
+            "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Thời điểm tạo bản ghi (UTC)",
+            "example": "2026-09-05T10:00:00Z"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Thời điểm cập nhật bản ghi gần nhất (UTC)",
+            "example": "2026-09-05T10:00:00Z"
+          },
+          "is_deleted": {
+            "type": "boolean",
+            "description": "Trạng thái soft-delete: false = đang tồn tại; true = đã xóa mềm",
+            "default": false,
+            "example": false
+          },
+          "user_id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "FK -> User (Chủ nhà)",
+            "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+          }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "updated_at",
+          "is_deleted",
+          "user_id"
+        ],
+        "examples": [
+          {
+            "id": "2fa85f64-5717-4562-b3fc-2c963f66af22",
+            "created_at": "2026-09-05T10:00:00Z",
+            "updated_at": "2026-09-05T10:00:00Z",
+            "is_deleted": false,
+            "user_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+          }
+        ]
+      },
+      "Building": {
+        "type": "object",
+        "title": "Building",
+        "description": "Tòa nhà/nhà trọ thuộc quyền quản lý của chủ nhà",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Khóa chính duy nhất (UUID v4)",
+            "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Thời điểm tạo bản ghi (UTC)",
+            "example": "2026-09-05T10:00:00Z"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Thời điểm cập nhật bản ghi gần nhất (UTC)",
+            "example": "2026-09-05T10:00:00Z"
+          },
+          "is_deleted": {
+            "type": "boolean",
+            "description": "Trạng thái soft-delete: false = đang tồn tại; true = đã xóa mềm",
+            "default": false,
+            "example": false
+          },
+          "landlord_id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "FK -> User (Chủ nhà sở hữu)",
+            "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+          },
+          "name": {
+            "type": "string",
+            "description": "Tên tòa nhà/dãy trọ",
+            "minLength": 1,
+            "maxLength": 254,
+            "example": "Nhà trọ Thanh Xuân"
+          },
+          "province": {
+            "type": "string",
+            "description": "Tỉnh/Thành phố",
+            "minLength": 1,
+            "maxLength": 100,
+            "example": "Thành phố Hồ Chí Minh"
+          },
+          "ward": {
+            "type": "string",
+            "description": "Phường/Xã",
+            "minLength": 1,
+            "maxLength": 100,
+            "example": "Phường Bến Nghé"
+          },
+          "address": {
+            "type": "string",
+            "description": "Địa chỉ chi tiết (số nhà, tên đường)",
+            "minLength": 1,
+            "maxLength": 254,
+            "example": "12 Nguyễn Trãi"
+          },
+          "latitude": {
+            "type": "number",
+            "format": "double",
+            "nullable": true,
+            "description": "Vĩ độ (tự geocode từ address)",
+            "minimum": -90,
+            "maximum": 90,
+            "example": 20.9951
+          },
+          "longitude": {
+            "type": "number",
+            "format": "double",
+            "nullable": true,
+            "description": "Kinh độ (tự geocode từ address)",
+            "minimum": -180,
+            "maximum": 180,
+            "example": 105.816649
+          },
+          "electricity_policy_id": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true,
+            "description": "FK -> RatePolicy (Điện cấp tòa). NULL = kế thừa LandlordProfile",
+            "example": null
+          },
+          "water_policy_id": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true,
+            "description": "FK -> RatePolicy (Nước cấp tòa). NULL = kế thừa LandlordProfile",
+            "example": null
+          },
+          "building_status": {
+            "type": "string",
+            "description": "Trạng thái duyệt của admin",
+            "enum": [
+              "pending",
+              "approved",
+              "rejected"
+            ],
+            "default": "pending",
+            "example": "approved"
+          },
+          "reviewed_by": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true,
+            "description": "FK -> User (Admin duyệt)",
+            "example": null
+          },
+          "reviewed_at": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "description": "Thời điểm admin duyệt",
+            "example": null
+          },
+          "note": {
+            "type": "string",
+            "nullable": true,
+            "description": "Ghi chú từ chối (bắt buộc khi rejected)",
+            "minLength": 1,
+            "maxLength": 500,
+            "example": null
+          }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "updated_at",
+          "is_deleted",
+          "landlord_id",
+          "name",
+          "province",
+          "ward",
+          "address",
+          "building_status"
+        ],
+        "examples": [
+          {
+            "id": "5fa85f64-5717-4562-b3fc-2c963f66af33",
+            "created_at": "2026-09-05T10:00:00Z",
+            "updated_at": "2026-09-05T10:00:00Z",
+            "is_deleted": false,
+            "landlord_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+            "name": "Nhà trọ Thanh Xuân",
+            "province": "Thành phố Hồ Chí Minh",
+            "ward": "Phường Bến Nghé",
+            "address": "12 Nguyễn Trãi",
+            "latitude": 20.9951,
+            "longitude": 105.816649,
+            "electricity_policy_id": null,
+            "water_policy_id": null,
+            "building_status": "approved",
+            "reviewed_by": null,
+            "reviewed_at": null,
+            "note": null
+          }
+        ]
+      },
+      "Room": {
+        "type": "object",
+        "title": "Room",
+        "description": "Phòng trọ trong tòa nhà",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Khóa chính duy nhất (UUID v4)",
+            "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Thời điểm tạo bản ghi (UTC)",
+            "example": "2026-09-05T10:00:00Z"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Thời điểm cập nhật bản ghi gần nhất (UTC)",
+            "example": "2026-09-05T10:00:00Z"
+          },
+          "is_deleted": {
+            "type": "boolean",
+            "description": "Trạng thái soft-delete: false = đang tồn tại; true = đã xóa mềm",
+            "default": false,
+            "example": false
+          },
+          "building_id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "FK -> Building",
+            "example": "5fa85f64-5717-4562-b3fc-2c963f66af33"
+          },
+          "floor_number": {
+            "type": "integer",
+            "nullable": true,
+            "description": "Số tầng (1-based)",
+            "minimum": 1,
+            "example": 2
+          },
+          "landlord_id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "FK -> User (Chủ nhà trực tiếp sở hữu, 1 chủ/phòng)",
+            "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+          },
+          "name": {
+            "type": "string",
+            "description": "Tên hoặc mã phòng",
+            "minLength": 1,
+            "maxLength": 254,
+            "example": "P.201"
+          },
+          "description": {
+            "type": "string",
+            "nullable": true,
+            "description": "Mô tả phòng",
+            "minLength": 1,
+            "maxLength": 500,
+            "example": "Phòng trọ hiện đại, tiện nghi đầy đủ"
+          },
+          "area": {
+            "type": "number",
+            "format": "double",
+            "nullable": true,
+            "description": "Diện tích phòng (m²)",
+            "minimum": 0.1,
+            "example": 18.5
+          },
+          "amenities": {
+            "type": "object",
+            "description": "Tiện nghi phòng lưu dưới dạng key-value JSON",
+            "additionalProperties": true,
+            "example": {
+              "aircon": true,
+              "fridge": false,
+              "wc_inside": true
+            }
+          },
+          "max_occupancy": {
+            "type": "integer",
+            "nullable": true,
+            "description": "Số người ở tối đa (dùng lọc ghép bạn)",
+            "minimum": 1,
+            "example": 3
+          },
+          "gender_policy": {
+            "type": "string",
+            "description": "Chính sách giới tính khi thuê",
+            "enum": [
+              "any",
+              "male",
+              "female"
+            ],
+            "default": "any",
+            "example": "any"
+          },
+          "rent_price": {
+            "type": "number",
+            "description": "Giá thuê niêm yết (VNĐ/tháng)",
+            "minimum": 0,
+            "example": 3500000
+          },
+          "electricity_policy_id": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true,
+            "description": "FK -> RatePolicy. NULL = kế thừa tòa nhà -> landlord",
+            "example": null
+          },
+          "water_policy_id": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true,
+            "description": "FK -> RatePolicy. NULL = kế thừa tòa nhà -> landlord",
+            "example": null
+          },
+          "room_status": {
+            "type": "string",
+            "description": "Trạng thái phòng",
+            "enum": [
+              "available",
+              "occupied",
+              "maintenance"
+            ],
+            "default": "available",
+            "example": "available"
+          }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "updated_at",
+          "is_deleted",
+          "building_id",
+          "landlord_id",
+          "name",
+          "amenities",
+          "gender_policy",
+          "rent_price",
+          "room_status"
+        ],
+        "examples": [
+          {
+            "id": "4fa85f64-5717-4562-b3fc-2c963f66afb7",
+            "created_at": "2026-09-05T10:00:00Z",
+            "updated_at": "2026-09-05T10:00:00Z",
+            "is_deleted": false,
+            "building_id": "5fa85f64-5717-4562-b3fc-2c963f66af33",
+            "floor_number": 2,
+            "landlord_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+            "name": "P.201",
+            "description": "Phòng trọ hiện đại, tiện nghi đầy đủ",
+            "area": 18.5,
+            "amenities": {
+              "aircon": true,
+              "fridge": false,
+              "wc_inside": true
+            },
+            "max_occupancy": 3,
+            "gender_policy": "any",
+            "rent_price": 3500000,
+            "electricity_policy_id": null,
+            "water_policy_id": null,
+            "room_status": "available"
+          }
+        ]
+      },
+      "Contract": {
+        "type": "object",
+        "title": "Contract",
+        "description": "Hợp đồng thuê phòng",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Khóa chính duy nhất (UUID v4)",
+            "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Thời điểm tạo bản ghi (UTC)",
+            "example": "2026-09-05T10:00:00Z"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Thời điểm cập nhật bản ghi gần nhất (UTC)",
+            "example": "2026-09-05T10:00:00Z"
+          },
+          "is_deleted": {
+            "type": "boolean",
+            "description": "Trạng thái soft-delete: false = đang tồn tại; true = đã xóa mềm",
+            "default": false,
+            "example": false
+          },
+          "room_id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "FK -> Room",
+            "example": "4fa85f64-5717-4562-b3fc-2c963f66afb7"
+          },
+          "landlord_id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "FK -> User (Chủ nhà ký HĐ)",
+            "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+          },
+          "tenant_id": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true,
+            "description": "FK -> User (Người thuê đại diện). Null nếu tenant chưa có tài khoản.",
+            "example": null
+          },
+          "tenant_name": {
+            "type": "string",
+            "nullable": true,
+            "description": "Họ tên người thuê (dùng khi tenant chưa có tài khoản)",
+            "minLength": 1,
+            "maxLength": 254,
+            "example": "Trần Văn B"
+          },
+          "tenant_phone": {
+            "type": "string",
+            "nullable": true,
+            "description": "SĐT người thuê (dùng khi tenant chưa có tài khoản)",
+            "minLength": 10,
+            "maxLength": 12,
+            "pattern": "^0[0-9]{9}$|^\\+84[0-9]{9}$",
+            "example": "0912345678"
+          },
+          "contract_status": {
+            "type": "string",
+            "description": "Trạng thái hợp đồng",
+            "enum": [
+              "draft",
+              "signed",
+              "active",
+              "suspended",
+              "expired",
+              "terminated"
+            ],
+            "default": "draft",
+            "example": "active"
+          },
+          "deposit_amount": {
+            "type": "number",
+            "description": "Tiền cọc thỏa thuận ban đầu (VNĐ)",
+            "minimum": 0,
+            "example": 7000000
+          },
+          "deposit_deduction_amount": {
+            "type": "number",
+            "description": "Tiền khấu trừ cọc khi checkout (hư hại, nợ,...)",
+            "minimum": 0,
+            "default": 0,
+            "example": 1000000
+          },
+          "deposit_deduction_reason": {
+            "type": "string",
+            "nullable": true,
+            "description": "Lý do khấu trừ cọc (bắt buộc khi deduction > 0)",
+            "maxLength": 500,
+            "example": "Hỏng cửa và thiết bị vệ sinh"
+          },
+          "deposit_settled_at": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "description": "Thời điểm hoàn tất đối soát quyết toán tiền cọc",
+            "example": null
+          },
+          "monthly_rent": {
+            "type": "number",
+            "description": "Giá thuê mỗi tháng cam kết trên HĐ (VNĐ)",
+            "minimum": 0,
+            "example": 3500000
+          },
+          "start_date": {
+            "type": "string",
+            "format": "date",
+            "description": "Ngày bắt đầu hiệu lực HĐ (YYYY-MM-DD)",
+            "example": "2026-09-01"
+          },
+          "end_date": {
+            "type": "string",
+            "format": "date",
+            "description": "Ngày kết thúc HĐ (YYYY-MM-DD)",
+            "example": "2027-08-31"
+          },
+          "description": {
+            "type": "string",
+            "nullable": true,
+            "description": "Ghi chú điều khoản bổ sung",
+            "minLength": 1,
+            "maxLength": 500,
+            "example": "Đóng tiền trước ngày 5 hàng tháng"
+          }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "updated_at",
+          "is_deleted",
+          "room_id",
+          "landlord_id",
+          "contract_status",
+          "deposit_amount",
+          "deposit_deduction_amount",
+          "monthly_rent",
+          "start_date",
+          "end_date"
+        ],
+        "examples": [
+          {
+            "id": "6fa85f64-5717-4562-b3fc-2c963f66af44",
+            "created_at": "2026-09-01T08:00:00Z",
+            "updated_at": "2026-09-01T08:00:00Z",
+            "is_deleted": false,
+            "room_id": "4fa85f64-5717-4562-b3fc-2c963f66afb7",
+            "landlord_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+            "tenant_id": null,
+            "tenant_name": "Trần Văn B",
+            "tenant_phone": "0912345678",
+            "contract_status": "active",
+            "deposit_amount": 7000000,
+            "deposit_deduction_amount": 0,
+            "deposit_deduction_reason": null,
+            "deposit_settled_at": null,
+            "monthly_rent": 3500000,
+            "start_date": "2026-09-01",
+            "end_date": "2027-08-31",
+            "description": "Đóng tiền trước ngày 5 hàng tháng"
+          }
+        ]
+      },
+      "ContractMember": {
+        "type": "object",
+        "title": "ContractMember",
+        "description": "Thành viên ở trong phòng theo hợp đồng (ở ghép)",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Khóa chính duy nhất (UUID v4)",
+            "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Thời điểm tạo bản ghi (UTC)",
+            "example": "2026-09-05T10:00:00Z"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Thời điểm cập nhật bản ghi gần nhất (UTC)",
+            "example": "2026-09-05T10:00:00Z"
+          },
+          "is_deleted": {
+            "type": "boolean",
+            "description": "Trạng thái soft-delete: false = đang tồn tại; true = đã xóa mềm",
+            "default": false,
+            "example": false
+          },
+          "contract_id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "FK -> Contract",
+            "example": "6fa85f64-5717-4562-b3fc-2c963f66af44"
+          },
+          "tenant_id": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true,
+            "description": "FK -> User (Null nếu thành viên chưa có tài khoản)",
+            "example": null
+          },
+          "tenant_name": {
+            "type": "string",
+            "nullable": true,
+            "description": "Họ tên thành viên",
+            "minLength": 1,
+            "maxLength": 254,
+            "example": "Nguyễn Thị C"
+          },
+          "tenant_phone": {
+            "type": "string",
+            "nullable": true,
+            "description": "SĐT thành viên",
+            "minLength": 10,
+            "maxLength": 12,
+            "pattern": "^0[0-9]{9}$|^\\+84[0-9]{9}$",
+            "example": "0921234567"
+          },
+          "joined_at": {
+            "type": "string",
+            "format": "date",
+            "description": "Ngày bắt đầu ở (phục vụ tính headcount phí theo ngày/kỳ)",
+            "example": "2026-09-01"
+          },
+          "left_at": {
+            "type": "string",
+            "format": "date",
+            "nullable": true,
+            "description": "Ngày chuyển đi",
+            "example": null
+          },
+          "vehicle_count": {
+            "type": "integer",
+            "nullable": true,
+            "description": "Số lượng xe gửi (D32). NULL = chưa khai báo; 0 = không gửi",
+            "minimum": 0,
+            "example": 1
+          }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "updated_at",
+          "is_deleted",
+          "contract_id",
+          "joined_at"
+        ],
+        "examples": [
+          {
+            "id": "7fa85f64-5717-4562-b3fc-2c963f66af55",
+            "created_at": "2026-09-01T08:00:00Z",
+            "updated_at": "2026-09-01T08:00:00Z",
+            "is_deleted": false,
+            "contract_id": "6fa85f64-5717-4562-b3fc-2c963f66af44",
+            "tenant_id": null,
+            "tenant_name": "Nguyễn Thị C",
+            "tenant_phone": "0921234567",
+            "joined_at": "2026-09-01",
+            "left_at": null,
+            "vehicle_count": 1
+          }
+        ]
+      },
+      "RatePolicyStep": {
+        "type": "object",
+        "title": "RatePolicyStep",
+        "description": "Bậc thang tính đơn giá điện/nước lũy tiến (EVN/TT25)",
+        "properties": {
+          "step": {
+            "type": "integer",
+            "description": "Số thứ tự bậc (1, 2, 3,...)",
+            "minimum": 1,
+            "example": 1
+          },
+          "from": {
+            "type": "number",
+            "description": "Sản lượng từ (kWh hoặc m3)",
+            "minimum": 0,
+            "example": 0
+          },
+          "to": {
+            "type": "number",
+            "nullable": true,
+            "description": "Sản lượng đến (null = không giới hạn trên)",
+            "example": 50
+          },
+          "price": {
+            "type": "number",
+            "description": "Đơn giá bậc này (VNĐ/đơn vị)",
+            "minimum": 0,
+            "example": 1806
+          }
+        },
+        "required": [
+          "step",
+          "from",
+          "price"
+        ]
+      },
+      "RatePolicy": {
+        "type": "object",
+        "title": "RatePolicy",
+        "description": "Chính sách đơn giá điện, nước và phí dịch vụ định kỳ",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Khóa chính duy nhất (UUID v4)",
+            "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Thời điểm tạo bản ghi (UTC)",
+            "example": "2026-09-05T10:00:00Z"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Thời điểm cập nhật bản ghi gần nhất (UTC)",
+            "example": "2026-09-05T10:00:00Z"
+          },
+          "is_deleted": {
+            "type": "boolean",
+            "description": "Trạng thái soft-delete: false = đang tồn tại; true = đã xóa mềm",
+            "default": false,
+            "example": false
+          },
+          "landlord_id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "FK -> User (Chủ nhà sở hữu policy)",
+            "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+          },
+          "scope": {
+            "type": "string",
+            "description": "Cấp độ áp dụng",
+            "enum": [
+              "building",
+              "room"
+            ],
+            "example": "room"
+          },
+          "room_id": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true,
+            "description": "FK -> Room (Bắt buộc nếu scope='room')",
+            "example": "4fa85f64-5717-4562-b3fc-2c963f66afb7"
+          },
+          "building_id": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true,
+            "description": "FK -> Building (Bắt buộc nếu scope='building')",
+            "example": null
+          },
+          "name": {
+            "type": "string",
+            "description": "Tên chính sách phí",
+            "minLength": 1,
+            "maxLength": 254,
+            "example": "Điện EVN"
+          },
+          "type": {
+            "type": "string",
+            "description": "Loại phí",
+            "enum": [
+              "electricity",
+              "water",
+              "wifi",
+              "cleaning",
+              "parking",
+              "maintenance"
+            ],
+            "example": "electricity"
+          },
+          "rate_kind": {
+            "type": "string",
+            "description": "Phương thức tính",
+            "enum": [
+              "flat",
+              "tiered",
+              "per_head",
+              "per_area_m2",
+              "per_vehicle"
+            ],
+            "example": "flat"
+          },
+          "unit_price": {
+            "type": "number",
+            "nullable": true,
+            "description": "Đơn giá cố định (VNĐ/đơn vị). Null nếu là tiered.",
+            "minimum": 0,
+            "example": 3500
+          },
+          "steps": {
+            "type": "array",
+            "nullable": true,
+            "description": "Danh sách các bậc thang giá (áp dụng khi rate_kind = 'tiered')",
+            "items": {
+              "$ref": "#/components/schemas/RatePolicyStep"
+            }
+          },
+          "is_active": {
+            "type": "boolean",
+            "description": "Trạng thái kích hoạt. Đổi giá tạo record mới, deactivate record cũ.",
+            "default": true,
+            "example": true
+          }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "updated_at",
+          "is_deleted",
+          "landlord_id",
+          "scope",
+          "name",
+          "type",
+          "rate_kind",
+          "is_active"
+        ],
+        "examples": [
+          {
+            "id": "8fa85f64-5717-4562-b3fc-2c963f66af66",
+            "created_at": "2026-09-01T08:00:00Z",
+            "updated_at": "2026-09-01T08:00:00Z",
+            "is_deleted": false,
+            "landlord_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+            "scope": "room",
+            "room_id": "4fa85f64-5717-4562-b3fc-2c963f66afb7",
+            "building_id": null,
+            "name": "Điện đồng hồ riêng",
+            "type": "electricity",
+            "rate_kind": "flat",
+            "unit_price": 3500,
+            "steps": null,
+            "is_active": true
+          }
+        ]
+      },
+      "BillingSetting": {
+        "type": "object",
+        "title": "BillingSetting",
+        "description": "Cấu hình hạn thanh toán và gửi thông báo nhắc nợ",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Khóa chính duy nhất (UUID v4)",
+            "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Thời điểm tạo bản ghi (UTC)",
+            "example": "2026-09-05T10:00:00Z"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Thời điểm cập nhật bản ghi gần nhất (UTC)",
+            "example": "2026-09-05T10:00:00Z"
+          },
+          "is_deleted": {
+            "type": "boolean",
+            "description": "Trạng thái soft-delete: false = đang tồn tại; true = đã xóa mềm",
+            "default": false,
+            "example": false
+          },
+          "landlord_id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "FK -> User (Chủ nhà)",
+            "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+          },
+          "scope": {
+            "type": "string",
+            "description": "Cấp áp dụng: landlord (mặc định), building, room",
+            "enum": [
+              "landlord",
+              "building",
+              "room"
+            ],
+            "example": "landlord"
+          },
+          "building_id": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true,
+            "description": "FK -> Building (Bắt buộc nếu scope='building')",
+            "example": null
+          },
+          "room_id": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true,
+            "description": "FK -> Room (Bắt buộc nếu scope='room')",
+            "example": null
+          },
+          "due_days": {
+            "type": "integer",
+            "description": "Số ngày gia hạn nộp tiền kể từ ngày phát hành hóa đơn",
+            "minimum": 1,
+            "maximum": 28,
+            "default": 5,
+            "example": 5
+          },
+          "remind_days": {
+            "type": "integer",
+            "description": "Ngày trong tháng bot tự động gửi nhắc nhở thanh toán",
+            "minimum": 1,
+            "maximum": 28,
+            "default": 3,
+            "example": 3
+          },
+          "bot_enabled": {
+            "type": "boolean",
+            "description": "Cho phép bot tự gửi thẻ nhắc nợ vào nhóm chat",
+            "default": true,
+            "example": true
+          },
+          "is_active": {
+            "type": "boolean",
+            "description": "Trạng thái hoạt động của cài đặt",
+            "default": true,
+            "example": true
+          }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "updated_at",
+          "is_deleted",
+          "landlord_id",
+          "scope",
+          "due_days",
+          "remind_days",
+          "bot_enabled",
+          "is_active"
+        ],
+        "examples": [
+          {
+            "id": "9fa85f64-5717-4562-b3fc-2c963f66af77",
+            "created_at": "2026-09-01T08:00:00Z",
+            "updated_at": "2026-09-01T08:00:00Z",
+            "is_deleted": false,
+            "landlord_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+            "scope": "landlord",
+            "building_id": null,
+            "room_id": null,
+            "due_days": 5,
+            "remind_days": 3,
+            "bot_enabled": true,
+            "is_active": true
+          }
+        ]
+      },
+      "MeterReading": {
+        "type": "object",
+        "title": "MeterReading",
+        "description": "Chỉ số tiêu thụ điện / nước hàng kỳ của phòng",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Khóa chính duy nhất (UUID v4)",
+            "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Thời điểm tạo bản ghi (UTC)",
+            "example": "2026-09-05T10:00:00Z"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Thời điểm cập nhật bản ghi gần nhất (UTC)",
+            "example": "2026-09-05T10:00:00Z"
+          },
+          "is_deleted": {
+            "type": "boolean",
+            "description": "Trạng thái soft-delete: false = đang tồn tại; true = đã xóa mềm",
+            "default": false,
+            "example": false
+          },
+          "room_id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "FK -> Room",
+            "example": "4fa85f64-5717-4562-b3fc-2c963f66afb7"
+          },
+          "type": {
+            "type": "string",
+            "description": "Loại chỉ số đồng hồ",
+            "enum": [
+              "electricity",
+              "water"
+            ],
+            "example": "electricity"
+          },
+          "period": {
+            "type": "string",
+            "description": "Kỳ chốt chỉ số (YYYY-MM)",
+            "minLength": 7,
+            "maxLength": 7,
+            "pattern": "^[0-9]{4}-(0[1-9]|1[0-2])$",
+            "example": "2026-09"
+          },
+          "previous_reading": {
+            "type": "number",
+            "description": "Chỉ số kỳ trước",
+            "minimum": 0,
+            "example": 1200
+          },
+          "current_reading": {
+            "type": "number",
+            "description": "Chỉ số kỳ này (phải >= previous_reading trừ trường hợp reset)",
+            "minimum": 0,
+            "example": 1380
+          },
+          "reading_date": {
+            "type": "string",
+            "format": "date",
+            "nullable": true,
+            "description": "Ngày ghi nhận chỉ số thực tế",
+            "example": "2026-09-30"
+          },
+          "is_baseline": {
+            "type": "boolean",
+            "description": "Đánh dấu chỉ số gốc ban đầu khi bàn giao phòng hoặc sau khi đổi đồng hồ",
+            "default": false,
+            "example": false
+          }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "updated_at",
+          "is_deleted",
+          "room_id",
+          "type",
+          "period",
+          "previous_reading",
+          "current_reading"
+        ],
+        "examples": [
+          {
+            "id": "11a85f64-5717-4562-b3fc-2c963f66af88",
+            "created_at": "2026-09-30T18:00:00Z",
+            "updated_at": "2026-09-30T18:00:00Z",
+            "is_deleted": false,
+            "room_id": "4fa85f64-5717-4562-b3fc-2c963f66afb7",
+            "type": "electricity",
+            "period": "2026-09",
+            "previous_reading": 1200,
+            "current_reading": 1380,
+            "reading_date": "2026-09-30",
+            "is_baseline": false
+          }
+        ]
+      },
+      "InvoiceBreakdownItem": {
+        "type": "object",
+        "title": "InvoiceBreakdownItem",
+        "description": "Dòng chi tiết tiền dịch vụ trong hóa đơn (điện, nước, internet, vệ sinh,...)",
+        "properties": {
+          "type": {
+            "type": "string",
+            "description": "Loại phí: electricity, water, wifi, cleaning, parking, maintenance, other",
+            "example": "electricity"
+          },
+          "name": {
+            "type": "string",
+            "description": "Tên hiển thị trên hóa đơn",
+            "example": "Điện EVN"
+          },
+          "amount": {
+            "type": "number",
+            "description": "Thành tiền (VNĐ)",
+            "example": 720000
+          },
+          "qty_kwh": {
+            "type": "number",
+            "description": "Số kWh tiêu thụ (với điện)",
+            "example": 180
+          },
+          "qty_m3": {
+            "type": "number",
+            "description": "Số m3 tiêu thụ (với nước tính theo khối)",
+            "example": 12
+          },
+          "head_count": {
+            "type": "integer",
+            "description": "Số người (với nước khoán đầu người)",
+            "example": 3
+          },
+          "quantity": {
+            "type": "number",
+            "description": "Số lượng dịch vụ sử dụng",
+            "example": 2
+          },
+          "unit_price": {
+            "type": "number",
+            "description": "Đơn giá",
+            "example": 150000
+          },
+          "rate_kind": {
+            "type": "string",
+            "description": "Phương thức tính phí",
+            "example": "per_vehicle"
+          },
+          "tier_detail": {
+            "type": "array",
+            "description": "Chi tiết các bậc thang (nếu tính theo bậc thang)",
+            "items": {
+              "type": "object",
+              "properties": {
+                "step": {
+                  "type": "integer",
+                  "example": 1
+                },
+                "from": {
+                  "type": "number",
+                  "example": 0
+                },
+                "to": {
+                  "type": "number",
+                  "nullable": true,
+                  "example": 50
+                },
+                "price": {
+                  "type": "number",
+                  "example": 1806
+                },
+                "amount": {
+                  "type": "number",
+                  "example": 90300
+                }
+              }
+            }
+          }
+        },
+        "required": [
+          "type",
+          "name",
+          "amount"
+        ]
+      },
+      "InvoiceOtherFeeItem": {
+        "type": "object",
+        "title": "InvoiceOtherFeeItem",
+        "description": "Khoản phí phụ thu hoặc giảm trừ phát sinh ngoài định kỳ (có thể âm để giảm giá)",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Tên khoản phí / lý do giảm trừ",
+            "example": "Vệ sinh lễ"
+          },
+          "amount": {
+            "type": "number",
+            "description": "Số tiền (VNĐ). Cho phép âm để giảm trừ hóa đơn.",
+            "example": 50000
+          }
+        },
+        "required": [
+          "name",
+          "amount"
+        ]
+      },
+      "PaymentRecipientSnapshot": {
+        "type": "object",
+        "title": "PaymentRecipientSnapshot",
+        "description": "Snapshot bất biến thông tin thụ hưởng thanh toán tại thời điểm phát hành hóa đơn",
+        "properties": {
+          "account_type": {
+            "type": "string",
+            "enum": [
+              "bank_account",
+              "vnpay_merchant",
+              "momo_merchant"
+            ],
+            "example": "bank_account"
+          },
+          "bank_code": {
+            "type": "string",
+            "example": "VCB"
+          },
+          "account_number_masked": {
+            "type": "string",
+            "example": "****1234"
+          },
+          "account_name": {
+            "type": "string",
+            "example": "NGUYEN VAN A"
+          },
+          "merchant_id": {
+            "type": "string",
+            "nullable": true,
+            "example": null
+          }
+        },
+        "required": [
+          "account_type"
+        ]
+      },
+      "Invoice": {
+        "type": "object",
+        "title": "Invoice",
+        "description": "Hóa đơn tiền phòng và dịch vụ hàng tháng",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Khóa chính duy nhất (UUID v4)",
+            "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Thời điểm tạo bản ghi (UTC)",
+            "example": "2026-09-05T10:00:00Z"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Thời điểm cập nhật bản ghi gần nhất (UTC)",
+            "example": "2026-09-05T10:00:00Z"
+          },
+          "is_deleted": {
+            "type": "boolean",
+            "description": "Trạng thái soft-delete: false = đang tồn tại; true = đã xóa mềm",
+            "default": false,
+            "example": false
+          },
+          "contract_id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "FK -> Contract",
+            "example": "6fa85f64-5717-4562-b3fc-2c963f66af44"
+          },
+          "code": {
+            "type": "string",
+            "description": "Mã nhận diện hóa đơn (nhúng trong VietQR chuyển khoản)",
+            "minLength": 1,
+            "maxLength": 32,
+            "example": "INV-202609-8F2K"
+          },
+          "payment_account_id": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true,
+            "description": "FK -> LandlordPaymentAccount (Tài khoản thụ hưởng nhận thanh toán)",
+            "example": "12a85f64-5717-4562-b3fc-2c963f66af99"
+          },
+          "payment_recipient_snapshot": {
+            "$ref": "#/components/schemas/PaymentRecipientSnapshot"
+          },
+          "period": {
+            "type": "string",
+            "description": "Kỳ hóa đơn (YYYY-MM)",
+            "minLength": 7,
+            "maxLength": 7,
+            "pattern": "^[0-9]{4}-(0[1-9]|1[0-2])$",
+            "example": "2026-09"
+          },
+          "rent_amount": {
+            "type": "number",
+            "description": "Tiền phòng sau khi prorated theo số ngày ở trong tháng (VNĐ)",
+            "minimum": 0,
+            "example": 3500000
+          },
+          "breakdown": {
+            "type": "array",
+            "nullable": true,
+            "description": "Bảng kê chi tiết các khoản tiền dịch vụ (điện, nước, phí cố định,...)",
+            "items": {
+              "$ref": "#/components/schemas/InvoiceBreakdownItem"
+            }
+          },
+          "other_fees": {
+            "type": "array",
+            "nullable": true,
+            "description": "Các khoản phụ thu hoặc chiết khấu giảm giá (có thể âm)",
+            "items": {
+              "$ref": "#/components/schemas/InvoiceOtherFeeItem"
+            }
+          },
+          "total_amount": {
+            "type": "number",
+            "description": "Tổng tiền thanh toán cuối cùng (làm tròn hàng nghìn, phải >= 0)",
+            "minimum": 0,
+            "example": 4610000
+          },
+          "paid_amount": {
+            "type": "number",
+            "description": "Tổng số tiền khách đã thanh toán thành công",
+            "minimum": 0,
+            "default": 0,
+            "example": 3500000
+          },
+          "invoice_status": {
+            "type": "string",
+            "description": "Trạng thái hóa đơn",
+            "enum": [
+              "pending",
+              "unpaid",
+              "partially_paid",
+              "paid",
+              "overdue",
+              "cancel"
+            ],
+            "default": "pending",
+            "example": "pending"
+          },
+          "issued_at": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "description": "Thời điểm chủ nhà phát hành hóa đơn (NULL khi còn là pending nháp)",
+            "example": "2026-09-30T20:15:00Z"
+          },
+          "due_date": {
+            "type": "string",
+            "format": "date",
+            "nullable": true,
+            "description": "Hạn thanh toán cuối cùng (YYYY-MM-DD)",
+            "example": "2026-10-06"
+          },
+          "voided_invoice_id": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true,
+            "description": "FK -> Invoice (Trỏ đến hóa đơn bị hủy mà hóa đơn này thay thế)",
+            "example": null
+          },
+          "note": {
+            "type": "string",
+            "nullable": true,
+            "description": "Ghi chú gửi người thuê",
+            "example": "Tháng nhập cư, prorate từ 15/09"
+          }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "updated_at",
+          "is_deleted",
+          "contract_id",
+          "code",
+          "period",
+          "rent_amount",
+          "total_amount",
+          "paid_amount",
+          "invoice_status"
+        ],
+        "examples": [
+          {
+            "id": "13a85f64-5717-4562-b3fc-2c963f66afaa",
+            "created_at": "2026-09-30T20:00:00Z",
+            "updated_at": "2026-09-30T20:15:00Z",
+            "is_deleted": false,
+            "contract_id": "6fa85f64-5717-4562-b3fc-2c963f66af44",
+            "code": "INV-202609-8F2K",
+            "payment_account_id": "12a85f64-5717-4562-b3fc-2c963f66af99",
+            "period": "2026-09",
+            "rent_amount": 3500000,
+            "total_amount": 4610000,
+            "paid_amount": 0,
+            "invoice_status": "unpaid",
+            "issued_at": "2026-09-30T20:15:00Z",
+            "due_date": "2026-10-06",
+            "voided_invoice_id": null,
+            "note": "Tháng nhập cư, prorate từ 15/09"
+          }
+        ]
+      },
+      "LandlordPaymentAccount": {
+        "type": "object",
+        "title": "LandlordPaymentAccount",
+        "description": "Tài khoản nhận tiền (Tài khoản ngân hàng VietQR hoặc MoMo/VNPay merchant) của chủ nhà",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Khóa chính duy nhất (UUID v4)",
+            "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Thời điểm tạo bản ghi (UTC)",
+            "example": "2026-09-05T10:00:00Z"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Thời điểm cập nhật bản ghi gần nhất (UTC)",
+            "example": "2026-09-05T10:00:00Z"
+          },
+          "is_deleted": {
+            "type": "boolean",
+            "description": "Trạng thái soft-delete: false = đang tồn tại; true = đã xóa mềm",
+            "default": false,
+            "example": false
+          },
+          "landlord_id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "FK -> User (Chủ nhà)",
+            "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+          },
+          "account_type": {
+            "type": "string",
+            "description": "Loại tài khoản",
+            "enum": [
+              "bank_account",
+              "vnpay_merchant",
+              "momo_merchant"
+            ],
+            "example": "bank_account"
+          },
+          "bank_code": {
+            "type": "string",
+            "nullable": true,
+            "description": "Mã ngân hàng chuẩn VietQR (VCB, TCB, MB,...)",
+            "minLength": 1,
+            "maxLength": 32,
+            "example": "VCB"
+          },
+          "account_number_encrypted": {
+            "type": "string",
+            "format": "byte",
+            "nullable": true,
+            "description": "Số tài khoản ngân hàng mã hóa (tuyệt đối không trả về API public)",
+            "example": null
+          },
+          "account_number_masked": {
+            "type": "string",
+            "nullable": true,
+            "description": "Số tài khoản đã che để hiển thị an toàn",
+            "minLength": 4,
+            "maxLength": 32,
+            "example": "****1234"
+          },
+          "account_name": {
+            "type": "string",
+            "nullable": true,
+            "description": "Tên chủ tài khoản in hoa không dấu",
+            "minLength": 1,
+            "maxLength": 254,
+            "example": "NGUYEN VAN A"
+          },
+          "merchant_id": {
+            "type": "string",
+            "nullable": true,
+            "description": "Mã định danh Merchant cổng thanh toán",
+            "minLength": 1,
+            "maxLength": 255,
+            "example": "MOMO_MERCHANT_01"
+          },
+          "credential_ref": {
+            "type": "string",
+            "nullable": true,
+            "description": "Khóa tham chiếu lưu Secret Manager (không lưu trực tiếp API secret)",
+            "minLength": 1,
+            "maxLength": 255,
+            "example": "secrets/payment/momo/01"
+          },
+          "is_default": {
+            "type": "boolean",
+            "description": "Tài khoản nhận tiền mặc định",
+            "default": false,
+            "example": true
+          },
+          "is_active": {
+            "type": "boolean",
+            "description": "Trạng thái còn sử dụng",
+            "default": true,
+            "example": true
+          },
+          "verified_at": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "description": "Thời điểm xác minh thành công tài khoản",
+            "example": null
+          }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "updated_at",
+          "is_deleted",
+          "landlord_id",
+          "account_type",
+          "is_default",
+          "is_active"
+        ],
+        "examples": [
+          {
+            "id": "12a85f64-5717-4562-b3fc-2c963f66af99",
+            "created_at": "2026-09-01T08:00:00Z",
+            "updated_at": "2026-09-01T08:00:00Z",
+            "is_deleted": false,
+            "landlord_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+            "account_type": "bank_account",
+            "bank_code": "VCB",
+            "account_number_masked": "****1234",
+            "account_name": "NGUYEN VAN A",
+            "merchant_id": null,
+            "credential_ref": null,
+            "is_default": true,
+            "is_active": true,
+            "verified_at": "2026-09-01T08:30:00Z"
+          }
+        ]
+      },
+      "Payment": {
+        "type": "object",
+        "title": "Payment",
+        "description": "Giao dịch thanh toán (thu tiền hóa đơn, thu tiền cọc, hoàn trả cọc)",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Khóa chính duy nhất (UUID v4)",
+            "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Thời điểm tạo bản ghi (UTC)",
+            "example": "2026-09-05T10:00:00Z"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Thời điểm cập nhật bản ghi gần nhất (UTC)",
+            "example": "2026-09-05T10:00:00Z"
+          },
+          "is_deleted": {
+            "type": "boolean",
+            "description": "Trạng thái soft-delete: false = đang tồn tại; true = đã xóa mềm",
+            "default": false,
+            "example": false
+          },
+          "invoice_id": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true,
+            "description": "FK -> Invoice (Bắt buộc khi payment_purpose='invoice_collection')",
+            "example": "13a85f64-5717-4562-b3fc-2c963f66afaa"
+          },
+          "contract_id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "FK -> Contract (Luôn gắn với hợp đồng để đối soát)",
+            "example": "6fa85f64-5717-4562-b3fc-2c963f66af44"
+          },
+          "payment_purpose": {
+            "type": "string",
+            "description": "Mục đích thanh toán",
+            "enum": [
+              "invoice_collection",
+              "deposit_collection",
+              "deposit_refund"
+            ],
+            "example": "invoice_collection"
+          },
+          "direction": {
+            "type": "string",
+            "description": "Chiều dòng tiền: inflow = thu vào cho landlord; outflow = landlord chi trả ra",
+            "enum": [
+              "inflow",
+              "outflow"
+            ],
+            "example": "inflow"
+          },
+          "channel": {
+            "type": "string",
+            "description": "Kênh giao dịch",
+            "enum": [
+              "bank_transfer_qr",
+              "vnpay",
+              "momo",
+              "cash",
+              "mock"
+            ],
+            "example": "bank_transfer_qr"
+          },
+          "payment_status": {
+            "type": "string",
+            "description": "Trạng thái giao dịch",
+            "enum": [
+              "pending",
+              "success",
+              "failed"
+            ],
+            "example": "success"
+          },
+          "amount": {
+            "type": "number",
+            "description": "Số tiền giao dịch thực tế (VNĐ)",
+            "minimum": 1,
+            "example": 2000000
+          },
+          "provider": {
+            "type": "string",
+            "nullable": true,
+            "description": "Đơn vị xử lý webhook đối soát (sepay, casso, vnpay, momo, mock, manual)",
+            "minLength": 1,
+            "maxLength": 50,
+            "example": "sepay"
+          },
+          "provider_event_id": {
+            "type": "string",
+            "nullable": true,
+            "description": "ID sự kiện webhook từ cổng (chống lặp idempotency)",
+            "minLength": 1,
+            "maxLength": 255,
+            "example": "evt_01J982K72..."
+          },
+          "transaction_id": {
+            "type": "string",
+            "nullable": true,
+            "description": "Mã giao dịch ngân hàng / gateway",
+            "minLength": 1,
+            "maxLength": 255,
+            "example": "FT260905123456"
+          },
+          "raw_gateway_response": {
+            "type": "object",
+            "nullable": true,
+            "description": "Payload phản hồi gốc từ webhook phục vụ tra soát",
+            "additionalProperties": true,
+            "example": {
+              "bank": "VCB",
+              "amount": 2000000
+            }
+          },
+          "payer_contract_member_id": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true,
+            "description": "FK -> ContractMember (Thành viên thực hiện thanh toán nếu xác định được)",
+            "example": null
+          },
+          "paid_at": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "description": "Thời điểm giao dịch thành công thực tế (bắt buộc khi status = success)",
+            "example": "2026-09-30T20:15:00Z"
+          },
+          "needs_review": {
+            "type": "boolean",
+            "description": "Cần can thiệp thủ công (true khi nhận tiền vào hóa đơn đã bị cancel)",
+            "default": false,
+            "example": false
+          }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "updated_at",
+          "is_deleted",
+          "contract_id",
+          "payment_purpose",
+          "direction",
+          "channel",
+          "payment_status",
+          "amount",
+          "needs_review"
+        ],
+        "examples": [
+          {
+            "id": "14a85f64-5717-4562-b3fc-2c963f66afbb",
+            "created_at": "2026-09-30T20:15:00Z",
+            "updated_at": "2026-09-30T20:15:00Z",
+            "is_deleted": false,
+            "invoice_id": "13a85f64-5717-4562-b3fc-2c963f66afaa",
+            "contract_id": "6fa85f64-5717-4562-b3fc-2c963f66af44",
+            "payment_purpose": "invoice_collection",
+            "direction": "inflow",
+            "channel": "bank_transfer_qr",
+            "payment_status": "success",
+            "amount": 2000000,
+            "provider": "sepay",
+            "provider_event_id": "evt_01J982K72...",
+            "transaction_id": "FT260905123456",
+            "raw_gateway_response": {
+              "bank": "VCB",
+              "amount": 2000000
+            },
+            "payer_contract_member_id": null,
+            "paid_at": "2026-09-30T20:15:00Z",
+            "needs_review": false
+          }
+        ]
+      },
+      "IssueReport": {
+        "type": "object",
+        "title": "IssueReport",
+        "description": "Báo cáo sự cố hỏng hóc, sửa chữa trong phòng",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Khóa chính duy nhất (UUID v4)",
+            "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Thời điểm tạo bản ghi (UTC)",
+            "example": "2026-09-05T10:00:00Z"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Thời điểm cập nhật bản ghi gần nhất (UTC)",
+            "example": "2026-09-05T10:00:00Z"
+          },
+          "is_deleted": {
+            "type": "boolean",
+            "description": "Trạng thái soft-delete: false = đang tồn tại; true = đã xóa mềm",
+            "default": false,
+            "example": false
+          },
+          "room_id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "FK -> Room",
+            "example": "4fa85f64-5717-4562-b3fc-2c963f66afb7"
+          },
+          "conversation_id": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true,
+            "description": "FK -> Conversation (Nhóm chat thảo luận xử lý sự cố)",
+            "example": null
+          },
+          "reporter_id": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true,
+            "description": "FK -> User (Người báo cáo. Null nếu landlord tạo thay tenant passive)",
+            "example": null
+          },
+          "status": {
+            "type": "string",
+            "description": "Tiến độ xử lý sự cố",
+            "enum": [
+              "open",
+              "in_progress",
+              "resolved",
+              "cancelled"
+            ],
+            "default": "open",
+            "example": "open"
+          },
+          "title": {
+            "type": "string",
+            "description": "Tiêu đề sự cố",
+            "minLength": 1,
+            "maxLength": 255,
+            "example": "Đèn cháy"
+          },
+          "description": {
+            "type": "string",
+            "nullable": true,
+            "description": "Mô tả chi tiết sự cố",
+            "minLength": 1,
+            "maxLength": 500,
+            "example": "Bóng đèn phòng ngủ cháy 2 bóng"
+          },
+          "note": {
+            "type": "string",
+            "nullable": true,
+            "description": "Ghi chú của chủ nhà trong quá trình xử lý",
+            "minLength": 1,
+            "maxLength": 500,
+            "example": null
+          },
+          "closed_at": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "description": "Thời điểm đóng sự cố (resolved hoặc cancelled)",
+            "example": null
+          }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "updated_at",
+          "is_deleted",
+          "room_id",
+          "status",
+          "title"
+        ],
+        "examples": [
+          {
+            "id": "15a85f64-5717-4562-b3fc-2c963f66afcc",
+            "created_at": "2026-09-10T09:00:00Z",
+            "updated_at": "2026-09-10T09:00:00Z",
+            "is_deleted": false,
+            "room_id": "4fa85f64-5717-4562-b3fc-2c963f66afb7",
+            "conversation_id": null,
+            "reporter_id": null,
+            "status": "open",
+            "title": "Đèn cháy",
+            "description": "Bóng đèn phòng ngủ cháy 2 bóng",
+            "note": null,
+            "closed_at": null
+          }
+        ]
+      },
+      "Conversation": {
+        "type": "object",
+        "title": "Conversation",
+        "description": "Hội thoại chat (theo phòng, theo tòa nhà, hoặc chat trực tiếp 1-1)",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Khóa chính duy nhất (UUID v4)",
+            "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Thời điểm tạo bản ghi (UTC)",
+            "example": "2026-09-05T10:00:00Z"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Thời điểm cập nhật bản ghi gần nhất (UTC)",
+            "example": "2026-09-05T10:00:00Z"
+          },
+          "is_deleted": {
+            "type": "boolean",
+            "description": "Trạng thái soft-delete: false = đang tồn tại; true = đã xóa mềm",
+            "default": false,
+            "example": false
+          },
+          "type": {
+            "type": "string",
+            "description": "Phạm vi hội thoại: room (phòng theo HĐ), building (tòa nhà), direct (chat riêng)",
+            "enum": [
+              "room",
+              "building",
+              "direct"
+            ],
+            "example": "room"
+          },
+          "building_id": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true,
+            "description": "FK -> Building (Bắt buộc nếu type = 'building')",
+            "example": null
+          },
+          "contract_id": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true,
+            "description": "FK -> Contract (Bắt buộc nếu type = 'room')",
+            "example": "6fa85f64-5717-4562-b3fc-2c963f66af44"
+          },
+          "title": {
+            "type": "string",
+            "nullable": true,
+            "description": "Tên nhóm chat",
+            "minLength": 1,
+            "maxLength": 255,
+            "example": "Phòng 201 - Hợp đồng 2026"
+          }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "updated_at",
+          "is_deleted",
+          "type"
+        ],
+        "examples": [
+          {
+            "id": "16a85f64-5717-4562-b3fc-2c963f66afdd",
+            "created_at": "2026-09-01T08:00:00Z",
+            "updated_at": "2026-09-01T08:00:00Z",
+            "is_deleted": false,
+            "type": "room",
+            "building_id": null,
+            "contract_id": "6fa85f64-5717-4562-b3fc-2c963f66af44",
+            "title": "Phòng 201 - Hợp đồng 2026"
+          }
+        ]
+      },
+      "ConversationMember": {
+        "type": "object",
+        "title": "ConversationMember",
+        "description": "Thành viên tham gia cuộc trò chuyện",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Khóa chính duy nhất (UUID v4)",
+            "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Thời điểm tạo bản ghi (UTC)",
+            "example": "2026-09-05T10:00:00Z"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Thời điểm cập nhật bản ghi gần nhất (UTC)",
+            "example": "2026-09-05T10:00:00Z"
+          },
+          "is_deleted": {
+            "type": "boolean",
+            "description": "Trạng thái soft-delete: false = đang tồn tại; true = đã xóa mềm",
+            "default": false,
+            "example": false
+          },
+          "conversation_id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "FK -> Conversation",
+            "example": "16a85f64-5717-4562-b3fc-2c963f66afdd"
+          },
+          "user_id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "FK -> User",
+            "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+          },
+          "joined_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Thời điểm tham gia hội thoại",
+            "example": "2026-09-01T10:05:00Z"
+          },
+          "left_at": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "description": "Thời điểm rời phòng (vẫn xem được tin nhắn trước thời điểm này)",
+            "example": null
+          }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "updated_at",
+          "is_deleted",
+          "conversation_id",
+          "user_id",
+          "joined_at"
+        ],
+        "examples": [
+          {
+            "id": "17a85f64-5717-4562-b3fc-2c963f66afee",
+            "created_at": "2026-09-01T10:05:00Z",
+            "updated_at": "2026-09-01T10:05:00Z",
+            "is_deleted": false,
+            "conversation_id": "16a85f64-5717-4562-b3fc-2c963f66afdd",
+            "user_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+            "joined_at": "2026-09-01T10:05:00Z",
+            "left_at": null
+          }
+        ]
+      },
+      "Message": {
+        "type": "object",
+        "title": "Message",
+        "description": "Tin nhắn trong cuộc trò chuyện (văn bản, hình ảnh, file hoặc tin nhắn bot)",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Khóa chính duy nhất (UUID v4)",
+            "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Thời điểm tạo bản ghi (UTC)",
+            "example": "2026-09-05T10:00:00Z"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Thời điểm cập nhật bản ghi gần nhất (UTC)",
+            "example": "2026-09-05T10:00:00Z"
+          },
+          "is_deleted": {
+            "type": "boolean",
+            "description": "Trạng thái soft-delete: false = đang tồn tại; true = đã xóa mềm",
+            "default": false,
+            "example": false
+          },
+          "conversation_id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "FK -> Conversation",
+            "example": "16a85f64-5717-4562-b3fc-2c963f66afdd"
+          },
+          "sender_id": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true,
+            "description": "FK -> User (Người gửi. Null = Tin nhắn từ Bot hệ thống)",
+            "example": null
+          },
+          "type": {
+            "type": "string",
+            "description": "Định dạng nội dung tin nhắn",
+            "enum": [
+              "text",
+              "image",
+              "file",
+              "bot"
+            ],
+            "example": "bot"
+          },
+          "content": {
+            "type": "string",
+            "nullable": true,
+            "description": "Nội dung tin nhắn văn bản hoặc caption đính kèm",
+            "example": "Đã chốt số điện tháng 09: 180 kWh"
+          }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "updated_at",
+          "is_deleted",
+          "conversation_id",
+          "type"
+        ],
+        "examples": [
+          {
+            "id": "18a85f64-5717-4562-b3fc-2c963f66aff1",
+            "created_at": "2026-09-30T18:05:00Z",
+            "updated_at": "2026-09-30T18:05:00Z",
+            "is_deleted": false,
+            "conversation_id": "16a85f64-5717-4562-b3fc-2c963f66afdd",
+            "sender_id": null,
+            "type": "bot",
+            "content": "Đã chốt số điện tháng 09: 180 kWh"
+          }
+        ]
+      },
+      "MessageMention": {
+        "type": "object",
+        "title": "MessageMention",
+        "description": "Người được nhắc tên (@mention) trong tin nhắn",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Khóa chính duy nhất (UUID v4)",
+            "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Thời điểm tạo bản ghi (UTC)",
+            "example": "2026-09-05T10:00:00Z"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Thời điểm cập nhật bản ghi gần nhất (UTC)",
+            "example": "2026-09-05T10:00:00Z"
+          },
+          "is_deleted": {
+            "type": "boolean",
+            "description": "Trạng thái soft-delete: false = đang tồn tại; true = đã xóa mềm",
+            "default": false,
+            "example": false
+          },
+          "message_id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "FK -> Message",
+            "example": "18a85f64-5717-4562-b3fc-2c963f66aff1"
+          },
+          "user_id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "FK -> User (@mention)",
+            "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+          }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "updated_at",
+          "is_deleted",
+          "message_id",
+          "user_id"
+        ],
+        "examples": [
+          {
+            "id": "19a85f64-5717-4562-b3fc-2c963f66aff2",
+            "created_at": "2026-09-30T18:05:00Z",
+            "updated_at": "2026-09-30T18:05:00Z",
+            "is_deleted": false,
+            "message_id": "18a85f64-5717-4562-b3fc-2c963f66aff1",
+            "user_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+          }
+        ]
+      },
+      "RoommateProfile": {
+        "type": "object",
+        "title": "RoommateProfile",
+        "description": "Hồ sơ tìm bạn cùng phòng của tenant",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Khóa chính duy nhất (UUID v4)",
+            "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Thời điểm tạo bản ghi (UTC)",
+            "example": "2026-09-05T10:00:00Z"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Thời điểm cập nhật bản ghi gần nhất (UTC)",
+            "example": "2026-09-05T10:00:00Z"
+          },
+          "is_deleted": {
+            "type": "boolean",
+            "description": "Trạng thái soft-delete: false = đang tồn tại; true = đã xóa mềm",
+            "default": false,
+            "example": false
+          },
+          "user_id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "FK -> User (Tenant sở hữu hồ sơ)",
+            "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+          },
+          "lifestyle": {
+            "type": "object",
+            "nullable": true,
+            "description": "Thói quen sinh hoạt (giờ ngủ, nuôi thú cưng, hút thuốc,...)",
+            "additionalProperties": true,
+            "example": {
+              "sleep": "23h-6h",
+              "pets": false,
+              "smoking": false
+            }
+          },
+          "personality": {
+            "type": "object",
+            "nullable": true,
+            "description": "Tính cách (hướng nội, mức độ ồn ào,...)",
+            "additionalProperties": true,
+            "example": {
+              "introvert": true,
+              "noisy_level": 2
+            }
+          },
+          "budget_min": {
+            "type": "number",
+            "nullable": true,
+            "description": "Ngân sách tối thiểu (VNĐ)",
+            "minimum": 0,
+            "example": 2000000
+          },
+          "budget_max": {
+            "type": "number",
+            "nullable": true,
+            "description": "Ngân sách tối đa (VNĐ)",
+            "minimum": 0,
+            "example": 3500000
+          },
+          "bio": {
+            "type": "string",
+            "nullable": true,
+            "description": "Giới thiệu bản thân",
+            "example": "Hiền lành, sạch sẽ, dậy sớm"
+          },
+          "preferred_area": {
+            "type": "string",
+            "nullable": true,
+            "description": "Khu vực mong muốn tìm phòng",
+            "minLength": 1,
+            "maxLength": 255,
+            "example": "Hòa Khánh, Liên Chiểu"
+          },
+          "move_in_on": {
+            "type": "string",
+            "format": "date",
+            "nullable": true,
+            "description": "Thời điểm dự kiến chuyển vào ở",
+            "example": "2026-10-01"
+          },
+          "is_visible": {
+            "type": "boolean",
+            "description": "Hiển thị hồ sơ trên bảng tin tìm bạn cùng phòng",
+            "default": true,
+            "example": true
+          },
+          "id_verified": {
+            "type": "boolean",
+            "description": "Huy hiệu đã xác minh danh tính tự nguyện (D26)",
+            "default": false,
+            "example": true
+          }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "updated_at",
+          "is_deleted",
+          "user_id",
+          "is_visible"
+        ],
+        "examples": [
+          {
+            "id": "20a85f64-5717-4562-b3fc-2c963f66aff3",
+            "created_at": "2026-09-01T08:00:00Z",
+            "updated_at": "2026-09-01T08:00:00Z",
+            "is_deleted": false,
+            "user_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+            "lifestyle": {
+              "sleep": "23h-6h",
+              "pets": false,
+              "smoking": false
+            },
+            "personality": {
+              "introvert": true,
+              "noisy_level": 2
+            },
+            "budget_min": 2000000,
+            "budget_max": 3500000,
+            "bio": "Hiền lành, sạch sẽ, dậy sớm",
+            "preferred_area": "Hòa Khánh, Liên Chiểu",
+            "move_in_on": "2026-10-01",
+            "is_visible": true,
+            "id_verified": true
+          }
+        ]
+      },
+      "MatchRequest": {
+        "type": "object",
+        "title": "MatchRequest",
+        "description": "Yêu cầu kết nối ghép phòng giữa hai người thuê",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Khóa chính duy nhất (UUID v4)",
+            "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Thời điểm tạo bản ghi (UTC)",
+            "example": "2026-09-05T10:00:00Z"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Thời điểm cập nhật bản ghi gần nhất (UTC)",
+            "example": "2026-09-05T10:00:00Z"
+          },
+          "is_deleted": {
+            "type": "boolean",
+            "description": "Trạng thái soft-delete: false = đang tồn tại; true = đã xóa mềm",
+            "default": false,
+            "example": false
+          },
+          "requester_id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "FK -> User (Người gửi yêu cầu ghép bạn)",
+            "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+          },
+          "target_id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "FK -> User (Người nhận yêu cầu ghép bạn)",
+            "example": "21a85f64-5717-4562-b3fc-2c963f66aff4"
+          },
+          "match_status": {
+            "type": "string",
+            "description": "Trạng thái yêu cầu ghép",
+            "enum": [
+              "pending",
+              "accepted",
+              "rejected"
+            ],
+            "default": "pending",
+            "example": "accepted"
+          },
+          "responded_at": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "description": "Thời điểm đối phương phản hồi",
+            "example": "2026-09-02T14:20:00Z"
+          },
+          "ai_score": {
+            "type": "number",
+            "nullable": true,
+            "description": "Điểm tương thích do AI tính toán (0 - 100)",
+            "minimum": 0.0,
+            "maximum": 100.0,
+            "example": 87.5
+          },
+          "ai_advice": {
+            "type": "string",
+            "nullable": true,
+            "description": "Lời khuyên hòa hợp từ AI",
+            "example": "Hai người cùng giờ ngủ, ít rủi ro xung đột"
+          }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "updated_at",
+          "is_deleted",
+          "requester_id",
+          "target_id",
+          "match_status"
+        ],
+        "examples": [
+          {
+            "id": "22a85f64-5717-4562-b3fc-2c963f66aff5",
+            "created_at": "2026-09-02T10:00:00Z",
+            "updated_at": "2026-09-02T14:20:00Z",
+            "is_deleted": false,
+            "requester_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+            "target_id": "21a85f64-5717-4562-b3fc-2c963f66aff4",
+            "match_status": "accepted",
+            "responded_at": "2026-09-02T14:20:00Z",
+            "ai_score": 87.5,
+            "ai_advice": "Hai người cùng giờ ngủ, ít rủi ro xung đột"
+          }
+        ]
+      },
+      "Notification": {
+        "type": "object",
+        "title": "Notification",
+        "description": "Thông báo gửi đến người dùng (hộp thư inbox app & FCM push)",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Khóa chính duy nhất (UUID v4)",
+            "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Thời điểm tạo bản ghi (UTC)",
+            "example": "2026-09-05T10:00:00Z"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Thời điểm cập nhật bản ghi gần nhất (UTC)",
+            "example": "2026-09-05T10:00:00Z"
+          },
+          "is_deleted": {
+            "type": "boolean",
+            "description": "Trạng thái soft-delete: false = đang tồn tại; true = đã xóa mềm",
+            "default": false,
+            "example": false
+          },
+          "user_id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "FK -> User (Người nhận)",
+            "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+          },
+          "type": {
+            "type": "string",
+            "description": "Loại thông báo (invoice_due, contract_expiry,...)",
+            "minLength": 1,
+            "maxLength": 50,
+            "example": "invoice_due"
+          },
+          "data": {
+            "type": "object",
+            "nullable": true,
+            "description": "Dữ liệu đính kèm phục vụ deep-link điều hướng màn hình app",
+            "additionalProperties": true,
+            "example": {
+              "invoice_id": "13a85f64-5717-4562-b3fc-2c963f66afaa",
+              "amount": 4610000
+            }
+          },
+          "read_at": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "description": "Thời điểm người dùng đã xem thông báo (NULL = chưa đọc)",
+            "example": null
+          },
+          "sent_at": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "description": "Thời điểm push FCM thành công",
+            "example": "2026-09-30T20:15:00Z"
+          }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "updated_at",
+          "is_deleted",
+          "user_id",
+          "type"
+        ],
+        "examples": [
+          {
+            "id": "23a85f64-5717-4562-b3fc-2c963f66aff6",
+            "created_at": "2026-09-30T20:15:00Z",
+            "updated_at": "2026-09-30T20:15:00Z",
+            "is_deleted": false,
+            "user_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+            "type": "invoice_due",
+            "data": {
+              "invoice_id": "13a85f64-5717-4562-b3fc-2c963f66afaa",
+              "amount": 4610000
+            },
+            "read_at": null,
+            "sent_at": "2026-09-30T20:15:00Z"
+          }
+        ]
+      },
+      "NotificationPreference": {
+        "type": "object",
+        "title": "NotificationPreference",
+        "description": "Cài đặt bật/tắt nhận từng nhóm thông báo của người dùng",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Khóa chính duy nhất (UUID v4)",
+            "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Thời điểm tạo bản ghi (UTC)",
+            "example": "2026-09-05T10:00:00Z"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Thời điểm cập nhật bản ghi gần nhất (UTC)",
+            "example": "2026-09-05T10:00:00Z"
+          },
+          "is_deleted": {
+            "type": "boolean",
+            "description": "Trạng thái soft-delete: false = đang tồn tại; true = đã xóa mềm",
+            "default": false,
+            "example": false
+          },
+          "user_id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "FK -> User",
+            "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+          },
+          "type": {
+            "type": "string",
+            "description": "Nhóm thông báo",
+            "enum": [
+              "invoice",
+              "chat",
+              "issue",
+              "match",
+              "account"
+            ],
+            "example": "invoice"
+          },
+          "enabled": {
+            "type": "boolean",
+            "description": "Cho phép nhận thông báo nhóm này hay không",
+            "default": true,
+            "example": true
+          }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "updated_at",
+          "is_deleted",
+          "user_id",
+          "type",
+          "enabled"
+        ],
+        "examples": [
+          {
+            "id": "24a85f64-5717-4562-b3fc-2c963f66aff7",
+            "created_at": "2026-09-01T08:00:00Z",
+            "updated_at": "2026-09-01T08:00:00Z",
+            "is_deleted": false,
+            "user_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+            "type": "invoice",
+            "enabled": true
+          }
+        ]
+      },
+      "PushDevice": {
+        "type": "object",
+        "title": "PushDevice",
+        "description": "Thiết bị đăng ký nhận thông báo đẩy FCM (Android / Web)",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Khóa chính duy nhất (UUID v4)",
+            "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Thời điểm tạo bản ghi (UTC)",
+            "example": "2026-09-05T10:00:00Z"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Thời điểm cập nhật bản ghi gần nhất (UTC)",
+            "example": "2026-09-05T10:00:00Z"
+          },
+          "is_deleted": {
+            "type": "boolean",
+            "description": "Trạng thái soft-delete: false = đang tồn tại; true = đã xóa mềm",
+            "default": false,
+            "example": false
+          },
+          "user_id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "FK -> User",
+            "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+          },
+          "token": {
+            "type": "string",
+            "description": "FCM Registration Token của thiết bị",
+            "minLength": 1,
+            "maxLength": 512,
+            "example": "fcm_token_sample_abc123..."
+          },
+          "platform": {
+            "type": "string",
+            "description": "Nền tảng thiết bị",
+            "enum": [
+              "android",
+              "web"
+            ],
+            "example": "android"
+          },
+          "last_seen_at": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "description": "Thời điểm tương tác gần nhất (dùng dọn token cũ không dùng)",
+            "example": "2026-09-19T12:00:00Z"
+          }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "updated_at",
+          "is_deleted",
+          "user_id",
+          "token",
+          "platform"
+        ],
+        "examples": [
+          {
+            "id": "25a85f64-5717-4562-b3fc-2c963f66aff8",
+            "created_at": "2026-09-01T08:00:00Z",
+            "updated_at": "2026-09-19T12:00:00Z",
+            "is_deleted": false,
+            "user_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+            "token": "fcm_token_sample_abc123...",
+            "platform": "android",
+            "last_seen_at": "2026-09-19T12:00:00Z"
+          }
+        ]
+      },
+      "AuditLog": {
+        "type": "object",
+        "title": "AuditLog",
+        "description": "Nhật ký kiểm toán hệ thống ghi lại mọi biến động dữ liệu quan trọng (append-only, không xóa sửa)",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Khóa chính duy nhất",
+            "example": "26a85f64-5717-4562-b3fc-2c963f66aff9"
+          },
+          "actor_id": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true,
+            "description": "FK -> User (Người thực hiện hành động. Null nếu là webhook / system cron)",
+            "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+          },
+          "action": {
+            "type": "string",
+            "description": "Mã hành vi (user.lock, building.approve, payment.webhook,...)",
+            "minLength": 1,
+            "maxLength": 100,
+            "example": "building.approve"
+          },
+          "entity_type": {
+            "type": "string",
+            "description": "Tên bảng/tài nguyên bị tác động",
+            "minLength": 1,
+            "maxLength": 50,
+            "example": "building"
+          },
+          "entity_id": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true,
+            "description": "ID bản ghi tài nguyên bị tác động",
+            "example": "5fa85f64-5717-4562-b3fc-2c963f66af33"
+          },
+          "before_data": {
+            "type": "object",
+            "nullable": true,
+            "description": "Dữ liệu snapshot trước khi thay đổi",
+            "additionalProperties": true,
+            "example": {
+              "building_status": "pending"
+            }
+          },
+          "after_data": {
+            "type": "object",
+            "nullable": true,
+            "description": "Dữ liệu snapshot sau khi thay đổi",
+            "additionalProperties": true,
+            "example": {
+              "building_status": "approved"
+            }
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Thời điểm ghi nhận nhật ký (UTC)",
+            "example": "2026-09-05T10:00:00Z"
+          }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "action",
+          "entity_type"
+        ],
+        "examples": [
+          {
+            "id": "26a85f64-5717-4562-b3fc-2c963f66aff9",
+            "actor_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+            "action": "building.approve",
+            "entity_type": "building",
+            "entity_id": "5fa85f64-5717-4562-b3fc-2c963f66af33",
+            "before_data": {
+              "building_status": "pending"
+            },
+            "after_data": {
+              "building_status": "approved"
+            },
+            "created_at": "2026-09-05T10:00:00Z"
+          }
+        ]
+      },
+      "Media": {
+        "type": "object",
+        "title": "Media",
+        "description": "Bảng quản lý tập tin & hình ảnh đa hình (polymorphic) toàn hệ thống",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Khóa chính duy nhất (UUID v4)",
+            "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Thời điểm tạo bản ghi (UTC)",
+            "example": "2026-09-05T10:00:00Z"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Thời điểm cập nhật bản ghi gần nhất (UTC)",
+            "example": "2026-09-05T10:00:00Z"
+          },
+          "is_deleted": {
+            "type": "boolean",
+            "description": "Trạng thái soft-delete: false = đang tồn tại; true = đã xóa mềm",
+            "default": false,
+            "example": false
+          },
+          "owner_type": {
+            "type": "string",
+            "description": "Tên loại thực thể sở hữu file",
+            "enum": [
+              "user",
+              "room",
+              "building",
+              "contract",
+              "contract_member",
+              "meter_reading",
+              "issue_report",
+              "message"
+            ],
+            "example": "room"
+          },
+          "owner_id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "UUID của thực thể sở hữu",
+            "example": "4fa85f64-5717-4562-b3fc-2c963f66afb7"
+          },
+          "purpose": {
+            "type": "string",
+            "description": "Mục đích sử dụng của file",
+            "enum": [
+              "avatar",
+              "cover_photo",
+              "gallery_photo",
+              "ownership_proof",
+              "cccd_front",
+              "cccd_back",
+              "contract_template",
+              "contract_signed",
+              "meter_reading_evidence",
+              "issue_photo",
+              "chat_attachment"
+            ],
+            "example": "cover_photo"
+          },
+          "file_type": {
+            "type": "string",
+            "description": "Loại định dạng tập tin",
+            "enum": [
+              "image",
+              "document",
+              "video",
+              "other"
+            ],
+            "default": "image",
+            "example": "image"
+          },
+          "url": {
+            "type": "string",
+            "description": "Đường dẫn tải/xem tập tin trên CDN",
+            "minLength": 1,
+            "maxLength": 2048,
+            "example": "https://cdn.pbl6.dev/room/4fa85f64-5717-4562-b3fc-2c963f66afb7/cover.webp"
+          },
+          "size_bytes": {
+            "type": "integer",
+            "format": "int64",
+            "nullable": true,
+            "description": "Dung lượng tập tin theo bytes",
+            "example": 245000
+          },
+          "user_id": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true,
+            "description": "FK -> User (Người tải file lên)",
+            "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+          }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "updated_at",
+          "is_deleted",
+          "owner_type",
+          "owner_id",
+          "purpose",
+          "file_type",
+          "url"
+        ],
+        "examples": [
+          {
+            "id": "27a85f64-5717-4562-b3fc-2c963f66affa",
+            "created_at": "2026-09-05T10:00:00Z",
+            "updated_at": "2026-09-05T10:00:00Z",
+            "is_deleted": false,
+            "owner_type": "room",
+            "owner_id": "4fa85f64-5717-4562-b3fc-2c963f66afb7",
+            "purpose": "cover_photo",
+            "file_type": "image",
+            "url": "https://cdn.pbl6.dev/room/4fa85f64-5717-4562-b3fc-2c963f66afb7/cover.webp",
+            "size_bytes": 245000,
+            "user_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+          }
+        ]
+      }
+    }
+  }
+}
