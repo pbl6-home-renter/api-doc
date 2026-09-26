@@ -11,7 +11,7 @@ Mã nguồn đặc tả được viết bằng **YAML**, tổ chức dạng modu
 ```text
 be/
 ├── src/
-│   ├── openapi.yaml                     # Entrypoint OpenAPI 3.0.3 tổng hợp toàn bộ components
+│   ├── openapi.yaml                     # Entrypoint OpenAPI 3.0.3 tổng hợp toàn bộ components & paths
 │   │
 │   ├── common/                          # Kiểu dữ liệu và định nghĩa dùng chung
 │   │   └── base-entity.yaml             # BaseEntity (id, createdAt, updatedAt, isDeleted)
@@ -43,57 +43,87 @@ be/
 
 ---
 
-## 2. Quy trình làm việc (Development Workflow)
+## 2. Hướng dẫn làm việc giữa Repo và Apidog (Step-by-step)
 
-### Bước 1: Thêm hoặc chỉnh sửa Schema trong `src/schemas/`
-- **Không sửa trực tiếp file `reference/rentify.json`!**
-- Khi thêm hoặc sửa Entity/Schema:
-  - Tạo hoặc sửa file `.yaml` trong thư mục domain tương ứng (`src/schemas/<domain>/`).
-  - Gắn thuộc tính `x-apidog-folder` để Apidog tự động xếp vào folder tương ứng:
-    ```yaml
-    type: object
-    x-apidog-folder: "Tên Domain" # User, Property, Contract, Billing, Chat, Operation, Matching, Notification
-    title: TênEntity
-    description: Mô tả entity
-    allOf:
-      - $ref: '../../common/base-entity.yaml'
-      - type: object
-        properties:
-          ...
-    ```
-  - Khai báo file mới vào mục `components/schemas` trong `src/openapi.yaml`.
+Quy trình chuẩn khi làm việc với API hàng ngày giữa VS Code / IDE và Apidog gồm các bước sau:
 
-### Bước 2: Biên dịch file cho Apidog (Bundle)
-Chạy script bundle để gộp toàn bộ các file con trong `src/` thành file `reference/rentify.json`:
-```bash
-npm run bundle
-# hoặc chạy trực tiếp bằng npx:
-npx @redocly/cli bundle src/openapi.yaml -o reference/rentify.json --ext json --component-names-strategy title
-```
-Lệnh này sẽ tự động:
-1. Giải quyết toàn bộ `$ref` tương đối giữa các file con.
-2. Giữ nguyên tên chuẩn theo `title` (PascalCase: `User`, `Building`, `Invoice`...).
-3. Cập nhật file `reference/rentify.json` để Apidog đọc.
-
-### Bước 3: Commit & Push lên Git
-```bash
-git add .
-git commit -m "feat(schemas): mô tả ngắn gọn thay đổi"
-git push origin <tên-nhánh>
+```text
+[Tạo nhánh Git] ➔ [Thiết kế API/DTO trong src/] ➔ [npm run bundle] ➔ [Push nhánh] ➔ [Vào Apidog Pull nhánh] ➔ [Kiểm tra Specs & APIs]
 ```
 
-### Bước 4: Xem trên Apidog
-- Mở Apidog (dự án `rentify`), chọn đúng nhánh Git vừa push.
-- Bấm **Sync / Refresh**: Các API và danh mục **`Schemas ▾`** sẽ tự động hiển thị đầy đủ thuộc tính và folder.
+### Bước 1: Mở repo & Tạo nhánh làm việc mới
+Mở terminal tại thư mục `be`, tạo một nhánh riêng để làm việc:
+```bash
+git checkout -b feature/<tên-chức-năng>
+# Ví dụ: git checkout -b feature/auth-endpoints
+```
 
 ---
 
-## 3. Các lệnh npx tiện ích
+### Bước 2: Thiết kế API, DTOs & Schemas trong `src/`
+Toàn bộ mã nguồn bạn viết đều nằm trong thư mục `src/`:
 
-Mọi lệnh đều chạy trực tiếp qua `npx` của Node.js, **không cần chạy `npm install`**:
+1. **Nếu thêm/sửa Schema (Entity / DTO):**
+   - Viết file YAML trong `src/schemas/<domain>/` (hoặc `src/requests/`, `src/responses/`).
+   - Nhớ gắn thẻ `x-apidog-folder` để Apidog tự gom vào folder:
+     ```yaml
+     type: object
+     x-apidog-folder: "User"   # Tên folder hiển thị trên Apidog
+     title: User
+     allOf:
+       - $ref: '../../common/base-entity.yaml'
+       - type: object
+         properties:
+           phone:
+             type: string
+     ```
+2. **Nếu thêm Endpoint (API Path):**
+   - Viết file YAML trong `src/paths/<domain>/` (ví dụ `login.yaml`).
+3. **Khai báo liên kết vào `src/openapi.yaml`:**
+   - Thêm đường dẫn `$ref` của Schema hoặc Path mới vào `src/openapi.yaml`.
 
-| Lệnh | Mục đích |
+---
+
+### Bước 3: Biên dịch file cho Apidog (Bundle)
+Chạy lệnh bundle để tự động giải quyết các `$ref` và cập nhật file `reference/rentify.json`:
+```bash
+npm run bundle
+```
+> *Lệnh này chạy qua `npx` của Node.js, bạn không cần phải chạy `npm install` trước.*
+
+---
+
+### Bước 4: Commit & Push nhánh lên GitHub
+```bash
+git add .
+git commit -m "feat: thêm api đăng nhập và schema người dùng"
+git push origin feature/<tên-chức-năng>
+```
+
+---
+
+### Bước 5: Lên Apidog đồng bộ nhánh mới về
+1. Mở ứng dụng **Apidog**, vào dự án **`rentify`**.
+2. Nhìn lên góc trên bên trái (chỗ dropdown chọn nhánh Git bên cạnh chữ APIs):
+   - Bấm vào tên nhánh -> Chọn **Fetch from remote** (hoặc vào **Settings -> Git Branches** để kéo danh sách nhánh mới về).
+   - Chọn chuyển sang nhánh `feature/<tên-chức-năng>` bạn vừa push.
+3. Bấm nút **Sync / Refresh (🔄)** để Apidog nạp dữ liệu từ commit mới.
+
+---
+
+### Bước 6: Kiểm tra trên Apidog
+1. **Kiểm tra ở tab `Specs` (icon `{}`):**
+   - Mở file `src/openapi.yaml` hoặc `reference/rentify.json` để kiểm tra preview cú pháp và outline tổng quan.
+2. **Kiểm tra ở tab `APIs` (icon cắm điện):**
+   - **Mục `Endpoints ▾`:** Kiểm tra các API URL đã xuất hiện đúng nhóm, đầy đủ Request Body, Query Params và Response chưa.
+   - **Mục `Schemas ▾`:** Kiểm tra các Schema đã nằm gọn trong từng folder (`User`, `Property`, `Billing`...), click vào từng Schema xem các trường dữ liệu và quan hệ kế thừa `allOf` có hiển thị đầy đủ không.
+
+---
+
+## 3. Bảng lệnh nhanh
+
+| Lệnh | Mô tả |
 |---|---|
-| `npm run bundle` | Gộp toàn bộ `src/` thành `reference/rentify.json` để Apidog đọc |
-| `npm run lint` | Kiểm tra lỗi cú pháp và chuẩn OpenAPI của bộ tài liệu |
-| `npm run preview` | Mở giao diện xem trước tài liệu trực tiếp trên trình duyệt local |
+| `npm run bundle` | Gộp toàn bộ `src/` thành `reference/rentify.json` để Apidog đồng bộ |
+| `npm run lint` | Kiểm tra cú pháp và quy chuẩn OpenAPI trước khi commit |
+| `npm run preview` | Khởi chạy giao diện xem trước tài liệu trực tiếp trên trình duyệt |
