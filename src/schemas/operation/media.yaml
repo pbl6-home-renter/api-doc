@@ -1,0 +1,63 @@
+type: object
+x-apidog-folder: Operation
+title: Media
+description: Quản lý tệp tin và hình ảnh theo mô hình polymorphic
+allOf:
+  - $ref: '../../common/base-entity.yaml'
+  - type: object
+    properties:
+      ownerType:
+        type: string
+        enum: [user, room, building, contract, contract_member, meter_reading, issue_report, message]
+        description: Loại thực thể sở hữu file
+        example: "room"
+      ownerId:
+        type: string
+        format: uuid
+        description: ID của thực thể sở hữu file
+        example: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+      purpose:
+        type: string
+        enum:
+          - avatar
+          - cover_photo
+          - gallery_photo
+          - ownership_proof
+          - cccd_front
+          - cccd_back
+          - contract_template
+          - contract_signed
+          - meter_reading_evidence
+          - issue_photo
+          - chat_attachment
+        description: Mục đích sử dụng của file đối với thực thể sở hữu
+        example: "cover_photo"
+      fileType:
+        type: string
+        enum: [image, document, video, other]
+        default: image
+        description: Loại định dạng tệp tin
+        example: "image"
+      url:
+        type: string
+        minLength: 1
+        maxLength: 2048
+        description: Đường dẫn truy cập tệp trên CDN / Cloud Storage
+        example: "https://cdn.pbl6.dev/room/3fa85f64/cover.webp"
+      sizeBytes:
+        type: integer
+        nullable: true
+        description: Dung lượng file tính bằng byte
+        example: 245000
+      userId:
+        type: string
+        format: uuid
+        nullable: true
+        description: ID người dùng đã tải tệp tin lên
+        example: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+    required:
+      - ownerType
+      - ownerId
+      - purpose
+      - fileType
+      - url

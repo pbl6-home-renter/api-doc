@@ -1,0 +1,30 @@
+type: object
+x-apidog-folder: Common
+title: BaseEntity
+description: Quy ước các trường chung áp dụng cho mọi entity (trừ AuditLog append-only)
+properties:
+  id:
+    type: string
+    format: uuid
+    description: Khóa chính duy nhất (UUID v4)
+    example: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+  createdAt:
+    type: string
+    format: date-time
+    description: Thời điểm tạo bản ghi (UTC)
+    example: "2026-09-05T10:00:00Z"
+  updatedAt:
+    type: string
+    format: date-time
+    description: Thời điểm cập nhật bản ghi gần nhất (UTC)
+    example: "2026-09-05T10:00:00Z"
+  isDeleted:
+    type: boolean
+    description: "Trạng thái soft-delete: false = đang hoạt động; true = đã xóa mềm"
+    default: false
+    example: false
+required:
+  - id
+  - createdAt
+  - updatedAt
+  - isDeleted

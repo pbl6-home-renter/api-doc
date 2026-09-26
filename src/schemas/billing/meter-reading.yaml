@@ -1,0 +1,52 @@
+type: object
+x-apidog-folder: Billing
+title: MeterReading
+description: Bản ghi chỉ số công tơ điện hoặc đồng hồ nước theo từng kỳ phòng
+allOf:
+  - $ref: '../../common/base-entity.yaml'
+  - type: object
+    properties:
+      roomId:
+        type: string
+        format: uuid
+        description: ID phòng chốt chỉ số
+        example: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+      type:
+        type: string
+        enum: [electricity, water]
+        description: Loại chỉ số (điện hoặc nước)
+        example: "electricity"
+      period:
+        type: string
+        minLength: 7
+        maxLength: 7
+        pattern: '^[0-9]{4}-(0[1-9]|1[0-2])$'
+        description: Kỳ tính tiền định dạng YYYY-MM
+        example: "2026-09"
+      previousReading:
+        type: number
+        minimum: 0
+        description: Chỉ số kỳ trước (hoặc chỉ số baseline khi bàn giao)
+        example: 1200
+      currentReading:
+        type: number
+        minimum: 0
+        description: Chỉ số chốt kỳ này (phải >= previousReading)
+        example: 1380
+      readingDate:
+        type: string
+        format: date
+        nullable: true
+        description: Ngày chốt thực tế (dọn vào/ra giữa tháng)
+        example: "2026-09-30"
+      isBaseline:
+        type: boolean
+        default: false
+        description: Cờ đánh dấu kỳ đầu tiên bàn giao hoặc sau khi thay đồng hồ
+        example: false
+    required:
+      - roomId
+      - type
+      - period
+      - previousReading
+      - currentReading

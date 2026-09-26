@@ -1,0 +1,89 @@
+type: object
+x-apidog-folder: Billing
+title: RatePolicy
+description: Bộ chính sách đơn giá dịch vụ và phí định kỳ (1 bộ áp dụng theo scope building hoặc room - D39)
+allOf:
+  - $ref: '../../common/base-entity.yaml'
+  - type: object
+    properties:
+      landlordId:
+        type: string
+        format: uuid
+        description: ID chủ nhà sở hữu bộ đơn giá
+        example: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+      scope:
+        type: string
+        enum: [building, room]
+        description: Phạm vi áp dụng chính sách giá
+        example: "room"
+      buildingId:
+        type: string
+        format: uuid
+        nullable: true
+        description: ID tòa nhà (bắt buộc khi scope = building)
+        example: null
+      roomId:
+        type: string
+        format: uuid
+        nullable: true
+        description: ID phòng (bắt buộc khi scope = room)
+        example: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+      rates:
+        type: array
+        description: Danh sách các đơn giá dịch vụ và phí định kỳ
+        items:
+          type: object
+          properties:
+            type:
+              type: string
+              enum: [electricity, water, wifi, cleaning, parking, maintenance, other]
+              description: Loại dịch vụ
+              example: "electricity"
+            name:
+              type: string
+              description: Tên hiển thị dịch vụ (copy sang snapshot hóa đơn)
+              example: "Điện EVN"
+            rateKind:
+              type: string
+              enum: [flat, tiered, fixed_per_period, per_head, per_area_m2, per_vehicle]
+              description: Phương pháp tính đơn giá
+              example: "flat"
+            unitPrice:
+              type: number
+              nullable: true
+              description: Đơn giá cố định (không áp dụng cho loại tiered)
+              example: 4000
+            steps:
+              type: array
+              nullable: true
+              description: Bậc thang lũy tiến (chỉ dùng cho loại tiered)
+              items:
+                type: object
+                properties:
+                  from:
+                    type: number
+                  to:
+                    type: number
+                    nullable: true
+                  price:
+                    type: number
+            billingUnit:
+              type: string
+              enum: [kwh, m3, room, person, m2, vehicle, day, occurrence]
+              description: Đơn vị tính để hiển thị
+              example: "kwh"
+          required:
+            - type
+            - name
+            - rateKind
+            - billingUnit
+      isActive:
+        type: boolean
+        default: true
+        description: "true = áp dụng bộ này; false = tắt và kế thừa bộ cấp trên"
+        example: true
+    required:
+      - landlordId
+      - scope
+      - rates
+      - isActive

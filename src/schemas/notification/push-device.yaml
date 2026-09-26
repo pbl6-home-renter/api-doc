@@ -1,0 +1,34 @@
+type: object
+x-apidog-folder: Notification
+title: PushDevice
+description: Thiết bị đăng ký nhận thông báo đẩy FCM của người dùng
+allOf:
+  - $ref: '../../common/base-entity.yaml'
+  - type: object
+    properties:
+      userId:
+        type: string
+        format: uuid
+        description: ID người dùng sở hữu thiết bị
+        example: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+      token:
+        type: string
+        minLength: 1
+        maxLength: 512
+        description: FCM Registration Token duy nhất của thiết bị
+        example: "f_zZ9...Xy1"
+      platform:
+        type: string
+        enum: [android, web]
+        description: Nền tảng thiết bị
+        example: "android"
+      lastSeenAt:
+        type: string
+        format: date-time
+        nullable: true
+        description: Thời điểm hoạt động gần nhất để dọn token cũ
+        example: "2026-09-05T10:00:00Z"
+    required:
+      - userId
+      - token
+      - platform

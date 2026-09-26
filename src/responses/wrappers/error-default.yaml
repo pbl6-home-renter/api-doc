@@ -1,0 +1,15 @@
+type: object
+title: ErrorDefaultWrapper
+description: Envelope phản hồi chuẩn cho lỗi (400, 401, 403, 404, 409, 500)
+properties:
+  statusCode:
+    type: integer
+    description: HTTP status code
+    example: 404
+  code:
+    type: string
+    description: Mã lỗi nghiệp vụ ổn định để client rẽ nhánh (in hoa)
+    example: "RESOURCE_NOT_FOUND"
+required:
+  - statusCode
+  - code

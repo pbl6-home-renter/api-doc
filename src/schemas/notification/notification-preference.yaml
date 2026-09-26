@@ -1,0 +1,27 @@
+type: object
+x-apidog-folder: Notification
+title: NotificationPreference
+description: Cài đặt bật/tắt nhận thông báo theo từng danh mục của người dùng
+allOf:
+  - $ref: '../../common/base-entity.yaml'
+  - type: object
+    properties:
+      userId:
+        type: string
+        format: uuid
+        description: ID người dùng
+        example: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+      type:
+        type: string
+        enum: [invoice, chat, issue, match, account]
+        description: Nhóm thông báo cài đặt
+        example: "invoice"
+      enabled:
+        type: boolean
+        default: true
+        description: Trạng thái cho phép gửi thông báo của nhóm này
+        example: true
+    required:
+      - userId
+      - type
+      - enabled

@@ -1,0 +1,48 @@
+type: object
+x-apidog-folder: Contract
+title: ContractMember
+description: Thành viên ở cùng / ở ghép trong hợp đồng thuê phòng
+allOf:
+  - $ref: '../../common/base-entity.yaml'
+  - type: object
+    properties:
+      contractId:
+        type: string
+        format: uuid
+        description: ID hợp đồng thuê phòng
+        example: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+      tenantId:
+        type: string
+        format: uuid
+        nullable: true
+        description: ID tài khoản thành viên (nullable nếu chưa có tài khoản - D29)
+        example: null
+      tenantName:
+        type: string
+        nullable: true
+        minLength: 1
+        maxLength: 254
+        description: Họ và tên thành viên
+        example: "Nguyễn Thị C"
+      tenantPhone:
+        type: string
+        nullable: true
+        minLength: 10
+        maxLength: 12
+        pattern: '^0[0-9]{9}$|^\+84[0-9]{9}$'
+        description: Số điện thoại thành viên
+        example: "0921234567"
+      joinedAt:
+        type: string
+        format: date
+        description: Ngày bắt đầu vào ở
+        example: "2026-09-01"
+      leftAt:
+        type: string
+        format: date
+        nullable: true
+        description: Ngày rời phòng (không xóa bản ghi khi rời phòng)
+        example: null
+    required:
+      - contractId
+      - joinedAt

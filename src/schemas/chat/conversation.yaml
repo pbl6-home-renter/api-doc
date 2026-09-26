@@ -1,0 +1,40 @@
+type: object
+x-apidog-folder: Chat
+title: Conversation
+description: Cuộc hội thoại chat (room chat theo hợp đồng, building chat, hoặc direct chat)
+allOf:
+  - $ref: '../../common/base-entity.yaml'
+  - type: object
+    properties:
+      type:
+        type: string
+        enum: [room, building, direct]
+        description: Loại cuộc trò chuyện
+        example: "room"
+      roomId:
+        type: string
+        format: uuid
+        nullable: true
+        description: ID phòng liên kết (bắt buộc khi type = room)
+        example: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+      buildingId:
+        type: string
+        format: uuid
+        nullable: true
+        description: ID tòa nhà liên kết (bắt buộc khi type = building)
+        example: null
+      contractId:
+        type: string
+        format: uuid
+        nullable: true
+        description: ID hợp đồng liên kết (bắt buộc khi type = room)
+        example: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+      title:
+        type: string
+        nullable: true
+        minLength: 1
+        maxLength: 255
+        description: Tiêu đề cuộc hội thoại
+        example: "Chat tòa nhà Thanh Xuân"
+    required:
+      - type

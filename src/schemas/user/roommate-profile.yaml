@@ -1,0 +1,71 @@
+type: object
+x-apidog-folder: User
+title: RoommateProfile
+description: Hồ sơ tìm bạn ở ghép của Tenant
+allOf:
+  - $ref: '../../common/base-entity.yaml'
+  - type: object
+    properties:
+      tenantId:
+        type: string
+        format: uuid
+        description: ID của tenant sở hữu profile
+        example: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+      lifestyle:
+        type: object
+        nullable: true
+        description: Thói quen sinh hoạt (giờ ngủ, nuôi thú cưng, hút thuốc...)
+        example:
+          sleep: "23h-6h"
+          pets: false
+          smoking: false
+      personality:
+        type: object
+        nullable: true
+        description: Đặc điểm tính cách (hướng nội, mức độ tiếng ồn...)
+        example:
+          introvert: true
+          noisyLevel: 2
+      budgetMin:
+        type: number
+        minimum: 0
+        nullable: true
+        description: Ngân sách tối thiểu (VND)
+        example: 2000000
+      budgetMax:
+        type: number
+        minimum: 0
+        nullable: true
+        description: Ngân sách tối đa (VND)
+        example: 3500000
+      bio:
+        type: string
+        nullable: true
+        description: Giới thiệu bản thân
+        example: "Hiền lành, sạch sẽ, dậy sớm"
+      preferredArea:
+        type: string
+        nullable: true
+        minLength: 1
+        maxLength: 255
+        description: Khu vực mong muốn tìm phòng
+        example: "Hòa Khánh, Liên Chiểu"
+      moveInOn:
+        type: string
+        format: date
+        nullable: true
+        description: Thời điểm mong muốn dọn vào
+        example: "2026-10-01"
+      isVisible:
+        type: boolean
+        default: true
+        description: Trạng thái hiển thị hồ sơ trên bảng tin tìm bạn
+        example: true
+      idVerified:
+        type: boolean
+        default: false
+        description: Đã xác minh danh tính hay chưa (D26)
+        example: true
+    required:
+      - tenantId
+      - isVisible

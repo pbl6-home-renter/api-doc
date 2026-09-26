@@ -1,0 +1,61 @@
+type: object
+x-apidog-folder: Operation
+title: IssueReport
+description: Báo cáo sự cố hoặc yêu cầu sửa chữa trong phòng trọ
+allOf:
+  - $ref: '../../common/base-entity.yaml'
+  - type: object
+    properties:
+      roomId:
+        type: string
+        format: uuid
+        description: ID phòng xảy ra sự cố
+        example: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+      conversationId:
+        type: string
+        format: uuid
+        nullable: true
+        description: ID hội thoại trao đổi về sự cố
+        example: null
+      reporterId:
+        type: string
+        format: uuid
+        nullable: true
+        description: ID người báo cáo (null nếu chủ nhà tự tạo thay người thuê passive - D29)
+        example: null
+      status:
+        type: string
+        enum: [open, in_progress, resolved, cancelled]
+        default: open
+        description: Trạng thái xử lý sự cố
+        example: "open"
+      title:
+        type: string
+        minLength: 1
+        maxLength: 255
+        description: Tiêu đề sự cố
+        example: "Đèn cháy"
+      description:
+        type: string
+        nullable: true
+        minLength: 1
+        maxLength: 500
+        description: Mô tả chi tiết hiện tượng hư hỏng
+        example: "Bóng đèn phòng ngủ cháy 2 bóng"
+      note:
+        type: string
+        nullable: true
+        minLength: 1
+        maxLength: 500
+        description: Ghi chú kết quả xử lý của chủ nhà
+        example: null
+      closedAt:
+        type: string
+        format: date-time
+        nullable: true
+        description: Thời điểm đóng sự cố (khi resolved hoặc cancelled)
+        example: null
+    required:
+      - roomId
+      - status
+      - title

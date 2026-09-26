@@ -1,0 +1,32 @@
+type: object
+x-apidog-folder: Chat
+title: Message
+description: Tin nhắn trao đổi trong cuộc hội thoại (hỗ trợ text, ảnh, file hoặc tin nhắn bot)
+allOf:
+  - $ref: '../../common/base-entity.yaml'
+  - type: object
+    properties:
+      conversationId:
+        type: string
+        format: uuid
+        description: ID cuộc hội thoại chứa tin nhắn
+        example: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+      senderId:
+        type: string
+        format: uuid
+        nullable: true
+        description: ID người gửi tin nhắn (null đối với thông báo từ bot)
+        example: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+      type:
+        type: string
+        enum: [text, image, file, bot]
+        description: Loại tin nhắn
+        example: "text"
+      content:
+        type: string
+        nullable: true
+        description: Nội dung tin nhắn dạng văn bản
+        example: "Đã chốt số điện tháng 09: 180 kWh"
+    required:
+      - conversationId
+      - type

@@ -1,0 +1,15 @@
+type: object
+title: ErrorValidationWrapper
+description: Envelope phản hồi chuẩn cho lỗi validation (HTTP 422)
+properties:
+  statusCode:
+    type: integer
+    description: HTTP status code
+    example: 422
+  code:
+    type: string
+    description: Mã lỗi validation cố định
+    example: "VALIDATION FAILED"
+required:
+  - statusCode
+  - code

@@ -1,0 +1,25 @@
+type: object
+title: SuccessListWrapper
+description: Envelope phản hồi chuẩn cho danh sách có kèm phân trang
+properties:
+  statusCode:
+    type: integer
+    description: HTTP status code
+    example: 200
+  code:
+    type: string
+    description: Mã thành công nghiệp vụ ổn định (in hoa, SNAKE_CASE)
+    example: "RESOURCES_FETCHED"
+  data:
+    type: array
+    items:
+      type: object
+    description: Mảng các đối tượng dữ liệu
+  pagination:
+    type: object
+    description: Metadata phân trang (offset hoặc cursor)
+required:
+  - statusCode
+  - code
+  - data
+  - pagination
