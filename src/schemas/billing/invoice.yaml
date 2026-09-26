@@ -1,0 +1,112 @@
+type: object
+title: Invoice
+description: Hóa đơn tiền phòng và chi phí dịch vụ theo từng kỳ
+allOf:
+  - $ref: '../../common/base-entity.yaml'
+  - type: object
+    properties:
+      contractId:
+        type: string
+        format: uuid
+        description: ID hợp đồng thuê phòng
+        example: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+      code:
+        type: string
+        minLength: 1
+        maxLength: 32
+        description: Mã nhận diện duy nhất nhúng trong VietQR để đối soát
+        example: "INV-202609-8F2K"
+      period:
+        type: string
+        minLength: 7
+        maxLength: 7
+        pattern: '^[0-9]{4}-(0[1-9]|1[0-2])$'
+        description: Kỳ tính tiền (YYYY-MM)
+        example: "2026-09"
+      rentAmount:
+        type: number
+        minimum: 0
+        description: Tiền thuê phòng (đã tính prorate nếu có)
+        example: 3500000
+      breakdown:
+        type: array
+        nullable: true
+        description: Snapshot bất biến chi tiết các khoản điện, nước, phí dịch vụ
+        items:
+          type: object
+          properties:
+            type:
+              type: string
+            name:
+              type: string
+            rateKind:
+              type: string
+            unitPrice:
+              type: number
+            quantity:
+              type: number
+            unit:
+              type: string
+            serviceStart:
+              type: string
+              format: date
+            serviceEnd:
+              type: string
+              format: date
+            prorateRatio:
+              type: number
+            amount:
+              type: number
+            tierDetail:
+              type: array
+              items:
+                type: object
+      otherFees:
+        type: array
+        nullable: true
+        description: Phí phát sinh một lần hoặc giảm trừ/miễn giảm (D33 cho phép amount âm)
+        items:
+          type: object
+          properties:
+            name:
+              type: string
+            amount:
+              type: number
+          required:
+            - name
+            - amount
+      totalAmount:
+        type: number
+        minimum: 0
+        description: Tổng số tiền phải thanh toán của hóa đơn
+        example: 4610000
+      status:
+        type: string
+        enum: [pending, issued, void]
+        default: pending
+        description: Trạng thái hóa đơn (D39 bỏ overdue; hủy hóa đơn chuyển thành void)
+        example: "pending"
+      issuedAt:
+        type: string
+        format: date-time
+        nullable: true
+        description: Thời điểm hóa đơn được phát hành
+        example: "2026-09-30T20:15:00Z"
+      voidedInvoiceId:
+        type: string
+        format: uuid
+        nullable: true
+        description: ID hóa đơn cũ bị thay thế nếu hóa đơn này là bản sửa đổi (D37)
+        example: null
+      note:
+        type: string
+        nullable: true
+        description: Ghi chú hóa đơn (vd lý do prorate)
+        example: "Tháng nhập cư, prorate từ 15/09"
+    required:
+      - contractId
+      - code
+      - period
+      - rentAmount
+      - totalAmount
+      - status

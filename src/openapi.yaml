@@ -1,0 +1,148 @@
+openapi: 3.0.3
+info:
+  title: PBL6 Home Renter API Specification
+  description: >
+    Tài liệu đặc tả hợp đồng API cho dự án PBL6 (Hệ thống quản lý nhà trọ và tìm bạn ở ghép).
+    Được đồng bộ trực tiếp với Apidog từ Git repository theo kiến trúc modular component.
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:3000/api/v1
+    description: Môi trường phát triển cục bộ (Local Development)
+
+tags:
+  - name: Auth
+    description: Quản lý xác thực và phiên làm việc
+  - name: User
+    description: Hồ sơ người dùng, phân quyền và quản trị
+  - name: Property
+    description: Tòa nhà, phòng trọ và phòng yêu thích
+  - name: Contract
+    description: Hợp đồng thuê phòng và thành viên ở cùng
+  - name: Billing
+    description: Chính sách giá, chỉ số công tơ, hóa đơn và thanh toán
+  - name: Operation
+    description: Báo cáo sự cố, tệp tin phương tiện và nhật ký kiểm toán
+  - name: Chat
+    description: Hội thoại trao đổi theo phòng, tòa nhà và tin nhắn
+  - name: Matching
+    description: Hồ sơ roommate và yêu cầu kết nối ở ghép
+  - name: Notification
+    description: Thông báo người dùng và thiết bị push FCM
+
+paths: {}
+
+components:
+  schemas:
+    BaseEntity:
+      $ref: './common/base-entity.yaml'
+    PaginationMeta:
+      $ref: './common/pagination.yaml'
+
+    # Domain: User
+    User:
+      $ref: './schemas/user/user.yaml'
+    LandlordProfile:
+      $ref: './schemas/user/landlord-profile.yaml'
+    RoommateProfile:
+      $ref: './schemas/user/roommate-profile.yaml'
+
+    # Domain: Property
+    Building:
+      $ref: './schemas/property/building.yaml'
+    Room:
+      $ref: './schemas/property/room.yaml'
+    FavoriteRoom:
+      $ref: './schemas/property/favorite-room.yaml'
+
+    # Domain: Contract
+    Contract:
+      $ref: './schemas/contract/contract.yaml'
+    ContractMember:
+      $ref: './schemas/contract/contract-member.yaml'
+
+    # Domain: Billing
+    RatePolicy:
+      $ref: './schemas/billing/rate-policy.yaml'
+    BillingSetting:
+      $ref: './schemas/billing/billing-setting.yaml'
+    MeterReading:
+      $ref: './schemas/billing/meter-reading.yaml'
+    Invoice:
+      $ref: './schemas/billing/invoice.yaml'
+    Payment:
+      $ref: './schemas/billing/payment.yaml'
+
+    # Domain: Operation
+    IssueReport:
+      $ref: './schemas/operation/issue-report.yaml'
+    Media:
+      $ref: './schemas/operation/media.yaml'
+    AuditLog:
+      $ref: './schemas/operation/audit-log.yaml'
+
+    # Domain: Chat
+    Conversation:
+      $ref: './schemas/chat/conversation.yaml'
+    ConversationMember:
+      $ref: './schemas/chat/conversation-member.yaml'
+    Message:
+      $ref: './schemas/chat/message.yaml'
+    MessageMention:
+      $ref: './schemas/chat/message-mention.yaml'
+
+    # Domain: Matching
+    MatchRequest:
+      $ref: './schemas/matching/match-request.yaml'
+
+    # Domain: Notification
+    Notification:
+      $ref: './schemas/notification/notification.yaml'
+    NotificationPreference:
+      $ref: './schemas/notification/notification-preference.yaml'
+    PushDevice:
+      $ref: './schemas/notification/push-device.yaml'
+
+  responses:
+    SuccessSingleResponse:
+      description: Phản hồi thành công cho một đối tượng đơn lẻ
+      content:
+        application/json:
+          schema:
+            $ref: './responses/wrappers/success-single.yaml'
+    SuccessListResponse:
+      description: Phản hồi thành công cho danh sách đối tượng có kèm phân trang
+      content:
+        application/json:
+          schema:
+            $ref: './responses/wrappers/success-list.yaml'
+    BadRequestError:
+      description: Yêu cầu không hợp lệ (400)
+      content:
+        application/json:
+          schema:
+            $ref: './responses/wrappers/error-default.yaml'
+    UnauthorizedError:
+      description: Chưa xác thực danh tính (401)
+      content:
+        application/json:
+          schema:
+            $ref: './responses/wrappers/error-default.yaml'
+    ForbiddenError:
+      description: Không có quyền truy cập tài nguyên (403)
+      content:
+        application/json:
+          schema:
+            $ref: './responses/wrappers/error-default.yaml'
+    NotFoundError:
+      description: Không tìm thấy tài nguyên (404)
+      content:
+        application/json:
+          schema:
+            $ref: './responses/wrappers/error-default.yaml'
+    ValidationError:
+      description: Dữ liệu gửi lên vi phạm quy tắc validation (422)
+      content:
+        application/json:
+          schema:
+            $ref: './responses/wrappers/error-validation.yaml'

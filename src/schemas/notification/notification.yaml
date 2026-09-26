@@ -1,0 +1,40 @@
+type: object
+title: Notification
+description: Thông báo gửi đến người dùng (inbox trong ứng dụng và push FCM)
+allOf:
+  - $ref: '../../common/base-entity.yaml'
+  - type: object
+    properties:
+      userId:
+        type: string
+        format: uuid
+        description: ID người nhận thông báo
+        example: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+      type:
+        type: string
+        minLength: 1
+        maxLength: 50
+        description: Loại sự kiện thông báo (vd invoice_due, contract_expiry)
+        example: "invoice_due"
+      data:
+        type: object
+        nullable: true
+        description: Payload dữ liệu hỗ trợ deep-link
+        example:
+          invoiceId: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+          amount: 4610000
+      readAt:
+        type: string
+        format: date-time
+        nullable: true
+        description: Thời điểm người dùng đọc thông báo
+        example: null
+      sentAt:
+        type: string
+        format: date-time
+        nullable: true
+        description: Thời điểm bắn thông báo qua Firebase Cloud Messaging (FCM)
+        example: "2026-09-05T10:00:00Z"
+    required:
+      - userId
+      - type

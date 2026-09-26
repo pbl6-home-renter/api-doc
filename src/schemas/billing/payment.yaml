@@ -1,0 +1,52 @@
+type: object
+title: Payment
+description: Giao dịch thanh toán tiền phòng, dịch vụ hoặc trả cọc (D39)
+allOf:
+  - $ref: '../../common/base-entity.yaml'
+  - type: object
+    properties:
+      invoiceId:
+        type: string
+        format: uuid
+        nullable: true
+        description: ID hóa đơn thanh toán (null khi thanh toán hoàn tiền / trả cọc)
+        example: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+      contractId:
+        type: string
+        format: uuid
+        nullable: true
+        description: ID hợp đồng liên quan (bắt buộc khi invoiceId là null để trả cọc)
+        example: null
+      method:
+        type: string
+        enum: [vietqr, vnpay, momo, cash, mock]
+        description: Phương thức thanh toán (D39 MVP dùng mock QR và cash là chính)
+        example: "mock"
+      status:
+        type: string
+        enum: [pending, success, failed]
+        description: Trạng thái giao dịch thanh toán
+        example: "success"
+      amount:
+        type: number
+        minimum: 0
+        description: Số tiền thực nhận trong lần giao dịch này (hỗ trợ thanh toán từng phần)
+        example: 2000000
+      transactionId:
+        type: string
+        nullable: true
+        minLength: 1
+        maxLength: 255
+        description: Mã giao dịch từ cổng thanh toán / ngân hàng (null đối với tiền mặt)
+        example: "VNPAY-20260930183021"
+      rawGatewayResponse:
+        type: object
+        nullable: true
+        description: Payload phản hồi gốc từ cổng thanh toán dùng đối soát
+        example:
+          bank: "VCB"
+          amount: 2000000
+    required:
+      - method
+      - status
+      - amount

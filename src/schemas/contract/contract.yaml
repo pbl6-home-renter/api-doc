@@ -1,0 +1,85 @@
+type: object
+title: Contract
+description: Hợp đồng thuê phòng giữa chủ nhà và người thuê
+allOf:
+  - $ref: '../../common/base-entity.yaml'
+  - type: object
+    properties:
+      roomId:
+        type: string
+        format: uuid
+        description: ID phòng cho thuê
+        example: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+      landlordId:
+        type: string
+        format: uuid
+        description: ID chủ nhà sở hữu hợp đồng
+        example: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+      tenantId:
+        type: string
+        format: uuid
+        nullable: true
+        description: ID người thuê (nullable nếu tenant chưa có tài khoản - D29)
+        example: null
+      tenantName:
+        type: string
+        nullable: true
+        minLength: 1
+        maxLength: 254
+        description: Họ tên người thuê (dùng khi tenant chưa có tài khoản)
+        example: "Trần Văn B"
+      tenantPhone:
+        type: string
+        nullable: true
+        minLength: 10
+        maxLength: 12
+        pattern: '^0[0-9]{9}$|^\+84[0-9]{9}$'
+        description: Số điện thoại người thuê (dùng khi tenant chưa có tài khoản)
+        example: "0912345678"
+      status:
+        type: string
+        enum: [draft, signed, active, suspended, expired, terminated]
+        default: draft
+        description: Trạng thái hợp đồng
+        example: "active"
+      depositAmount:
+        type: number
+        minimum: 0
+        description: Số tiền cọc khi ký hợp đồng (VND)
+        example: 7000000
+      rentPrice:
+        type: number
+        minimum: 0
+        description: Giá thuê phòng thỏa thuận trên hợp đồng (VND)
+        example: 3500000
+      startDate:
+        type: string
+        format: date
+        description: Ngày bắt đầu hợp đồng (YYYY-MM-DD)
+        example: "2026-09-01"
+      endDate:
+        type: string
+        format: date
+        description: Ngày kết thúc hợp đồng (YYYY-MM-DD)
+        example: "2027-08-31"
+      description:
+        type: string
+        nullable: true
+        minLength: 1
+        maxLength: 500
+        description: Điều khoản hoặc ghi chú bổ sung
+        example: "Đóng tiền trước ngày 5 hàng tháng..."
+      vehicleCount:
+        type: integer
+        minimum: 0
+        nullable: true
+        description: Số lượng xe gửi tại nhà trọ (D32, null = chưa khai báo)
+        example: 1
+    required:
+      - roomId
+      - landlordId
+      - status
+      - depositAmount
+      - rentPrice
+      - startDate
+      - endDate

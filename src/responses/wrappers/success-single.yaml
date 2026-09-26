@@ -1,0 +1,19 @@
+type: object
+title: SuccessSingleWrapper
+description: Envelope phản hồi chuẩn cho kết quả trả về một đối tượng đơn lẻ
+properties:
+  statusCode:
+    type: integer
+    description: HTTP status code
+    example: 200
+  code:
+    type: string
+    description: Mã thành công nghiệp vụ ổn định (in hoa, SNAKE_CASE)
+    example: "RESOURCE_FETCHED"
+  data:
+    type: object
+    description: Dữ liệu chi tiết của đối tượng
+required:
+  - statusCode
+  - code
+  - data

@@ -1,0 +1,65 @@
+type: object
+title: User
+description: Tài khoản người dùng (Tenant, Landlord, Admin). Một tài khoản có đúng một role bất biến.
+allOf:
+  - $ref: '../../common/base-entity.yaml'
+  - type: object
+    properties:
+      phone:
+        type: string
+        minLength: 10
+        maxLength: 12
+        pattern: '^0[0-9]{9}$|^\+84[0-9]{9}$'
+        description: Số điện thoại định danh chính (VN)
+        example: "0901234567"
+      email:
+        type: string
+        format: email
+        minLength: 5
+        maxLength: 254
+        pattern: '^[^\s@]+@[^\s@]+\.[^\s@]+$'
+        description: Email người dùng
+        example: "lan@example.com"
+      password:
+        type: string
+        minLength: 60
+        maxLength: 255
+        description: Mật khẩu đã băm (BCrypt/Argon2)
+        example: "$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcFl7p92ldGxad68LJZdL17lhWy"
+      name:
+        type: string
+        minLength: 1
+        maxLength: 254
+        description: Họ và tên
+        example: "Lê Văn An"
+      role:
+        type: string
+        enum: [landlord, tenant, admin]
+        description: Vai trò người dùng (bất biến)
+        example: "landlord"
+      status:
+        type: string
+        enum: [active, locked]
+        default: active
+        description: Trạng thái tài khoản
+        example: "active"
+      lockReason:
+        type: string
+        nullable: true
+        minLength: 1
+        maxLength: 500
+        description: Lý do admin khóa tài khoản
+        example: null
+      lockedAt:
+        type: string
+        format: date-time
+        nullable: true
+        description: Thời điểm bị khóa
+        example: null
+    required:
+      - phone
+      - email
+      - password
+      - name
+      - role
+      - status

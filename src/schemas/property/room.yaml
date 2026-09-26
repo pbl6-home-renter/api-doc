@@ -1,0 +1,78 @@
+type: object
+title: Room
+description: Phòng trọ thuộc tòa nhà cho thuê
+allOf:
+  - $ref: '../../common/base-entity.yaml'
+  - type: object
+    properties:
+      landlordId:
+        type: string
+        format: uuid
+        description: ID chủ nhà sở hữu phòng (bắt buộc, 1 chủ/phòng)
+        example: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+      buildingId:
+        type: string
+        format: uuid
+        description: ID tòa nhà chứa phòng
+        example: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+      floorNumber:
+        type: integer
+        minimum: 1
+        nullable: true
+        description: Tầng (bắt đầu từ tầng 1)
+        example: 2
+      name:
+        type: string
+        minLength: 1
+        maxLength: 254
+        description: Tên / Mã số phòng
+        example: "P.201"
+      description:
+        type: string
+        nullable: true
+        minLength: 1
+        maxLength: 500
+        description: Mô tả chi tiết phòng trọ
+        example: "Phòng trọ hiện đại, tiện nghi đầy đủ"
+      area:
+        type: number
+        minimum: 0.1
+        nullable: true
+        description: Diện tích phòng tính theo m²
+        example: 18.5
+      amenities:
+        type: object
+        description: Các tiện ích đi kèm (điều hòa, tủ lạnh, wc khép kín...)
+        example:
+          aircon: true
+          fridge: false
+          wcInside: true
+      maxOccupancy:
+        type: integer
+        minimum: 1
+        nullable: true
+        description: Số lượng người ở tối đa
+        example: 3
+      genderPolicy:
+        type: string
+        enum: [any, male, female]
+        default: any
+        description: Giới hạn giới tính người thuê
+        example: "any"
+      rentPrice:
+        type: number
+        minimum: 0
+        description: Giá thuê phòng hàng tháng (VND)
+        example: 3500000
+      status:
+        type: string
+        enum: [available, occupied, maintenance]
+        description: Trạng thái phòng (trống, đã có người ở, đang bảo trì)
+        example: "occupied"
+    required:
+      - landlordId
+      - buildingId
+      - name
+      - amenities
+      - rentPrice
+      - status

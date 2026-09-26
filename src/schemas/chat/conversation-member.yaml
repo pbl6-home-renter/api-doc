@@ -1,0 +1,32 @@
+type: object
+title: ConversationMember
+description: Thành viên tham gia cuộc trò chuyện
+allOf:
+  - $ref: '../../common/base-entity.yaml'
+  - type: object
+    properties:
+      conversationId:
+        type: string
+        format: uuid
+        description: ID cuộc hội thoại
+        example: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+      userId:
+        type: string
+        format: uuid
+        description: ID người dùng tham gia
+        example: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+      joinedAt:
+        type: string
+        format: date-time
+        description: Thời điểm bắt đầu tham gia nhóm chat
+        example: "2026-09-01T10:05:00Z"
+      leftAt:
+        type: string
+        format: date-time
+        nullable: true
+        description: Thời điểm rời khỏi nhóm chat (vẫn giữ quyền đọc lịch sử cũ)
+        example: null
+    required:
+      - conversationId
+      - userId
+      - joinedAt

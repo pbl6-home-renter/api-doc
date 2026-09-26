@@ -1,0 +1,45 @@
+type: object
+title: MatchRequest
+description: Yêu cầu kết nối tìm bạn ở ghép giữa 2 tenant
+allOf:
+  - $ref: '../../common/base-entity.yaml'
+  - type: object
+    properties:
+      requesterId:
+        type: string
+        format: uuid
+        description: ID tenant gửi lời mời kết nối
+        example: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+      targetId:
+        type: string
+        format: uuid
+        description: ID tenant nhận lời mời kết nối
+        example: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+      status:
+        type: string
+        enum: [pending, accepted, rejected, withdrawn]
+        default: pending
+        description: Trạng thái yêu cầu ghép phòng (withdrawn do chính người gửi rút lại - D50)
+        example: "pending"
+      respondedAt:
+        type: string
+        format: date-time
+        nullable: true
+        description: Thời điểm người nhận phản hồi (chấp nhận/từ chối)
+        example: null
+      aiScore:
+        type: number
+        minimum: 0
+        maximum: 100
+        nullable: true
+        description: Điểm số độ tương thích tính bởi AI (D28)
+        example: 87.5
+      aiAdvice:
+        type: string
+        nullable: true
+        description: Lời khuyên phân tích tương thích của AI (D28)
+        example: "Hai người cùng giờ ngủ, ít rủi ro xung đột"
+    required:
+      - requesterId
+      - targetId
+      - status

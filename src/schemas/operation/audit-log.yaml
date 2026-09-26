@@ -1,0 +1,54 @@
+type: object
+title: AuditLog
+description: Nhật ký kiểm toán hệ thống (append-only, không có cập nhật hoặc xóa mềm)
+properties:
+  id:
+    type: string
+    format: uuid
+    description: Khóa chính duy nhất (UUID v4)
+    example: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+  createdAt:
+    type: string
+    format: date-time
+    description: Thời điểm ghi nhận thao tác (UTC)
+    example: "2026-09-05T10:00:00Z"
+  actorId:
+    type: string
+    format: uuid
+    nullable: true
+    description: ID người thực hiện hành động (null đối với system/webhook)
+    example: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+  action:
+    type: string
+    minLength: 1
+    maxLength: 100
+    description: Tên hành vi nghiệp vụ (vd user.lock, building.approve, payment.webhook)
+    example: "building.approve"
+  entityType:
+    type: string
+    minLength: 1
+    maxLength: 50
+    description: Loại tài nguyên bị tác động
+    example: "building"
+  entityId:
+    type: string
+    format: uuid
+    nullable: true
+    description: ID tài nguyên bị tác động
+    example: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+  beforeData:
+    type: object
+    nullable: true
+    description: Snapshot trạng thái dữ liệu trước khi thay đổi
+    example: null
+  afterData:
+    type: object
+    nullable: true
+    description: Snapshot trạng thái dữ liệu sau khi thay đổi
+    example:
+      status: "approved"
+required:
+  - id
+  - createdAt
+  - action
+  - entityType

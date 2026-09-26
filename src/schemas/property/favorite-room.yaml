@@ -1,0 +1,20 @@
+type: object
+title: FavoriteRoom
+description: Phòng đã lưu / yêu thích của tenant
+allOf:
+  - $ref: '../../common/base-entity.yaml'
+  - type: object
+    properties:
+      tenantId:
+        type: string
+        format: uuid
+        description: ID người thuê phòng
+        example: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+      roomId:
+        type: string
+        format: uuid
+        description: ID phòng được lưu
+        example: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+    required:
+      - tenantId
+      - roomId
