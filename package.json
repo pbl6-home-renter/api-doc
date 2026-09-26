@@ -1,0 +1,16 @@
+{
+  "name": "pbl6-api-docs",
+  "version": "1.0.0",
+  "private": true,
+  "description": "PBL6 Home Renter - API Specification & Documentation Hub (Synced with Apidog)",
+  "scripts": {
+    "bundle": "redocly bundle src/openapi.yaml -o reference/rentify.json --ext json --component-names-strategy title",
+    "bundle:npx": "npx @redocly/cli bundle src/openapi.yaml -o reference/rentify.json --ext json --component-names-strategy title",
+    "lint": "redocly lint src/openapi.yaml",
+    "lint:npx": "npx @redocly/cli lint src/openapi.yaml",
+    "preview": "redocly preview-docs src/openapi.yaml"
+  },
+  "devDependencies": {
+    "@redocly/cli": "^1.27.0"
+  }
+}
