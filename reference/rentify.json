@@ -54,6 +54,7 @@
     "schemas": {
       "BaseEntity": {
         "type": "object",
+        "x-apidog-folder": "Common",
         "title": "BaseEntity",
         "description": "Quy ước các trường chung áp dụng cho mọi entity (trừ AuditLog append-only)",
         "properties": {
@@ -89,70 +90,9 @@
           "isDeleted"
         ]
       },
-      "PaginationMeta": {
-        "type": "object",
-        "title": "PaginationMeta",
-        "description": "Cấu trúc phân trang chuẩn (offset hoặc cursor)",
-        "properties": {
-          "type": {
-            "type": "string",
-            "enum": [
-              "offset",
-              "cursor"
-            ],
-            "description": "Loại phân trang đang sử dụng",
-            "example": "offset"
-          },
-          "pageNo": {
-            "type": "integer",
-            "minimum": 1,
-            "description": "Số trang hiện tại (dành cho offset pagination)",
-            "example": 1
-          },
-          "pageSize": {
-            "type": "integer",
-            "minimum": 1,
-            "maximum": 100,
-            "description": "Số lượng bản ghi trên một trang",
-            "example": 20
-          },
-          "totalItems": {
-            "type": "integer",
-            "minimum": 0,
-            "description": "Tổng số lượng bản ghi thỏa mãn điều kiện lọc",
-            "example": 50
-          },
-          "totalPages": {
-            "type": "integer",
-            "minimum": 0,
-            "description": "Tổng số trang (dành cho offset pagination)",
-            "example": 3
-          },
-          "hasNextPage": {
-            "type": "boolean",
-            "description": "Có trang kế tiếp hay không",
-            "example": true
-          },
-          "hasPreviousPage": {
-            "type": "boolean",
-            "description": "Có trang trước đó hay không",
-            "example": false
-          },
-          "nextCursor": {
-            "type": "string",
-            "nullable": true,
-            "description": "Con trỏ trang kế tiếp (dành cho cursor pagination)",
-            "example": null
-          }
-        },
-        "required": [
-          "type",
-          "pageSize",
-          "hasNextPage"
-        ]
-      },
       "User": {
         "type": "object",
+        "x-apidog-folder": "User",
         "title": "User",
         "description": "Tài khoản người dùng (Tenant, Landlord, Admin). Một tài khoản có đúng một role bất biến.",
         "allOf": [
@@ -242,6 +182,7 @@
       },
       "LandlordProfile": {
         "type": "object",
+        "x-apidog-folder": "User",
         "title": "LandlordProfile",
         "description": "Hồ sơ chủ nhà (1-1 với User role landlord), chứa thông tin nhận tiền VietQR",
         "allOf": [
@@ -289,6 +230,7 @@
       },
       "RoommateProfile": {
         "type": "object",
+        "x-apidog-folder": "User",
         "title": "RoommateProfile",
         "description": "Hồ sơ tìm bạn ở ghép của Tenant",
         "allOf": [
@@ -380,6 +322,7 @@
       },
       "Building": {
         "type": "object",
+        "x-apidog-folder": "Property",
         "title": "Building",
         "description": "Tòa nhà / khu nhà trọ cho thuê do chủ nhà đăng ký",
         "allOf": [
@@ -486,6 +429,7 @@
       },
       "Room": {
         "type": "object",
+        "x-apidog-folder": "Property",
         "title": "Room",
         "description": "Phòng trọ thuộc tòa nhà cho thuê",
         "allOf": [
@@ -593,6 +537,7 @@
       },
       "FavoriteRoom": {
         "type": "object",
+        "x-apidog-folder": "Property",
         "title": "FavoriteRoom",
         "description": "Phòng đã lưu / yêu thích của tenant",
         "allOf": [
@@ -624,6 +569,7 @@
       },
       "Contract": {
         "type": "object",
+        "x-apidog-folder": "Contract",
         "title": "Contract",
         "description": "Hợp đồng thuê phòng giữa chủ nhà và người thuê",
         "allOf": [
@@ -737,6 +683,7 @@
       },
       "ContractMember": {
         "type": "object",
+        "x-apidog-folder": "Contract",
         "title": "ContractMember",
         "description": "Thành viên ở cùng / ở ghép trong hợp đồng thuê phòng",
         "allOf": [
@@ -799,6 +746,7 @@
       },
       "RatePolicy": {
         "type": "object",
+        "x-apidog-folder": "Billing",
         "title": "RatePolicy",
         "description": "Bộ chính sách đơn giá dịch vụ và phí định kỳ (1 bộ áp dụng theo scope building hoặc room - D39)",
         "allOf": [
@@ -943,6 +891,7 @@
       },
       "BillingSetting": {
         "type": "object",
+        "x-apidog-folder": "Billing",
         "title": "BillingSetting",
         "description": "Cấu hình ngày thu dự kiến và nhắc nộp tiền (D39 - chỉ hiển thị, không sinh overdue tự động)",
         "allOf": [
@@ -1022,6 +971,7 @@
       },
       "MeterReading": {
         "type": "object",
+        "x-apidog-folder": "Billing",
         "title": "MeterReading",
         "description": "Bản ghi chỉ số công tơ điện hoặc đồng hồ nước theo từng kỳ phòng",
         "allOf": [
@@ -1092,6 +1042,7 @@
       },
       "Invoice": {
         "type": "object",
+        "x-apidog-folder": "Billing",
         "title": "Invoice",
         "description": "Hóa đơn tiền phòng và chi phí dịch vụ theo từng kỳ",
         "allOf": [
@@ -1247,6 +1198,7 @@
       },
       "Payment": {
         "type": "object",
+        "x-apidog-folder": "Billing",
         "title": "Payment",
         "description": "Giao dịch thanh toán tiền phòng, dịch vụ hoặc trả cọc (D39)",
         "allOf": [
@@ -1326,6 +1278,7 @@
       },
       "IssueReport": {
         "type": "object",
+        "x-apidog-folder": "Operation",
         "title": "IssueReport",
         "description": "Báo cáo sự cố hoặc yêu cầu sửa chữa trong phòng trọ",
         "allOf": [
@@ -1408,6 +1361,7 @@
       },
       "Media": {
         "type": "object",
+        "x-apidog-folder": "Operation",
         "title": "Media",
         "description": "Quản lý tệp tin và hình ảnh theo mô hình polymorphic",
         "allOf": [
@@ -1501,6 +1455,7 @@
       },
       "AuditLog": {
         "type": "object",
+        "x-apidog-folder": "Operation",
         "title": "AuditLog",
         "description": "Nhật ký kiểm toán hệ thống (append-only, không có cập nhật hoặc xóa mềm)",
         "properties": {
@@ -1568,6 +1523,7 @@
       },
       "Conversation": {
         "type": "object",
+        "x-apidog-folder": "Chat",
         "title": "Conversation",
         "description": "Cuộc hội thoại chat (room chat theo hợp đồng, building chat, hoặc direct chat)",
         "allOf": [
@@ -1625,6 +1581,7 @@
       },
       "ConversationMember": {
         "type": "object",
+        "x-apidog-folder": "Chat",
         "title": "ConversationMember",
         "description": "Thành viên tham gia cuộc trò chuyện",
         "allOf": [
@@ -1670,6 +1627,7 @@
       },
       "Message": {
         "type": "object",
+        "x-apidog-folder": "Chat",
         "title": "Message",
         "description": "Tin nhắn trao đổi trong cuộc hội thoại (hỗ trợ text, ảnh, file hoặc tin nhắn bot)",
         "allOf": [
@@ -1719,6 +1677,7 @@
       },
       "MessageMention": {
         "type": "object",
+        "x-apidog-folder": "Chat",
         "title": "MessageMention",
         "description": "Người dùng được @tag trong tin nhắn chat",
         "allOf": [
@@ -1750,6 +1709,7 @@
       },
       "MatchRequest": {
         "type": "object",
+        "x-apidog-folder": "Matching",
         "title": "MatchRequest",
         "description": "Yêu cầu kết nối tìm bạn ở ghép giữa 2 tenant",
         "allOf": [
@@ -1815,6 +1775,7 @@
       },
       "Notification": {
         "type": "object",
+        "x-apidog-folder": "Notification",
         "title": "Notification",
         "description": "Thông báo gửi đến người dùng (inbox trong ứng dụng và push FCM)",
         "allOf": [
@@ -1870,6 +1831,7 @@
       },
       "NotificationPreference": {
         "type": "object",
+        "x-apidog-folder": "Notification",
         "title": "NotificationPreference",
         "description": "Cài đặt bật/tắt nhận thông báo theo từng danh mục của người dùng",
         "allOf": [
@@ -1914,6 +1876,7 @@
       },
       "PushDevice": {
         "type": "object",
+        "x-apidog-folder": "Notification",
         "title": "PushDevice",
         "description": "Thiết bị đăng ký nhận thông báo đẩy FCM của người dùng",
         "allOf": [
@@ -2010,7 +1973,8 @@
             "description": "Mảng các đối tượng dữ liệu"
           },
           "pagination": {
-            "$ref": "#/components/schemas/PaginationMeta"
+            "type": "object",
+            "description": "Metadata phân trang (offset hoặc cursor)"
           }
         },
         "required": [
