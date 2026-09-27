@@ -1,0 +1,21 @@
+type: object
+x-apidog-folder: Property
+title: MyBuildingDetailResponse
+description: Chi tiết tòa nhà của chủ nhà hiện tại
+
+allOf:
+  - $ref: '../../wrappers/success-single.yaml'
+  - type: object
+    properties:
+      statusCode: { type: integer, enum: [200], example: 200 }
+      code: { type: string, enum: [MY_BUILDING_FETCHED], example: MY_BUILDING_FETCHED }
+      data:
+        type: object
+        properties:
+          id: { type: string, format: uuid }
+          name: { type: string }
+          status: { type: string, enum: [pending, approved, rejected] }
+          totalRooms: { type: integer, minimum: 0 }
+          occupancyRate: { type: string }
+          reviewNote: { type: string, nullable: true, minLength: 1, maxLength: 500 }
+        required: [id, name, status, totalRooms, occupancyRate, reviewNote]

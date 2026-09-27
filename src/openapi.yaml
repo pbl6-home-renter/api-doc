@@ -34,6 +34,66 @@ paths: {}
 
 components:
   schemas:
+
+    # Auth Request / Response DTOs
+    RegisterRequest:
+      $ref: './requests/auth/register-request.yaml'
+
+    RegisterResponse:
+      $ref: './responses/dtos/auth/register-response.yaml'
+
+    LoginRequest:
+      $ref: './requests/auth/login-request.yaml'
+
+    LoginResponse:
+      $ref: './responses/dtos/auth/login-response.yaml'
+
+    RefreshResponse:
+      $ref: './responses/dtos/auth/refresh-response.yaml'
+
+    RequestPasswordResetRequest:
+      $ref: './requests/auth/request-password-reset-request.yaml'
+
+    RequestPasswordResetResponse:
+      $ref: './responses/dtos/auth/request-password-reset-response.yaml'
+
+    ResetPasswordRequest:
+      $ref: './requests/auth/reset-password-request.yaml'
+
+    # User Request / Response DTOs
+    UpdateCurrentUserRequest:
+      $ref: './requests/users/update-current-user-request.yaml'
+
+    ChangePasswordRequest:
+      $ref: './requests/users/change-password-request.yaml'
+
+    UpdateUserRequest:
+      $ref: './requests/users/update-user-request.yaml'
+
+    LockUserRequest:
+      $ref: './requests/users/lock-user-request.yaml'
+
+    CurrentUserResponse:
+      $ref: './responses/dtos/users/current-user-response.yaml'
+
+    UpdateCurrentUserResponse:
+      $ref: './responses/dtos/users/update-current-user-response.yaml'
+
+    UserListResponse:
+      $ref: './responses/dtos/users/user-list-response.yaml'
+
+    UserDetailResponse:
+      $ref: './responses/dtos/users/user-detail-response.yaml'
+
+    UpdateUserResponse:
+      $ref: './responses/dtos/users/update-user-response.yaml'
+
+    LockUserResponse:
+      $ref: './responses/dtos/users/lock-user-response.yaml'
+
+    UnlockUserResponse:
+      $ref: './responses/dtos/users/unlock-user-response.yaml'
+    
     BaseEntity:
       $ref: './common/base-entity.yaml'
 
@@ -52,6 +112,318 @@ components:
       $ref: './schemas/property/room.yaml'
     FavoriteRoom:
       $ref: './schemas/property/favorite-room.yaml'
+    # Building Request DTOs
+    CreateBuildingRequest:
+      $ref: './requests/buildings/create-building-request.yaml'
+    UpdateBuildingRequest:
+      $ref: './requests/buildings/update-building-request.yaml'
+    ApproveBuildingRequest:
+      $ref: './requests/buildings/approve-building-request.yaml'
+    RejectBuildingRequest:
+      $ref: './requests/buildings/reject-building-request.yaml'
+    # Building Response DTOs
+    PublicBuildingListResponse:
+      $ref: './responses/dtos/buildings/public-building-list-response.yaml'
+    MyBuildingListResponse:
+      $ref: './responses/dtos/buildings/my-building-list-response.yaml'
+    AdminBuildingListResponse:
+      $ref: './responses/dtos/buildings/admin-building-list-response.yaml'
+    CreateBuildingResponse:
+      $ref: './responses/dtos/buildings/create-building-response.yaml'
+    PublicBuildingDetailResponse:
+      $ref: './responses/dtos/buildings/public-building-detail-response.yaml'
+    MyBuildingDetailResponse:
+      $ref: './responses/dtos/buildings/my-building-detail-response.yaml'
+    UpdateBuildingResponse:
+      $ref: './responses/dtos/buildings/update-building-response.yaml'
+    ApproveBuildingResponse:
+      $ref: './responses/dtos/buildings/approve-building-response.yaml'
+    RejectBuildingResponse:
+      $ref: './responses/dtos/buildings/reject-building-response.yaml'
+    AdminBuildingDetailResponse:
+      $ref: './responses/dtos/buildings/admin-building-detail-response.yaml'
+    # Room Request DTOs
+    CreateRoomRequest:
+      $ref: './requests/rooms/create-room-request.yaml'
+    UpdateRoomRequest:
+      $ref: './requests/rooms/update-room-request.yaml'
+    # Room Response DTOs
+    PublicRoomListResponse:
+      $ref: './responses/dtos/rooms/public-room-list-response.yaml'
+    MyRoomListResponse:
+      $ref: './responses/dtos/rooms/my-room-list-response.yaml'
+    CreateRoomResponse:
+      $ref: './responses/dtos/rooms/create-room-response.yaml'
+    RoomDetailResponse:
+      $ref: './responses/dtos/rooms/room-detail-response.yaml'
+    UpdateRoomResponse:
+      $ref: './responses/dtos/rooms/update-room-response.yaml'
+    MarkRoomReadyResponse:
+      $ref: './responses/dtos/rooms/mark-room-ready-response.yaml'
+    # FavoriteRoom Request DTO
+    FavoriteRoomRequest:
+      $ref: './requests/rooms/favorite-room-request.yaml'
+    # FavoriteRoom Response DTOs
+    FavoriteRoomListResponse:
+      $ref: './responses/dtos/rooms/favorite-room-list-response.yaml'
+    FavoriteRoomResponse:
+      $ref: './responses/dtos/rooms/favorite-room-response.yaml'
+    # RoommateProfile Request DTO
+    SaveRoommateProfileRequest:
+      $ref: './requests/users/save-roommate-profile-request.yaml'
+    # RoommateProfile Response DTOs
+    RoommateProfileListResponse:
+      $ref: './responses/dtos/users/roommate-profile-list-response.yaml'
+    RoommateProfileDetailResponse:
+      $ref: './responses/dtos/users/roommate-profile-detail-response.yaml'
+    MyRoommateProfileResponse:
+      $ref: './responses/dtos/users/my-roommate-profile-response.yaml'
+    SaveRoommateProfileResponse:
+      $ref: './responses/dtos/users/save-roommate-profile-response.yaml'
+    # ContractTemplate Response DTOs
+    ContractTemplateListResponse:
+      $ref: './responses/dtos/contracts/contract-template-list-response.yaml'
+    ContractTemplateDetailResponse:
+      $ref: './responses/dtos/contracts/contract-template-detail-response.yaml'
+    # Contract Request DTOs
+    CreateContractRequest:
+      $ref: './requests/contracts/create-contract-request.yaml'
+    UpdateContractRequest:
+      $ref: './requests/contracts/update-contract-request.yaml'
+    ApplyContractTemplateRequest:
+      $ref: './requests/contracts/apply-contract-template-request.yaml'
+    GenerateContractDraftRequest:
+      $ref: './requests/contracts/generate-contract-draft-request.yaml'
+    ActivateContractRequest:
+      $ref: './requests/contracts/activate-contract-request.yaml'
+    CompleteContractCheckoutRequest:
+      $ref: './requests/contracts/complete-contract-checkout-request.yaml'
+    # Contract Response DTOs
+    MyContractListResponse:
+      $ref: './responses/dtos/contracts/my-contract-list-response.yaml'
+    ContractListResponse:
+      $ref: './responses/dtos/contracts/contract-list-response.yaml'
+    CreateContractResponse:
+      $ref: './responses/dtos/contracts/create-contract-response.yaml'
+    ContractDetailResponse:
+      $ref: './responses/dtos/contracts/contract-detail-response.yaml'
+    UpdateContractResponse:
+      $ref: './responses/dtos/contracts/update-contract-response.yaml'
+    ApplyContractTemplateResponse:
+      $ref: './responses/dtos/contracts/apply-contract-template-response.yaml'
+    GenerateContractDraftResponse:
+      $ref: './responses/dtos/contracts/generate-contract-draft-response.yaml'
+    ActivateContractResponse:
+      $ref: './responses/dtos/contracts/activate-contract-response.yaml'
+    CompleteContractCheckoutResponse:
+      $ref: './responses/dtos/contracts/complete-contract-checkout-response.yaml'
+    # MeterReading DTOs
+    PreviewOcrMeterReadingRequest:
+      $ref: './requests/rooms/preview-ocr-meter-reading-request.yaml'
+    CreateMeterReadingRequest:
+      $ref: './requests/rooms/create-meter-reading-request.yaml'
+    MeterReadingListResponse:
+      $ref: './responses/dtos/rooms/meter-reading-list-response.yaml'
+    PreviewOcrMeterReadingResponse:
+      $ref: './responses/dtos/rooms/preview-ocr-meter-reading-response.yaml'
+    CreateMeterReadingResponse:
+      $ref: './responses/dtos/rooms/create-meter-reading-response.yaml'
+    # Invoice DTOs
+    CreateSettlementInvoiceRequest:
+      $ref: './requests/invoices/create-settlement-invoice-request.yaml'
+    UpdateInvoiceRequest:
+      $ref: './requests/invoices/update-invoice-request.yaml'
+    IssueInvoicesRequest:
+      $ref: './requests/invoices/issue-invoices-request.yaml'
+    CancelInvoiceRequest:
+      $ref: './requests/invoices/cancel-invoice-request.yaml'
+    SendInvoiceRemindersRequest:
+      $ref: './requests/invoices/send-invoice-reminders-request.yaml'
+    MyInvoiceListResponse:
+      $ref: './responses/dtos/invoices/my-invoice-list-response.yaml'
+    InvoiceListResponse:
+      $ref: './responses/dtos/invoices/invoice-list-response.yaml'
+    CreateSettlementInvoiceResponse:
+      $ref: './responses/dtos/invoices/create-settlement-invoice-response.yaml'
+    InvoiceDetailResponse:
+      $ref: './responses/dtos/invoices/invoice-detail-response.yaml'
+    UpdateInvoiceResponse:
+      $ref: './responses/dtos/invoices/update-invoice-response.yaml'
+    IssueInvoicesResponse:
+      $ref: './responses/dtos/invoices/issue-invoices-response.yaml'
+    CancelInvoiceResponse:
+      $ref: './responses/dtos/invoices/cancel-invoice-response.yaml'
+    SendInvoiceRemindersResponse:
+      $ref: './responses/dtos/invoices/send-invoice-reminders-response.yaml'
+    # Payment DTOs
+    CreatePaymentIntentRequest:
+      $ref: './requests/payments/create-payment-intent-request.yaml'
+    RecordCashPaymentRequest:
+      $ref: './requests/payments/record-cash-payment-request.yaml'
+    PaymentWebhookRequest:
+      $ref: './requests/payments/payment-webhook-request.yaml'
+    MyPaymentListResponse:
+      $ref: './responses/dtos/payments/my-payment-list-response.yaml'
+    PaymentListResponse:
+      $ref: './responses/dtos/payments/payment-list-response.yaml'
+    CreatePaymentIntentResponse:
+      $ref: './responses/dtos/payments/create-payment-intent-response.yaml'
+    RecordCashPaymentResponse:
+      $ref: './responses/dtos/payments/record-cash-payment-response.yaml'
+    # IssueReport DTOs
+    CreateIssueRequest:
+      $ref: './requests/operations/create-issue-request.yaml'
+    UpdateIssueRequest:
+      $ref: './requests/operations/update-issue-request.yaml'
+    MyIssueListResponse:
+      $ref: './responses/dtos/operations/my-issue-list-response.yaml'
+    IssueListResponse:
+      $ref: './responses/dtos/operations/issue-list-response.yaml'
+    CreateIssueResponse:
+      $ref: './responses/dtos/operations/create-issue-response.yaml'
+    IssueDetailResponse:
+      $ref: './responses/dtos/operations/issue-detail-response.yaml'
+    UpdateIssueResponse:
+      $ref: './responses/dtos/operations/update-issue-response.yaml'
+    CancelIssueResponse:
+      $ref: './responses/dtos/operations/cancel-issue-response.yaml'
+    # Conversation DTOs
+    ResolveConversationRequest:
+      $ref: './requests/operations/resolve-conversation-request.yaml'
+    ConversationListResponse:
+      $ref: './responses/dtos/operations/conversation-list-response.yaml'
+    ConversationDetailResponse:
+      $ref: './responses/dtos/operations/conversation-detail-response.yaml'
+    ResolveConversationResponse:
+      $ref: './responses/dtos/operations/resolve-conversation-response.yaml'
+    # Message DTOs
+    SendMessageRequest:
+      $ref: './requests/operations/send-message-request.yaml'
+    MarkMessagesReadRequest:
+      $ref: './requests/operations/mark-messages-read-request.yaml'
+    MessageListResponse:
+      $ref: './responses/dtos/operations/message-list-response.yaml'
+    SendMessageResponse:
+      $ref: './responses/dtos/operations/send-message-response.yaml'
+    MarkMessagesReadResponse:
+      $ref: './responses/dtos/operations/mark-messages-read-response.yaml'
+    # Notification DTOs
+    NotificationListResponse:
+      $ref: './responses/dtos/users/notification-list-response.yaml'
+    MarkNotificationReadResponse:
+      $ref: './responses/dtos/users/mark-notification-read-response.yaml'
+    MarkAllNotificationsReadResponse:
+      $ref: './responses/dtos/users/mark-all-notifications-read-response.yaml'
+    # NotificationPreference DTOs
+    UpdateNotificationPreferenceRequest:
+      $ref: './requests/users/update-notification-preference-request.yaml'
+    NotificationPreferenceResponse:
+      $ref: './responses/dtos/users/notification-preference-response.yaml'
+    UpdateNotificationPreferenceResponse:
+      $ref: './responses/dtos/users/update-notification-preference-response.yaml'
+    # AuditLog DTOs
+    AuditLogListResponse:
+      $ref: './responses/dtos/operations/audit-log-list-response.yaml'
+    AuditLogDetailResponse:
+      $ref: './responses/dtos/operations/audit-log-detail-response.yaml'
+    # Dashboard DTOs
+    DashboardResponse:
+      $ref: './responses/dtos/operations/dashboard-response.yaml'
+    # Invoice DTOs
+    CreateSettlementInvoiceRequest:
+      $ref: './requests/invoices/create-settlement-invoice-request.yaml'
+    UpdateInvoiceRequest:
+      $ref: './requests/invoices/update-invoice-request.yaml'
+    IssueInvoicesRequest:
+      $ref: './requests/invoices/issue-invoices-request.yaml'
+    CancelInvoiceRequest:
+      $ref: './requests/invoices/cancel-invoice-request.yaml'
+    SendInvoiceRemindersRequest:
+      $ref: './requests/invoices/send-invoice-reminders-request.yaml'
+    MyInvoiceListResponse:
+      $ref: './responses/dtos/invoices/my-invoice-list-response.yaml'
+    InvoiceListResponse:
+      $ref: './responses/dtos/invoices/invoice-list-response.yaml'
+    CreateSettlementInvoiceResponse:
+      $ref: './responses/dtos/invoices/create-settlement-invoice-response.yaml'
+    InvoiceDetailResponse:
+      $ref: './responses/dtos/invoices/invoice-detail-response.yaml'
+    UpdateInvoiceResponse:
+      $ref: './responses/dtos/invoices/update-invoice-response.yaml'
+    IssueInvoicesResponse:
+      $ref: './responses/dtos/invoices/issue-invoices-response.yaml'
+    CancelInvoiceResponse:
+      $ref: './responses/dtos/invoices/cancel-invoice-response.yaml'
+    SendInvoiceRemindersResponse:
+      $ref: './responses/dtos/invoices/send-invoice-reminders-response.yaml'
+    # Payment DTOs
+    CreatePaymentIntentRequest:
+      $ref: './requests/payments/create-payment-intent-request.yaml'
+    RecordCashPaymentRequest:
+      $ref: './requests/payments/record-cash-payment-request.yaml'
+    PaymentWebhookRequest:
+      $ref: './requests/payments/payment-webhook-request.yaml'
+    MyPaymentListResponse:
+      $ref: './responses/dtos/payments/my-payment-list-response.yaml'
+    PaymentListResponse:
+      $ref: './responses/dtos/payments/payment-list-response.yaml'
+    CreatePaymentIntentResponse:
+      $ref: './responses/dtos/payments/create-payment-intent-response.yaml'
+    RecordCashPaymentResponse:
+      $ref: './responses/dtos/payments/record-cash-payment-response.yaml'
+    # ContractMember Request DTOs
+    AddContractMemberRequest:
+      $ref: './requests/contracts/add-contract-member-request.yaml'
+    UpdateContractMemberRequest:
+      $ref: './requests/contracts/update-contract-member-request.yaml'
+    LeaveContractMemberRequest:
+      $ref: './requests/contracts/leave-contract-member-request.yaml'
+    # ContractMember Response DTOs
+    AddContractMemberResponse:
+      $ref: './responses/dtos/contracts/add-contract-member-response.yaml'
+    UpdateContractMemberResponse:
+      $ref: './responses/dtos/contracts/update-contract-member-response.yaml'
+    LeaveContractMemberResponse:
+      $ref: './responses/dtos/contracts/leave-contract-member-response.yaml'
+    ContractMemberListResponse:
+      $ref: './responses/dtos/contracts/contract-member-list-response.yaml'
+    # MatchRequest DTOs
+    CreateMatchRequest:
+      $ref: './requests/users/create-match-request.yaml'
+    MatchRequestListResponse:
+      $ref: './responses/dtos/users/match-request-list-response.yaml'
+    CreateMatchRequestResponse:
+      $ref: './responses/dtos/users/create-match-request-response.yaml'
+    AcceptMatchRequestResponse:
+      $ref: './responses/dtos/users/accept-match-request-response.yaml'
+    RejectMatchRequestResponse:
+      $ref: './responses/dtos/users/reject-match-request-response.yaml'
+    WithdrawMatchRequestResponse:
+      $ref: './responses/dtos/users/withdraw-match-request-response.yaml'
+    # RatePolicy DTOs
+    CreateRatePolicyRequest:
+      $ref: './requests/rooms/create-rate-policy-request.yaml'
+    UpdateRatePolicyRequest:
+      $ref: './requests/rooms/update-rate-policy-request.yaml'
+    RatePolicyListResponse:
+      $ref: './responses/dtos/rooms/rate-policy-list-response.yaml'
+    CreateRatePolicyResponse:
+      $ref: './responses/dtos/rooms/create-rate-policy-response.yaml'
+    UpdateRatePolicyResponse:
+      $ref: './responses/dtos/rooms/update-rate-policy-response.yaml'
+    DeactivateRatePolicyResponse:
+      $ref: './responses/dtos/rooms/deactivate-rate-policy-response.yaml'
+    # BillingSetting DTOs
+    CreateBillingSettingRequest:
+      $ref: './requests/rooms/create-billing-setting-request.yaml'
+    UpdateBillingSettingRequest:
+      $ref: './requests/rooms/update-billing-setting-request.yaml'
+    BillingSettingListResponse:
+      $ref: './responses/dtos/rooms/billing-setting-list-response.yaml'
+    CreateBillingSettingResponse:
+      $ref: './responses/dtos/rooms/create-billing-setting-response.yaml'
+    UpdateBillingSettingResponse:
+      $ref: './responses/dtos/rooms/update-billing-setting-response.yaml'
 
     # Domain: Contract
     Contract:
@@ -78,6 +450,12 @@ components:
       $ref: './schemas/operation/media.yaml'
     AuditLog:
       $ref: './schemas/operation/audit-log.yaml'
+    PresignMediaUploadRequest:
+      $ref: './requests/operations/presign-media-upload-request.yaml'
+    PresignMediaUploadResponse:
+      $ref: './responses/dtos/operations/presign-media-upload-response.yaml'
+    CompleteMediaUploadResponse:
+      $ref: './responses/dtos/operations/complete-media-upload-response.yaml'
 
     # Domain: Chat
     Conversation:
@@ -100,6 +478,10 @@ components:
       $ref: './schemas/notification/notification-preference.yaml'
     PushDevice:
       $ref: './schemas/notification/push-device.yaml'
+    RegisterPushDeviceRequest:
+      $ref: './requests/notification/register-push-device-request.yaml'
+    RegisterPushDeviceResponse:
+      $ref: './responses/dtos/notification/register-push-device-response.yaml'
 
   responses:
     SuccessSingleResponse:

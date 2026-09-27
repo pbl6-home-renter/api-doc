@@ -1,0 +1,71 @@
+type: object
+x-apidog-folder: Operation
+title: PresignMediaUploadRequest
+description: Dữ liệu xin cấp upload ticket cho Media
+additionalProperties: false
+
+properties:
+  ownerType:
+    type: string
+    enum:
+      - user
+      - room
+      - building
+      - contract
+      - contract_member
+      - meter_reading
+      - issue_report
+      - message
+    description: Loại thực thể sở hữu file
+    example: room
+
+  ownerId:
+    type: string
+    format: uuid
+    description: ID của thực thể sở hữu file
+    example: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+
+  purpose:
+    type: string
+    enum:
+      - avatar
+      - cover_photo
+      - gallery_photo
+      - ownership_proof
+      - cccd_front
+      - cccd_back
+      - contract_template
+      - contract_signed
+      - meter_reading_evidence
+      - issue_photo
+      - chat_attachment
+    description: Mục đích sử dụng của file đối với thực thể sở hữu
+    example: cover_photo
+
+  fileName:
+    type: string
+    description: Tên file do client cung cấp
+    example: p201.jpg
+
+  contentType:
+    type: string
+    enum:
+      - image/jpeg
+      - image/png
+      - image/webp
+      - application/pdf
+    description: MIME type của file
+    example: image/jpeg
+
+  size:
+    type: integer
+    description: Kích thước file tính bằng byte
+    example: 248120
+
+required:
+  - ownerType
+  - ownerId
+  - purpose
+  - fileName
+  - contentType
+  - size

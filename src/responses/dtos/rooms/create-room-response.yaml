@@ -1,0 +1,20 @@
+type: object
+x-apidog-folder: Property
+title: CreateRoomResponse
+description: Phản hồi khi tạo phòng thành công
+
+allOf:
+  - $ref: '../../wrappers/success-single.yaml'
+  - type: object
+    properties:
+      statusCode: { type: integer, enum: [201], example: 201 }
+      code: { type: string, enum: [ROOM_CREATED], example: ROOM_CREATED }
+      data:
+        type: object
+        properties:
+          id: { type: string, format: uuid }
+          buildingId: { type: string, format: uuid }
+          name: { type: string }
+          status: { type: string, enum: [available], example: available }
+          rentPrice: { type: integer, minimum: 0 }
+        required: [id, buildingId, name, status, rentPrice]

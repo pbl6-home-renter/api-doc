@@ -1,0 +1,8 @@
+type: object
+x-apidog-folder: Contract
+title: UpdateContractMemberRequest
+description: Dữ liệu cập nhật số điện thoại thành viên hợp đồng
+additionalProperties: false
+properties:
+  tenantPhone: { type: string, minLength: 10, maxLength: 12, pattern: '^0[0-9]{9}$|^\+84[0-9]{9}$' }
+required: [tenantPhone]

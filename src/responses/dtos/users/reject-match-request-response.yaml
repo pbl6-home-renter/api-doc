@@ -1,0 +1,17 @@
+type: object
+x-apidog-folder: Matching
+title: RejectMatchRequestResponse
+description: Phản hồi khi từ chối yêu cầu kết nối
+
+allOf:
+  - $ref: '../../wrappers/success-single.yaml'
+  - type: object
+    properties:
+      statusCode: { type: integer, enum: [200], example: 200 }
+      code: { type: string, enum: [MATCH_REQUEST_REJECTED], example: MATCH_REQUEST_REJECTED }
+      data:
+        type: object
+        properties:
+          id: { type: string, format: uuid }
+          status: { type: string, enum: [rejected], example: rejected }
+        required: [id, status]

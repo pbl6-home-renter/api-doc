@@ -1,0 +1,33 @@
+type: object
+x-apidog-folder: Property
+title: AdminBuildingListResponse
+description: Danh sách tòa nhà dành cho admin
+
+allOf:
+  - $ref: '../../wrappers/success-list.yaml'
+  - type: object
+    properties:
+      statusCode: { type: integer, enum: [200], example: 200 }
+      code: { type: string, enum: [ADMIN_BUILDINGS_FETCHED], example: ADMIN_BUILDINGS_FETCHED }
+      data:
+        type: array
+        items:
+          type: object
+          properties:
+            id: { type: string, format: uuid }
+            name: { type: string }
+            landlordId: { type: string, format: uuid }
+            status: { type: string, enum: [pending, approved, rejected] }
+            createdAt: { type: string, format: date-time }
+          required: [id, name, landlordId, status, createdAt]
+      pagination:
+        type: object
+        properties:
+          type: { type: string, enum: [offset], example: offset }
+          pageNo: { type: integer, minimum: 1, example: 1 }
+          pageSize: { type: integer, minimum: 1, maximum: 100, example: 20 }
+          totalItems: { type: integer, minimum: 0, example: 1 }
+          totalPages: { type: integer, minimum: 0, example: 1 }
+          hasNextPage: { type: boolean, example: false }
+          hasPreviousPage: { type: boolean, example: false }
+        required: [type, pageNo, pageSize, totalItems, totalPages, hasNextPage, hasPreviousPage]

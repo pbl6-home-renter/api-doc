@@ -1,0 +1,16 @@
+type: object
+x-apidog-folder: Contract
+title: LeaveContractMemberResponse
+description: Phản hồi khi thành viên rời hợp đồng
+allOf:
+  - $ref: '../../wrappers/success-single.yaml'
+  - type: object
+    properties:
+      statusCode: { type: integer, enum: [200], example: 200 }
+      code: { type: string, enum: [CONTRACT_MEMBER_LEFT], example: CONTRACT_MEMBER_LEFT }
+      data:
+        type: object
+        properties:
+          id: { type: string, format: uuid }
+          leftAt: { type: string, format: date }
+        required: [id, leftAt]

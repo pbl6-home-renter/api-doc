@@ -1,0 +1,16 @@
+type: object
+x-apidog-folder: Operation
+title: CancelIssueResponse
+description: Phản hồi khi hủy báo cáo sự cố
+allOf:
+  - $ref: '../../wrappers/success-single.yaml'
+  - type: object
+    properties:
+      statusCode: { type: integer, enum: [200], example: 200 }
+      code: { type: string, enum: [ISSUE_CANCELLED], example: ISSUE_CANCELLED }
+      data:
+        type: object
+        properties:
+          id: { type: string, format: uuid }
+          status: { type: string, enum: [cancel], example: cancel }
+        required: [id, status]

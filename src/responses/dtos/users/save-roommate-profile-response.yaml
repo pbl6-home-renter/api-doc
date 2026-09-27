@@ -1,0 +1,17 @@
+type: object
+x-apidog-folder: User
+title: SaveRoommateProfileResponse
+description: Phản hồi khi lưu hồ sơ tìm bạn ở ghép thành công
+
+allOf:
+  - $ref: '../../wrappers/success-single.yaml'
+  - type: object
+    properties:
+      statusCode: { type: integer, enum: [200], example: 200 }
+      code: { type: string, enum: [ROOMMATE_PROFILE_SAVED], example: ROOMMATE_PROFILE_SAVED }
+      data:
+        type: object
+        properties:
+          tenantId: { type: string, format: uuid }
+          isVisible: { type: boolean }
+        required: [tenantId, isVisible]

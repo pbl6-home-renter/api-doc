@@ -1,0 +1,28 @@
+type: object
+x-apidog-folder: Notification
+title: NotificationListResponse
+description: Danh sách thông báo theo cursor
+allOf:
+  - $ref: '../../wrappers/success-list.yaml'
+  - type: object
+    properties:
+      statusCode: { type: integer, enum: [200], example: 200 }
+      code: { type: string, enum: [NOTIFICATIONS_FETCHED], example: NOTIFICATIONS_FETCHED }
+      data:
+        type: array
+        items:
+          type: object
+          properties:
+            id: { type: string, format: uuid }
+            type: { type: string, minLength: 1, maxLength: 50 }
+            data: { type: object, nullable: true }
+            readAt: { type: string, format: date-time, nullable: true }
+          required: [id, type, data, readAt]
+      pagination:
+        type: object
+        properties:
+          type: { type: string, enum: [cursor], example: cursor }
+          pageSize: { type: integer, minimum: 1, example: 20 }
+          nextCursor: { type: string, nullable: true }
+          hasNextPage: { type: boolean }
+        required: [type, pageSize, nextCursor, hasNextPage]

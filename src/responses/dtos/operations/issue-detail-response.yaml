@@ -1,0 +1,25 @@
+type: object
+x-apidog-folder: Operation
+title: IssueDetailResponse
+description: Chi tiết báo cáo sự cố
+allOf:
+  - $ref: '../../wrappers/success-single.yaml'
+  - type: object
+    properties:
+      statusCode: { type: integer, enum: [200], example: 200 }
+      code: { type: string, enum: [ISSUE_FETCHED], example: ISSUE_FETCHED }
+      data:
+        type: object
+        properties:
+          id: { type: string, format: uuid }
+          roomId: { type: string, format: uuid }
+          reporterId: { type: string, format: uuid, nullable: true }
+          title: { type: string, minLength: 1, maxLength: 255 }
+          description: { type: string, nullable: true, minLength: 1, maxLength: 500 }
+          status: { type: string, enum: [open, in_progress, resolved, cancelled] }
+          note: { type: string, nullable: true, minLength: 1, maxLength: 500 }
+          closedAt: { type: string, format: date-time, nullable: true }
+          issuePhotoMediaIds:
+            type: array
+            items: { type: string, format: uuid }
+        required: [id, roomId, reporterId, title, description, status, note, closedAt, issuePhotoMediaIds]

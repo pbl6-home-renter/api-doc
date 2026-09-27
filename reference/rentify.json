@@ -52,6 +52,354 @@
   "paths": {},
   "components": {
     "schemas": {
+      "RegisterRequest": {
+        "type": "object",
+        "x-apidog-folder": "Auth",
+        "title": "RegisterRequest",
+        "description": "Dữ liệu đăng ký tài khoản tenant hoặc landlord",
+        "additionalProperties": false,
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email",
+            "minLength": 5,
+            "maxLength": 254,
+            "description": "Email đăng nhập của người dùng",
+            "example": "lan@example.com"
+          },
+          "phone": {
+            "type": "string",
+            "minLength": 10,
+            "maxLength": 12,
+            "pattern": "^0[0-9]{9}$|^\\+84[0-9]{9}$",
+            "description": "Số điện thoại Việt Nam",
+            "example": "0901234567"
+          },
+          "password": {
+            "type": "string",
+            "description": "Mật khẩu thô do người dùng nhập khi đăng ký",
+            "example": "P@ssw0rd123"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 254,
+            "description": "Họ và tên người dùng",
+            "example": "Lê Văn An"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "tenant",
+              "landlord"
+            ],
+            "description": "Vai trò tài khoản được phép tự đăng ký. Admin không được đăng ký qua API này.",
+            "example": "tenant"
+          }
+        },
+        "required": [
+          "email",
+          "phone",
+          "password",
+          "name",
+          "role"
+        ]
+      },
+      "RegisterResponse": {
+        "type": "object",
+        "x-apidog-folder": "Auth",
+        "title": "RegisterResponse",
+        "description": "Phản hồi khi đăng ký tài khoản thành công",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/SuccessSingleWrapper"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "statusCode": {
+                "type": "integer",
+                "enum": [
+                  201
+                ],
+                "example": 201
+              },
+              "code": {
+                "type": "string",
+                "enum": [
+                  "REGISTERED"
+                ],
+                "example": "REGISTERED"
+              },
+              "data": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "format": "uuid",
+                    "description": "ID tài khoản vừa được tạo",
+                    "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                  },
+                  "role": {
+                    "type": "string",
+                    "enum": [
+                      "tenant",
+                      "landlord"
+                    ],
+                    "description": "Vai trò của tài khoản",
+                    "example": "tenant"
+                  },
+                  "status": {
+                    "type": "string",
+                    "enum": [
+                      "active"
+                    ],
+                    "description": "Trạng thái ban đầu của tài khoản",
+                    "example": "active"
+                  }
+                },
+                "required": [
+                  "id",
+                  "role",
+                  "status"
+                ]
+              }
+            }
+          }
+        ]
+      },
+      "LoginRequest": {
+        "type": "object",
+        "x-apidog-folder": "Auth",
+        "title": "LoginRequest",
+        "description": "Dữ liệu đăng nhập tài khoản",
+        "additionalProperties": false,
+        "properties": {
+          "identifier": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Định danh dùng để đăng nhập",
+            "example": "lan@example.com"
+          },
+          "password": {
+            "type": "string",
+            "minLength": 1,
+            "writeOnly": true,
+            "description": "Mật khẩu do người dùng nhập",
+            "example": "P@ssw0rd123"
+          },
+          "rememberMe": {
+            "type": "boolean",
+            "description": "Cờ ghi nhớ phiên đăng nhập do client gửi theo API contract",
+            "example": true
+          }
+        },
+        "required": [
+          "identifier",
+          "password",
+          "rememberMe"
+        ]
+      },
+      "LoginResponse": {
+        "type": "object",
+        "x-apidog-folder": "Auth",
+        "title": "LoginResponse",
+        "description": "Phản hồi khi đăng nhập thành công",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/SuccessSingleWrapper"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "statusCode": {
+                "type": "integer",
+                "enum": [
+                  200
+                ],
+                "example": 200
+              },
+              "code": {
+                "type": "string",
+                "enum": [
+                  "LOGGED_IN"
+                ],
+                "example": "LOGGED_IN"
+              },
+              "data": {
+                "type": "object",
+                "properties": {
+                  "accessToken": {
+                    "type": "string",
+                    "minLength": 1,
+                    "description": "JWT access token dùng để truy cập các API được bảo vệ",
+                    "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                  },
+                  "expiresIn": {
+                    "type": "integer",
+                    "enum": [
+                      900
+                    ],
+                    "description": "Thời gian sống của access token tính bằng giây",
+                    "example": 900
+                  }
+                },
+                "required": [
+                  "accessToken",
+                  "expiresIn"
+                ]
+              }
+            }
+          }
+        ]
+      },
+      "RefreshResponse": {
+        "type": "object",
+        "x-apidog-folder": "Auth",
+        "title": "RefreshResponse",
+        "description": "Phản hồi khi xoay vòng refresh session thành công",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/SuccessSingleWrapper"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "statusCode": {
+                "type": "integer",
+                "enum": [
+                  200
+                ],
+                "example": 200
+              },
+              "code": {
+                "type": "string",
+                "enum": [
+                  "SESSION_REFRESHED"
+                ],
+                "example": "SESSION_REFRESHED"
+              },
+              "data": {
+                "type": "object",
+                "properties": {
+                  "accessToken": {
+                    "type": "string",
+                    "minLength": 1,
+                    "description": "Access token mới được phát hành",
+                    "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                  },
+                  "expiresIn": {
+                    "type": "integer",
+                    "enum": [
+                      900
+                    ],
+                    "description": "Thời gian sống của access token mới, tính bằng giây",
+                    "example": 900
+                  }
+                },
+                "required": [
+                  "accessToken",
+                  "expiresIn"
+                ]
+              }
+            }
+          }
+        ]
+      },
+      "RequestPasswordResetRequest": {
+        "type": "object",
+        "x-apidog-folder": "Auth",
+        "title": "RequestPasswordResetRequest",
+        "description": "Dữ liệu yêu cầu gửi link đặt lại mật khẩu",
+        "additionalProperties": false,
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email",
+            "minLength": 5,
+            "maxLength": 254,
+            "pattern": "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$",
+            "description": "Email của tài khoản cần đặt lại mật khẩu",
+            "example": "lan@example.com"
+          }
+        },
+        "required": [
+          "email"
+        ]
+      },
+      "RequestPasswordResetResponse": {
+        "type": "object",
+        "x-apidog-folder": "Auth",
+        "title": "RequestPasswordResetResponse",
+        "description": "Phản hồi khi hệ thống đã tiếp nhận yêu cầu đặt lại mật khẩu",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/SuccessSingleWrapper"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "statusCode": {
+                "type": "integer",
+                "enum": [
+                  202
+                ],
+                "example": 202
+              },
+              "code": {
+                "type": "string",
+                "enum": [
+                  "PASSWORD_RESET_REQUESTED"
+                ],
+                "example": "PASSWORD_RESET_REQUESTED"
+              },
+              "data": {
+                "type": "object",
+                "properties": {
+                  "accepted": {
+                    "type": "boolean",
+                    "enum": [
+                      true
+                    ],
+                    "description": "Hệ thống đã tiếp nhận yêu cầu xử lý",
+                    "example": true
+                  }
+                },
+                "required": [
+                  "accepted"
+                ]
+              }
+            }
+          }
+        ]
+      },
+      "ResetPasswordRequest": {
+        "type": "object",
+        "x-apidog-folder": "Auth",
+        "title": "ResetPasswordRequest",
+        "description": "Dữ liệu dùng token đặt lại mật khẩu",
+        "additionalProperties": false,
+        "properties": {
+          "token": {
+            "type": "string",
+            "minLength": 1,
+            "writeOnly": true,
+            "description": "Token opaque dùng để xác nhận quyền đặt lại mật khẩu",
+            "example": "sR7pQx9Nm2Vk4..."
+          },
+          "newPassword": {
+            "type": "string",
+            "minLength": 1,
+            "writeOnly": true,
+            "description": "Mật khẩu mới do người dùng thiết lập",
+            "example": "NewP@ssw0rd123"
+          }
+        },
+        "required": [
+          "token",
+          "newPassword"
+        ]
+      },
       "BaseEntity": {
         "type": "object",
         "x-apidog-folder": "Common",

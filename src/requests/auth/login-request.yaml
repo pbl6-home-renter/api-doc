@@ -1,0 +1,29 @@
+type: object
+x-apidog-folder: Auth
+title: LoginRequest
+description: Dữ liệu đăng nhập tài khoản
+additionalProperties: false
+
+properties:
+  identifier:
+    type: string
+    minLength: 1
+    description: Định danh dùng để đăng nhập
+    example: "lan@example.com"
+
+  password:
+    type: string
+    minLength: 1
+    writeOnly: true
+    description: Mật khẩu do người dùng nhập
+    example: "P@ssw0rd123"
+
+  rememberMe:
+    type: boolean
+    description: Cờ ghi nhớ phiên đăng nhập do client gửi theo API contract
+    example: true
+
+required:
+  - identifier
+  - password
+  - rememberMe

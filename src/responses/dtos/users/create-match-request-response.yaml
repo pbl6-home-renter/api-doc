@@ -1,0 +1,18 @@
+type: object
+x-apidog-folder: Matching
+title: CreateMatchRequestResponse
+description: Phản hồi khi tạo yêu cầu kết nối
+
+allOf:
+  - $ref: '../../wrappers/success-single.yaml'
+  - type: object
+    properties:
+      statusCode: { type: integer, enum: [201], example: 201 }
+      code: { type: string, enum: [MATCH_REQUEST_CREATED], example: MATCH_REQUEST_CREATED }
+      data:
+        type: object
+        properties:
+          id: { type: string, format: uuid }
+          status: { type: string, enum: [pending], example: pending }
+          respondedAt: { type: string, format: date-time, nullable: true }
+        required: [id, status, respondedAt]

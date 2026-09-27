@@ -1,0 +1,57 @@
+type: object
+x-apidog-folder: User
+title: SaveRoommateProfileRequest
+description: Dữ liệu đầy đủ để tạo hoặc cập nhật hồ sơ tìm bạn ở ghép
+additionalProperties: false
+
+properties:
+  bio:
+    type: string
+    nullable: true
+    example: Hiền lành, sạch sẽ
+  lifestyle:
+    type: object
+    nullable: true
+    description: Thói quen sinh hoạt dạng object linh hoạt
+    example:
+      sleep: 23h-6h
+  personality:
+    type: object
+    nullable: true
+    description: Đặc điểm tính cách dạng object linh hoạt
+    example:
+      introvert: true
+  budgetMin:
+    type: integer
+    minimum: 0
+    nullable: true
+    example: 2000000
+  budgetMax:
+    type: integer
+    minimum: 0
+    nullable: true
+    example: 3500000
+  preferredArea:
+    type: string
+    nullable: true
+    minLength: 1
+    maxLength: 255
+    example: Hòa Khánh, Liên Chiểu
+  moveInOn:
+    type: string
+    format: date
+    nullable: true
+    example: '2026-10-01'
+  isVisible:
+    type: boolean
+    example: true
+
+required:
+  - bio
+  - lifestyle
+  - personality
+  - budgetMin
+  - budgetMax
+  - preferredArea
+  - moveInOn
+  - isVisible

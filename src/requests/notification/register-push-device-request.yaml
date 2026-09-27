@@ -1,0 +1,25 @@
+type: object
+x-apidog-folder: Notification
+title: RegisterPushDeviceRequest
+description: Dữ liệu đăng ký thiết bị nhận thông báo đẩy FCM
+additionalProperties: false
+
+properties:
+  platform:
+    type: string
+    enum:
+      - android
+      - web
+    description: Nền tảng thiết bị
+    example: android
+
+  token:
+    type: string
+    minLength: 1
+    maxLength: 512
+    description: FCM Registration Token của thiết bị
+    example: f_zZ9...Xy1
+
+required:
+  - platform
+  - token

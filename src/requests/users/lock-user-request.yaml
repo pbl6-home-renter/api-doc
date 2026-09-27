@@ -1,0 +1,16 @@
+type: object
+x-apidog-folder: User
+title: LockUserRequest
+description: Dữ liệu admin dùng để khóa một tài khoản
+additionalProperties: false
+
+properties:
+  lockReason:
+    type: string
+    minLength: 1
+    maxLength: 500
+    description: Lý do khóa tài khoản
+    example: "Spam listing"
+
+required:
+  - lockReason

@@ -1,0 +1,9 @@
+type: object
+x-apidog-folder: Chat
+title: MarkMessagesReadRequest
+description: Dữ liệu cập nhật con trỏ đã đọc
+additionalProperties: false
+properties:
+  conversationId: { type: string, format: uuid }
+  lastReadMessageId: { type: string, format: uuid }
+required: [conversationId, lastReadMessageId]

@@ -1,0 +1,24 @@
+type: object
+x-apidog-folder: Property
+title: AdminBuildingDetailResponse
+description: Chi tiết tòa nhà dành cho admin
+
+allOf:
+  - $ref: '../../wrappers/success-single.yaml'
+  - type: object
+    properties:
+      statusCode: { type: integer, enum: [200], example: 200 }
+      code: { type: string, enum: [ADMIN_BUILDING_FETCHED], example: ADMIN_BUILDING_FETCHED }
+      data:
+        type: object
+        properties:
+          id: { type: string, format: uuid }
+          name: { type: string }
+          address: { type: string, minLength: 1, maxLength: 254 }
+          landlordId: { type: string, format: uuid }
+          status: { type: string, enum: [pending, approved, rejected] }
+          totalRooms: { type: integer, minimum: 0 }
+          occupancyRate: { type: string }
+          reviewNote: { type: string, nullable: true, minLength: 1, maxLength: 500 }
+          createdAt: { type: string, format: date-time }
+        required: [id, name, address, landlordId, status, totalRooms, occupancyRate, reviewNote, createdAt]

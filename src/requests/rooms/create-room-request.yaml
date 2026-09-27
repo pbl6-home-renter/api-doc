@@ -1,0 +1,50 @@
+type: object
+x-apidog-folder: Property
+title: CreateRoomRequest
+description: Dữ liệu tạo phòng
+additionalProperties: false
+
+properties:
+  buildingId:
+    type: string
+    format: uuid
+    example: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+  name:
+    type: string
+    minLength: 1
+    maxLength: 254
+    example: P.201
+  floorNumber:
+    type: integer
+    minimum: 1
+    example: 2
+  area:
+    type: string
+    example: '18.5'
+  amenities:
+    type: object
+    description: Các tiện ích đi kèm
+    example:
+      aircon: true
+  maxOccupancy:
+    type: integer
+    minimum: 1
+    example: 3
+  genderPolicy:
+    type: string
+    enum: [any, male, female]
+    example: any
+  rentPrice:
+    type: integer
+    minimum: 0
+    example: 3500000
+
+required:
+  - buildingId
+  - name
+  - floorNumber
+  - area
+  - amenities
+  - maxOccupancy
+  - genderPolicy
+  - rentPrice

@@ -1,0 +1,23 @@
+type: object
+x-apidog-folder: User
+title: UpdateUserRequest
+description: Dữ liệu admin cập nhật thông tin một tài khoản
+additionalProperties: false
+
+properties:
+  name:
+    type: string
+    minLength: 1
+    maxLength: 254
+    example: "Nguyễn Văn An"
+
+  phone:
+    type: string
+    minLength: 10
+    maxLength: 12
+    pattern: '^0[0-9]{9}$|^\+84[0-9]{9}$'
+    example: "0901234567"
+
+required:
+  - name
+  - phone

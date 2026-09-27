@@ -1,0 +1,19 @@
+type: object
+x-apidog-folder: Property
+title: UpdateBuildingResponse
+description: Phản hồi khi cập nhật tòa nhà thành công
+
+allOf:
+  - $ref: '../../wrappers/success-single.yaml'
+  - type: object
+    properties:
+      statusCode: { type: integer, enum: [200], example: 200 }
+      code: { type: string, enum: [BUILDING_UPDATED], example: BUILDING_UPDATED }
+      data:
+        type: object
+        properties:
+          id: { type: string, format: uuid }
+          name: { type: string, minLength: 1, maxLength: 254 }
+          address: { type: string, minLength: 1, maxLength: 254 }
+          status: { type: string, enum: [pending, approved, rejected] }
+        required: [id, name, address, status]

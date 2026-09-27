@@ -1,0 +1,11 @@
+type: object
+x-apidog-folder: Chat
+title: SendMessageRequest
+description: Dữ liệu gửi tin nhắn
+additionalProperties: false
+properties:
+  conversationId: { type: string, format: uuid }
+  type: { type: string, enum: [text, image, file, bot] }
+  content: { type: string, nullable: true }
+  mediaId: { type: string, format: uuid, nullable: true }
+required: [conversationId, type, content, mediaId]

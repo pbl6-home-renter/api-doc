@@ -1,0 +1,19 @@
+type: object
+x-apidog-folder: Billing
+title: CreateBillingSettingResponse
+description: Phản hồi khi tạo cấu hình billing
+
+allOf:
+  - $ref: '../../wrappers/success-single.yaml'
+  - type: object
+    properties:
+      statusCode: { type: integer, enum: [201], example: 201 }
+      code: { type: string, enum: [BILLING_SETTING_CREATED], example: BILLING_SETTING_CREATED }
+      data:
+        type: object
+        properties:
+          id: { type: string, format: uuid }
+          dueDays: { type: integer, minimum: 1, maximum: 28 }
+          remindDays: { type: integer, minimum: 1, maximum: 28, nullable: true }
+          botEnabled: { type: boolean }
+        required: [id, dueDays, remindDays, botEnabled]

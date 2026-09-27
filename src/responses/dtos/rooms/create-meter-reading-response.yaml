@@ -1,0 +1,19 @@
+type: object
+x-apidog-folder: Billing
+title: CreateMeterReadingResponse
+description: Phản hồi khi tạo chỉ số công tơ
+allOf:
+  - $ref: '../../wrappers/success-single.yaml'
+  - type: object
+    properties:
+      statusCode: { type: integer, enum: [201], example: 201 }
+      code: { type: string, enum: [METER_READING_CREATED], example: METER_READING_CREATED }
+      data:
+        type: object
+        properties:
+          id: { type: string, format: uuid }
+          roomId: { type: string, format: uuid }
+          type: { type: string, enum: [electricity, water] }
+          period: { type: string, pattern: '^[0-9]{4}-(0[1-9]|1[0-2])$' }
+          currentReading: { type: string }
+        required: [id, roomId, type, period, currentReading]

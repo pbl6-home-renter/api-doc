@@ -1,0 +1,15 @@
+type: object
+x-apidog-folder: Property
+title: ApproveBuildingRequest
+description: Ghi chú khi admin duyệt tòa nhà
+additionalProperties: false
+
+properties:
+  note:
+    type: string
+    minLength: 1
+    maxLength: 500
+    example: Ownership proof verified
+
+required:
+  - note

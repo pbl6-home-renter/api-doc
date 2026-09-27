@@ -1,0 +1,33 @@
+type: object
+x-apidog-folder: Property
+title: MyRoomListResponse
+description: Danh sách phòng của chủ nhà hiện tại
+
+allOf:
+  - $ref: '../../wrappers/success-list.yaml'
+  - type: object
+    properties:
+      statusCode: { type: integer, enum: [200], example: 200 }
+      code: { type: string, enum: [MY_ROOMS_FETCHED], example: MY_ROOMS_FETCHED }
+      data:
+        type: array
+        items:
+          type: object
+          properties:
+            id: { type: string, format: uuid }
+            buildingId: { type: string, format: uuid }
+            name: { type: string }
+            rentPrice: { type: integer, minimum: 0 }
+            status: { type: string, example: cleaning }
+          required: [id, buildingId, name, rentPrice, status]
+      pagination:
+        type: object
+        properties:
+          type: { type: string, enum: [offset], example: offset }
+          pageNo: { type: integer, minimum: 1, example: 1 }
+          pageSize: { type: integer, minimum: 1, maximum: 100, example: 20 }
+          totalItems: { type: integer, minimum: 0, example: 1 }
+          totalPages: { type: integer, minimum: 0, example: 1 }
+          hasNextPage: { type: boolean, example: false }
+          hasPreviousPage: { type: boolean, example: false }
+        required: [type, pageNo, pageSize, totalItems, totalPages, hasNextPage, hasPreviousPage]

@@ -1,0 +1,9 @@
+type: object
+x-apidog-folder: Billing
+title: CreatePaymentIntentRequest
+description: Dữ liệu tạo yêu cầu thanh toán
+additionalProperties: false
+properties:
+  invoiceId: { type: string, format: uuid }
+  method: { type: string, enum: [vietqr, vnpay, momo, cash, mock] }
+required: [invoiceId, method]

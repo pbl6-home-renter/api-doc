@@ -1,0 +1,81 @@
+type: object
+x-apidog-folder: User
+title: UpdateCurrentUserRequest
+description: >
+  Cập nhật hồ sơ hiện tại. Tenant/admin gửi name và phone.
+  Landlord có thể gửi thêm payoutAccount.
+
+oneOf:
+  - title: StandardProfileUpdate
+    type: object
+    additionalProperties: false
+
+    properties:
+      name:
+        type: string
+        minLength: 1
+        maxLength: 254
+        example: "Lê Văn An"
+
+      phone:
+        type: string
+        minLength: 10
+        maxLength: 12
+        pattern: '^0[0-9]{9}$|^\+84[0-9]{9}$'
+        example: "0901234567"
+
+    required:
+      - name
+      - phone
+
+  - title: LandlordProfileUpdate
+    type: object
+    additionalProperties: false
+
+    properties:
+      name:
+        type: string
+        minLength: 1
+        maxLength: 254
+        example: "Lê Văn An"
+
+      phone:
+        type: string
+        minLength: 10
+        maxLength: 12
+        pattern: '^0[0-9]{9}$|^\+84[0-9]{9}$'
+        example: "0901234567"
+
+      payoutAccount:
+        type: object
+        nullable: true
+        description: >
+          Tài khoản nhận tiền của landlord. Ba field phải được gửi cùng nhau.
+          null được dùng khi xoá tài khoản nhận tiền theo business rule.
+        properties:
+          bankCode:
+            type: string
+            minLength: 4
+            maxLength: 20
+            example: "970415"
+
+          accountNumber:
+            type: string
+            pattern: '^[0-9]{6,20}$'
+            example: "102876543210"
+
+          accountName:
+            type: string
+            minLength: 1
+            maxLength: 254
+            example: "NGUYEN VAN AN"
+
+        required:
+          - bankCode
+          - accountNumber
+          - accountName
+
+    required:
+      - name
+      - phone
+      - payoutAccount

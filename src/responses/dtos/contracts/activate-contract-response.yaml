@@ -1,0 +1,17 @@
+type: object
+x-apidog-folder: Contract
+title: ActivateContractResponse
+description: Phản hồi khi kích hoạt hợp đồng
+allOf:
+  - $ref: '../../wrappers/success-single.yaml'
+  - type: object
+    properties:
+      statusCode: { type: integer, enum: [200], example: 200 }
+      code: { type: string, enum: [CONTRACT_ACTIVATED], example: CONTRACT_ACTIVATED }
+      data:
+        type: object
+        properties:
+          id: { type: string, format: uuid }
+          status: { type: string, enum: [active], example: active }
+          activatedAt: { type: string, format: date-time }
+        required: [id, status, activatedAt]

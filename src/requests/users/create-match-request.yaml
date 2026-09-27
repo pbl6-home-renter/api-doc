@@ -1,0 +1,15 @@
+type: object
+x-apidog-folder: Matching
+title: CreateMatchRequest
+description: Dữ liệu gửi yêu cầu kết nối tìm bạn ở ghép
+additionalProperties: false
+
+properties:
+  targetId:
+    type: string
+    format: uuid
+    description: ID tenant nhận yêu cầu
+    example: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+
+required:
+  - targetId

@@ -1,0 +1,20 @@
+type: object
+x-apidog-folder: Billing
+title: CreateRatePolicyResponse
+description: Phản hồi khi tạo chính sách đơn giá
+
+allOf:
+  - $ref: '../../wrappers/success-single.yaml'
+  - type: object
+    properties:
+      statusCode: { type: integer, enum: [201], example: 201 }
+      code: { type: string, enum: [RATE_POLICY_CREATED], example: RATE_POLICY_CREATED }
+      data:
+        type: object
+        properties:
+          id: { type: string, format: uuid }
+          scope: { type: string, enum: [building, room] }
+          type: { type: string, enum: [electricity, water, wifi, cleaning, parking, maintenance, other] }
+          rateKind: { type: string, enum: [flat, tiered, fixed_per_period, per_head, per_area_m2, per_vehicle] }
+          isActive: { type: boolean, enum: [true], example: true }
+        required: [id, scope, type, rateKind, isActive]

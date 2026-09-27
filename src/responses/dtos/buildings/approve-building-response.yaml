@@ -1,0 +1,18 @@
+type: object
+x-apidog-folder: Property
+title: ApproveBuildingResponse
+description: Phản hồi khi duyệt tòa nhà thành công
+
+allOf:
+  - $ref: '../../wrappers/success-single.yaml'
+  - type: object
+    properties:
+      statusCode: { type: integer, enum: [200], example: 200 }
+      code: { type: string, enum: [BUILDING_APPROVED], example: BUILDING_APPROVED }
+      data:
+        type: object
+        properties:
+          id: { type: string, format: uuid }
+          status: { type: string, enum: [approved], example: approved }
+          reviewedAt: { type: string, format: date-time }
+        required: [id, status, reviewedAt]

@@ -1,0 +1,9 @@
+type: object
+x-apidog-folder: Operation
+title: UpdateIssueRequest
+description: Dữ liệu cập nhật một phần báo cáo sự cố
+additionalProperties: false
+minProperties: 1
+properties:
+  status: { type: string, enum: [open, in_progress, resolved, cancelled] }
+  note: { type: string, nullable: true, minLength: 1, maxLength: 500 }

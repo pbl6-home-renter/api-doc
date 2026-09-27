@@ -1,0 +1,18 @@
+type: object
+x-apidog-folder: Matching
+title: WithdrawMatchRequestResponse
+description: Phản hồi khi rút yêu cầu kết nối
+
+allOf:
+  - $ref: '../../wrappers/success-single.yaml'
+  - type: object
+    properties:
+      statusCode: { type: integer, enum: [200], example: 200 }
+      code: { type: string, enum: [MATCH_REQUEST_WITHDRAWN], example: MATCH_REQUEST_WITHDRAWN }
+      data:
+        type: object
+        properties:
+          id: { type: string, format: uuid }
+          status: { type: string, enum: [withdrawn], example: withdrawn }
+          respondedAt: { type: string, format: date-time }
+        required: [id, status, respondedAt]

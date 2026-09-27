@@ -1,0 +1,49 @@
+type: object
+x-apidog-folder: Auth
+title: RegisterRequest
+description: Dữ liệu đăng ký tài khoản tenant hoặc landlord
+additionalProperties: false
+
+properties:
+  email:
+    type: string
+    format: email
+    minLength: 5
+    maxLength: 254
+    description: Email đăng nhập của người dùng
+    example: "lan@example.com"
+
+  phone:
+    type: string
+    minLength: 10
+    maxLength: 12
+    pattern: '^0[0-9]{9}$|^\+84[0-9]{9}$'
+    description: Số điện thoại Việt Nam
+    example: "0901234567"
+
+  password:
+    type: string
+    description: Mật khẩu thô do người dùng nhập khi đăng ký
+    example: "P@ssw0rd123"
+
+  name:
+    type: string
+    minLength: 1
+    maxLength: 254
+    description: Họ và tên người dùng
+    example: "Lê Văn An"
+
+  role:
+    type: string
+    enum:
+      - tenant
+      - landlord
+    description: Vai trò tài khoản được phép tự đăng ký. Admin không được đăng ký qua API này.
+    example: "tenant"
+
+required:
+  - email
+  - phone
+  - password
+  - name
+  - role

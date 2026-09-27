@@ -1,0 +1,27 @@
+type: object
+x-apidog-folder: User
+title: MyRoommateProfileResponse
+description: Hồ sơ tìm bạn ở ghép của chính tenant hiện tại
+
+allOf:
+  - $ref: '../../wrappers/success-single.yaml'
+  - type: object
+    properties:
+      statusCode: { type: integer, enum: [200], example: 200 }
+      code: { type: string, enum: [ROOMMATE_PROFILE_FETCHED], example: ROOMMATE_PROFILE_FETCHED }
+      data:
+        type: object
+        properties:
+          tenantId: { type: string, format: uuid }
+          lifestyle:
+            type: object
+            nullable: true
+            example:
+              sleep: 23h-6h
+          personality:
+            type: object
+            nullable: true
+            example:
+              introvert: true
+          isVisible: { type: boolean }
+        required: [tenantId, lifestyle, personality, isVisible]
