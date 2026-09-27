@@ -1,0 +1,17 @@
+type: object
+x-apidog-folder: "Room/Response"
+title: RoomMarkReadyResponseDto
+description: Phản hồi khi đánh dấu phòng sẵn sàng
+
+allOf:
+  - $ref: '../../wrappers/success-single.yaml'
+  - type: object
+    properties:
+      statusCode: { type: integer, enum: [200], example: 200 }
+      code: { type: string, enum: [ROOM_MARKED_READY], example: ROOM_MARKED_READY }
+      data:
+        type: object
+        properties:
+          id: { type: string, format: uuid }
+          status: { type: string, enum: [available], example: available }
+        required: [id, status]

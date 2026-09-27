@@ -1,0 +1,10 @@
+type: object
+x-apidog-folder: "MeterReading/Request"
+title: MeterReadingPreviewOcrRequestDto
+description: Dữ liệu xem trước kết quả OCR chỉ số
+additionalProperties: false
+properties:
+  roomId: { type: string, format: uuid }
+  mediaId: { type: string, format: uuid }
+  type: { type: string, enum: [electricity, water] }
+required: [roomId, mediaId, type]

@@ -1,0 +1,17 @@
+type: object
+x-apidog-folder: "Invoice/Response"
+title: InvoiceCancelResponseDto
+description: Phản hồi khi hủy hóa đơn
+allOf:
+  - $ref: '../../wrappers/success-single.yaml'
+  - type: object
+    properties:
+      statusCode: { type: integer, enum: [200], example: 200 }
+      code: { type: string, enum: [INVOICE_CANCELLED], example: INVOICE_CANCELLED }
+      data:
+        type: object
+        properties:
+          id: { type: string, format: uuid }
+          invoiceStatus: { type: string, enum: [void], example: void }
+          cancelReason: { type: string }
+        required: [id, invoiceStatus, cancelReason]

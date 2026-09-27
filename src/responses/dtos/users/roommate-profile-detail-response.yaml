@@ -1,0 +1,21 @@
+type: object
+x-apidog-folder: "RoommateProfile/Response"
+title: RoommateProfileDetailResponseDto
+description: Chi tiết hồ sơ tìm bạn ở ghép của người khác
+
+allOf:
+  - $ref: '../../wrappers/success-single.yaml'
+  - type: object
+    properties:
+      statusCode: { type: integer, enum: [200], example: 200 }
+      code: { type: string, enum: [ROOMMATE_PROFILE_FETCHED], example: ROOMMATE_PROFILE_FETCHED }
+      data:
+        type: object
+        properties:
+          tenantId: { type: string, format: uuid }
+          bio: { type: string, nullable: true }
+          budgetMin: { type: integer, minimum: 0, nullable: true }
+          budgetMax: { type: integer, minimum: 0, nullable: true }
+          preferredArea: { type: string, nullable: true, minLength: 1, maxLength: 255 }
+          isVisible: { type: boolean }
+        required: [tenantId, bio, budgetMin, budgetMax, preferredArea, isVisible]

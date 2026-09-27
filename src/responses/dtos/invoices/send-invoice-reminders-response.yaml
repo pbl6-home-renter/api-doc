@@ -1,0 +1,31 @@
+type: object
+x-apidog-folder: "Invoice/Response"
+title: InvoiceSendRemindersResponseDto
+description: Kết quả xếp hàng nhắc thanh toán hóa đơn
+allOf:
+  - $ref: '../../wrappers/success-single.yaml'
+  - type: object
+    properties:
+      statusCode: { type: integer, enum: [202], example: 202 }
+      code: { type: string, enum: [INVOICE_REMINDERS_QUEUED], example: INVOICE_REMINDERS_QUEUED }
+      data:
+        type: object
+        properties:
+          requested: { type: integer, minimum: 0 }
+          queued:
+            type: array
+            items:
+              type: object
+              properties:
+                invoiceId: { type: string, format: uuid }
+                sentCount: { type: integer, minimum: 0 }
+              required: [invoiceId, sentCount]
+          failed:
+            type: array
+            items:
+              type: object
+              properties:
+                invoiceId: { type: string, format: uuid }
+                code: { type: string }
+              required: [invoiceId, code]
+        required: [requested, queued, failed]

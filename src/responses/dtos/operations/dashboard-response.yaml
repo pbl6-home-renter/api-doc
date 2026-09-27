@@ -1,0 +1,22 @@
+type: object
+x-apidog-folder: "Dashboard/Response"
+title: DashboardResponseDto
+description: Số liệu tổng hợp dashboard
+allOf:
+  - $ref: '../../wrappers/success-single.yaml'
+  - type: object
+    properties:
+      statusCode: { type: integer, enum: [200], example: 200 }
+      code: { type: string, enum: [DASHBOARD_FETCHED], example: DASHBOARD_FETCHED }
+      data:
+        type: object
+        properties:
+          totalUsers: { type: integer, minimum: 0 }
+          totalLandlords: { type: integer, minimum: 0 }
+          totalTenants: { type: integer, minimum: 0 }
+          totalBuildings: { type: integer, minimum: 0 }
+          pendingApprovalBuildings: { type: integer, minimum: 0 }
+          totalRooms: { type: integer, minimum: 0 }
+          occupancyRate: { type: string }
+          systemTransactionVolume: { type: integer, minimum: 0 }
+        required: [totalUsers, totalLandlords, totalTenants, totalBuildings, pendingApprovalBuildings, totalRooms, occupancyRate, systemTransactionVolume]

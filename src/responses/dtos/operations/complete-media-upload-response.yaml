@@ -1,0 +1,90 @@
+type: object
+x-apidog-folder: "Media/Response"
+title: MediaCompleteUploadResponseDto
+description: Phản hồi khi Media được xác minh và sẵn sàng đọc
+
+allOf:
+  - $ref: '../../wrappers/success-single.yaml'
+
+  - type: object
+    properties:
+      statusCode:
+        type: integer
+        enum:
+          - 200
+        example: 200
+
+      code:
+        type: string
+        enum:
+          - MEDIA_READY
+        example: MEDIA_READY
+
+      data:
+        type: object
+        properties:
+          id:
+            type: string
+            format: uuid
+            description: ID Media đã sẵn sàng
+            example: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+
+          ownerType:
+            type: string
+            enum:
+              - user
+              - room
+              - building
+              - contract
+              - contract_member
+              - meter_reading
+              - issue_report
+              - message
+            description: Loại thực thể sở hữu file
+            example: room
+
+          ownerId:
+            type: string
+            format: uuid
+            description: ID của thực thể sở hữu file
+            example: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+
+          purpose:
+            type: string
+            enum:
+              - avatar
+              - cover_photo
+              - gallery_photo
+              - ownership_proof
+              - cccd_front
+              - cccd_back
+              - contract_template
+              - contract_signed
+              - meter_reading_evidence
+              - issue_photo
+              - chat_attachment
+            description: Mục đích sử dụng của file đối với thực thể sở hữu
+            example: cover_photo
+
+          fileType:
+            type: string
+            enum:
+              - image
+              - document
+              - video
+              - other
+            description: Loại định dạng tệp tin
+            example: image
+
+          url:
+            type: string
+            description: URL truy cập hoặc signed URL do hệ thống trả
+            example: https://cdn.pbl6.dev/room/3fa85f64/cover.webp
+
+        required:
+          - id
+          - ownerType
+          - ownerId
+          - purpose
+          - fileType
+          - url

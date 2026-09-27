@@ -1,0 +1,15 @@
+type: object
+x-apidog-folder: "Notification/Response"
+title: NotificationMarkAllReadResponseDto
+description: Phản hồi khi đánh dấu toàn bộ thông báo đã đọc
+allOf:
+  - $ref: '../../wrappers/success-single.yaml'
+  - type: object
+    properties:
+      statusCode: { type: integer, enum: [200], example: 200 }
+      code: { type: string, enum: [ALL_NOTIFICATIONS_MARKED_READ], example: ALL_NOTIFICATIONS_MARKED_READ }
+      data:
+        type: object
+        properties:
+          markedCount: { type: integer, minimum: 0 }
+        required: [markedCount]

@@ -1,0 +1,49 @@
+type: object
+x-apidog-folder: "User/Response"
+title: UserUpdateResponseDto
+description: Phản hồi sau khi admin cập nhật tài khoản
+
+allOf:
+  - $ref: '../../wrappers/success-single.yaml'
+
+  - type: object
+    properties:
+      statusCode:
+        type: integer
+        enum:
+          - 200
+        example: 200
+
+      code:
+        type: string
+        enum:
+          - USER_UPDATED
+        example: "USER_UPDATED"
+
+      data:
+        type: object
+        properties:
+          userId:
+            type: string
+            format: uuid
+
+          name:
+            type: string
+            example: "Nguyễn Văn An"
+
+          phone:
+            type: string
+            example: "0901234567"
+
+          status:
+            type: string
+            enum:
+              - active
+              - locked
+            example: "active"
+
+        required:
+          - userId
+          - name
+          - phone
+          - status

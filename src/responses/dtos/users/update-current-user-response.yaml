@@ -1,0 +1,68 @@
+type: object
+x-apidog-folder: "User/Response"
+title: UserUpdateCurrentResponseDto
+description: Phản hồi sau khi cập nhật hồ sơ hiện tại thành công
+
+allOf:
+  - $ref: '../../wrappers/success-single.yaml'
+
+  - type: object
+    properties:
+      statusCode:
+        type: integer
+        enum:
+          - 200
+        example: 200
+
+      code:
+        type: string
+        enum:
+          - PROFILE_UPDATED
+        example: "PROFILE_UPDATED"
+
+      data:
+        type: object
+        properties:
+          id:
+            type: string
+            format: uuid
+
+          name:
+            type: string
+            minLength: 1
+            maxLength: 254
+            example: "Lê Văn An"
+
+          phone:
+            type: string
+            minLength: 10
+            maxLength: 12
+            example: "0901234567"
+
+          payoutAccount:
+            type: object
+            nullable: true
+            properties:
+              bankCode:
+                type: string
+                example: "970415"
+
+              accountNumber:
+                type: string
+                description: Số tài khoản đã được mask khi trả cho client
+                example: "**43210"
+
+              accountName:
+                type: string
+                example: "NGUYEN VAN AN"
+
+            required:
+              - bankCode
+              - accountNumber
+              - accountName
+
+        required:
+          - id
+          - name
+          - phone
+          - payoutAccount

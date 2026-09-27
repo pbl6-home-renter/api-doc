@@ -1,0 +1,19 @@
+type: object
+x-apidog-folder: "Room/Response"
+title: RoomUpdateResponseDto
+description: Phản hồi khi cập nhật phòng thành công
+
+allOf:
+  - $ref: '../../wrappers/success-single.yaml'
+  - type: object
+    properties:
+      statusCode: { type: integer, enum: [200], example: 200 }
+      code: { type: string, enum: [ROOM_UPDATED], example: ROOM_UPDATED }
+      data:
+        type: object
+        properties:
+          id: { type: string, format: uuid }
+          name: { type: string }
+          rentPrice: { type: integer, minimum: 0 }
+          area: { type: string, nullable: true, example: '19.0' }
+        required: [id, name, rentPrice, area]

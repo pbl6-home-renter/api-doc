@@ -1,0 +1,33 @@
+type: object
+x-apidog-folder: "Invoice/Response"
+title: InvoiceIssueResponseDto
+description: Kết quả phát hành hàng loạt hóa đơn
+allOf:
+  - $ref: '../../wrappers/success-single.yaml'
+  - type: object
+    properties:
+      statusCode: { type: integer, enum: [200], example: 200 }
+      code: { type: string, enum: [INVOICES_ISSUE_REQUESTED], example: INVOICES_ISSUE_REQUESTED }
+      data:
+        type: object
+        properties:
+          requested: { type: integer, minimum: 0 }
+          succeeded:
+            type: array
+            items:
+              type: object
+              properties:
+                id: { type: string, format: uuid }
+                invoiceStatus: { type: string, enum: [pending, issued, void] }
+                issuedAt: { type: string, format: date-time, nullable: true }
+                vietQrContent: { type: string }
+              required: [id, invoiceStatus, issuedAt, vietQrContent]
+          failed:
+            type: array
+            items:
+              type: object
+              properties:
+                invoiceId: { type: string, format: uuid }
+                code: { type: string }
+              required: [invoiceId, code]
+        required: [requested, succeeded, failed]

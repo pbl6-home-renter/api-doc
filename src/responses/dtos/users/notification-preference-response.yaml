@@ -1,0 +1,19 @@
+type: object
+x-apidog-folder: "NotificationPreference/Response"
+title: NotificationPreferenceDetailResponseDto
+description: Danh sách tùy biến thông báo của người dùng hiện tại
+allOf:
+  - $ref: '../../wrappers/success-single.yaml'
+  - type: object
+    properties:
+      statusCode: { type: integer, enum: [200], example: 200 }
+      code: { type: string, enum: [NOTIFICATION_PREFERENCES_FETCHED], example: NOTIFICATION_PREFERENCES_FETCHED }
+      data:
+        type: array
+        items:
+          type: object
+          properties:
+            type: { type: string, enum: [invoice, chat, issue, match, account] }
+            enabled: { type: boolean }
+          required: [type, enabled]
+

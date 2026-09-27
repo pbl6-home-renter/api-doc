@@ -1,0 +1,36 @@
+type: object
+x-apidog-folder: "BillingSetting/Request"
+title: BillingSettingCreateRequestDto
+description: Dữ liệu tạo cấu hình billing
+additionalProperties: false
+
+properties:
+  scope:
+    type: string
+    enum: [building, room]
+    example: room
+  roomId:
+    type: string
+    format: uuid
+    nullable: true
+  dueDays:
+    type: integer
+    minimum: 1
+    maximum: 28
+    example: 5
+  remindDays:
+    type: integer
+    minimum: 1
+    maximum: 28
+    nullable: true
+    example: 3
+  botEnabled:
+    type: boolean
+    example: true
+
+required:
+  - scope
+  - roomId
+  - dueDays
+  - remindDays
+  - botEnabled

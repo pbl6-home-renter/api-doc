@@ -1,0 +1,17 @@
+type: object
+x-apidog-folder: "FavoriteRoom/Response"
+title: FavoriteRoomToggleResponseDto
+description: Phản hồi khi lưu phòng yêu thích thành công
+
+allOf:
+  - $ref: '../../wrappers/success-single.yaml'
+  - type: object
+    properties:
+      statusCode: { type: integer, enum: [201], example: 201 }
+      code: { type: string, enum: [ROOM_FAVORITED], example: ROOM_FAVORITED }
+      data:
+        type: object
+        properties:
+          roomId: { type: string, format: uuid }
+          roomName: { type: string, minLength: 1, maxLength: 254 }
+        required: [roomId, roomName]

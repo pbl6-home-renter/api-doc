@@ -1,0 +1,17 @@
+type: object
+x-apidog-folder: "Contract/Response"
+title: ContractGenerateDraftResponseDto
+description: Phản hồi khi sinh tài liệu hợp đồng nháp
+allOf:
+  - $ref: '../../wrappers/success-single.yaml'
+  - type: object
+    properties:
+      statusCode: { type: integer, enum: [201], example: 201 }
+      code: { type: string, enum: [CONTRACT_DRAFT_GENERATED], example: CONTRACT_DRAFT_GENERATED }
+      data:
+        type: object
+        properties:
+          contractId: { type: string, format: uuid }
+          mediaId: { type: string, format: uuid }
+          purpose: { type: string, enum: [contract_template], example: contract_template }
+        required: [contractId, mediaId, purpose]

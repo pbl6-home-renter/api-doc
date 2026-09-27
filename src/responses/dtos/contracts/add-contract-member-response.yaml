@@ -1,0 +1,19 @@
+type: object
+x-apidog-folder: "ContractMember/Response"
+title: ContractMemberAddResponseDto
+description: Phản hồi khi thêm thành viên hợp đồng
+allOf:
+  - $ref: '../../wrappers/success-single.yaml'
+  - type: object
+    properties:
+      statusCode: { type: integer, enum: [201], example: 201 }
+      code: { type: string, enum: [CONTRACT_MEMBER_ADDED], example: CONTRACT_MEMBER_ADDED }
+      data:
+        type: object
+        properties:
+          id: { type: string, format: uuid }
+          contractId: { type: string, format: uuid }
+          tenantId: { type: string, format: uuid, nullable: true }
+          joinedAt: { type: string, format: date }
+          leftAt: { type: string, format: date, nullable: true }
+        required: [id, contractId, tenantId, joinedAt, leftAt]

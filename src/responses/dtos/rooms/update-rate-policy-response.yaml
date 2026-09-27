@@ -1,0 +1,17 @@
+type: object
+x-apidog-folder: "RatePolicy/Response"
+title: RatePolicyUpdateResponseDto
+description: Phản hồi khi cập nhật chính sách đơn giá
+
+allOf:
+  - $ref: '../../wrappers/success-single.yaml'
+  - type: object
+    properties:
+      statusCode: { type: integer, enum: [200], example: 200 }
+      code: { type: string, enum: [RATE_POLICY_UPDATED], example: RATE_POLICY_UPDATED }
+      data:
+        type: object
+        properties:
+          id: { type: string, format: uuid }
+          name: { type: string }
+        required: [id, name]

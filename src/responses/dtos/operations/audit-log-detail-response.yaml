@@ -1,0 +1,20 @@
+type: object
+x-apidog-folder: "AuditLog/Response"
+title: AuditLogDetailResponseDto
+description: Chi tiết nhật ký kiểm toán
+allOf:
+  - $ref: '../../wrappers/success-single.yaml'
+  - type: object
+    properties:
+      statusCode: { type: integer, enum: [200], example: 200 }
+      code: { type: string, enum: [AUDIT_LOG_FETCHED], example: AUDIT_LOG_FETCHED }
+      data:
+        type: object
+        properties:
+          id: { type: string, format: uuid }
+          action: { type: string, minLength: 1, maxLength: 100 }
+          entityType: { type: string, minLength: 1, maxLength: 50 }
+          entityId: { type: string, format: uuid, nullable: true }
+          beforeData: { type: object, nullable: true }
+          afterData: { type: object, nullable: true }
+        required: [id, action, entityType, entityId, beforeData, afterData]

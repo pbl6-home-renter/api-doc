@@ -1,0 +1,12 @@
+type: object
+x-apidog-folder: "ContractMember/Request"
+title: ContractMemberAddRequestDto
+description: Dữ liệu thêm thành viên vào hợp đồng
+additionalProperties: false
+properties:
+  contractId: { type: string, format: uuid }
+  tenantId: { type: string, format: uuid, nullable: true }
+  tenantName: { type: string, nullable: true, minLength: 1, maxLength: 254 }
+  tenantPhone: { type: string, nullable: true, minLength: 10, maxLength: 12, pattern: '^0[0-9]{9}$|^\+84[0-9]{9}$' }
+  joinedAt: { type: string, format: date }
+required: [contractId, tenantId, tenantName, tenantPhone, joinedAt]

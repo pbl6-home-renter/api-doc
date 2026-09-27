@@ -1,0 +1,99 @@
+type: object
+x-apidog-folder: "User/Response"
+title: UserCurrentResponseDto
+description: Phản hồi hồ sơ của người dùng hiện đang đăng nhập
+
+allOf:
+  - $ref: '../../wrappers/success-single.yaml'
+
+  - type: object
+    properties:
+      statusCode:
+        type: integer
+        enum:
+          - 200
+        example: 200
+
+      code:
+        type: string
+        enum:
+          - CURRENT_USER_FETCHED
+        example: "CURRENT_USER_FETCHED"
+
+      data:
+        type: object
+        properties:
+          id:
+            type: string
+            format: uuid
+
+          name:
+            type: string
+            minLength: 1
+            maxLength: 254
+            example: "Lê Văn An"
+
+          email:
+            type: string
+            format: email
+            example: "lan@example.com"
+
+          phone:
+            type: string
+            minLength: 10
+            maxLength: 12
+            pattern: '^0[0-9]{9}$|^\+84[0-9]{9}$'
+            example: "0901234567"
+
+          role:
+            type: string
+            enum:
+              - tenant
+              - landlord
+              - admin
+            example: "tenant"
+
+          status:
+            type: string
+            enum:
+              - active
+              - locked
+            example: "active"
+
+          payoutAccount:
+            type: object
+            nullable: true
+            description: >
+              Tài khoản nhận tiền của landlord. Tenant và admin nhận null.
+              accountNumber được mask khi trả về client.
+            properties:
+              bankCode:
+                type: string
+                minLength: 4
+                maxLength: 20
+                example: "970415"
+
+              accountNumber:
+                type: string
+                description: Số tài khoản đã được mask
+                example: "**43210"
+
+              accountName:
+                type: string
+                minLength: 1
+                maxLength: 254
+                example: "NGUYEN VAN AN"
+
+            required:
+              - bankCode
+              - accountNumber
+              - accountName
+
+        required:
+          - id
+          - name
+          - email
+          - phone
+          - role
+          - status
+          - payoutAccount

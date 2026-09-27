@@ -1,0 +1,65 @@
+type: object
+x-apidog-folder: "User/Response"
+title: UserDetailResponseDto
+description: Phản hồi chi tiết một người dùng dành cho admin
+
+allOf:
+  - $ref: '../../wrappers/success-single.yaml'
+
+  - type: object
+    properties:
+      statusCode:
+        type: integer
+        enum:
+          - 200
+        example: 200
+
+      code:
+        type: string
+        enum:
+          - USER_FETCHED
+        example: "USER_FETCHED"
+
+      data:
+        type: object
+        properties:
+          id:
+            type: string
+            format: uuid
+
+          name:
+            type: string
+            example: "Lê Văn An"
+
+          role:
+            type: string
+            enum:
+              - tenant
+              - landlord
+              - admin
+            example: "tenant"
+
+          status:
+            type: string
+            enum:
+              - active
+              - locked
+            example: "active"
+
+          buildingCount:
+            type: integer
+            minimum: 0
+            example: 0
+
+          activeContractCount:
+            type: integer
+            minimum: 0
+            example: 1
+
+        required:
+          - id
+          - name
+          - role
+          - status
+          - buildingCount
+          - activeContractCount

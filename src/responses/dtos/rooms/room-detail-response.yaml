@@ -1,0 +1,28 @@
+type: object
+x-apidog-folder: "Room/Response"
+title: RoomDetailResponseDto
+description: Chi tiết phòng
+
+allOf:
+  - $ref: '../../wrappers/success-single.yaml'
+  - type: object
+    properties:
+      statusCode: { type: integer, enum: [200], example: 200 }
+      code: { type: string, enum: [ROOM_FETCHED], example: ROOM_FETCHED }
+      data:
+        type: object
+        properties:
+          id: { type: string, format: uuid }
+          buildingId: { type: string, format: uuid }
+          name: { type: string }
+          description: { type: string, nullable: true, minLength: 1, maxLength: 500 }
+          area: { type: string, nullable: true, example: '18.5' }
+          rentPrice: { type: integer, minimum: 0 }
+          status: { type: string, example: available }
+          effectiveRatePolicySummary:
+            type: object
+            properties:
+              electricity: { type: string, example: flat }
+              water: { type: string, example: flat }
+            required: [electricity, water]
+        required: [id, buildingId, name, description, area, rentPrice, status, effectiveRatePolicySummary]

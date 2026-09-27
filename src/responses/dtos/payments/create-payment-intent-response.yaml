@@ -1,0 +1,19 @@
+type: object
+x-apidog-folder: "Payment/Response"
+title: PaymentCreateIntentResponseDto
+description: Phản hồi khi tạo payment intent
+allOf:
+  - $ref: '../../wrappers/success-single.yaml'
+  - type: object
+    properties:
+      statusCode: { type: integer, enum: [201], example: 201 }
+      code: { type: string, enum: [PAYMENT_INTENT_CREATED], example: PAYMENT_INTENT_CREATED }
+      data:
+        type: object
+        properties:
+          paymentId: { type: string, format: uuid }
+          invoiceCode: { type: string }
+          method: { type: string, enum: [vietqr, vnpay, momo, cash, mock] }
+          amount: { type: integer, minimum: 0 }
+          qrContent: { type: string }
+        required: [paymentId, invoiceCode, method, amount, qrContent]

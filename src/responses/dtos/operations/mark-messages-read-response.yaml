@@ -1,0 +1,16 @@
+type: object
+x-apidog-folder: "Message/Response"
+title: MessageMarkReadResponseDto
+description: Phản hồi khi đánh dấu tin nhắn đã đọc
+allOf:
+  - $ref: '../../wrappers/success-single.yaml'
+  - type: object
+    properties:
+      statusCode: { type: integer, enum: [200], example: 200 }
+      code: { type: string, enum: [MESSAGES_MARKED_READ], example: MESSAGES_MARKED_READ }
+      data:
+        type: object
+        properties:
+          conversationId: { type: string, format: uuid }
+          unreadCount: { type: integer, minimum: 0 }
+        required: [conversationId, unreadCount]

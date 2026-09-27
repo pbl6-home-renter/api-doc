@@ -1,0 +1,18 @@
+type: object
+x-apidog-folder: "Contract/Response"
+title: ContractCreateResponseDto
+description: Phản hồi khi tạo hợp đồng nháp
+allOf:
+  - $ref: '../../wrappers/success-single.yaml'
+  - type: object
+    properties:
+      statusCode: { type: integer, enum: [201], example: 201 }
+      code: { type: string, enum: [CONTRACT_CREATED], example: CONTRACT_CREATED }
+      data:
+        type: object
+        properties:
+          id: { type: string, format: uuid }
+          status: { type: string, enum: [draft], example: draft }
+          tenantId: { type: string, format: uuid, nullable: true }
+          rentPrice: { type: integer, minimum: 0 }
+        required: [id, status, tenantId, rentPrice]

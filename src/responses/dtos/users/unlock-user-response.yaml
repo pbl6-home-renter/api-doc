@@ -1,0 +1,46 @@
+type: object
+x-apidog-folder: "User/Response"
+title: UserUnlockResponseDto
+description: Phản hồi sau khi mở khóa tài khoản thành công
+
+allOf:
+  - $ref: '../../wrappers/success-single.yaml'
+
+  - type: object
+    properties:
+      statusCode:
+        type: integer
+        enum:
+          - 200
+        example: 200
+
+      code:
+        type: string
+        enum:
+          - USER_UNLOCKED
+        example: "USER_UNLOCKED"
+
+      data:
+        type: object
+        properties:
+          userId:
+            type: string
+            format: uuid
+
+          status:
+            type: string
+            enum:
+              - active
+            example: "active"
+
+          lockedAt:
+            type: string
+            format: date-time
+            nullable: true
+            description: Sau khi mở khóa trường này được trả về null
+            example: null
+
+        required:
+          - userId
+          - status
+          - lockedAt

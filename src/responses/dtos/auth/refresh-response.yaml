@@ -1,0 +1,41 @@
+type: object
+x-apidog-folder: "Auth/Response"
+title: AuthRefreshResponseDto
+description: Phản hồi khi xoay vòng refresh session thành công
+
+allOf:
+  - $ref: '../../wrappers/success-single.yaml'
+
+  - type: object
+    properties:
+      statusCode:
+        type: integer
+        enum:
+          - 200
+        example: 200
+
+      code:
+        type: string
+        enum:
+          - SESSION_REFRESHED
+        example: "SESSION_REFRESHED"
+
+      data:
+        type: object
+        properties:
+          accessToken:
+            type: string
+            minLength: 1
+            description: Access token mới được phát hành
+            example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+
+          expiresIn:
+            type: integer
+            enum:
+              - 900
+            description: Thời gian sống của access token mới, tính bằng giây
+            example: 900
+
+        required:
+          - accessToken
+          - expiresIn
