@@ -1,0 +1,15 @@
+type: object
+x-apidog-folder: Notification
+title: UpdateNotificationPreferenceResponse
+description: Phản hồi khi cập nhật tùy biến thông báo
+allOf:
+  - $ref: '../../wrappers/success-single.yaml'
+  - type: object
+    properties:
+      statusCode: { type: integer, enum: [200], example: 200 }
+      code: { type: string, enum: [NOTIFICATION_PREFERENCES_UPDATED], example: NOTIFICATION_PREFERENCES_UPDATED }
+      data:
+        type: object
+        properties:
+          updatedAt: { type: string, format: date-time }
+        required: [updatedAt]
