@@ -54,7 +54,7 @@
     "schemas": {
       "RegisterRequest": {
         "type": "object",
-        "x-apidog-folder": "Request/Auth",
+        "x-apidog-folder": "Auth/Request",
         "title": "RegisterRequest",
         "description": "Dữ liệu đăng ký tài khoản tenant hoặc landlord",
         "additionalProperties": false,
@@ -107,7 +107,7 @@
       },
       "RegisterResponse": {
         "type": "object",
-        "x-apidog-folder": "Response/Auth",
+        "x-apidog-folder": "Auth/Response",
         "title": "RegisterResponse",
         "description": "Phản hồi khi đăng ký tài khoản thành công",
         "allOf": [
@@ -170,7 +170,7 @@
       },
       "LoginRequest": {
         "type": "object",
-        "x-apidog-folder": "Request/Auth",
+        "x-apidog-folder": "Auth/Request",
         "title": "LoginRequest",
         "description": "Dữ liệu đăng nhập tài khoản",
         "additionalProperties": false,
@@ -202,7 +202,7 @@
       },
       "LoginResponse": {
         "type": "object",
-        "x-apidog-folder": "Response/Auth",
+        "x-apidog-folder": "Auth/Response",
         "title": "LoginResponse",
         "description": "Phản hồi khi đăng nhập thành công",
         "allOf": [
@@ -255,7 +255,7 @@
       },
       "RefreshResponse": {
         "type": "object",
-        "x-apidog-folder": "Response/Auth",
+        "x-apidog-folder": "Auth/Response",
         "title": "RefreshResponse",
         "description": "Phản hồi khi xoay vòng refresh session thành công",
         "allOf": [
@@ -308,7 +308,7 @@
       },
       "RequestPasswordResetRequest": {
         "type": "object",
-        "x-apidog-folder": "Request/Auth",
+        "x-apidog-folder": "Auth/Request",
         "title": "RequestPasswordResetRequest",
         "description": "Dữ liệu yêu cầu gửi link đặt lại mật khẩu",
         "additionalProperties": false,
@@ -329,7 +329,7 @@
       },
       "RequestPasswordResetResponse": {
         "type": "object",
-        "x-apidog-folder": "Response/Auth",
+        "x-apidog-folder": "Auth/Response",
         "title": "RequestPasswordResetResponse",
         "description": "Phản hồi khi hệ thống đã tiếp nhận yêu cầu đặt lại mật khẩu",
         "allOf": [
@@ -375,7 +375,7 @@
       },
       "ResetPasswordRequest": {
         "type": "object",
-        "x-apidog-folder": "Request/Auth",
+        "x-apidog-folder": "Auth/Request",
         "title": "ResetPasswordRequest",
         "description": "Dữ liệu dùng token đặt lại mật khẩu",
         "additionalProperties": false,
@@ -402,7 +402,7 @@
       },
       "UpdateCurrentUserRequest": {
         "type": "object",
-        "x-apidog-folder": "Request/User",
+        "x-apidog-folder": "User/Request",
         "title": "UpdateCurrentUserRequest",
         "description": "Cập nhật hồ sơ hiện tại. Tenant/admin gửi name và phone. Landlord có thể gửi thêm payoutAccount.\n",
         "oneOf": [
@@ -488,7 +488,7 @@
       },
       "ChangePasswordRequest": {
         "type": "object",
-        "x-apidog-folder": "Request/User",
+        "x-apidog-folder": "User/Request",
         "title": "ChangePasswordRequest",
         "description": "Dữ liệu đổi mật khẩu của người dùng hiện tại",
         "additionalProperties": false,
@@ -523,7 +523,7 @@
       },
       "UpdateUserRequest": {
         "type": "object",
-        "x-apidog-folder": "Request/User",
+        "x-apidog-folder": "User/Request",
         "title": "UpdateUserRequest",
         "description": "Dữ liệu admin cập nhật thông tin một tài khoản",
         "additionalProperties": false,
@@ -549,7 +549,7 @@
       },
       "LockUserRequest": {
         "type": "object",
-        "x-apidog-folder": "Request/User",
+        "x-apidog-folder": "User/Request",
         "title": "LockUserRequest",
         "description": "Dữ liệu admin dùng để khóa một tài khoản",
         "additionalProperties": false,
@@ -568,7 +568,7 @@
       },
       "CurrentUserResponse": {
         "type": "object",
-        "x-apidog-folder": "Response/User",
+        "x-apidog-folder": "User/Response",
         "title": "CurrentUserResponse",
         "description": "Phản hồi hồ sơ của người dùng hiện đang đăng nhập",
         "allOf": [
@@ -680,7 +680,7 @@
       },
       "UpdateCurrentUserResponse": {
         "type": "object",
-        "x-apidog-folder": "Response/User",
+        "x-apidog-folder": "User/Response",
         "title": "UpdateCurrentUserResponse",
         "description": "Phản hồi sau khi cập nhật hồ sơ hiện tại thành công",
         "allOf": [
@@ -761,7 +761,7 @@
       },
       "UserListResponse": {
         "type": "object",
-        "x-apidog-folder": "Response/User",
+        "x-apidog-folder": "User/Response",
         "title": "UserListResponse",
         "description": "Danh sách người dùng dành cho admin với offset pagination",
         "allOf": [
@@ -880,7 +880,7 @@
       },
       "UserDetailResponse": {
         "type": "object",
-        "x-apidog-folder": "Response/User",
+        "x-apidog-folder": "User/Response",
         "title": "UserDetailResponse",
         "description": "Phản hồi chi tiết một người dùng dành cho admin",
         "allOf": [
@@ -958,7 +958,7 @@
       },
       "UpdateUserResponse": {
         "type": "object",
-        "x-apidog-folder": "Response/User",
+        "x-apidog-folder": "User/Response",
         "title": "UpdateUserResponse",
         "description": "Phản hồi sau khi admin cập nhật tài khoản",
         "allOf": [
@@ -1019,7 +1019,7 @@
       },
       "LockUserResponse": {
         "type": "object",
-        "x-apidog-folder": "Response/User",
+        "x-apidog-folder": "User/Response",
         "title": "LockUserResponse",
         "description": "Phản hồi sau khi khóa tài khoản thành công",
         "allOf": [
@@ -1082,7 +1082,7 @@
       },
       "UnlockUserResponse": {
         "type": "object",
-        "x-apidog-folder": "Response/User",
+        "x-apidog-folder": "User/Response",
         "title": "UnlockUserResponse",
         "description": "Phản hồi sau khi mở khóa tài khoản thành công",
         "allOf": [
@@ -1140,7 +1140,7 @@
       },
       "BaseEntity": {
         "type": "object",
-        "x-apidog-folder": "Common",
+        "x-apidog-folder": "Common/Entity",
         "title": "BaseEntity",
         "description": "Quy ước các trường chung áp dụng cho mọi entity (trừ AuditLog append-only)",
         "properties": {
@@ -1178,7 +1178,7 @@
       },
       "User": {
         "type": "object",
-        "x-apidog-folder": "User",
+        "x-apidog-folder": "User/Entity",
         "title": "User",
         "description": "Tài khoản người dùng (Tenant, Landlord, Admin). Một tài khoản có đúng một role bất biến.",
         "allOf": [
@@ -1268,7 +1268,7 @@
       },
       "LandlordProfile": {
         "type": "object",
-        "x-apidog-folder": "User",
+        "x-apidog-folder": "User/Entity",
         "title": "LandlordProfile",
         "description": "Hồ sơ chủ nhà (1-1 với User role landlord), chứa thông tin nhận tiền VietQR",
         "allOf": [
@@ -1316,7 +1316,7 @@
       },
       "RoommateProfile": {
         "type": "object",
-        "x-apidog-folder": "User",
+        "x-apidog-folder": "User/Entity",
         "title": "RoommateProfile",
         "description": "Hồ sơ tìm bạn ở ghép của Tenant",
         "allOf": [
@@ -1408,7 +1408,7 @@
       },
       "Building": {
         "type": "object",
-        "x-apidog-folder": "Property",
+        "x-apidog-folder": "Property/Entity",
         "title": "Building",
         "description": "Tòa nhà / khu nhà trọ cho thuê do chủ nhà đăng ký",
         "allOf": [
@@ -1515,7 +1515,7 @@
       },
       "Room": {
         "type": "object",
-        "x-apidog-folder": "Property",
+        "x-apidog-folder": "Property/Entity",
         "title": "Room",
         "description": "Phòng trọ thuộc tòa nhà cho thuê",
         "allOf": [
@@ -1623,7 +1623,7 @@
       },
       "FavoriteRoom": {
         "type": "object",
-        "x-apidog-folder": "Property",
+        "x-apidog-folder": "Property/Entity",
         "title": "FavoriteRoom",
         "description": "Phòng đã lưu / yêu thích của tenant",
         "allOf": [
@@ -1655,7 +1655,7 @@
       },
       "CreateBuildingRequest": {
         "type": "object",
-        "x-apidog-folder": "Request/Property",
+        "x-apidog-folder": "Property/Request",
         "title": "CreateBuildingRequest",
         "description": "Dữ liệu tạo tòa nhà",
         "additionalProperties": false,
@@ -1694,7 +1694,7 @@
       },
       "UpdateBuildingRequest": {
         "type": "object",
-        "x-apidog-folder": "Request/Property",
+        "x-apidog-folder": "Property/Request",
         "title": "UpdateBuildingRequest",
         "description": "Dữ liệu cập nhật một phần thông tin tòa nhà",
         "additionalProperties": false,
@@ -1716,7 +1716,7 @@
       },
       "ApproveBuildingRequest": {
         "type": "object",
-        "x-apidog-folder": "Request/Property",
+        "x-apidog-folder": "Property/Request",
         "title": "ApproveBuildingRequest",
         "description": "Ghi chú khi admin duyệt tòa nhà",
         "additionalProperties": false,
@@ -1734,7 +1734,7 @@
       },
       "RejectBuildingRequest": {
         "type": "object",
-        "x-apidog-folder": "Request/Property",
+        "x-apidog-folder": "Property/Request",
         "title": "RejectBuildingRequest",
         "description": "Lý do admin từ chối tòa nhà",
         "additionalProperties": false,
@@ -1752,7 +1752,7 @@
       },
       "PublicBuildingListResponse": {
         "type": "object",
-        "x-apidog-folder": "Response/Property",
+        "x-apidog-folder": "Property/Response",
         "title": "PublicBuildingListResponse",
         "description": "Danh sách tòa nhà công khai",
         "allOf": [
@@ -1871,7 +1871,7 @@
       },
       "MyBuildingListResponse": {
         "type": "object",
-        "x-apidog-folder": "Response/Property",
+        "x-apidog-folder": "Property/Response",
         "title": "MyBuildingListResponse",
         "description": "Danh sách tòa nhà của chủ nhà hiện tại",
         "allOf": [
@@ -1988,7 +1988,7 @@
       },
       "AdminBuildingListResponse": {
         "type": "object",
-        "x-apidog-folder": "Response/Property",
+        "x-apidog-folder": "Property/Response",
         "title": "AdminBuildingListResponse",
         "description": "Danh sách tòa nhà dành cho admin",
         "allOf": [
@@ -2106,7 +2106,7 @@
       },
       "CreateBuildingResponse": {
         "type": "object",
-        "x-apidog-folder": "Response/Property",
+        "x-apidog-folder": "Property/Response",
         "title": "CreateBuildingResponse",
         "description": "Phản hồi khi tạo tòa nhà thành công",
         "allOf": [
@@ -2166,7 +2166,7 @@
       },
       "PublicBuildingDetailResponse": {
         "type": "object",
-        "x-apidog-folder": "Response/Property",
+        "x-apidog-folder": "Property/Response",
         "title": "PublicBuildingDetailResponse",
         "description": "Chi tiết tòa nhà công khai",
         "allOf": [
@@ -2240,7 +2240,7 @@
       },
       "MyBuildingDetailResponse": {
         "type": "object",
-        "x-apidog-folder": "Response/Property",
+        "x-apidog-folder": "Property/Response",
         "title": "MyBuildingDetailResponse",
         "description": "Chi tiết tòa nhà của chủ nhà hiện tại",
         "allOf": [
@@ -2311,7 +2311,7 @@
       },
       "UpdateBuildingResponse": {
         "type": "object",
-        "x-apidog-folder": "Response/Property",
+        "x-apidog-folder": "Property/Response",
         "title": "UpdateBuildingResponse",
         "description": "Phản hồi khi cập nhật tòa nhà thành công",
         "allOf": [
@@ -2374,7 +2374,7 @@
       },
       "ApproveBuildingResponse": {
         "type": "object",
-        "x-apidog-folder": "Response/Property",
+        "x-apidog-folder": "Property/Response",
         "title": "ApproveBuildingResponse",
         "description": "Phản hồi khi duyệt tòa nhà thành công",
         "allOf": [
@@ -2429,7 +2429,7 @@
       },
       "RejectBuildingResponse": {
         "type": "object",
-        "x-apidog-folder": "Response/Property",
+        "x-apidog-folder": "Property/Response",
         "title": "RejectBuildingResponse",
         "description": "Phản hồi khi từ chối tòa nhà",
         "allOf": [
@@ -2490,7 +2490,7 @@
       },
       "AdminBuildingDetailResponse": {
         "type": "object",
-        "x-apidog-folder": "Response/Property",
+        "x-apidog-folder": "Property/Response",
         "title": "AdminBuildingDetailResponse",
         "description": "Chi tiết tòa nhà dành cho admin",
         "allOf": [
@@ -2577,7 +2577,7 @@
       },
       "CreateRoomRequest": {
         "type": "object",
-        "x-apidog-folder": "Request/Property",
+        "x-apidog-folder": "Property/Request",
         "title": "CreateRoomRequest",
         "description": "Dữ liệu tạo phòng",
         "additionalProperties": false,
@@ -2642,7 +2642,7 @@
       },
       "UpdateRoomRequest": {
         "type": "object",
-        "x-apidog-folder": "Request/Property",
+        "x-apidog-folder": "Property/Request",
         "title": "UpdateRoomRequest",
         "description": "Dữ liệu cập nhật một phần thông tin phòng",
         "additionalProperties": false,
@@ -2668,7 +2668,7 @@
       },
       "PublicRoomListResponse": {
         "type": "object",
-        "x-apidog-folder": "Response/Property",
+        "x-apidog-folder": "Property/Response",
         "title": "PublicRoomListResponse",
         "description": "Danh sách phòng công khai",
         "allOf": [
@@ -2793,7 +2793,7 @@
       },
       "MyRoomListResponse": {
         "type": "object",
-        "x-apidog-folder": "Response/Property",
+        "x-apidog-folder": "Property/Response",
         "title": "MyRoomListResponse",
         "description": "Danh sách phòng của chủ nhà hiện tại",
         "allOf": [
@@ -2907,7 +2907,7 @@
       },
       "CreateRoomResponse": {
         "type": "object",
-        "x-apidog-folder": "Response/Property",
+        "x-apidog-folder": "Property/Response",
         "title": "CreateRoomResponse",
         "description": "Phản hồi khi tạo phòng thành công",
         "allOf": [
@@ -2971,7 +2971,7 @@
       },
       "RoomDetailResponse": {
         "type": "object",
-        "x-apidog-folder": "Response/Property",
+        "x-apidog-folder": "Property/Response",
         "title": "RoomDetailResponse",
         "description": "Chi tiết phòng",
         "allOf": [
@@ -3063,7 +3063,7 @@
       },
       "UpdateRoomResponse": {
         "type": "object",
-        "x-apidog-folder": "Response/Property",
+        "x-apidog-folder": "Property/Response",
         "title": "UpdateRoomResponse",
         "description": "Phản hồi khi cập nhật phòng thành công",
         "allOf": [
@@ -3120,7 +3120,7 @@
       },
       "MarkRoomReadyResponse": {
         "type": "object",
-        "x-apidog-folder": "Response/Property",
+        "x-apidog-folder": "Property/Response",
         "title": "MarkRoomReadyResponse",
         "description": "Phản hồi khi đánh dấu phòng sẵn sàng",
         "allOf": [
@@ -3170,7 +3170,7 @@
       },
       "FavoriteRoomRequest": {
         "type": "object",
-        "x-apidog-folder": "Request/Property",
+        "x-apidog-folder": "Property/Request",
         "title": "FavoriteRoomRequest",
         "description": "Dữ liệu lưu một phòng yêu thích",
         "additionalProperties": false,
@@ -3188,7 +3188,7 @@
       },
       "FavoriteRoomListResponse": {
         "type": "object",
-        "x-apidog-folder": "Response/Property",
+        "x-apidog-folder": "Property/Response",
         "title": "FavoriteRoomListResponse",
         "description": "Danh sách phòng đã lưu của tenant hiện tại",
         "allOf": [
@@ -3294,7 +3294,7 @@
       },
       "FavoriteRoomResponse": {
         "type": "object",
-        "x-apidog-folder": "Response/Property",
+        "x-apidog-folder": "Property/Response",
         "title": "FavoriteRoomResponse",
         "description": "Phản hồi khi lưu phòng yêu thích thành công",
         "allOf": [
@@ -3342,7 +3342,7 @@
       },
       "SaveRoommateProfileRequest": {
         "type": "object",
-        "x-apidog-folder": "Request/User",
+        "x-apidog-folder": "User/Request",
         "title": "SaveRoommateProfileRequest",
         "description": "Dữ liệu đầy đủ để tạo hoặc cập nhật hồ sơ tìm bạn ở ghép",
         "additionalProperties": false,
@@ -3411,7 +3411,7 @@
       },
       "RoommateProfileListResponse": {
         "type": "object",
-        "x-apidog-folder": "Response/User",
+        "x-apidog-folder": "User/Response",
         "title": "RoommateProfileListResponse",
         "description": "Danh sách hồ sơ tìm bạn ở ghép",
         "allOf": [
@@ -3527,7 +3527,7 @@
       },
       "RoommateProfileDetailResponse": {
         "type": "object",
-        "x-apidog-folder": "Response/User",
+        "x-apidog-folder": "User/Response",
         "title": "RoommateProfileDetailResponse",
         "description": "Chi tiết hồ sơ tìm bạn ở ghép của người khác",
         "allOf": [
@@ -3597,7 +3597,7 @@
       },
       "MyRoommateProfileResponse": {
         "type": "object",
-        "x-apidog-folder": "Response/User",
+        "x-apidog-folder": "User/Response",
         "title": "MyRoommateProfileResponse",
         "description": "Hồ sơ tìm bạn ở ghép của chính tenant hiện tại",
         "allOf": [
@@ -3659,7 +3659,7 @@
       },
       "SaveRoommateProfileResponse": {
         "type": "object",
-        "x-apidog-folder": "Response/User",
+        "x-apidog-folder": "User/Response",
         "title": "SaveRoommateProfileResponse",
         "description": "Phản hồi khi lưu hồ sơ tìm bạn ở ghép thành công",
         "allOf": [
@@ -3705,7 +3705,7 @@
       },
       "ContractTemplateListResponse": {
         "type": "object",
-        "x-apidog-folder": "Response/Contract",
+        "x-apidog-folder": "Contract/Response",
         "title": "ContractTemplateListResponse",
         "description": "Danh sách mẫu hợp đồng",
         "allOf": [
@@ -3807,7 +3807,7 @@
       },
       "ContractTemplateDetailResponse": {
         "type": "object",
-        "x-apidog-folder": "Response/Contract",
+        "x-apidog-folder": "Contract/Response",
         "title": "ContractTemplateDetailResponse",
         "description": "Chi tiết mẫu hợp đồng",
         "allOf": [
@@ -3863,7 +3863,7 @@
       },
       "CreateContractRequest": {
         "type": "object",
-        "x-apidog-folder": "Request/Contract",
+        "x-apidog-folder": "Contract/Request",
         "title": "CreateContractRequest",
         "description": "Dữ liệu tạo hợp đồng nháp",
         "additionalProperties": false,
@@ -3926,7 +3926,7 @@
       },
       "UpdateContractRequest": {
         "type": "object",
-        "x-apidog-folder": "Request/Contract",
+        "x-apidog-folder": "Contract/Request",
         "title": "UpdateContractRequest",
         "description": "Dữ liệu cập nhật hợp đồng nháp",
         "additionalProperties": false,
@@ -3944,7 +3944,7 @@
       },
       "ApplyContractTemplateRequest": {
         "type": "object",
-        "x-apidog-folder": "Request/Contract",
+        "x-apidog-folder": "Contract/Request",
         "title": "ApplyContractTemplateRequest",
         "description": "Dữ liệu áp dụng mẫu hợp đồng",
         "additionalProperties": false,
@@ -3959,7 +3959,7 @@
       },
       "GenerateContractDraftRequest": {
         "type": "object",
-        "x-apidog-folder": "Request/Contract",
+        "x-apidog-folder": "Contract/Request",
         "title": "GenerateContractDraftRequest",
         "description": "Dữ liệu sinh tài liệu hợp đồng nháp",
         "additionalProperties": false,
@@ -3974,7 +3974,7 @@
       },
       "ActivateContractRequest": {
         "type": "object",
-        "x-apidog-folder": "Request/Contract",
+        "x-apidog-folder": "Contract/Request",
         "title": "ActivateContractRequest",
         "description": "Dữ liệu kích hoạt hợp đồng",
         "additionalProperties": false,
@@ -3990,7 +3990,7 @@
       },
       "CompleteContractCheckoutRequest": {
         "type": "object",
-        "x-apidog-folder": "Request/Contract",
+        "x-apidog-folder": "Contract/Request",
         "title": "CompleteContractCheckoutRequest",
         "description": "Dữ liệu hoàn tất trả phòng",
         "additionalProperties": false,
@@ -4006,7 +4006,7 @@
       },
       "MyContractListResponse": {
         "type": "object",
-        "x-apidog-folder": "Response/Contract",
+        "x-apidog-folder": "Contract/Response",
         "title": "MyContractListResponse",
         "description": "Danh sách hợp đồng của tenant hiện tại",
         "allOf": [
@@ -4128,7 +4128,7 @@
       },
       "ContractListResponse": {
         "type": "object",
-        "x-apidog-folder": "Response/Contract",
+        "x-apidog-folder": "Contract/Response",
         "title": "ContractListResponse",
         "description": "Danh sách hợp đồng",
         "allOf": [
@@ -4250,7 +4250,7 @@
       },
       "CreateContractResponse": {
         "type": "object",
-        "x-apidog-folder": "Response/Contract",
+        "x-apidog-folder": "Contract/Response",
         "title": "CreateContractResponse",
         "description": "Phản hồi khi tạo hợp đồng nháp",
         "allOf": [
@@ -4311,7 +4311,7 @@
       },
       "ContractDetailResponse": {
         "type": "object",
-        "x-apidog-folder": "Response/Contract",
+        "x-apidog-folder": "Contract/Response",
         "title": "ContractDetailResponse",
         "description": "Chi tiết hợp đồng",
         "allOf": [
@@ -4417,7 +4417,7 @@
       },
       "UpdateContractResponse": {
         "type": "object",
-        "x-apidog-folder": "Response/Contract",
+        "x-apidog-folder": "Contract/Response",
         "title": "UpdateContractResponse",
         "description": "Phản hồi khi cập nhật hợp đồng nháp",
         "allOf": [
@@ -4474,7 +4474,7 @@
       },
       "ApplyContractTemplateResponse": {
         "type": "object",
-        "x-apidog-folder": "Response/Contract",
+        "x-apidog-folder": "Contract/Response",
         "title": "ApplyContractTemplateResponse",
         "description": "Phản hồi khi áp dụng mẫu hợp đồng",
         "allOf": [
@@ -4528,7 +4528,7 @@
       },
       "GenerateContractDraftResponse": {
         "type": "object",
-        "x-apidog-folder": "Response/Contract",
+        "x-apidog-folder": "Contract/Response",
         "title": "GenerateContractDraftResponse",
         "description": "Phản hồi khi sinh tài liệu hợp đồng nháp",
         "allOf": [
@@ -4583,7 +4583,7 @@
       },
       "ActivateContractResponse": {
         "type": "object",
-        "x-apidog-folder": "Response/Contract",
+        "x-apidog-folder": "Contract/Response",
         "title": "ActivateContractResponse",
         "description": "Phản hồi khi kích hoạt hợp đồng",
         "allOf": [
@@ -4638,7 +4638,7 @@
       },
       "CompleteContractCheckoutResponse": {
         "type": "object",
-        "x-apidog-folder": "Response/Contract",
+        "x-apidog-folder": "Contract/Response",
         "title": "CompleteContractCheckoutResponse",
         "description": "Phản hồi khi hoàn tất trả phòng",
         "allOf": [
@@ -4693,7 +4693,7 @@
       },
       "PreviewOcrMeterReadingRequest": {
         "type": "object",
-        "x-apidog-folder": "Request/Billing",
+        "x-apidog-folder": "Billing/Request",
         "title": "PreviewOcrMeterReadingRequest",
         "description": "Dữ liệu xem trước kết quả OCR chỉ số",
         "additionalProperties": false,
@@ -4722,7 +4722,7 @@
       },
       "CreateMeterReadingRequest": {
         "type": "object",
-        "x-apidog-folder": "Request/Billing",
+        "x-apidog-folder": "Billing/Request",
         "title": "CreateMeterReadingRequest",
         "description": "Dữ liệu tạo chỉ số công tơ đã xác nhận",
         "additionalProperties": false,
@@ -4776,7 +4776,7 @@
       },
       "MeterReadingListResponse": {
         "type": "object",
-        "x-apidog-folder": "Response/Billing",
+        "x-apidog-folder": "Billing/Response",
         "title": "MeterReadingListResponse",
         "description": "Danh sách chỉ số công tơ",
         "allOf": [
@@ -4909,7 +4909,7 @@
       },
       "PreviewOcrMeterReadingResponse": {
         "type": "object",
-        "x-apidog-folder": "Response/Billing",
+        "x-apidog-folder": "Billing/Response",
         "title": "PreviewOcrMeterReadingResponse",
         "description": "Kết quả xem trước OCR chỉ số",
         "allOf": [
@@ -4966,7 +4966,7 @@
       },
       "CreateMeterReadingResponse": {
         "type": "object",
-        "x-apidog-folder": "Response/Billing",
+        "x-apidog-folder": "Billing/Response",
         "title": "CreateMeterReadingResponse",
         "description": "Phản hồi khi tạo chỉ số công tơ",
         "allOf": [
@@ -5030,7 +5030,7 @@
       },
       "CreateSettlementInvoiceRequest": {
         "type": "object",
-        "x-apidog-folder": "Request/Billing",
+        "x-apidog-folder": "Billing/Request",
         "title": "CreateSettlementInvoiceRequest",
         "description": "Dữ liệu tạo hóa đơn quyết toán",
         "additionalProperties": false,
@@ -5078,7 +5078,7 @@
       },
       "UpdateInvoiceRequest": {
         "type": "object",
-        "x-apidog-folder": "Request/Billing",
+        "x-apidog-folder": "Billing/Request",
         "title": "UpdateInvoiceRequest",
         "description": "Dữ liệu cập nhật hóa đơn đang pending",
         "additionalProperties": false,
@@ -5110,7 +5110,7 @@
       },
       "IssueInvoicesRequest": {
         "type": "object",
-        "x-apidog-folder": "Request/Billing",
+        "x-apidog-folder": "Billing/Request",
         "title": "IssueInvoicesRequest",
         "description": "Dữ liệu phát hành hàng loạt hóa đơn",
         "additionalProperties": false,
@@ -5135,7 +5135,7 @@
       },
       "CancelInvoiceRequest": {
         "type": "object",
-        "x-apidog-folder": "Request/Billing",
+        "x-apidog-folder": "Billing/Request",
         "title": "CancelInvoiceRequest",
         "description": "Lý do hủy hóa đơn",
         "additionalProperties": false,
@@ -5150,7 +5150,7 @@
       },
       "SendInvoiceRemindersRequest": {
         "type": "object",
-        "x-apidog-folder": "Request/Billing",
+        "x-apidog-folder": "Billing/Request",
         "title": "SendInvoiceRemindersRequest",
         "description": "Dữ liệu xếp hàng nhắc thanh toán hóa đơn",
         "additionalProperties": false,
@@ -5176,7 +5176,7 @@
       },
       "MyInvoiceListResponse": {
         "type": "object",
-        "x-apidog-folder": "Response/Billing",
+        "x-apidog-folder": "Billing/Response",
         "title": "MyInvoiceListResponse",
         "description": "Danh sách hóa đơn của tenant hiện tại",
         "allOf": [
@@ -5307,7 +5307,7 @@
       },
       "InvoiceListResponse": {
         "type": "object",
-        "x-apidog-folder": "Response/Billing",
+        "x-apidog-folder": "Billing/Response",
         "title": "InvoiceListResponse",
         "description": "Danh sách hóa đơn",
         "allOf": [
@@ -5438,7 +5438,7 @@
       },
       "CreateSettlementInvoiceResponse": {
         "type": "object",
-        "x-apidog-folder": "Response/Billing",
+        "x-apidog-folder": "Billing/Response",
         "title": "CreateSettlementInvoiceResponse",
         "description": "Phản hồi khi tạo hóa đơn quyết toán",
         "allOf": [
@@ -5536,7 +5536,7 @@
       },
       "InvoiceDetailResponse": {
         "type": "object",
-        "x-apidog-folder": "Response/Billing",
+        "x-apidog-folder": "Billing/Response",
         "title": "InvoiceDetailResponse",
         "description": "Chi tiết hóa đơn và tổng hợp thanh toán",
         "allOf": [
@@ -5640,7 +5640,7 @@
       },
       "UpdateInvoiceResponse": {
         "type": "object",
-        "x-apidog-folder": "Response/Billing",
+        "x-apidog-folder": "Billing/Response",
         "title": "UpdateInvoiceResponse",
         "description": "Phản hồi khi cập nhật hóa đơn",
         "allOf": [
@@ -5695,7 +5695,7 @@
       },
       "IssueInvoicesResponse": {
         "type": "object",
-        "x-apidog-folder": "Response/Billing",
+        "x-apidog-folder": "Billing/Response",
         "title": "IssueInvoicesResponse",
         "description": "Kết quả phát hành hàng loạt hóa đơn",
         "allOf": [
@@ -5792,7 +5792,7 @@
       },
       "CancelInvoiceResponse": {
         "type": "object",
-        "x-apidog-folder": "Response/Billing",
+        "x-apidog-folder": "Billing/Response",
         "title": "CancelInvoiceResponse",
         "description": "Phản hồi khi hủy hóa đơn",
         "allOf": [
@@ -5846,7 +5846,7 @@
       },
       "SendInvoiceRemindersResponse": {
         "type": "object",
-        "x-apidog-folder": "Response/Billing",
+        "x-apidog-folder": "Billing/Response",
         "title": "SendInvoiceRemindersResponse",
         "description": "Kết quả xếp hàng nhắc thanh toán hóa đơn",
         "allOf": [
@@ -5929,7 +5929,7 @@
       },
       "CreatePaymentIntentRequest": {
         "type": "object",
-        "x-apidog-folder": "Request/Billing",
+        "x-apidog-folder": "Billing/Request",
         "title": "CreatePaymentIntentRequest",
         "description": "Dữ liệu tạo yêu cầu thanh toán",
         "additionalProperties": false,
@@ -5956,7 +5956,7 @@
       },
       "RecordCashPaymentRequest": {
         "type": "object",
-        "x-apidog-folder": "Request/Billing",
+        "x-apidog-folder": "Billing/Request",
         "title": "RecordCashPaymentRequest",
         "description": "Dữ liệu ghi nhận thanh toán tiền mặt",
         "additionalProperties": false,
@@ -5986,7 +5986,7 @@
       },
       "PaymentWebhookRequest": {
         "type": "object",
-        "x-apidog-folder": "Request/Billing",
+        "x-apidog-folder": "Billing/Request",
         "title": "PaymentWebhookRequest",
         "description": "Signed payload generic từ payment provider",
         "additionalProperties": false,
@@ -6014,7 +6014,7 @@
       },
       "MyPaymentListResponse": {
         "type": "object",
-        "x-apidog-folder": "Response/Billing",
+        "x-apidog-folder": "Billing/Response",
         "title": "MyPaymentListResponse",
         "description": "Danh sách thanh toán của người dùng hiện tại",
         "allOf": [
@@ -6147,7 +6147,7 @@
       },
       "PaymentListResponse": {
         "type": "object",
-        "x-apidog-folder": "Response/Billing",
+        "x-apidog-folder": "Billing/Response",
         "title": "PaymentListResponse",
         "description": "Danh sách thanh toán",
         "allOf": [
@@ -6280,7 +6280,7 @@
       },
       "CreatePaymentIntentResponse": {
         "type": "object",
-        "x-apidog-folder": "Response/Billing",
+        "x-apidog-folder": "Billing/Response",
         "title": "CreatePaymentIntentResponse",
         "description": "Phản hồi khi tạo payment intent",
         "allOf": [
@@ -6346,7 +6346,7 @@
       },
       "RecordCashPaymentResponse": {
         "type": "object",
-        "x-apidog-folder": "Response/Billing",
+        "x-apidog-folder": "Billing/Response",
         "title": "RecordCashPaymentResponse",
         "description": "Phản hồi khi ghi nhận thanh toán tiền mặt",
         "allOf": [
@@ -6430,7 +6430,7 @@
       },
       "CreateIssueRequest": {
         "type": "object",
-        "x-apidog-folder": "Request/Operation",
+        "x-apidog-folder": "Operation/Request",
         "title": "CreateIssueRequest",
         "description": "Dữ liệu tạo báo cáo sự cố",
         "additionalProperties": false,
@@ -6467,7 +6467,7 @@
       },
       "UpdateIssueRequest": {
         "type": "object",
-        "x-apidog-folder": "Request/Operation",
+        "x-apidog-folder": "Operation/Request",
         "title": "UpdateIssueRequest",
         "description": "Dữ liệu cập nhật một phần báo cáo sự cố",
         "additionalProperties": false,
@@ -6492,7 +6492,7 @@
       },
       "MyIssueListResponse": {
         "type": "object",
-        "x-apidog-folder": "Response/Operation",
+        "x-apidog-folder": "Operation/Response",
         "title": "MyIssueListResponse",
         "description": "Danh sách sự cố của người dùng hiện tại",
         "allOf": [
@@ -6615,7 +6615,7 @@
       },
       "IssueListResponse": {
         "type": "object",
-        "x-apidog-folder": "Response/Operation",
+        "x-apidog-folder": "Operation/Response",
         "title": "IssueListResponse",
         "description": "Danh sách báo cáo sự cố",
         "allOf": [
@@ -6738,7 +6738,7 @@
       },
       "CreateIssueResponse": {
         "type": "object",
-        "x-apidog-folder": "Response/Operation",
+        "x-apidog-folder": "Operation/Response",
         "title": "CreateIssueResponse",
         "description": "Phản hồi khi tạo báo cáo sự cố",
         "allOf": [
@@ -6794,7 +6794,7 @@
       },
       "IssueDetailResponse": {
         "type": "object",
-        "x-apidog-folder": "Response/Operation",
+        "x-apidog-folder": "Operation/Response",
         "title": "IssueDetailResponse",
         "description": "Chi tiết báo cáo sự cố",
         "allOf": [
@@ -6891,7 +6891,7 @@
       },
       "UpdateIssueResponse": {
         "type": "object",
-        "x-apidog-folder": "Response/Operation",
+        "x-apidog-folder": "Operation/Response",
         "title": "UpdateIssueResponse",
         "description": "Phản hồi khi cập nhật báo cáo sự cố",
         "allOf": [
@@ -6949,7 +6949,7 @@
       },
       "CancelIssueResponse": {
         "type": "object",
-        "x-apidog-folder": "Response/Operation",
+        "x-apidog-folder": "Operation/Response",
         "title": "CancelIssueResponse",
         "description": "Phản hồi khi hủy báo cáo sự cố",
         "allOf": [
@@ -7029,12 +7029,12 @@
             ]
           }
         ],
-        "x-apidog-folder": "Request/Chat",
+        "x-apidog-folder": "Chat/Request",
         "description": "Exactly one contractId or buildingId is required"
       },
       "ConversationListResponse": {
         "type": "object",
-        "x-apidog-folder": "Response/Chat",
+        "x-apidog-folder": "Chat/Response",
         "title": "ConversationListResponse",
         "description": "Danh sách cuộc hội thoại",
         "allOf": [
@@ -7150,7 +7150,7 @@
       },
       "ConversationDetailResponse": {
         "type": "object",
-        "x-apidog-folder": "Response/Chat",
+        "x-apidog-folder": "Chat/Response",
         "title": "ConversationDetailResponse",
         "description": "Chi tiết cuộc hội thoại",
         "allOf": [
@@ -7225,7 +7225,7 @@
       },
       "ResolveConversationResponse": {
         "type": "object",
-        "x-apidog-folder": "Response/Chat",
+        "x-apidog-folder": "Chat/Response",
         "title": "ResolveConversationResponse",
         "description": "Phản hồi resolve cuộc hội thoại",
         "allOf": [
@@ -7282,7 +7282,7 @@
       },
       "SendMessageRequest": {
         "type": "object",
-        "x-apidog-folder": "Request/Chat",
+        "x-apidog-folder": "Chat/Request",
         "title": "SendMessageRequest",
         "description": "Dữ liệu gửi tin nhắn",
         "additionalProperties": false,
@@ -7319,7 +7319,7 @@
       },
       "MarkMessagesReadRequest": {
         "type": "object",
-        "x-apidog-folder": "Request/Chat",
+        "x-apidog-folder": "Chat/Request",
         "title": "MarkMessagesReadRequest",
         "description": "Dữ liệu cập nhật con trỏ đã đọc",
         "additionalProperties": false,
@@ -7340,7 +7340,7 @@
       },
       "MessageListResponse": {
         "type": "object",
-        "x-apidog-folder": "Response/Chat",
+        "x-apidog-folder": "Chat/Response",
         "title": "MessageListResponse",
         "description": "Danh sách tin nhắn theo cursor",
         "allOf": [
@@ -7446,7 +7446,7 @@
       },
       "SendMessageResponse": {
         "type": "object",
-        "x-apidog-folder": "Response/Chat",
+        "x-apidog-folder": "Chat/Response",
         "title": "SendMessageResponse",
         "description": "Phản hồi khi gửi tin nhắn",
         "allOf": [
@@ -7513,7 +7513,7 @@
       },
       "MarkMessagesReadResponse": {
         "type": "object",
-        "x-apidog-folder": "Response/Chat",
+        "x-apidog-folder": "Chat/Response",
         "title": "MarkMessagesReadResponse",
         "description": "Phản hồi khi đánh dấu tin nhắn đã đọc",
         "allOf": [
@@ -7560,7 +7560,7 @@
       },
       "NotificationListResponse": {
         "type": "object",
-        "x-apidog-folder": "Response/Notification",
+        "x-apidog-folder": "Notification/Response",
         "title": "NotificationListResponse",
         "description": "Danh sách thông báo theo cursor",
         "allOf": [
@@ -7652,7 +7652,7 @@
       },
       "MarkNotificationReadResponse": {
         "type": "object",
-        "x-apidog-folder": "Response/Notification",
+        "x-apidog-folder": "Notification/Response",
         "title": "MarkNotificationReadResponse",
         "description": "Phản hồi khi đánh dấu một thông báo đã đọc",
         "allOf": [
@@ -7699,7 +7699,7 @@
       },
       "MarkAllNotificationsReadResponse": {
         "type": "object",
-        "x-apidog-folder": "Response/Notification",
+        "x-apidog-folder": "Notification/Response",
         "title": "MarkAllNotificationsReadResponse",
         "description": "Phản hồi khi đánh dấu toàn bộ thông báo đã đọc",
         "allOf": [
@@ -7741,7 +7741,7 @@
       },
       "UpdateNotificationPreferenceRequest": {
         "type": "object",
-        "x-apidog-folder": "Request/Notification",
+        "x-apidog-folder": "Notification/Request",
         "title": "UpdateNotificationPreferenceRequest",
         "description": "Dữ liệu thay đổi tùy biến thông báo",
         "additionalProperties": false,
@@ -7779,7 +7779,7 @@
       },
       "NotificationPreferenceResponse": {
         "type": "object",
-        "x-apidog-folder": "Response/Notification",
+        "x-apidog-folder": "Notification/Response",
         "title": "NotificationPreferenceResponse",
         "description": "Danh sách tùy biến thông báo của người dùng hiện tại",
         "allOf": [
@@ -7834,7 +7834,7 @@
       },
       "UpdateNotificationPreferenceResponse": {
         "type": "object",
-        "x-apidog-folder": "Response/Notification",
+        "x-apidog-folder": "Notification/Response",
         "title": "UpdateNotificationPreferenceResponse",
         "description": "Phản hồi khi cập nhật tùy biến thông báo",
         "allOf": [
@@ -7876,7 +7876,7 @@
       },
       "AuditLogListResponse": {
         "type": "object",
-        "x-apidog-folder": "Response/Operation",
+        "x-apidog-folder": "Operation/Response",
         "title": "AuditLogListResponse",
         "description": "Danh sách nhật ký kiểm toán",
         "allOf": [
@@ -8000,7 +8000,7 @@
       },
       "AuditLogDetailResponse": {
         "type": "object",
-        "x-apidog-folder": "Response/Operation",
+        "x-apidog-folder": "Operation/Response",
         "title": "AuditLogDetailResponse",
         "description": "Chi tiết nhật ký kiểm toán",
         "allOf": [
@@ -8070,7 +8070,7 @@
       },
       "DashboardResponse": {
         "type": "object",
-        "x-apidog-folder": "Response/Operation",
+        "x-apidog-folder": "Operation/Response",
         "title": "DashboardResponse",
         "description": "Số liệu tổng hợp dashboard",
         "allOf": [
@@ -8146,7 +8146,7 @@
       },
       "AddContractMemberRequest": {
         "type": "object",
-        "x-apidog-folder": "Request/Contract",
+        "x-apidog-folder": "Contract/Request",
         "title": "AddContractMemberRequest",
         "description": "Dữ liệu thêm thành viên vào hợp đồng",
         "additionalProperties": false,
@@ -8188,7 +8188,7 @@
       },
       "UpdateContractMemberRequest": {
         "type": "object",
-        "x-apidog-folder": "Request/Contract",
+        "x-apidog-folder": "Contract/Request",
         "title": "UpdateContractMemberRequest",
         "description": "Dữ liệu cập nhật số điện thoại thành viên hợp đồng",
         "additionalProperties": false,
@@ -8206,7 +8206,7 @@
       },
       "LeaveContractMemberRequest": {
         "type": "object",
-        "x-apidog-folder": "Request/Contract",
+        "x-apidog-folder": "Contract/Request",
         "title": "LeaveContractMemberRequest",
         "description": "Dữ liệu ghi nhận thành viên rời hợp đồng",
         "additionalProperties": false,
@@ -8222,7 +8222,7 @@
       },
       "AddContractMemberResponse": {
         "type": "object",
-        "x-apidog-folder": "Response/Contract",
+        "x-apidog-folder": "Contract/Response",
         "title": "AddContractMemberResponse",
         "description": "Phản hồi khi thêm thành viên hợp đồng",
         "allOf": [
@@ -8286,7 +8286,7 @@
       },
       "UpdateContractMemberResponse": {
         "type": "object",
-        "x-apidog-folder": "Response/Contract",
+        "x-apidog-folder": "Contract/Response",
         "title": "UpdateContractMemberResponse",
         "description": "Phản hồi khi cập nhật thành viên hợp đồng",
         "allOf": [
@@ -8335,7 +8335,7 @@
       },
       "LeaveContractMemberResponse": {
         "type": "object",
-        "x-apidog-folder": "Response/Contract",
+        "x-apidog-folder": "Contract/Response",
         "title": "LeaveContractMemberResponse",
         "description": "Phản hồi khi thành viên rời hợp đồng",
         "allOf": [
@@ -8382,7 +8382,7 @@
       },
       "ContractMemberListResponse": {
         "type": "object",
-        "x-apidog-folder": "Response/Contract",
+        "x-apidog-folder": "Contract/Response",
         "title": "ContractMemberListResponse",
         "description": "Danh sách thành viên hợp đồng",
         "allOf": [
@@ -8500,7 +8500,7 @@
       },
       "CreateMatchRequest": {
         "type": "object",
-        "x-apidog-folder": "Request/Matching",
+        "x-apidog-folder": "Matching/Request",
         "title": "CreateMatchRequest",
         "description": "Dữ liệu gửi yêu cầu kết nối tìm bạn ở ghép",
         "additionalProperties": false,
@@ -8518,7 +8518,7 @@
       },
       "MatchRequestListResponse": {
         "type": "object",
-        "x-apidog-folder": "Response/Matching",
+        "x-apidog-folder": "Matching/Response",
         "title": "MatchRequestListResponse",
         "description": "Danh sách yêu cầu kết nối tìm bạn ở ghép",
         "allOf": [
@@ -8638,7 +8638,7 @@
       },
       "CreateMatchRequestResponse": {
         "type": "object",
-        "x-apidog-folder": "Response/Matching",
+        "x-apidog-folder": "Matching/Response",
         "title": "CreateMatchRequestResponse",
         "description": "Phản hồi khi tạo yêu cầu kết nối",
         "allOf": [
@@ -8694,7 +8694,7 @@
       },
       "AcceptMatchRequestResponse": {
         "type": "object",
-        "x-apidog-folder": "Response/Matching",
+        "x-apidog-folder": "Matching/Response",
         "title": "AcceptMatchRequestResponse",
         "description": "Phản hồi khi chấp nhận yêu cầu kết nối",
         "allOf": [
@@ -8749,7 +8749,7 @@
       },
       "RejectMatchRequestResponse": {
         "type": "object",
-        "x-apidog-folder": "Response/Matching",
+        "x-apidog-folder": "Matching/Response",
         "title": "RejectMatchRequestResponse",
         "description": "Phản hồi khi từ chối yêu cầu kết nối",
         "allOf": [
@@ -8799,7 +8799,7 @@
       },
       "WithdrawMatchRequestResponse": {
         "type": "object",
-        "x-apidog-folder": "Response/Matching",
+        "x-apidog-folder": "Matching/Response",
         "title": "WithdrawMatchRequestResponse",
         "description": "Phản hồi khi rút yêu cầu kết nối",
         "allOf": [
@@ -8854,7 +8854,7 @@
       },
       "CreateRatePolicyRequest": {
         "type": "object",
-        "x-apidog-folder": "Request/Billing",
+        "x-apidog-folder": "Billing/Request",
         "title": "CreateRatePolicyRequest",
         "description": "Dữ liệu tạo chính sách đơn giá",
         "additionalProperties": false,
@@ -8940,7 +8940,7 @@
       },
       "UpdateRatePolicyRequest": {
         "type": "object",
-        "x-apidog-folder": "Request/Billing",
+        "x-apidog-folder": "Billing/Request",
         "title": "UpdateRatePolicyRequest",
         "description": "Dữ liệu cập nhật một phần tên chính sách đơn giá",
         "additionalProperties": false,
@@ -8954,7 +8954,7 @@
       },
       "RatePolicyListResponse": {
         "type": "object",
-        "x-apidog-folder": "Response/Billing",
+        "x-apidog-folder": "Billing/Response",
         "title": "RatePolicyListResponse",
         "description": "Danh sách chính sách đơn giá",
         "allOf": [
@@ -9097,7 +9097,7 @@
       },
       "CreateRatePolicyResponse": {
         "type": "object",
-        "x-apidog-folder": "Response/Billing",
+        "x-apidog-folder": "Billing/Response",
         "title": "CreateRatePolicyResponse",
         "description": "Phản hồi khi tạo chính sách đơn giá",
         "allOf": [
@@ -9180,7 +9180,7 @@
       },
       "UpdateRatePolicyResponse": {
         "type": "object",
-        "x-apidog-folder": "Response/Billing",
+        "x-apidog-folder": "Billing/Response",
         "title": "UpdateRatePolicyResponse",
         "description": "Phản hồi khi cập nhật chính sách đơn giá",
         "allOf": [
@@ -9226,7 +9226,7 @@
       },
       "DeactivateRatePolicyResponse": {
         "type": "object",
-        "x-apidog-folder": "Response/Billing",
+        "x-apidog-folder": "Billing/Response",
         "title": "DeactivateRatePolicyResponse",
         "description": "Phản hồi khi vô hiệu hóa chính sách đơn giá",
         "allOf": [
@@ -9276,7 +9276,7 @@
       },
       "CreateBillingSettingRequest": {
         "type": "object",
-        "x-apidog-folder": "Request/Billing",
+        "x-apidog-folder": "Billing/Request",
         "title": "CreateBillingSettingRequest",
         "description": "Dữ liệu tạo cấu hình billing",
         "additionalProperties": false,
@@ -9322,7 +9322,7 @@
       },
       "UpdateBillingSettingRequest": {
         "type": "object",
-        "x-apidog-folder": "Request/Billing",
+        "x-apidog-folder": "Billing/Request",
         "title": "UpdateBillingSettingRequest",
         "description": "Dữ liệu cập nhật một phần cấu hình billing",
         "additionalProperties": false,
@@ -9346,7 +9346,7 @@
       },
       "BillingSettingListResponse": {
         "type": "object",
-        "x-apidog-folder": "Response/Billing",
+        "x-apidog-folder": "Billing/Response",
         "title": "BillingSettingListResponse",
         "description": "Danh sách cấu hình billing",
         "allOf": [
@@ -9476,7 +9476,7 @@
       },
       "CreateBillingSettingResponse": {
         "type": "object",
-        "x-apidog-folder": "Response/Billing",
+        "x-apidog-folder": "Billing/Response",
         "title": "CreateBillingSettingResponse",
         "description": "Phản hồi khi tạo cấu hình billing",
         "allOf": [
@@ -9535,7 +9535,7 @@
       },
       "UpdateBillingSettingResponse": {
         "type": "object",
-        "x-apidog-folder": "Response/Billing",
+        "x-apidog-folder": "Billing/Response",
         "title": "UpdateBillingSettingResponse",
         "description": "Phản hồi khi cập nhật cấu hình billing",
         "allOf": [
@@ -9594,7 +9594,7 @@
       },
       "Contract": {
         "type": "object",
-        "x-apidog-folder": "Contract",
+        "x-apidog-folder": "Contract/Entity",
         "title": "Contract",
         "description": "Hợp đồng thuê phòng giữa chủ nhà và người thuê",
         "allOf": [
@@ -9708,7 +9708,7 @@
       },
       "ContractMember": {
         "type": "object",
-        "x-apidog-folder": "Contract",
+        "x-apidog-folder": "Contract/Entity",
         "title": "ContractMember",
         "description": "Thành viên ở cùng / ở ghép trong hợp đồng thuê phòng",
         "allOf": [
@@ -9771,7 +9771,7 @@
       },
       "RatePolicy": {
         "type": "object",
-        "x-apidog-folder": "Billing",
+        "x-apidog-folder": "Billing/Entity",
         "title": "RatePolicy",
         "description": "Bộ chính sách đơn giá dịch vụ và phí định kỳ (1 bộ áp dụng theo scope building hoặc room - D39)",
         "allOf": [
@@ -9916,7 +9916,7 @@
       },
       "BillingSetting": {
         "type": "object",
-        "x-apidog-folder": "Billing",
+        "x-apidog-folder": "Billing/Entity",
         "title": "BillingSetting",
         "description": "Cấu hình ngày thu dự kiến và nhắc nộp tiền (D39 - chỉ hiển thị, không sinh overdue tự động)",
         "allOf": [
@@ -9996,7 +9996,7 @@
       },
       "MeterReading": {
         "type": "object",
-        "x-apidog-folder": "Billing",
+        "x-apidog-folder": "Billing/Entity",
         "title": "MeterReading",
         "description": "Bản ghi chỉ số công tơ điện hoặc đồng hồ nước theo từng kỳ phòng",
         "allOf": [
@@ -10067,7 +10067,7 @@
       },
       "Invoice": {
         "type": "object",
-        "x-apidog-folder": "Billing",
+        "x-apidog-folder": "Billing/Entity",
         "title": "Invoice",
         "description": "Hóa đơn tiền phòng và chi phí dịch vụ theo từng kỳ",
         "allOf": [
@@ -10223,7 +10223,7 @@
       },
       "Payment": {
         "type": "object",
-        "x-apidog-folder": "Billing",
+        "x-apidog-folder": "Billing/Entity",
         "title": "Payment",
         "description": "Giao dịch thanh toán tiền phòng, dịch vụ hoặc trả cọc (D39)",
         "allOf": [
@@ -10303,7 +10303,7 @@
       },
       "IssueReport": {
         "type": "object",
-        "x-apidog-folder": "Operation",
+        "x-apidog-folder": "Operation/Entity",
         "title": "IssueReport",
         "description": "Báo cáo sự cố hoặc yêu cầu sửa chữa trong phòng trọ",
         "allOf": [
@@ -10386,7 +10386,7 @@
       },
       "Media": {
         "type": "object",
-        "x-apidog-folder": "Operation",
+        "x-apidog-folder": "Operation/Entity",
         "title": "Media",
         "description": "Quản lý tệp tin và hình ảnh theo mô hình polymorphic",
         "allOf": [
@@ -10480,7 +10480,7 @@
       },
       "AuditLog": {
         "type": "object",
-        "x-apidog-folder": "Operation",
+        "x-apidog-folder": "Operation/Entity",
         "title": "AuditLog",
         "description": "Nhật ký kiểm toán hệ thống (append-only, không có cập nhật hoặc xóa mềm)",
         "properties": {
@@ -10548,7 +10548,7 @@
       },
       "PresignMediaUploadRequest": {
         "type": "object",
-        "x-apidog-folder": "Request/Operation",
+        "x-apidog-folder": "Operation/Request",
         "title": "PresignMediaUploadRequest",
         "description": "Dữ liệu xin cấp upload ticket cho Media",
         "additionalProperties": false,
@@ -10625,7 +10625,7 @@
       },
       "PresignMediaUploadResponse": {
         "type": "object",
-        "x-apidog-folder": "Response/Operation",
+        "x-apidog-folder": "Operation/Response",
         "title": "PresignMediaUploadResponse",
         "description": "Phản hồi cấp upload ticket cho Media",
         "allOf": [
@@ -10746,7 +10746,7 @@
       },
       "CompleteMediaUploadResponse": {
         "type": "object",
-        "x-apidog-folder": "Response/Operation",
+        "x-apidog-folder": "Operation/Response",
         "title": "CompleteMediaUploadResponse",
         "description": "Phản hồi khi Media được xác minh và sẵn sàng đọc",
         "allOf": [
@@ -10850,7 +10850,7 @@
       },
       "Conversation": {
         "type": "object",
-        "x-apidog-folder": "Chat",
+        "x-apidog-folder": "Chat/Entity",
         "title": "Conversation",
         "description": "Cuộc hội thoại chat (room chat theo hợp đồng, building chat, hoặc direct chat)",
         "allOf": [
@@ -10908,7 +10908,7 @@
       },
       "ConversationMember": {
         "type": "object",
-        "x-apidog-folder": "Chat",
+        "x-apidog-folder": "Chat/Entity",
         "title": "ConversationMember",
         "description": "Thành viên tham gia cuộc trò chuyện",
         "allOf": [
@@ -10954,7 +10954,7 @@
       },
       "Message": {
         "type": "object",
-        "x-apidog-folder": "Chat",
+        "x-apidog-folder": "Chat/Entity",
         "title": "Message",
         "description": "Tin nhắn trao đổi trong cuộc hội thoại (hỗ trợ text, ảnh, file hoặc tin nhắn bot)",
         "allOf": [
@@ -11004,7 +11004,7 @@
       },
       "MessageMention": {
         "type": "object",
-        "x-apidog-folder": "Chat",
+        "x-apidog-folder": "Chat/Entity",
         "title": "MessageMention",
         "description": "Người dùng được @tag trong tin nhắn chat",
         "allOf": [
@@ -11036,7 +11036,7 @@
       },
       "MatchRequest": {
         "type": "object",
-        "x-apidog-folder": "Matching",
+        "x-apidog-folder": "Matching/Entity",
         "title": "MatchRequest",
         "description": "Yêu cầu kết nối tìm bạn ở ghép giữa 2 tenant",
         "allOf": [
@@ -11102,7 +11102,7 @@
       },
       "Notification": {
         "type": "object",
-        "x-apidog-folder": "Notification",
+        "x-apidog-folder": "Notification/Entity",
         "title": "Notification",
         "description": "Thông báo gửi đến người dùng (inbox trong ứng dụng và push FCM)",
         "allOf": [
@@ -11158,7 +11158,7 @@
       },
       "NotificationPreference": {
         "type": "object",
-        "x-apidog-folder": "Notification",
+        "x-apidog-folder": "Notification/Entity",
         "title": "NotificationPreference",
         "description": "Cài đặt bật/tắt nhận thông báo theo từng danh mục của người dùng",
         "allOf": [
@@ -11203,7 +11203,7 @@
       },
       "PushDevice": {
         "type": "object",
-        "x-apidog-folder": "Notification",
+        "x-apidog-folder": "Notification/Entity",
         "title": "PushDevice",
         "description": "Thiết bị đăng ký nhận thông báo đẩy FCM của người dùng",
         "allOf": [
@@ -11253,7 +11253,7 @@
       },
       "RegisterPushDeviceRequest": {
         "type": "object",
-        "x-apidog-folder": "Request/Notification",
+        "x-apidog-folder": "Notification/Request",
         "title": "RegisterPushDeviceRequest",
         "description": "Dữ liệu đăng ký thiết bị nhận thông báo đẩy FCM",
         "additionalProperties": false,
@@ -11282,7 +11282,7 @@
       },
       "RegisterPushDeviceResponse": {
         "type": "object",
-        "x-apidog-folder": "Response/Notification",
+        "x-apidog-folder": "Notification/Response",
         "title": "RegisterPushDeviceResponse",
         "description": "Phản hồi khi đăng ký thiết bị nhận thông báo đẩy thành công",
         "allOf": [
@@ -11336,6 +11336,7 @@
       },
       "SuccessSingleWrapper": {
         "type": "object",
+        "x-apidog-folder": "Common/Wrapper",
         "title": "SuccessSingleWrapper",
         "description": "Envelope phản hồi chuẩn cho kết quả trả về một đối tượng đơn lẻ",
         "properties": {
@@ -11362,6 +11363,7 @@
       },
       "SuccessListWrapper": {
         "type": "object",
+        "x-apidog-folder": "Common/Wrapper",
         "title": "SuccessListWrapper",
         "description": "Envelope phản hồi chuẩn cho danh sách có kèm phân trang",
         "properties": {
@@ -11396,6 +11398,7 @@
       },
       "ErrorDefaultWrapper": {
         "type": "object",
+        "x-apidog-folder": "Common/Wrapper",
         "title": "ErrorDefaultWrapper",
         "description": "Envelope phản hồi chuẩn cho lỗi (400, 401, 403, 404, 409, 500)",
         "properties": {
@@ -11417,6 +11420,7 @@
       },
       "ErrorValidationWrapper": {
         "type": "object",
+        "x-apidog-folder": "Common/Wrapper",
         "title": "ErrorValidationWrapper",
         "description": "Envelope phản hồi chuẩn cho lỗi validation (HTTP 422)",
         "properties": {
