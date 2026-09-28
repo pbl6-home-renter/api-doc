@@ -17,7 +17,7 @@ properties:
         period: { type: string, minLength: 7, maxLength: 7, pattern: '^[0-9]{4}-(0[1-9]|1[0-2])$', description: "Kỳ ghi chỉ số theo định dạng YYYY-MM." }
         previousReading: { type: string , description: "Thông tin previous reading của tài nguyên trong ngữ cảnh DTO." }
         currentReading: { type: string , description: "Thông tin current reading của tài nguyên trong ngữ cảnh DTO." }
-        readingDate: { type: string, format: date, nullable: true , description: "Thông tin reading date của tài nguyên trong ngữ cảnh DTO." }
+        readingDate: { type: string, format: date-time, nullable: true , description: "Thông tin reading date của tài nguyên trong ngữ cảnh DTO." }
         isBaseline: { type: boolean , description: "Thông tin is baseline của tài nguyên trong ngữ cảnh DTO." }
       required: [id, roomId, type, period, previousReading, currentReading, readingDate, isBaseline]
   pagination:

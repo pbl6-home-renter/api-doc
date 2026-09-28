@@ -1392,10 +1392,10 @@
               },
               "moveInOn": {
                 "type": "string",
-                "format": "date",
+                "format": "date-time",
                 "nullable": true,
                 "description": "Thời điểm mong muốn dọn vào",
-                "example": "2026-10-01"
+                "example": "2026-10-01T00:00:00Z"
               },
               "isVisible": {
                 "type": "boolean",
@@ -3564,9 +3564,9 @@
           "moveInOn": {
             "type": "string",
             "description": "Thông tin move in on của tài nguyên trong ngữ cảnh DTO.",
-            "format": "date",
+            "format": "date-time",
             "nullable": true,
-            "example": "2026-10-01"
+            "example": "2026-10-01T00:00:00Z"
           },
           "isVisible": {
             "type": "boolean",
@@ -4125,12 +4125,12 @@
           },
           "startDate": {
             "type": "string",
-            "format": "date",
+            "format": "date-time",
             "description": "Thông tin start date của tài nguyên trong ngữ cảnh DTO."
           },
           "endDate": {
             "type": "string",
-            "format": "date",
+            "format": "date-time",
             "description": "Thông tin end date của tài nguyên trong ngữ cảnh DTO."
           },
           "vehicleCount": {
@@ -4229,7 +4229,7 @@
         "properties": {
           "completedOn": {
             "type": "string",
-            "format": "date",
+            "format": "date-time",
             "description": "Thông tin completed on của tài nguyên trong ngữ cảnh DTO."
           }
         },
@@ -4655,12 +4655,12 @@
               },
               "startDate": {
                 "type": "string",
-                "format": "date",
+                "format": "date-time",
                 "description": "Thông tin start date của tài nguyên trong ngữ cảnh DTO."
               },
               "endDate": {
                 "type": "string",
-                "format": "date",
+                "format": "date-time",
                 "description": "Thông tin end date của tài nguyên trong ngữ cảnh DTO."
               },
               "signedContractMediaId": {
@@ -4964,7 +4964,7 @@
               },
               "completedOn": {
                 "type": "string",
-                "format": "date",
+                "format": "date-time",
                 "description": "Thông tin completed on của tài nguyên trong ngữ cảnh DTO."
               }
             },
@@ -5050,7 +5050,7 @@
           },
           "readingDate": {
             "type": "string",
-            "format": "date",
+            "format": "date-time",
             "nullable": true,
             "description": "Thông tin reading date của tài nguyên trong ngữ cảnh DTO."
           },
@@ -5138,7 +5138,7 @@
                 },
                 "readingDate": {
                   "type": "string",
-                  "format": "date",
+                  "format": "date-time",
                   "nullable": true,
                   "description": "Thông tin reading date của tài nguyên trong ngữ cảnh DTO."
                 },
@@ -8798,7 +8798,7 @@
           },
           "joinedAt": {
             "type": "string",
-            "format": "date",
+            "format": "date-time",
             "description": "Thông tin joined at của tài nguyên trong ngữ cảnh DTO."
           }
         },
@@ -8838,7 +8838,7 @@
         "properties": {
           "leftOn": {
             "type": "string",
-            "format": "date",
+            "format": "date-time",
             "description": "Thông tin left on của tài nguyên trong ngữ cảnh DTO."
           }
         },
@@ -8890,12 +8890,12 @@
               },
               "joinedAt": {
                 "type": "string",
-                "format": "date",
+                "format": "date-time",
                 "description": "Thông tin joined at của tài nguyên trong ngữ cảnh DTO."
               },
               "leftAt": {
                 "type": "string",
-                "format": "date",
+                "format": "date-time",
                 "nullable": true,
                 "description": "Thông tin left at của tài nguyên trong ngữ cảnh DTO."
               }
@@ -8999,7 +8999,7 @@
               },
               "leftAt": {
                 "type": "string",
-                "format": "date",
+                "format": "date-time",
                 "description": "Thông tin left at của tài nguyên trong ngữ cảnh DTO."
               }
             },
@@ -9062,12 +9062,12 @@
                 },
                 "joinedAt": {
                   "type": "string",
-                  "format": "date",
+                  "format": "date-time",
                   "description": "Thông tin joined at của tài nguyên trong ngữ cảnh DTO."
                 },
                 "leftAt": {
                   "type": "string",
-                  "format": "date",
+                  "format": "date-time",
                   "nullable": true,
                   "description": "Thông tin left at của tài nguyên trong ngữ cảnh DTO."
                 }
@@ -10408,15 +10408,15 @@
               },
               "startDate": {
                 "type": "string",
-                "format": "date",
-                "description": "Ngày bắt đầu hợp đồng (YYYY-MM-DD)",
-                "example": "2026-09-01"
+                "format": "date-time",
+                "description": "Ngày bắt đầu hợp đồng (ISO 8601 date-time)",
+                "example": "2026-09-01T00:00:00Z"
               },
               "endDate": {
                 "type": "string",
-                "format": "date",
-                "description": "Ngày kết thúc hợp đồng (YYYY-MM-DD)",
-                "example": "2027-08-31"
+                "format": "date-time",
+                "description": "Ngày kết thúc hợp đồng (ISO 8601 date-time)",
+                "example": "2027-08-31T00:00:00Z"
               },
               "description": {
                 "type": "string",
@@ -10490,13 +10490,13 @@
               },
               "joinedAt": {
                 "type": "string",
-                "format": "date",
+                "format": "date-time",
                 "description": "Ngày bắt đầu vào ở",
-                "example": "2026-09-01"
+                "example": "2026-09-01T00:00:00Z"
               },
               "leftAt": {
                 "type": "string",
-                "format": "date",
+                "format": "date-time",
                 "nullable": true,
                 "description": "Ngày rời phòng (không xóa bản ghi khi rời phòng)",
                 "example": null
@@ -10783,10 +10783,10 @@
               },
               "readingDate": {
                 "type": "string",
-                "format": "date",
+                "format": "date-time",
                 "nullable": true,
                 "description": "Ngày chốt thực tế (dọn vào/ra giữa tháng)",
-                "example": "2026-09-30"
+                "example": "2026-09-30T00:00:00Z"
               },
               "isBaseline": {
                 "type": "boolean",
@@ -10871,11 +10871,11 @@
                     },
                     "serviceStart": {
                       "type": "string",
-                      "format": "date"
+                      "format": "date-time"
                     },
                     "serviceEnd": {
                       "type": "string",
-                      "format": "date"
+                      "format": "date-time"
                     },
                     "prorateRatio": {
                       "type": "number"
