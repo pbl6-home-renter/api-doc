@@ -1,31 +1,14 @@
-type: object
+type: array
 x-apidog-folder: "Message/Response"
 title: MessageListResponseDto
 description: Danh sách tin nhắn theo cursor
-properties:
-  data:
-    type: array
-    description: Dữ liệu kết quả của thao tác.
-    items:
-      type: object
-      properties:
-        id: { type: string, format: uuid , description: "Định danh duy nhất của tài nguyên." }
-        conversationId: { type: string, format: uuid , description: "Thông tin conversation id của tài nguyên trong ngữ cảnh DTO." }
-        senderId: { type: string, format: uuid, nullable: true , description: "Thông tin sender id của tài nguyên trong ngữ cảnh DTO." }
-        type: { type: string, enum: [text, image, file, bot] , description: "Thông tin type của tài nguyên trong ngữ cảnh DTO." }
-        content: { type: string, nullable: true , description: "Thông tin content của tài nguyên trong ngữ cảnh DTO." }
-        createdAt: { type: string, format: date-time , description: "Thời điểm bản ghi được tạo, theo định dạng ngày giờ ISO 8601." }
-      required: [id, conversationId, senderId, type, content, createdAt]
-  pagination:
-    type: object
-    description: Thông tin phân trang của danh sách kết quả.
-    properties:
-      type: { type: string, enum: [cursor], example: cursor , description: "Thông tin type của tài nguyên trong ngữ cảnh DTO." }
-      pageSize: { type: integer, minimum: 1, example: 30 , description: "Số lượng phần tử tối đa trên một trang." }
-      nextCursor: { type: string, nullable: true , description: "Thông tin next cursor của tài nguyên trong ngữ cảnh DTO." }
-      hasNextPage: { type: boolean , description: "Cho biết còn trang kế tiếp hay không." }
-    required: [type, pageSize, nextCursor, hasNextPage]
-
-required:
-  - data
-  - pagination
+items:
+  type: object
+  properties:
+    id: { type: string, format: uuid , description: "Định danh duy nhất của tài nguyên." }
+    conversationId: { type: string, format: uuid , description: "Thông tin conversation id của tài nguyên trong ngữ cảnh DTO." }
+    senderId: { type: string, format: uuid, nullable: true , description: "Thông tin sender id của tài nguyên trong ngữ cảnh DTO." }
+    type: { type: string, enum: [text, image, file, bot] , description: "Thông tin type của tài nguyên trong ngữ cảnh DTO." }
+    content: { type: string, nullable: true , description: "Thông tin content của tài nguyên trong ngữ cảnh DTO." }
+    createdAt: { type: string, format: date-time , description: "Thời điểm bản ghi được tạo, theo định dạng ngày giờ ISO 8601." }
+  required: [id, conversationId, senderId, type, content, createdAt]

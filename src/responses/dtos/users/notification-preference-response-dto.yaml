@@ -1,17 +1,10 @@
-type: object
+type: array
 x-apidog-folder: "NotificationPreference/Response"
 title: NotificationPreferenceDetailResponseDto
 description: Danh sách tùy biến thông báo của người dùng hiện tại
-properties:
-  data:
-    type: array
-    description: Dữ liệu kết quả của thao tác.
-    items:
-      type: object
-      properties:
-        type: { type: string, enum: [invoice, chat, issue, match, account] , description: "Thông tin type của tài nguyên trong ngữ cảnh DTO." }
-        enabled: { type: boolean , description: "Thông tin enabled của tài nguyên trong ngữ cảnh DTO." }
-      required: [type, enabled]
-
-required:
-  - data
+items:
+  type: object
+  properties:
+    type: { type: string, enum: [invoice, chat, issue, match, account] , description: "Thông tin type của tài nguyên trong ngữ cảnh DTO." }
+    enabled: { type: boolean , description: "Thông tin enabled của tài nguyên trong ngữ cảnh DTO." }
+  required: [type, enabled]

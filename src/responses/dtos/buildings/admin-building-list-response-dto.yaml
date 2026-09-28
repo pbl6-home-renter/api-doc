@@ -1,34 +1,14 @@
-type: object
+type: array
 x-apidog-folder: "Building/Response"
 title: BuildingAdminListResponseDto
 description: Danh sách tòa nhà dành cho admin
 
-properties:
-  data:
-    type: array
-    description: Dữ liệu kết quả của thao tác.
-    items:
-      type: object
-      properties:
-        id: { type: string, format: uuid , description: "Định danh duy nhất của tài nguyên." }
-        name: { type: string , description: "Thông tin name của tài nguyên trong ngữ cảnh DTO." }
-        landlordId: { type: string, format: uuid , description: "Thông tin landlord id của tài nguyên trong ngữ cảnh DTO." }
-        status: { type: string, enum: [pending, approved, rejected] , description: "Trạng thái hiện tại của tài nguyên trong quy trình nghiệp vụ." }
-        createdAt: { type: string, format: date-time , description: "Thời điểm bản ghi được tạo, theo định dạng ngày giờ ISO 8601." }
-      required: [id, name, landlordId, status, createdAt]
-  pagination:
-    type: object
-    description: Thông tin phân trang của danh sách kết quả.
-    properties:
-      type: { type: string, enum: [offset], example: offset , description: "Thông tin type của tài nguyên trong ngữ cảnh DTO." }
-      pageNo: { type: integer, minimum: 1, example: 1 , description: "Số trang hiện tại trong kết quả phân trang." }
-      pageSize: { type: integer, minimum: 1, maximum: 100, example: 20 , description: "Số lượng phần tử tối đa trên một trang." }
-      totalItems: { type: integer, minimum: 0, example: 1 , description: "Tổng số phần tử phù hợp với truy vấn." }
-      totalPages: { type: integer, minimum: 0, example: 1 , description: "Tổng số trang có thể truy cập." }
-      hasNextPage: { type: boolean, example: false , description: "Cho biết còn trang kế tiếp hay không." }
-      hasPreviousPage: { type: boolean, example: false , description: "Cho biết có trang trước đó hay không." }
-    required: [type, pageNo, pageSize, totalItems, totalPages, hasNextPage, hasPreviousPage]
-
-required:
-  - data
-  - pagination
+items:
+  type: object
+  properties:
+    id: { type: string, format: uuid , description: "Định danh duy nhất của tài nguyên." }
+    name: { type: string , description: "Thông tin name của tài nguyên trong ngữ cảnh DTO." }
+    landlordId: { type: string, format: uuid , description: "Thông tin landlord id của tài nguyên trong ngữ cảnh DTO." }
+    status: { type: string, enum: [pending, approved, rejected] , description: "Trạng thái hiện tại của tài nguyên trong quy trình nghiệp vụ." }
+    createdAt: { type: string, format: date-time , description: "Thời điểm bản ghi được tạo, theo định dạng ngày giờ ISO 8601." }
+  required: [id, name, landlordId, status, createdAt]
