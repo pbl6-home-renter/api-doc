@@ -1,16 +1,14 @@
-type: array
+type: object
 x-apidog-folder: "BillingSetting/Response"
 title: BillingSettingListResponseDto
 description: Danh sách cấu hình billing
 
-items:
-  type: object
-  properties:
-    id: { type: string, format: uuid , description: "Định danh duy nhất của tài nguyên." }
-    scope: { type: string, enum: [building, room] , description: "Thông tin scope của tài nguyên trong ngữ cảnh DTO." }
-    roomId: { type: string, format: uuid, nullable: true , description: "Định danh duy nhất của phòng liên quan." }
-    dueDays: { type: integer, minimum: 1, maximum: 28 , description: "Thông tin due days của tài nguyên trong ngữ cảnh DTO." }
-    remindDays: { type: integer, minimum: 1, maximum: 28, nullable: true , description: "Thông tin remind days của tài nguyên trong ngữ cảnh DTO." }
-    botEnabled: { type: boolean , description: "Thông tin bot enabled của tài nguyên trong ngữ cảnh DTO." }
-    isActive: { type: boolean , description: "Thông tin is active của tài nguyên trong ngữ cảnh DTO." }
-  required: [id, scope, roomId, dueDays, remindDays, botEnabled, isActive]
+properties:
+  id: { type: string, format: uuid , description: "Định danh duy nhất của tài nguyên." }
+  scope: { type: string, enum: [building, room] , description: "Thông tin scope của tài nguyên trong ngữ cảnh DTO." }
+  roomId: { type: string, format: uuid, nullable: true , description: "Định danh duy nhất của phòng liên quan." }
+  dueDays: { type: integer, minimum: 1, maximum: 28 , description: "Thông tin due days của tài nguyên trong ngữ cảnh DTO." }
+  remindDays: { type: integer, minimum: 1, maximum: 28, nullable: true , description: "Thông tin remind days của tài nguyên trong ngữ cảnh DTO." }
+  botEnabled: { type: boolean , description: "Thông tin bot enabled của tài nguyên trong ngữ cảnh DTO." }
+  isActive: { type: boolean , description: "Thông tin is active của tài nguyên trong ngữ cảnh DTO." }
+required: [id, scope, roomId, dueDays, remindDays, botEnabled, isActive]

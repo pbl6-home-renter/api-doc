@@ -1,14 +1,12 @@
-type: array
+type: object
 x-apidog-folder: "Room/Response"
 title: RoomMyListResponseDto
 description: Danh sách phòng của chủ nhà hiện tại
 
-items:
-  type: object
-  properties:
-    id: { type: string, format: uuid , description: "Định danh duy nhất của tài nguyên." }
-    buildingId: { type: string, format: uuid , description: "Định danh duy nhất của tòa nhà liên quan." }
-    name: { type: string , description: "Thông tin name của tài nguyên trong ngữ cảnh DTO." }
-    rentPrice: { type: integer, minimum: 0 , description: "Thông tin rent price của tài nguyên trong ngữ cảnh DTO." }
-    status: { type: string, example: cleaning , description: "Trạng thái hiện tại của tài nguyên trong quy trình nghiệp vụ." }
-  required: [id, buildingId, name, rentPrice, status]
+properties:
+  id: { type: string, format: uuid , description: "Định danh duy nhất của tài nguyên." }
+  buildingId: { type: string, format: uuid , description: "Định danh duy nhất của tòa nhà liên quan." }
+  name: { type: string , description: "Thông tin name của tài nguyên trong ngữ cảnh DTO." }
+  rentPrice: { type: integer, minimum: 0 , description: "Thông tin rent price của tài nguyên trong ngữ cảnh DTO." }
+  status: { type: string, example: cleaning , description: "Trạng thái hiện tại của tài nguyên trong quy trình nghiệp vụ." }
+required: [id, buildingId, name, rentPrice, status]

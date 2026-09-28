@@ -1,17 +1,15 @@
-type: array
+type: object
 x-apidog-folder: "Building/Response"
 title: BuildingMyListResponseDto
 description: Danh sách tòa nhà của chủ nhà hiện tại
 
-items:
-  type: object
-  properties:
-    id: { type: string, format: uuid , description: "Định danh duy nhất của tài nguyên." }
-    name: { type: string , description: "Thông tin name của tài nguyên trong ngữ cảnh DTO." }
-    status:
-      type: string
-      description: Trạng thái hiện tại của tài nguyên trong quy trình nghiệp vụ.
-      enum: [pending, approved, rejected]
-    totalRooms: { type: integer, minimum: 0 , description: "Thông tin total rooms của tài nguyên trong ngữ cảnh DTO." }
-    occupancyRate: { type: string , description: "Thông tin occupancy rate của tài nguyên trong ngữ cảnh DTO." }
-  required: [id, name, status, totalRooms, occupancyRate]
+properties:
+  id: { type: string, format: uuid , description: "Định danh duy nhất của tài nguyên." }
+  name: { type: string , description: "Thông tin name của tài nguyên trong ngữ cảnh DTO." }
+  status:
+    type: string
+    description: Trạng thái hiện tại của tài nguyên trong quy trình nghiệp vụ.
+    enum: [pending, approved, rejected]
+  totalRooms: { type: integer, minimum: 0 , description: "Thông tin total rooms của tài nguyên trong ngữ cảnh DTO." }
+  occupancyRate: { type: string , description: "Thông tin occupancy rate của tài nguyên trong ngữ cảnh DTO." }
+required: [id, name, status, totalRooms, occupancyRate]

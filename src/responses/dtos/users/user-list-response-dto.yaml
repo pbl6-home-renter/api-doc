@@ -1,40 +1,38 @@
-type: array
+type: object
 x-apidog-folder: "User/Response"
 title: UserListResponseDto
 description: Danh sách người dùng dành cho admin với offset pagination
 
-items:
-  type: object
-  properties:
-    id:
-      type: string
-      description: Định danh duy nhất của tài nguyên.
-      format: uuid
+properties:
+  id:
+    type: string
+    description: Định danh duy nhất của tài nguyên.
+    format: uuid
 
-    name:
-      type: string
-      description: Thông tin name của tài nguyên trong ngữ cảnh DTO.
-      example: "Lê Văn An"
+  name:
+    type: string
+    description: Thông tin name của tài nguyên trong ngữ cảnh DTO.
+    example: "Lê Văn An"
 
-    role:
-      type: string
-      description: Thông tin role của tài nguyên trong ngữ cảnh DTO.
-      enum:
-        - tenant
-        - landlord
-        - admin
-      example: "tenant"
+  role:
+    type: string
+    description: Thông tin role của tài nguyên trong ngữ cảnh DTO.
+    enum:
+      - tenant
+      - landlord
+      - admin
+    example: "tenant"
 
-    status:
-      type: string
-      description: Trạng thái hiện tại của tài nguyên trong quy trình nghiệp vụ.
-      enum:
-        - active
-        - locked
-      example: "active"
+  status:
+    type: string
+    description: Trạng thái hiện tại của tài nguyên trong quy trình nghiệp vụ.
+    enum:
+      - active
+      - locked
+    example: "active"
 
-  required:
-    - id
-    - name
-    - role
-    - status
+required:
+  - id
+  - name
+  - role
+  - status

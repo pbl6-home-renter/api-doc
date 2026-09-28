@@ -1,14 +1,12 @@
-type: array
+type: object
 x-apidog-folder: "Building/Response"
 title: BuildingAdminListResponseDto
 description: Danh sách tòa nhà dành cho admin
 
-items:
-  type: object
-  properties:
-    id: { type: string, format: uuid , description: "Định danh duy nhất của tài nguyên." }
-    name: { type: string , description: "Thông tin name của tài nguyên trong ngữ cảnh DTO." }
-    landlordId: { type: string, format: uuid , description: "Thông tin landlord id của tài nguyên trong ngữ cảnh DTO." }
-    status: { type: string, enum: [pending, approved, rejected] , description: "Trạng thái hiện tại của tài nguyên trong quy trình nghiệp vụ." }
-    createdAt: { type: string, format: date-time , description: "Thời điểm bản ghi được tạo, theo định dạng ngày giờ ISO 8601." }
-  required: [id, name, landlordId, status, createdAt]
+properties:
+  id: { type: string, format: uuid , description: "Định danh duy nhất của tài nguyên." }
+  name: { type: string , description: "Thông tin name của tài nguyên trong ngữ cảnh DTO." }
+  landlordId: { type: string, format: uuid , description: "Thông tin landlord id của tài nguyên trong ngữ cảnh DTO." }
+  status: { type: string, enum: [pending, approved, rejected] , description: "Trạng thái hiện tại của tài nguyên trong quy trình nghiệp vụ." }
+  createdAt: { type: string, format: date-time , description: "Thời điểm bản ghi được tạo, theo định dạng ngày giờ ISO 8601." }
+required: [id, name, landlordId, status, createdAt]

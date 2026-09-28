@@ -1,11 +1,9 @@
-type: array
+type: object
 x-apidog-folder: "ContractTemplate/Response"
 title: ContractTemplateListResponseDto
 description: Danh sách mẫu hợp đồng
-items:
-  type: object
-  properties:
-    templateKey: { type: string , description: "Thông tin template key của tài nguyên trong ngữ cảnh DTO." }
-    title: { type: string , description: "Thông tin title của tài nguyên trong ngữ cảnh DTO." }
-    version: { type: string , description: "Thông tin version của tài nguyên trong ngữ cảnh DTO." }
-  required: [templateKey, title, version]
+properties:
+  templateKey: { type: string , description: "Thông tin template key của tài nguyên trong ngữ cảnh DTO." }
+  title: { type: string , description: "Thông tin title của tài nguyên trong ngữ cảnh DTO." }
+  version: { type: string , description: "Thông tin version của tài nguyên trong ngữ cảnh DTO." }
+required: [templateKey, title, version]

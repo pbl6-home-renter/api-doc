@@ -1,13 +1,11 @@
-type: array
+type: object
 x-apidog-folder: "Contract/Response"
 title: ContractMyListResponseDto
 description: Danh sách hợp đồng của tenant hiện tại
-items:
-  type: object
-  properties:
-    id: { type: string, format: uuid , description: "Định danh duy nhất của tài nguyên." }
-    roomId: { type: string, format: uuid , description: "Định danh duy nhất của phòng liên quan." }
-    status: { type: string, enum: [draft, signed, active, suspended, expired, terminated] , description: "Trạng thái hiện tại của tài nguyên trong quy trình nghiệp vụ." }
-    rentPrice: { type: integer, minimum: 0 , description: "Thông tin rent price của tài nguyên trong ngữ cảnh DTO." }
-    depositAmount: { type: integer, minimum: 0 , description: "Thông tin deposit amount của tài nguyên trong ngữ cảnh DTO." }
-  required: [id, roomId, status, rentPrice, depositAmount]
+properties:
+  id: { type: string, format: uuid , description: "Định danh duy nhất của tài nguyên." }
+  roomId: { type: string, format: uuid , description: "Định danh duy nhất của phòng liên quan." }
+  status: { type: string, enum: [draft, signed, active, suspended, expired, terminated] , description: "Trạng thái hiện tại của tài nguyên trong quy trình nghiệp vụ." }
+  rentPrice: { type: integer, minimum: 0 , description: "Thông tin rent price của tài nguyên trong ngữ cảnh DTO." }
+  depositAmount: { type: integer, minimum: 0 , description: "Thông tin deposit amount của tài nguyên trong ngữ cảnh DTO." }
+required: [id, roomId, status, rentPrice, depositAmount]

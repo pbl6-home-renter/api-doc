@@ -588,50 +588,47 @@
         ]
       },
       "UserListResponseDto": {
-        "type": "array",
+        "type": "object",
         "x-apidog-folder": "User/Response",
         "title": "UserListResponseDto",
         "description": "Danh sách người dùng dành cho admin với offset pagination",
-        "items": {
-          "type": "object",
-          "properties": {
-            "id": {
-              "type": "string",
-              "description": "Định danh duy nhất của tài nguyên.",
-              "format": "uuid"
-            },
-            "name": {
-              "type": "string",
-              "description": "Thông tin name của tài nguyên trong ngữ cảnh DTO.",
-              "example": "Lê Văn An"
-            },
-            "role": {
-              "type": "string",
-              "description": "Thông tin role của tài nguyên trong ngữ cảnh DTO.",
-              "enum": [
-                "tenant",
-                "landlord",
-                "admin"
-              ],
-              "example": "tenant"
-            },
-            "status": {
-              "type": "string",
-              "description": "Trạng thái hiện tại của tài nguyên trong quy trình nghiệp vụ.",
-              "enum": [
-                "active",
-                "locked"
-              ],
-              "example": "active"
-            }
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Định danh duy nhất của tài nguyên.",
+            "format": "uuid"
           },
-          "required": [
-            "id",
-            "name",
-            "role",
-            "status"
-          ]
-        }
+          "name": {
+            "type": "string",
+            "description": "Thông tin name của tài nguyên trong ngữ cảnh DTO.",
+            "example": "Lê Văn An"
+          },
+          "role": {
+            "type": "string",
+            "description": "Thông tin role của tài nguyên trong ngữ cảnh DTO.",
+            "enum": [
+              "tenant",
+              "landlord",
+              "admin"
+            ],
+            "example": "tenant"
+          },
+          "status": {
+            "type": "string",
+            "description": "Trạng thái hiện tại của tài nguyên trong quy trình nghiệp vụ.",
+            "enum": [
+              "active",
+              "locked"
+            ],
+            "example": "active"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "role",
+          "status"
+        ]
       },
       "UserDetailResponseDto": {
         "type": "object",
@@ -1422,142 +1419,133 @@
         ]
       },
       "BuildingPublicListResponseDto": {
-        "type": "array",
+        "type": "object",
         "x-apidog-folder": "Building/Response",
         "title": "BuildingPublicListResponseDto",
         "description": "Danh sách tòa nhà công khai",
-        "items": {
-          "type": "object",
-          "properties": {
-            "id": {
-              "type": "string",
-              "format": "uuid",
-              "description": "Định danh duy nhất của tài nguyên."
-            },
-            "name": {
-              "type": "string",
-              "minLength": 1,
-              "maxLength": 254,
-              "description": "Thông tin name của tài nguyên trong ngữ cảnh DTO."
-            },
-            "province": {
-              "type": "string",
-              "minLength": 1,
-              "maxLength": 100,
-              "description": "Thông tin province của tài nguyên trong ngữ cảnh DTO."
-            },
-            "ward": {
-              "type": "string",
-              "minLength": 1,
-              "maxLength": 100,
-              "description": "Thông tin ward của tài nguyên trong ngữ cảnh DTO."
-            },
-            "address": {
-              "type": "string",
-              "minLength": 1,
-              "maxLength": 254,
-              "description": "Thông tin address của tài nguyên trong ngữ cảnh DTO."
-            }
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Định danh duy nhất của tài nguyên."
           },
-          "required": [
-            "id",
-            "name",
-            "province",
-            "ward",
-            "address"
-          ]
-        }
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 254,
+            "description": "Thông tin name của tài nguyên trong ngữ cảnh DTO."
+          },
+          "province": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100,
+            "description": "Thông tin province của tài nguyên trong ngữ cảnh DTO."
+          },
+          "ward": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100,
+            "description": "Thông tin ward của tài nguyên trong ngữ cảnh DTO."
+          },
+          "address": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 254,
+            "description": "Thông tin address của tài nguyên trong ngữ cảnh DTO."
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "province",
+          "ward",
+          "address"
+        ]
       },
       "BuildingMyListResponseDto": {
-        "type": "array",
+        "type": "object",
         "x-apidog-folder": "Building/Response",
         "title": "BuildingMyListResponseDto",
         "description": "Danh sách tòa nhà của chủ nhà hiện tại",
-        "items": {
-          "type": "object",
-          "properties": {
-            "id": {
-              "type": "string",
-              "format": "uuid",
-              "description": "Định danh duy nhất của tài nguyên."
-            },
-            "name": {
-              "type": "string",
-              "description": "Thông tin name của tài nguyên trong ngữ cảnh DTO."
-            },
-            "status": {
-              "type": "string",
-              "description": "Trạng thái hiện tại của tài nguyên trong quy trình nghiệp vụ.",
-              "enum": [
-                "pending",
-                "approved",
-                "rejected"
-              ]
-            },
-            "totalRooms": {
-              "type": "integer",
-              "minimum": 0,
-              "description": "Thông tin total rooms của tài nguyên trong ngữ cảnh DTO."
-            },
-            "occupancyRate": {
-              "type": "string",
-              "description": "Thông tin occupancy rate của tài nguyên trong ngữ cảnh DTO."
-            }
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Định danh duy nhất của tài nguyên."
           },
-          "required": [
-            "id",
-            "name",
-            "status",
-            "totalRooms",
-            "occupancyRate"
-          ]
-        }
+          "name": {
+            "type": "string",
+            "description": "Thông tin name của tài nguyên trong ngữ cảnh DTO."
+          },
+          "status": {
+            "type": "string",
+            "description": "Trạng thái hiện tại của tài nguyên trong quy trình nghiệp vụ.",
+            "enum": [
+              "pending",
+              "approved",
+              "rejected"
+            ]
+          },
+          "totalRooms": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Thông tin total rooms của tài nguyên trong ngữ cảnh DTO."
+          },
+          "occupancyRate": {
+            "type": "string",
+            "description": "Thông tin occupancy rate của tài nguyên trong ngữ cảnh DTO."
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "status",
+          "totalRooms",
+          "occupancyRate"
+        ]
       },
       "BuildingAdminListResponseDto": {
-        "type": "array",
+        "type": "object",
         "x-apidog-folder": "Building/Response",
         "title": "BuildingAdminListResponseDto",
         "description": "Danh sách tòa nhà dành cho admin",
-        "items": {
-          "type": "object",
-          "properties": {
-            "id": {
-              "type": "string",
-              "format": "uuid",
-              "description": "Định danh duy nhất của tài nguyên."
-            },
-            "name": {
-              "type": "string",
-              "description": "Thông tin name của tài nguyên trong ngữ cảnh DTO."
-            },
-            "landlordId": {
-              "type": "string",
-              "format": "uuid",
-              "description": "Thông tin landlord id của tài nguyên trong ngữ cảnh DTO."
-            },
-            "status": {
-              "type": "string",
-              "enum": [
-                "pending",
-                "approved",
-                "rejected"
-              ],
-              "description": "Trạng thái hiện tại của tài nguyên trong quy trình nghiệp vụ."
-            },
-            "createdAt": {
-              "type": "string",
-              "format": "date-time",
-              "description": "Thời điểm bản ghi được tạo, theo định dạng ngày giờ ISO 8601."
-            }
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Định danh duy nhất của tài nguyên."
           },
-          "required": [
-            "id",
-            "name",
-            "landlordId",
-            "status",
-            "createdAt"
-          ]
-        }
+          "name": {
+            "type": "string",
+            "description": "Thông tin name của tài nguyên trong ngữ cảnh DTO."
+          },
+          "landlordId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Thông tin landlord id của tài nguyên trong ngữ cảnh DTO."
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "approved",
+              "rejected"
+            ],
+            "description": "Trạng thái hiện tại của tài nguyên trong quy trình nghiệp vụ."
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Thời điểm bản ghi được tạo, theo định dạng ngày giờ ISO 8601."
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "landlordId",
+          "status",
+          "createdAt"
+        ]
       },
       "BuildingCreateResponseDto": {
         "type": "object",
@@ -1979,100 +1967,94 @@
         }
       },
       "RoomPublicListResponseDto": {
-        "type": "array",
+        "type": "object",
         "x-apidog-folder": "Room/Response",
         "title": "RoomPublicListResponseDto",
         "description": "Danh sách phòng công khai",
-        "items": {
-          "type": "object",
-          "properties": {
-            "id": {
-              "type": "string",
-              "format": "uuid",
-              "description": "Định danh duy nhất của tài nguyên."
-            },
-            "buildingId": {
-              "type": "string",
-              "format": "uuid",
-              "description": "Định danh duy nhất của tòa nhà liên quan."
-            },
-            "name": {
-              "type": "string",
-              "minLength": 1,
-              "maxLength": 254,
-              "description": "Thông tin name của tài nguyên trong ngữ cảnh DTO."
-            },
-            "area": {
-              "type": "string",
-              "example": "18.5",
-              "description": "Thông tin area của tài nguyên trong ngữ cảnh DTO."
-            },
-            "rentPrice": {
-              "type": "integer",
-              "minimum": 0,
-              "description": "Thông tin rent price của tài nguyên trong ngữ cảnh DTO."
-            },
-            "genderPolicy": {
-              "type": "string",
-              "enum": [
-                "any",
-                "male",
-                "female"
-              ],
-              "description": "Thông tin gender policy của tài nguyên trong ngữ cảnh DTO."
-            }
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Định danh duy nhất của tài nguyên."
           },
-          "required": [
-            "id",
-            "buildingId",
-            "name",
-            "area",
-            "rentPrice",
-            "genderPolicy"
-          ]
-        }
+          "buildingId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Định danh duy nhất của tòa nhà liên quan."
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 254,
+            "description": "Thông tin name của tài nguyên trong ngữ cảnh DTO."
+          },
+          "area": {
+            "type": "string",
+            "example": "18.5",
+            "description": "Thông tin area của tài nguyên trong ngữ cảnh DTO."
+          },
+          "rentPrice": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Thông tin rent price của tài nguyên trong ngữ cảnh DTO."
+          },
+          "genderPolicy": {
+            "type": "string",
+            "enum": [
+              "any",
+              "male",
+              "female"
+            ],
+            "description": "Thông tin gender policy của tài nguyên trong ngữ cảnh DTO."
+          }
+        },
+        "required": [
+          "id",
+          "buildingId",
+          "name",
+          "area",
+          "rentPrice",
+          "genderPolicy"
+        ]
       },
       "RoomMyListResponseDto": {
-        "type": "array",
+        "type": "object",
         "x-apidog-folder": "Room/Response",
         "title": "RoomMyListResponseDto",
         "description": "Danh sách phòng của chủ nhà hiện tại",
-        "items": {
-          "type": "object",
-          "properties": {
-            "id": {
-              "type": "string",
-              "format": "uuid",
-              "description": "Định danh duy nhất của tài nguyên."
-            },
-            "buildingId": {
-              "type": "string",
-              "format": "uuid",
-              "description": "Định danh duy nhất của tòa nhà liên quan."
-            },
-            "name": {
-              "type": "string",
-              "description": "Thông tin name của tài nguyên trong ngữ cảnh DTO."
-            },
-            "rentPrice": {
-              "type": "integer",
-              "minimum": 0,
-              "description": "Thông tin rent price của tài nguyên trong ngữ cảnh DTO."
-            },
-            "status": {
-              "type": "string",
-              "example": "cleaning",
-              "description": "Trạng thái hiện tại của tài nguyên trong quy trình nghiệp vụ."
-            }
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Định danh duy nhất của tài nguyên."
           },
-          "required": [
-            "id",
-            "buildingId",
-            "name",
-            "rentPrice",
-            "status"
-          ]
-        }
+          "buildingId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Định danh duy nhất của tòa nhà liên quan."
+          },
+          "name": {
+            "type": "string",
+            "description": "Thông tin name của tài nguyên trong ngữ cảnh DTO."
+          },
+          "rentPrice": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Thông tin rent price của tài nguyên trong ngữ cảnh DTO."
+          },
+          "status": {
+            "type": "string",
+            "example": "cleaning",
+            "description": "Trạng thái hiện tại của tài nguyên trong quy trình nghiệp vụ."
+          }
+        },
+        "required": [
+          "id",
+          "buildingId",
+          "name",
+          "rentPrice",
+          "status"
+        ]
       },
       "RoomCreateResponseDto": {
         "type": "object",
@@ -2269,36 +2251,33 @@
         ]
       },
       "FavoriteRoomListResponseDto": {
-        "type": "array",
+        "type": "object",
         "x-apidog-folder": "FavoriteRoom/Response",
         "title": "FavoriteRoomListResponseDto",
         "description": "Danh sách phòng đã lưu của tenant hiện tại",
-        "items": {
-          "type": "object",
-          "properties": {
-            "roomId": {
-              "type": "string",
-              "format": "uuid",
-              "description": "Định danh duy nhất của phòng liên quan."
-            },
-            "name": {
-              "type": "string",
-              "minLength": 1,
-              "maxLength": 254,
-              "description": "Thông tin name của tài nguyên trong ngữ cảnh DTO."
-            },
-            "rentPrice": {
-              "type": "integer",
-              "minimum": 0,
-              "description": "Thông tin rent price của tài nguyên trong ngữ cảnh DTO."
-            }
+        "properties": {
+          "roomId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Định danh duy nhất của phòng liên quan."
           },
-          "required": [
-            "roomId",
-            "name",
-            "rentPrice"
-          ]
-        }
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 254,
+            "description": "Thông tin name của tài nguyên trong ngữ cảnh DTO."
+          },
+          "rentPrice": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Thông tin rent price của tài nguyên trong ngữ cảnh DTO."
+          }
+        },
+        "required": [
+          "roomId",
+          "name",
+          "rentPrice"
+        ]
       },
       "FavoriteRoomToggleResponseDto": {
         "type": "object",
@@ -2399,48 +2378,45 @@
         ]
       },
       "RoommateProfileListResponseDto": {
-        "type": "array",
+        "type": "object",
         "x-apidog-folder": "RoommateProfile/Response",
         "title": "RoommateProfileListResponseDto",
         "description": "Danh sách hồ sơ tìm bạn ở ghép",
-        "items": {
-          "type": "object",
-          "properties": {
-            "tenantId": {
-              "type": "string",
-              "format": "uuid",
-              "description": "Thông tin tenant id của tài nguyên trong ngữ cảnh DTO."
-            },
-            "bio": {
-              "type": "string",
-              "nullable": true,
-              "description": "Thông tin bio của tài nguyên trong ngữ cảnh DTO."
-            },
-            "budgetMin": {
-              "type": "integer",
-              "minimum": 0,
-              "nullable": true,
-              "description": "Thông tin budget min của tài nguyên trong ngữ cảnh DTO."
-            },
-            "budgetMax": {
-              "type": "integer",
-              "minimum": 0,
-              "nullable": true,
-              "description": "Thông tin budget max của tài nguyên trong ngữ cảnh DTO."
-            },
-            "isVisible": {
-              "type": "boolean",
-              "description": "Thông tin is visible của tài nguyên trong ngữ cảnh DTO."
-            }
+        "properties": {
+          "tenantId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Thông tin tenant id của tài nguyên trong ngữ cảnh DTO."
           },
-          "required": [
-            "tenantId",
-            "bio",
-            "budgetMin",
-            "budgetMax",
-            "isVisible"
-          ]
-        }
+          "bio": {
+            "type": "string",
+            "nullable": true,
+            "description": "Thông tin bio của tài nguyên trong ngữ cảnh DTO."
+          },
+          "budgetMin": {
+            "type": "integer",
+            "minimum": 0,
+            "nullable": true,
+            "description": "Thông tin budget min của tài nguyên trong ngữ cảnh DTO."
+          },
+          "budgetMax": {
+            "type": "integer",
+            "minimum": 0,
+            "nullable": true,
+            "description": "Thông tin budget max của tài nguyên trong ngữ cảnh DTO."
+          },
+          "isVisible": {
+            "type": "boolean",
+            "description": "Thông tin is visible của tài nguyên trong ngữ cảnh DTO."
+          }
+        },
+        "required": [
+          "tenantId",
+          "bio",
+          "budgetMin",
+          "budgetMax",
+          "isVisible"
+        ]
       },
       "RoommateProfileDetailResponseDto": {
         "type": "object",
@@ -2552,32 +2528,29 @@
         ]
       },
       "ContractTemplateListResponseDto": {
-        "type": "array",
+        "type": "object",
         "x-apidog-folder": "ContractTemplate/Response",
         "title": "ContractTemplateListResponseDto",
         "description": "Danh sách mẫu hợp đồng",
-        "items": {
-          "type": "object",
-          "properties": {
-            "templateKey": {
-              "type": "string",
-              "description": "Thông tin template key của tài nguyên trong ngữ cảnh DTO."
-            },
-            "title": {
-              "type": "string",
-              "description": "Thông tin title của tài nguyên trong ngữ cảnh DTO."
-            },
-            "version": {
-              "type": "string",
-              "description": "Thông tin version của tài nguyên trong ngữ cảnh DTO."
-            }
+        "properties": {
+          "templateKey": {
+            "type": "string",
+            "description": "Thông tin template key của tài nguyên trong ngữ cảnh DTO."
           },
-          "required": [
-            "templateKey",
-            "title",
-            "version"
-          ]
-        }
+          "title": {
+            "type": "string",
+            "description": "Thông tin title của tài nguyên trong ngữ cảnh DTO."
+          },
+          "version": {
+            "type": "string",
+            "description": "Thông tin version của tài nguyên trong ngữ cảnh DTO."
+          }
+        },
+        "required": [
+          "templateKey",
+          "title",
+          "version"
+        ]
       },
       "ContractTemplateDetailResponseDto": {
         "type": "object",
@@ -2771,104 +2744,98 @@
         ]
       },
       "ContractMyListResponseDto": {
-        "type": "array",
+        "type": "object",
         "x-apidog-folder": "Contract/Response",
         "title": "ContractMyListResponseDto",
         "description": "Danh sách hợp đồng của tenant hiện tại",
-        "items": {
-          "type": "object",
-          "properties": {
-            "id": {
-              "type": "string",
-              "format": "uuid",
-              "description": "Định danh duy nhất của tài nguyên."
-            },
-            "roomId": {
-              "type": "string",
-              "format": "uuid",
-              "description": "Định danh duy nhất của phòng liên quan."
-            },
-            "status": {
-              "type": "string",
-              "enum": [
-                "draft",
-                "signed",
-                "active",
-                "suspended",
-                "expired",
-                "terminated"
-              ],
-              "description": "Trạng thái hiện tại của tài nguyên trong quy trình nghiệp vụ."
-            },
-            "rentPrice": {
-              "type": "integer",
-              "minimum": 0,
-              "description": "Thông tin rent price của tài nguyên trong ngữ cảnh DTO."
-            },
-            "depositAmount": {
-              "type": "integer",
-              "minimum": 0,
-              "description": "Thông tin deposit amount của tài nguyên trong ngữ cảnh DTO."
-            }
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Định danh duy nhất của tài nguyên."
           },
-          "required": [
-            "id",
-            "roomId",
-            "status",
-            "rentPrice",
-            "depositAmount"
-          ]
-        }
+          "roomId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Định danh duy nhất của phòng liên quan."
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "draft",
+              "signed",
+              "active",
+              "suspended",
+              "expired",
+              "terminated"
+            ],
+            "description": "Trạng thái hiện tại của tài nguyên trong quy trình nghiệp vụ."
+          },
+          "rentPrice": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Thông tin rent price của tài nguyên trong ngữ cảnh DTO."
+          },
+          "depositAmount": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Thông tin deposit amount của tài nguyên trong ngữ cảnh DTO."
+          }
+        },
+        "required": [
+          "id",
+          "roomId",
+          "status",
+          "rentPrice",
+          "depositAmount"
+        ]
       },
       "ContractListResponseDto": {
-        "type": "array",
+        "type": "object",
         "x-apidog-folder": "Contract/Response",
         "title": "ContractListResponseDto",
         "description": "Danh sách hợp đồng",
-        "items": {
-          "type": "object",
-          "properties": {
-            "id": {
-              "type": "string",
-              "format": "uuid",
-              "description": "Định danh duy nhất của tài nguyên."
-            },
-            "roomId": {
-              "type": "string",
-              "format": "uuid",
-              "description": "Định danh duy nhất của phòng liên quan."
-            },
-            "status": {
-              "type": "string",
-              "enum": [
-                "draft",
-                "signed",
-                "active",
-                "suspended",
-                "expired",
-                "terminated"
-              ],
-              "description": "Trạng thái hiện tại của tài nguyên trong quy trình nghiệp vụ."
-            },
-            "rentPrice": {
-              "type": "integer",
-              "minimum": 0,
-              "description": "Thông tin rent price của tài nguyên trong ngữ cảnh DTO."
-            },
-            "depositAmount": {
-              "type": "integer",
-              "minimum": 0,
-              "description": "Thông tin deposit amount của tài nguyên trong ngữ cảnh DTO."
-            }
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Định danh duy nhất của tài nguyên."
           },
-          "required": [
-            "id",
-            "roomId",
-            "status",
-            "rentPrice",
-            "depositAmount"
-          ]
-        }
+          "roomId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Định danh duy nhất của phòng liên quan."
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "draft",
+              "signed",
+              "active",
+              "suspended",
+              "expired",
+              "terminated"
+            ],
+            "description": "Trạng thái hiện tại của tài nguyên trong quy trình nghiệp vụ."
+          },
+          "rentPrice": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Thông tin rent price của tài nguyên trong ngữ cảnh DTO."
+          },
+          "depositAmount": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Thông tin deposit amount của tài nguyên trong ngữ cảnh DTO."
+          }
+        },
+        "required": [
+          "id",
+          "roomId",
+          "status",
+          "rentPrice",
+          "depositAmount"
+        ]
       },
       "ContractCreateResponseDto": {
         "type": "object",
@@ -3249,68 +3216,65 @@
         ]
       },
       "MeterReadingListResponseDto": {
-        "type": "array",
+        "type": "object",
         "x-apidog-folder": "MeterReading/Response",
         "title": "MeterReadingListResponseDto",
         "description": "Danh sách chỉ số công tơ",
-        "items": {
-          "type": "object",
-          "properties": {
-            "id": {
-              "type": "string",
-              "format": "uuid",
-              "description": "Định danh duy nhất của tài nguyên."
-            },
-            "roomId": {
-              "type": "string",
-              "format": "uuid",
-              "description": "Định danh duy nhất của phòng liên quan."
-            },
-            "type": {
-              "type": "string",
-              "enum": [
-                "electricity",
-                "water"
-              ],
-              "description": "Thông tin type của tài nguyên trong ngữ cảnh DTO."
-            },
-            "period": {
-              "type": "string",
-              "minLength": 7,
-              "maxLength": 7,
-              "pattern": "^[0-9]{4}-(0[1-9]|1[0-2])$",
-              "description": "Kỳ ghi chỉ số theo định dạng YYYY-MM."
-            },
-            "previousReading": {
-              "type": "string",
-              "description": "Thông tin previous reading của tài nguyên trong ngữ cảnh DTO."
-            },
-            "currentReading": {
-              "type": "string",
-              "description": "Thông tin current reading của tài nguyên trong ngữ cảnh DTO."
-            },
-            "readingDate": {
-              "type": "string",
-              "format": "date-time",
-              "nullable": true,
-              "description": "Thông tin reading date của tài nguyên trong ngữ cảnh DTO."
-            },
-            "isBaseline": {
-              "type": "boolean",
-              "description": "Thông tin is baseline của tài nguyên trong ngữ cảnh DTO."
-            }
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Định danh duy nhất của tài nguyên."
           },
-          "required": [
-            "id",
-            "roomId",
-            "type",
-            "period",
-            "previousReading",
-            "currentReading",
-            "readingDate",
-            "isBaseline"
-          ]
-        }
+          "roomId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Định danh duy nhất của phòng liên quan."
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "electricity",
+              "water"
+            ],
+            "description": "Thông tin type của tài nguyên trong ngữ cảnh DTO."
+          },
+          "period": {
+            "type": "string",
+            "minLength": 7,
+            "maxLength": 7,
+            "pattern": "^[0-9]{4}-(0[1-9]|1[0-2])$",
+            "description": "Kỳ ghi chỉ số theo định dạng YYYY-MM."
+          },
+          "previousReading": {
+            "type": "string",
+            "description": "Thông tin previous reading của tài nguyên trong ngữ cảnh DTO."
+          },
+          "currentReading": {
+            "type": "string",
+            "description": "Thông tin current reading của tài nguyên trong ngữ cảnh DTO."
+          },
+          "readingDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "description": "Thông tin reading date của tài nguyên trong ngữ cảnh DTO."
+          },
+          "isBaseline": {
+            "type": "boolean",
+            "description": "Thông tin is baseline của tài nguyên trong ngữ cảnh DTO."
+          }
+        },
+        "required": [
+          "id",
+          "roomId",
+          "type",
+          "period",
+          "previousReading",
+          "currentReading",
+          "readingDate",
+          "isBaseline"
+        ]
       },
       "MeterReadingPreviewOcrResponseDto": {
         "type": "object",
@@ -3552,126 +3516,120 @@
         ]
       },
       "InvoiceMyListResponseDto": {
-        "type": "array",
+        "type": "object",
         "x-apidog-folder": "Invoice/Response",
         "title": "InvoiceMyListResponseDto",
         "description": "Danh sách hóa đơn của tenant hiện tại",
-        "items": {
-          "type": "object",
-          "properties": {
-            "id": {
-              "type": "string",
-              "format": "uuid",
-              "description": "Định danh duy nhất của tài nguyên."
-            },
-            "code": {
-              "type": "string",
-              "minLength": 1,
-              "maxLength": 32,
-              "description": "Mã ổn định để client nhận diện kết quả nghiệp vụ."
-            },
-            "contractId": {
-              "type": "string",
-              "format": "uuid",
-              "description": "Định danh duy nhất của hợp đồng liên quan."
-            },
-            "period": {
-              "type": "string",
-              "pattern": "^[0-9]{4}-(0[1-9]|1[0-2])$",
-              "description": "Kỳ hóa đơn theo định dạng YYYY-MM."
-            },
-            "totalAmount": {
-              "type": "integer",
-              "minimum": 0,
-              "description": "Thông tin total amount của tài nguyên trong ngữ cảnh DTO."
-            },
-            "invoiceStatus": {
-              "type": "string",
-              "enum": [
-                "pending",
-                "issued",
-                "void"
-              ],
-              "description": "Thông tin invoice status của tài nguyên trong ngữ cảnh DTO."
-            },
-            "issuedAt": {
-              "type": "string",
-              "format": "date-time",
-              "nullable": true,
-              "description": "Thông tin issued at của tài nguyên trong ngữ cảnh DTO."
-            }
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Định danh duy nhất của tài nguyên."
           },
-          "required": [
-            "id",
-            "code",
-            "contractId",
-            "period",
-            "totalAmount",
-            "invoiceStatus",
-            "issuedAt"
-          ]
-        }
+          "code": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 32,
+            "description": "Mã ổn định để client nhận diện kết quả nghiệp vụ."
+          },
+          "contractId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Định danh duy nhất của hợp đồng liên quan."
+          },
+          "period": {
+            "type": "string",
+            "pattern": "^[0-9]{4}-(0[1-9]|1[0-2])$",
+            "description": "Kỳ hóa đơn theo định dạng YYYY-MM."
+          },
+          "totalAmount": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Thông tin total amount của tài nguyên trong ngữ cảnh DTO."
+          },
+          "invoiceStatus": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "issued",
+              "void"
+            ],
+            "description": "Thông tin invoice status của tài nguyên trong ngữ cảnh DTO."
+          },
+          "issuedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "description": "Thông tin issued at của tài nguyên trong ngữ cảnh DTO."
+          }
+        },
+        "required": [
+          "id",
+          "code",
+          "contractId",
+          "period",
+          "totalAmount",
+          "invoiceStatus",
+          "issuedAt"
+        ]
       },
       "InvoiceListResponseDto": {
-        "type": "array",
+        "type": "object",
         "x-apidog-folder": "Invoice/Response",
         "title": "InvoiceListResponseDto",
         "description": "Danh sách hóa đơn",
-        "items": {
-          "type": "object",
-          "properties": {
-            "id": {
-              "type": "string",
-              "format": "uuid",
-              "description": "Định danh duy nhất của tài nguyên."
-            },
-            "code": {
-              "type": "string",
-              "minLength": 1,
-              "maxLength": 32,
-              "description": "Mã ổn định để client nhận diện kết quả nghiệp vụ."
-            },
-            "contractId": {
-              "type": "string",
-              "format": "uuid",
-              "description": "Định danh duy nhất của hợp đồng liên quan."
-            },
-            "period": {
-              "type": "string",
-              "pattern": "^[0-9]{4}-(0[1-9]|1[0-2])$",
-              "description": "Kỳ hóa đơn theo định dạng YYYY-MM."
-            },
-            "totalAmount": {
-              "type": "integer",
-              "minimum": 0,
-              "description": "Thông tin total amount của tài nguyên trong ngữ cảnh DTO."
-            },
-            "invoiceStatus": {
-              "type": "string",
-              "enum": [
-                "pending",
-                "issued",
-                "void"
-              ],
-              "description": "Thông tin invoice status của tài nguyên trong ngữ cảnh DTO."
-            },
-            "issuedAt": {
-              "type": "string",
-              "format": "date-time",
-              "nullable": true,
-              "description": "Thông tin issued at của tài nguyên trong ngữ cảnh DTO."
-            }
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Định danh duy nhất của tài nguyên."
           },
-          "required": [
-            "id",
-            "code",
-            "contractId",
-            "period",
-            "totalAmount",
-            "invoiceStatus",
-            "issuedAt"
-          ]
-        }
+          "code": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 32,
+            "description": "Mã ổn định để client nhận diện kết quả nghiệp vụ."
+          },
+          "contractId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Định danh duy nhất của hợp đồng liên quan."
+          },
+          "period": {
+            "type": "string",
+            "pattern": "^[0-9]{4}-(0[1-9]|1[0-2])$",
+            "description": "Kỳ hóa đơn theo định dạng YYYY-MM."
+          },
+          "totalAmount": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Thông tin total amount của tài nguyên trong ngữ cảnh DTO."
+          },
+          "invoiceStatus": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "issued",
+              "void"
+            ],
+            "description": "Thông tin invoice status của tài nguyên trong ngữ cảnh DTO."
+          },
+          "issuedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "description": "Thông tin issued at của tài nguyên trong ngữ cảnh DTO."
+          }
+        },
+        "required": [
+          "id",
+          "code",
+          "contractId",
+          "period",
+          "totalAmount",
+          "invoiceStatus",
+          "issuedAt"
+        ]
       },
       "InvoiceCreateSettlementResponseDto": {
         "type": "object",
@@ -4141,128 +4099,122 @@
         ]
       },
       "PaymentMyListResponseDto": {
-        "type": "array",
+        "type": "object",
         "x-apidog-folder": "Payment/Response",
         "title": "PaymentMyListResponseDto",
         "description": "Danh sách thanh toán của người dùng hiện tại",
-        "items": {
-          "type": "object",
-          "properties": {
-            "id": {
-              "type": "string",
-              "format": "uuid",
-              "description": "Định danh duy nhất của tài nguyên."
-            },
-            "invoiceId": {
-              "type": "string",
-              "format": "uuid",
-              "nullable": true,
-              "description": "Thông tin invoice id của tài nguyên trong ngữ cảnh DTO."
-            },
-            "method": {
-              "type": "string",
-              "enum": [
-                "vietqr",
-                "vnpay",
-                "momo",
-                "cash",
-                "mock"
-              ],
-              "description": "Thông tin method của tài nguyên trong ngữ cảnh DTO."
-            },
-            "paymentStatus": {
-              "type": "string",
-              "enum": [
-                "pending",
-                "success",
-                "failed"
-              ],
-              "description": "Thông tin payment status của tài nguyên trong ngữ cảnh DTO."
-            },
-            "amount": {
-              "type": "integer",
-              "minimum": 0,
-              "description": "Thông tin amount của tài nguyên trong ngữ cảnh DTO."
-            },
-            "transactionId": {
-              "type": "string",
-              "nullable": true,
-              "minLength": 1,
-              "maxLength": 255,
-              "description": "Thông tin transaction id của tài nguyên trong ngữ cảnh DTO."
-            }
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Định danh duy nhất của tài nguyên."
           },
-          "required": [
-            "id",
-            "invoiceId",
-            "method",
-            "paymentStatus",
-            "amount",
-            "transactionId"
-          ]
-        }
+          "invoiceId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true,
+            "description": "Thông tin invoice id của tài nguyên trong ngữ cảnh DTO."
+          },
+          "method": {
+            "type": "string",
+            "enum": [
+              "vietqr",
+              "vnpay",
+              "momo",
+              "cash",
+              "mock"
+            ],
+            "description": "Thông tin method của tài nguyên trong ngữ cảnh DTO."
+          },
+          "paymentStatus": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "success",
+              "failed"
+            ],
+            "description": "Thông tin payment status của tài nguyên trong ngữ cảnh DTO."
+          },
+          "amount": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Thông tin amount của tài nguyên trong ngữ cảnh DTO."
+          },
+          "transactionId": {
+            "type": "string",
+            "nullable": true,
+            "minLength": 1,
+            "maxLength": 255,
+            "description": "Thông tin transaction id của tài nguyên trong ngữ cảnh DTO."
+          }
+        },
+        "required": [
+          "id",
+          "invoiceId",
+          "method",
+          "paymentStatus",
+          "amount",
+          "transactionId"
+        ]
       },
       "PaymentListResponseDto": {
-        "type": "array",
+        "type": "object",
         "x-apidog-folder": "Payment/Response",
         "title": "PaymentListResponseDto",
         "description": "Danh sách thanh toán",
-        "items": {
-          "type": "object",
-          "properties": {
-            "id": {
-              "type": "string",
-              "format": "uuid",
-              "description": "Định danh duy nhất của tài nguyên."
-            },
-            "invoiceId": {
-              "type": "string",
-              "format": "uuid",
-              "nullable": true,
-              "description": "Thông tin invoice id của tài nguyên trong ngữ cảnh DTO."
-            },
-            "method": {
-              "type": "string",
-              "enum": [
-                "vietqr",
-                "vnpay",
-                "momo",
-                "cash",
-                "mock"
-              ],
-              "description": "Thông tin method của tài nguyên trong ngữ cảnh DTO."
-            },
-            "paymentStatus": {
-              "type": "string",
-              "enum": [
-                "pending",
-                "success",
-                "failed"
-              ],
-              "description": "Thông tin payment status của tài nguyên trong ngữ cảnh DTO."
-            },
-            "amount": {
-              "type": "integer",
-              "minimum": 0,
-              "description": "Thông tin amount của tài nguyên trong ngữ cảnh DTO."
-            },
-            "transactionId": {
-              "type": "string",
-              "nullable": true,
-              "minLength": 1,
-              "maxLength": 255,
-              "description": "Thông tin transaction id của tài nguyên trong ngữ cảnh DTO."
-            }
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Định danh duy nhất của tài nguyên."
           },
-          "required": [
-            "id",
-            "invoiceId",
-            "method",
-            "paymentStatus",
-            "amount",
-            "transactionId"
-          ]
-        }
+          "invoiceId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true,
+            "description": "Thông tin invoice id của tài nguyên trong ngữ cảnh DTO."
+          },
+          "method": {
+            "type": "string",
+            "enum": [
+              "vietqr",
+              "vnpay",
+              "momo",
+              "cash",
+              "mock"
+            ],
+            "description": "Thông tin method của tài nguyên trong ngữ cảnh DTO."
+          },
+          "paymentStatus": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "success",
+              "failed"
+            ],
+            "description": "Thông tin payment status của tài nguyên trong ngữ cảnh DTO."
+          },
+          "amount": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Thông tin amount của tài nguyên trong ngữ cảnh DTO."
+          },
+          "transactionId": {
+            "type": "string",
+            "nullable": true,
+            "minLength": 1,
+            "maxLength": 255,
+            "description": "Thông tin transaction id của tài nguyên trong ngữ cảnh DTO."
+          }
+        },
+        "required": [
+          "id",
+          "invoiceId",
+          "method",
+          "paymentStatus",
+          "amount",
+          "transactionId"
+        ]
       },
       "PaymentCreateIntentResponseDto": {
         "type": "object",
@@ -4443,106 +4395,100 @@
         }
       },
       "IssueReportMyListResponseDto": {
-        "type": "array",
+        "type": "object",
         "x-apidog-folder": "IssueReport/Response",
         "title": "IssueReportMyListResponseDto",
         "description": "Danh sách sự cố của người dùng hiện tại",
-        "items": {
-          "type": "object",
-          "properties": {
-            "id": {
-              "type": "string",
-              "format": "uuid",
-              "description": "Định danh duy nhất của tài nguyên."
-            },
-            "roomId": {
-              "type": "string",
-              "format": "uuid",
-              "description": "Định danh duy nhất của phòng liên quan."
-            },
-            "title": {
-              "type": "string",
-              "minLength": 1,
-              "maxLength": 255,
-              "description": "Thông tin title của tài nguyên trong ngữ cảnh DTO."
-            },
-            "status": {
-              "type": "string",
-              "enum": [
-                "open",
-                "in_progress",
-                "resolved",
-                "cancelled"
-              ],
-              "description": "Trạng thái hiện tại của tài nguyên trong quy trình nghiệp vụ."
-            },
-            "description": {
-              "type": "string",
-              "nullable": true,
-              "minLength": 1,
-              "maxLength": 500,
-              "description": "Thông tin description của tài nguyên trong ngữ cảnh DTO."
-            }
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Định danh duy nhất của tài nguyên."
           },
-          "required": [
-            "id",
-            "roomId",
-            "title",
-            "status",
-            "description"
-          ]
-        }
+          "roomId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Định danh duy nhất của phòng liên quan."
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 255,
+            "description": "Thông tin title của tài nguyên trong ngữ cảnh DTO."
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "open",
+              "in_progress",
+              "resolved",
+              "cancelled"
+            ],
+            "description": "Trạng thái hiện tại của tài nguyên trong quy trình nghiệp vụ."
+          },
+          "description": {
+            "type": "string",
+            "nullable": true,
+            "minLength": 1,
+            "maxLength": 500,
+            "description": "Thông tin description của tài nguyên trong ngữ cảnh DTO."
+          }
+        },
+        "required": [
+          "id",
+          "roomId",
+          "title",
+          "status",
+          "description"
+        ]
       },
       "IssueReportListResponseDto": {
-        "type": "array",
+        "type": "object",
         "x-apidog-folder": "IssueReport/Response",
         "title": "IssueReportListResponseDto",
         "description": "Danh sách báo cáo sự cố",
-        "items": {
-          "type": "object",
-          "properties": {
-            "id": {
-              "type": "string",
-              "format": "uuid",
-              "description": "Định danh duy nhất của tài nguyên."
-            },
-            "roomId": {
-              "type": "string",
-              "format": "uuid",
-              "description": "Định danh duy nhất của phòng liên quan."
-            },
-            "title": {
-              "type": "string",
-              "minLength": 1,
-              "maxLength": 255,
-              "description": "Thông tin title của tài nguyên trong ngữ cảnh DTO."
-            },
-            "status": {
-              "type": "string",
-              "enum": [
-                "open",
-                "in_progress",
-                "resolved",
-                "cancelled"
-              ],
-              "description": "Trạng thái hiện tại của tài nguyên trong quy trình nghiệp vụ."
-            },
-            "description": {
-              "type": "string",
-              "nullable": true,
-              "minLength": 1,
-              "maxLength": 500,
-              "description": "Thông tin description của tài nguyên trong ngữ cảnh DTO."
-            }
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Định danh duy nhất của tài nguyên."
           },
-          "required": [
-            "id",
-            "roomId",
-            "title",
-            "status",
-            "description"
-          ]
-        }
+          "roomId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Định danh duy nhất của phòng liên quan."
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 255,
+            "description": "Thông tin title của tài nguyên trong ngữ cảnh DTO."
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "open",
+              "in_progress",
+              "resolved",
+              "cancelled"
+            ],
+            "description": "Trạng thái hiện tại của tài nguyên trong quy trình nghiệp vụ."
+          },
+          "description": {
+            "type": "string",
+            "nullable": true,
+            "minLength": 1,
+            "maxLength": 500,
+            "description": "Thông tin description của tài nguyên trong ngữ cảnh DTO."
+          }
+        },
+        "required": [
+          "id",
+          "roomId",
+          "title",
+          "status",
+          "description"
+        ]
       },
       "IssueReportCreateResponseDto": {
         "type": "object",
@@ -4753,47 +4699,44 @@
         "description": "Exactly one contractId or buildingId is required"
       },
       "ConversationListResponseDto": {
-        "type": "array",
+        "type": "object",
         "x-apidog-folder": "Conversation/Response",
         "title": "ConversationListResponseDto",
         "description": "Danh sách cuộc hội thoại",
-        "items": {
-          "type": "object",
-          "properties": {
-            "id": {
-              "type": "string",
-              "format": "uuid",
-              "description": "Định danh duy nhất của tài nguyên."
-            },
-            "type": {
-              "type": "string",
-              "enum": [
-                "room",
-                "building",
-                "direct"
-              ],
-              "description": "Thông tin type của tài nguyên trong ngữ cảnh DTO."
-            },
-            "title": {
-              "type": "string",
-              "nullable": true,
-              "minLength": 1,
-              "maxLength": 255,
-              "description": "Thông tin title của tài nguyên trong ngữ cảnh DTO."
-            },
-            "unreadCount": {
-              "type": "integer",
-              "minimum": 0,
-              "description": "Thông tin unread count của tài nguyên trong ngữ cảnh DTO."
-            }
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Định danh duy nhất của tài nguyên."
           },
-          "required": [
-            "id",
-            "type",
-            "title",
-            "unreadCount"
-          ]
-        }
+          "type": {
+            "type": "string",
+            "enum": [
+              "room",
+              "building",
+              "direct"
+            ],
+            "description": "Thông tin type của tài nguyên trong ngữ cảnh DTO."
+          },
+          "title": {
+            "type": "string",
+            "nullable": true,
+            "minLength": 1,
+            "maxLength": 255,
+            "description": "Thông tin title của tài nguyên trong ngữ cảnh DTO."
+          },
+          "unreadCount": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Thông tin unread count của tài nguyên trong ngữ cảnh DTO."
+          }
+        },
+        "required": [
+          "id",
+          "type",
+          "title",
+          "unreadCount"
+        ]
       },
       "ConversationDetailResponseDto": {
         "type": "object",
@@ -4947,59 +4890,56 @@
         ]
       },
       "MessageListResponseDto": {
-        "type": "array",
+        "type": "object",
         "x-apidog-folder": "Message/Response",
         "title": "MessageListResponseDto",
         "description": "Danh sách tin nhắn theo cursor",
-        "items": {
-          "type": "object",
-          "properties": {
-            "id": {
-              "type": "string",
-              "format": "uuid",
-              "description": "Định danh duy nhất của tài nguyên."
-            },
-            "conversationId": {
-              "type": "string",
-              "format": "uuid",
-              "description": "Thông tin conversation id của tài nguyên trong ngữ cảnh DTO."
-            },
-            "senderId": {
-              "type": "string",
-              "format": "uuid",
-              "nullable": true,
-              "description": "Thông tin sender id của tài nguyên trong ngữ cảnh DTO."
-            },
-            "type": {
-              "type": "string",
-              "enum": [
-                "text",
-                "image",
-                "file",
-                "bot"
-              ],
-              "description": "Thông tin type của tài nguyên trong ngữ cảnh DTO."
-            },
-            "content": {
-              "type": "string",
-              "nullable": true,
-              "description": "Thông tin content của tài nguyên trong ngữ cảnh DTO."
-            },
-            "createdAt": {
-              "type": "string",
-              "format": "date-time",
-              "description": "Thời điểm bản ghi được tạo, theo định dạng ngày giờ ISO 8601."
-            }
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Định danh duy nhất của tài nguyên."
           },
-          "required": [
-            "id",
-            "conversationId",
-            "senderId",
-            "type",
-            "content",
-            "createdAt"
-          ]
-        }
+          "conversationId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Thông tin conversation id của tài nguyên trong ngữ cảnh DTO."
+          },
+          "senderId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true,
+            "description": "Thông tin sender id của tài nguyên trong ngữ cảnh DTO."
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "text",
+              "image",
+              "file",
+              "bot"
+            ],
+            "description": "Thông tin type của tài nguyên trong ngữ cảnh DTO."
+          },
+          "content": {
+            "type": "string",
+            "nullable": true,
+            "description": "Thông tin content của tài nguyên trong ngữ cảnh DTO."
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Thời điểm bản ghi được tạo, theo định dạng ngày giờ ISO 8601."
+          }
+        },
+        "required": [
+          "id",
+          "conversationId",
+          "senderId",
+          "type",
+          "content",
+          "createdAt"
+        ]
       },
       "MessageSendResponseDto": {
         "type": "object",
@@ -5069,43 +5009,40 @@
         ]
       },
       "NotificationListResponseDto": {
-        "type": "array",
+        "type": "object",
         "x-apidog-folder": "Notification/Response",
         "title": "NotificationListResponseDto",
         "description": "Danh sách thông báo theo cursor",
-        "items": {
-          "type": "object",
-          "properties": {
-            "id": {
-              "type": "string",
-              "format": "uuid",
-              "description": "Định danh duy nhất của tài nguyên."
-            },
-            "type": {
-              "type": "string",
-              "minLength": 1,
-              "maxLength": 50,
-              "description": "Thông tin type của tài nguyên trong ngữ cảnh DTO."
-            },
-            "data": {
-              "type": "object",
-              "nullable": true,
-              "description": "Dữ liệu kết quả của thao tác."
-            },
-            "readAt": {
-              "type": "string",
-              "format": "date-time",
-              "nullable": true,
-              "description": "Thời điểm thông báo được đọc; null nghĩa là chưa đọc."
-            }
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Định danh duy nhất của tài nguyên."
           },
-          "required": [
-            "id",
-            "type",
-            "data",
-            "readAt"
-          ]
-        }
+          "type": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 50,
+            "description": "Thông tin type của tài nguyên trong ngữ cảnh DTO."
+          },
+          "data": {
+            "type": "object",
+            "nullable": true,
+            "description": "Dữ liệu kết quả của thao tác."
+          },
+          "readAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "description": "Thời điểm thông báo được đọc; null nghĩa là chưa đọc."
+          }
+        },
+        "required": [
+          "id",
+          "type",
+          "data",
+          "readAt"
+        ]
       },
       "NotificationMarkReadResponseDto": {
         "type": "object",
@@ -5187,34 +5124,31 @@
         ]
       },
       "NotificationPreferenceDetailResponseDto": {
-        "type": "array",
+        "type": "object",
         "x-apidog-folder": "NotificationPreference/Response",
         "title": "NotificationPreferenceDetailResponseDto",
         "description": "Danh sách tùy biến thông báo của người dùng hiện tại",
-        "items": {
-          "type": "object",
-          "properties": {
-            "type": {
-              "type": "string",
-              "enum": [
-                "invoice",
-                "chat",
-                "issue",
-                "match",
-                "account"
-              ],
-              "description": "Thông tin type của tài nguyên trong ngữ cảnh DTO."
-            },
-            "enabled": {
-              "type": "boolean",
-              "description": "Thông tin enabled của tài nguyên trong ngữ cảnh DTO."
-            }
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "invoice",
+              "chat",
+              "issue",
+              "match",
+              "account"
+            ],
+            "description": "Thông tin type của tài nguyên trong ngữ cảnh DTO."
           },
-          "required": [
-            "type",
-            "enabled"
-          ]
-        }
+          "enabled": {
+            "type": "boolean",
+            "description": "Thông tin enabled của tài nguyên trong ngữ cảnh DTO."
+          }
+        },
+        "required": [
+          "type",
+          "enabled"
+        ]
       },
       "NotificationPreferenceUpdateResponseDto": {
         "type": "object",
@@ -5233,57 +5167,54 @@
         ]
       },
       "AuditLogListResponseDto": {
-        "type": "array",
+        "type": "object",
         "x-apidog-folder": "AuditLog/Response",
         "title": "AuditLogListResponseDto",
         "description": "Danh sách nhật ký kiểm toán",
-        "items": {
-          "type": "object",
-          "properties": {
-            "id": {
-              "type": "string",
-              "format": "uuid",
-              "description": "Định danh duy nhất của tài nguyên."
-            },
-            "actorId": {
-              "type": "string",
-              "format": "uuid",
-              "nullable": true,
-              "description": "Thông tin actor id của tài nguyên trong ngữ cảnh DTO."
-            },
-            "action": {
-              "type": "string",
-              "minLength": 1,
-              "maxLength": 100,
-              "description": "Thông tin action của tài nguyên trong ngữ cảnh DTO."
-            },
-            "entityType": {
-              "type": "string",
-              "minLength": 1,
-              "maxLength": 50,
-              "description": "Thông tin entity type của tài nguyên trong ngữ cảnh DTO."
-            },
-            "entityId": {
-              "type": "string",
-              "format": "uuid",
-              "nullable": true,
-              "description": "Thông tin entity id của tài nguyên trong ngữ cảnh DTO."
-            },
-            "createdAt": {
-              "type": "string",
-              "format": "date-time",
-              "description": "Thời điểm bản ghi được tạo, theo định dạng ngày giờ ISO 8601."
-            }
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Định danh duy nhất của tài nguyên."
           },
-          "required": [
-            "id",
-            "actorId",
-            "action",
-            "entityType",
-            "entityId",
-            "createdAt"
-          ]
-        }
+          "actorId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true,
+            "description": "Thông tin actor id của tài nguyên trong ngữ cảnh DTO."
+          },
+          "action": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100,
+            "description": "Thông tin action của tài nguyên trong ngữ cảnh DTO."
+          },
+          "entityType": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 50,
+            "description": "Thông tin entity type của tài nguyên trong ngữ cảnh DTO."
+          },
+          "entityId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true,
+            "description": "Thông tin entity id của tài nguyên trong ngữ cảnh DTO."
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Thời điểm bản ghi được tạo, theo định dạng ngày giờ ISO 8601."
+          }
+        },
+        "required": [
+          "id",
+          "actorId",
+          "action",
+          "entityType",
+          "entityId",
+          "createdAt"
+        ]
       },
       "AuditLogDetailResponseDto": {
         "type": "object",
@@ -5563,50 +5494,47 @@
         ]
       },
       "ContractMemberListResponseDto": {
-        "type": "array",
+        "type": "object",
         "x-apidog-folder": "ContractMember/Response",
         "title": "ContractMemberListResponseDto",
         "description": "Danh sách thành viên hợp đồng",
-        "items": {
-          "type": "object",
-          "properties": {
-            "id": {
-              "type": "string",
-              "format": "uuid",
-              "description": "Định danh duy nhất của tài nguyên."
-            },
-            "contractId": {
-              "type": "string",
-              "format": "uuid",
-              "description": "Định danh duy nhất của hợp đồng liên quan."
-            },
-            "tenantName": {
-              "type": "string",
-              "nullable": true,
-              "minLength": 1,
-              "maxLength": 254,
-              "description": "Thông tin tenant name của tài nguyên trong ngữ cảnh DTO."
-            },
-            "joinedAt": {
-              "type": "string",
-              "format": "date-time",
-              "description": "Thông tin joined at của tài nguyên trong ngữ cảnh DTO."
-            },
-            "leftAt": {
-              "type": "string",
-              "format": "date-time",
-              "nullable": true,
-              "description": "Thông tin left at của tài nguyên trong ngữ cảnh DTO."
-            }
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Định danh duy nhất của tài nguyên."
           },
-          "required": [
-            "id",
-            "contractId",
-            "tenantName",
-            "joinedAt",
-            "leftAt"
-          ]
-        }
+          "contractId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Định danh duy nhất của hợp đồng liên quan."
+          },
+          "tenantName": {
+            "type": "string",
+            "nullable": true,
+            "minLength": 1,
+            "maxLength": 254,
+            "description": "Thông tin tenant name của tài nguyên trong ngữ cảnh DTO."
+          },
+          "joinedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Thông tin joined at của tài nguyên trong ngữ cảnh DTO."
+          },
+          "leftAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "description": "Thông tin left at của tài nguyên trong ngữ cảnh DTO."
+          }
+        },
+        "required": [
+          "id",
+          "contractId",
+          "tenantName",
+          "joinedAt",
+          "leftAt"
+        ]
       },
       "MatchRequestCreateRequestDto": {
         "type": "object",
@@ -5627,52 +5555,49 @@
         ]
       },
       "MatchRequestListResponseDto": {
-        "type": "array",
+        "type": "object",
         "x-apidog-folder": "MatchRequest/Response",
         "title": "MatchRequestListResponseDto",
         "description": "Danh sách yêu cầu kết nối tìm bạn ở ghép",
-        "items": {
-          "type": "object",
-          "properties": {
-            "id": {
-              "type": "string",
-              "format": "uuid",
-              "description": "Định danh duy nhất của tài nguyên."
-            },
-            "requesterId": {
-              "type": "string",
-              "format": "uuid",
-              "description": "Thông tin requester id của tài nguyên trong ngữ cảnh DTO."
-            },
-            "targetId": {
-              "type": "string",
-              "format": "uuid",
-              "description": "Thông tin target id của tài nguyên trong ngữ cảnh DTO."
-            },
-            "status": {
-              "type": "string",
-              "enum": [
-                "pending",
-                "accepted",
-                "rejected",
-                "withdrawn"
-              ],
-              "description": "Trạng thái hiện tại của tài nguyên trong quy trình nghiệp vụ."
-            },
-            "createdAt": {
-              "type": "string",
-              "format": "date-time",
-              "description": "Thời điểm bản ghi được tạo, theo định dạng ngày giờ ISO 8601."
-            }
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Định danh duy nhất của tài nguyên."
           },
-          "required": [
-            "id",
-            "requesterId",
-            "targetId",
-            "status",
-            "createdAt"
-          ]
-        }
+          "requesterId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Thông tin requester id của tài nguyên trong ngữ cảnh DTO."
+          },
+          "targetId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Thông tin target id của tài nguyên trong ngữ cảnh DTO."
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "accepted",
+              "rejected",
+              "withdrawn"
+            ],
+            "description": "Trạng thái hiện tại của tài nguyên trong quy trình nghiệp vụ."
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Thời điểm bản ghi được tạo, theo định dạng ngày giờ ISO 8601."
+          }
+        },
+        "required": [
+          "id",
+          "requesterId",
+          "targetId",
+          "status",
+          "createdAt"
+        ]
       },
       "MatchRequestCreateResponseDto": {
         "type": "object",
@@ -5903,77 +5828,74 @@
         }
       },
       "RatePolicyListResponseDto": {
-        "type": "array",
+        "type": "object",
         "x-apidog-folder": "RatePolicy/Response",
         "title": "RatePolicyListResponseDto",
         "description": "Danh sách chính sách đơn giá",
-        "items": {
-          "type": "object",
-          "properties": {
-            "id": {
-              "type": "string",
-              "format": "uuid",
-              "description": "Định danh duy nhất của tài nguyên."
-            },
-            "landlordId": {
-              "type": "string",
-              "format": "uuid",
-              "description": "Thông tin landlord id của tài nguyên trong ngữ cảnh DTO."
-            },
-            "scope": {
-              "type": "string",
-              "enum": [
-                "building",
-                "room"
-              ],
-              "description": "Thông tin scope của tài nguyên trong ngữ cảnh DTO."
-            },
-            "roomId": {
-              "type": "string",
-              "format": "uuid",
-              "nullable": true,
-              "description": "Định danh duy nhất của phòng liên quan."
-            },
-            "type": {
-              "type": "string",
-              "enum": [
-                "electricity",
-                "water",
-                "wifi",
-                "cleaning",
-                "parking",
-                "maintenance",
-                "other"
-              ],
-              "description": "Thông tin type của tài nguyên trong ngữ cảnh DTO."
-            },
-            "rateKind": {
-              "type": "string",
-              "enum": [
-                "flat",
-                "tiered",
-                "fixed_per_period",
-                "per_head",
-                "per_area_m2",
-                "per_vehicle"
-              ],
-              "description": "Thông tin rate kind của tài nguyên trong ngữ cảnh DTO."
-            },
-            "isActive": {
-              "type": "boolean",
-              "description": "Thông tin is active của tài nguyên trong ngữ cảnh DTO."
-            }
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Định danh duy nhất của tài nguyên."
           },
-          "required": [
-            "id",
-            "landlordId",
-            "scope",
-            "roomId",
-            "type",
-            "rateKind",
-            "isActive"
-          ]
-        }
+          "landlordId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Thông tin landlord id của tài nguyên trong ngữ cảnh DTO."
+          },
+          "scope": {
+            "type": "string",
+            "enum": [
+              "building",
+              "room"
+            ],
+            "description": "Thông tin scope của tài nguyên trong ngữ cảnh DTO."
+          },
+          "roomId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true,
+            "description": "Định danh duy nhất của phòng liên quan."
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "electricity",
+              "water",
+              "wifi",
+              "cleaning",
+              "parking",
+              "maintenance",
+              "other"
+            ],
+            "description": "Thông tin type của tài nguyên trong ngữ cảnh DTO."
+          },
+          "rateKind": {
+            "type": "string",
+            "enum": [
+              "flat",
+              "tiered",
+              "fixed_per_period",
+              "per_head",
+              "per_area_m2",
+              "per_vehicle"
+            ],
+            "description": "Thông tin rate kind của tài nguyên trong ngữ cảnh DTO."
+          },
+          "isActive": {
+            "type": "boolean",
+            "description": "Thông tin is active của tài nguyên trong ngữ cảnh DTO."
+          }
+        },
+        "required": [
+          "id",
+          "landlordId",
+          "scope",
+          "roomId",
+          "type",
+          "rateKind",
+          "isActive"
+        ]
       },
       "RatePolicyCreateResponseDto": {
         "type": "object",
@@ -6161,64 +6083,61 @@
         }
       },
       "BillingSettingListResponseDto": {
-        "type": "array",
+        "type": "object",
         "x-apidog-folder": "BillingSetting/Response",
         "title": "BillingSettingListResponseDto",
         "description": "Danh sách cấu hình billing",
-        "items": {
-          "type": "object",
-          "properties": {
-            "id": {
-              "type": "string",
-              "format": "uuid",
-              "description": "Định danh duy nhất của tài nguyên."
-            },
-            "scope": {
-              "type": "string",
-              "enum": [
-                "building",
-                "room"
-              ],
-              "description": "Thông tin scope của tài nguyên trong ngữ cảnh DTO."
-            },
-            "roomId": {
-              "type": "string",
-              "format": "uuid",
-              "nullable": true,
-              "description": "Định danh duy nhất của phòng liên quan."
-            },
-            "dueDays": {
-              "type": "integer",
-              "minimum": 1,
-              "maximum": 28,
-              "description": "Thông tin due days của tài nguyên trong ngữ cảnh DTO."
-            },
-            "remindDays": {
-              "type": "integer",
-              "minimum": 1,
-              "maximum": 28,
-              "nullable": true,
-              "description": "Thông tin remind days của tài nguyên trong ngữ cảnh DTO."
-            },
-            "botEnabled": {
-              "type": "boolean",
-              "description": "Thông tin bot enabled của tài nguyên trong ngữ cảnh DTO."
-            },
-            "isActive": {
-              "type": "boolean",
-              "description": "Thông tin is active của tài nguyên trong ngữ cảnh DTO."
-            }
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Định danh duy nhất của tài nguyên."
           },
-          "required": [
-            "id",
-            "scope",
-            "roomId",
-            "dueDays",
-            "remindDays",
-            "botEnabled",
-            "isActive"
-          ]
-        }
+          "scope": {
+            "type": "string",
+            "enum": [
+              "building",
+              "room"
+            ],
+            "description": "Thông tin scope của tài nguyên trong ngữ cảnh DTO."
+          },
+          "roomId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true,
+            "description": "Định danh duy nhất của phòng liên quan."
+          },
+          "dueDays": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 28,
+            "description": "Thông tin due days của tài nguyên trong ngữ cảnh DTO."
+          },
+          "remindDays": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 28,
+            "nullable": true,
+            "description": "Thông tin remind days của tài nguyên trong ngữ cảnh DTO."
+          },
+          "botEnabled": {
+            "type": "boolean",
+            "description": "Thông tin bot enabled của tài nguyên trong ngữ cảnh DTO."
+          },
+          "isActive": {
+            "type": "boolean",
+            "description": "Thông tin is active của tài nguyên trong ngữ cảnh DTO."
+          }
+        },
+        "required": [
+          "id",
+          "scope",
+          "roomId",
+          "dueDays",
+          "remindDays",
+          "botEnabled",
+          "isActive"
+        ]
       },
       "BillingSettingCreateResponseDto": {
         "type": "object",
