@@ -4,18 +4,11 @@ title: MatchRequestCreateResponseDto
 description: Phản hồi khi tạo yêu cầu kết nối
 
 properties:
-  statusCode: { type: integer, enum: [201], example: 201 , description: "Thông tin status code của tài nguyên trong ngữ cảnh DTO." }
-  code: { type: string, enum: [MATCH_REQUEST_CREATED], example: MATCH_REQUEST_CREATED , description: "Mã ổn định để client nhận diện kết quả nghiệp vụ." }
-  data:
-    type: object
-    description: Dữ liệu kết quả của thao tác.
-    properties:
-      id: { type: string, format: uuid , description: "Định danh duy nhất của tài nguyên." }
-      status: { type: string, enum: [pending], example: pending , description: "Trạng thái hiện tại của tài nguyên trong quy trình nghiệp vụ." }
-      respondedAt: { type: string, format: date-time, nullable: true , description: "Thông tin responded at của tài nguyên trong ngữ cảnh DTO." }
-    required: [id, status, respondedAt]
+  id: { type: string, format: uuid , description: "Định danh duy nhất của tài nguyên." }
+  status: { type: string, enum: [pending], example: pending , description: "Trạng thái hiện tại của tài nguyên trong quy trình nghiệp vụ." }
+  respondedAt: { type: string, format: date-time, nullable: true , description: "Thông tin responded at của tài nguyên trong ngữ cảnh DTO." }
 
 required:
-  - statusCode
-  - code
-  - data
+  - id
+  - status
+  - respondedAt

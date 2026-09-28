@@ -4,103 +4,82 @@ title: MediaPresignUploadResponseDto
 description: Phản hồi cấp upload ticket cho Media
 
 properties:
-  statusCode:
-    type: integer
-    description: Thông tin status code của tài nguyên trong ngữ cảnh DTO.
-    enum:
-      - 201
-    example: 201
-
-  code:
+  id:
     type: string
-    description: Mã ổn định để client nhận diện kết quả nghiệp vụ.
-    enum:
-      - MEDIA_UPLOAD_TICKET_ISSUED
-    example: MEDIA_UPLOAD_TICKET_ISSUED
+    format: uuid
+    description: ID Media được cấp upload ticket
+    example: 3fa85f64-5717-4562-b3fc-2c963f66afa6
 
-  data:
+  ownerType:
+    type: string
+    enum:
+      - user
+      - room
+      - building
+      - contract
+      - contract_member
+      - meter_reading
+      - issue_report
+      - message
+    description: Loại thực thể sở hữu file
+    example: room
+
+  ownerId:
+    type: string
+    format: uuid
+    description: ID của thực thể sở hữu file
+    example: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+
+  purpose:
+    type: string
+    enum:
+      - avatar
+      - cover_photo
+      - gallery_photo
+      - ownership_proof
+      - cccd_front
+      - cccd_back
+      - contract_template
+      - contract_signed
+      - meter_reading_evidence
+      - issue_photo
+      - chat_attachment
+    description: Mục đích sử dụng của file đối với thực thể sở hữu
+    example: cover_photo
+
+  uploadUrl:
+    type: string
+    description: Signed URL để client upload trực tiếp lên storage
+    example: https://storage.example.com/upload-ticket
+
+  requiredHeaders:
     type: object
     properties:
-      id:
-        type: string
-        format: uuid
-        description: ID Media được cấp upload ticket
-        example: 3fa85f64-5717-4562-b3fc-2c963f66afa6
-
-      ownerType:
+      Content-Type:
         type: string
         enum:
-          - user
-          - room
-          - building
-          - contract
-          - contract_member
-          - meter_reading
-          - issue_report
-          - message
-        description: Loại thực thể sở hữu file
-        example: room
-
-      ownerId:
-        type: string
-        format: uuid
-        description: ID của thực thể sở hữu file
-        example: 3fa85f64-5717-4562-b3fc-2c963f66afa6
-
-      purpose:
-        type: string
-        enum:
-          - avatar
-          - cover_photo
-          - gallery_photo
-          - ownership_proof
-          - cccd_front
-          - cccd_back
-          - contract_template
-          - contract_signed
-          - meter_reading_evidence
-          - issue_photo
-          - chat_attachment
-        description: Mục đích sử dụng của file đối với thực thể sở hữu
-        example: cover_photo
-
-      uploadUrl:
-        type: string
-        description: Signed URL để client upload trực tiếp lên storage
-        example: https://storage.example.com/upload-ticket
-
-      requiredHeaders:
-        type: object
-        properties:
-          Content-Type:
-            type: string
-            enum:
-              - image/jpeg
-              - image/png
-              - image/webp
-              - application/pdf
-            description: MIME type phải gửi khi upload
-            example: image/jpeg
-        required:
-          - Content-Type
-
-      expiresIn:
-        type: integer
-        enum:
-          - 900
-        description: Thời gian upload ticket có hiệu lực tính bằng giây
-        example: 900
-
+          - image/jpeg
+          - image/png
+          - image/webp
+          - application/pdf
+        description: MIME type phải gửi khi upload
+        example: image/jpeg
     required:
-      - id
-      - ownerType
-      - ownerId
-      - purpose
-      - uploadUrl
-      - requiredHeaders
-      - expiresIn
+      - Content-Type
+
+  expiresIn:
+    type: integer
+    enum:
+      - 900
+    description: Thời gian upload ticket có hiệu lực tính bằng giây
+    example: 900
+
 
 required:
-  - statusCode
-  - code
-  - data
+  - id
+  - ownerType
+  - ownerId
+  - purpose
+  - uploadUrl
+  - requiredHeaders
+  - expiresIn

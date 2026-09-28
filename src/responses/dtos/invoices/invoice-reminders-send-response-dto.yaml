@@ -3,34 +3,27 @@ x-apidog-folder: "Invoice/Response"
 title: InvoiceSendRemindersResponseDto
 description: Kết quả xếp hàng nhắc thanh toán hóa đơn
 properties:
-  statusCode: { type: integer, enum: [202], example: 202 , description: "Thông tin status code của tài nguyên trong ngữ cảnh DTO." }
-  code: { type: string, enum: [INVOICE_REMINDERS_QUEUED], example: INVOICE_REMINDERS_QUEUED , description: "Mã ổn định để client nhận diện kết quả nghiệp vụ." }
-  data:
-    type: object
-    description: Dữ liệu kết quả của thao tác.
-    properties:
-      requested: { type: integer, minimum: 0 , description: "Thông tin requested của tài nguyên trong ngữ cảnh DTO." }
-      queued:
-        type: array
-        description: Thông tin queued của tài nguyên trong ngữ cảnh DTO.
-        items:
-          type: object
-          properties:
-            invoiceId: { type: string, format: uuid , description: "Thông tin invoice id của tài nguyên trong ngữ cảnh DTO." }
-            sentCount: { type: integer, minimum: 0 , description: "Thông tin sent count của tài nguyên trong ngữ cảnh DTO." }
-          required: [invoiceId, sentCount]
-      failed:
-        type: array
-        description: Thông tin failed của tài nguyên trong ngữ cảnh DTO.
-        items:
-          type: object
-          properties:
-            invoiceId: { type: string, format: uuid , description: "Thông tin invoice id của tài nguyên trong ngữ cảnh DTO." }
-            code: { type: string , description: "Mã ổn định để client nhận diện kết quả nghiệp vụ." }
-          required: [invoiceId, code]
-    required: [requested, queued, failed]
+  requested: { type: integer, minimum: 0 , description: "Thông tin requested của tài nguyên trong ngữ cảnh DTO." }
+  queued:
+    type: array
+    description: Thông tin queued của tài nguyên trong ngữ cảnh DTO.
+    items:
+      type: object
+      properties:
+        invoiceId: { type: string, format: uuid , description: "Thông tin invoice id của tài nguyên trong ngữ cảnh DTO." }
+        sentCount: { type: integer, minimum: 0 , description: "Thông tin sent count của tài nguyên trong ngữ cảnh DTO." }
+      required: [invoiceId, sentCount]
+  failed:
+    type: array
+    description: Thông tin failed của tài nguyên trong ngữ cảnh DTO.
+    items:
+      type: object
+      properties:
+        invoiceId: { type: string, format: uuid , description: "Thông tin invoice id của tài nguyên trong ngữ cảnh DTO." }
+        code: { type: string , description: "Mã ổn định để client nhận diện kết quả nghiệp vụ." }
+      required: [invoiceId, code]
 
 required:
-  - statusCode
-  - code
-  - data
+  - requested
+  - queued
+  - failed

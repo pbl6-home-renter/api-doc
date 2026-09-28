@@ -4,16 +4,6 @@ title: BuildingPublicListResponseDto
 description: Danh sách tòa nhà công khai
 
 properties:
-  statusCode:
-    type: integer
-    description: Thông tin status code của tài nguyên trong ngữ cảnh DTO.
-    enum: [200]
-    example: 200
-  code:
-    type: string
-    description: Mã ổn định để client nhận diện kết quả nghiệp vụ.
-    enum: [BUILDINGS_FETCHED]
-    example: BUILDINGS_FETCHED
   data:
     type: array
     description: Dữ liệu kết quả của thao tác.
@@ -40,7 +30,5 @@ properties:
     required: [type, pageNo, pageSize, totalItems, totalPages, hasNextPage, hasPreviousPage]
 
 required:
-  - statusCode
-  - code
   - data
   - pagination

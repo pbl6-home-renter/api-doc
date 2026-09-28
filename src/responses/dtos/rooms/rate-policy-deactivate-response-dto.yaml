@@ -4,17 +4,9 @@ title: RatePolicyDeactivateResponseDto
 description: Phản hồi khi vô hiệu hóa chính sách đơn giá
 
 properties:
-  statusCode: { type: integer, enum: [200], example: 200 , description: "Thông tin status code của tài nguyên trong ngữ cảnh DTO." }
-  code: { type: string, enum: [RATE_POLICY_DEACTIVATED], example: RATE_POLICY_DEACTIVATED , description: "Mã ổn định để client nhận diện kết quả nghiệp vụ." }
-  data:
-    type: object
-    description: Dữ liệu kết quả của thao tác.
-    properties:
-      id: { type: string, format: uuid , description: "Định danh duy nhất của tài nguyên." }
-      isActive: { type: boolean, enum: [false], example: false , description: "Thông tin is active của tài nguyên trong ngữ cảnh DTO." }
-    required: [id, isActive]
+  id: { type: string, format: uuid , description: "Định danh duy nhất của tài nguyên." }
+  isActive: { type: boolean, enum: [false], example: false , description: "Thông tin is active của tài nguyên trong ngữ cảnh DTO." }
 
 required:
-  - statusCode
-  - code
-  - data
+  - id
+  - isActive

@@ -4,20 +4,6 @@ title: UserListResponseDto
 description: Danh sách người dùng dành cho admin với offset pagination
 
 properties:
-  statusCode:
-    type: integer
-    description: Thông tin status code của tài nguyên trong ngữ cảnh DTO.
-    enum:
-      - 200
-    example: 200
-
-  code:
-    type: string
-    description: Mã ổn định để client nhận diện kết quả nghiệp vụ.
-    enum:
-      - USERS_FETCHED
-    example: "USERS_FETCHED"
-
   data:
     type: array
     description: Dữ liệu kết quả của thao tác.
@@ -112,7 +98,5 @@ properties:
       - hasPreviousPage
 
 required:
-  - statusCode
-  - code
   - data
   - pagination

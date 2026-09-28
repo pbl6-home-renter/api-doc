@@ -4,19 +4,13 @@ title: RoomUpdateResponseDto
 description: Phản hồi khi cập nhật phòng thành công
 
 properties:
-  statusCode: { type: integer, enum: [200], example: 200 , description: "Thông tin status code của tài nguyên trong ngữ cảnh DTO." }
-  code: { type: string, enum: [ROOM_UPDATED], example: ROOM_UPDATED , description: "Mã ổn định để client nhận diện kết quả nghiệp vụ." }
-  data:
-    type: object
-    description: Dữ liệu kết quả của thao tác.
-    properties:
-      id: { type: string, format: uuid , description: "Định danh duy nhất của tài nguyên." }
-      name: { type: string , description: "Thông tin name của tài nguyên trong ngữ cảnh DTO." }
-      rentPrice: { type: integer, minimum: 0 , description: "Thông tin rent price của tài nguyên trong ngữ cảnh DTO." }
-      area: { type: string, nullable: true, example: '19.0' , description: "Thông tin area của tài nguyên trong ngữ cảnh DTO." }
-    required: [id, name, rentPrice, area]
+  id: { type: string, format: uuid , description: "Định danh duy nhất của tài nguyên." }
+  name: { type: string , description: "Thông tin name của tài nguyên trong ngữ cảnh DTO." }
+  rentPrice: { type: integer, minimum: 0 , description: "Thông tin rent price của tài nguyên trong ngữ cảnh DTO." }
+  area: { type: string, nullable: true, example: '19.0' , description: "Thông tin area của tài nguyên trong ngữ cảnh DTO." }
 
 required:
-  - statusCode
-  - code
-  - data
+  - id
+  - name
+  - rentPrice
+  - area

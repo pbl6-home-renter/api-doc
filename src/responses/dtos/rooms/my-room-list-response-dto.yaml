@@ -4,8 +4,6 @@ title: RoomMyListResponseDto
 description: Danh sách phòng của chủ nhà hiện tại
 
 properties:
-  statusCode: { type: integer, enum: [200], example: 200 , description: "Thông tin status code của tài nguyên trong ngữ cảnh DTO." }
-  code: { type: string, enum: [MY_ROOMS_FETCHED], example: MY_ROOMS_FETCHED , description: "Mã ổn định để client nhận diện kết quả nghiệp vụ." }
   data:
     type: array
     description: Dữ liệu kết quả của thao tác.
@@ -32,7 +30,5 @@ properties:
     required: [type, pageNo, pageSize, totalItems, totalPages, hasNextPage, hasPreviousPage]
 
 required:
-  - statusCode
-  - code
   - data
   - pagination

@@ -3,36 +3,29 @@ x-apidog-folder: "Invoice/Response"
 title: InvoiceIssueResponseDto
 description: Kết quả phát hành hàng loạt hóa đơn
 properties:
-  statusCode: { type: integer, enum: [200], example: 200 , description: "Thông tin status code của tài nguyên trong ngữ cảnh DTO." }
-  code: { type: string, enum: [INVOICES_ISSUE_REQUESTED], example: INVOICES_ISSUE_REQUESTED , description: "Mã ổn định để client nhận diện kết quả nghiệp vụ." }
-  data:
-    type: object
-    description: Dữ liệu kết quả của thao tác.
-    properties:
-      requested: { type: integer, minimum: 0 , description: "Thông tin requested của tài nguyên trong ngữ cảnh DTO." }
-      succeeded:
-        type: array
-        description: Thông tin succeeded của tài nguyên trong ngữ cảnh DTO.
-        items:
-          type: object
-          properties:
-            id: { type: string, format: uuid , description: "Định danh duy nhất của tài nguyên." }
-            invoiceStatus: { type: string, enum: [pending, issued, void] , description: "Thông tin invoice status của tài nguyên trong ngữ cảnh DTO." }
-            issuedAt: { type: string, format: date-time, nullable: true , description: "Thông tin issued at của tài nguyên trong ngữ cảnh DTO." }
-            vietQrContent: { type: string , description: "Thông tin viet qr content của tài nguyên trong ngữ cảnh DTO." }
-          required: [id, invoiceStatus, issuedAt, vietQrContent]
-      failed:
-        type: array
-        description: Thông tin failed của tài nguyên trong ngữ cảnh DTO.
-        items:
-          type: object
-          properties:
-            invoiceId: { type: string, format: uuid , description: "Thông tin invoice id của tài nguyên trong ngữ cảnh DTO." }
-            code: { type: string , description: "Mã ổn định để client nhận diện kết quả nghiệp vụ." }
-          required: [invoiceId, code]
-    required: [requested, succeeded, failed]
+  requested: { type: integer, minimum: 0 , description: "Thông tin requested của tài nguyên trong ngữ cảnh DTO." }
+  succeeded:
+    type: array
+    description: Thông tin succeeded của tài nguyên trong ngữ cảnh DTO.
+    items:
+      type: object
+      properties:
+        id: { type: string, format: uuid , description: "Định danh duy nhất của tài nguyên." }
+        invoiceStatus: { type: string, enum: [pending, issued, void] , description: "Thông tin invoice status của tài nguyên trong ngữ cảnh DTO." }
+        issuedAt: { type: string, format: date-time, nullable: true , description: "Thông tin issued at của tài nguyên trong ngữ cảnh DTO." }
+        vietQrContent: { type: string , description: "Thông tin viet qr content của tài nguyên trong ngữ cảnh DTO." }
+      required: [id, invoiceStatus, issuedAt, vietQrContent]
+  failed:
+    type: array
+    description: Thông tin failed của tài nguyên trong ngữ cảnh DTO.
+    items:
+      type: object
+      properties:
+        invoiceId: { type: string, format: uuid , description: "Thông tin invoice id của tài nguyên trong ngữ cảnh DTO." }
+        code: { type: string , description: "Mã ổn định để client nhận diện kết quả nghiệp vụ." }
+      required: [invoiceId, code]
 
 required:
-  - statusCode
-  - code
-  - data
+  - requested
+  - succeeded
+  - failed

@@ -3,8 +3,6 @@ x-apidog-folder: "Message/Response"
 title: MessageListResponseDto
 description: Danh sách tin nhắn theo cursor
 properties:
-  statusCode: { type: integer, enum: [200], example: 200 , description: "Thông tin status code của tài nguyên trong ngữ cảnh DTO." }
-  code: { type: string, enum: [MESSAGES_FETCHED], example: MESSAGES_FETCHED , description: "Mã ổn định để client nhận diện kết quả nghiệp vụ." }
   data:
     type: array
     description: Dữ liệu kết quả của thao tác.
@@ -29,7 +27,5 @@ properties:
     required: [type, pageSize, nextCursor, hasNextPage]
 
 required:
-  - statusCode
-  - code
   - data
   - pagination

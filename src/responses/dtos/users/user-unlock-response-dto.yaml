@@ -4,48 +4,27 @@ title: UserUnlockResponseDto
 description: Phản hồi sau khi mở khóa tài khoản thành công
 
 properties:
-  statusCode:
-    type: integer
-    description: Thông tin status code của tài nguyên trong ngữ cảnh DTO.
-    enum:
-      - 200
-    example: 200
-
-  code:
+  userId:
     type: string
-    description: Mã ổn định để client nhận diện kết quả nghiệp vụ.
+    description: Định danh duy nhất của người dùng liên quan.
+    format: uuid
+
+  status:
+    type: string
+    description: Trạng thái hiện tại của tài nguyên trong quy trình nghiệp vụ.
     enum:
-      - USER_UNLOCKED
-    example: "USER_UNLOCKED"
+      - active
+    example: "active"
 
-  data:
-    type: object
-    properties:
-      userId:
-        type: string
-        description: Định danh duy nhất của người dùng liên quan.
-        format: uuid
+  lockedAt:
+    type: string
+    format: date-time
+    nullable: true
+    description: Sau khi mở khóa trường này được trả về null
+    example: null
 
-      status:
-        type: string
-        description: Trạng thái hiện tại của tài nguyên trong quy trình nghiệp vụ.
-        enum:
-          - active
-        example: "active"
-
-      lockedAt:
-        type: string
-        format: date-time
-        nullable: true
-        description: Sau khi mở khóa trường này được trả về null
-        example: null
-
-    required:
-      - userId
-      - status
-      - lockedAt
 
 required:
-  - statusCode
-  - code
-  - data
+  - userId
+  - status
+  - lockedAt

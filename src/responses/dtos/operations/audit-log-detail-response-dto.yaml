@@ -3,21 +3,17 @@ x-apidog-folder: "AuditLog/Response"
 title: AuditLogDetailResponseDto
 description: Chi tiết nhật ký kiểm toán
 properties:
-  statusCode: { type: integer, enum: [200], example: 200 , description: "Thông tin status code của tài nguyên trong ngữ cảnh DTO." }
-  code: { type: string, enum: [AUDIT_LOG_FETCHED], example: AUDIT_LOG_FETCHED , description: "Mã ổn định để client nhận diện kết quả nghiệp vụ." }
-  data:
-    type: object
-    description: Dữ liệu kết quả của thao tác.
-    properties:
-      id: { type: string, format: uuid , description: "Định danh duy nhất của tài nguyên." }
-      action: { type: string, minLength: 1, maxLength: 100 , description: "Thông tin action của tài nguyên trong ngữ cảnh DTO." }
-      entityType: { type: string, minLength: 1, maxLength: 50 , description: "Thông tin entity type của tài nguyên trong ngữ cảnh DTO." }
-      entityId: { type: string, format: uuid, nullable: true , description: "Thông tin entity id của tài nguyên trong ngữ cảnh DTO." }
-      beforeData: { type: object, nullable: true , description: "Thông tin before data của tài nguyên trong ngữ cảnh DTO." }
-      afterData: { type: object, nullable: true , description: "Thông tin after data của tài nguyên trong ngữ cảnh DTO." }
-    required: [id, action, entityType, entityId, beforeData, afterData]
+  id: { type: string, format: uuid , description: "Định danh duy nhất của tài nguyên." }
+  action: { type: string, minLength: 1, maxLength: 100 , description: "Thông tin action của tài nguyên trong ngữ cảnh DTO." }
+  entityType: { type: string, minLength: 1, maxLength: 50 , description: "Thông tin entity type của tài nguyên trong ngữ cảnh DTO." }
+  entityId: { type: string, format: uuid, nullable: true , description: "Thông tin entity id của tài nguyên trong ngữ cảnh DTO." }
+  beforeData: { type: object, nullable: true , description: "Thông tin before data của tài nguyên trong ngữ cảnh DTO." }
+  afterData: { type: object, nullable: true , description: "Thông tin after data của tài nguyên trong ngữ cảnh DTO." }
 
 required:
-  - statusCode
-  - code
-  - data
+  - id
+  - action
+  - entityType
+  - entityId
+  - beforeData
+  - afterData

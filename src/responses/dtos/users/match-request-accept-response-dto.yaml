@@ -4,18 +4,11 @@ title: MatchRequestAcceptResponseDto
 description: Phản hồi khi chấp nhận yêu cầu kết nối
 
 properties:
-  statusCode: { type: integer, enum: [200], example: 200 , description: "Thông tin status code của tài nguyên trong ngữ cảnh DTO." }
-  code: { type: string, enum: [MATCH_REQUEST_ACCEPTED], example: MATCH_REQUEST_ACCEPTED , description: "Mã ổn định để client nhận diện kết quả nghiệp vụ." }
-  data:
-    type: object
-    description: Dữ liệu kết quả của thao tác.
-    properties:
-      id: { type: string, format: uuid , description: "Định danh duy nhất của tài nguyên." }
-      status: { type: string, enum: [accepted], example: accepted , description: "Trạng thái hiện tại của tài nguyên trong quy trình nghiệp vụ." }
-      conversationId: { type: string, format: uuid , description: "Thông tin conversation id của tài nguyên trong ngữ cảnh DTO." }
-    required: [id, status, conversationId]
+  id: { type: string, format: uuid , description: "Định danh duy nhất của tài nguyên." }
+  status: { type: string, enum: [accepted], example: accepted , description: "Trạng thái hiện tại của tài nguyên trong quy trình nghiệp vụ." }
+  conversationId: { type: string, format: uuid , description: "Thông tin conversation id của tài nguyên trong ngữ cảnh DTO." }
 
 required:
-  - statusCode
-  - code
-  - data
+  - id
+  - status
+  - conversationId

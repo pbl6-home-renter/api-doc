@@ -3,20 +3,15 @@ x-apidog-folder: "MeterReading/Response"
 title: MeterReadingCreateResponseDto
 description: Phản hồi khi tạo chỉ số công tơ
 properties:
-  statusCode: { type: integer, enum: [201], example: 201 , description: "Thông tin status code của tài nguyên trong ngữ cảnh DTO." }
-  code: { type: string, enum: [METER_READING_CREATED], example: METER_READING_CREATED , description: "Mã ổn định để client nhận diện kết quả nghiệp vụ." }
-  data:
-    type: object
-    description: Dữ liệu kết quả của thao tác.
-    properties:
-      id: { type: string, format: uuid , description: "Định danh duy nhất của tài nguyên." }
-      roomId: { type: string, format: uuid , description: "Định danh duy nhất của phòng liên quan." }
-      type: { type: string, enum: [electricity, water] , description: "Thông tin type của tài nguyên trong ngữ cảnh DTO." }
-      period: { type: string, pattern: '^[0-9]{4}-(0[1-9]|1[0-2])$', description: "Kỳ ghi chỉ số theo định dạng YYYY-MM." }
-      currentReading: { type: string , description: "Thông tin current reading của tài nguyên trong ngữ cảnh DTO." }
-    required: [id, roomId, type, period, currentReading]
+  id: { type: string, format: uuid , description: "Định danh duy nhất của tài nguyên." }
+  roomId: { type: string, format: uuid , description: "Định danh duy nhất của phòng liên quan." }
+  type: { type: string, enum: [electricity, water] , description: "Thông tin type của tài nguyên trong ngữ cảnh DTO." }
+  period: { type: string, pattern: '^[0-9]{4}-(0[1-9]|1[0-2])$', description: "Kỳ ghi chỉ số theo định dạng YYYY-MM." }
+  currentReading: { type: string , description: "Thông tin current reading của tài nguyên trong ngữ cảnh DTO." }
 
 required:
-  - statusCode
-  - code
-  - data
+  - id
+  - roomId
+  - type
+  - period
+  - currentReading

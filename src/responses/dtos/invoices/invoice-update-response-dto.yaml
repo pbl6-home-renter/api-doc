@@ -3,18 +3,11 @@ x-apidog-folder: "Invoice/Response"
 title: InvoiceUpdateResponseDto
 description: Phản hồi khi cập nhật hóa đơn
 properties:
-  statusCode: { type: integer, enum: [200], example: 200 , description: "Thông tin status code của tài nguyên trong ngữ cảnh DTO." }
-  code: { type: string, enum: [INVOICE_UPDATED], example: INVOICE_UPDATED , description: "Mã ổn định để client nhận diện kết quả nghiệp vụ." }
-  data:
-    type: object
-    description: Dữ liệu kết quả của thao tác.
-    properties:
-      id: { type: string, format: uuid , description: "Định danh duy nhất của tài nguyên." }
-      otherFees: { type: array, nullable: true, items: { type: object } , description: "Các khoản phí khác ngoài tiền thuê; null khi không có khoản phí." }
-      totalAmount: { type: integer, minimum: 0 , description: "Thông tin total amount của tài nguyên trong ngữ cảnh DTO." }
-    required: [id, otherFees, totalAmount]
+  id: { type: string, format: uuid , description: "Định danh duy nhất của tài nguyên." }
+  otherFees: { type: array, nullable: true, items: { type: object } , description: "Các khoản phí khác ngoài tiền thuê; null khi không có khoản phí." }
+  totalAmount: { type: integer, minimum: 0 , description: "Thông tin total amount của tài nguyên trong ngữ cảnh DTO." }
 
 required:
-  - statusCode
-  - code
-  - data
+  - id
+  - otherFees
+  - totalAmount

@@ -4,72 +4,50 @@ title: UserDetailResponseDto
 description: Phản hồi chi tiết một người dùng dành cho admin
 
 properties:
-  statusCode:
-    type: integer
-    description: Thông tin status code của tài nguyên trong ngữ cảnh DTO.
-    enum:
-      - 200
-    example: 200
-
-  code:
+  id:
     type: string
-    description: Mã ổn định để client nhận diện kết quả nghiệp vụ.
+    description: Định danh duy nhất của tài nguyên.
+    format: uuid
+
+  name:
+    type: string
+    description: Thông tin name của tài nguyên trong ngữ cảnh DTO.
+    example: "Lê Văn An"
+
+  role:
+    type: string
+    description: Thông tin role của tài nguyên trong ngữ cảnh DTO.
     enum:
-      - USER_FETCHED
-    example: "USER_FETCHED"
+      - tenant
+      - landlord
+      - admin
+    example: "tenant"
 
-  data:
-    type: object
-    description: Dữ liệu kết quả của thao tác.
-    properties:
-      id:
-        type: string
-        description: Định danh duy nhất của tài nguyên.
-        format: uuid
+  status:
+    type: string
+    description: Trạng thái hiện tại của tài nguyên trong quy trình nghiệp vụ.
+    enum:
+      - active
+      - locked
+    example: "active"
 
-      name:
-        type: string
-        description: Thông tin name của tài nguyên trong ngữ cảnh DTO.
-        example: "Lê Văn An"
+  buildingCount:
+    type: integer
+    description: Thông tin building count của tài nguyên trong ngữ cảnh DTO.
+    minimum: 0
+    example: 0
 
-      role:
-        type: string
-        description: Thông tin role của tài nguyên trong ngữ cảnh DTO.
-        enum:
-          - tenant
-          - landlord
-          - admin
-        example: "tenant"
+  activeContractCount:
+    type: integer
+    description: Thông tin active contract count của tài nguyên trong ngữ cảnh DTO.
+    minimum: 0
+    example: 1
 
-      status:
-        type: string
-        description: Trạng thái hiện tại của tài nguyên trong quy trình nghiệp vụ.
-        enum:
-          - active
-          - locked
-        example: "active"
-
-      buildingCount:
-        type: integer
-        description: Thông tin building count của tài nguyên trong ngữ cảnh DTO.
-        minimum: 0
-        example: 0
-
-      activeContractCount:
-        type: integer
-        description: Thông tin active contract count của tài nguyên trong ngữ cảnh DTO.
-        minimum: 0
-        example: 1
-
-    required:
-      - id
-      - name
-      - role
-      - status
-      - buildingCount
-      - activeContractCount
 
 required:
-  - statusCode
-  - code
-  - data
+  - id
+  - name
+  - role
+  - status
+  - buildingCount
+  - activeContractCount

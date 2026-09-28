@@ -4,73 +4,52 @@ title: UserCurrentUpdateResponseDto
 description: Phản hồi sau khi cập nhật hồ sơ hiện tại thành công
 
 properties:
-  statusCode:
-    type: integer
-    description: Thông tin status code của tài nguyên trong ngữ cảnh DTO.
-    enum:
-      - 200
-    example: 200
-
-  code:
+  id:
     type: string
-    description: Mã ổn định để client nhận diện kết quả nghiệp vụ.
-    enum:
-      - PROFILE_UPDATED
-    example: "PROFILE_UPDATED"
+    description: Định danh duy nhất của tài nguyên.
+    format: uuid
 
-  data:
+  name:
+    type: string
+    description: Thông tin name của tài nguyên trong ngữ cảnh DTO.
+    minLength: 1
+    maxLength: 254
+    example: "Lê Văn An"
+
+  phone:
+    type: string
+    description: Thông tin phone của tài nguyên trong ngữ cảnh DTO.
+    minLength: 10
+    maxLength: 12
+    example: "0901234567"
+
+  payoutAccount:
     type: object
+    nullable: true
     properties:
-      id:
+      bankCode:
         type: string
-        description: Định danh duy nhất của tài nguyên.
-        format: uuid
+        description: Thông tin bank code của tài nguyên trong ngữ cảnh DTO.
+        example: "970415"
 
-      name:
+      accountNumber:
         type: string
-        description: Thông tin name của tài nguyên trong ngữ cảnh DTO.
-        minLength: 1
-        maxLength: 254
-        example: "Lê Văn An"
+        description: Số tài khoản đã được mask khi trả cho client
+        example: "**43210"
 
-      phone:
+      accountName:
         type: string
-        description: Thông tin phone của tài nguyên trong ngữ cảnh DTO.
-        minLength: 10
-        maxLength: 12
-        example: "0901234567"
-
-      payoutAccount:
-        type: object
-        nullable: true
-        properties:
-          bankCode:
-            type: string
-            description: Thông tin bank code của tài nguyên trong ngữ cảnh DTO.
-            example: "970415"
-
-          accountNumber:
-            type: string
-            description: Số tài khoản đã được mask khi trả cho client
-            example: "**43210"
-
-          accountName:
-            type: string
-            description: Thông tin account name của tài nguyên trong ngữ cảnh DTO.
-            example: "NGUYEN VAN AN"
-
-        required:
-          - bankCode
-          - accountNumber
-          - accountName
+        description: Thông tin account name của tài nguyên trong ngữ cảnh DTO.
+        example: "NGUYEN VAN AN"
 
     required:
-      - id
-      - name
-      - phone
-      - payoutAccount
+      - bankCode
+      - accountNumber
+      - accountName
+
 
 required:
-  - statusCode
-  - code
-  - data
+  - id
+  - name
+  - phone
+  - payoutAccount

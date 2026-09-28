@@ -3,16 +3,7 @@ x-apidog-folder: "Notification/Response"
 title: NotificationMarkAllReadResponseDto
 description: Phản hồi khi đánh dấu toàn bộ thông báo đã đọc
 properties:
-  statusCode: { type: integer, enum: [200], example: 200 , description: "Thông tin status code của tài nguyên trong ngữ cảnh DTO." }
-  code: { type: string, enum: [ALL_NOTIFICATIONS_MARKED_READ], example: ALL_NOTIFICATIONS_MARKED_READ , description: "Mã ổn định để client nhận diện kết quả nghiệp vụ." }
-  data:
-    type: object
-    description: Dữ liệu kết quả của thao tác.
-    properties:
-      markedCount: { type: integer, minimum: 0 , description: "Thông tin marked count của tài nguyên trong ngữ cảnh DTO." }
-    required: [markedCount]
+  markedCount: { type: integer, minimum: 0 , description: "Thông tin marked count của tài nguyên trong ngữ cảnh DTO." }
 
 required:
-  - statusCode
-  - code
-  - data
+  - markedCount

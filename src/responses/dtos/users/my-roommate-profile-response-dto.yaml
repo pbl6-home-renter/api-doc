@@ -4,29 +4,23 @@ title: RoommateProfileMyResponseDto
 description: Hồ sơ tìm bạn ở ghép của chính tenant hiện tại
 
 properties:
-  statusCode: { type: integer, enum: [200], example: 200 , description: "Thông tin status code của tài nguyên trong ngữ cảnh DTO." }
-  code: { type: string, enum: [ROOMMATE_PROFILE_FETCHED], example: ROOMMATE_PROFILE_FETCHED , description: "Mã ổn định để client nhận diện kết quả nghiệp vụ." }
-  data:
+  tenantId: { type: string, format: uuid , description: "Thông tin tenant id của tài nguyên trong ngữ cảnh DTO." }
+  lifestyle:
     type: object
-    description: Dữ liệu kết quả của thao tác.
-    properties:
-      tenantId: { type: string, format: uuid , description: "Thông tin tenant id của tài nguyên trong ngữ cảnh DTO." }
-      lifestyle:
-        type: object
-        description: Thông tin lifestyle của tài nguyên trong ngữ cảnh DTO.
-        nullable: true
-        example:
-          sleep: 23h-6h
-      personality:
-        type: object
-        description: Thông tin personality của tài nguyên trong ngữ cảnh DTO.
-        nullable: true
-        example:
-          introvert: true
-      isVisible: { type: boolean , description: "Thông tin is visible của tài nguyên trong ngữ cảnh DTO." }
-    required: [tenantId, lifestyle, personality, isVisible]
+    description: Thông tin lifestyle của tài nguyên trong ngữ cảnh DTO.
+    nullable: true
+    example:
+      sleep: 23h-6h
+  personality:
+    type: object
+    description: Thông tin personality của tài nguyên trong ngữ cảnh DTO.
+    nullable: true
+    example:
+      introvert: true
+  isVisible: { type: boolean , description: "Thông tin is visible của tài nguyên trong ngữ cảnh DTO." }
 
 required:
-  - statusCode
-  - code
-  - data
+  - tenantId
+  - lifestyle
+  - personality
+  - isVisible

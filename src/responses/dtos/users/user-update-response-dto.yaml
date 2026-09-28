@@ -4,54 +4,32 @@ title: UserUpdateResponseDto
 description: Phản hồi sau khi admin cập nhật tài khoản
 
 properties:
-  statusCode:
-    type: integer
-    description: Thông tin status code của tài nguyên trong ngữ cảnh DTO.
-    enum:
-      - 200
-    example: 200
-
-  code:
+  userId:
     type: string
-    description: Mã ổn định để client nhận diện kết quả nghiệp vụ.
+    description: Định danh duy nhất của người dùng liên quan.
+    format: uuid
+
+  name:
+    type: string
+    description: Thông tin name của tài nguyên trong ngữ cảnh DTO.
+    example: "Nguyễn Văn An"
+
+  phone:
+    type: string
+    description: Thông tin phone của tài nguyên trong ngữ cảnh DTO.
+    example: "0901234567"
+
+  status:
+    type: string
+    description: Trạng thái hiện tại của tài nguyên trong quy trình nghiệp vụ.
     enum:
-      - USER_UPDATED
-    example: "USER_UPDATED"
+      - active
+      - locked
+    example: "active"
 
-  data:
-    type: object
-    description: Dữ liệu kết quả của thao tác.
-    properties:
-      userId:
-        type: string
-        description: Định danh duy nhất của người dùng liên quan.
-        format: uuid
-
-      name:
-        type: string
-        description: Thông tin name của tài nguyên trong ngữ cảnh DTO.
-        example: "Nguyễn Văn An"
-
-      phone:
-        type: string
-        description: Thông tin phone của tài nguyên trong ngữ cảnh DTO.
-        example: "0901234567"
-
-      status:
-        type: string
-        description: Trạng thái hiện tại của tài nguyên trong quy trình nghiệp vụ.
-        enum:
-          - active
-          - locked
-        example: "active"
-
-    required:
-      - userId
-      - name
-      - phone
-      - status
 
 required:
-  - statusCode
-  - code
-  - data
+  - userId
+  - name
+  - phone
+  - status

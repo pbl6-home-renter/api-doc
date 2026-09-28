@@ -4,19 +4,13 @@ title: BuildingRejectResponseDto
 description: Phản hồi khi từ chối tòa nhà
 
 properties:
-  statusCode: { type: integer, enum: [200], example: 200 , description: "Thông tin status code của tài nguyên trong ngữ cảnh DTO." }
-  code: { type: string, enum: [BUILDING_REJECTED], example: BUILDING_REJECTED , description: "Mã ổn định để client nhận diện kết quả nghiệp vụ." }
-  data:
-    type: object
-    description: Dữ liệu kết quả của thao tác.
-    properties:
-      id: { type: string, format: uuid , description: "Định danh duy nhất của tài nguyên." }
-      status: { type: string, enum: [rejected], example: rejected , description: "Trạng thái hiện tại của tài nguyên trong quy trình nghiệp vụ." }
-      reviewNote: { type: string, minLength: 1, maxLength: 500 , description: "Thông tin review note của tài nguyên trong ngữ cảnh DTO." }
-      reviewedAt: { type: string, format: date-time , description: "Thông tin reviewed at của tài nguyên trong ngữ cảnh DTO." }
-    required: [id, status, reviewNote, reviewedAt]
+  id: { type: string, format: uuid , description: "Định danh duy nhất của tài nguyên." }
+  status: { type: string, enum: [rejected], example: rejected , description: "Trạng thái hiện tại của tài nguyên trong quy trình nghiệp vụ." }
+  reviewNote: { type: string, minLength: 1, maxLength: 500 , description: "Thông tin review note của tài nguyên trong ngữ cảnh DTO." }
+  reviewedAt: { type: string, format: date-time , description: "Thông tin reviewed at của tài nguyên trong ngữ cảnh DTO." }
 
 required:
-  - statusCode
-  - code
-  - data
+  - id
+  - status
+  - reviewNote
+  - reviewedAt

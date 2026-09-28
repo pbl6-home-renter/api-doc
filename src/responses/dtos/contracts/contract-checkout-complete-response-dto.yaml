@@ -3,18 +3,11 @@ x-apidog-folder: "Contract/Response"
 title: ContractCompleteCheckoutResponseDto
 description: Phản hồi khi hoàn tất trả phòng
 properties:
-  statusCode: { type: integer, enum: [200], example: 200 , description: "Thông tin status code của tài nguyên trong ngữ cảnh DTO." }
-  code: { type: string, enum: [CONTRACT_CHECKOUT_COMPLETED], example: CONTRACT_CHECKOUT_COMPLETED , description: "Mã ổn định để client nhận diện kết quả nghiệp vụ." }
-  data:
-    type: object
-    description: Dữ liệu kết quả của thao tác.
-    properties:
-      id: { type: string, format: uuid , description: "Định danh duy nhất của tài nguyên." }
-      status: { type: string, enum: [expired], example: expired , description: "Trạng thái hiện tại của tài nguyên trong quy trình nghiệp vụ." }
-      completedOn: { type: string, format: date-time , description: "Thông tin completed on của tài nguyên trong ngữ cảnh DTO." }
-    required: [id, status, completedOn]
+  id: { type: string, format: uuid , description: "Định danh duy nhất của tài nguyên." }
+  status: { type: string, enum: [expired], example: expired , description: "Trạng thái hiện tại của tài nguyên trong quy trình nghiệp vụ." }
+  completedOn: { type: string, format: date-time , description: "Thông tin completed on của tài nguyên trong ngữ cảnh DTO." }
 
 required:
-  - statusCode
-  - code
-  - data
+  - id
+  - status
+  - completedOn

@@ -4,8 +4,6 @@ title: RatePolicyListResponseDto
 description: Danh sách chính sách đơn giá
 
 properties:
-  statusCode: { type: integer, enum: [200], example: 200 , description: "Thông tin status code của tài nguyên trong ngữ cảnh DTO." }
-  code: { type: string, enum: [RATE_POLICIES_FETCHED], example: RATE_POLICIES_FETCHED , description: "Mã ổn định để client nhận diện kết quả nghiệp vụ." }
   data:
     type: array
     description: Dữ liệu kết quả của thao tác.
@@ -34,7 +32,5 @@ properties:
     required: [type, pageNo, pageSize, totalItems, totalPages, hasNextPage, hasPreviousPage]
 
 required:
-  - statusCode
-  - code
   - data
   - pagination

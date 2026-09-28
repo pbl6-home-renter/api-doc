@@ -3,17 +3,9 @@ x-apidog-folder: "Message/Response"
 title: MessageMarkReadResponseDto
 description: Phản hồi khi đánh dấu tin nhắn đã đọc
 properties:
-  statusCode: { type: integer, enum: [200], example: 200 , description: "Thông tin status code của tài nguyên trong ngữ cảnh DTO." }
-  code: { type: string, enum: [MESSAGES_MARKED_READ], example: MESSAGES_MARKED_READ , description: "Mã ổn định để client nhận diện kết quả nghiệp vụ." }
-  data:
-    type: object
-    description: Dữ liệu kết quả của thao tác.
-    properties:
-      conversationId: { type: string, format: uuid , description: "Thông tin conversation id của tài nguyên trong ngữ cảnh DTO." }
-      unreadCount: { type: integer, minimum: 0 , description: "Thông tin unread count của tài nguyên trong ngữ cảnh DTO." }
-    required: [conversationId, unreadCount]
+  conversationId: { type: string, format: uuid , description: "Thông tin conversation id của tài nguyên trong ngữ cảnh DTO." }
+  unreadCount: { type: integer, minimum: 0 , description: "Thông tin unread count của tài nguyên trong ngữ cảnh DTO." }
 
 required:
-  - statusCode
-  - code
-  - data
+  - conversationId
+  - unreadCount

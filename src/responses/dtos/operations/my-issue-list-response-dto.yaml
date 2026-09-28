@@ -3,8 +3,6 @@ x-apidog-folder: "IssueReport/Response"
 title: IssueReportMyListResponseDto
 description: Danh sách sự cố của người dùng hiện tại
 properties:
-  statusCode: { type: integer, enum: [200], example: 200 , description: "Thông tin status code của tài nguyên trong ngữ cảnh DTO." }
-  code: { type: string, enum: [MY_ISSUES_FETCHED], example: MY_ISSUES_FETCHED , description: "Mã ổn định để client nhận diện kết quả nghiệp vụ." }
   data:
     type: array
     items:
@@ -30,7 +28,5 @@ properties:
     required: [type, pageNo, pageSize, totalItems, totalPages, hasNextPage, hasPreviousPage]
 
 required:
-  - statusCode
-  - code
   - data
   - pagination

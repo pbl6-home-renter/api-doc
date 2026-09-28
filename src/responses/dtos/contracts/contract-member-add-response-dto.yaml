@@ -3,20 +3,15 @@ x-apidog-folder: "ContractMember/Response"
 title: ContractMemberAddResponseDto
 description: Phản hồi khi thêm thành viên hợp đồng
 properties:
-  statusCode: { type: integer, enum: [201], example: 201 , description: "Thông tin status code của tài nguyên trong ngữ cảnh DTO." }
-  code: { type: string, enum: [CONTRACT_MEMBER_ADDED], example: CONTRACT_MEMBER_ADDED , description: "Mã ổn định để client nhận diện kết quả nghiệp vụ." }
-  data:
-    type: object
-    description: Dữ liệu kết quả của thao tác.
-    properties:
-      id: { type: string, format: uuid , description: "Định danh duy nhất của tài nguyên." }
-      contractId: { type: string, format: uuid , description: "Định danh duy nhất của hợp đồng liên quan." }
-      tenantId: { type: string, format: uuid, nullable: true , description: "Thông tin tenant id của tài nguyên trong ngữ cảnh DTO." }
-      joinedAt: { type: string, format: date-time , description: "Thông tin joined at của tài nguyên trong ngữ cảnh DTO." }
-      leftAt: { type: string, format: date-time, nullable: true , description: "Thông tin left at của tài nguyên trong ngữ cảnh DTO." }
-    required: [id, contractId, tenantId, joinedAt, leftAt]
+  id: { type: string, format: uuid , description: "Định danh duy nhất của tài nguyên." }
+  contractId: { type: string, format: uuid , description: "Định danh duy nhất của hợp đồng liên quan." }
+  tenantId: { type: string, format: uuid, nullable: true , description: "Thông tin tenant id của tài nguyên trong ngữ cảnh DTO." }
+  joinedAt: { type: string, format: date-time , description: "Thông tin joined at của tài nguyên trong ngữ cảnh DTO." }
+  leftAt: { type: string, format: date-time, nullable: true , description: "Thông tin left at của tài nguyên trong ngữ cảnh DTO." }
 
 required:
-  - statusCode
-  - code
-  - data
+  - id
+  - contractId
+  - tenantId
+  - joinedAt
+  - leftAt

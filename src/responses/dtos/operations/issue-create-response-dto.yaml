@@ -3,18 +3,11 @@ x-apidog-folder: "IssueReport/Response"
 title: IssueReportCreateResponseDto
 description: Phản hồi khi tạo báo cáo sự cố
 properties:
-  statusCode: { type: integer, enum: [201], example: 201 , description: "Thông tin status code của tài nguyên trong ngữ cảnh DTO." }
-  code: { type: string, enum: [ISSUE_CREATED], example: ISSUE_CREATED , description: "Mã ổn định để client nhận diện kết quả nghiệp vụ." }
-  data:
-    type: object
-    description: Dữ liệu kết quả của thao tác.
-    properties:
-      id: { type: string, format: uuid , description: "Định danh duy nhất của tài nguyên." }
-      status: { type: string, enum: [open], example: open , description: "Trạng thái hiện tại của tài nguyên trong quy trình nghiệp vụ." }
-      title: { type: string, minLength: 1, maxLength: 255 , description: "Thông tin title của tài nguyên trong ngữ cảnh DTO." }
-    required: [id, status, title]
+  id: { type: string, format: uuid , description: "Định danh duy nhất của tài nguyên." }
+  status: { type: string, enum: [open], example: open , description: "Trạng thái hiện tại của tài nguyên trong quy trình nghiệp vụ." }
+  title: { type: string, minLength: 1, maxLength: 255 , description: "Thông tin title của tài nguyên trong ngữ cảnh DTO." }
 
 required:
-  - statusCode
-  - code
-  - data
+  - id
+  - status
+  - title

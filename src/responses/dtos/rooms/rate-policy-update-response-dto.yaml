@@ -4,17 +4,9 @@ title: RatePolicyUpdateResponseDto
 description: Phản hồi khi cập nhật chính sách đơn giá
 
 properties:
-  statusCode: { type: integer, enum: [200], example: 200 , description: "Thông tin status code của tài nguyên trong ngữ cảnh DTO." }
-  code: { type: string, enum: [RATE_POLICY_UPDATED], example: RATE_POLICY_UPDATED , description: "Mã ổn định để client nhận diện kết quả nghiệp vụ." }
-  data:
-    type: object
-    description: Dữ liệu kết quả của thao tác.
-    properties:
-      id: { type: string, format: uuid , description: "Định danh duy nhất của tài nguyên." }
-      name: { type: string , description: "Thông tin name của tài nguyên trong ngữ cảnh DTO." }
-    required: [id, name]
+  id: { type: string, format: uuid , description: "Định danh duy nhất của tài nguyên." }
+  name: { type: string , description: "Thông tin name của tài nguyên trong ngữ cảnh DTO." }
 
 required:
-  - statusCode
-  - code
-  - data
+  - id
+  - name
