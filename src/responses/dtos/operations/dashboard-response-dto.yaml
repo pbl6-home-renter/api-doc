@@ -1,0 +1,25 @@
+type: object
+x-apidog-folder: "Dashboard/Response"
+title: DashboardResponseDto
+description: Số liệu tổng hợp dashboard
+properties:
+  statusCode: { type: integer, enum: [200], example: 200 , description: "Thông tin status code của tài nguyên trong ngữ cảnh DTO." }
+  code: { type: string, enum: [DASHBOARD_FETCHED], example: DASHBOARD_FETCHED , description: "Mã ổn định để client nhận diện kết quả nghiệp vụ." }
+  data:
+    type: object
+    description: Dữ liệu kết quả của thao tác.
+    properties:
+      totalUsers: { type: integer, minimum: 0 , description: "Thông tin total users của tài nguyên trong ngữ cảnh DTO." }
+      totalLandlords: { type: integer, minimum: 0 , description: "Thông tin total landlords của tài nguyên trong ngữ cảnh DTO." }
+      totalTenants: { type: integer, minimum: 0 , description: "Thông tin total tenants của tài nguyên trong ngữ cảnh DTO." }
+      totalBuildings: { type: integer, minimum: 0 , description: "Thông tin total buildings của tài nguyên trong ngữ cảnh DTO." }
+      pendingApprovalBuildings: { type: integer, minimum: 0 , description: "Thông tin pending approval buildings của tài nguyên trong ngữ cảnh DTO." }
+      totalRooms: { type: integer, minimum: 0 , description: "Thông tin total rooms của tài nguyên trong ngữ cảnh DTO." }
+      occupancyRate: { type: string , description: "Thông tin occupancy rate của tài nguyên trong ngữ cảnh DTO." }
+      systemTransactionVolume: { type: integer, minimum: 0 , description: "Thông tin system transaction volume của tài nguyên trong ngữ cảnh DTO." }
+    required: [totalUsers, totalLandlords, totalTenants, totalBuildings, pendingApprovalBuildings, totalRooms, occupancyRate, systemTransactionVolume]
+
+required:
+  - statusCode
+  - code
+  - data

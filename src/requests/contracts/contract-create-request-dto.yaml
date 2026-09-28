@@ -1,0 +1,22 @@
+type: object
+x-apidog-folder: "Contract/Request"
+title: ContractCreateRequestDto
+description: Dữ liệu tạo hợp đồng nháp
+additionalProperties: false
+properties:
+  roomId: { type: string, format: uuid , description: "Định danh duy nhất của phòng liên quan." }
+  tenantId: { type: string, format: uuid, nullable: true , description: "Thông tin tenant id của tài nguyên trong ngữ cảnh DTO." }
+  tenantName: { type: string, nullable: true, minLength: 1, maxLength: 254 , description: "Thông tin tenant name của tài nguyên trong ngữ cảnh DTO." }
+  tenantPhone:
+    type: string
+    description: Thông tin tenant phone của tài nguyên trong ngữ cảnh DTO.
+    nullable: true
+    minLength: 10
+    maxLength: 12
+    pattern: '^0[0-9]{9}$|^\+84[0-9]{9}$'
+  depositAmount: { type: integer, minimum: 0 , description: "Thông tin deposit amount của tài nguyên trong ngữ cảnh DTO." }
+  rentPrice: { type: integer, minimum: 0 , description: "Thông tin rent price của tài nguyên trong ngữ cảnh DTO." }
+  startDate: { type: string, format: date , description: "Thông tin start date của tài nguyên trong ngữ cảnh DTO." }
+  endDate: { type: string, format: date , description: "Thông tin end date của tài nguyên trong ngữ cảnh DTO." }
+  vehicleCount: { type: integer, minimum: 0, nullable: true , description: "Thông tin vehicle count của tài nguyên trong ngữ cảnh DTO." }
+required: [roomId, tenantId, tenantName, tenantPhone, depositAmount, rentPrice, startDate, endDate, vehicleCount]

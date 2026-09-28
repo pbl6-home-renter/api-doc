@@ -1,0 +1,36 @@
+type: object
+x-apidog-folder: "IssueReport/Response"
+title: IssueReportMyListResponseDto
+description: Danh sách sự cố của người dùng hiện tại
+properties:
+  statusCode: { type: integer, enum: [200], example: 200 , description: "Thông tin status code của tài nguyên trong ngữ cảnh DTO." }
+  code: { type: string, enum: [MY_ISSUES_FETCHED], example: MY_ISSUES_FETCHED , description: "Mã ổn định để client nhận diện kết quả nghiệp vụ." }
+  data:
+    type: array
+    items:
+      type: object
+      properties:
+        id: { type: string, format: uuid , description: "Định danh duy nhất của tài nguyên." }
+        roomId: { type: string, format: uuid , description: "Định danh duy nhất của phòng liên quan." }
+        title: { type: string, minLength: 1, maxLength: 255 , description: "Thông tin title của tài nguyên trong ngữ cảnh DTO." }
+        status: { type: string, enum: [open, in_progress, resolved, cancelled] , description: "Trạng thái hiện tại của tài nguyên trong quy trình nghiệp vụ." }
+        description: { type: string, nullable: true, minLength: 1, maxLength: 500 , description: "Thông tin description của tài nguyên trong ngữ cảnh DTO." }
+      required: [id, roomId, title, status, description]
+  pagination:
+    type: object
+    description: Thông tin phân trang của danh sách kết quả.
+    properties:
+      type: { type: string, enum: [offset], example: offset , description: "Thông tin type của tài nguyên trong ngữ cảnh DTO." }
+      pageNo: { type: integer, minimum: 1, example: 1 , description: "Số trang hiện tại trong kết quả phân trang." }
+      pageSize: { type: integer, minimum: 1, maximum: 100, example: 20 , description: "Số lượng phần tử tối đa trên một trang." }
+      totalItems: { type: integer, minimum: 0, example: 1 , description: "Tổng số phần tử phù hợp với truy vấn." }
+      totalPages: { type: integer, minimum: 0, example: 1 , description: "Tổng số trang có thể truy cập." }
+      hasNextPage: { type: boolean, example: false , description: "Cho biết còn trang kế tiếp hay không." }
+      hasPreviousPage: { type: boolean, example: false , description: "Cho biết có trang trước đó hay không." }
+    required: [type, pageNo, pageSize, totalItems, totalPages, hasNextPage, hasPreviousPage]
+
+required:
+  - statusCode
+  - code
+  - data
+  - pagination

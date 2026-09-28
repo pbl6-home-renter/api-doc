@@ -1,0 +1,22 @@
+type: object
+x-apidog-folder: "BillingSetting/Request"
+title: BillingSettingUpdateRequestDto
+description: Dữ liệu cập nhật một phần cấu hình billing
+additionalProperties: false
+minProperties: 1
+
+properties:
+  dueDays:
+    type: integer
+    description: Thông tin due days của tài nguyên trong ngữ cảnh DTO.
+    minimum: 1
+    maximum: 28
+  remindDays:
+    type: integer
+    description: Thông tin remind days của tài nguyên trong ngữ cảnh DTO.
+    minimum: 1
+    maximum: 28
+    nullable: true
+  botEnabled:
+    type: boolean
+    description: Thông tin bot enabled của tài nguyên trong ngữ cảnh DTO.

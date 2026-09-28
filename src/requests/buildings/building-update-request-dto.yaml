@@ -1,0 +1,20 @@
+type: object
+x-apidog-folder: "Building/Request"
+title: BuildingUpdateRequestDto
+description: Dữ liệu cập nhật một phần thông tin tòa nhà
+additionalProperties: false
+minProperties: 1
+
+properties:
+  name:
+    type: string
+    description: Thông tin name của tài nguyên trong ngữ cảnh DTO.
+    minLength: 1
+    maxLength: 254
+    example: Tòa nhà Rentify Central Park
+  address:
+    type: string
+    description: Thông tin address của tài nguyên trong ngữ cảnh DTO.
+    minLength: 1
+    maxLength: 254
+    example: 123 Nguyễn Thị Minh Khai

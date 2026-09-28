@@ -1,0 +1,14 @@
+type: object
+x-apidog-folder: "Invoice/Request"
+title: InvoiceSendRemindersRequestDto
+description: Dữ liệu xếp hàng nhắc thanh toán hóa đơn
+additionalProperties: false
+properties:
+  invoiceIds:
+    type: array
+    description: Thông tin invoice ids của tài nguyên trong ngữ cảnh DTO.
+    minItems: 1
+    uniqueItems: true
+    items: { type: string, format: uuid , description: "Thông tin items của tài nguyên trong ngữ cảnh DTO." }
+  channel: { type: string, example: push , description: "Thông tin channel của tài nguyên trong ngữ cảnh DTO." }
+required: [invoiceIds, channel]

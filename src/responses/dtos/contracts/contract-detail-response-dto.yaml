@@ -1,0 +1,28 @@
+type: object
+x-apidog-folder: "Contract/Response"
+title: ContractDetailResponseDto
+description: Chi tiết hợp đồng
+properties:
+  statusCode: { type: integer, enum: [200], example: 200 , description: "Thông tin status code của tài nguyên trong ngữ cảnh DTO." }
+  code: { type: string, enum: [CONTRACT_FETCHED], example: CONTRACT_FETCHED , description: "Mã ổn định để client nhận diện kết quả nghiệp vụ." }
+  data:
+    type: object
+    description: Dữ liệu kết quả của thao tác.
+    properties:
+      id: { type: string, format: uuid , description: "Định danh duy nhất của tài nguyên." }
+      roomId: { type: string, format: uuid , description: "Định danh duy nhất của phòng liên quan." }
+      status: { type: string, enum: [draft, signed, active, suspended, expired, terminated] , description: "Trạng thái hiện tại của tài nguyên trong quy trình nghiệp vụ." }
+      tenantId: { type: string, format: uuid, nullable: true , description: "Thông tin tenant id của tài nguyên trong ngữ cảnh DTO." }
+      tenantName: { type: string, nullable: true, minLength: 1, maxLength: 254 , description: "Thông tin tenant name của tài nguyên trong ngữ cảnh DTO." }
+      tenantPhone: { type: string, nullable: true, minLength: 10, maxLength: 12, pattern: '^0[0-9]{9}$|^\+84[0-9]{9}$', description: "Số điện thoại của người thuê; null khi chưa có thông tin." }
+      rentPrice: { type: integer, minimum: 0 , description: "Thông tin rent price của tài nguyên trong ngữ cảnh DTO." }
+      depositAmount: { type: integer, minimum: 0 , description: "Thông tin deposit amount của tài nguyên trong ngữ cảnh DTO." }
+      startDate: { type: string, format: date , description: "Thông tin start date của tài nguyên trong ngữ cảnh DTO." }
+      endDate: { type: string, format: date , description: "Thông tin end date của tài nguyên trong ngữ cảnh DTO." }
+      signedContractMediaId: { type: string, format: uuid, nullable: true , description: "Thông tin signed contract media id của tài nguyên trong ngữ cảnh DTO." }
+    required: [id, roomId, status, tenantId, tenantName, tenantPhone, rentPrice, depositAmount, startDate, endDate, signedContractMediaId]
+
+required:
+  - statusCode
+  - code
+  - data

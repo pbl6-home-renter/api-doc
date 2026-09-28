@@ -1,0 +1,20 @@
+type: object
+x-apidog-folder: "Conversation/Response"
+title: ConversationResolveResponseDto
+description: Phản hồi resolve cuộc hội thoại
+properties:
+  statusCode: { type: integer, enum: [200], example: 200 , description: "Thông tin status code của tài nguyên trong ngữ cảnh DTO." }
+  code: { type: string, enum: [CONVERSATION_RESOLVED], example: CONVERSATION_RESOLVED , description: "Mã ổn định để client nhận diện kết quả nghiệp vụ." }
+  data:
+    type: object
+    description: Dữ liệu kết quả của thao tác.
+    properties:
+      id: { type: string, format: uuid , description: "Định danh duy nhất của tài nguyên." }
+      type: { type: string, enum: [room, building, direct] , description: "Thông tin type của tài nguyên trong ngữ cảnh DTO." }
+      contractId: { type: string, format: uuid, nullable: true , description: "Định danh duy nhất của hợp đồng liên quan." }
+    required: [id, type, contractId]
+
+required:
+  - statusCode
+  - code
+  - data

@@ -1,0 +1,33 @@
+type: object
+x-apidog-folder: "Notification/Response"
+title: NotificationListResponseDto
+description: Danh sách thông báo theo cursor
+properties:
+  statusCode: { type: integer, enum: [200], example: 200 , description: "Thông tin status code của tài nguyên trong ngữ cảnh DTO." }
+  code: { type: string, enum: [NOTIFICATIONS_FETCHED], example: NOTIFICATIONS_FETCHED , description: "Mã ổn định để client nhận diện kết quả nghiệp vụ." }
+  data:
+    type: array
+    description: Dữ liệu kết quả của thao tác.
+    items:
+      type: object
+      properties:
+        id: { type: string, format: uuid , description: "Định danh duy nhất của tài nguyên." }
+        type: { type: string, minLength: 1, maxLength: 50 , description: "Thông tin type của tài nguyên trong ngữ cảnh DTO." }
+        data: { type: object, nullable: true , description: "Dữ liệu kết quả của thao tác." }
+        readAt: { type: string, format: date-time, nullable: true , description: "Thời điểm thông báo được đọc; null nghĩa là chưa đọc." }
+      required: [id, type, data, readAt]
+  pagination:
+    type: object
+    description: Thông tin phân trang của danh sách kết quả.
+    properties:
+      type: { type: string, enum: [cursor], example: cursor , description: "Thông tin type của tài nguyên trong ngữ cảnh DTO." }
+      pageSize: { type: integer, minimum: 1, example: 20 , description: "Số lượng phần tử tối đa trên một trang." }
+      nextCursor: { type: string, nullable: true , description: "Thông tin next cursor của tài nguyên trong ngữ cảnh DTO." }
+      hasNextPage: { type: boolean , description: "Cho biết còn trang kế tiếp hay không." }
+    required: [type, pageSize, nextCursor, hasNextPage]
+
+required:
+  - statusCode
+  - code
+  - data
+  - pagination

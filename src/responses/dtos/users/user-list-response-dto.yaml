@@ -1,0 +1,118 @@
+type: object
+x-apidog-folder: "User/Response"
+title: UserListResponseDto
+description: Danh sách người dùng dành cho admin với offset pagination
+
+properties:
+  statusCode:
+    type: integer
+    description: Thông tin status code của tài nguyên trong ngữ cảnh DTO.
+    enum:
+      - 200
+    example: 200
+
+  code:
+    type: string
+    description: Mã ổn định để client nhận diện kết quả nghiệp vụ.
+    enum:
+      - USERS_FETCHED
+    example: "USERS_FETCHED"
+
+  data:
+    type: array
+    description: Dữ liệu kết quả của thao tác.
+    items:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Định danh duy nhất của tài nguyên.
+          format: uuid
+
+        name:
+          type: string
+          description: Thông tin name của tài nguyên trong ngữ cảnh DTO.
+          example: "Lê Văn An"
+
+        role:
+          type: string
+          description: Thông tin role của tài nguyên trong ngữ cảnh DTO.
+          enum:
+            - tenant
+            - landlord
+            - admin
+          example: "tenant"
+
+        status:
+          type: string
+          description: Trạng thái hiện tại của tài nguyên trong quy trình nghiệp vụ.
+          enum:
+            - active
+            - locked
+          example: "active"
+
+      required:
+        - id
+        - name
+        - role
+        - status
+
+  pagination:
+    type: object
+    description: Thông tin phân trang của danh sách kết quả.
+    properties:
+      type:
+        type: string
+        enum:
+          - offset
+        example: "offset"
+
+      pageNo:
+        type: integer
+        description: Số trang hiện tại trong kết quả phân trang.
+        minimum: 1
+        example: 1
+
+      pageSize:
+        type: integer
+        description: Số lượng phần tử tối đa trên một trang.
+        minimum: 1
+        maximum: 100
+        example: 20
+
+      totalItems:
+        type: integer
+        description: Tổng số phần tử phù hợp với truy vấn.
+        minimum: 0
+        example: 1
+
+      totalPages:
+        type: integer
+        description: Tổng số trang có thể truy cập.
+        minimum: 0
+        example: 1
+
+      hasNextPage:
+        type: boolean
+        description: Cho biết còn trang kế tiếp hay không.
+        example: false
+
+      hasPreviousPage:
+        type: boolean
+        description: Cho biết có trang trước đó hay không.
+        example: false
+
+    required:
+      - type
+      - pageNo
+      - pageSize
+      - totalItems
+      - totalPages
+      - hasNextPage
+      - hasPreviousPage
+
+required:
+  - statusCode
+  - code
+  - data
+  - pagination

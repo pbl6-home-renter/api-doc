@@ -1,0 +1,24 @@
+type: object
+x-apidog-folder: "RoommateProfile/Response"
+title: RoommateProfileDetailResponseDto
+description: Chi tiết hồ sơ tìm bạn ở ghép của người khác
+
+properties:
+  statusCode: { type: integer, enum: [200], example: 200 , description: "Thông tin status code của tài nguyên trong ngữ cảnh DTO." }
+  code: { type: string, enum: [ROOMMATE_PROFILE_FETCHED], example: ROOMMATE_PROFILE_FETCHED , description: "Mã ổn định để client nhận diện kết quả nghiệp vụ." }
+  data:
+    type: object
+    description: Dữ liệu kết quả của thao tác.
+    properties:
+      tenantId: { type: string, format: uuid , description: "Thông tin tenant id của tài nguyên trong ngữ cảnh DTO." }
+      bio: { type: string, nullable: true , description: "Thông tin bio của tài nguyên trong ngữ cảnh DTO." }
+      budgetMin: { type: integer, minimum: 0, nullable: true , description: "Thông tin budget min của tài nguyên trong ngữ cảnh DTO." }
+      budgetMax: { type: integer, minimum: 0, nullable: true , description: "Thông tin budget max của tài nguyên trong ngữ cảnh DTO." }
+      preferredArea: { type: string, nullable: true, minLength: 1, maxLength: 255 , description: "Thông tin preferred area của tài nguyên trong ngữ cảnh DTO." }
+      isVisible: { type: boolean , description: "Thông tin is visible của tài nguyên trong ngữ cảnh DTO." }
+    required: [tenantId, bio, budgetMin, budgetMax, preferredArea, isVisible]
+
+required:
+  - statusCode
+  - code
+  - data

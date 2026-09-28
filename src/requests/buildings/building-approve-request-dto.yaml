@@ -1,0 +1,16 @@
+type: object
+x-apidog-folder: "Building/Request"
+title: BuildingApproveRequestDto
+description: Ghi chú khi admin duyệt tòa nhà
+additionalProperties: false
+
+properties:
+  note:
+    type: string
+    description: Thông tin note của tài nguyên trong ngữ cảnh DTO.
+    minLength: 1
+    maxLength: 500
+    example: Ownership proof verified
+
+required:
+  - note

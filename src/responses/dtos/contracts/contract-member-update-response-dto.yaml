@@ -1,0 +1,19 @@
+type: object
+x-apidog-folder: "ContractMember/Response"
+title: ContractMemberUpdateResponseDto
+description: Phản hồi khi cập nhật thành viên hợp đồng
+properties:
+  statusCode: { type: integer, enum: [200], example: 200 , description: "Thông tin status code của tài nguyên trong ngữ cảnh DTO." }
+  code: { type: string, enum: [CONTRACT_MEMBER_UPDATED], example: CONTRACT_MEMBER_UPDATED , description: "Mã ổn định để client nhận diện kết quả nghiệp vụ." }
+  data:
+    type: object
+    description: Dữ liệu kết quả của thao tác.
+    properties:
+      id: { type: string, format: uuid , description: "Định danh duy nhất của tài nguyên." }
+      tenantPhone: { type: string, minLength: 10, maxLength: 12, pattern: '^0[0-9]{9}$|^\+84[0-9]{9}$', description: "Số điện thoại mới của thành viên hợp đồng." }
+    required: [id, tenantPhone]
+
+required:
+  - statusCode
+  - code
+  - data

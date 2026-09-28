@@ -1,0 +1,20 @@
+type: object
+x-apidog-folder: "RoommateProfile/Response"
+title: RoommateProfileSaveResponseDto
+description: Phản hồi khi lưu hồ sơ tìm bạn ở ghép thành công
+
+properties:
+  statusCode: { type: integer, enum: [200], example: 200 , description: "Thông tin status code của tài nguyên trong ngữ cảnh DTO." }
+  code: { type: string, enum: [ROOMMATE_PROFILE_SAVED], example: ROOMMATE_PROFILE_SAVED , description: "Mã ổn định để client nhận diện kết quả nghiệp vụ." }
+  data:
+    type: object
+    description: Dữ liệu kết quả của thao tác.
+    properties:
+      tenantId: { type: string, format: uuid , description: "Thông tin tenant id của tài nguyên trong ngữ cảnh DTO." }
+      isVisible: { type: boolean , description: "Thông tin is visible của tài nguyên trong ngữ cảnh DTO." }
+    required: [tenantId, isVisible]
+
+required:
+  - statusCode
+  - code
+  - data

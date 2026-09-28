@@ -1,0 +1,49 @@
+type: object
+x-apidog-folder: "RatePolicy/Request"
+title: RatePolicyCreateRequestDto
+description: Dữ liệu tạo chính sách đơn giá
+additionalProperties: false
+
+properties:
+  scope:
+    type: string
+    description: Thông tin scope của tài nguyên trong ngữ cảnh DTO.
+    enum: [building, room]
+    example: room
+  roomId:
+    type: string
+    description: Định danh duy nhất của phòng liên quan.
+    format: uuid
+    nullable: true
+  name:
+    type: string
+    description: Thông tin name của tài nguyên trong ngữ cảnh DTO.
+    example: Điện EVN
+  type:
+    type: string
+    enum: [electricity, water, wifi, cleaning, parking, maintenance, other]
+    example: electricity
+  rateKind:
+    type: string
+    description: Thông tin rate kind của tài nguyên trong ngữ cảnh DTO.
+    enum: [flat, tiered, fixed_per_period, per_head, per_area_m2, per_vehicle]
+    example: tiered
+  steps:
+    type: array
+    description: Thông tin steps của tài nguyên trong ngữ cảnh DTO.
+    nullable: true
+    items:
+      type: object
+      properties:
+        from: { type: integer, minimum: 0 , description: "Thông tin from của tài nguyên trong ngữ cảnh DTO." }
+        to: { type: integer, minimum: 0, nullable: true , description: "Thông tin to của tài nguyên trong ngữ cảnh DTO." }
+        price: { type: integer, minimum: 0 , description: "Thông tin price của tài nguyên trong ngữ cảnh DTO." }
+      required: [from, to, price]
+
+required:
+  - scope
+  - roomId
+  - name
+  - type
+  - rateKind
+  - steps

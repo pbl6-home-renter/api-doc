@@ -1,0 +1,24 @@
+type: object
+x-apidog-folder: "ContractTemplate/Response"
+title: ContractTemplateDetailResponseDto
+description: Chi tiết mẫu hợp đồng
+properties:
+  statusCode: { type: integer, enum: [200], example: 200 , description: "Thông tin status code của tài nguyên trong ngữ cảnh DTO." }
+  code: { type: string, enum: [CONTRACT_TEMPLATE_FETCHED], example: CONTRACT_TEMPLATE_FETCHED , description: "Mã ổn định để client nhận diện kết quả nghiệp vụ." }
+  data:
+    type: object
+    description: Dữ liệu kết quả của thao tác.
+    properties:
+      templateKey: { type: string , description: "Thông tin template key của tài nguyên trong ngữ cảnh DTO." }
+      title: { type: string , description: "Thông tin title của tài nguyên trong ngữ cảnh DTO." }
+      version: { type: string , description: "Thông tin version của tài nguyên trong ngữ cảnh DTO." }
+      requiredVariables:
+        type: array
+        description: Thông tin required variables của tài nguyên trong ngữ cảnh DTO.
+        items: { type: string , description: "Thông tin items của tài nguyên trong ngữ cảnh DTO." }
+    required: [templateKey, title, version, requiredVariables]
+
+required:
+  - statusCode
+  - code
+  - data

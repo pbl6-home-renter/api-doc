@@ -1,0 +1,23 @@
+type: object
+x-apidog-folder: "Conversation/Response"
+title: ConversationDetailResponseDto
+description: Chi tiết cuộc hội thoại
+properties:
+  statusCode: { type: integer, enum: [200], example: 200 , description: "Thông tin status code của tài nguyên trong ngữ cảnh DTO." }
+  code: { type: string, enum: [CONVERSATION_FETCHED], example: CONVERSATION_FETCHED , description: "Mã ổn định để client nhận diện kết quả nghiệp vụ." }
+  data:
+    type: object
+    description: Dữ liệu kết quả của thao tác.
+    properties:
+      id: { type: string, format: uuid , description: "Định danh duy nhất của tài nguyên." }
+      type: { type: string, enum: [room, building, direct] , description: "Thông tin type của tài nguyên trong ngữ cảnh DTO." }
+      roomId: { type: string, format: uuid, nullable: true , description: "Định danh duy nhất của phòng liên quan." }
+      contractId: { type: string, format: uuid, nullable: true , description: "Định danh duy nhất của hợp đồng liên quan." }
+      title: { type: string, nullable: true, minLength: 1, maxLength: 255 , description: "Thông tin title của tài nguyên trong ngữ cảnh DTO." }
+      unreadCount: { type: integer, minimum: 0 , description: "Thông tin unread count của tài nguyên trong ngữ cảnh DTO." }
+    required: [id, type, roomId, contractId, title, unreadCount]
+
+required:
+  - statusCode
+  - code
+  - data

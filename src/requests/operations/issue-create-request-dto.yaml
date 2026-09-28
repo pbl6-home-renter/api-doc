@@ -1,0 +1,14 @@
+type: object
+x-apidog-folder: "IssueReport/Request"
+title: IssueReportCreateRequestDto
+description: Dữ liệu tạo báo cáo sự cố
+additionalProperties: false
+properties:
+  roomId: { type: string, format: uuid , description: "Định danh duy nhất của phòng liên quan." }
+  title: { type: string, minLength: 1, maxLength: 255 , description: "Thông tin title của tài nguyên trong ngữ cảnh DTO." }
+  description: { type: string, nullable: true, minLength: 1, maxLength: 500 , description: "Thông tin description của tài nguyên trong ngữ cảnh DTO." }
+  issuePhotoMediaIds:
+    type: array
+    description: Thông tin issue photo media ids của tài nguyên trong ngữ cảnh DTO.
+    items: { type: string, format: uuid , description: "Thông tin items của tài nguyên trong ngữ cảnh DTO." }
+required: [roomId, title, description, issuePhotoMediaIds]

@@ -1,0 +1,14 @@
+type: object
+x-apidog-folder: "Invoice/Request"
+title: InvoiceIssueRequestDto
+description: Dữ liệu phát hành hàng loạt hóa đơn
+additionalProperties: false
+properties:
+  invoiceIds:
+    type: array
+    description: Thông tin invoice ids của tài nguyên trong ngữ cảnh DTO.
+    minItems: 1
+    uniqueItems: true
+    items: { type: string, format: uuid , description: "Thông tin items của tài nguyên trong ngữ cảnh DTO." }
+  sendNotification: { type: boolean , description: "Thông tin send notification của tài nguyên trong ngữ cảnh DTO." }
+required: [invoiceIds, sendNotification]

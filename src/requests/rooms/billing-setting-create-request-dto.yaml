@@ -1,0 +1,41 @@
+type: object
+x-apidog-folder: "BillingSetting/Request"
+title: BillingSettingCreateRequestDto
+description: Dữ liệu tạo cấu hình billing
+additionalProperties: false
+
+properties:
+  scope:
+    type: string
+    description: Thông tin scope của tài nguyên trong ngữ cảnh DTO.
+    enum: [building, room]
+    example: room
+  roomId:
+    type: string
+    description: Định danh duy nhất của phòng liên quan.
+    format: uuid
+    nullable: true
+  dueDays:
+    type: integer
+    description: Thông tin due days của tài nguyên trong ngữ cảnh DTO.
+    minimum: 1
+    maximum: 28
+    example: 5
+  remindDays:
+    type: integer
+    description: Thông tin remind days của tài nguyên trong ngữ cảnh DTO.
+    minimum: 1
+    maximum: 28
+    nullable: true
+    example: 3
+  botEnabled:
+    type: boolean
+    description: Thông tin bot enabled của tài nguyên trong ngữ cảnh DTO.
+    example: true
+
+required:
+  - scope
+  - roomId
+  - dueDays
+  - remindDays
+  - botEnabled

@@ -1,0 +1,23 @@
+type: object
+x-apidog-folder: "Room/Response"
+title: RoomCreateResponseDto
+description: Phản hồi khi tạo phòng thành công
+
+properties:
+  statusCode: { type: integer, enum: [201], example: 201 , description: "Thông tin status code của tài nguyên trong ngữ cảnh DTO." }
+  code: { type: string, enum: [ROOM_CREATED], example: ROOM_CREATED , description: "Mã ổn định để client nhận diện kết quả nghiệp vụ." }
+  data:
+    type: object
+    description: Dữ liệu kết quả của thao tác.
+    properties:
+      id: { type: string, format: uuid , description: "Định danh duy nhất của tài nguyên." }
+      buildingId: { type: string, format: uuid , description: "Định danh duy nhất của tòa nhà liên quan." }
+      name: { type: string , description: "Thông tin name của tài nguyên trong ngữ cảnh DTO." }
+      status: { type: string, enum: [available], example: available , description: "Trạng thái hiện tại của tài nguyên trong quy trình nghiệp vụ." }
+      rentPrice: { type: integer, minimum: 0 , description: "Thông tin rent price của tài nguyên trong ngữ cảnh DTO." }
+    required: [id, buildingId, name, status, rentPrice]
+
+required:
+  - statusCode
+  - code
+  - data

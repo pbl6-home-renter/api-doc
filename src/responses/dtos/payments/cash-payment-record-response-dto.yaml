@@ -1,0 +1,25 @@
+type: object
+x-apidog-folder: "Payment/Response"
+title: PaymentRecordCashResponseDto
+description: Phản hồi khi ghi nhận thanh toán tiền mặt
+properties:
+  statusCode: { type: integer, enum: [201], example: 201 , description: "Thông tin status code của tài nguyên trong ngữ cảnh DTO." }
+  code: { type: string, enum: [CASH_PAYMENT_RECORDED], example: CASH_PAYMENT_RECORDED , description: "Mã ổn định để client nhận diện kết quả nghiệp vụ." }
+  data:
+    type: object
+    description: Dữ liệu kết quả của thao tác.
+    properties:
+      paymentId: { type: string, format: uuid , description: "Thông tin payment id của tài nguyên trong ngữ cảnh DTO." }
+      invoiceId: { type: string, format: uuid , description: "Thông tin invoice id của tài nguyên trong ngữ cảnh DTO." }
+      paymentStatus: { type: string, enum: [success], example: success , description: "Thông tin payment status của tài nguyên trong ngữ cảnh DTO." }
+      amount: { type: integer, minimum: 0 , description: "Thông tin amount của tài nguyên trong ngữ cảnh DTO." }
+      invoiceStatus: { type: string, enum: [pending, issued, void] , description: "Thông tin invoice status của tài nguyên trong ngữ cảnh DTO." }
+      paidAmount: { type: integer, minimum: 0 , description: "Thông tin paid amount của tài nguyên trong ngữ cảnh DTO." }
+      remainingAmount: { type: integer, minimum: 0 , description: "Thông tin remaining amount của tài nguyên trong ngữ cảnh DTO." }
+      paymentState: { type: string, example: paid , description: "Thông tin payment state của tài nguyên trong ngữ cảnh DTO." }
+    required: [paymentId, invoiceId, paymentStatus, amount, invoiceStatus, paidAmount, remainingAmount, paymentState]
+
+required:
+  - statusCode
+  - code
+  - data

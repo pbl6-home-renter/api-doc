@@ -1,0 +1,45 @@
+type: object
+x-apidog-folder: "PushDevice/Response"
+title: PushDeviceRegisterResponseDto
+description: Phản hồi khi đăng ký thiết bị nhận thông báo đẩy thành công
+
+properties:
+  statusCode:
+    type: integer
+    description: Thông tin status code của tài nguyên trong ngữ cảnh DTO.
+    enum:
+      - 201
+    example: 201
+
+  code:
+    type: string
+    description: Mã ổn định để client nhận diện kết quả nghiệp vụ.
+    enum:
+      - PUSH_DEVICE_REGISTERED
+    example: PUSH_DEVICE_REGISTERED
+
+  data:
+    type: object
+    properties:
+      id:
+        type: string
+        format: uuid
+        description: ID thiết bị vừa đăng ký
+        example: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+
+      platform:
+        type: string
+        enum:
+          - android
+          - web
+        description: Nền tảng thiết bị
+        example: android
+
+    required:
+      - id
+      - platform
+
+required:
+  - statusCode
+  - code
+  - data

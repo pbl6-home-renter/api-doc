@@ -1,0 +1,17 @@
+type: object
+x-apidog-folder: "Invoice/Request"
+title: InvoiceUpdateRequestDto
+description: Dữ liệu cập nhật hóa đơn đang pending
+additionalProperties: false
+properties:
+  otherFees:
+    type: array
+    description: Thông tin other fees của tài nguyên trong ngữ cảnh DTO.
+    nullable: true
+    items:
+      type: object
+      properties:
+        name: { type: string , description: "Thông tin name của tài nguyên trong ngữ cảnh DTO." }
+        amount: { type: integer , description: "Thông tin amount của tài nguyên trong ngữ cảnh DTO." }
+      required: [name, amount]
+  note: { type: string, nullable: true , description: "Thông tin note của tài nguyên trong ngữ cảnh DTO." }

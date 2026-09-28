@@ -1,0 +1,16 @@
+title: ConversationResolveRequestDto
+oneOf:
+  - type: object
+    title: ResolveConversationByContractRequest
+    additionalProperties: false
+    properties:
+      contractId: { type: string, format: uuid , description: "Định danh duy nhất của hợp đồng liên quan." }
+    required: [contractId]
+  - type: object
+    title: ResolveConversationByBuildingRequest
+    additionalProperties: false
+    properties:
+      buildingId: { type: string, format: uuid , description: "Định danh duy nhất của tòa nhà liên quan." }
+    required: [buildingId]
+x-apidog-folder: "Conversation/Request"
+description: Exactly one contractId or buildingId is required

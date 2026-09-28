@@ -1,0 +1,21 @@
+type: object
+x-apidog-folder: "Building/Response"
+title: BuildingApproveResponseDto
+description: Phản hồi khi duyệt tòa nhà thành công
+
+properties:
+  statusCode: { type: integer, enum: [200], example: 200 , description: "Thông tin status code của tài nguyên trong ngữ cảnh DTO." }
+  code: { type: string, enum: [BUILDING_APPROVED], example: BUILDING_APPROVED , description: "Mã ổn định để client nhận diện kết quả nghiệp vụ." }
+  data:
+    type: object
+    description: Dữ liệu kết quả của thao tác.
+    properties:
+      id: { type: string, format: uuid , description: "Định danh duy nhất của tài nguyên." }
+      status: { type: string, enum: [approved], example: approved , description: "Trạng thái hiện tại của tài nguyên trong quy trình nghiệp vụ." }
+      reviewedAt: { type: string, format: date-time , description: "Thông tin reviewed at của tài nguyên trong ngữ cảnh DTO." }
+    required: [id, status, reviewedAt]
+
+required:
+  - statusCode
+  - code
+  - data

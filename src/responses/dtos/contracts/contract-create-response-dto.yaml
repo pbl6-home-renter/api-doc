@@ -1,0 +1,21 @@
+type: object
+x-apidog-folder: "Contract/Response"
+title: ContractCreateResponseDto
+description: Phản hồi khi tạo hợp đồng nháp
+properties:
+  statusCode: { type: integer, enum: [201], example: 201 , description: "Thông tin status code của tài nguyên trong ngữ cảnh DTO." }
+  code: { type: string, enum: [CONTRACT_CREATED], example: CONTRACT_CREATED , description: "Mã ổn định để client nhận diện kết quả nghiệp vụ." }
+  data:
+    type: object
+    description: Dữ liệu kết quả của thao tác.
+    properties:
+      id: { type: string, format: uuid , description: "Định danh duy nhất của tài nguyên." }
+      status: { type: string, enum: [draft], example: draft , description: "Trạng thái hiện tại của tài nguyên trong quy trình nghiệp vụ." }
+      tenantId: { type: string, format: uuid, nullable: true , description: "Thông tin tenant id của tài nguyên trong ngữ cảnh DTO." }
+      rentPrice: { type: integer, minimum: 0 , description: "Thông tin rent price của tài nguyên trong ngữ cảnh DTO." }
+    required: [id, status, tenantId, rentPrice]
+
+required:
+  - statusCode
+  - code
+  - data

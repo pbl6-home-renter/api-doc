@@ -1,0 +1,18 @@
+type: object
+x-apidog-folder: "NotificationPreference/Response"
+title: NotificationPreferenceUpdateResponseDto
+description: Phản hồi khi cập nhật tùy biến thông báo
+properties:
+  statusCode: { type: integer, enum: [200], example: 200 , description: "Thông tin status code của tài nguyên trong ngữ cảnh DTO." }
+  code: { type: string, enum: [NOTIFICATION_PREFERENCES_UPDATED], example: NOTIFICATION_PREFERENCES_UPDATED , description: "Mã ổn định để client nhận diện kết quả nghiệp vụ." }
+  data:
+    type: object
+    description: Dữ liệu kết quả của thao tác.
+    properties:
+      updatedAt: { type: string, format: date-time , description: "Thời điểm bản ghi được cập nhật gần nhất, theo định dạng ngày giờ ISO 8601." }
+    required: [updatedAt]
+
+required:
+  - statusCode
+  - code
+  - data

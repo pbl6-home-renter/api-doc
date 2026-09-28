@@ -1,0 +1,40 @@
+type: object
+x-apidog-folder: "RatePolicy/Response"
+title: RatePolicyListResponseDto
+description: Danh sách chính sách đơn giá
+
+properties:
+  statusCode: { type: integer, enum: [200], example: 200 , description: "Thông tin status code của tài nguyên trong ngữ cảnh DTO." }
+  code: { type: string, enum: [RATE_POLICIES_FETCHED], example: RATE_POLICIES_FETCHED , description: "Mã ổn định để client nhận diện kết quả nghiệp vụ." }
+  data:
+    type: array
+    description: Dữ liệu kết quả của thao tác.
+    items:
+      type: object
+      properties:
+        id: { type: string, format: uuid , description: "Định danh duy nhất của tài nguyên." }
+        landlordId: { type: string, format: uuid , description: "Thông tin landlord id của tài nguyên trong ngữ cảnh DTO." }
+        scope: { type: string, enum: [building, room] , description: "Thông tin scope của tài nguyên trong ngữ cảnh DTO." }
+        roomId: { type: string, format: uuid, nullable: true , description: "Định danh duy nhất của phòng liên quan." }
+        type: { type: string, enum: [electricity, water, wifi, cleaning, parking, maintenance, other] , description: "Thông tin type của tài nguyên trong ngữ cảnh DTO." }
+        rateKind: { type: string, enum: [flat, tiered, fixed_per_period, per_head, per_area_m2, per_vehicle] , description: "Thông tin rate kind của tài nguyên trong ngữ cảnh DTO." }
+        isActive: { type: boolean , description: "Thông tin is active của tài nguyên trong ngữ cảnh DTO." }
+      required: [id, landlordId, scope, roomId, type, rateKind, isActive]
+  pagination:
+    type: object
+    description: Thông tin phân trang của danh sách kết quả.
+    properties:
+      type: { type: string, enum: [offset], example: offset , description: "Thông tin type của tài nguyên trong ngữ cảnh DTO." }
+      pageNo: { type: integer, minimum: 1, example: 1 , description: "Số trang hiện tại trong kết quả phân trang." }
+      pageSize: { type: integer, minimum: 1, maximum: 100, example: 20 , description: "Số lượng phần tử tối đa trên một trang." }
+      totalItems: { type: integer, minimum: 0, example: 1 , description: "Tổng số phần tử phù hợp với truy vấn." }
+      totalPages: { type: integer, minimum: 0, example: 1 , description: "Tổng số trang có thể truy cập." }
+      hasNextPage: { type: boolean, example: false , description: "Cho biết còn trang kế tiếp hay không." }
+      hasPreviousPage: { type: boolean, example: false , description: "Cho biết có trang trước đó hay không." }
+    required: [type, pageNo, pageSize, totalItems, totalPages, hasNextPage, hasPreviousPage]
+
+required:
+  - statusCode
+  - code
+  - data
+  - pagination

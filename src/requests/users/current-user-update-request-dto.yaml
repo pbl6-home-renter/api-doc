@@ -1,0 +1,52 @@
+type: object
+x-apidog-folder: "User/Request"
+title: UserCurrentUpdateRequestDto
+description: >
+  Cập nhật hồ sơ hiện tại. Tenant/admin gửi name và phone.
+  Landlord có thể gửi thêm payoutAccount.
+
+additionalProperties: false
+properties:
+  name:
+    type: string
+    minLength: 1
+    maxLength: 254
+    description: Họ và tên mới của người dùng hiện tại.
+    example: "Lê Văn An"
+  phone:
+    type: string
+    minLength: 10
+    maxLength: 12
+    pattern: '^0[0-9]{9}$|^\+84[0-9]{9}$'
+    description: Số điện thoại liên hệ mới theo định dạng Việt Nam.
+    example: "0901234567"
+  payoutAccount:
+    type: object
+    nullable: true
+    description: Tài khoản nhận tiền của landlord; null dùng để xoá tài khoản nhận tiền theo business rule. Ba trường con phải đi cùng nhau khi gửi object.
+    properties:
+      bankCode:
+        type: string
+        minLength: 4
+        maxLength: 20
+        description: Mã ngân hàng nhận tiền.
+        example: "970415"
+      accountNumber:
+        type: string
+        pattern: '^[0-9]{6,20}$'
+        description: Số tài khoản nhận tiền chưa được mask trong request.
+        example: "102876543210"
+      accountName:
+        type: string
+        minLength: 1
+        maxLength: 254
+        description: Tên chủ tài khoản nhận tiền.
+        example: "NGUYEN VAN AN"
+    required:
+      - bankCode
+      - accountNumber
+      - accountName
+required:
+  - name
+  - phone
+  - payoutAccount
