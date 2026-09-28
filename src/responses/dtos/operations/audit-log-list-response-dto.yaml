@@ -1,0 +1,12 @@
+type: object
+x-apidog-folder: "AuditLog/Response"
+title: AuditLogListResponseDto
+description: Danh sách nhật ký kiểm toán
+properties:
+  id: { type: string, format: uuid , description: "Định danh duy nhất của tài nguyên." }
+  actorId: { type: string, format: uuid, nullable: true , description: "Thông tin actor id của tài nguyên trong ngữ cảnh DTO." }
+  action: { type: string, minLength: 1, maxLength: 100 , description: "Thông tin action của tài nguyên trong ngữ cảnh DTO." }
+  entityType: { type: string, minLength: 1, maxLength: 50 , description: "Thông tin entity type của tài nguyên trong ngữ cảnh DTO." }
+  entityId: { type: string, format: uuid, nullable: true , description: "Thông tin entity id của tài nguyên trong ngữ cảnh DTO." }
+  createdAt: { type: string, format: date-time , description: "Thời điểm bản ghi được tạo, theo định dạng ngày giờ ISO 8601." }
+required: [id, actorId, action, entityType, entityId, createdAt]

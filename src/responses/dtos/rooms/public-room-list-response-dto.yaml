@@ -1,0 +1,13 @@
+type: object
+x-apidog-folder: "Room/Response"
+title: RoomPublicListResponseDto
+description: Danh sách phòng công khai
+
+properties:
+  id: { type: string, format: uuid , description: "Định danh duy nhất của tài nguyên." }
+  buildingId: { type: string, format: uuid , description: "Định danh duy nhất của tòa nhà liên quan." }
+  name: { type: string, minLength: 1, maxLength: 254 , description: "Thông tin name của tài nguyên trong ngữ cảnh DTO." }
+  area: { type: string, example: '18.5' , description: "Thông tin area của tài nguyên trong ngữ cảnh DTO." }
+  rentPrice: { type: integer, minimum: 0 , description: "Thông tin rent price của tài nguyên trong ngữ cảnh DTO." }
+  genderPolicy: { type: string, enum: [any, male, female] , description: "Thông tin gender policy của tài nguyên trong ngữ cảnh DTO." }
+required: [id, buildingId, name, area, rentPrice, genderPolicy]

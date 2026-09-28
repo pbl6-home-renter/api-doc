@@ -1,0 +1,13 @@
+type: object
+x-apidog-folder: "Invoice/Response"
+title: InvoiceCancelResponseDto
+description: Phản hồi khi hủy hóa đơn
+properties:
+  id: { type: string, format: uuid , description: "Định danh duy nhất của tài nguyên." }
+  invoiceStatus: { type: string, enum: [void], example: void , description: "Thông tin invoice status của tài nguyên trong ngữ cảnh DTO." }
+  cancelReason: { type: string , description: "Thông tin cancel reason của tài nguyên trong ngữ cảnh DTO." }
+
+required:
+  - id
+  - invoiceStatus
+  - cancelReason

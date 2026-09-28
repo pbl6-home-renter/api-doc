@@ -1,0 +1,11 @@
+type: object
+x-apidog-folder: "IssueReport/Response"
+title: IssueReportCancelResponseDto
+description: Phản hồi khi hủy báo cáo sự cố
+properties:
+  id: { type: string, format: uuid , description: "Định danh duy nhất của tài nguyên." }
+  status: { type: string, enum: [cancel], example: cancel , description: "Trạng thái hiện tại của tài nguyên trong quy trình nghiệp vụ." }
+
+required:
+  - id
+  - status

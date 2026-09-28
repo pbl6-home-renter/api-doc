@@ -1,0 +1,10 @@
+type: object
+x-apidog-folder: "FavoriteRoom/Response"
+title: FavoriteRoomListResponseDto
+description: Danh sách phòng đã lưu của tenant hiện tại
+
+properties:
+  roomId: { type: string, format: uuid , description: "Định danh duy nhất của phòng liên quan." }
+  name: { type: string, minLength: 1, maxLength: 254 , description: "Thông tin name của tài nguyên trong ngữ cảnh DTO." }
+  rentPrice: { type: integer, minimum: 0 , description: "Thông tin rent price của tài nguyên trong ngữ cảnh DTO." }
+required: [roomId, name, rentPrice]

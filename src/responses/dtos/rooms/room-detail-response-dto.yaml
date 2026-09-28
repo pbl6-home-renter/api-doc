@@ -1,0 +1,30 @@
+type: object
+x-apidog-folder: "Room/Response"
+title: RoomDetailResponseDto
+description: Chi tiết phòng
+
+properties:
+  id: { type: string, format: uuid , description: "Định danh duy nhất của tài nguyên." }
+  buildingId: { type: string, format: uuid , description: "Định danh duy nhất của tòa nhà liên quan." }
+  name: { type: string , description: "Thông tin name của tài nguyên trong ngữ cảnh DTO." }
+  description: { type: string, nullable: true, minLength: 1, maxLength: 500 , description: "Thông tin description của tài nguyên trong ngữ cảnh DTO." }
+  area: { type: string, nullable: true, example: '18.5' , description: "Thông tin area của tài nguyên trong ngữ cảnh DTO." }
+  rentPrice: { type: integer, minimum: 0 , description: "Thông tin rent price của tài nguyên trong ngữ cảnh DTO." }
+  status: { type: string, example: available , description: "Trạng thái hiện tại của tài nguyên trong quy trình nghiệp vụ." }
+  effectiveRatePolicySummary:
+    type: object
+    description: Thông tin effective rate policy summary của tài nguyên trong ngữ cảnh DTO.
+    properties:
+      electricity: { type: string, example: flat , description: "Thông tin electricity của tài nguyên trong ngữ cảnh DTO." }
+      water: { type: string, example: flat , description: "Thông tin water của tài nguyên trong ngữ cảnh DTO." }
+    required: [electricity, water]
+
+required:
+  - id
+  - buildingId
+  - name
+  - description
+  - area
+  - rentPrice
+  - status
+  - effectiveRatePolicySummary

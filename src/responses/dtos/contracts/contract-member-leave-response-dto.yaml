@@ -1,0 +1,11 @@
+type: object
+x-apidog-folder: "ContractMember/Response"
+title: ContractMemberLeaveResponseDto
+description: Phản hồi khi thành viên rời hợp đồng
+properties:
+  id: { type: string, format: uuid , description: "Định danh duy nhất của tài nguyên." }
+  leftAt: { type: string, format: date-time , description: "Thông tin left at của tài nguyên trong ngữ cảnh DTO." }
+
+required:
+  - id
+  - leftAt

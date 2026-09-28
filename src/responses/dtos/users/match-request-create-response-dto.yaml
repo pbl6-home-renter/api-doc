@@ -1,0 +1,14 @@
+type: object
+x-apidog-folder: "MatchRequest/Response"
+title: MatchRequestCreateResponseDto
+description: Phản hồi khi tạo yêu cầu kết nối
+
+properties:
+  id: { type: string, format: uuid , description: "Định danh duy nhất của tài nguyên." }
+  status: { type: string, enum: [pending], example: pending , description: "Trạng thái hiện tại của tài nguyên trong quy trình nghiệp vụ." }
+  respondedAt: { type: string, format: date-time, nullable: true , description: "Thông tin responded at của tài nguyên trong ngữ cảnh DTO." }
+
+required:
+  - id
+  - status
+  - respondedAt

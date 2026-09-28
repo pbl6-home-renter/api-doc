@@ -1,0 +1,12 @@
+type: object
+x-apidog-folder: "Payment/Response"
+title: PaymentListResponseDto
+description: Danh sách thanh toán
+properties:
+  id: { type: string, format: uuid , description: "Định danh duy nhất của tài nguyên." }
+  invoiceId: { type: string, format: uuid, nullable: true , description: "Thông tin invoice id của tài nguyên trong ngữ cảnh DTO." }
+  method: { type: string, enum: [vietqr, vnpay, momo, cash, mock] , description: "Thông tin method của tài nguyên trong ngữ cảnh DTO." }
+  paymentStatus: { type: string, enum: [pending, success, failed] , description: "Thông tin payment status của tài nguyên trong ngữ cảnh DTO." }
+  amount: { type: integer, minimum: 0 , description: "Thông tin amount của tài nguyên trong ngữ cảnh DTO." }
+  transactionId: { type: string, nullable: true, minLength: 1, maxLength: 255 , description: "Thông tin transaction id của tài nguyên trong ngữ cảnh DTO." }
+required: [id, invoiceId, method, paymentStatus, amount, transactionId]

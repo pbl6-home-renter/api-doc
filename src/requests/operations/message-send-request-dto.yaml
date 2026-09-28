@@ -1,0 +1,11 @@
+type: object
+x-apidog-folder: "Message/Request"
+title: MessageSendRequestDto
+description: Dữ liệu gửi tin nhắn
+additionalProperties: false
+properties:
+  conversationId: { type: string, format: uuid , description: "Thông tin conversation id của tài nguyên trong ngữ cảnh DTO." }
+  type: { type: string, enum: [text, image, file, bot] , description: "Thông tin type của tài nguyên trong ngữ cảnh DTO." }
+  content: { type: string, nullable: true , description: "Thông tin content của tài nguyên trong ngữ cảnh DTO." }
+  mediaId: { type: string, format: uuid, nullable: true , description: "Thông tin media id của tài nguyên trong ngữ cảnh DTO." }
+required: [conversationId, type, content, mediaId]

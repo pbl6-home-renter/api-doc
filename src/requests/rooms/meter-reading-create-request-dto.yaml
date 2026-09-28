@@ -1,0 +1,15 @@
+type: object
+x-apidog-folder: "MeterReading/Request"
+title: MeterReadingCreateRequestDto
+description: Dữ liệu tạo chỉ số công tơ đã xác nhận
+additionalProperties: false
+properties:
+  roomId: { type: string, format: uuid , description: "Định danh duy nhất của phòng liên quan." }
+  type: { type: string, enum: [electricity, water] , description: "Thông tin type của tài nguyên trong ngữ cảnh DTO." }
+  period: { type: string, minLength: 7, maxLength: 7, pattern: '^[0-9]{4}-(0[1-9]|1[0-2])$', description: "Kỳ ghi chỉ số theo định dạng YYYY-MM." }
+  previousReading: { type: string , description: "Thông tin previous reading của tài nguyên trong ngữ cảnh DTO." }
+  currentReading: { type: string , description: "Thông tin current reading của tài nguyên trong ngữ cảnh DTO." }
+  readingDate: { type: string, format: date-time, nullable: true , description: "Thông tin reading date của tài nguyên trong ngữ cảnh DTO." }
+  isBaseline: { type: boolean , description: "Thông tin is baseline của tài nguyên trong ngữ cảnh DTO." }
+  evidenceMediaId: { type: string, format: uuid , description: "Thông tin evidence media id của tài nguyên trong ngữ cảnh DTO." }
+required: [roomId, type, period, previousReading, currentReading, readingDate, isBaseline, evidenceMediaId]

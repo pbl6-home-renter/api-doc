@@ -1,0 +1,12 @@
+type: object
+x-apidog-folder: "MatchRequest/Response"
+title: MatchRequestRejectResponseDto
+description: Phản hồi khi từ chối yêu cầu kết nối
+
+properties:
+  id: { type: string, format: uuid , description: "Định danh duy nhất của tài nguyên." }
+  status: { type: string, enum: [rejected], example: rejected , description: "Trạng thái hiện tại của tài nguyên trong quy trình nghiệp vụ." }
+
+required:
+  - id
+  - status

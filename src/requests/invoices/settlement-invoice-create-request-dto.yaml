@@ -1,0 +1,20 @@
+type: object
+x-apidog-folder: "Invoice/Request"
+title: InvoiceCreateSettlementRequestDto
+description: Dữ liệu tạo hóa đơn quyết toán
+additionalProperties: false
+properties:
+  contractId: { type: string, format: uuid , description: "Định danh duy nhất của hợp đồng liên quan." }
+  period: { type: string, minLength: 7, maxLength: 7, pattern: '^[0-9]{4}-(0[1-9]|1[0-2])$', description: "Kỳ hóa đơn theo định dạng YYYY-MM." }
+  otherFees:
+    type: array
+    description: Thông tin other fees của tài nguyên trong ngữ cảnh DTO.
+    nullable: true
+    items:
+      type: object
+      properties:
+        name: { type: string , description: "Thông tin name của tài nguyên trong ngữ cảnh DTO." }
+        amount: { type: integer , description: "Thông tin amount của tài nguyên trong ngữ cảnh DTO." }
+      required: [name, amount]
+  note: { type: string, nullable: true , description: "Thông tin note của tài nguyên trong ngữ cảnh DTO." }
+required: [contractId, period, otherFees, note]

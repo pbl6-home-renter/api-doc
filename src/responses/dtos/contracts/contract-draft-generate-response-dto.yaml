@@ -1,0 +1,13 @@
+type: object
+x-apidog-folder: "Contract/Response"
+title: ContractGenerateDraftResponseDto
+description: Phản hồi khi sinh tài liệu hợp đồng nháp
+properties:
+  contractId: { type: string, format: uuid , description: "Định danh duy nhất của hợp đồng liên quan." }
+  mediaId: { type: string, format: uuid , description: "Thông tin media id của tài nguyên trong ngữ cảnh DTO." }
+  purpose: { type: string, enum: [contract_template], example: contract_template , description: "Thông tin purpose của tài nguyên trong ngữ cảnh DTO." }
+
+required:
+  - contractId
+  - mediaId
+  - purpose

@@ -1,0 +1,10 @@
+type: object
+x-apidog-folder: "Conversation/Response"
+title: ConversationListResponseDto
+description: Danh sách cuộc hội thoại
+properties:
+  id: { type: string, format: uuid , description: "Định danh duy nhất của tài nguyên." }
+  type: { type: string, enum: [room, building, direct] , description: "Thông tin type của tài nguyên trong ngữ cảnh DTO." }
+  title: { type: string, nullable: true, minLength: 1, maxLength: 255 , description: "Thông tin title của tài nguyên trong ngữ cảnh DTO." }
+  unreadCount: { type: integer, minimum: 0 , description: "Thông tin unread count của tài nguyên trong ngữ cảnh DTO." }
+required: [id, type, title, unreadCount]

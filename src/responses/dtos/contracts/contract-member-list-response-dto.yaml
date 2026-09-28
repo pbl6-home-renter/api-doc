@@ -1,0 +1,11 @@
+type: object
+x-apidog-folder: "ContractMember/Response"
+title: ContractMemberListResponseDto
+description: Danh sách thành viên hợp đồng
+properties:
+  id: { type: string, format: uuid , description: "Định danh duy nhất của tài nguyên." }
+  contractId: { type: string, format: uuid , description: "Định danh duy nhất của hợp đồng liên quan." }
+  tenantName: { type: string, nullable: true, minLength: 1, maxLength: 254 , description: "Thông tin tenant name của tài nguyên trong ngữ cảnh DTO." }
+  joinedAt: { type: string, format: date-time , description: "Thông tin joined at của tài nguyên trong ngữ cảnh DTO." }
+  leftAt: { type: string, format: date-time, nullable: true , description: "Thông tin left at của tài nguyên trong ngữ cảnh DTO." }
+required: [id, contractId, tenantName, joinedAt, leftAt]

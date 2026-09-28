@@ -1,0 +1,89 @@
+type: object
+x-apidog-folder: "User/Response"
+title: UserCurrentResponseDto
+description: Phản hồi hồ sơ của người dùng hiện đang đăng nhập
+
+properties:
+  id:
+    type: string
+    description: Định danh duy nhất của tài nguyên.
+    format: uuid
+
+  name:
+    type: string
+    description: Thông tin name của tài nguyên trong ngữ cảnh DTO.
+    minLength: 1
+    maxLength: 254
+    example: "Lê Văn An"
+
+  email:
+    type: string
+    description: Địa chỉ email dùng để liên hệ hoặc xác định tài khoản.
+    format: email
+    example: "lan@example.com"
+
+  phone:
+    type: string
+    description: Thông tin phone của tài nguyên trong ngữ cảnh DTO.
+    minLength: 10
+    maxLength: 12
+    pattern: '^0[0-9]{9}$|^\+84[0-9]{9}$'
+    example: "0901234567"
+
+  role:
+    type: string
+    description: Thông tin role của tài nguyên trong ngữ cảnh DTO.
+    enum:
+      - tenant
+      - landlord
+      - admin
+    example: "tenant"
+
+  status:
+    type: string
+    description: Trạng thái hiện tại của tài nguyên trong quy trình nghiệp vụ.
+    enum:
+      - active
+      - locked
+    example: "active"
+
+  payoutAccount:
+    type: object
+    nullable: true
+    description: >
+      Tài khoản nhận tiền của landlord. Tenant và admin nhận null.
+      accountNumber được mask khi trả về client.
+    properties:
+      bankCode:
+        type: string
+        description: Thông tin bank code của tài nguyên trong ngữ cảnh DTO.
+        minLength: 4
+        maxLength: 20
+        example: "970415"
+
+      accountNumber:
+        type: string
+        description: Số tài khoản đã được mask
+        example: "**43210"
+
+      accountName:
+        type: string
+        description: Thông tin account name của tài nguyên trong ngữ cảnh DTO.
+        minLength: 1
+        maxLength: 254
+        example: "NGUYEN VAN AN"
+
+    required:
+      - bankCode
+      - accountNumber
+      - accountName
+
+
+required:
+  - id
+  - name
+  - email
+  - phone
+  - role
+  - status
+  - payoutAccount

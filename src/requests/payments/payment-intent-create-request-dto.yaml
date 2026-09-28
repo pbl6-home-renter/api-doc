@@ -1,0 +1,9 @@
+type: object
+x-apidog-folder: "Payment/Request"
+title: PaymentCreateIntentRequestDto
+description: Dữ liệu tạo yêu cầu thanh toán
+additionalProperties: false
+properties:
+  invoiceId: { type: string, format: uuid , description: "Thông tin invoice id của tài nguyên trong ngữ cảnh DTO." }
+  method: { type: string, enum: [vietqr, vnpay, momo, cash, mock] , description: "Thông tin method của tài nguyên trong ngữ cảnh DTO." }
+required: [invoiceId, method]

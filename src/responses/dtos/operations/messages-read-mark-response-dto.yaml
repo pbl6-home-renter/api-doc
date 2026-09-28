@@ -1,0 +1,11 @@
+type: object
+x-apidog-folder: "Message/Response"
+title: MessageMarkReadResponseDto
+description: Phản hồi khi đánh dấu tin nhắn đã đọc
+properties:
+  conversationId: { type: string, format: uuid , description: "Thông tin conversation id của tài nguyên trong ngữ cảnh DTO." }
+  unreadCount: { type: integer, minimum: 0 , description: "Thông tin unread count của tài nguyên trong ngữ cảnh DTO." }
+
+required:
+  - conversationId
+  - unreadCount

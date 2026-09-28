@@ -1,0 +1,13 @@
+type: object
+x-apidog-folder: "Conversation/Response"
+title: ConversationResolveResponseDto
+description: Phản hồi resolve cuộc hội thoại
+properties:
+  id: { type: string, format: uuid , description: "Định danh duy nhất của tài nguyên." }
+  type: { type: string, enum: [room, building, direct] , description: "Thông tin type của tài nguyên trong ngữ cảnh DTO." }
+  contractId: { type: string, format: uuid, nullable: true , description: "Định danh duy nhất của hợp đồng liên quan." }
+
+required:
+  - id
+  - type
+  - contractId

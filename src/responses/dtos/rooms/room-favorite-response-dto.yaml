@@ -1,0 +1,12 @@
+type: object
+x-apidog-folder: "FavoriteRoom/Response"
+title: FavoriteRoomToggleResponseDto
+description: Phản hồi khi lưu phòng yêu thích thành công
+
+properties:
+  roomId: { type: string, format: uuid , description: "Định danh duy nhất của phòng liên quan." }
+  roomName: { type: string, minLength: 1, maxLength: 254 , description: "Thông tin room name của tài nguyên trong ngữ cảnh DTO." }
+
+required:
+  - roomId
+  - roomName

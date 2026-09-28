@@ -1,0 +1,12 @@
+type: object
+x-apidog-folder: "RoommateProfile/Response"
+title: RoommateProfileListResponseDto
+description: Danh sách hồ sơ tìm bạn ở ghép
+
+properties:
+  tenantId: { type: string, format: uuid , description: "Thông tin tenant id của tài nguyên trong ngữ cảnh DTO." }
+  bio: { type: string, nullable: true , description: "Thông tin bio của tài nguyên trong ngữ cảnh DTO." }
+  budgetMin: { type: integer, minimum: 0, nullable: true , description: "Thông tin budget min của tài nguyên trong ngữ cảnh DTO." }
+  budgetMax: { type: integer, minimum: 0, nullable: true , description: "Thông tin budget max của tài nguyên trong ngữ cảnh DTO." }
+  isVisible: { type: boolean , description: "Thông tin is visible của tài nguyên trong ngữ cảnh DTO." }
+required: [tenantId, bio, budgetMin, budgetMax, isVisible]

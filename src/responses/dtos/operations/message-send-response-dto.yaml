@@ -1,0 +1,17 @@
+type: object
+x-apidog-folder: "Message/Response"
+title: MessageSendResponseDto
+description: Phản hồi khi gửi tin nhắn
+properties:
+  id: { type: string, format: uuid , description: "Định danh duy nhất của tài nguyên." }
+  conversationId: { type: string, format: uuid , description: "Thông tin conversation id của tài nguyên trong ngữ cảnh DTO." }
+  type: { type: string, enum: [text, image, file, bot] , description: "Thông tin type của tài nguyên trong ngữ cảnh DTO." }
+  content: { type: string, nullable: true , description: "Thông tin content của tài nguyên trong ngữ cảnh DTO." }
+  createdAt: { type: string, format: date-time , description: "Thời điểm bản ghi được tạo, theo định dạng ngày giờ ISO 8601." }
+
+required:
+  - id
+  - conversationId
+  - type
+  - content
+  - createdAt

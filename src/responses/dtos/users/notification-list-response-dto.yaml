@@ -1,0 +1,10 @@
+type: object
+x-apidog-folder: "Notification/Response"
+title: NotificationListResponseDto
+description: Danh sách thông báo theo cursor
+properties:
+  id: { type: string, format: uuid , description: "Định danh duy nhất của tài nguyên." }
+  type: { type: string, minLength: 1, maxLength: 50 , description: "Thông tin type của tài nguyên trong ngữ cảnh DTO." }
+  data: { type: object, nullable: true , description: "Dữ liệu kết quả của thao tác." }
+  readAt: { type: string, format: date-time, nullable: true , description: "Thời điểm thông báo được đọc; null nghĩa là chưa đọc." }
+required: [id, type, data, readAt]

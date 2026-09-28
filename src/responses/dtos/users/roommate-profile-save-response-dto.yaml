@@ -1,0 +1,12 @@
+type: object
+x-apidog-folder: "RoommateProfile/Response"
+title: RoommateProfileSaveResponseDto
+description: Phản hồi khi lưu hồ sơ tìm bạn ở ghép thành công
+
+properties:
+  tenantId: { type: string, format: uuid , description: "Thông tin tenant id của tài nguyên trong ngữ cảnh DTO." }
+  isVisible: { type: boolean , description: "Thông tin is visible của tài nguyên trong ngữ cảnh DTO." }
+
+required:
+  - tenantId
+  - isVisible

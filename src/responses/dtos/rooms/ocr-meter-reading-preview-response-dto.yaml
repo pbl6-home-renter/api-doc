@@ -1,0 +1,15 @@
+type: object
+x-apidog-folder: "MeterReading/Response"
+title: MeterReadingPreviewOcrResponseDto
+description: Kết quả xem trước OCR chỉ số
+properties:
+  type: { type: string, enum: [electricity, water] , description: "Thông tin type của tài nguyên trong ngữ cảnh DTO." }
+  previousReading: { type: string , description: "Thông tin previous reading của tài nguyên trong ngữ cảnh DTO." }
+  currentReading: { type: string , description: "Thông tin current reading của tài nguyên trong ngữ cảnh DTO." }
+  requiresConfirmation: { type: boolean , description: "Thông tin requires confirmation của tài nguyên trong ngữ cảnh DTO." }
+
+required:
+  - type
+  - previousReading
+  - currentReading
+  - requiresConfirmation

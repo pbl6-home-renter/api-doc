@@ -1,0 +1,13 @@
+type: object
+x-apidog-folder: "Invoice/Response"
+title: InvoiceListResponseDto
+description: Danh sách hóa đơn
+properties:
+  id: { type: string, format: uuid , description: "Định danh duy nhất của tài nguyên." }
+  code: { type: string, minLength: 1, maxLength: 32 , description: "Mã ổn định để client nhận diện kết quả nghiệp vụ." }
+  contractId: { type: string, format: uuid , description: "Định danh duy nhất của hợp đồng liên quan." }
+  period: { type: string, pattern: '^[0-9]{4}-(0[1-9]|1[0-2])$', description: "Kỳ hóa đơn theo định dạng YYYY-MM." }
+  totalAmount: { type: integer, minimum: 0 , description: "Thông tin total amount của tài nguyên trong ngữ cảnh DTO." }
+  invoiceStatus: { type: string, enum: [pending, issued, void] , description: "Thông tin invoice status của tài nguyên trong ngữ cảnh DTO." }
+  issuedAt: { type: string, format: date-time, nullable: true , description: "Thông tin issued at của tài nguyên trong ngữ cảnh DTO." }
+required: [id, code, contractId, period, totalAmount, invoiceStatus, issuedAt]

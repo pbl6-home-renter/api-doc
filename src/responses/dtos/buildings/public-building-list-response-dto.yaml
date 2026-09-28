@@ -1,0 +1,12 @@
+type: object
+x-apidog-folder: "Building/Response"
+title: BuildingPublicListResponseDto
+description: Danh sách tòa nhà công khai
+
+properties:
+  id: { type: string, format: uuid , description: "Định danh duy nhất của tài nguyên." }
+  name: { type: string, minLength: 1, maxLength: 254 , description: "Thông tin name của tài nguyên trong ngữ cảnh DTO." }
+  province: { type: string, minLength: 1, maxLength: 100 , description: "Thông tin province của tài nguyên trong ngữ cảnh DTO." }
+  ward: { type: string, minLength: 1, maxLength: 100 , description: "Thông tin ward của tài nguyên trong ngữ cảnh DTO." }
+  address: { type: string, minLength: 1, maxLength: 254 , description: "Thông tin address của tài nguyên trong ngữ cảnh DTO." }
+required: [id, name, province, ward, address]

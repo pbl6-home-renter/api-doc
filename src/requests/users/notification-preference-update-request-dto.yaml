@@ -1,0 +1,17 @@
+type: object
+x-apidog-folder: "NotificationPreference/Request"
+title: NotificationPreferenceUpdateRequestDto
+description: Dữ liệu thay đổi tùy biến thông báo
+additionalProperties: false
+properties:
+  preferences:
+    type: array
+    description: Thông tin preferences của tài nguyên trong ngữ cảnh DTO.
+    items:
+      type: object
+      additionalProperties: false
+      properties:
+        type: { type: string, enum: [invoice, chat, issue, match, account] , description: "Thông tin type của tài nguyên trong ngữ cảnh DTO." }
+        enabled: { type: boolean , description: "Thông tin enabled của tài nguyên trong ngữ cảnh DTO." }
+      required: [type, enabled]
+required: [preferences]

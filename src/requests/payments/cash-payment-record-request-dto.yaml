@@ -1,0 +1,11 @@
+type: object
+x-apidog-folder: "Payment/Request"
+title: PaymentRecordCashRequestDto
+description: Dữ liệu ghi nhận thanh toán tiền mặt
+additionalProperties: false
+properties:
+  invoiceId: { type: string, format: uuid , description: "Thông tin invoice id của tài nguyên trong ngữ cảnh DTO." }
+  amount: { type: integer, minimum: 0 , description: "Thông tin amount của tài nguyên trong ngữ cảnh DTO." }
+  transactionId: { type: string , description: "Thông tin transaction id của tài nguyên trong ngữ cảnh DTO." }
+  receiptMediaId: { type: string, format: uuid , description: "Thông tin receipt media id của tài nguyên trong ngữ cảnh DTO." }
+required: [invoiceId, amount, transactionId, receiptMediaId]

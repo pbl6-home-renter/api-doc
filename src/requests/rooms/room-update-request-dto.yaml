@@ -1,0 +1,24 @@
+type: object
+x-apidog-folder: "Room/Request"
+title: RoomUpdateRequestDto
+description: Dữ liệu cập nhật một phần thông tin phòng
+additionalProperties: false
+minProperties: 1
+
+properties:
+  name:
+    type: string
+    description: Thông tin name của tài nguyên trong ngữ cảnh DTO.
+    minLength: 1
+    maxLength: 254
+    example: P.201
+  rentPrice:
+    type: integer
+    description: Thông tin rent price của tài nguyên trong ngữ cảnh DTO.
+    minimum: 0
+    example: 3600000
+  area:
+    type: string
+    description: Thông tin area của tài nguyên trong ngữ cảnh DTO.
+    nullable: true
+    example: '19.0'

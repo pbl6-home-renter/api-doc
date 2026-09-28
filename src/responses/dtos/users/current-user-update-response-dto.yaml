@@ -1,0 +1,55 @@
+type: object
+x-apidog-folder: "User/Response"
+title: UserCurrentUpdateResponseDto
+description: Phản hồi sau khi cập nhật hồ sơ hiện tại thành công
+
+properties:
+  id:
+    type: string
+    description: Định danh duy nhất của tài nguyên.
+    format: uuid
+
+  name:
+    type: string
+    description: Thông tin name của tài nguyên trong ngữ cảnh DTO.
+    minLength: 1
+    maxLength: 254
+    example: "Lê Văn An"
+
+  phone:
+    type: string
+    description: Thông tin phone của tài nguyên trong ngữ cảnh DTO.
+    minLength: 10
+    maxLength: 12
+    example: "0901234567"
+
+  payoutAccount:
+    type: object
+    nullable: true
+    properties:
+      bankCode:
+        type: string
+        description: Thông tin bank code của tài nguyên trong ngữ cảnh DTO.
+        example: "970415"
+
+      accountNumber:
+        type: string
+        description: Số tài khoản đã được mask khi trả cho client
+        example: "**43210"
+
+      accountName:
+        type: string
+        description: Thông tin account name của tài nguyên trong ngữ cảnh DTO.
+        example: "NGUYEN VAN AN"
+
+    required:
+      - bankCode
+      - accountNumber
+      - accountName
+
+
+required:
+  - id
+  - name
+  - phone
+  - payoutAccount

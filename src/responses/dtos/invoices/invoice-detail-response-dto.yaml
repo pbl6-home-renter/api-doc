@@ -1,0 +1,29 @@
+type: object
+x-apidog-folder: "Invoice/Response"
+title: InvoiceDetailResponseDto
+description: Chi tiết hóa đơn và tổng hợp thanh toán
+properties:
+  id: { type: string, format: uuid , description: "Định danh duy nhất của tài nguyên." }
+  code: { type: string, minLength: 1, maxLength: 32 , description: "Mã ổn định để client nhận diện kết quả nghiệp vụ." }
+  period: { type: string, pattern: '^[0-9]{4}-(0[1-9]|1[0-2])$', description: "Kỳ hóa đơn theo định dạng YYYY-MM." }
+  rentAmount: { type: integer, minimum: 0 , description: "Thông tin rent amount của tài nguyên trong ngữ cảnh DTO." }
+  breakdown: { type: array, nullable: true, items: { type: object } , description: "Các khoản chi tiết cấu thành hóa đơn; null khi không có breakdown." }
+  otherFees: { type: array, nullable: true, items: { type: object } , description: "Các khoản phí khác ngoài tiền thuê; null khi không có khoản phí." }
+  totalAmount: { type: integer, minimum: 0 , description: "Thông tin total amount của tài nguyên trong ngữ cảnh DTO." }
+  invoiceStatus: { type: string, enum: [pending, issued, void] , description: "Thông tin invoice status của tài nguyên trong ngữ cảnh DTO." }
+  issuedAt: { type: string, format: date-time, nullable: true , description: "Thông tin issued at của tài nguyên trong ngữ cảnh DTO." }
+  paidAmount: { type: integer, minimum: 0 , description: "Thông tin paid amount của tài nguyên trong ngữ cảnh DTO." }
+  remainingAmount: { type: integer, minimum: 0 , description: "Thông tin remaining amount của tài nguyên trong ngữ cảnh DTO." }
+
+required:
+  - id
+  - code
+  - period
+  - rentAmount
+  - breakdown
+  - otherFees
+  - totalAmount
+  - invoiceStatus
+  - issuedAt
+  - paidAmount
+  - remainingAmount

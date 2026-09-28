@@ -1,0 +1,35 @@
+type: object
+x-apidog-folder: "User/Response"
+title: UserUpdateResponseDto
+description: Phản hồi sau khi admin cập nhật tài khoản
+
+properties:
+  userId:
+    type: string
+    description: Định danh duy nhất của người dùng liên quan.
+    format: uuid
+
+  name:
+    type: string
+    description: Thông tin name của tài nguyên trong ngữ cảnh DTO.
+    example: "Nguyễn Văn An"
+
+  phone:
+    type: string
+    description: Thông tin phone của tài nguyên trong ngữ cảnh DTO.
+    example: "0901234567"
+
+  status:
+    type: string
+    description: Trạng thái hiện tại của tài nguyên trong quy trình nghiệp vụ.
+    enum:
+      - active
+      - locked
+    example: "active"
+
+
+required:
+  - userId
+  - name
+  - phone
+  - status

@@ -1,0 +1,16 @@
+type: object
+x-apidog-folder: "BillingSetting/Response"
+title: BillingSettingCreateResponseDto
+description: Phản hồi khi tạo cấu hình billing
+
+properties:
+  id: { type: string, format: uuid , description: "Định danh duy nhất của tài nguyên." }
+  dueDays: { type: integer, minimum: 1, maximum: 28 , description: "Thông tin due days của tài nguyên trong ngữ cảnh DTO." }
+  remindDays: { type: integer, minimum: 1, maximum: 28, nullable: true , description: "Thông tin remind days của tài nguyên trong ngữ cảnh DTO." }
+  botEnabled: { type: boolean , description: "Thông tin bot enabled của tài nguyên trong ngữ cảnh DTO." }
+
+required:
+  - id
+  - dueDays
+  - remindDays
+  - botEnabled

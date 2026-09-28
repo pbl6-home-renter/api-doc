@@ -1,0 +1,12 @@
+type: object
+x-apidog-folder: "MatchRequest/Response"
+title: MatchRequestListResponseDto
+description: Danh sách yêu cầu kết nối tìm bạn ở ghép
+
+properties:
+  id: { type: string, format: uuid , description: "Định danh duy nhất của tài nguyên." }
+  requesterId: { type: string, format: uuid , description: "Thông tin requester id của tài nguyên trong ngữ cảnh DTO." }
+  targetId: { type: string, format: uuid , description: "Thông tin target id của tài nguyên trong ngữ cảnh DTO." }
+  status: { type: string, enum: [pending, accepted, rejected, withdrawn] , description: "Trạng thái hiện tại của tài nguyên trong quy trình nghiệp vụ." }
+  createdAt: { type: string, format: date-time , description: "Thời điểm bản ghi được tạo, theo định dạng ngày giờ ISO 8601." }
+required: [id, requesterId, targetId, status, createdAt]

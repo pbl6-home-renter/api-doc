@@ -1,0 +1,11 @@
+type: object
+x-apidog-folder: "IssueReport/Response"
+title: IssueReportListResponseDto
+description: Danh sách báo cáo sự cố
+properties:
+  id: { type: string, format: uuid , description: "Định danh duy nhất của tài nguyên." }
+  roomId: { type: string, format: uuid , description: "Định danh duy nhất của phòng liên quan." }
+  title: { type: string, minLength: 1, maxLength: 255 , description: "Thông tin title của tài nguyên trong ngữ cảnh DTO." }
+  status: { type: string, enum: [open, in_progress, resolved, cancelled] , description: "Trạng thái hiện tại của tài nguyên trong quy trình nghiệp vụ." }
+  description: { type: string, nullable: true, minLength: 1, maxLength: 500 , description: "Thông tin description của tài nguyên trong ngữ cảnh DTO." }
+required: [id, roomId, title, status, description]

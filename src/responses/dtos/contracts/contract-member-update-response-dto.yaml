@@ -1,0 +1,11 @@
+type: object
+x-apidog-folder: "ContractMember/Response"
+title: ContractMemberUpdateResponseDto
+description: Phản hồi khi cập nhật thành viên hợp đồng
+properties:
+  id: { type: string, format: uuid , description: "Định danh duy nhất của tài nguyên." }
+  tenantPhone: { type: string, minLength: 10, maxLength: 12, pattern: '^0[0-9]{9}$|^\+84[0-9]{9}$', description: "Số điện thoại mới của thành viên hợp đồng." }
+
+required:
+  - id
+  - tenantPhone

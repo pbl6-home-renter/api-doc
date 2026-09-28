@@ -1,0 +1,37 @@
+type: object
+x-apidog-folder: "Building/Request"
+title: BuildingCreateRequestDto
+description: Dữ liệu tạo tòa nhà
+additionalProperties: false
+
+properties:
+  name:
+    type: string
+    description: Thông tin name của tài nguyên trong ngữ cảnh DTO.
+    minLength: 1
+    maxLength: 254
+    example: Nhà trọ Thanh Xuân
+  province:
+    type: string
+    description: Thông tin province của tài nguyên trong ngữ cảnh DTO.
+    minLength: 1
+    maxLength: 100
+    example: Thành phố Hồ Chí Minh
+  ward:
+    type: string
+    description: Thông tin ward của tài nguyên trong ngữ cảnh DTO.
+    minLength: 1
+    maxLength: 100
+    example: Phường Bến Nghé
+  address:
+    type: string
+    description: Thông tin address của tài nguyên trong ngữ cảnh DTO.
+    minLength: 1
+    maxLength: 254
+    example: 12 Nguyễn Trãi
+
+required:
+  - name
+  - province
+  - ward
+  - address

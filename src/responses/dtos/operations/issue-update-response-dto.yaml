@@ -1,0 +1,13 @@
+type: object
+x-apidog-folder: "IssueReport/Response"
+title: IssueReportUpdateResponseDto
+description: Phản hồi khi cập nhật báo cáo sự cố
+properties:
+  id: { type: string, format: uuid , description: "Định danh duy nhất của tài nguyên." }
+  status: { type: string, enum: [open, in_progress, resolved, cancelled] , description: "Trạng thái hiện tại của tài nguyên trong quy trình nghiệp vụ." }
+  closedAt: { type: string, format: date-time, nullable: true , description: "Thông tin closed at của tài nguyên trong ngữ cảnh DTO." }
+
+required:
+  - id
+  - status
+  - closedAt

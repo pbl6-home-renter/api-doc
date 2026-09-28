@@ -1,0 +1,18 @@
+type: object
+x-apidog-folder: "RatePolicy/Response"
+title: RatePolicyCreateResponseDto
+description: Phản hồi khi tạo chính sách đơn giá
+
+properties:
+  id: { type: string, format: uuid , description: "Định danh duy nhất của tài nguyên." }
+  scope: { type: string, enum: [building, room] , description: "Thông tin scope của tài nguyên trong ngữ cảnh DTO." }
+  type: { type: string, enum: [electricity, water, wifi, cleaning, parking, maintenance, other] , description: "Thông tin type của tài nguyên trong ngữ cảnh DTO." }
+  rateKind: { type: string, enum: [flat, tiered, fixed_per_period, per_head, per_area_m2, per_vehicle] , description: "Thông tin rate kind của tài nguyên trong ngữ cảnh DTO." }
+  isActive: { type: boolean, enum: [true], example: true , description: "Thông tin is active của tài nguyên trong ngữ cảnh DTO." }
+
+required:
+  - id
+  - scope
+  - type
+  - rateKind
+  - isActive

@@ -1,0 +1,20 @@
+type: object
+x-apidog-folder: "Building/Response"
+title: BuildingMyDetailResponseDto
+description: Chi tiết tòa nhà của chủ nhà hiện tại
+
+properties:
+  id: { type: string, format: uuid , description: "Định danh duy nhất của tài nguyên." }
+  name: { type: string , description: "Thông tin name của tài nguyên trong ngữ cảnh DTO." }
+  status: { type: string, enum: [pending, approved, rejected] , description: "Trạng thái hiện tại của tài nguyên trong quy trình nghiệp vụ." }
+  totalRooms: { type: integer, minimum: 0 , description: "Thông tin total rooms của tài nguyên trong ngữ cảnh DTO." }
+  occupancyRate: { type: string , description: "Thông tin occupancy rate của tài nguyên trong ngữ cảnh DTO." }
+  reviewNote: { type: string, nullable: true, minLength: 1, maxLength: 500 , description: "Thông tin review note của tài nguyên trong ngữ cảnh DTO." }
+
+required:
+  - id
+  - name
+  - status
+  - totalRooms
+  - occupancyRate
+  - reviewNote

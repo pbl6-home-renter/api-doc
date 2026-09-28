@@ -1,0 +1,11 @@
+type: object
+x-apidog-folder: "Notification/Response"
+title: NotificationMarkReadResponseDto
+description: Phản hồi khi đánh dấu một thông báo đã đọc
+properties:
+  id: { type: string, format: uuid , description: "Định danh duy nhất của tài nguyên." }
+  readAt: { type: string, format: date-time , description: "Thời điểm thông báo được đọc; null nghĩa là chưa đọc." }
+
+required:
+  - id
+  - readAt

@@ -1,0 +1,13 @@
+type: object
+x-apidog-folder: "Invoice/Response"
+title: InvoiceUpdateResponseDto
+description: Phản hồi khi cập nhật hóa đơn
+properties:
+  id: { type: string, format: uuid , description: "Định danh duy nhất của tài nguyên." }
+  otherFees: { type: array, nullable: true, items: { type: object } , description: "Các khoản phí khác ngoài tiền thuê; null khi không có khoản phí." }
+  totalAmount: { type: integer, minimum: 0 , description: "Thông tin total amount của tài nguyên trong ngữ cảnh DTO." }
+
+required:
+  - id
+  - otherFees
+  - totalAmount

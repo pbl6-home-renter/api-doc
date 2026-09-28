@@ -1,0 +1,8 @@
+type: object
+x-apidog-folder: "Contract/Request"
+title: ContractActivateRequestDto
+description: Dữ liệu kích hoạt hợp đồng
+additionalProperties: false
+properties:
+  signedContractMediaId: { type: string, format: uuid , description: "Thông tin signed contract media id của tài nguyên trong ngữ cảnh DTO." }
+required: [signedContractMediaId]

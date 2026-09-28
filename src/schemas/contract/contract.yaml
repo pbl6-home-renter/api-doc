@@ -55,14 +55,14 @@ allOf:
         example: 3500000
       startDate:
         type: string
-        format: date
-        description: Ngày bắt đầu hợp đồng (YYYY-MM-DD)
-        example: "2026-09-01"
+        format: date-time
+        description: Ngày bắt đầu hợp đồng (ISO 8601 date-time)
+        example: "2026-09-01T00:00:00Z"
       endDate:
         type: string
-        format: date
-        description: Ngày kết thúc hợp đồng (YYYY-MM-DD)
-        example: "2027-08-31"
+        format: date-time
+        description: Ngày kết thúc hợp đồng (ISO 8601 date-time)
+        example: "2027-08-31T00:00:00Z"
       description:
         type: string
         nullable: true

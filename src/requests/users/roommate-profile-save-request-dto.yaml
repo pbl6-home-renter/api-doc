@@ -1,0 +1,63 @@
+type: object
+x-apidog-folder: "RoommateProfile/Request"
+title: RoommateProfileSaveRequestDto
+description: Dữ liệu đầy đủ để tạo hoặc cập nhật hồ sơ tìm bạn ở ghép
+additionalProperties: false
+
+properties:
+  bio:
+    type: string
+    description: Thông tin bio của tài nguyên trong ngữ cảnh DTO.
+    nullable: true
+    example: Hiền lành, sạch sẽ
+  lifestyle:
+    type: object
+    nullable: true
+    description: Thói quen sinh hoạt dạng object linh hoạt
+    example:
+      sleep: 23h-6h
+  personality:
+    type: object
+    nullable: true
+    description: Đặc điểm tính cách dạng object linh hoạt
+    example:
+      introvert: true
+  budgetMin:
+    type: integer
+    description: Thông tin budget min của tài nguyên trong ngữ cảnh DTO.
+    minimum: 0
+    nullable: true
+    example: 2000000
+  budgetMax:
+    type: integer
+    description: Thông tin budget max của tài nguyên trong ngữ cảnh DTO.
+    minimum: 0
+    nullable: true
+    example: 3500000
+  preferredArea:
+    type: string
+    description: Thông tin preferred area của tài nguyên trong ngữ cảnh DTO.
+    nullable: true
+    minLength: 1
+    maxLength: 255
+    example: Hòa Khánh, Liên Chiểu
+  moveInOn:
+    type: string
+    description: Thông tin move in on của tài nguyên trong ngữ cảnh DTO.
+    format: date-time
+    nullable: true
+    example: '2026-10-01T00:00:00Z'
+  isVisible:
+    type: boolean
+    description: Thông tin is visible của tài nguyên trong ngữ cảnh DTO.
+    example: true
+
+required:
+  - bio
+  - lifestyle
+  - personality
+  - budgetMin
+  - budgetMax
+  - preferredArea
+  - moveInOn
+  - isVisible

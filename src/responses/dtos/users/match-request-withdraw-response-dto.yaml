@@ -1,0 +1,14 @@
+type: object
+x-apidog-folder: "MatchRequest/Response"
+title: MatchRequestWithdrawResponseDto
+description: Phản hồi khi rút yêu cầu kết nối
+
+properties:
+  id: { type: string, format: uuid , description: "Định danh duy nhất của tài nguyên." }
+  status: { type: string, enum: [withdrawn], example: withdrawn , description: "Trạng thái hiện tại của tài nguyên trong quy trình nghiệp vụ." }
+  respondedAt: { type: string, format: date-time , description: "Thông tin responded at của tài nguyên trong ngữ cảnh DTO." }
+
+required:
+  - id
+  - status
+  - respondedAt

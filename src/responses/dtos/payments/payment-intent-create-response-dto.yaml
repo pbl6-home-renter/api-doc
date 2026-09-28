@@ -1,0 +1,17 @@
+type: object
+x-apidog-folder: "Payment/Response"
+title: PaymentCreateIntentResponseDto
+description: Phản hồi khi tạo payment intent
+properties:
+  paymentId: { type: string, format: uuid , description: "Thông tin payment id của tài nguyên trong ngữ cảnh DTO." }
+  invoiceCode: { type: string , description: "Thông tin invoice code của tài nguyên trong ngữ cảnh DTO." }
+  method: { type: string, enum: [vietqr, vnpay, momo, cash, mock] , description: "Thông tin method của tài nguyên trong ngữ cảnh DTO." }
+  amount: { type: integer, minimum: 0 , description: "Thông tin amount của tài nguyên trong ngữ cảnh DTO." }
+  qrContent: { type: string , description: "Thông tin qr content của tài nguyên trong ngữ cảnh DTO." }
+
+required:
+  - paymentId
+  - invoiceCode
+  - method
+  - amount
+  - qrContent

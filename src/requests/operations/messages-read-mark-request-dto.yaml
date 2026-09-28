@@ -1,0 +1,9 @@
+type: object
+x-apidog-folder: "Message/Request"
+title: MessageMarkReadRequestDto
+description: Dữ liệu cập nhật con trỏ đã đọc
+additionalProperties: false
+properties:
+  conversationId: { type: string, format: uuid , description: "Thông tin conversation id của tài nguyên trong ngữ cảnh DTO." }
+  lastReadMessageId: { type: string, format: uuid , description: "Thông tin last read message id của tài nguyên trong ngữ cảnh DTO." }
+required: [conversationId, lastReadMessageId]

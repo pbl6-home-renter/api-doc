@@ -1,0 +1,12 @@
+type: object
+x-apidog-folder: "RatePolicy/Response"
+title: RatePolicyDeactivateResponseDto
+description: Phản hồi khi vô hiệu hóa chính sách đơn giá
+
+properties:
+  id: { type: string, format: uuid , description: "Định danh duy nhất của tài nguyên." }
+  isActive: { type: boolean, enum: [false], example: false , description: "Thông tin is active của tài nguyên trong ngữ cảnh DTO." }
+
+required:
+  - id
+  - isActive

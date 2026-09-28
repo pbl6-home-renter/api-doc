@@ -1,0 +1,13 @@
+type: object
+x-apidog-folder: "Contract/Response"
+title: ContractApplyTemplateResponseDto
+description: Phản hồi khi áp dụng mẫu hợp đồng
+properties:
+  id: { type: string, format: uuid , description: "Định danh duy nhất của tài nguyên." }
+  templateKey: { type: string , description: "Thông tin template key của tài nguyên trong ngữ cảnh DTO." }
+  status: { type: string, enum: [draft], example: draft , description: "Trạng thái hiện tại của tài nguyên trong quy trình nghiệp vụ." }
+
+required:
+  - id
+  - templateKey
+  - status

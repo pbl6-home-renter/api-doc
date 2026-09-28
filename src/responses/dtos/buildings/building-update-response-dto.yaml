@@ -1,0 +1,16 @@
+type: object
+x-apidog-folder: "Building/Response"
+title: BuildingUpdateResponseDto
+description: Phản hồi khi cập nhật tòa nhà thành công
+
+properties:
+  id: { type: string, format: uuid , description: "Định danh duy nhất của tài nguyên." }
+  name: { type: string, minLength: 1, maxLength: 254 , description: "Thông tin name của tài nguyên trong ngữ cảnh DTO." }
+  address: { type: string, minLength: 1, maxLength: 254 , description: "Thông tin address của tài nguyên trong ngữ cảnh DTO." }
+  status: { type: string, enum: [pending, approved, rejected] , description: "Trạng thái hiện tại của tài nguyên trong quy trình nghiệp vụ." }
+
+required:
+  - id
+  - name
+  - address
+  - status

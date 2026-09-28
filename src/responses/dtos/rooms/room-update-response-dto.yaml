@@ -1,0 +1,16 @@
+type: object
+x-apidog-folder: "Room/Response"
+title: RoomUpdateResponseDto
+description: Phản hồi khi cập nhật phòng thành công
+
+properties:
+  id: { type: string, format: uuid , description: "Định danh duy nhất của tài nguyên." }
+  name: { type: string , description: "Thông tin name của tài nguyên trong ngữ cảnh DTO." }
+  rentPrice: { type: integer, minimum: 0 , description: "Thông tin rent price của tài nguyên trong ngữ cảnh DTO." }
+  area: { type: string, nullable: true, example: '19.0' , description: "Thông tin area của tài nguyên trong ngữ cảnh DTO." }
+
+required:
+  - id
+  - name
+  - rentPrice
+  - area

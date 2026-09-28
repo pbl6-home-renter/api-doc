@@ -1,0 +1,12 @@
+type: object
+x-apidog-folder: "Room/Response"
+title: RoomMarkReadyResponseDto
+description: Phản hồi khi đánh dấu phòng sẵn sàng
+
+properties:
+  id: { type: string, format: uuid , description: "Định danh duy nhất của tài nguyên." }
+  status: { type: string, enum: [available], example: available , description: "Trạng thái hiện tại của tài nguyên trong quy trình nghiệp vụ." }
+
+required:
+  - id
+  - status
