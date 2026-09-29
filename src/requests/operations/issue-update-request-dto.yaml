@@ -1,9 +1,38 @@
 type: object
 x-apidog-folder: "IssueReport/Request"
 title: IssueReportUpdateRequestDto
-description: Dữ liệu cập nhật một phần báo cáo sự cố
+description: Dữ liệu cập nhật tiến độ xử lý và nghiệm thu sự cố
 additionalProperties: false
 minProperties: 1
+
 properties:
-  status: { type: string, enum: [open, in_progress, resolved, cancelled] , description: "Trạng thái hiện tại của tài nguyên trong quy trình nghiệp vụ." }
-  note: { type: string, nullable: true, minLength: 1, maxLength: 500 , description: "Thông tin note của tài nguyên trong ngữ cảnh DTO." }
+  status:
+    type: string
+    enum: [open, in_progress, resolved, cancelled]
+    description: Trạng thái mới của sự cố
+    example: "resolved"
+  assignedTo:
+    type: string
+    nullable: true
+    description: Phân công thợ hoặc đơn vị sửa chữa
+    example: "Thợ điện nước anh Hùng"
+  repairCost:
+    type: integer
+    minimum: 0
+    nullable: true
+    description: Chi phí bảo dưỡng, thay thế phụ kiện (VNĐ)
+    example: 150000
+  resolutionNote:
+    type: string
+    nullable: true
+    minLength: 1
+    maxLength: 500
+    description: Ghi chú kết quả xử lý hoặc nguyên nhân hư hỏng
+    example: "Đã thay gioăng cao su mới và vòi xịt inox"
+  resolutionMediaIds:
+    type: array
+    nullable: true
+    description: Danh sách ID ảnh chụp sau khi đã sửa xong để nghiệm thu
+    items:
+      type: string
+      format: uuid

@@ -5,59 +5,88 @@ description: Dữ liệu đầy đủ để tạo hoặc cập nhật hồ sơ t
 additionalProperties: false
 
 properties:
+  gender:
+    type: string
+    enum: [male, female, other]
+    description: Giới tính của bản thân
+    example: "female"
+  birthYear:
+    type: integer
+    nullable: true
+    description: Năm sinh
+    example: 2002
+  occupation:
+    type: string
+    nullable: true
+    maxLength: 100
+    description: Nghề nghiệp hoặc trường đang theo học
+    example: "Sinh viên ĐH Bách Khoa Đà Nẵng"
+  preferredProvince:
+    type: string
+    nullable: true
+    maxLength: 100
+    description: Tỉnh / Thành phố mong muốn tìm phòng
+    example: "Đà Nẵng"
+  preferredDistrict:
+    type: string
+    nullable: true
+    maxLength: 100
+    description: Quận / Huyện mong muốn tìm phòng
+    example: "Liên Chiểu"
+  preferredArea:
+    type: string
+    nullable: true
+    minLength: 1
+    maxLength: 255
+    description: Khu vực mong muốn tìm phòng cụ thể
+    example: "Khu vực quanh chợ Hòa Khánh"
+  budgetMin:
+    type: integer
+    minimum: 0
+    nullable: true
+    description: Ngân sách thuê tối thiểu (VNĐ)
+    example: 1500000
+  budgetMax:
+    type: integer
+    minimum: 0
+    nullable: true
+    description: Ngân sách thuê tối đa (VNĐ)
+    example: 2500000
+  moveInOn:
+    type: string
+    format: date-time
+    nullable: true
+    description: Ngày dự kiến có thể chuyển vào ở
+    example: "2026-10-01T00:00:00Z"
   bio:
     type: string
-    description: Thông tin bio của tài nguyên trong ngữ cảnh DTO.
     nullable: true
-    example: Hiền lành, sạch sẽ
+    maxLength: 1000
+    description: Lời giới thiệu bản thân
+    example: "Mình hòa đồng, sạch sẽ, không hút thuốc. Cần tìm bạn ở ghép share tiền phòng."
   lifestyle:
     type: object
     nullable: true
-    description: Thói quen sinh hoạt dạng object linh hoạt
-    example:
-      sleep: 23h-6h
+    description: Các thói quen sinh hoạt dạng strongly-typed flags
+    properties:
+      cleanAndTidy: { type: boolean, example: true, description: "Ngăn nắp gọn gàng" }
+      earlyBird: { type: boolean, example: true, description: "Thức dậy sớm" }
+      nightOwl: { type: boolean, example: false, description: "Cú đêm / thức khuya" }
+      petFriendly: { type: boolean, example: false, description: "Thích hoặc nuôi thú cưng" }
+      smoking: { type: boolean, example: false, description: "Hút thuốc lá" }
+      cooking: { type: boolean, example: true, description: "Thường xuyên nấu ăn tại phòng" }
+      guestsAllowed: { type: boolean, example: false, description: "Đồng ý dẫn bạn bè về phòng" }
   personality:
     type: object
     nullable: true
     description: Đặc điểm tính cách dạng object linh hoạt
     example:
       introvert: true
-  budgetMin:
-    type: integer
-    description: Thông tin budget min của tài nguyên trong ngữ cảnh DTO.
-    minimum: 0
-    nullable: true
-    example: 2000000
-  budgetMax:
-    type: integer
-    description: Thông tin budget max của tài nguyên trong ngữ cảnh DTO.
-    minimum: 0
-    nullable: true
-    example: 3500000
-  preferredArea:
-    type: string
-    description: Thông tin preferred area của tài nguyên trong ngữ cảnh DTO.
-    nullable: true
-    minLength: 1
-    maxLength: 255
-    example: Hòa Khánh, Liên Chiểu
-  moveInOn:
-    type: string
-    description: Thông tin move in on của tài nguyên trong ngữ cảnh DTO.
-    format: date-time
-    nullable: true
-    example: '2026-10-01T00:00:00Z'
+      quiet: true
   isVisible:
     type: boolean
-    description: Thông tin is visible của tài nguyên trong ngữ cảnh DTO.
+    description: Bật/tắt hiển thị công khai hồ sơ trên feed tìm bạn ở ghép
     example: true
 
 required:
-  - bio
-  - lifestyle
-  - personality
-  - budgetMin
-  - budgetMax
-  - preferredArea
-  - moveInOn
   - isVisible

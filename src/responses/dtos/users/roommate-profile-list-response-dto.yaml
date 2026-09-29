@@ -1,12 +1,91 @@
 type: object
 x-apidog-folder: "RoommateProfile/Response"
 title: RoommateProfileListResponseDto
-description: Danh sách hồ sơ tìm bạn ở ghép
+description: Thẻ hồ sơ tìm bạn ở ghép hiển thị trên feed tìm kiếm
 
 properties:
-  tenantId: { type: string, format: uuid , description: "Thông tin tenant id của tài nguyên trong ngữ cảnh DTO." }
-  bio: { type: string, nullable: true , description: "Thông tin bio của tài nguyên trong ngữ cảnh DTO." }
-  budgetMin: { type: integer, minimum: 0, nullable: true , description: "Thông tin budget min của tài nguyên trong ngữ cảnh DTO." }
-  budgetMax: { type: integer, minimum: 0, nullable: true , description: "Thông tin budget max của tài nguyên trong ngữ cảnh DTO." }
-  isVisible: { type: boolean , description: "Thông tin is visible của tài nguyên trong ngữ cảnh DTO." }
-required: [tenantId, bio, budgetMin, budgetMax, isVisible]
+  id:
+    type: string
+    format: uuid
+    description: Định danh duy nhất của hồ sơ tìm bạn.
+  tenantId:
+    type: string
+    format: uuid
+    description: Định danh tài khoản người dùng.
+  tenantName:
+    type: string
+    description: Họ và tên hiển thị của người tìm bạn ở ghép.
+    example: "Nguyễn Thu Hà"
+  avatarUrl:
+    type: string
+    format: uri
+    nullable: true
+    description: URL ảnh đại diện.
+    example: "https://example.com/avatar.jpg"
+  gender:
+    type: string
+    enum: [male, female, other]
+    description: Giới tính.
+    example: "female"
+  birthYear:
+    type: integer
+    nullable: true
+    description: Năm sinh của ứng viên.
+    example: 2002
+  occupation:
+    type: string
+    nullable: true
+    description: Nghề nghiệp hoặc trường đại học đang theo học.
+    example: "Sinh viên ĐH Bách Khoa"
+  budgetMin:
+    type: integer
+    minimum: 0
+    nullable: true
+    description: Ngân sách thuê tối thiểu (VNĐ).
+    example: 1500000
+  budgetMax:
+    type: integer
+    minimum: 0
+    nullable: true
+    description: Ngân sách thuê tối đa (VNĐ).
+    example: 2500000
+  preferredDistrict:
+    type: string
+    nullable: true
+    description: Quận / Huyện mong muốn tìm phòng.
+    example: "Liên Chiểu"
+  preferredArea:
+    type: string
+    nullable: true
+    description: Khu vực mong muốn tìm phòng (chuỗi tự do).
+    example: "Khu vực gần ĐH Bách Khoa"
+  lifestyleTags:
+    type: array
+    description: Danh sách các tag thói quen sinh hoạt nổi bật để hiển thị badge.
+    items:
+      type: string
+    example:
+      - "Sạch sẽ"
+      - "Không hút thuốc"
+      - "Ngủ sớm"
+  matchScore:
+    type: integer
+    minimum: 0
+    maximum: 100
+    nullable: true
+    description: Điểm số tương thích ghép đôi theo thuật toán AI (0 - 100%).
+    example: 88
+  bio:
+    type: string
+    nullable: true
+    description: Đoạn giới thiệu bản thân ngắn gọn.
+  isVisible:
+    type: boolean
+    description: Trạng thái hiển thị công khai trên feed tìm kiếm.
+
+required:
+  - id
+  - tenantId
+  - tenantName
+  - gender
+  - isVisible

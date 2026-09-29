@@ -1,20 +1,104 @@
 type: object
 x-apidog-folder: "RoommateProfile/Response"
 title: RoommateProfileDetailResponseDto
-description: Chi tiết hồ sơ tìm bạn ở ghép của người khác
+description: Chi tiết toàn diện về hồ sơ tìm bạn ở ghép, các thói quen sinh hoạt và phân tích tương thích AI
 
 properties:
-  tenantId: { type: string, format: uuid , description: "Thông tin tenant id của tài nguyên trong ngữ cảnh DTO." }
-  bio: { type: string, nullable: true , description: "Thông tin bio của tài nguyên trong ngữ cảnh DTO." }
-  budgetMin: { type: integer, minimum: 0, nullable: true , description: "Thông tin budget min của tài nguyên trong ngữ cảnh DTO." }
-  budgetMax: { type: integer, minimum: 0, nullable: true , description: "Thông tin budget max của tài nguyên trong ngữ cảnh DTO." }
-  preferredArea: { type: string, nullable: true, minLength: 1, maxLength: 255 , description: "Thông tin preferred area của tài nguyên trong ngữ cảnh DTO." }
-  isVisible: { type: boolean , description: "Thông tin is visible của tài nguyên trong ngữ cảnh DTO." }
+  id:
+    type: string
+    format: uuid
+    description: Định danh duy nhất của hồ sơ tìm bạn.
+  tenantId:
+    type: string
+    format: uuid
+    description: Định danh người dùng.
+  tenantName:
+    type: string
+    description: Họ và tên người tìm bạn ở ghép.
+    example: "Nguyễn Thu Hà"
+  avatarUrl:
+    type: string
+    format: uri
+    nullable: true
+    description: URL ảnh đại diện.
+    example: "https://example.com/avatar.jpg"
+  gender:
+    type: string
+    enum: [male, female, other]
+    description: Giới tính.
+    example: "female"
+  birthYear:
+    type: integer
+    nullable: true
+    description: Năm sinh.
+    example: 2002
+  occupation:
+    type: string
+    nullable: true
+    description: Nghề nghiệp hoặc trường đại học đang học.
+    example: "Sinh viên ĐH Bách Khoa Đà Nẵng"
+  preferredProvince:
+    type: string
+    nullable: true
+    description: Tỉnh / Thành phố mong muốn tìm trọ.
+    example: "Đà Nẵng"
+  preferredDistrict:
+    type: string
+    nullable: true
+    description: Quận / Huyện mong muốn tìm trọ.
+    example: "Liên Chiểu"
+  preferredArea:
+    type: string
+    nullable: true
+    description: Khu vực mong muốn tìm phòng.
+    example: "Gần ĐH Bách Khoa, chợ Hòa Khánh"
+  budgetMin:
+    type: integer
+    minimum: 0
+    nullable: true
+    description: Ngân sách thuê tối thiểu (VNĐ).
+    example: 1500000
+  budgetMax:
+    type: integer
+    minimum: 0
+    nullable: true
+    description: Ngân sách thuê tối đa (VNĐ).
+    example: 2500000
+  bio:
+    type: string
+    nullable: true
+    description: Bài viết tự giới thiệu về bản thân.
+    example: "Mình là sinh viên năm cuối, tính tình hòa đồng, sạch sẽ, không hút thuốc. Cần tìm bạn nữ ở ghép share tiền phòng."
+  lifestyleDetails:
+    type: object
+    description: Chi tiết các thói quen sinh hoạt
+    properties:
+      cleanAndTidy: { type: boolean, example: true, description: "Ngăn nắp gọn gàng" }
+      earlyBird: { type: boolean, example: true, description: "Thức dậy sớm" }
+      nightOwl: { type: boolean, example: false, description: "Cú đêm / thức khuya" }
+      petFriendly: { type: boolean, example: false, description: "Thích hoặc nuôi thú cưng" }
+      smoking: { type: boolean, example: false, description: "Hút thuốc lá" }
+      cooking: { type: boolean, example: true, description: "Thường xuyên nấu ăn tại phòng" }
+      guestsAllowed: { type: boolean, example: false, description: "Đồng ý dẫn bạn bè về phòng" }
+  aiMatchScore:
+    type: integer
+    minimum: 0
+    maximum: 100
+    nullable: true
+    description: Điểm tương thích AI giữa người xem và chủ hồ sơ (0 - 100%).
+    example: 92
+  aiAdvice:
+    type: string
+    nullable: true
+    description: Lời khuyên hòa hợp từ AI phân tích độ tương đồng về tính cách, thói quen và ngân sách.
+    example: "Cả hai đều có thói quen dậy sớm, nấu ăn tại phòng và không hút thuốc. Mức độ phù hợp rất cao."
+  isVisible:
+    type: boolean
+    description: Trạng thái công khai hồ sơ.
 
 required:
+  - id
   - tenantId
-  - bio
-  - budgetMin
-  - budgetMax
-  - preferredArea
+  - tenantName
+  - gender
   - isVisible

@@ -1,13 +1,30 @@
 type: object
 x-apidog-folder: "Room/Response"
 title: RoomPublicListResponseDto
-description: Danh sách phòng công khai
+description: Danh sách phòng trọ công khai dành cho khách tìm kiếm phòng
 
 properties:
-  id: { type: string, format: uuid , description: "Định danh duy nhất của tài nguyên." }
-  buildingId: { type: string, format: uuid , description: "Định danh duy nhất của tòa nhà liên quan." }
-  name: { type: string, minLength: 1, maxLength: 254 , description: "Thông tin name của tài nguyên trong ngữ cảnh DTO." }
-  area: { type: string, example: '18.5' , description: "Thông tin area của tài nguyên trong ngữ cảnh DTO." }
-  rentPrice: { type: integer, minimum: 0 , description: "Thông tin rent price của tài nguyên trong ngữ cảnh DTO." }
-  genderPolicy: { type: string, enum: [any, male, female] , description: "Thông tin gender policy của tài nguyên trong ngữ cảnh DTO." }
-required: [id, buildingId, name, area, rentPrice, genderPolicy]
+  id: { type: string, format: uuid, description: "Định danh duy nhất của phòng." }
+  buildingId: { type: string, format: uuid, description: "Định danh duy nhất của tòa nhà liên quan." }
+  name: { type: string, minLength: 1, maxLength: 254, description: "Tên phòng trọ." }
+  roomType: { type: string, nullable: true, description: "Loại hình phòng (Gác lửng, Studio, Căn hộ...)." }
+  thumbnailUrl: { type: string, nullable: true, format: uri, description: "URL ảnh đại diện chính của căn phòng." }
+  area: { type: string, example: '25.0', description: "Diện tích phòng (m2)." }
+  rentPrice: { type: integer, minimum: 0, description: "Giá thuê theo tháng (VNĐ)." }
+  genderPolicy: { type: string, enum: [any, male, female], description: "Quy định giới tính cư trú." }
+  address: { type: string, description: "Địa chỉ cụ thể của tòa nhà chứa phòng." }
+  district: { type: string, description: "Quận / Huyện." }
+  province: { type: string, description: "Tỉnh / Thành phố." }
+  isFavorited: { type: boolean, description: "Khách thuê hiện tại đã thêm phòng này vào mục yêu thích hay chưa." }
+
+required:
+  - id
+  - buildingId
+  - name
+  - area
+  - rentPrice
+  - genderPolicy
+  - address
+  - district
+  - province
+  - isFavorited

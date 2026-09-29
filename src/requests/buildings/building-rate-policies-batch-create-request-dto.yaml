@@ -1,0 +1,87 @@
+type: object
+x-apidog-folder: "Building/Request"
+title: BuildingRatePoliciesBatchCreateRequestDto
+description: Dữ liệu thiết lập một đợt toàn bộ các biểu giá dịch vụ ban đầu (điện, nước, internet, rác, xe...) cho tòa nhà
+additionalProperties: false
+
+properties:
+  buildingId:
+    type: string
+    format: uuid
+    description: Định danh duy nhất của tòa nhà áp dụng biểu giá
+    example: "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d"
+  ratePolicies:
+    type: array
+    description: Danh sách các chính sách biểu giá dịch vụ cần áp dụng cho tòa nhà
+    items:
+      type: object
+      description: Chi tiết biểu giá của một loại dịch vụ
+      properties:
+        category:
+          type: string
+          enum: [ELECTRICITY, WATER, INTERNET, TRASH, PARKING, CLEANING, OTHER]
+          description: Nhóm dịch vụ sinh hoạt
+          example: "ELECTRICITY"
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+          description: Tên dịch vụ hiển thị trên hóa đơn
+          example: "Tiền điện sinh hoạt"
+        rateKind:
+          type: string
+          enum: [FLAT, PROGRESSIVE, PER_PERSON, PER_ROOM]
+          description: Phương thức tính phí (cố định theo số đo, lũy tiến EVN, khoán theo người, khoán theo phòng)
+          example: "PROGRESSIVE"
+        unit:
+          type: string
+          minLength: 1
+          maxLength: 30
+          description: Đơn vị tính (kWh, m3, người, phòng, tháng)
+          example: "kWh"
+        unitPrice:
+          type: integer
+          minimum: 0
+          nullable: true
+          description: Đơn giá cố định nếu rateKind là FLAT, PER_PERSON hoặc PER_ROOM
+          example: 3500
+        calculationBasis:
+          type: string
+          nullable: true
+          description: Căn cứ hoặc ghi chú tính toán
+          example: "Theo đồng hồ riêng từng phòng"
+        steps:
+          type: array
+          nullable: true
+          description: Các bậc tính giá lũy tiến nếu rateKind là PROGRESSIVE (bậc thang EVN)
+          items:
+            type: object
+            properties:
+              fromStep:
+                type: integer
+                minimum: 0
+                description: Số chỉ số bắt đầu của bậc
+                example: 0
+              toStep:
+                type: integer
+                minimum: 1
+                nullable: true
+                description: Số chỉ số kết thúc của bậc (null nếu là bậc vô hạn cuối cùng)
+                example: 50
+              stepPrice:
+                type: integer
+                minimum: 0
+                description: Đơn giá áp dụng cho bậc này (VNĐ)
+                example: 1806
+            required:
+              - fromStep
+              - stepPrice
+      required:
+        - category
+        - name
+        - rateKind
+        - unit
+
+required:
+  - buildingId
+  - ratePolicies

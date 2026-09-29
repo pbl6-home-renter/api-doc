@@ -115,6 +115,10 @@ components:
     # Building Request DTOs
     BuildingCreateRequestDto:
       $ref: './requests/buildings/building-create-request-dto.yaml'
+    BuildingVietQrConfigRequestDto:
+      $ref: './requests/buildings/building-vietqr-config-request-dto.yaml'
+    BuildingRatePoliciesBatchCreateRequestDto:
+      $ref: './requests/buildings/building-rate-policies-batch-create-request-dto.yaml'
     BuildingUpdateRequestDto:
       $ref: './requests/buildings/building-update-request-dto.yaml'
     BuildingApproveRequestDto:
@@ -130,6 +134,8 @@ components:
       $ref: './responses/dtos/buildings/admin-building-list-response-dto.yaml'
     BuildingCreateResponseDto:
       $ref: './responses/dtos/buildings/building-create-response-dto.yaml'
+    BuildingVietQrConfigResponseDto:
+      $ref: './responses/dtos/buildings/building-vietqr-config-response-dto.yaml'
     BuildingPublicDetailResponseDto:
       $ref: './responses/dtos/buildings/public-building-detail-response-dto.yaml'
     BuildingMyDetailResponseDto:
@@ -160,6 +166,8 @@ components:
       $ref: './responses/dtos/rooms/room-update-response-dto.yaml'
     RoomMarkReadyResponseDto:
       $ref: './responses/dtos/rooms/room-ready-mark-response-dto.yaml'
+    MyRoomHubResponseDto:
+      $ref: './responses/dtos/rooms/my-room-hub-response-dto.yaml'
     # FavoriteRoom Request DTO
     FavoriteRoomToggleRequestDto:
       $ref: './requests/rooms/room-favorite-request-dto.yaml'
@@ -188,6 +196,8 @@ components:
     # Contract Request DTOs
     ContractCreateRequestDto:
       $ref: './requests/contracts/contract-create-request-dto.yaml'
+    DepositSettlementRequestDto:
+      $ref: './requests/contracts/deposit-settlement-request-dto.yaml'
     ContractUpdateRequestDto:
       $ref: './requests/contracts/contract-update-request-dto.yaml'
     ContractApplyTemplateRequestDto:
@@ -207,6 +217,8 @@ components:
       $ref: './responses/dtos/contracts/contract-create-response-dto.yaml'
     ContractDetailResponseDto:
       $ref: './responses/dtos/contracts/contract-detail-response-dto.yaml'
+    DepositSettlementResponseDto:
+      $ref: './responses/dtos/contracts/deposit-settlement-response-dto.yaml'
     ContractUpdateResponseDto:
       $ref: './responses/dtos/contracts/contract-update-response-dto.yaml'
     ContractApplyTemplateResponseDto:
@@ -222,12 +234,16 @@ components:
       $ref: './requests/rooms/ocr-meter-reading-preview-request-dto.yaml'
     MeterReadingCreateRequestDto:
       $ref: './requests/rooms/meter-reading-create-request-dto.yaml'
+    BulkMeterReadingCreateRequestDto:
+      $ref: './requests/rooms/bulk-meter-reading-create-request-dto.yaml'
     MeterReadingListResponseDto:
       $ref: './responses/dtos/rooms/meter-reading-list-response-dto.yaml'
     MeterReadingPreviewOcrResponseDto:
       $ref: './responses/dtos/rooms/ocr-meter-reading-preview-response-dto.yaml'
     MeterReadingCreateResponseDto:
       $ref: './responses/dtos/rooms/meter-reading-create-response-dto.yaml'
+    BulkMeterReadingResponseDto:
+      $ref: './responses/dtos/rooms/bulk-meter-reading-response-dto.yaml'
     # Invoice DTOs
     InvoiceCreateSettlementRequestDto:
       $ref: './requests/invoices/settlement-invoice-create-request-dto.yaml'
@@ -243,6 +259,8 @@ components:
       $ref: './responses/dtos/invoices/my-invoice-list-response-dto.yaml'
     InvoiceListResponseDto:
       $ref: './responses/dtos/invoices/invoice-list-response-dto.yaml'
+    OverdueDebtListResponseDto:
+      $ref: './responses/dtos/invoices/overdue-debt-list-response-dto.yaml'
     InvoiceCreateSettlementResponseDto:
       $ref: './responses/dtos/invoices/settlement-invoice-create-response-dto.yaml'
     InvoiceDetailResponseDto:

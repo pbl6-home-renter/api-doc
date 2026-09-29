@@ -1,20 +1,54 @@
 type: object
 x-apidog-folder: "Building/Response"
 title: BuildingMyDetailResponseDto
-description: Chi tiết tòa nhà của chủ nhà hiện tại
+description: Chi tiết tòa nhà thuộc quyền quản lý của chủ nhà hiện tại
 
 properties:
-  id: { type: string, format: uuid , description: "Định danh duy nhất của tài nguyên." }
-  name: { type: string , description: "Thông tin name của tài nguyên trong ngữ cảnh DTO." }
-  status: { type: string, enum: [pending, approved, rejected] , description: "Trạng thái hiện tại của tài nguyên trong quy trình nghiệp vụ." }
-  totalRooms: { type: integer, minimum: 0 , description: "Thông tin total rooms của tài nguyên trong ngữ cảnh DTO." }
-  occupancyRate: { type: string , description: "Thông tin occupancy rate của tài nguyên trong ngữ cảnh DTO." }
-  reviewNote: { type: string, nullable: true, minLength: 1, maxLength: 500 , description: "Thông tin review note của tài nguyên trong ngữ cảnh DTO." }
+  id: { type: string, format: uuid, description: "Định danh duy nhất của tòa nhà." }
+  name: { type: string, description: "Tên tòa nhà." }
+  province: { type: string, description: "Tỉnh / Thành phố." }
+  district: { type: string, description: "Quận / Huyện." }
+  ward: { type: string, description: "Phường / Xã." }
+  address: { type: string, description: "Địa chỉ chi tiết." }
+  totalFloors: { type: integer, minimum: 1, description: "Số tầng của tòa nhà." }
+  totalRooms: { type: integer, minimum: 0, description: "Tổng số phòng của tòa nhà." }
+  occupiedRooms: { type: integer, minimum: 0, description: "Số phòng đang có khách thuê." }
+  occupancyRate: { type: string, description: "Tỷ lệ lấp đầy." }
+  status: { type: string, enum: [pending, approved, rejected], description: "Trạng thái kiểm duyệt tài sản." }
+  reviewNote: { type: string, nullable: true, minLength: 1, maxLength: 500, description: "Ghi chú phê duyệt hoặc lý do từ chối từ admin." }
+  amenities: { type: object, nullable: true, description: "Tiện ích chung của tòa nhà." }
+  ownershipCertificateUrls:
+    type: array
+    description: Danh sách đường dẫn ảnh/tài liệu sổ đỏ đã tải lên
+    items:
+      type: string
+      format: uri
+  vietQrConfigured:
+    type: boolean
+    description: Tòa nhà đã được cấu hình tài khoản nhận tiền VietQR riêng hay chưa
+  ratePolicies:
+    type: array
+    description: Danh sách biểu giá dịch vụ đang áp dụng cho tòa nhà
+    items:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        name: { type: string }
+        category: { type: string }
+        rateKind: { type: string }
+        unit: { type: string }
+        unitPrice: { type: integer, nullable: true }
+  createdAt: { type: string, format: date-time, description: "Thời điểm tạo tòa nhà." }
 
 required:
   - id
   - name
+  - province
+  - district
+  - ward
+  - address
   - status
   - totalRooms
+  - occupiedRooms
   - occupancyRate
-  - reviewNote
+  - vietQrConfigured

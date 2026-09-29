@@ -1,7 +1,7 @@
 type: object
 x-apidog-folder: "Room/Request"
 title: RoomCreateRequestDto
-description: Dữ liệu tạo phòng
+description: Dữ liệu tạo phòng mới trong tòa nhà
 additionalProperties: false
 
 properties:
@@ -9,49 +9,72 @@ properties:
     type: string
     description: Định danh duy nhất của tòa nhà liên quan.
     format: uuid
-    example: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+    example: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
   name:
     type: string
-    description: Thông tin name của tài nguyên trong ngữ cảnh DTO.
+    description: "Tên hoặc số phòng (VD: P.201)."
     minLength: 1
     maxLength: 254
-    example: P.201
+    example: "P.201"
+  roomType:
+    type: string
+    description: Loại hình phòng trọ (Gác lửng, Studio, Phòng đơn, Căn hộ mini).
+    minLength: 1
+    maxLength: 100
+    example: "Gác lửng"
   floorNumber:
     type: integer
-    description: Thông tin floor number của tài nguyên trong ngữ cảnh DTO.
+    description: Số tầng vị trí phòng.
     minimum: 1
     example: 2
   area:
     type: string
-    description: Thông tin area của tài nguyên trong ngữ cảnh DTO.
-    example: '18.5'
-  amenities:
-    type: object
-    description: Các tiện ích đi kèm
-    example:
-      aircon: true
-  maxOccupancy:
-    type: integer
-    description: Thông tin max occupancy của tài nguyên trong ngữ cảnh DTO.
-    minimum: 1
-    example: 3
-  genderPolicy:
-    type: string
-    description: Thông tin gender policy của tài nguyên trong ngữ cảnh DTO.
-    enum: [any, male, female]
-    example: any
+    description: Diện tích sử dụng của phòng (m2), lưu dạng chuỗi thập phân chính xác.
+    example: "25.0"
   rentPrice:
     type: integer
-    description: Thông tin rent price của tài nguyên trong ngữ cảnh DTO.
+    description: Giá thuê phòng theo tháng (VNĐ).
     minimum: 0
     example: 3500000
+  depositAmount:
+    type: integer
+    description: Số tiền đặt cọc quy định cho phòng (VNĐ).
+    minimum: 0
+    example: 3500000
+  maxOccupancy:
+    type: integer
+    minimum: 1
+    nullable: true
+    description: Số người ở tối đa quy định. Nếu để trống hoặc null thì phòng không giới hạn số người ghép.
+    example: null
+  genderPolicy:
+    type: string
+    description: Quy định giới tính của phòng.
+    enum: [any, male, female]
+    example: "any"
+  amenities:
+    type: object
+    nullable: true
+    description: Tiện ích và nội thất có sẵn trong phòng.
+    example:
+      aircon: true
+      waterHeater: true
+      mezzanine: true
+      refrigerator: true
+  photoMediaIds:
+    type: array
+    description: Danh sách ID các tệp ảnh thực tế của căn phòng.
+    items:
+      type: string
+      format: uuid
+    example:
+      - "48fae08f-e1a5-48b4-9c02-e2513470ff42"
 
 required:
   - buildingId
   - name
   - floorNumber
   - area
-  - amenities
-  - maxOccupancy
-  - genderPolicy
   - rentPrice
+  - depositAmount
+  - genderPolicy

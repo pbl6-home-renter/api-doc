@@ -1,13 +1,33 @@
 type: object
 x-apidog-folder: "Invoice/Response"
 title: InvoiceListResponseDto
-description: Danh sách hóa đơn
+description: Danh sách hóa đơn hàng tháng dành cho bảng hiển thị của chủ nhà và khách thuê
+
 properties:
-  id: { type: string, format: uuid , description: "Định danh duy nhất của tài nguyên." }
-  code: { type: string, minLength: 1, maxLength: 32 , description: "Mã ổn định để client nhận diện kết quả nghiệp vụ." }
-  contractId: { type: string, format: uuid , description: "Định danh duy nhất của hợp đồng liên quan." }
+  id: { type: string, format: uuid, description: "Định danh duy nhất của hóa đơn." }
+  code: { type: string, minLength: 1, maxLength: 32, description: "Mã hiển thị hóa đơn (VD: INV-2026-09-001)." }
+  contractId: { type: string, format: uuid, description: "Định danh hợp đồng liên quan." }
+  roomId: { type: string, format: uuid, description: "Định danh phòng." }
+  roomName: { type: string, description: "Tên phòng trọ (VD: P.201)." }
+  tenantName: { type: string, description: "Họ và tên người đại diện thuê phòng." }
+  tenantPhone: { type: string, description: "Số điện thoại người đại diện." }
   period: { type: string, pattern: '^[0-9]{4}-(0[1-9]|1[0-2])$', description: "Kỳ hóa đơn theo định dạng YYYY-MM." }
-  totalAmount: { type: integer, minimum: 0 , description: "Thông tin total amount của tài nguyên trong ngữ cảnh DTO." }
-  invoiceStatus: { type: string, enum: [pending, issued, void] , description: "Thông tin invoice status của tài nguyên trong ngữ cảnh DTO." }
-  issuedAt: { type: string, format: date-time, nullable: true , description: "Thông tin issued at của tài nguyên trong ngữ cảnh DTO." }
-required: [id, code, contractId, period, totalAmount, invoiceStatus, issuedAt]
+  totalAmount: { type: integer, minimum: 0, description: "Tổng số tiền cần thanh toán trong kỳ (VNĐ)." }
+  paidAmount: { type: integer, minimum: 0, description: "Số tiền đã thanh toán (VNĐ)." }
+  remainingAmount: { type: integer, minimum: 0, description: "Số tiền còn nợ lại cần thu (VNĐ)." }
+  dueDate: { type: string, format: date-time, description: "Hạn chót thanh toán hóa đơn." }
+  invoiceStatus: { type: string, enum: [pending, issued, void], description: "Trạng thái hóa đơn (pending: nháp, issued: đã xuất, void: đã hủy)." }
+  issuedAt: { type: string, format: date-time, nullable: true, description: "Thời điểm xuất hóa đơn." }
+
+required:
+  - id
+  - code
+  - contractId
+  - roomName
+  - tenantName
+  - period
+  - totalAmount
+  - paidAmount
+  - remainingAmount
+  - dueDate
+  - invoiceStatus
