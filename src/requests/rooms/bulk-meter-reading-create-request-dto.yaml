@@ -1,0 +1,62 @@
+type: object
+x-apidog-folder: "MeterReading/Request"
+title: BulkMeterReadingCreateRequestDto
+description: Dữ liệu ghi chỉ số điện và nước hàng loạt cho toàn bộ các phòng trong tòa nhà
+additionalProperties: false
+
+properties:
+  buildingId:
+    type: string
+    format: uuid
+    description: Định danh duy nhất của tòa nhà cần chốt chỉ số
+    example: "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d"
+  recordedMonth:
+    type: string
+    pattern: '^[0-9]{4}-(0[1-9]|1[0-2])$'
+    description: Kỳ chốt chỉ số theo định dạng YYYY-MM
+    example: "2026-09"
+  readingMethod:
+    type: string
+    enum: [CAMERA_CAPTURE, FILE_UPLOAD]
+    description: Phương thức thu thập ảnh (CAMERA_CAPTURE cho chụp trực tiếp, FILE_UPLOAD cho tải tệp từ thiết bị - quyền chủ nhà)
+    example: "CAMERA_CAPTURE"
+  readings:
+    type: array
+    description: Danh sách chỉ số điện nước từng phòng được ghi nhận
+    items:
+      type: object
+      properties:
+        roomId:
+          type: string
+          format: uuid
+          description: Định danh duy nhất của phòng trọ
+          example: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+        type:
+          type: string
+          enum: [electricity, water]
+          description: Loại công tơ dịch vụ (điện hoặc nước)
+          example: "electricity"
+        previousReading:
+          type: string
+          description: Chỉ số cũ (chuỗi số thập phân lưu trữ chính xác)
+          example: "1250.0"
+        currentReading:
+          type: string
+          description: Chỉ số mới ghi nhận được
+          example: "1380.5"
+        evidenceMediaId:
+          type: string
+          format: uuid
+          nullable: true
+          description: Định danh ảnh chụp công tơ đính kèm làm bằng chứng đối chiếu
+          example: "48fae08f-e1a5-48b4-9c02-e2513470ff42"
+      required:
+        - roomId
+        - type
+        - currentReading
+
+required:
+  - buildingId
+  - recordedMonth
+  - readingMethod
+  - readings

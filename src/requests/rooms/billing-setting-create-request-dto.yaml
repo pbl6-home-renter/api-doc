@@ -1,41 +1,92 @@
 type: object
 x-apidog-folder: "BillingSetting/Request"
 title: BillingSettingCreateRequestDto
-description: Dữ liệu tạo cấu hình billing
+description: Dữ liệu thiết lập chu kỳ chốt tiền, hạn thanh toán và cấu hình quét nợ tự động của chủ nhà
 additionalProperties: false
 
 properties:
   scope:
     type: string
-    description: Thông tin scope của tài nguyên trong ngữ cảnh DTO.
+    description: "Phạm vi áp dụng của cấu hình (building: toàn bộ tòa nhà, room: phòng riêng lẻ)."
     enum: [building, room]
-    example: room
-  roomId:
+    example: "building"
+  buildingId:
     type: string
-    description: Định danh duy nhất của phòng liên quan.
     format: uuid
     nullable: true
-  dueDays:
+    description: Định danh tòa nhà áp dụng cấu hình chu kỳ và quét nợ
+    example: "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d"
+  roomId:
+    type: string
+    format: uuid
+    nullable: true
+    description: Định danh phòng áp dụng (nếu scope = room)
+    example: null
+  meterCutoffDay:
     type: integer
-    description: Thông tin due days của tài nguyên trong ngữ cảnh DTO.
     minimum: 1
     maximum: 28
+    description: Ngày chốt chỉ số điện nước hàng tháng (1-28)
+    example: 25
+  invoiceIssuanceDay:
+    type: integer
+    minimum: 1
+    maximum: 28
+    description: Ngày tự động xuất và gửi hóa đơn cho khách hàng tháng (1-28)
+    example: 1
+  paymentDueDay:
+    type: integer
+    minimum: 1
+    maximum: 28
+    description: Ngày hạn chót thanh toán hóa đơn trong tháng (1-28)
+    example: 5
+  dueDays:
+    type: integer
+    minimum: 1
+    maximum: 28
+    nullable: true
+    description: Số ngày được phép thanh toán sau khi xuất hóa đơn
     example: 5
   remindDays:
     type: integer
-    description: Thông tin remind days của tài nguyên trong ngữ cảnh DTO.
     minimum: 1
     maximum: 28
     nullable: true
+    description: Số ngày nhắc nợ trước khi đến hạn thanh toán
+    example: 2
+  debtScanEnabled:
+    type: boolean
+    description: Bật tính năng quét nợ và cảnh báo nợ tự động của chủ nhà
+    example: true
+  gracePeriodDays:
+    type: integer
+    minimum: 0
+    description: Số ngày ân hạn sau ngày hết hạn trước khi chính thức tính là công nợ quá hạn
     example: 3
+  overdueReminderIntervalDays:
+    type: integer
+    minimum: 1
+    description: Tần suất gửi nhắc nợ khi hóa đơn đã quá hạn (số ngày gửi một lần)
+    example: 3
+  reminderChannels:
+    type: array
+    description: Các kênh gửi thông báo nhắc nợ
+    items:
+      type: string
+      enum: [APP_PUSH, SMS, ZALO, EMAIL]
+    example:
+      - "APP_PUSH"
+      - "ZALO"
   botEnabled:
     type: boolean
-    description: Thông tin bot enabled của tài nguyên trong ngữ cảnh DTO.
+    description: Cho phép bot tự động nhắc tiền trong nhóm chat của phòng
     example: true
 
 required:
   - scope
-  - roomId
-  - dueDays
-  - remindDays
+  - paymentDueDay
+  - debtScanEnabled
+  - gracePeriodDays
+  - overdueReminderIntervalDays
+  - reminderChannels
   - botEnabled

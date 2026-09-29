@@ -1,12 +1,42 @@
 type: object
 x-apidog-folder: "MatchRequest/Response"
 title: MatchRequestListResponseDto
-description: Danh sách yêu cầu kết nối tìm bạn ở ghép
+description: Danh sách yêu cầu kết nối tìm bạn ở ghép giữa 2 khách thuê
 
 properties:
-  id: { type: string, format: uuid , description: "Định danh duy nhất của tài nguyên." }
-  requesterId: { type: string, format: uuid , description: "Thông tin requester id của tài nguyên trong ngữ cảnh DTO." }
-  targetId: { type: string, format: uuid , description: "Thông tin target id của tài nguyên trong ngữ cảnh DTO." }
-  status: { type: string, enum: [pending, accepted, rejected, withdrawn] , description: "Trạng thái hiện tại của tài nguyên trong quy trình nghiệp vụ." }
-  createdAt: { type: string, format: date-time , description: "Thời điểm bản ghi được tạo, theo định dạng ngày giờ ISO 8601." }
-required: [id, requesterId, targetId, status, createdAt]
+  id: { type: string, format: uuid, description: "Định danh duy nhất của yêu cầu kết nối." }
+  requesterId: { type: string, format: uuid, description: "Định danh người gửi yêu cầu ghép." }
+  requester:
+    type: object
+    description: Thông tin tóm tắt người gửi yêu cầu
+    properties:
+      id: { type: string, format: uuid }
+      name: { type: string, example: "Nguyễn Văn A" }
+      avatarUrl: { type: string, format: uri, nullable: true }
+      phone: { type: string, nullable: true }
+      gender: { type: string, enum: [male, female, other] }
+    required: [id, name, gender]
+  targetId: { type: string, format: uuid, description: "Định danh người nhận yêu cầu ghép." }
+  target:
+    type: object
+    description: Thông tin tóm tắt người nhận yêu cầu
+    properties:
+      id: { type: string, format: uuid }
+      name: { type: string, example: "Trần Thị B" }
+      avatarUrl: { type: string, format: uri, nullable: true }
+      phone: { type: string, nullable: true }
+      gender: { type: string, enum: [male, female, other] }
+    required: [id, name, gender]
+  matchScore: { type: integer, minimum: 0, maximum: 100, nullable: true, description: "Điểm tương thích AI giữa hai bên (0 - 100%)." }
+  message: { type: string, nullable: true, maxLength: 500, description: "Lời nhắn gửi kèm khi mời ghép phòng." }
+  status: { type: string, enum: [pending, accepted, rejected, withdrawn], description: "Trạng thái yêu cầu ghép phòng." }
+  createdAt: { type: string, format: date-time, description: "Thời điểm gửi yêu cầu." }
+
+required:
+  - id
+  - requesterId
+  - requester
+  - targetId
+  - target
+  - status
+  - createdAt

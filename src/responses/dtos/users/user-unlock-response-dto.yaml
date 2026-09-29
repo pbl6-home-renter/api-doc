@@ -8,6 +8,7 @@ properties:
     type: string
     description: Định danh duy nhất của người dùng liên quan.
     format: uuid
+    example: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
 
   status:
     type: string
@@ -16,15 +17,13 @@ properties:
       - active
     example: "active"
 
-  lockedAt:
+  unlockedAt:
     type: string
     format: date-time
-    nullable: true
-    description: Sau khi mở khóa trường này được trả về null
-    example: null
-
+    description: Thời điểm tài khoản được admin mở khóa thành công.
+    example: "2026-09-29T14:30:00Z"
 
 required:
   - userId
   - status
-  - lockedAt
+  - unlockedAt

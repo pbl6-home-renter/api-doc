@@ -1,0 +1,64 @@
+post:
+  tags: [Auth]
+  x-apidog-folder: Auth
+  operationId: loginAccount
+  summary: Login
+  description: >-
+    Public. Đăng nhập bằng identifier và password. Access token có thời hạn
+    900 giây; refresh token opaque được trả trong data của response và đặt
+    trong cookie HttpOnly, Secure, SameSite=Lax, Path=/api/v1/auth.
+  security: []
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: '../../openapi.yaml#/components/schemas/AuthLoginRequestDto'
+        example:
+          identifier: lan@example.com
+          password: P@ssw0rd123
+          rememberMe: true
+  responses:
+    '200':
+      description: Đăng nhập thành công
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code, data]
+            properties:
+              statusCode:
+                type: integer
+                enum: [200]
+              code:
+                type: string
+                enum: [LOGGED_IN]
+              data:
+                $ref: '../../openapi.yaml#/components/schemas/AuthLoginResponseDto'
+          example:
+            statusCode: 200
+            code: LOGGED_IN
+            data:
+              accessToken: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+              refreshToken: rt_opaque_token_example
+              profile:
+                id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                email: lan@example.com
+                phone: '0901234567'
+                name: Lê Văn An
+                role: tenant
+                status: active
+                payoutAccount: null
+    '400':
+      $ref: '../../openapi.yaml#/components/responses/BadRequestError'
+    '401':
+      $ref: '../../openapi.yaml#/components/responses/UnauthorizedError'
+    '403':
+      $ref: '../../openapi.yaml#/components/responses/ForbiddenError'
+    '422':
+      $ref: '../../openapi.yaml#/components/responses/ValidationError'
+    '429':
+      $ref: '../../openapi.yaml#/components/responses/TooManyRequestsError'
+    '500':
+      $ref: '../../openapi.yaml#/components/responses/InternalServerError'

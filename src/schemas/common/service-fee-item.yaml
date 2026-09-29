@@ -1,0 +1,40 @@
+type: object
+title: ServiceFeeItem
+properties:
+  category:
+    type: string
+    enum: [ELECTRICITY, WATER, INTERNET, TRASH, LAUNDRY, GENERAL_SERVICE, OTHER]
+    example: "ELECTRICITY"
+  name:
+    type: string
+    example: "Điện sinh hoạt"
+  rateKind:
+    type: string
+    enum: [flat, tiered, fixed_per_period, per_head, per_room]
+    example: "flat"
+  previousIndex:
+    type: string
+    nullable: true
+    example: "1250"
+    description: Chỉ số đầu kỳ (cho điện, nước)
+  currentIndex:
+    type: string
+    nullable: true
+    example: "1380"
+    description: Chỉ số cuối kỳ (cho điện, nước)
+  usage:
+    type: string
+    nullable: true
+    example: "130"
+    description: Sản lượng tiêu thụ thực tế
+  unit:
+    type: string
+    example: "kWh"
+  unitPrice:
+    type: integer
+    example: 3500
+    description: Đơn giá VND
+  amount:
+    type: integer
+    example: 455000
+    description: Thành tiền VND

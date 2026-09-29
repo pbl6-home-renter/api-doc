@@ -1,0 +1,123 @@
+type: object
+x-apidog-folder: "Invoice/Response"
+title: OverdueDebtListResponseDto
+description: Danh sách công nợ quá hạn và lịch sử nhắc nợ theo từng phòng trong tòa nhà
+
+properties:
+  buildingId:
+    type: string
+    format: uuid
+    description: Định danh tòa nhà
+    example: "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d"
+  buildingName:
+    type: string
+    description: Tên tòa nhà
+    example: "Nhà trọ Thanh Xuân"
+  totalOverdueAmount:
+    type: integer
+    minimum: 0
+    description: Tổng số tiền nợ quá hạn của toàn tòa nhà (VNĐ)
+    example: 8500000
+  totalOverdueInvoices:
+    type: integer
+    minimum: 0
+    description: Tổng số lượng hóa đơn bị quá hạn
+    example: 3
+  items:
+    type: array
+    description: Danh sách các hóa đơn công nợ quá hạn
+    items:
+      type: object
+      properties:
+        invoiceId:
+          type: string
+          format: uuid
+          description: Định danh hóa đơn
+          example: "e6fbbff5-d72b-426b-8fb7-bf6f3a743e49"
+        invoiceCode:
+          type: string
+          description: Mã hóa đơn hiển thị
+          example: "INV-2026-08-001"
+        roomId:
+          type: string
+          format: uuid
+          description: Định danh phòng
+          example: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+        roomName:
+          type: string
+          description: Tên phòng nợ tiền
+          example: "P.201"
+        tenantId:
+          type: string
+          format: uuid
+          nullable: true
+          description: Định danh người đại diện thuê phòng
+        tenantName:
+          type: string
+          description: Họ tên người đại diện thuê phòng
+          example: "Trần Thị B"
+        tenantPhone:
+          type: string
+          description: Số điện thoại người đại diện
+          example: "0901234567"
+        totalAmount:
+          type: integer
+          minimum: 0
+          description: Tổng giá trị hóa đơn
+          example: 3500000
+        paidAmount:
+          type: integer
+          minimum: 0
+          description: Số tiền đã thanh toán một phần
+          example: 1000000
+        remainingAmount:
+          type: integer
+          minimum: 0
+          description: Số tiền nợ còn lại cần thu
+          example: 2500000
+        dueDate:
+          type: string
+          format: date-time
+          description: Hạn chót thanh toán ban đầu
+          example: "2026-09-05T23:59:59Z"
+        overdueDays:
+          type: integer
+          minimum: 0
+          description: Số ngày đã quá hạn thanh toán
+          example: 24
+        reminderCount:
+          type: integer
+          minimum: 0
+          description: Số lần hệ thống hoặc chủ nhà đã gửi thông báo nhắc nợ
+          example: 2
+        lastRemindedAt:
+          type: string
+          format: date-time
+          nullable: true
+          description: Thời điểm gửi nhắc nợ gần nhất
+          example: "2026-09-20T08:00:00Z"
+        status:
+          type: string
+          enum: [pending, issued, void]
+          description: Trạng thái hóa đơn
+          example: "issued"
+      required:
+        - invoiceId
+        - invoiceCode
+        - roomId
+        - roomName
+        - tenantName
+        - tenantPhone
+        - totalAmount
+        - paidAmount
+        - remainingAmount
+        - dueDate
+        - overdueDays
+        - reminderCount
+
+required:
+  - buildingId
+  - buildingName
+  - totalOverdueAmount
+  - totalOverdueInvoices
+  - items

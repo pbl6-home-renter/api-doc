@@ -1,15 +1,26 @@
 type: object
 x-apidog-folder: "Building/Response"
 title: BuildingMyListResponseDto
-description: Danh sách tòa nhà của chủ nhà hiện tại
+description: Danh sách tòa nhà thuộc quyền quản lý của chủ nhà hiện tại
 
 properties:
-  id: { type: string, format: uuid , description: "Định danh duy nhất của tài nguyên." }
-  name: { type: string , description: "Thông tin name của tài nguyên trong ngữ cảnh DTO." }
+  id: { type: string, format: uuid, description: "Định danh duy nhất của tòa nhà." }
+  name: { type: string, description: "Tên tòa nhà." }
+  address: { type: string, description: "Địa chỉ tòa nhà." }
   status:
     type: string
-    description: Trạng thái hiện tại của tài nguyên trong quy trình nghiệp vụ.
+    description: Trạng thái kiểm duyệt của tòa nhà (pending, approved, rejected).
     enum: [pending, approved, rejected]
-  totalRooms: { type: integer, minimum: 0 , description: "Thông tin total rooms của tài nguyên trong ngữ cảnh DTO." }
-  occupancyRate: { type: string , description: "Thông tin occupancy rate của tài nguyên trong ngữ cảnh DTO." }
-required: [id, name, status, totalRooms, occupancyRate]
+  totalRooms: { type: integer, minimum: 0, description: "Tổng số phòng của tòa nhà." }
+  occupiedRooms: { type: integer, minimum: 0, description: "Số lượng phòng đang có khách thuê." }
+  occupancyRate: { type: string, description: "Tỷ lệ lấp đầy (VD: '85%')." }
+  rejectionReason: { type: string, nullable: true, description: "Lý do bị admin từ chối duyệt (nếu status = rejected)." }
+  createdAt: { type: string, format: date-time, description: "Thời điểm tạo tòa nhà." }
+
+required:
+  - id
+  - name
+  - status
+  - totalRooms
+  - occupiedRooms
+  - occupancyRate

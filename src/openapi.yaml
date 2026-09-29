@@ -30,7 +30,17 @@ tags:
   - name: Notification
     description: Thông báo người dùng và thiết bị push FCM
 
-paths: {}
+paths:
+  /auth/register:
+    $ref: './paths/auth/register.yaml'
+  /auth/login:
+    $ref: './paths/auth/login.yaml'
+  /auth/refresh:
+    $ref: './paths/auth/refresh.yaml'
+  /auth/logout:
+    $ref: './paths/auth/logout.yaml'
+  /auth/password-reset-requests:
+    $ref: './paths/auth/password-reset-requests.yaml'
 
 components:
   schemas:
@@ -115,6 +125,10 @@ components:
     # Building Request DTOs
     BuildingCreateRequestDto:
       $ref: './requests/buildings/building-create-request-dto.yaml'
+    BuildingVietQrConfigRequestDto:
+      $ref: './requests/buildings/building-vietqr-config-request-dto.yaml'
+    BuildingRatePoliciesBatchCreateRequestDto:
+      $ref: './requests/buildings/building-rate-policies-batch-create-request-dto.yaml'
     BuildingUpdateRequestDto:
       $ref: './requests/buildings/building-update-request-dto.yaml'
     BuildingApproveRequestDto:
@@ -130,6 +144,8 @@ components:
       $ref: './responses/dtos/buildings/admin-building-list-response-dto.yaml'
     BuildingCreateResponseDto:
       $ref: './responses/dtos/buildings/building-create-response-dto.yaml'
+    BuildingVietQrConfigResponseDto:
+      $ref: './responses/dtos/buildings/building-vietqr-config-response-dto.yaml'
     BuildingPublicDetailResponseDto:
       $ref: './responses/dtos/buildings/public-building-detail-response-dto.yaml'
     BuildingMyDetailResponseDto:
@@ -160,6 +176,8 @@ components:
       $ref: './responses/dtos/rooms/room-update-response-dto.yaml'
     RoomMarkReadyResponseDto:
       $ref: './responses/dtos/rooms/room-ready-mark-response-dto.yaml'
+    MyRoomHubResponseDto:
+      $ref: './responses/dtos/rooms/my-room-hub-response-dto.yaml'
     # FavoriteRoom Request DTO
     FavoriteRoomToggleRequestDto:
       $ref: './requests/rooms/room-favorite-request-dto.yaml'
@@ -188,6 +206,8 @@ components:
     # Contract Request DTOs
     ContractCreateRequestDto:
       $ref: './requests/contracts/contract-create-request-dto.yaml'
+    DepositSettlementRequestDto:
+      $ref: './requests/contracts/deposit-settlement-request-dto.yaml'
     ContractUpdateRequestDto:
       $ref: './requests/contracts/contract-update-request-dto.yaml'
     ContractApplyTemplateRequestDto:
@@ -207,6 +227,8 @@ components:
       $ref: './responses/dtos/contracts/contract-create-response-dto.yaml'
     ContractDetailResponseDto:
       $ref: './responses/dtos/contracts/contract-detail-response-dto.yaml'
+    DepositSettlementResponseDto:
+      $ref: './responses/dtos/contracts/deposit-settlement-response-dto.yaml'
     ContractUpdateResponseDto:
       $ref: './responses/dtos/contracts/contract-update-response-dto.yaml'
     ContractApplyTemplateResponseDto:
@@ -222,12 +244,16 @@ components:
       $ref: './requests/rooms/ocr-meter-reading-preview-request-dto.yaml'
     MeterReadingCreateRequestDto:
       $ref: './requests/rooms/meter-reading-create-request-dto.yaml'
+    BulkMeterReadingCreateRequestDto:
+      $ref: './requests/rooms/bulk-meter-reading-create-request-dto.yaml'
     MeterReadingListResponseDto:
       $ref: './responses/dtos/rooms/meter-reading-list-response-dto.yaml'
     MeterReadingPreviewOcrResponseDto:
       $ref: './responses/dtos/rooms/ocr-meter-reading-preview-response-dto.yaml'
     MeterReadingCreateResponseDto:
       $ref: './responses/dtos/rooms/meter-reading-create-response-dto.yaml'
+    BulkMeterReadingResponseDto:
+      $ref: './responses/dtos/rooms/bulk-meter-reading-response-dto.yaml'
     # Invoice DTOs
     InvoiceCreateSettlementRequestDto:
       $ref: './requests/invoices/settlement-invoice-create-request-dto.yaml'
@@ -243,6 +269,8 @@ components:
       $ref: './responses/dtos/invoices/my-invoice-list-response-dto.yaml'
     InvoiceListResponseDto:
       $ref: './responses/dtos/invoices/invoice-list-response-dto.yaml'
+    OverdueDebtListResponseDto:
+      $ref: './responses/dtos/invoices/overdue-debt-list-response-dto.yaml'
     InvoiceCreateSettlementResponseDto:
       $ref: './responses/dtos/invoices/settlement-invoice-create-response-dto.yaml'
     InvoiceDetailResponseDto:
@@ -443,11 +471,34 @@ components:
 
   responses:
     SuccessSingleResponse:
-      description: Phản hồi thành công cho một đối tượng đơn lẻ
+      x-apidog-name: OK
+      description: Yêu cầu được xử lý thành công
       content:
         application/json:
           schema:
-            $ref: './responses/wrappers/success-single.yaml'
+            type: object
+            additionalProperties: false
+            required:
+              - statusCode
+              - code
+              - data
+            properties:
+              statusCode:
+                type: integer
+                enum:
+                  - 200
+              code:
+                type: string
+                enum:
+                  - OK
+              data:
+                type: object
+                description: Dữ liệu trả về theo nghiệp vụ của endpoint
+                additionalProperties: true
+          example:
+            statusCode: 200
+            code: OK
+            data: {}
     SuccessListResponse:
       description: Phản hồi thành công cho danh sách đối tượng có kèm phân trang
       content:
@@ -455,23 +506,74 @@ components:
           schema:
             $ref: './responses/wrappers/success-list.yaml'
     BadRequestError:
-      description: Yêu cầu không hợp lệ (400)
+      x-apidog-name: Bad Request
+      description: JSON, header hoặc media type sai cú pháp
       content:
         application/json:
           schema:
-            $ref: './responses/wrappers/error-default.yaml'
+            type: object
+            additionalProperties: false
+            required:
+              - statusCode
+              - code
+            properties:
+              statusCode:
+                type: integer
+                enum:
+                  - 400
+              code:
+                type: string
+                enum:
+                  - BAD_REQUEST
+          example:
+            statusCode: 400
+            code: BAD_REQUEST
     UnauthorizedError:
-      description: Chưa xác thực danh tính (401)
+      x-apidog-name: Unauthorized
+      description: Thiếu hoặc không hợp lệ thông tin xác thực
       content:
         application/json:
           schema:
-            $ref: './responses/wrappers/error-default.yaml'
+            type: object
+            additionalProperties: false
+            required:
+              - statusCode
+              - code
+            properties:
+              statusCode:
+                type: integer
+                enum:
+                  - 401
+              code:
+                type: string
+                enum:
+                  - UNAUTHORIZED
+          example:
+            statusCode: 401
+            code: UNAUTHORIZED
     ForbiddenError:
-      description: Không có quyền truy cập tài nguyên (403)
+      x-apidog-name: Forbidden
+      description: Không có quyền thực hiện yêu cầu
       content:
         application/json:
           schema:
-            $ref: './responses/wrappers/error-default.yaml'
+            type: object
+            additionalProperties: false
+            required:
+              - statusCode
+              - code
+            properties:
+              statusCode:
+                type: integer
+                enum:
+                  - 403
+              code:
+                type: string
+                enum:
+                  - FORBIDDEN
+          example:
+            statusCode: 403
+            code: FORBIDDEN
     NotFoundError:
       description: Không tìm thấy tài nguyên (404)
       content:
@@ -479,8 +581,180 @@ components:
           schema:
             $ref: './responses/wrappers/error-default.yaml'
     ValidationError:
-      description: Dữ liệu gửi lên vi phạm quy tắc validation (422)
+      x-apidog-name: Unprocessable Entity
+      description: Dữ liệu yêu cầu không hợp lệ
       content:
         application/json:
           schema:
-            $ref: './responses/wrappers/error-validation.yaml'
+            type: object
+            additionalProperties: false
+            required:
+              - statusCode
+              - code
+            properties:
+              statusCode:
+                type: integer
+                enum:
+                  - 422
+              code:
+                type: string
+                enum:
+                  - UNPROCESSABLE_ENTITY
+          example:
+            statusCode: 422
+            code: UNPROCESSABLE_ENTITY
+    CreatedResponse:
+      x-apidog-name: Created
+      description: Tài nguyên được tạo thành công
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required:
+              - statusCode
+              - code
+              - data
+            properties:
+              statusCode:
+                type: integer
+                enum:
+                  - 201
+              code:
+                type: string
+                enum:
+                  - CREATED
+              data:
+                type: object
+                description: Dữ liệu trả về theo nghiệp vụ của endpoint
+                additionalProperties: true
+          example:
+            statusCode: 201
+            code: CREATED
+            data: {}
+    AcceptedResponse:
+      x-apidog-name: Accepted
+      description: Yêu cầu đã được tiếp nhận để xử lý
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required:
+              - statusCode
+              - code
+              - data
+            properties:
+              statusCode:
+                type: integer
+                enum:
+                  - 202
+              code:
+                type: string
+                enum:
+                  - ACCEPTED
+              data:
+                type: object
+                description: Dữ liệu trả về theo nghiệp vụ của endpoint
+                additionalProperties: true
+          example:
+            statusCode: 202
+            code: ACCEPTED
+            data: {}
+    NoContentResponse:
+      x-apidog-name: No Content
+      description: Yêu cầu thành công, không có response body
+    ConflictError:
+      x-apidog-name: Conflict
+      description: Yêu cầu xung đột với trạng thái hiện tại
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required:
+              - statusCode
+              - code
+            properties:
+              statusCode:
+                type: integer
+                enum:
+                  - 409
+              code:
+                type: string
+                enum:
+                  - CONFLICT
+          example:
+            statusCode: 409
+            code: CONFLICT
+    TooManyRequestsError:
+      x-apidog-name: Too Many Requests
+      description: Vượt giới hạn tần suất gọi API
+      headers:
+        Retry-After:
+          description: Số giây cần đợi trước khi thử lại
+          schema:
+            type: integer
+            minimum: 0
+          example: 60
+        RateLimit-Limit:
+          description: Hạn mức hiện tại do deployment cấu hình
+          schema:
+            type: integer
+        RateLimit-Remaining:
+          description: Số request còn lại trong cửa sổ hiện tại
+          schema:
+            type: integer
+        RateLimit-Reset:
+          description: Thời điểm đặt lại hạn mức do server cung cấp
+          schema:
+            type: integer
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required:
+              - statusCode
+              - code
+            properties:
+              statusCode:
+                type: integer
+                enum:
+                  - 429
+              code:
+                type: string
+                enum:
+                  - TOO_MANY_REQUESTS
+          example:
+            statusCode: 429
+            code: TOO_MANY_REQUESTS
+    InternalServerError:
+      x-apidog-name: Internal Server Error
+      description: Lỗi không mong đợi phía server
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required:
+              - statusCode
+              - code
+            properties:
+              statusCode:
+                type: integer
+                enum:
+                  - 500
+              code:
+                type: string
+                enum:
+                  - INTERNAL_SERVER_ERROR
+          example:
+            statusCode: 500
+            code: INTERNAL_SERVER_ERROR
+  securitySchemes:
+    RefreshCookie:
+      type: apiKey
+      in: cookie
+      name: refreshToken
+      description: Refresh token opaque trong cookie HttpOnly, Secure, SameSite=Lax, Path=/api/v1/auth. Chỉ dùng cho refresh và logout.

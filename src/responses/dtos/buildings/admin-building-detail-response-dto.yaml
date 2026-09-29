@@ -1,26 +1,62 @@
 type: object
 x-apidog-folder: "Building/Response"
 title: BuildingAdminDetailResponseDto
-description: Chi tiết tòa nhà dành cho admin
+description: Chi tiết tòa nhà dành cho admin kiểm duyệt sổ đỏ và thông tin tài sản
 
 properties:
-  id: { type: string, format: uuid , description: "Định danh duy nhất của tài nguyên." }
-  name: { type: string , description: "Thông tin name của tài nguyên trong ngữ cảnh DTO." }
-  address: { type: string, minLength: 1, maxLength: 254 , description: "Thông tin address của tài nguyên trong ngữ cảnh DTO." }
-  landlordId: { type: string, format: uuid , description: "Thông tin landlord id của tài nguyên trong ngữ cảnh DTO." }
-  status: { type: string, enum: [pending, approved, rejected] , description: "Trạng thái hiện tại của tài nguyên trong quy trình nghiệp vụ." }
-  totalRooms: { type: integer, minimum: 0 , description: "Thông tin total rooms của tài nguyên trong ngữ cảnh DTO." }
-  occupancyRate: { type: string , description: "Thông tin occupancy rate của tài nguyên trong ngữ cảnh DTO." }
-  reviewNote: { type: string, nullable: true, minLength: 1, maxLength: 500 , description: "Thông tin review note của tài nguyên trong ngữ cảnh DTO." }
-  createdAt: { type: string, format: date-time , description: "Thời điểm bản ghi được tạo, theo định dạng ngày giờ ISO 8601." }
+  id: { type: string, format: uuid, description: "Định danh duy nhất của tòa nhà." }
+  name: { type: string, description: "Tên tòa nhà." }
+  province: { type: string, description: "Tỉnh / Thành phố." }
+  district: { type: string, description: "Quận / Huyện." }
+  ward: { type: string, description: "Phường / Xã." }
+  address: { type: string, minLength: 1, maxLength: 254, description: "Địa chỉ chi tiết số nhà, tên đường." }
+  totalFloors: { type: integer, minimum: 1, description: "Số tầng của tòa nhà." }
+  totalRooms: { type: integer, minimum: 0, description: "Tổng số phòng trong tòa nhà." }
+  occupancyRate: { type: string, description: "Tỷ lệ lấp đầy phòng." }
+  description: { type: string, nullable: true, maxLength: 1000, description: "Mô tả chi tiết về tòa nhà." }
+  amenities: { type: object, nullable: true, description: "Các tiện ích chung của tòa nhà (thang máy, khóa vân tay, camera an ninh...)." }
+  landlordId: { type: string, format: uuid, description: "Định danh chủ nhà." }
+  landlord:
+    type: object
+    description: Thông tin chi tiết của chủ nhà gửi yêu cầu kiểm duyệt
+    properties:
+      id: { type: string, format: uuid }
+      name: { type: string, description: "Họ và tên chủ nhà." }
+      phone: { type: string, description: "Số điện thoại liên hệ." }
+      email: { type: string, format: email, nullable: true, description: "Email của chủ nhà." }
+      cccdNumber: { type: string, nullable: true, description: "Số CCCD/CMND để đối chiếu với sổ đỏ." }
+    required:
+      - id
+      - name
+      - phone
+  ownershipDocuments:
+    type: array
+    description: Danh sách giấy tờ đất, sổ đỏ hoặc chứng từ sở hữu bất động sản tải lên để admin duyệt tay
+    items:
+      type: object
+      properties:
+        id: { type: string, format: uuid, description: "Định danh file media." }
+        url: { type: string, format: uri, description: "URL xem/tải tài liệu chứng minh sở hữu." }
+        name: { type: string, description: "Tên file tài liệu." }
+        uploadedAt: { type: string, format: date-time, description: "Thời điểm tải lên." }
+      required:
+        - id
+        - url
+  status: { type: string, enum: [pending, approved, rejected], description: "Trạng thái kiểm duyệt của tòa nhà." }
+  reviewNote: { type: string, nullable: true, minLength: 1, maxLength: 500, description: "Ghi chú của admin khi phê duyệt hoặc lý do từ chối." }
+  submittedAt: { type: string, format: date-time, description: "Thời điểm chủ nhà nộp hồ sơ kiểm duyệt." }
+  createdAt: { type: string, format: date-time, description: "Thời điểm tạo bản ghi." }
 
 required:
   - id
   - name
+  - province
+  - district
+  - ward
   - address
-  - landlordId
-  - status
   - totalRooms
-  - occupancyRate
-  - reviewNote
+  - landlordId
+  - landlord
+  - ownershipDocuments
+  - status
   - createdAt

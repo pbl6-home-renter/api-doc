@@ -1,0 +1,90 @@
+type: object
+x-apidog-folder: "Contract/Request"
+title: DepositSettlementRequestDto
+description: Dữ liệu quyết toán tiền cọc, chi phí phát sinh và thông tin hoàn trả cọc khi thanh lý hợp đồng
+additionalProperties: false
+
+properties:
+  contractId:
+    type: string
+    format: uuid
+    description: Định danh hợp đồng cần quyết toán cọc
+    example: "a81d4284-5f6e-4b68-b762-d3369b12be12"
+  originalDeposit:
+    type: integer
+    minimum: 0
+    description: Số tiền cọc gốc đã thu của khách thuê (VNĐ)
+    example: 3500000
+  deductions:
+    type: array
+    description: Danh sách các khoản tiền bị khấu trừ từ tiền cọc
+    items:
+      type: object
+      properties:
+        category:
+          type: string
+          enum: [UNPAID_INVOICE, DAMAGE_COMPENSATION, EARLY_TERMINATION_FEE, OTHER]
+          description: Lý do khấu trừ
+          example: "DAMAGE_COMPENSATION"
+        description:
+          type: string
+          minLength: 1
+          maxLength: 255
+          description: Chi tiết hư hại hoặc khoản phí cần trừ
+          example: "Vỡ cánh cửa tủ lạnh và hỏng ổ khóa phòng"
+        amount:
+          type: integer
+          minimum: 0
+          description: Số tiền bị khấu trừ (VNĐ)
+          example: 800000
+        evidenceMediaIds:
+          type: array
+          nullable: true
+          description: Danh sách media ID ảnh chụp hiện trường hoặc biên bản kiểm tra phòng
+          items:
+            type: string
+            format: uuid
+      required:
+        - category
+        - description
+        - amount
+  refundAmount:
+    type: integer
+    description: Số tiền thực tế quyết toán (nếu > 0 là chủ nhà hoàn tiền cho khách, nếu < 0 là khách phải nộp thêm)
+    example: 2700000
+  paymentMethod:
+    type: string
+    enum: [CASH, BANK_TRANSFER]
+    description: Hình thức hoàn cọc hoặc thu thêm tiền
+    example: "BANK_TRANSFER"
+  refundPayoutAccount:
+    type: object
+    nullable: true
+    description: Thông tin tài khoản ngân hàng của khách nhận hoàn cọc nếu chuyển khoản
+    properties:
+      bankCode:
+        type: string
+        example: "VCB"
+      accountNumber:
+        type: string
+        example: "1234567890"
+      accountHolderName:
+        type: string
+        example: "NGUYEN THI KHACH"
+    required:
+      - bankCode
+      - accountNumber
+      - accountHolderName
+  note:
+    type: string
+    nullable: true
+    maxLength: 500
+    description: Ghi chú hoặc điều khoản thỏa thuận thêm khi bàn giao phòng
+    example: "Đã bàn giao đủ 2 chìa khóa và kiểm tra đồng hồ điện nước"
+
+required:
+  - contractId
+  - originalDeposit
+  - deductions
+  - refundAmount
+  - paymentMethod

@@ -1,12 +1,66 @@
 type: object
 x-apidog-folder: "ContractMember/Request"
 title: ContractMemberAddRequestDto
-description: Dữ liệu thêm thành viên vào hợp đồng
+description: Dữ liệu thêm thành viên ở ghép vào hợp đồng phòng (bỏ thủ tục khai báo tạm trú công an)
 additionalProperties: false
+
 properties:
-  contractId: { type: string, format: uuid , description: "Định danh duy nhất của hợp đồng liên quan." }
-  tenantId: { type: string, format: uuid, nullable: true , description: "Thông tin tenant id của tài nguyên trong ngữ cảnh DTO." }
-  tenantName: { type: string, nullable: true, minLength: 1, maxLength: 254 , description: "Thông tin tenant name của tài nguyên trong ngữ cảnh DTO." }
-  tenantPhone: { type: string, nullable: true, minLength: 10, maxLength: 12, pattern: '^0[0-9]{9}$|^\+84[0-9]{9}$', description: "Số điện thoại của thành viên hợp đồng; có thể để trống khi chưa cung cấp." }
-  joinedAt: { type: string, format: date-time , description: "Thông tin joined at của tài nguyên trong ngữ cảnh DTO." }
-required: [contractId, tenantId, tenantName, tenantPhone, joinedAt]
+  contractId:
+    type: string
+    format: uuid
+    description: Định danh duy nhất của hợp đồng thuê phòng
+    example: "a81d4284-5f6e-4b68-b762-d3369b12be12"
+  tenantId:
+    type: string
+    format: uuid
+    nullable: true
+    description: ID người dùng trên hệ thống nếu đã có tài khoản
+    example: null
+  tenantName:
+    type: string
+    minLength: 1
+    maxLength: 254
+    description: Họ và tên thành viên ở cùng
+    example: "Lê Văn C"
+  tenantPhone:
+    type: string
+    nullable: true
+    minLength: 10
+    maxLength: 12
+    pattern: '^0[0-9]{9}$|^+84[0-9]{9}$'
+    description: Số điện thoại thành viên
+    example: "0912345678"
+  identityCardNumber:
+    type: string
+    nullable: true
+    minLength: 9
+    maxLength: 12
+    description: Số CCCD/CMND để đối chiếu thông tin người ở ghép
+    example: "048195009876"
+  dateOfBirth:
+    type: string
+    format: date
+    nullable: true
+    description: Ngày tháng năm sinh của thành viên
+    example: "2002-05-15"
+  gender:
+    type: string
+    enum: [male, female, other]
+    nullable: true
+    description: Giới tính của thành viên
+    example: "male"
+  isRepresentative:
+    type: boolean
+    nullable: true
+    description: Đánh dấu thành viên có phải là đại diện đứng tên hợp đồng không (mặc định false)
+    example: false
+  joinedAt:
+    type: string
+    format: date-time
+    description: Ngày thành viên bắt đầu vào ở
+    example: "2026-10-01T00:00:00Z"
+
+required:
+  - contractId
+  - tenantName
+  - joinedAt

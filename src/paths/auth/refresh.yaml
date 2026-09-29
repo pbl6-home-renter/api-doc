@@ -1,0 +1,45 @@
+post:
+  tags: [Auth]
+  x-apidog-folder: Auth
+  operationId: refreshSession
+  summary: Refresh token
+  description: >-
+    Dành cho tenant, landlord và admin. Không nhận request body hoặc bearer token;
+    chỉ đọc cookie refreshToken. Token cũ bị vô hiệu ngay khi dùng; token mới
+    được trả trong data của response và đặt lại trong cookie, đồng thời giữ
+    nguyên mốc hết hạn 30 ngày tính từ lần đăng nhập. Nếu token đã bị xoay,
+    hết hạn hoặc session đã bị thu hồi, client xóa phiên cục bộ và đăng nhập lại.
+  security:
+    - RefreshCookie: []
+  responses:
+    '200':
+      description: Phiên làm việc được làm mới thành công
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code, data]
+            properties:
+              statusCode:
+                type: integer
+                enum: [200]
+              code:
+                type: string
+                enum: [SESSION_REFRESHED]
+              data:
+                $ref: '../../openapi.yaml#/components/schemas/AuthRefreshResponseDto'
+          example:
+            statusCode: 200
+            code: SESSION_REFRESHED
+            data:
+              accessToken: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+              refreshToken: rt_opaque_token_example
+    '400':
+      $ref: '../../openapi.yaml#/components/responses/BadRequestError'
+    '401':
+      $ref: '../../openapi.yaml#/components/responses/UnauthorizedError'
+    '429':
+      $ref: '../../openapi.yaml#/components/responses/TooManyRequestsError'
+    '500':
+      $ref: '../../openapi.yaml#/components/responses/InternalServerError'

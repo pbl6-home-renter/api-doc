@@ -1,13 +1,20 @@
 type: object
 x-apidog-folder: "Payment/Response"
 title: PaymentCreateIntentResponseDto
-description: Phản hồi khi tạo payment intent
+description: Phản hồi khi tạo ý định thanh toán hóa đơn với đầy đủ payload VietQR để ứng dụng ngân hàng quét chuyển khoản
+
 properties:
-  paymentId: { type: string, format: uuid , description: "Thông tin payment id của tài nguyên trong ngữ cảnh DTO." }
-  invoiceCode: { type: string , description: "Thông tin invoice code của tài nguyên trong ngữ cảnh DTO." }
-  method: { type: string, enum: [vietqr, vnpay, momo, cash, mock] , description: "Thông tin method của tài nguyên trong ngữ cảnh DTO." }
-  amount: { type: integer, minimum: 0 , description: "Thông tin amount của tài nguyên trong ngữ cảnh DTO." }
-  qrContent: { type: string , description: "Thông tin qr content của tài nguyên trong ngữ cảnh DTO." }
+  paymentId: { type: string, format: uuid, description: "Định danh duy nhất của giao dịch thanh toán." }
+  invoiceCode: { type: string, description: "Mã hóa đơn cần thanh toán." }
+  method: { type: string, enum: [vietqr, vnpay, momo, cash, mock], description: "Phương thức thanh toán được chọn." }
+  amount: { type: integer, minimum: 0, description: "Số tiền cần thanh toán (VNĐ)." }
+  qrContent: { type: string, description: "Chuỗi raw payload dữ liệu theo chuẩn EMVCo VietQR." }
+  bankCode: { type: string, description: "Mã ngân hàng thụ hưởng (VD: MB, VCB)." }
+  bankName: { type: string, description: "Tên thương mại ngân hàng thụ hưởng." }
+  accountNumber: { type: string, description: "Số tài khoản ngân hàng thụ hưởng." }
+  accountHolderName: { type: string, description: "Tên chủ tài khoản thụ hưởng (chủ nhà hoặc tòa nhà)." }
+  paymentMemo: { type: string, description: "Nội dung chuyển khoản chuẩn hóa (VD: 'RENTIFY INV202609001')." }
+  qrCodeUrl: { type: string, format: uri, description: "URL ảnh mã QR động do VietQR API tạo sẵn." }
 
 required:
   - paymentId
@@ -15,3 +22,8 @@ required:
   - method
   - amount
   - qrContent
+  - bankCode
+  - accountNumber
+  - accountHolderName
+  - paymentMemo
+  - qrCodeUrl

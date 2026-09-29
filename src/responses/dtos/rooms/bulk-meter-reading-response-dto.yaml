@@ -1,0 +1,89 @@
+type: object
+x-apidog-folder: "MeterReading/Response"
+title: BulkMeterReadingResponseDto
+description: Phản hồi tổng hợp kết quả ghi chỉ số điện nước hàng loạt và lượng tiêu thụ của tòa nhà
+
+properties:
+  buildingId:
+    type: string
+    format: uuid
+    description: Định danh tòa nhà
+    example: "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d"
+  buildingName:
+    type: string
+    description: Tên tòa nhà
+    example: "Nhà trọ Thanh Xuân"
+  recordedMonth:
+    type: string
+    description: Kỳ chốt chỉ số (YYYY-MM)
+    example: "2026-09"
+  totalRoomsRecorded:
+    type: integer
+    minimum: 0
+    description: Tổng số phòng đã ghi nhận chỉ số thành công
+    example: 12
+  totalElectricityUsage:
+    type: string
+    description: Tổng lượng điện tiêu thụ toàn tòa nhà trong kỳ (kWh)
+    example: "1520.5"
+  totalWaterUsage:
+    type: string
+    description: Tổng lượng nước tiêu thụ toàn tòa nhà trong kỳ (m3)
+    example: "145.0"
+  results:
+    type: array
+    description: Kết quả ghi nhận chi tiết theo từng phòng
+    items:
+      type: object
+      properties:
+        roomId:
+          type: string
+          format: uuid
+          description: Định danh phòng
+          example: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+        roomName:
+          type: string
+          description: Tên phòng
+          example: "P.201"
+        electricityReadingId:
+          type: string
+          format: uuid
+          nullable: true
+          description: ID bản ghi số điện
+        electricityUsage:
+          type: string
+          nullable: true
+          description: Lượng điện tiêu thụ (kWh)
+          example: "130.5"
+        waterReadingId:
+          type: string
+          format: uuid
+          nullable: true
+          description: ID bản ghi số nước
+        waterUsage:
+          type: string
+          nullable: true
+          description: Lượng nước tiêu thụ (m3)
+          example: "12.0"
+        status:
+          type: string
+          enum: [SUCCESS, WARNING, ERROR]
+          description: Trạng thái ghi nhận
+          example: "SUCCESS"
+        note:
+          type: string
+          nullable: true
+          description: Cảnh báo bất thường (nếu có mức tiêu thụ tăng vọt so với tháng trước)
+      required:
+        - roomId
+        - roomName
+        - status
+
+required:
+  - buildingId
+  - buildingName
+  - recordedMonth
+  - totalRoomsRecorded
+  - totalElectricityUsage
+  - totalWaterUsage
+  - results
