@@ -1,11 +1,28 @@
 type: object
 x-apidog-folder: "ContractMember/Response"
 title: ContractMemberListResponseDto
-description: Danh sách thành viên hợp đồng
+description: Danh sách thành viên cùng cư trú trong hợp đồng thuê phòng
+
 properties:
-  id: { type: string, format: uuid , description: "Định danh duy nhất của tài nguyên." }
-  contractId: { type: string, format: uuid , description: "Định danh duy nhất của hợp đồng liên quan." }
-  tenantName: { type: string, nullable: true, minLength: 1, maxLength: 254 , description: "Thông tin tenant name của tài nguyên trong ngữ cảnh DTO." }
-  joinedAt: { type: string, format: date-time , description: "Thông tin joined at của tài nguyên trong ngữ cảnh DTO." }
-  leftAt: { type: string, format: date-time, nullable: true , description: "Thông tin left at của tài nguyên trong ngữ cảnh DTO." }
-required: [id, contractId, tenantName, joinedAt, leftAt]
+  id: { type: string, format: uuid, description: "Định danh thành viên hợp đồng." }
+  contractId: { type: string, format: uuid, description: "Định danh hợp đồng liên quan." }
+  tenantId: { type: string, format: uuid, nullable: true, description: "Định danh tài khoản người dùng (nếu có tài khoản hệ thống)." }
+  tenantName: { type: string, description: "Họ và tên thành viên cư trú." }
+  tenantPhone: { type: string, nullable: true, description: "Số điện thoại thành viên." }
+  identityCardNumber: { type: string, nullable: true, description: "Số CCCD/CMND của thành viên để chủ nhà đối chiếu nhân thân." }
+  isRepresentative: { type: boolean, description: "Là người đại diện đứng tên ký hợp đồng chính hay không." }
+  status:
+    type: string
+    enum: [ACTIVE, TEMPORARY_ABSENT, LEFT]
+    description: "Trạng thái cư trú: ACTIVE (đang ở), TEMPORARY_ABSENT (tạm vắng), LEFT (đã chuyển đi)."
+    example: "ACTIVE"
+  joinedAt: { type: string, format: date-time, description: "Thời điểm thành viên bắt đầu vào ở." }
+  leftAt: { type: string, format: date-time, nullable: true, description: "Thời điểm thành viên rời khỏi phòng (null nếu đang ở)." }
+
+required:
+  - id
+  - contractId
+  - tenantName
+  - isRepresentative
+  - status
+  - joinedAt

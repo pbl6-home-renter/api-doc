@@ -1,12 +1,29 @@
 type: object
 x-apidog-folder: "Room/Response"
 title: RoomMyListResponseDto
-description: Danh sách phòng của chủ nhà hiện tại
+description: Danh sách phòng trong tòa nhà dành cho chủ nhà quản lý
 
 properties:
-  id: { type: string, format: uuid , description: "Định danh duy nhất của tài nguyên." }
-  buildingId: { type: string, format: uuid , description: "Định danh duy nhất của tòa nhà liên quan." }
-  name: { type: string , description: "Thông tin name của tài nguyên trong ngữ cảnh DTO." }
-  rentPrice: { type: integer, minimum: 0 , description: "Thông tin rent price của tài nguyên trong ngữ cảnh DTO." }
-  status: { type: string, example: cleaning , description: "Trạng thái hiện tại của tài nguyên trong quy trình nghiệp vụ." }
-required: [id, buildingId, name, rentPrice, status]
+  id: { type: string, format: uuid, description: "Định danh duy nhất của phòng." }
+  buildingId: { type: string, format: uuid, description: "Định danh duy nhất của tòa nhà liên quan." }
+  name: { type: string, description: "Tên hoặc số phòng (VD: P.201)." }
+  roomType: { type: string, nullable: true, description: "Loại hình phòng (VD: Gác lửng, Studio)." }
+  area: { type: string, nullable: true, description: "Diện tích phòng (m2)." }
+  rentPrice: { type: integer, minimum: 0, description: "Giá thuê niêm yết theo tháng." }
+  status:
+    type: string
+    enum: [available, occupied, maintenance, cleaning, pending_cleanup]
+    description: "Trạng thái phòng: available (trống), occupied (đã thuê), maintenance (bảo trì), cleaning / pending_cleanup (chờ dọn dẹp sau checkout)."
+    example: "available"
+  floorNumber: { type: integer, nullable: true, description: "Số tầng của phòng." }
+  currentTenantName: { type: string, nullable: true, description: "Họ tên người thuê đại diện hiện tại (nếu đang occupied)." }
+  currentTenantPhone: { type: string, nullable: true, description: "Số điện thoại người thuê đại diện." }
+  activeIssuesCount: { type: integer, minimum: 0, description: "Số lượng sự cố chưa giải quyết của phòng." }
+
+required:
+  - id
+  - buildingId
+  - name
+  - rentPrice
+  - status
+  - activeIssuesCount

@@ -1,11 +1,34 @@
 type: object
 x-apidog-folder: "Contract/Response"
 title: ContractListResponseDto
-description: Danh sách hợp đồng
+description: Danh sách hợp đồng thuê phòng dành cho chủ nhà quản lý
+
 properties:
-  id: { type: string, format: uuid , description: "Định danh duy nhất của tài nguyên." }
-  roomId: { type: string, format: uuid , description: "Định danh duy nhất của phòng liên quan." }
-  status: { type: string, enum: [draft, signed, active, suspended, expired, terminated] , description: "Trạng thái hiện tại của tài nguyên trong quy trình nghiệp vụ." }
-  rentPrice: { type: integer, minimum: 0 , description: "Thông tin rent price của tài nguyên trong ngữ cảnh DTO." }
-  depositAmount: { type: integer, minimum: 0 , description: "Thông tin deposit amount của tài nguyên trong ngữ cảnh DTO." }
-required: [id, roomId, status, rentPrice, depositAmount]
+  id: { type: string, format: uuid, description: "Định danh duy nhất của hợp đồng." }
+  contractCode: { type: string, description: "Mã hợp đồng hiển thị trên giao diện (VD: HD-2026-0012)." }
+  roomId: { type: string, format: uuid, description: "Định danh duy nhất của phòng liên quan." }
+  roomName: { type: string, description: "Tên phòng trọ (VD: P.201)." }
+  tenantName: { type: string, description: "Họ tên người đại diện ký hợp đồng." }
+  tenantPhone: { type: string, description: "Số điện thoại người đại diện." }
+  status:
+    type: string
+    enum: [draft, signed, active, suspended, expired, terminated]
+    description: "Trạng thái hợp đồng (draft: nháp, signed: đã ký, active: đang hiệu lực, suspended: tạm dừng, expired: hết hạn, terminated: đã thanh lý)."
+  rentalType: { type: string, enum: [MONTHLY, DAILY], description: "Hình thức thuê dài hạn hoặc ngắn hạn theo ngày." }
+  rentPrice: { type: integer, minimum: 0, description: "Giá thuê theo chu kỳ (VNĐ)." }
+  depositAmount: { type: integer, minimum: 0, description: "Tiền đặt cọc phòng (VNĐ)." }
+  startDate: { type: string, format: date-time, description: "Thời điểm bắt đầu hợp đồng." }
+  endDate: { type: string, format: date-time, description: "Thời điểm kết thúc hợp đồng." }
+
+required:
+  - id
+  - contractCode
+  - roomId
+  - roomName
+  - tenantName
+  - tenantPhone
+  - status
+  - rentPrice
+  - depositAmount
+  - startDate
+  - endDate

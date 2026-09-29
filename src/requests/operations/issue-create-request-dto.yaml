@@ -1,14 +1,62 @@
 type: object
 x-apidog-folder: "IssueReport/Request"
 title: IssueReportCreateRequestDto
-description: Dữ liệu tạo báo cáo sự cố
+description: Dữ liệu gửi báo cáo sự cố hư hỏng thiết bị hoặc phản ánh cư trú
 additionalProperties: false
+
 properties:
-  roomId: { type: string, format: uuid , description: "Định danh duy nhất của phòng liên quan." }
-  title: { type: string, minLength: 1, maxLength: 255 , description: "Thông tin title của tài nguyên trong ngữ cảnh DTO." }
-  description: { type: string, nullable: true, minLength: 1, maxLength: 500 , description: "Thông tin description của tài nguyên trong ngữ cảnh DTO." }
+  roomId:
+    type: string
+    format: uuid
+    description: Định danh duy nhất của phòng xảy ra sự cố
+    example: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+  title:
+    type: string
+    minLength: 1
+    maxLength: 255
+    description: "Tiêu đề tóm tắt sự cố (VD: Hỏng vòi sen nhà tắm)"
+    example: "Hỏng vòi xịt vệ sinh bị rò nước"
+  category:
+    type: string
+    enum: [PLUMBING, ELECTRICAL, APPLIANCE, STRUCTURAL, SECURITY, OTHER]
+    description: Phân loại nhóm sự cố
+    example: "PLUMBING"
+  urgency:
+    type: string
+    enum: [LOW, MEDIUM, HIGH, EMERGENCY]
+    description: Mức độ khẩn cấp theo đánh giá của người tạo
+    example: "HIGH"
+  description:
+    type: string
+    nullable: true
+    minLength: 1
+    maxLength: 500
+    description: Mô tả chi tiết hiện trạng hư hỏng
+    example: "Vòi xịt bị nứt ren, nước chảy liên tục không khóa được"
   issuePhotoMediaIds:
     type: array
-    description: Thông tin issue photo media ids của tài nguyên trong ngữ cảnh DTO.
-    items: { type: string, format: uuid , description: "Thông tin items của tài nguyên trong ngữ cảnh DTO." }
-required: [roomId, title, description, issuePhotoMediaIds]
+    description: Danh sách ID ảnh chụp hiện trường đính kèm
+    items:
+      type: string
+      format: uuid
+    example:
+      - "48fae08f-e1a5-48b4-9c02-e2513470ff42"
+  taggedUserId:
+    type: string
+    format: uuid
+    nullable: true
+    description: Tag người liên quan (@User) trong phòng hoặc thợ sửa
+    example: null
+  taggedRoomId:
+    type: string
+    format: uuid
+    nullable: true
+    description: Tag phòng (@Room) nếu là sự cố khu vực chung ảnh hưởng nhiều phòng
+    example: null
+
+required:
+  - roomId
+  - title
+  - category
+  - urgency
+  - issuePhotoMediaIds

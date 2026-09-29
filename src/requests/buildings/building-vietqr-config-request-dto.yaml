@@ -1,0 +1,47 @@
+type: object
+x-apidog-folder: "Building/Request"
+title: BuildingVietQrConfigRequestDto
+description: Dữ liệu cấu hình tài khoản nhận tiền VietQR cho từng tòa nhà cụ thể
+additionalProperties: false
+
+properties:
+  bankCode:
+    type: string
+    description: "Mã ngân hàng thụ hưởng (VD: VCB, MB, TCB, ACB, VPB)"
+    minLength: 2
+    maxLength: 20
+    example: "MB"
+  bankName:
+    type: string
+    description: Tên thương mại ngân hàng thụ hưởng
+    minLength: 2
+    maxLength: 100
+    example: "Ngân hàng TMCP Quân Đội"
+  accountNumber:
+    type: string
+    description: Số tài khoản ngân hàng thụ hưởng
+    minLength: 6
+    maxLength: 30
+    example: "0987654321"
+  accountHolderName:
+    type: string
+    description: Tên chủ tài khoản thụ hưởng (viết hoa không dấu)
+    minLength: 2
+    maxLength: 100
+    example: "NGUYEN VAN A"
+  branch:
+    type: string
+    nullable: true
+    description: Chi nhánh ngân hàng thụ hưởng (tùy chọn)
+    example: "Chi nhánh Đà Nẵng"
+  isDefault:
+    type: boolean
+    nullable: true
+    description: Đặt làm tài khoản nhận thanh toán mặc định cho toàn bộ phòng trong tòa nhà
+    example: true
+
+required:
+  - bankCode
+  - bankName
+  - accountNumber
+  - accountHolderName

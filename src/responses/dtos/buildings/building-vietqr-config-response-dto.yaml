@@ -1,0 +1,62 @@
+type: object
+x-apidog-folder: "Building/Response"
+title: BuildingVietQrConfigResponseDto
+description: Phản hồi thông tin cấu hình tài khoản VietQR và mã QR mẫu của tòa nhà
+
+properties:
+  id:
+    type: string
+    format: uuid
+    description: Định danh duy nhất của cấu hình VietQR tòa nhà
+    example: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+  buildingId:
+    type: string
+    format: uuid
+    description: Định danh tòa nhà liên quan
+    example: "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d"
+  bankCode:
+    type: string
+    description: Mã ngân hàng thụ hưởng
+    example: "MB"
+  bankName:
+    type: string
+    description: Tên ngân hàng thụ hưởng
+    example: "Ngân hàng TMCP Quân Đội"
+  accountNumber:
+    type: string
+    description: Số tài khoản ngân hàng thụ hưởng
+    example: "0987654321"
+  accountHolderName:
+    type: string
+    description: Tên chủ tài khoản thụ hưởng
+    example: "NGUYEN VAN A"
+  branch:
+    type: string
+    nullable: true
+    description: Chi nhánh ngân hàng thụ hưởng
+    example: "Chi nhánh Đà Nẵng"
+  qrSampleUrl:
+    type: string
+    format: uri
+    description: URL hình ảnh mã VietQR mẫu để chủ trọ quét thử nghiệm
+    example: "https://api.vietqr.io/image/970422-0987654321-template.jpg"
+  createdAt:
+    type: string
+    format: date-time
+    description: Thời điểm thiết lập cấu hình
+    example: "2026-09-29T10:00:00Z"
+  updatedAt:
+    type: string
+    format: date-time
+    description: Thời điểm cập nhật cấu hình gần nhất
+    example: "2026-09-29T10:00:00Z"
+
+required:
+  - id
+  - buildingId
+  - bankCode
+  - bankName
+  - accountNumber
+  - accountHolderName
+  - qrSampleUrl
+  - createdAt

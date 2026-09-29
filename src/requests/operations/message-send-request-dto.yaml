@@ -1,11 +1,58 @@
 type: object
 x-apidog-folder: "Message/Request"
 title: MessageSendRequestDto
-description: Dữ liệu gửi tin nhắn
+description: Dữ liệu gửi tin nhắn trong cuộc hội thoại (hỗ trợ tag người dùng @User hoặc tag phòng @Room)
 additionalProperties: false
+
 properties:
-  conversationId: { type: string, format: uuid , description: "Thông tin conversation id của tài nguyên trong ngữ cảnh DTO." }
-  type: { type: string, enum: [text, image, file, bot] , description: "Thông tin type của tài nguyên trong ngữ cảnh DTO." }
-  content: { type: string, nullable: true , description: "Thông tin content của tài nguyên trong ngữ cảnh DTO." }
-  mediaId: { type: string, format: uuid, nullable: true , description: "Thông tin media id của tài nguyên trong ngữ cảnh DTO." }
-required: [conversationId, type, content, mediaId]
+  conversationId:
+    type: string
+    format: uuid
+    description: Định danh duy nhất của cuộc hội thoại nhận tin nhắn.
+    example: "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d"
+  type:
+    type: string
+    enum: [text, image, file, bot]
+    description: Phân loại nội dung tin nhắn.
+    example: "text"
+  content:
+    type: string
+    nullable: true
+    maxLength: 4000
+    description: Nội dung văn bản của tin nhắn.
+    example: "Chào bạn @Lê Văn C, phòng @P.201 hôm nay có ai ở nhà không?"
+  mediaId:
+    type: string
+    format: uuid
+    nullable: true
+    description: ID tệp tin phương tiện đính kèm nếu type là image hoặc file.
+    example: null
+  mentions:
+    type: array
+    nullable: true
+    description: Danh sách các đối tượng được nhắc đến / tag tên trong tin nhắn (tag người dùng hoặc tag phòng)
+    items:
+      type: object
+      properties:
+        type:
+          type: string
+          enum: [USER, ROOM]
+          description: Loại đối tượng được tag
+          example: "USER"
+        id:
+          type: string
+          format: uuid
+          description: Định danh UUID của user hoặc phòng được tag
+          example: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+        displayName:
+          type: string
+          description: Tên hiển thị kèm theo dấu @
+          example: "Lê Văn C"
+      required:
+        - type
+        - id
+        - displayName
+
+required:
+  - conversationId
+  - type

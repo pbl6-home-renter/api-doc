@@ -1,37 +1,75 @@
 type: object
 x-apidog-folder: "Building/Request"
 title: BuildingCreateRequestDto
-description: Dữ liệu tạo tòa nhà
+description: Dữ liệu tạo tòa nhà mới (bao gồm giấy tờ chứng minh sở hữu / sổ đỏ tải lên tại Bước 2)
 additionalProperties: false
 
 properties:
   name:
     type: string
-    description: Thông tin name của tài nguyên trong ngữ cảnh DTO.
+    description: Tên tòa nhà hoặc dãy trọ
     minLength: 1
     maxLength: 254
-    example: Nhà trọ Thanh Xuân
+    example: "Nhà trọ Thanh Xuân"
   province:
     type: string
-    description: Thông tin province của tài nguyên trong ngữ cảnh DTO.
+    description: Tỉnh / Thành phố
     minLength: 1
     maxLength: 100
-    example: Thành phố Hồ Chí Minh
+    example: "Thành phố Hồ Chí Minh"
+  district:
+    type: string
+    description: Quận / Huyện
+    minLength: 1
+    maxLength: 100
+    example: "Quận 1"
   ward:
     type: string
-    description: Thông tin ward của tài nguyên trong ngữ cảnh DTO.
+    description: Phường / Xã
     minLength: 1
     maxLength: 100
-    example: Phường Bến Nghé
+    example: "Phường Bến Nghé"
   address:
     type: string
-    description: Thông tin address của tài nguyên trong ngữ cảnh DTO.
+    description: Địa chỉ chi tiết số nhà, ngõ ngách, tên đường
     minLength: 1
     maxLength: 254
-    example: 12 Nguyễn Trãi
+    example: "12 Nguyễn Trãi"
+  totalFloors:
+    type: integer
+    minimum: 1
+    nullable: true
+    description: Tổng số tầng của tòa nhà
+    example: 4
+  description:
+    type: string
+    nullable: true
+    maxLength: 1000
+    description: Giới thiệu chung về tòa nhà, quy định an ninh, giờ giấc
+    example: "Khu trọ yên tĩnh, an ninh, camera 24/7, giờ giấc tự do."
+  amenities:
+    type: object
+    nullable: true
+    description: Tiện ích chung của tòa nhà (khóa vân tay, thang máy, bảo vệ, nhà để xe...)
+    example:
+      fingerprintLock: true
+      elevator: true
+      parking: true
+      securityCamera: true
+  ownershipCertificateMediaIds:
+    type: array
+    description: Danh sách ID các tệp media chứng minh quyền sở hữu nhà đất (sổ đỏ/sổ hồng/hợp đồng mua bán) tải lên tại Bước 2 để admin duyệt
+    items:
+      type: string
+      format: uuid
+    minItems: 1
+    example:
+      - "3fa85f64-5717-4562-b3fc-2c963f66afa6"
 
 required:
   - name
   - province
+  - district
   - ward
   - address
+  - ownershipCertificateMediaIds

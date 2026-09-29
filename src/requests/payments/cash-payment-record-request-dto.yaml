@@ -1,11 +1,51 @@
 type: object
 x-apidog-folder: "Payment/Request"
 title: PaymentRecordCashRequestDto
-description: Dữ liệu ghi nhận thanh toán tiền mặt
+description: Dữ liệu ghi nhận thanh toán tiền mặt cho hóa đơn
 additionalProperties: false
+
 properties:
-  invoiceId: { type: string, format: uuid , description: "Thông tin invoice id của tài nguyên trong ngữ cảnh DTO." }
-  amount: { type: integer, minimum: 0 , description: "Thông tin amount của tài nguyên trong ngữ cảnh DTO." }
-  transactionId: { type: string , description: "Thông tin transaction id của tài nguyên trong ngữ cảnh DTO." }
-  receiptMediaId: { type: string, format: uuid , description: "Thông tin receipt media id của tài nguyên trong ngữ cảnh DTO." }
-required: [invoiceId, amount, transactionId, receiptMediaId]
+  invoiceId:
+    type: string
+    format: uuid
+    description: Định danh duy nhất của hóa đơn được thanh toán.
+    example: "e6fbbff5-d72b-426b-8fb7-bf6f3a743e49"
+  amount:
+    type: integer
+    minimum: 0
+    description: Số tiền mặt thực tế chủ nhà đã thu (VNĐ).
+    example: 3500000
+  paymentDate:
+    type: string
+    format: date-time
+    description: Thời điểm chủ nhà nhận tiền mặt từ khách thuê.
+    example: "2026-09-29T08:30:00Z"
+  payerName:
+    type: string
+    minLength: 1
+    maxLength: 254
+    description: Họ tên người trực tiếp nộp tiền mặt (khách thuê hoặc bạn cùng phòng).
+    example: "Lê Văn C"
+  transactionId:
+    type: string
+    description: Mã biên nhận thu tiền mặt nội bộ do chủ nhà tạo.
+    example: "TM-20260929-001"
+  receiptMediaId:
+    type: string
+    format: uuid
+    nullable: true
+    description: Ảnh chụp phiếu thu tiền mặt hoặc chữ ký xác nhận của khách thuê (tùy chọn).
+    example: "48fae08f-e1a5-48b4-9c02-e2513470ff42"
+  note:
+    type: string
+    nullable: true
+    maxLength: 500
+    description: "Ghi chú khi thu tiền mặt (VD: 'Thu tại phòng, tiền lẻ 50k')."
+    example: "Đã thu đủ tiền mặt tại phòng lúc sáng"
+
+required:
+  - invoiceId
+  - amount
+  - paymentDate
+  - payerName
+  - transactionId

@@ -1,0 +1,60 @@
+type: object
+x-apidog-folder: "Contract/Response"
+title: DepositSettlementResponseDto
+description: Phản hồi kết quả quyết toán cọc và biên bản bàn giao phòng
+
+properties:
+  contractId:
+    type: string
+    format: uuid
+    description: Định danh hợp đồng đã thanh lý
+    example: "a81d4284-5f6e-4b68-b762-d3369b12be12"
+  settlementId:
+    type: string
+    format: uuid
+    description: Định danh giao dịch quyết toán cọc
+    example: "bf82d61b-17c3-42e1-a083-d5d21e84617a"
+  originalDeposit:
+    type: integer
+    minimum: 0
+    description: Số tiền cọc gốc ban đầu (VNĐ)
+    example: 3500000
+  totalDeductions:
+    type: integer
+    minimum: 0
+    description: Tổng số tiền bị khấu trừ (VNĐ)
+    example: 800000
+  finalAmount:
+    type: integer
+    description: Số tiền thực tế chuyển giao (dương là hoàn trả khách, âm là truy thu thêm)
+    example: 2700000
+  settlementType:
+    type: string
+    enum: [REFUND_TO_TENANT, TENANT_ADDITIONAL_PAYMENT, BALANCED]
+    description: Loại quyết toán (hoàn cọc cho khách, khách nộp thêm, hoặc bù trừ hết)
+    example: "REFUND_TO_TENANT"
+  status:
+    type: string
+    enum: [pending, completed]
+    description: Trạng thái thực hiện giao dịch quyết toán
+    example: "completed"
+  settledAt:
+    type: string
+    format: date-time
+    description: Thời điểm hoàn tất quyết toán
+    example: "2026-09-29T11:30:00Z"
+  transactionId:
+    type: string
+    nullable: true
+    description: Mã giao dịch chuyển khoản nếu hoàn cọc qua ngân hàng
+    example: "MB-TRANS-987654"
+
+required:
+  - contractId
+  - settlementId
+  - originalDeposit
+  - totalDeductions
+  - finalAmount
+  - settlementType
+  - status
+  - settledAt

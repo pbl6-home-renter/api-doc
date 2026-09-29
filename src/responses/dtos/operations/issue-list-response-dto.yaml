@@ -1,11 +1,42 @@
 type: object
 x-apidog-folder: "IssueReport/Response"
 title: IssueReportListResponseDto
-description: Danh sách báo cáo sự cố
+description: Danh sách báo cáo sự cố hư hỏng trong phòng hoặc tòa nhà
+
 properties:
-  id: { type: string, format: uuid , description: "Định danh duy nhất của tài nguyên." }
-  roomId: { type: string, format: uuid , description: "Định danh duy nhất của phòng liên quan." }
-  title: { type: string, minLength: 1, maxLength: 255 , description: "Thông tin title của tài nguyên trong ngữ cảnh DTO." }
-  status: { type: string, enum: [open, in_progress, resolved, cancelled] , description: "Trạng thái hiện tại của tài nguyên trong quy trình nghiệp vụ." }
-  description: { type: string, nullable: true, minLength: 1, maxLength: 500 , description: "Thông tin description của tài nguyên trong ngữ cảnh DTO." }
-required: [id, roomId, title, status, description]
+  id: { type: string, format: uuid, description: "Định danh duy nhất của báo cáo sự cố." }
+  roomId: { type: string, format: uuid, description: "Định danh phòng liên quan." }
+  roomName: { type: string, description: "Tên phòng trọ (VD: P.201)." }
+  buildingId: { type: string, format: uuid, description: "Định danh tòa nhà." }
+  buildingName: { type: string, description: "Tên tòa nhà." }
+  reporterName: { type: string, description: "Họ và tên người tạo phản ánh." }
+  title: { type: string, minLength: 1, maxLength: 255, description: "Tiêu đề ngắn gọn của sự cố." }
+  category:
+    type: string
+    enum: [PLUMBING, ELECTRICAL, APPLIANCE, STRUCTURAL, SECURITY, OTHER]
+    description: "Nhóm sự cố (PLUMBING: nước/ống xả, ELECTRICAL: điện/đèn, APPLIANCE: thiết bị điện tử, STRUCTURAL: tường trần cửa, SECURITY: an ninh)."
+    example: "PLUMBING"
+  urgency:
+    type: string
+    enum: [LOW, MEDIUM, HIGH, EMERGENCY]
+    description: "Mức độ khẩn cấp của sự cố."
+    example: "HIGH"
+  status:
+    type: string
+    enum: [open, in_progress, resolved, cancelled]
+    description: "Trạng thái xử lý sự cố."
+    example: "open"
+  description: { type: string, nullable: true, minLength: 1, maxLength: 500, description: "Mô tả chi tiết sự cố." }
+  createdAt: { type: string, format: date-time, description: "Thời điểm gửi báo cáo." }
+
+required:
+  - id
+  - roomId
+  - roomName
+  - buildingName
+  - reporterName
+  - title
+  - category
+  - urgency
+  - status
+  - createdAt

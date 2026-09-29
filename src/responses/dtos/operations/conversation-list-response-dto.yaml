@@ -1,10 +1,35 @@
 type: object
 x-apidog-folder: "Conversation/Response"
 title: ConversationListResponseDto
-description: Danh sách cuộc hội thoại
+description: Danh sách cuộc hội thoại trao đổi (theo phòng, theo tòa nhà, hoặc nhắn riêng)
+
 properties:
-  id: { type: string, format: uuid , description: "Định danh duy nhất của tài nguyên." }
-  type: { type: string, enum: [room, building, direct] , description: "Thông tin type của tài nguyên trong ngữ cảnh DTO." }
-  title: { type: string, nullable: true, minLength: 1, maxLength: 255 , description: "Thông tin title của tài nguyên trong ngữ cảnh DTO." }
-  unreadCount: { type: integer, minimum: 0 , description: "Thông tin unread count của tài nguyên trong ngữ cảnh DTO." }
-required: [id, type, title, unreadCount]
+  id: { type: string, format: uuid, description: "Định danh duy nhất của cuộc hội thoại." }
+  type:
+    type: string
+    enum: [room, building, direct]
+    description: "Phân loại hội thoại (room: nhóm phòng, building: nhóm cư dân tòa nhà, direct: nhắn tin trực tiếp 1-1)."
+    example: "room"
+  title: { type: string, nullable: true, minLength: 1, maxLength: 255, description: "Tiêu đề hội thoại (VD: 'Phòng 201 - Nhà trọ Thanh Xuân')." }
+  avatarUrl: { type: string, format: uri, nullable: true, description: "Ảnh đại diện của hội thoại hoặc avatar người đối thoại." }
+  contextTag: { type: string, nullable: true, description: "Tag ngữ cảnh hiển thị trên badge UI (VD: 'P.201', 'Tòa Thanh Xuân')." }
+  roomId: { type: string, format: uuid, nullable: true, description: "Định danh phòng nếu là nhóm chat theo phòng." }
+  buildingId: { type: string, format: uuid, nullable: true, description: "Định danh tòa nhà nếu là nhóm chat theo tòa." }
+  unreadCount: { type: integer, minimum: 0, description: "Số lượng tin nhắn chưa đọc của người dùng hiện tại." }
+  lastMessage:
+    type: object
+    nullable: true
+    description: Tóm tắt nội dung tin nhắn mới nhất
+    properties:
+      id: { type: string, format: uuid }
+      senderName: { type: string }
+      content: { type: string }
+      type: { type: string, enum: [text, image, file, bot] }
+      sentAt: { type: string, format: date-time }
+  lastMessageAt: { type: string, format: date-time, nullable: true, description: "Thời điểm gửi tin nhắn gần nhất." }
+
+required:
+  - id
+  - type
+  - title
+  - unreadCount

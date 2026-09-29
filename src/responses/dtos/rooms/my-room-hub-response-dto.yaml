@@ -1,0 +1,199 @@
+type: object
+x-apidog-folder: "Room/Response"
+title: MyRoomHubResponseDto
+description: Dữ liệu tổng hợp màn hình Trung tâm phòng của tôi dành cho khách thuê (Hợp đồng, hóa đơn, bạn cùng phòng, chủ trọ)
+
+properties:
+  room:
+    type: object
+    description: Thông tin phòng đang thuê hiện tại
+    properties:
+      id:
+        type: string
+        format: uuid
+        example: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+      name:
+        type: string
+        example: "P.201"
+      roomType:
+        type: string
+        nullable: true
+        example: "Gác lửng"
+      area:
+        type: string
+        nullable: true
+        example: "25.0"
+      rentPrice:
+        type: integer
+        minimum: 0
+        example: 3500000
+      buildingId:
+        type: string
+        format: uuid
+        example: "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d"
+      buildingName:
+        type: string
+        example: "Nhà trọ Thanh Xuân"
+      address:
+        type: string
+        example: "12 Nguyễn Trãi, Phường Bến Nghé, Quận 1, TP Hồ Chí Minh"
+      photoUrls:
+        type: array
+        items:
+          type: string
+          format: uri
+    required:
+      - id
+      - name
+      - rentPrice
+      - buildingId
+      - buildingName
+      - address
+
+  landlord:
+    type: object
+    description: Thông tin liên hệ của chủ trọ
+    properties:
+      id:
+        type: string
+        format: uuid
+        example: "1c28c89b-f975-4302-86ee-ea5e158dfb1d"
+      name:
+        type: string
+        example: "Nguyễn Văn Chủ"
+      phone:
+        type: string
+        example: "0909123456"
+      avatarUrl:
+        type: string
+        format: uri
+        nullable: true
+        example: "https://example.com/avatars/landlord.jpg"
+    required:
+      - id
+      - name
+      - phone
+
+  contract:
+    type: object
+    description: Hợp đồng thuê phòng có hiệu lực hiện tại
+    properties:
+      id:
+        type: string
+        format: uuid
+        example: "a81d4284-5f6e-4b68-b762-d3369b12be12"
+      contractCode:
+        type: string
+        example: "HD-2026-0012"
+      rentalType:
+        type: string
+        enum: [LONG_TERM, SHORT_TERM_DAILY]
+        example: "LONG_TERM"
+      startDate:
+        type: string
+        format: date-time
+        example: "2026-01-01T00:00:00Z"
+      endDate:
+        type: string
+        format: date-time
+        example: "2027-01-01T00:00:00Z"
+      status:
+        type: string
+        example: "active"
+      signedContractUrl:
+        type: string
+        format: uri
+        nullable: true
+        example: "https://example.com/contracts/signed_hd0012.pdf"
+    required:
+      - id
+      - contractCode
+      - rentalType
+      - startDate
+      - endDate
+      - status
+
+  currentInvoice:
+    type: object
+    nullable: true
+    description: Hóa đơn của kỳ hiện tại cần thanh toán
+    properties:
+      id:
+        type: string
+        format: uuid
+        example: "e6fbbff5-d72b-426b-8fb7-bf6f3a743e49"
+      code:
+        type: string
+        example: "INV-2026-09-001"
+      period:
+        type: string
+        example: "2026-09"
+      totalAmount:
+        type: integer
+        minimum: 0
+        example: 3850000
+      remainingAmount:
+        type: integer
+        minimum: 0
+        example: 3850000
+      dueDate:
+        type: string
+        format: date-time
+        example: "2026-10-05T23:59:59Z"
+      invoiceStatus:
+        type: string
+        example: "issued"
+      vietQrPaymentUrl:
+        type: string
+        format: uri
+        nullable: true
+        example: "https://api.vietqr.io/image/970422-0987654321-INV001.jpg"
+    required:
+      - id
+      - code
+      - period
+      - totalAmount
+      - remainingAmount
+      - dueDate
+      - invoiceStatus
+
+  roommates:
+    type: array
+    description: Danh sách thành viên đang cùng cư trú trong phòng
+    items:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+          example: "Lê Văn C"
+        phone:
+          type: string
+          nullable: true
+          example: "0912345678"
+        avatarUrl:
+          type: string
+          format: uri
+          nullable: true
+        isRepresentative:
+          type: boolean
+          example: false
+      required:
+        - id
+        - name
+        - isRepresentative
+
+  activeIssuesCount:
+    type: integer
+    minimum: 0
+    description: Số sự cố đang chờ xử lý của phòng
+    example: 1
+
+required:
+  - room
+  - landlord
+  - contract
+  - roommates
+  - activeIssuesCount

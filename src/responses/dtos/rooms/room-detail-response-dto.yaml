@@ -1,30 +1,83 @@
 type: object
 x-apidog-folder: "Room/Response"
 title: RoomDetailResponseDto
-description: Chi tiết phòng
+description: Chi tiết toàn diện về căn phòng, bao gồm hợp đồng hiện tại, thành viên cư trú và thông số dịch vụ
 
 properties:
-  id: { type: string, format: uuid , description: "Định danh duy nhất của tài nguyên." }
-  buildingId: { type: string, format: uuid , description: "Định danh duy nhất của tòa nhà liên quan." }
-  name: { type: string , description: "Thông tin name của tài nguyên trong ngữ cảnh DTO." }
-  description: { type: string, nullable: true, minLength: 1, maxLength: 500 , description: "Thông tin description của tài nguyên trong ngữ cảnh DTO." }
-  area: { type: string, nullable: true, example: '18.5' , description: "Thông tin area của tài nguyên trong ngữ cảnh DTO." }
-  rentPrice: { type: integer, minimum: 0 , description: "Thông tin rent price của tài nguyên trong ngữ cảnh DTO." }
-  status: { type: string, example: available , description: "Trạng thái hiện tại của tài nguyên trong quy trình nghiệp vụ." }
+  id: { type: string, format: uuid, description: "Định danh duy nhất của phòng." }
+  buildingId: { type: string, format: uuid, description: "Định danh duy nhất của tòa nhà liên quan." }
+  buildingName: { type: string, description: "Tên tòa nhà chứa phòng." }
+  name: { type: string, description: "Tên hoặc mã số phòng." }
+  roomType: { type: string, nullable: true, description: "Loại phòng (VD: Gác lửng, Studio)." }
+  description: { type: string, nullable: true, maxLength: 1000, description: "Mô tả chi tiết phòng trọ." }
+  area: { type: string, nullable: true, example: '25.0', description: "Diện tích sử dụng (m2)." }
+  floorNumber: { type: integer, nullable: true, description: "Số tầng của phòng." }
+  rentPrice: { type: integer, minimum: 0, description: "Giá thuê theo tháng (VNĐ)." }
+  depositAmount: { type: integer, minimum: 0, description: "Tiền cọc phòng (VNĐ)." }
+  status:
+    type: string
+    enum: [available, occupied, maintenance, cleaning, pending_cleanup]
+    description: "Trạng thái phòng."
+    example: "available"
+  maxOccupancy: { type: integer, nullable: true, description: "Số người ở tối đa (null nếu không giới hạn)." }
+  genderPolicy: { type: string, enum: [any, male, female], description: "Quy định giới tính cư trú." }
+  amenities: { type: object, nullable: true, description: "Danh mục tiện ích trong phòng." }
+  photoUrls:
+    type: array
+    description: Danh sách đường dẫn ảnh thực tế của căn phòng
+    items:
+      type: string
+      format: uri
+  landlord:
+    type: object
+    description: Thông tin chủ nhà sở hữu phòng
+    properties:
+      id: { type: string, format: uuid }
+      name: { type: string }
+      phone: { type: string }
+    required: [id, name, phone]
+  currentContract:
+    type: object
+    nullable: true
+    description: Thông tin hợp đồng đang có hiệu lực tại phòng (null nếu phòng trống)
+    properties:
+      id: { type: string, format: uuid }
+      contractCode: { type: string }
+      startDate: { type: string, format: date-time }
+      endDate: { type: string, format: date-time }
+      status: { type: string }
+  currentMembers:
+    type: array
+    description: Danh sách thành viên đang sinh sống trong phòng
+    items:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        name: { type: string }
+        phone: { type: string, nullable: true }
+        avatarUrl: { type: string, nullable: true }
+        isRepresentative: { type: boolean }
+  latestMeterReadings:
+    type: object
+    nullable: true
+    description: Chỉ số điện nước chốt gần nhất của phòng
+    properties:
+      electricity: { type: string, nullable: true, example: "1350.5" }
+      water: { type: string, nullable: true, example: "120.0" }
+      recordedAt: { type: string, format: date-time, nullable: true }
   effectiveRatePolicySummary:
     type: object
-    description: Thông tin effective rate policy summary của tài nguyên trong ngữ cảnh DTO.
+    description: Tóm tắt chính sách giá điện nước đang áp dụng cho phòng
     properties:
-      electricity: { type: string, example: flat , description: "Thông tin electricity của tài nguyên trong ngữ cảnh DTO." }
-      water: { type: string, example: flat , description: "Thông tin water của tài nguyên trong ngữ cảnh DTO." }
-    required: [electricity, water]
+      electricity: { type: string, example: "flat" }
+      water: { type: string, example: "flat" }
 
 required:
   - id
   - buildingId
+  - buildingName
   - name
-  - description
-  - area
   - rentPrice
+  - depositAmount
   - status
-  - effectiveRatePolicySummary
+  - landlord

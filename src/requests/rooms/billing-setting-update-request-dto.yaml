@@ -1,22 +1,55 @@
 type: object
 x-apidog-folder: "BillingSetting/Request"
 title: BillingSettingUpdateRequestDto
-description: Dữ liệu cập nhật một phần cấu hình billing
+description: Dữ liệu cập nhật một phần cấu hình chu kỳ thanh toán và quét nợ của chủ nhà
 additionalProperties: false
 minProperties: 1
 
 properties:
-  dueDays:
+  meterCutoffDay:
     type: integer
-    description: Thông tin due days của tài nguyên trong ngữ cảnh DTO.
     minimum: 1
     maximum: 28
-  remindDays:
+    description: Ngày chốt chỉ số điện nước hàng tháng (1-28)
+  invoiceIssuanceDay:
     type: integer
-    description: Thông tin remind days của tài nguyên trong ngữ cảnh DTO.
+    minimum: 1
+    maximum: 28
+    description: Ngày tự động xuất hóa đơn hàng tháng (1-28)
+  paymentDueDay:
+    type: integer
+    minimum: 1
+    maximum: 28
+    description: Hạn thanh toán hóa đơn hàng tháng (1-28)
+  dueDays:
+    type: integer
     minimum: 1
     maximum: 28
     nullable: true
+    description: Số ngày được phép thanh toán sau khi xuất hóa đơn
+  remindDays:
+    type: integer
+    minimum: 1
+    maximum: 28
+    nullable: true
+    description: Số ngày nhắc nợ trước khi đến hạn thanh toán
+  debtScanEnabled:
+    type: boolean
+    description: Bật tính năng quét nợ và cảnh báo nợ tự động của chủ nhà
+  gracePeriodDays:
+    type: integer
+    minimum: 0
+    description: Số ngày ân hạn trước khi tính là nợ quá hạn
+  overdueReminderIntervalDays:
+    type: integer
+    minimum: 1
+    description: Tần suất gửi nhắc nợ quá hạn (ngày)
+  reminderChannels:
+    type: array
+    items:
+      type: string
+      enum: [APP_PUSH, SMS, ZALO, EMAIL]
+    description: Các kênh gửi nhắc nợ
   botEnabled:
     type: boolean
-    description: Thông tin bot enabled của tài nguyên trong ngữ cảnh DTO.
+    description: Bật bot tự động nhắc tiền trong nhóm chat

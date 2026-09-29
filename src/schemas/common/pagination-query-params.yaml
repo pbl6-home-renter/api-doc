@@ -1,0 +1,14 @@
+type: object
+title: PaginationQueryParams
+properties:
+  page:
+    type: integer
+    default: 1
+    minimum: 1
+  pageSize:
+    type: integer
+    default: 10
+    maximum: 100
+  sort:
+    type: string
+    example: "createdAt:desc"

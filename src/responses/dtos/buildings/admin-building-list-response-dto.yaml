@@ -4,9 +4,23 @@ title: BuildingAdminListResponseDto
 description: Danh sách tòa nhà dành cho admin
 
 properties:
-  id: { type: string, format: uuid , description: "Định danh duy nhất của tài nguyên." }
-  name: { type: string , description: "Thông tin name của tài nguyên trong ngữ cảnh DTO." }
-  landlordId: { type: string, format: uuid , description: "Thông tin landlord id của tài nguyên trong ngữ cảnh DTO." }
-  status: { type: string, enum: [pending, approved, rejected] , description: "Trạng thái hiện tại của tài nguyên trong quy trình nghiệp vụ." }
-  createdAt: { type: string, format: date-time , description: "Thời điểm bản ghi được tạo, theo định dạng ngày giờ ISO 8601." }
-required: [id, name, landlordId, status, createdAt]
+  id: { type: string, format: uuid, description: "Định danh duy nhất của tòa nhà." }
+  name: { type: string, description: "Tên tòa nhà." }
+  landlordId: { type: string, format: uuid, description: "Định danh chủ nhà." }
+  landlordName: { type: string, description: "Tên chủ nhà." }
+  landlordPhone: { type: string, description: "Số điện thoại của chủ nhà." }
+  status: { type: string, enum: [pending, approved, rejected], description: "Trạng thái kiểm duyệt tòa nhà." }
+  totalRooms: { type: integer, minimum: 0, description: "Tổng số phòng trong tòa nhà." }
+  documentsCount: { type: integer, minimum: 0, description: "Số lượng tài liệu/giấy tờ sở hữu đã tải lên." }
+  createdAt: { type: string, format: date-time, description: "Thời điểm bản ghi được tạo theo ISO 8601." }
+
+required:
+  - id
+  - name
+  - landlordId
+  - landlordName
+  - landlordPhone
+  - status
+  - totalRooms
+  - documentsCount
+  - createdAt

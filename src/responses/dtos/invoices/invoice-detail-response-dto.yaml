@@ -1,29 +1,105 @@
 type: object
 x-apidog-folder: "Invoice/Response"
 title: InvoiceDetailResponseDto
-description: Chi tiết hóa đơn và tổng hợp thanh toán
+description: Chi tiết hóa đơn hàng tháng với các dịch vụ (điện, nước, internet, rác...) được gộp chung, lịch sử thanh toán và mã VietQR
+
 properties:
-  id: { type: string, format: uuid , description: "Định danh duy nhất của tài nguyên." }
-  code: { type: string, minLength: 1, maxLength: 32 , description: "Mã ổn định để client nhận diện kết quả nghiệp vụ." }
+  id: { type: string, format: uuid, description: "Định danh duy nhất của hóa đơn." }
+  code: { type: string, minLength: 1, maxLength: 32, description: "Mã hóa đơn (VD: INV-2026-09-001)." }
+  contractId: { type: string, format: uuid, description: "Định danh hợp đồng liên quan." }
+  roomId: { type: string, format: uuid, description: "Định danh phòng liên quan." }
+  roomName: { type: string, description: "Tên phòng trọ (VD: P.201)." }
+  tenantName: { type: string, description: "Họ và tên người đại diện ký hợp đồng." }
+  tenantPhone: { type: string, description: "Số điện thoại người đại diện." }
   period: { type: string, pattern: '^[0-9]{4}-(0[1-9]|1[0-2])$', description: "Kỳ hóa đơn theo định dạng YYYY-MM." }
-  rentAmount: { type: integer, minimum: 0 , description: "Thông tin rent amount của tài nguyên trong ngữ cảnh DTO." }
-  breakdown: { type: array, nullable: true, items: { type: object } , description: "Các khoản chi tiết cấu thành hóa đơn; null khi không có breakdown." }
-  otherFees: { type: array, nullable: true, items: { type: object } , description: "Các khoản phí khác ngoài tiền thuê; null khi không có khoản phí." }
-  totalAmount: { type: integer, minimum: 0 , description: "Thông tin total amount của tài nguyên trong ngữ cảnh DTO." }
-  invoiceStatus: { type: string, enum: [pending, issued, void] , description: "Thông tin invoice status của tài nguyên trong ngữ cảnh DTO." }
-  issuedAt: { type: string, format: date-time, nullable: true , description: "Thông tin issued at của tài nguyên trong ngữ cảnh DTO." }
-  paidAmount: { type: integer, minimum: 0 , description: "Thông tin paid amount của tài nguyên trong ngữ cảnh DTO." }
-  remainingAmount: { type: integer, minimum: 0 , description: "Thông tin remaining amount của tài nguyên trong ngữ cảnh DTO." }
+  rentAmount: { type: integer, minimum: 0, description: "Tiền thuê phòng trong kỳ (VNĐ)." }
+  services:
+    type: array
+    description: Toàn bộ danh mục dịch vụ phát sinh trong kỳ (điện, nước, internet, rác, gửi xe, giặt sấy...)
+    items:
+      type: object
+      properties:
+        category:
+          type: string
+          enum: [ELECTRICITY, WATER, INTERNET, TRASH, PARKING, CLEANING, OTHER]
+          description: Phân loại dịch vụ
+        name:
+          type: string
+          description: "Tên dịch vụ hiển thị (VD: Tiền điện, Tiền nước, Internet)"
+        rateKind:
+          type: string
+          enum: [FLAT, PROGRESSIVE, PER_PERSON, PER_ROOM]
+          description: Phương thức tính phí
+        previousReading:
+          type: string
+          nullable: true
+          description: Chỉ số cũ (nếu có đồng hồ)
+        currentReading:
+          type: string
+          nullable: true
+          description: Chỉ số mới (nếu có đồng hồ)
+        usage:
+          type: string
+          nullable: true
+          description: Lượng tiêu thụ thực tế trong kỳ
+        unit:
+          type: string
+          description: Đơn vị tính (kWh, m3, tháng, người)
+        unitPrice:
+          type: integer
+          nullable: true
+          description: Đơn giá áp dụng (VNĐ)
+        amount:
+          type: integer
+          minimum: 0
+          description: Thành tiền của mục dịch vụ này (VNĐ)
+      required:
+        - category
+        - name
+        - unit
+        - amount
+  otherFees:
+    type: array
+    nullable: true
+    description: Các khoản phí phát sinh khác hoặc điều chỉnh giảm giá
+    items:
+      type: object
+      properties:
+        name: { type: string }
+        amount: { type: integer }
+        description: { type: string, nullable: true }
+  totalAmount: { type: integer, minimum: 0, description: "Tổng số tiền cần thanh toán trong hóa đơn (VNĐ)." }
+  paidAmount: { type: integer, minimum: 0, description: "Tổng số tiền đã được thanh toán (VNĐ)." }
+  remainingAmount: { type: integer, minimum: 0, description: "Số tiền nợ còn lại cần thanh toán (VNĐ)." }
+  dueDate: { type: string, format: date-time, description: "Hạn chót thanh toán hóa đơn." }
+  invoiceStatus: { type: string, enum: [pending, issued, void], description: "Trạng thái hóa đơn." }
+  issuedAt: { type: string, format: date-time, nullable: true, description: "Thời điểm hóa đơn được xuất." }
+  vietQrPaymentUrl: { type: string, format: uri, nullable: true, description: "Link mã QR động chuẩn VietQR chứa đúng số tiền và nội dung chuyển khoản cho hóa đơn này." }
+  payments:
+    type: array
+    description: Lịch sử các lần giao dịch thanh toán cho hóa đơn này (tiền mặt hoặc chuyển khoản)
+    items:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        paymentMethod: { type: string, enum: [vietqr, vnpay, momo, cash, mock] }
+        amount: { type: integer, minimum: 0 }
+        paymentStatus: { type: string }
+        paidAt: { type: string, format: date-time }
+        payerName: { type: string, nullable: true }
+        transactionId: { type: string, nullable: true }
 
 required:
   - id
   - code
+  - contractId
+  - roomName
+  - tenantName
   - period
   - rentAmount
-  - breakdown
-  - otherFees
+  - services
   - totalAmount
-  - invoiceStatus
-  - issuedAt
   - paidAmount
   - remainingAmount
+  - dueDate
+  - invoiceStatus

@@ -1,22 +1,95 @@
 type: object
 x-apidog-folder: "Contract/Request"
 title: ContractCreateRequestDto
-description: Dữ liệu tạo hợp đồng nháp
+description: Dữ liệu tạo hợp đồng thuê phòng mới
 additionalProperties: false
+
 properties:
-  roomId: { type: string, format: uuid , description: "Định danh duy nhất của phòng liên quan." }
-  tenantId: { type: string, format: uuid, nullable: true , description: "Thông tin tenant id của tài nguyên trong ngữ cảnh DTO." }
-  tenantName: { type: string, nullable: true, minLength: 1, maxLength: 254 , description: "Thông tin tenant name của tài nguyên trong ngữ cảnh DTO." }
+  roomId:
+    type: string
+    format: uuid
+    description: Định danh duy nhất của phòng cần lập hợp đồng
+    example: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+  rentalType:
+    type: string
+    enum: [MONTHLY, DAILY]
+    description: Hình thức thuê dài hạn theo tháng (MONTHLY) hoặc ngắn hạn theo ngày (DAILY, không tính theo giờ)
+    example: "MONTHLY"
+  tenantId:
+    type: string
+    format: uuid
+    nullable: true
+    description: Định danh tài khoản khách thuê nếu đã có tài khoản trên Rentify
+    example: null
+  tenantName:
+    type: string
+    minLength: 1
+    maxLength: 254
+    description: Họ tên người đại diện ký hợp đồng
+    example: "Trần Thị B"
   tenantPhone:
     type: string
-    description: Thông tin tenant phone của tài nguyên trong ngữ cảnh DTO.
-    nullable: true
     minLength: 10
     maxLength: 12
-    pattern: '^0[0-9]{9}$|^\+84[0-9]{9}$'
-  depositAmount: { type: integer, minimum: 0 , description: "Thông tin deposit amount của tài nguyên trong ngữ cảnh DTO." }
-  rentPrice: { type: integer, minimum: 0 , description: "Thông tin rent price của tài nguyên trong ngữ cảnh DTO." }
-  startDate: { type: string, format: date-time , description: "Thông tin start date của tài nguyên trong ngữ cảnh DTO." }
-  endDate: { type: string, format: date-time , description: "Thông tin end date của tài nguyên trong ngữ cảnh DTO." }
-  vehicleCount: { type: integer, minimum: 0, nullable: true , description: "Thông tin vehicle count của tài nguyên trong ngữ cảnh DTO." }
-required: [roomId, tenantId, tenantName, tenantPhone, depositAmount, rentPrice, startDate, endDate, vehicleCount]
+    pattern: '^0[0-9]{9}$|^+84[0-9]{9}$'
+    description: Số điện thoại người đại diện ký hợp đồng
+    example: "0901234567"
+  tenantCccd:
+    type: string
+    minLength: 9
+    maxLength: 12
+    description: Số CCCD/CMND của người đại diện ký hợp đồng để đối chiếu dân sự
+    example: "048195001234"
+  depositAmount:
+    type: integer
+    minimum: 0
+    description: Số tiền đặt cọc giữ phòng (VNĐ)
+    example: 3500000
+  rentPrice:
+    type: integer
+    minimum: 0
+    description: Tiền thuê theo chu kỳ (tháng hoặc ngày tùy rentalType) (VNĐ)
+    example: 3500000
+  paymentDueDay:
+    type: integer
+    minimum: 1
+    maximum: 28
+    nullable: true
+    description: Ngày trong tháng người thuê phải đóng tiền phòng (1-28; chỉ áp dụng cho MONTHLY)
+    example: 5
+  startDate:
+    type: string
+    format: date-time
+    description: Ngày bắt đầu tính tiền thuê phòng
+    example: "2026-10-01T00:00:00Z"
+  endDate:
+    type: string
+    format: date-time
+    description: Ngày kết thúc hợp đồng thuê
+    example: "2027-10-01T00:00:00Z"
+  vehicleCount:
+    type: integer
+    minimum: 0
+    nullable: true
+    description: Số lượng xe máy gửi tại nhà xe
+    example: 1
+  templateKey:
+    type: string
+    nullable: true
+    description: Mã mẫu văn bản hợp đồng áp dụng
+    example: "STANDARD_RENTAL_CONTRACT_V1"
+  templateVariables:
+    type: object
+    nullable: true
+    description: Dữ liệu biến tùy chỉnh điền vào các trường trong mẫu hợp đồng
+
+required:
+  - roomId
+  - rentalType
+  - tenantName
+  - tenantPhone
+  - tenantCccd
+  - depositAmount
+  - rentPrice
+  - startDate
+  - endDate

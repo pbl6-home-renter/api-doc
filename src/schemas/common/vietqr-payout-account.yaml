@@ -1,0 +1,23 @@
+type: object
+title: VietQrPayoutAccount
+properties:
+  bankCode:
+    type: string
+    example: "970422"
+    description: Mã định danh ngân hàng (BIN) theo Napas/VietQR
+  bankName:
+    type: string
+    example: "MBBank"
+    description: Tên thương mại ngân hàng
+  accountNumber:
+    type: string
+    example: "0912345678"
+    description: Số tài khoản ngân hàng thụ hưởng
+  accountHolderName:
+    type: string
+    example: "LE HOANG NAM"
+    description: Tên chủ tài khoản viết hoa không dấu
+  branch:
+    type: string
+    nullable: true
+    example: "Chi nhánh TP. Hồ Chí Minh"
