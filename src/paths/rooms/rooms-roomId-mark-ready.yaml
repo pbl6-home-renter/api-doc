@@ -1,0 +1,83 @@
+post:
+  tags:
+  - Property
+  x-apidog-folder: Room
+  operationId: postRoomsRoomidMarkReady
+  security:
+    - BearerAuth: []
+  summary: Mark room ready for rent
+  description: 'landlord. Đánh dấu phòng sẵn sàng cho thuê. Lỗi nghiệp vụ: 404 NOT FOUND · 403 FORBIDDEN · 409 INVALID
+    ROOM TRANSITION.'
+  parameters:
+  - name: roomId
+    in: path
+    required: true
+    schema:
+      type: string
+      format: uuid
+  responses:
+    '200':
+      description: 'Thành công: Đánh dấu phòng sẵn sàng cho thuê.'
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required:
+            - statusCode
+            - code
+            - data
+            properties:
+              statusCode:
+                type: integer
+                enum:
+                - 200
+              code:
+                type: string
+                enum:
+                - ROOM_MARKED_READY
+              data:
+                $ref: ../../openapi.yaml#/components/schemas/RoomMarkReadyResponseDto
+          example:
+            statusCode: 200
+            code: ROOM_MARKED_READY
+            data:
+              id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+              status: available
+    '400':
+      $ref: ../../openapi.yaml#/components/responses/BadRequestPathError
+    '401':
+      $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
+    '403':
+      $ref: ../../openapi.yaml#/components/responses/ForbiddenError
+    '404':
+      $ref: ../../openapi.yaml#/components/responses/NotFoundError
+    '409':
+      x-apidog-name: Conflict
+      description: Yêu cầu xung đột với trạng thái hiện tại hoặc dữ liệu đã tồn tại.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code]
+            properties:
+              statusCode:
+                type: integer
+                enum: [409]
+              code:
+                type: string
+                enum:
+                  - INVALID_ROOM_TRANSITION
+                description: |-
+                  - INVALID_ROOM_TRANSITION: Không thể chuyển phòng sang trạng thái yêu cầu.
+          examples:
+            invalid_room_transition:
+              summary: INVALID_ROOM_TRANSITION — Không thể chuyển phòng sang trạng thái yêu cầu.
+              value:
+                statusCode: 409
+                code: INVALID_ROOM_TRANSITION
+    '429':
+      $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
+    '500':
+      $ref: ../../openapi.yaml#/components/responses/InternalServerError

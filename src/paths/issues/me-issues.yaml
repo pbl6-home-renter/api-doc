@@ -1,0 +1,167 @@
+get:
+  tags:
+  - Operation
+  x-apidog-folder: IssueReport
+  operationId: getMeIssues
+  security:
+    - BearerAuth: []
+  summary: List my issues
+  description: 'tenant. Sự cố của tôi. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 VALIDATION FAILED.'
+  parameters:
+  - name: filter
+    in: query
+    required: false
+    style: deepObject
+    explode: true
+    description: Bộ lọc được endpoint hỗ trợ.
+    schema:
+      type: object
+      additionalProperties: false
+      properties:
+        status:
+          type: string
+        roomId:
+          type: string
+          format: uuid
+  - name: sort
+    in: query
+    description: Một trường sắp xếp được endpoint hỗ trợ.
+    schema:
+      type: string
+      default: createdAt
+  - name: order
+    in: query
+    schema:
+      type: string
+      enum:
+      - asc
+      - desc
+      default: asc
+  - name: pageSize
+    in: query
+    schema:
+      type: integer
+      minimum: 1
+      maximum: 100
+      default: 20
+  - name: pageNo
+    in: query
+    schema:
+      type: integer
+      minimum: 1
+      default: 1
+  - name: format
+    in: query
+    description: json trả envelope; định dạng khác trả file stream.
+    schema:
+      type: string
+      enum:
+      - json
+      - xlsx
+      - csv
+      - pdf
+      default: json
+  responses:
+    '200':
+      description: 'Thành công: Sự cố của tôi.'
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required:
+            - statusCode
+            - code
+            - data
+            - pagination
+            properties:
+              statusCode:
+                type: integer
+                enum:
+                - 200
+              code:
+                type: string
+                enum:
+                - ISSUES_MY_FETCHED
+              data:
+                type: array
+                items:
+                  $ref: ../../openapi.yaml#/components/schemas/IssueReportMyListResponseDto
+              pagination:
+                type: object
+                additionalProperties: false
+                required:
+                - type
+                - pageNo
+                - pageSize
+                - totalItems
+                - totalPages
+                - hasNextPage
+                - hasPreviousPage
+                properties:
+                  type:
+                    type: string
+                    enum:
+                    - offset
+                  pageNo:
+                    type: integer
+                    minimum: 1
+                  pageSize:
+                    type: integer
+                    minimum: 1
+                    maximum: 100
+                  totalItems:
+                    type: integer
+                    minimum: 0
+                  totalPages:
+                    type: integer
+                    minimum: 0
+                  hasNextPage:
+                    type: boolean
+                  hasPreviousPage:
+                    type: boolean
+          example:
+            statusCode: 200
+            code: ISSUES_MY_FETCHED
+            data:
+            - id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+              roomId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+              title: Vòi xịt bồn cầu bị rò rỉ
+              status: open
+              description: Nước rò rỉ liên tục
+              roomName: Ví dụ
+              category: PLUMBING
+              urgency: HIGH
+              createdAt: '2026-09-23T11:55:00.000Z'
+            pagination:
+              type: offset
+              pageNo: 1
+              pageSize: 20
+              totalItems: 1
+              totalPages: 1
+              hasNextPage: false
+              hasPreviousPage: false
+        text/csv:
+          schema:
+            type: string
+            format: binary
+        application/pdf:
+          schema:
+            type: string
+            format: binary
+        application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+          schema:
+            type: string
+            format: binary
+    '400':
+      $ref: ../../openapi.yaml#/components/responses/BadRequestQueryError
+    '401':
+      $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
+    '403':
+      $ref: ../../openapi.yaml#/components/responses/ForbiddenError
+    '422':
+      $ref: ../../openapi.yaml#/components/responses/ValidationError
+    '429':
+      $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
+    '500':
+      $ref: ../../openapi.yaml#/components/responses/InternalServerError

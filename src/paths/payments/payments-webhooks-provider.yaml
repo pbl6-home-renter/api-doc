@@ -1,0 +1,110 @@
+post:
+  tags:
+  - Billing
+  x-apidog-folder: Payment
+  operationId: postPaymentsWebhooksProvider
+  summary: Handle payment provider webhook
+  security: []
+  description: 'system. Nhận callback đã ký từ provider. Lỗi nghiệp vụ: 401 INVALID SIGNATURE · 409 DUPLICATE WEBHOOK
+    · 422 WEBHOOK INVALID.'
+  parameters:
+  - name: provider
+    in: path
+    required: true
+    schema:
+      type: string
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: ../../openapi.yaml#/components/schemas/PaymentWebhookRequestDto
+  responses:
+    '204':
+      $ref: ../../openapi.yaml#/components/responses/NoContentResponse
+    '400':
+      $ref: ../../openapi.yaml#/components/responses/BadRequestBodyPathError
+    '401':
+      x-apidog-name: Unauthorized
+      description: Không xác thực được chữ ký của payment provider.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code]
+            properties:
+              statusCode:
+                type: integer
+                enum: [401]
+              code:
+                type: string
+                enum:
+                  - INVALID_SIGNATURE
+          examples:
+            invalid_signature:
+              summary: INVALID_SIGNATURE — Chữ ký webhook không hợp lệ.
+              value:
+                statusCode: 401
+                code: INVALID_SIGNATURE
+    '409':
+      x-apidog-name: Conflict
+      description: Yêu cầu xung đột với trạng thái hiện tại hoặc dữ liệu đã tồn tại.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code]
+            properties:
+              statusCode:
+                type: integer
+                enum: [409]
+              code:
+                type: string
+                enum:
+                  - DUPLICATE_WEBHOOK
+                description: |-
+                  - DUPLICATE_WEBHOOK: Webhook đã được xử lý.
+          examples:
+            duplicate_webhook:
+              summary: DUPLICATE_WEBHOOK — Webhook đã được xử lý.
+              value:
+                statusCode: 409
+                code: DUPLICATE_WEBHOOK
+    '422':
+      x-apidog-name: Unprocessable Entity
+      description: Dữ liệu hợp lệ về cấu trúc nhưng vi phạm ràng buộc trường hoặc quy tắc nghiệp vụ.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code]
+            properties:
+              statusCode:
+                type: integer
+                enum: [422]
+              code:
+                type: string
+                enum:
+                  - WEBHOOK_INVALID
+                  - VALIDATION_FAILED
+                description: |-
+                  - WEBHOOK_INVALID: Nội dung webhook không hợp lệ.
+                  - VALIDATION_FAILED: Dữ liệu vi phạm ràng buộc schema hoặc quy tắc nghiệp vụ khác chưa có mã riêng.
+          examples:
+            webhook_invalid:
+              summary: WEBHOOK_INVALID — Nội dung webhook không hợp lệ.
+              value:
+                statusCode: 422
+                code: WEBHOOK_INVALID
+            validation_failed:
+              summary: VALIDATION_FAILED — Dữ liệu vi phạm ràng buộc schema hoặc quy tắc nghiệp vụ khác chưa có mã riêng.
+              value:
+                statusCode: 422
+                code: VALIDATION_FAILED
+    '500':
+      $ref: ../../openapi.yaml#/components/responses/InternalServerError
+    '200':
+      description: Provider acknowledgement; không có JSON wrapper.

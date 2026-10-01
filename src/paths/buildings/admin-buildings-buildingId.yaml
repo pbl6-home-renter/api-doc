@@ -1,0 +1,72 @@
+get:
+  tags:
+  - Property
+  x-apidog-folder: Building
+  operationId: getAdminBuildingsBuildingid
+  security:
+    - BearerAuth: []
+  summary: Get building details for approval
+  description: 'admin. Chi tiết tòa nhà trong hàng đợi duyệt. Lỗi nghiệp vụ: 404 NOT FOUND · 403 FORBIDDEN.'
+  parameters:
+  - name: buildingId
+    in: path
+    required: true
+    schema:
+      type: string
+      format: uuid
+  responses:
+    '200':
+      description: 'Thành công: Chi tiết tòa nhà trong hàng đợi duyệt.'
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required:
+            - statusCode
+            - code
+            - data
+            properties:
+              statusCode:
+                type: integer
+                enum:
+                - 200
+              code:
+                type: string
+                enum:
+                - BUILDING_ADMIN_FETCHED
+              data:
+                $ref: ../../openapi.yaml#/components/schemas/BuildingAdminDetailResponseDto
+          example:
+            statusCode: 200
+            code: BUILDING_ADMIN_FETCHED
+            data:
+              id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+              name: Tòa nhà Rentify Central Park
+              address: 123 Nguyễn Thị Minh Khai
+              landlordId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+              status: pending
+              totalRooms: 12
+              occupancyRate: '75.0'
+              reviewNote: null
+              createdAt: '2026-09-20T08:00:00.000Z'
+              province: Thành phố Hồ Chí Minh
+              district: Quận 1
+              ward: Phường Bến Nghé
+              landlord:
+                id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                name: Ví dụ
+                phone: '0901234567'
+              ownershipDocuments: []
+    '400':
+      $ref: ../../openapi.yaml#/components/responses/BadRequestPathError
+    '401':
+      $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
+    '403':
+      $ref: ../../openapi.yaml#/components/responses/ForbiddenError
+    '404':
+      $ref: ../../openapi.yaml#/components/responses/NotFoundError
+    '429':
+      $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
+    '500':
+      $ref: ../../openapi.yaml#/components/responses/InternalServerError

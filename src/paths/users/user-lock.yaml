@@ -1,0 +1,125 @@
+post:
+  tags:
+  - User
+  x-apidog-folder: User
+  operationId: lockUser
+  security:
+    - BearerAuth: []
+  summary: Lock user
+  description: "Chỉ admin; yêu cầu access token. Khóa tài khoản, thu hồi phiên và ghi audit log. Nghiệp vụ: Khi khóa chủ trọ, toàn bộ thông tin/phòng của chủ trọ sẽ bị vô hiệu hóa (ẩn khỏi sàn), hợp đồng đang hiệu lực chuyển sang trạng thái tạm thời kết thúc (nếu đến hạn chưa mở khóa thì tự hủy). Khi khóa người thuê, người thuê vẫn được thanh toán hóa đơn hợp đồng hiện tại, nhưng không thể gia hạn và không thể thuê trọ mới.log."
+  parameters:
+  - name: userId
+    in: path
+    required: true
+    description: UUID của người dùng.
+    schema:
+      type: string
+      format: uuid
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: ../../openapi.yaml#/components/schemas/UserLockRequestDto
+        example:
+          lockReason: Spam listing
+  responses:
+    '200':
+      description: User locked
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required:
+            - statusCode
+            - code
+            - data
+            properties:
+              statusCode:
+                type: integer
+                enum:
+                - 200
+              code:
+                type: string
+                enum:
+                - USER_LOCKED
+              data:
+                $ref: ../../openapi.yaml#/components/schemas/UserLockResponseDto
+          example:
+            statusCode: 200
+            code: USER_LOCKED
+            data:
+              userId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+              status: locked
+              lockReason: Spam listing
+              lockedAt: '2026-09-23T11:55:00.000Z'
+    '400':
+      $ref: ../../openapi.yaml#/components/responses/BadRequestBodyPathError
+    '401':
+      $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
+    '403':
+      $ref: ../../openapi.yaml#/components/responses/ForbiddenError
+    '404':
+      $ref: ../../openapi.yaml#/components/responses/NotFoundError
+    '409':
+      x-apidog-name: Conflict
+      description: Yêu cầu xung đột với trạng thái hiện tại hoặc dữ liệu đã tồn tại.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code]
+            properties:
+              statusCode:
+                type: integer
+                enum: [409]
+              code:
+                type: string
+                enum:
+                  - USER_ALREADY_LOCKED
+                description: |-
+                  - USER_ALREADY_LOCKED: Tài khoản đã bị khóa.
+          examples:
+            user_already_locked:
+              summary: USER_ALREADY_LOCKED — Tài khoản đã bị khóa.
+              value:
+                statusCode: 409
+                code: USER_ALREADY_LOCKED
+    '422':
+      x-apidog-name: Unprocessable Entity
+      description: Lý do khóa tài khoản không hợp lệ.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code]
+            properties:
+              statusCode:
+                type: integer
+                enum: [422]
+              code:
+                type: string
+                enum:
+                  - LOCK_REASON_REQUIRED
+                  - VALIDATION_FAILED
+                description: |-
+                  - LOCK_REASON_REQUIRED: Thiếu lockReason hoặc lockReason là null.
+                  - VALIDATION_FAILED: Giá trị lockReason vi phạm ràng buộc khác.
+          examples:
+            lock_reason_required:
+              summary: LOCK_REASON_REQUIRED — Thiếu lockReason hoặc lockReason là null.
+              value:
+                statusCode: 422
+                code: LOCK_REASON_REQUIRED
+            validation_failed:
+              summary: VALIDATION_FAILED — Giá trị lockReason vi phạm ràng buộc khác.
+              value:
+                statusCode: 422
+                code: VALIDATION_FAILED
+    '429':
+      $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
+    '500':
+      $ref: ../../openapi.yaml#/components/responses/InternalServerError

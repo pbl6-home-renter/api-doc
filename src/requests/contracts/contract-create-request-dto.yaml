@@ -31,7 +31,7 @@ properties:
     type: string
     minLength: 10
     maxLength: 12
-    pattern: '^0[0-9]{9}$|^+84[0-9]{9}$'
+    pattern: '^(0[0-9]{9}|\+84[0-9]{9})$'
     description: Số điện thoại người đại diện ký hợp đồng
     example: "0901234567"
   tenantCccd:
@@ -59,14 +59,14 @@ properties:
     example: 5
   startDate:
     type: string
-    format: date-time
+    format: date
     description: Ngày bắt đầu tính tiền thuê phòng
-    example: "2026-10-01T00:00:00Z"
+    example: "2026-10-01"
   endDate:
     type: string
-    format: date-time
+    format: date
     description: Ngày kết thúc hợp đồng thuê
-    example: "2027-10-01T00:00:00Z"
+    example: "2027-10-01"
   vehicleCount:
     type: integer
     minimum: 0

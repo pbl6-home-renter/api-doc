@@ -1,0 +1,122 @@
+post:
+  tags:
+  - Billing
+  x-apidog-folder: MeterReading
+  operationId: postBulkMeterReadings
+  security:
+    - BearerAuth: []
+  summary: Bulk create meter readings
+  description: "landlord. Nhập và chốt chỉ số điện/nước hàng loạt cho nhiều phòng trong tòa nhà theo kỳ ghi số. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 VALIDATION FAILED · 409 DUPLICATE READING."
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: ../../openapi.yaml#/components/schemas/BulkMeterReadingCreateRequestDto
+        example:
+          buildingId: 9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d
+          recordedMonth: "2026-09"
+          readingMethod: CAMERA_CAPTURE
+          readings:
+          - roomId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+            type: electricity
+            previousReading: "1250.0"
+            currentReading: "1380.0"
+            evidenceMediaId: 48fae08f-e1a5-48b4-9c02-e2513470ff42
+  responses:
+    "201":
+      description: "Thành công: Ghi chỉ số hàng loạt."
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required:
+            - statusCode
+            - code
+            - data
+            properties:
+              statusCode:
+                type: integer
+                enum:
+                - 201
+              code:
+                type: string
+                enum:
+                - METER_READINGS_BULK_RECORDED
+              data:
+                $ref: ../../openapi.yaml#/components/schemas/BulkMeterReadingResponseDto
+    "400":
+      $ref: ../../openapi.yaml#/components/responses/BadRequestBodyError
+    "401":
+      $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
+    "403":
+      $ref: ../../openapi.yaml#/components/responses/ForbiddenError
+    "404":
+      $ref: ../../openapi.yaml#/components/responses/NotFoundError
+    '422':
+      x-apidog-name: Unprocessable Entity
+      description: Dữ liệu hợp lệ về cấu trúc nhưng vi phạm quy tắc của endpoint.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code]
+            properties:
+              statusCode:
+                type: integer
+                enum: [422]
+              code:
+                type: string
+                enum:
+                  - CURRENT_READING_INVALID
+                  - EVIDENCE_REQUIRED
+                  - VALIDATION_FAILED
+                description: |-
+                  - CURRENT_READING_INVALID: Chỉ số hiện tại nhỏ hơn chỉ số trước đó trong ít nhất một bản ghi.
+                  - EVIDENCE_REQUIRED: Thiếu ảnh chứng cứ của ít nhất một chỉ số cần chốt.
+                  - VALIDATION_FAILED: Danh sách chỉ số hoặc kỳ ghi số vi phạm ràng buộc khác.
+          examples:
+            current_reading_invalid:
+              summary: CURRENT_READING_INVALID — Chỉ số hiện tại nhỏ hơn chỉ số trước đó trong ít nhất một bản ghi.
+              value:
+                statusCode: 422
+                code: CURRENT_READING_INVALID
+            evidence_required:
+              summary: EVIDENCE_REQUIRED — Thiếu ảnh chứng cứ của ít nhất một chỉ số cần chốt.
+              value:
+                statusCode: 422
+                code: EVIDENCE_REQUIRED
+            validation_failed:
+              summary: VALIDATION_FAILED — Danh sách chỉ số hoặc kỳ ghi số vi phạm ràng buộc khác.
+              value:
+                statusCode: 422
+                code: VALIDATION_FAILED
+    '409':
+      x-apidog-name: Conflict
+      description: Yêu cầu xung đột với trạng thái hiện tại hoặc dữ liệu đã tồn tại.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code]
+            properties:
+              statusCode:
+                type: integer
+                enum: [409]
+              code:
+                type: string
+                enum:
+                  - DUPLICATE_READING
+                description: |-
+                  - DUPLICATE_READING: Chỉ số ghi hàng loạt bị trùng.
+          examples:
+            duplicate_reading:
+              summary: DUPLICATE_READING — Chỉ số ghi hàng loạt bị trùng.
+              value:
+                statusCode: 409
+                code: DUPLICATE_READING
+    '500':
+      $ref: ../../openapi.yaml#/components/responses/InternalServerError

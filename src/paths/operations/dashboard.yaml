@@ -1,0 +1,97 @@
+get:
+  tags:
+  - Operation
+  x-apidog-folder: Dashboard
+  operationId: getDashboard
+  security:
+    - BearerAuth: []
+  summary: Get system dashboard metrics
+  description: 'admin. Đọc số liệu tổng hợp hệ thống. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 INVALID DATE RANGE.'
+  parameters:
+  - name: from
+    in: query
+    schema:
+      type: string
+      format: date
+  - name: to
+    in: query
+    schema:
+      type: string
+      format: date
+  responses:
+    '200':
+      description: 'Thành công: Đọc số liệu tổng hợp hệ thống.'
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required:
+            - statusCode
+            - code
+            - data
+            properties:
+              statusCode:
+                type: integer
+                enum:
+                - 200
+              code:
+                type: string
+                enum:
+                - DASHBOARD_FETCHED
+              data:
+                $ref: ../../openapi.yaml#/components/schemas/DashboardResponseDto
+          example:
+            statusCode: 200
+            code: DASHBOARD_FETCHED
+            data:
+              totalUsers: 1250
+              totalLandlords: 320
+              totalTenants: 930
+              totalBuildings: 145
+              pendingApprovalBuildings: 8
+              totalRooms: 1580
+              occupancyRate: '89.2'
+              systemTransactionVolume: 3450000000
+    '400':
+      $ref: ../../openapi.yaml#/components/responses/BadRequestQueryError
+    '401':
+      $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
+    '403':
+      $ref: ../../openapi.yaml#/components/responses/ForbiddenError
+    '422':
+      x-apidog-name: Unprocessable Entity
+      description: Dữ liệu hợp lệ về cấu trúc nhưng vi phạm ràng buộc trường hoặc quy tắc nghiệp vụ.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code]
+            properties:
+              statusCode:
+                type: integer
+                enum: [422]
+              code:
+                type: string
+                enum:
+                  - INVALID_DATE_RANGE
+                  - VALIDATION_FAILED
+                description: |-
+                  - INVALID_DATE_RANGE: Khoảng ngày không hợp lệ.
+                  - VALIDATION_FAILED: Dữ liệu vi phạm ràng buộc schema hoặc quy tắc nghiệp vụ khác chưa có mã riêng.
+          examples:
+            invalid_date_range:
+              summary: INVALID_DATE_RANGE — Khoảng ngày không hợp lệ.
+              value:
+                statusCode: 422
+                code: INVALID_DATE_RANGE
+            validation_failed:
+              summary: VALIDATION_FAILED — Dữ liệu vi phạm ràng buộc schema hoặc quy tắc nghiệp vụ khác chưa có mã riêng.
+              value:
+                statusCode: 422
+                code: VALIDATION_FAILED
+    '429':
+      $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
+    '500':
+      $ref: ../../openapi.yaml#/components/responses/InternalServerError

@@ -20,12 +20,17 @@ properties:
     type: string
     description: Thông tin phone của tài nguyên trong ngữ cảnh DTO.
     minLength: 10
-    maxLength: 12
+    maxLength: 10
+    pattern: '^0[0-9]{9}$'
     example: "0901234567"
 
   payoutAccount:
     type: object
     nullable: true
+    example:
+      bankCode: '970415'
+      accountNumber: '**43210'
+      accountName: LE VAN AN
     properties:
       bankCode:
         type: string

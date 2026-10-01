@@ -1,0 +1,112 @@
+post:
+  tags:
+  - Operation
+  x-apidog-folder: Media
+  operationId: postMediaPresignUpload
+  security:
+    - BearerAuth: []
+  summary: Request presigned upload URL
+  description: "tenant, landlord, admin. Xin URL upload đã ký để đẩy file trực tiếp lên Storage. Nghiệp vụ: Với ảnh công tơ điện nước, tenant chỉ được dùng camera trực tiếp (camera_direct), landlord được upload từ bộ nhớ máy (device_storage). Lỗi nghiệp vụ: 403 FORBIDDEN · 422 VALIDATION FAILED."
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: ../../openapi.yaml#/components/schemas/MediaPresignUploadRequestDto
+        example:
+          ownerType: room
+          ownerId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+          purpose: cover_photo
+          fileName: p201.jpg
+          contentType: image/jpeg
+          size: 248120
+  responses:
+    '201':
+      description: 'Thành công: Xin URL upload đã ký.'
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required:
+            - statusCode
+            - code
+            - data
+            properties:
+              statusCode:
+                type: integer
+                enum:
+                - 201
+              code:
+                type: string
+                enum:
+                - MEDIA_UPLOAD_TICKET_ISSUED
+              data:
+                $ref: ../../openapi.yaml#/components/schemas/MediaPresignUploadResponseDto
+          example:
+            statusCode: 201
+            code: MEDIA_UPLOAD_TICKET_ISSUED
+            data:
+              id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+              ownerType: room
+              ownerId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+              purpose: cover_photo
+              uploadUrl: https://example.com/upload
+              requiredHeaders:
+                Content-Type: image/jpeg
+              expiresIn: 900
+      headers:
+        Location:
+          description: Đường dẫn tài nguyên được tạo.
+          schema:
+            type: string
+            example: /api/v1/media/{mediaId}
+    '400':
+      $ref: ../../openapi.yaml#/components/responses/BadRequestBodyError
+    '401':
+      $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
+    '403':
+      $ref: ../../openapi.yaml#/components/responses/ForbiddenError
+    '422':
+      x-apidog-name: Unprocessable Entity
+      description: Thông tin tệp hoặc mục đích tải lên không hợp lệ.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code]
+            properties:
+              statusCode:
+                type: integer
+                enum: [422]
+              code:
+                type: string
+                enum:
+                  - MEDIA_TYPE_NOT_ALLOWED
+                  - INVALID_PURPOSE
+                  - VALIDATION_FAILED
+                description: |-
+                  - MEDIA_TYPE_NOT_ALLOWED: Loại MIME hoặc kích thước tệp không được phép.
+                  - INVALID_PURPOSE: Mục đích upload không phù hợp với tài nguyên cha.
+                  - VALIDATION_FAILED: Lỗi validation khác chưa có mã cụ thể.
+          examples:
+            media_type_not_allowed:
+              summary: MEDIA_TYPE_NOT_ALLOWED — Loại MIME hoặc kích thước tệp không được phép.
+              value:
+                statusCode: 422
+                code: MEDIA_TYPE_NOT_ALLOWED
+            invalid_purpose:
+              summary: INVALID_PURPOSE — Mục đích upload không phù hợp với tài nguyên cha.
+              value:
+                statusCode: 422
+                code: INVALID_PURPOSE
+            validation_failed:
+              summary: VALIDATION_FAILED — Lỗi validation khác chưa có mã cụ thể.
+              value:
+                statusCode: 422
+                code: VALIDATION_FAILED
+    '429':
+      $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
+    '500':
+      $ref: ../../openapi.yaml#/components/responses/InternalServerError

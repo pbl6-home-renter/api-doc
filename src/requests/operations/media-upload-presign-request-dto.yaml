@@ -57,6 +57,15 @@ properties:
     description: MIME type của file
     example: image/jpeg
 
+  captureSource:
+    type: string
+    enum:
+      - camera_direct
+      - device_storage
+    nullable: true
+    description: "Nguồn tải tệp. Đối với ảnh công tơ điện nước (purpose: meter_reading_evidence), người thuê (tenant) bắt buộc phải chụp trực tiếp từ camera (camera_direct), chỉ chủ trọ (landlord) mới được tải tệp từ thiết bị (device_storage)."
+    example: camera_direct
+
   size:
     type: integer
     description: Kích thước file tính bằng byte

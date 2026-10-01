@@ -10,6 +10,9 @@ servers:
   - url: http://localhost:3000/api/v1
     description: Môi trường phát triển cục bộ (Local Development)
 
+security:
+  - BearerAuth: []
+
 tags:
   - name: Auth
     description: Quản lý xác thực và phiên làm việc
@@ -41,6 +44,178 @@ paths:
     $ref: './paths/auth/logout.yaml'
   /auth/password-reset-requests:
     $ref: './paths/auth/password-reset-requests.yaml'
+  /auth/password-resets:
+    $ref: './paths/auth/password-resets.yaml'
+  /me:
+    $ref: './paths/users/me.yaml'
+  /me/password:
+    $ref: './paths/users/me-password.yaml'
+  /users:
+    $ref: './paths/users/users.yaml'
+  /users/{userId}:
+    $ref: './paths/users/user-by-id.yaml'
+  /users/{userId}/lock:
+    $ref: './paths/users/user-lock.yaml'
+  /users/{userId}/unlock:
+    $ref: './paths/users/user-unlock.yaml'
+
+  /me/push-devices:
+    $ref: './paths/notification/me-push-devices.yaml'
+  /me/push-devices/{deviceId}:
+    $ref: './paths/notification/me-push-devices-deviceId.yaml'
+  /media/presign-upload:
+    $ref: './paths/media/media-presign-upload.yaml'
+  /media/{mediaId}/complete-upload:
+    $ref: './paths/media/media-mediaId-complete-upload.yaml'
+  /media/{mediaId}:
+    $ref: './paths/media/media-mediaId.yaml'
+  /buildings:
+    $ref: './paths/buildings/buildings.yaml'
+  /me/buildings:
+    $ref: './paths/buildings/me-buildings.yaml'
+  /admin/buildings:
+    $ref: './paths/buildings/admin-buildings.yaml'
+  /buildings/{buildingId}:
+    $ref: './paths/buildings/buildings-buildingId.yaml'
+  /buildings/{buildingId}/vietqr-config:
+    $ref: './paths/buildings/buildings-buildingId-vietqr-config.yaml'
+  /buildings/{buildingId}/rate-policies/batch:
+    $ref: './paths/buildings/buildings-buildingId-rate-policies-batch.yaml'
+  /me/buildings/{buildingId}:
+    $ref: './paths/buildings/me-buildings-buildingId.yaml'
+  /buildings/{buildingId}/approve:
+    $ref: './paths/buildings/buildings-buildingId-approve.yaml'
+  /buildings/{buildingId}/reject:
+    $ref: './paths/buildings/buildings-buildingId-reject.yaml'
+  /admin/buildings/{buildingId}:
+    $ref: './paths/buildings/admin-buildings-buildingId.yaml'
+  /rooms:
+    $ref: './paths/rooms/rooms.yaml'
+  /me/rooms:
+    $ref: './paths/rooms/me-rooms.yaml'
+  /me/room-hub:
+    $ref: './paths/rooms/me-room-hub.yaml'
+  /rooms/{roomId}:
+    $ref: './paths/rooms/rooms-roomId.yaml'
+  /rooms/{roomId}/mark-ready:
+    $ref: './paths/rooms/rooms-roomId-mark-ready.yaml'
+  /me/favorite-rooms:
+    $ref: './paths/rooms/me-favorite-rooms.yaml'
+  /me/favorite-rooms/{roomId}:
+    $ref: './paths/rooms/me-favorite-rooms-roomId.yaml'
+  /roommate-profiles:
+    $ref: './paths/matching/roommate-profiles.yaml'
+  /roommate-profiles/{roommateProfileId}:
+    $ref: './paths/matching/roommate-profiles-roommateProfileId.yaml'
+  /me/roommate-profile:
+    $ref: './paths/matching/me-roommate-profile.yaml'
+  /match-requests:
+    $ref: './paths/matching/match-requests.yaml'
+  /match-requests/{matchRequestId}/accept-request:
+    $ref: './paths/matching/match-requests-matchRequestId-accept-request.yaml'
+  /match-requests/{matchRequestId}/reject-request:
+    $ref: './paths/matching/match-requests-matchRequestId-reject-request.yaml'
+  /match-requests/{matchRequestId}/withdraw-request:
+    $ref: './paths/matching/match-requests-matchRequestId-withdraw-request.yaml'
+  /rate-policies:
+    $ref: './paths/billing/rate-policies.yaml'
+  /rate-policies/{ratePolicyId}:
+    $ref: './paths/billing/rate-policies-ratePolicyId.yaml'
+  /rate-policies/{ratePolicyId}/deactivate-policy:
+    $ref: './paths/billing/rate-policies-ratePolicyId-deactivate-policy.yaml'
+  /billing-settings:
+    $ref: './paths/billing/billing-settings.yaml'
+  /billing-settings/{billingSettingId}:
+    $ref: './paths/billing/billing-settings-billingSettingId.yaml'
+  /contract-templates:
+    $ref: './paths/contracts/contract-templates.yaml'
+  /contract-templates/{templateKey}:
+    $ref: './paths/contracts/contract-templates-templateKey.yaml'
+  /me/contracts:
+    $ref: './paths/contracts/me-contracts.yaml'
+  /contracts:
+    $ref: './paths/contracts/contracts.yaml'
+  /contracts/{contractId}:
+    $ref: './paths/contracts/contracts-contractId.yaml'
+  /contracts/{contractId}/apply-template:
+    $ref: './paths/contracts/contracts-contractId-apply-template.yaml'
+  /contracts/{contractId}/generate-draft-document:
+    $ref: './paths/contracts/contracts-contractId-generate-draft-document.yaml'
+  /contracts/{contractId}/activate-contract:
+    $ref: './paths/contracts/contracts-contractId-activate-contract.yaml'
+  /contracts/{contractId}/complete-checkout:
+    $ref: './paths/contracts/contracts-contractId-complete-checkout.yaml'
+  /contracts/{contractId}/deposit-settlement:
+    $ref: './paths/contracts/contracts-contractId-deposit-settlement.yaml'
+  /contract-members:
+    $ref: './paths/contracts/contract-members.yaml'
+  /contract-members/{contractMemberId}:
+    $ref: './paths/contracts/contract-members-contractMemberId.yaml'
+  /contract-members/{contractMemberId}/leave-contract:
+    $ref: './paths/contracts/contract-members-contractMemberId-leave-contract.yaml'
+  /meter-readings:
+    $ref: './paths/billing/meter-readings.yaml'
+  /meter-readings/bulk:
+    $ref: './paths/billing/meter-readings-bulk.yaml'
+  /meter-readings/preview-ocr-result:
+    $ref: './paths/billing/meter-readings-preview-ocr-result.yaml'
+  /invoices/tenant:
+    $ref: './paths/invoices/invoices-tenant.yaml'
+  /invoices:
+    $ref: './paths/invoices/invoices.yaml'
+  /invoices/overdue-debts:
+    $ref: './paths/invoices/invoices-overdue-debts.yaml'
+  /invoices/{invoiceId}:
+    $ref: './paths/invoices/invoices-invoiceId.yaml'
+  /invoices/issue-invoice:
+    $ref: './paths/invoices/invoices-issue-invoice.yaml'
+  /invoices/{invoiceId}/cancel-invoice:
+    $ref: './paths/invoices/invoices-invoiceId-cancel-invoice.yaml'
+  /invoices/send-reminder:
+    $ref: './paths/invoices/invoices-send-reminder.yaml'
+  /me/payments:
+    $ref: './paths/payments/me-payments.yaml'
+  /payments:
+    $ref: './paths/payments/payments.yaml'
+  /payments/create-intent:
+    $ref: './paths/payments/payments-create-intent.yaml'
+  /payments/record-cash-payment:
+    $ref: './paths/payments/payments-record-cash-payment.yaml'
+  /payments/webhooks/{provider}:
+    $ref: './paths/payments/payments-webhooks-provider.yaml'
+  /me/issues:
+    $ref: './paths/issues/me-issues.yaml'
+  /issues:
+    $ref: './paths/issues/issues.yaml'
+  /issues/{issueId}:
+    $ref: './paths/issues/issues-issueId.yaml'
+  /issues/{issueId}/cancel:
+    $ref: './paths/issues/issues-issueId-cancel.yaml'
+  /conversations:
+    $ref: './paths/chat/conversations.yaml'
+  /conversations/{conversationId}:
+    $ref: './paths/chat/conversations-conversationId.yaml'
+  /conversations/resolve-conversation:
+    $ref: './paths/chat/conversations-resolve-conversation.yaml'
+  /messages:
+    $ref: './paths/chat/messages.yaml'
+  /messages/mark-read:
+    $ref: './paths/chat/messages-mark-read.yaml'
+  /notifications:
+    $ref: './paths/notification/notifications.yaml'
+  /notifications/{notificationId}/mark-read:
+    $ref: './paths/notification/notifications-notificationId-mark-read.yaml'
+  /notifications/mark-all-read:
+    $ref: './paths/notification/notifications-mark-all-read.yaml'
+  /me/notification-preference:
+    $ref: './paths/notification/me-notification-preference.yaml'
+  /audit-logs:
+    $ref: './paths/operations/audit-logs.yaml'
+  /audit-logs/{auditLogId}:
+    $ref: './paths/operations/audit-logs-auditLogId.yaml'
+  /dashboard:
+    $ref: './paths/operations/dashboard.yaml'
+
 
 components:
   schemas:
@@ -507,27 +682,213 @@ components:
             $ref: './responses/wrappers/success-list.yaml'
     BadRequestError:
       x-apidog-name: Bad Request
-      description: JSON, header hoặc media type sai cú pháp
+      description: Yêu cầu sai cú pháp hoặc sai cấu trúc đầu vào; lỗi giá trị từng trường trong body và quy tắc nghiệp vụ xem HTTP 422.
       content:
         application/json:
           schema:
             type: object
             additionalProperties: false
-            required:
-              - statusCode
-              - code
+            required: [statusCode, code]
             properties:
               statusCode:
                 type: integer
-                enum:
-                  - 400
+                enum: [400]
               code:
                 type: string
                 enum:
+                  - INVALID_HEADER
                   - BAD_REQUEST
-          example:
-            statusCode: 400
-            code: BAD_REQUEST
+                description: |-
+                  - INVALID_HEADER: Header đầu vào sai định dạng; lỗi xác thực trả HTTP 401.
+                  - BAD_REQUEST: Yêu cầu không hợp lệ khác chưa có mã cụ thể.
+          examples:
+            invalid_header:
+              summary: INVALID_HEADER — Header đầu vào sai định dạng; lỗi xác thực trả HTTP 401.
+              value:
+                statusCode: 400
+                code: INVALID_HEADER
+            bad_request:
+              summary: BAD_REQUEST — Yêu cầu không hợp lệ khác chưa có mã cụ thể.
+              value:
+                statusCode: 400
+                code: BAD_REQUEST
+    BadRequestBodyError:
+      x-apidog-name: Bad Request
+      description: Yêu cầu sai cú pháp hoặc sai cấu trúc đầu vào; lỗi giá trị từng trường trong body và quy tắc nghiệp vụ xem HTTP 422.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code]
+            properties:
+              statusCode:
+                type: integer
+                enum: [400]
+              code:
+                type: string
+                enum:
+                  - INVALID_JSON
+                  - INVALID_REQUEST_BODY
+                  - INVALID_HEADER
+                  - BAD_REQUEST
+                description: |-
+                  - INVALID_JSON: Body có nội dung nhưng JSON sai cú pháp.
+                  - INVALID_REQUEST_BODY: Thiếu body bắt buộc hoặc JSON cấp gốc không đúng cấu trúc; lỗi giá trị từng trường trả HTTP 422.
+                  - INVALID_HEADER: Header đầu vào sai định dạng; lỗi xác thực trả HTTP 401.
+                  - BAD_REQUEST: Yêu cầu không hợp lệ khác chưa có mã cụ thể.
+          examples:
+            invalid_json:
+              summary: INVALID_JSON — Body có nội dung nhưng JSON sai cú pháp.
+              value:
+                statusCode: 400
+                code: INVALID_JSON
+            invalid_request_body:
+              summary: INVALID_REQUEST_BODY — Thiếu body bắt buộc hoặc JSON cấp gốc không đúng cấu trúc; lỗi giá trị từng trường trả HTTP 422.
+              value:
+                statusCode: 400
+                code: INVALID_REQUEST_BODY
+            invalid_header:
+              summary: INVALID_HEADER — Header đầu vào sai định dạng; lỗi xác thực trả HTTP 401.
+              value:
+                statusCode: 400
+                code: INVALID_HEADER
+            bad_request:
+              summary: BAD_REQUEST — Yêu cầu không hợp lệ khác chưa có mã cụ thể.
+              value:
+                statusCode: 400
+                code: BAD_REQUEST
+    BadRequestQueryError:
+      x-apidog-name: Bad Request
+      description: Yêu cầu sai cú pháp hoặc sai cấu trúc đầu vào; lỗi giá trị từng trường trong body và quy tắc nghiệp vụ xem HTTP 422.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code]
+            properties:
+              statusCode:
+                type: integer
+                enum: [400]
+              code:
+                type: string
+                enum:
+                  - INVALID_QUERY_PARAMETER
+                  - INVALID_HEADER
+                  - BAD_REQUEST
+                description: |-
+                  - INVALID_QUERY_PARAMETER: Tham số query sai kiểu hoặc định dạng.
+                  - INVALID_HEADER: Header đầu vào sai định dạng; lỗi xác thực trả HTTP 401.
+                  - BAD_REQUEST: Yêu cầu không hợp lệ khác chưa có mã cụ thể.
+          examples:
+            invalid_query_parameter:
+              summary: INVALID_QUERY_PARAMETER — Tham số query sai kiểu hoặc định dạng.
+              value:
+                statusCode: 400
+                code: INVALID_QUERY_PARAMETER
+            invalid_header:
+              summary: INVALID_HEADER — Header đầu vào sai định dạng; lỗi xác thực trả HTTP 401.
+              value:
+                statusCode: 400
+                code: INVALID_HEADER
+            bad_request:
+              summary: BAD_REQUEST — Yêu cầu không hợp lệ khác chưa có mã cụ thể.
+              value:
+                statusCode: 400
+                code: BAD_REQUEST
+    BadRequestPathError:
+      x-apidog-name: Bad Request
+      description: Yêu cầu sai cú pháp hoặc sai cấu trúc đầu vào; lỗi giá trị từng trường trong body và quy tắc nghiệp vụ xem HTTP 422.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code]
+            properties:
+              statusCode:
+                type: integer
+                enum: [400]
+              code:
+                type: string
+                enum:
+                  - INVALID_PATH_PARAMETER
+                  - INVALID_HEADER
+                  - BAD_REQUEST
+                description: |-
+                  - INVALID_PATH_PARAMETER: Tham số trên đường dẫn sai kiểu hoặc định dạng.
+                  - INVALID_HEADER: Header đầu vào sai định dạng; lỗi xác thực trả HTTP 401.
+                  - BAD_REQUEST: Yêu cầu không hợp lệ khác chưa có mã cụ thể.
+          examples:
+            invalid_path_parameter:
+              summary: INVALID_PATH_PARAMETER — Tham số trên đường dẫn sai kiểu hoặc định dạng.
+              value:
+                statusCode: 400
+                code: INVALID_PATH_PARAMETER
+            invalid_header:
+              summary: INVALID_HEADER — Header đầu vào sai định dạng; lỗi xác thực trả HTTP 401.
+              value:
+                statusCode: 400
+                code: INVALID_HEADER
+            bad_request:
+              summary: BAD_REQUEST — Yêu cầu không hợp lệ khác chưa có mã cụ thể.
+              value:
+                statusCode: 400
+                code: BAD_REQUEST
+    BadRequestBodyPathError:
+      x-apidog-name: Bad Request
+      description: Yêu cầu sai cú pháp hoặc sai cấu trúc đầu vào; lỗi giá trị từng trường trong body và quy tắc nghiệp vụ xem HTTP 422.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code]
+            properties:
+              statusCode:
+                type: integer
+                enum: [400]
+              code:
+                type: string
+                enum:
+                  - INVALID_JSON
+                  - INVALID_REQUEST_BODY
+                  - INVALID_PATH_PARAMETER
+                  - INVALID_HEADER
+                  - BAD_REQUEST
+                description: |-
+                  - INVALID_JSON: Body có nội dung nhưng JSON sai cú pháp.
+                  - INVALID_REQUEST_BODY: Thiếu body bắt buộc hoặc JSON cấp gốc không đúng cấu trúc; lỗi giá trị từng trường trả HTTP 422.
+                  - INVALID_PATH_PARAMETER: Tham số trên đường dẫn sai kiểu hoặc định dạng.
+                  - INVALID_HEADER: Header đầu vào sai định dạng; lỗi xác thực trả HTTP 401.
+                  - BAD_REQUEST: Yêu cầu không hợp lệ khác chưa có mã cụ thể.
+          examples:
+            invalid_json:
+              summary: INVALID_JSON — Body có nội dung nhưng JSON sai cú pháp.
+              value:
+                statusCode: 400
+                code: INVALID_JSON
+            invalid_request_body:
+              summary: INVALID_REQUEST_BODY — Thiếu body bắt buộc hoặc JSON cấp gốc không đúng cấu trúc; lỗi giá trị từng trường trả HTTP 422.
+              value:
+                statusCode: 400
+                code: INVALID_REQUEST_BODY
+            invalid_path_parameter:
+              summary: INVALID_PATH_PARAMETER — Tham số trên đường dẫn sai kiểu hoặc định dạng.
+              value:
+                statusCode: 400
+                code: INVALID_PATH_PARAMETER
+            invalid_header:
+              summary: INVALID_HEADER — Header đầu vào sai định dạng; lỗi xác thực trả HTTP 401.
+              value:
+                statusCode: 400
+                code: INVALID_HEADER
+            bad_request:
+              summary: BAD_REQUEST — Yêu cầu không hợp lệ khác chưa có mã cụ thể.
+              value:
+                statusCode: 400
+                code: BAD_REQUEST
     UnauthorizedError:
       x-apidog-name: Unauthorized
       description: Thiếu hoặc không hợp lệ thông tin xác thực
@@ -575,14 +936,27 @@ components:
             statusCode: 403
             code: FORBIDDEN
     NotFoundError:
-      description: Không tìm thấy tài nguyên (404)
+      x-apidog-name: Not Found
+      description: Không tìm thấy tài nguyên được yêu cầu
       content:
         application/json:
           schema:
-            $ref: './responses/wrappers/error-default.yaml'
+            type: object
+            additionalProperties: false
+            required: [statusCode, code]
+            properties:
+              statusCode:
+                type: integer
+                enum: [404]
+              code:
+                type: string
+                enum: [RESOURCE_NOT_FOUND]
+          example:
+            statusCode: 404
+            code: RESOURCE_NOT_FOUND
     ValidationError:
       x-apidog-name: Unprocessable Entity
-      description: Dữ liệu yêu cầu không hợp lệ
+      description: Dữ liệu hợp lệ về cấu trúc nhưng vi phạm ràng buộc trường hoặc quy tắc nghiệp vụ
       content:
         application/json:
           schema:
@@ -599,10 +973,10 @@ components:
               code:
                 type: string
                 enum:
-                  - UNPROCESSABLE_ENTITY
+                  - VALIDATION_FAILED
           example:
             statusCode: 422
-            code: UNPROCESSABLE_ENTITY
+            code: VALIDATION_FAILED
     CreatedResponse:
       x-apidog-name: Created
       description: Tài nguyên được tạo thành công
@@ -664,29 +1038,6 @@ components:
     NoContentResponse:
       x-apidog-name: No Content
       description: Yêu cầu thành công, không có response body
-    ConflictError:
-      x-apidog-name: Conflict
-      description: Yêu cầu xung đột với trạng thái hiện tại
-      content:
-        application/json:
-          schema:
-            type: object
-            additionalProperties: false
-            required:
-              - statusCode
-              - code
-            properties:
-              statusCode:
-                type: integer
-                enum:
-                  - 409
-              code:
-                type: string
-                enum:
-                  - CONFLICT
-          example:
-            statusCode: 409
-            code: CONFLICT
     TooManyRequestsError:
       x-apidog-name: Too Many Requests
       description: Vượt giới hạn tần suất gọi API
@@ -753,6 +1104,11 @@ components:
             statusCode: 500
             code: INTERNAL_SERVER_ERROR
   securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: 'Access token trong header Authorization: Bearer <token>.'
     RefreshCookie:
       type: apiKey
       in: cookie

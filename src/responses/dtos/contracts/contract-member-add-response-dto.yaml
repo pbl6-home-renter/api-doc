@@ -6,8 +6,8 @@ properties:
   id: { type: string, format: uuid , description: "Định danh duy nhất của tài nguyên." }
   contractId: { type: string, format: uuid , description: "Định danh duy nhất của hợp đồng liên quan." }
   tenantId: { type: string, format: uuid, nullable: true , description: "Thông tin tenant id của tài nguyên trong ngữ cảnh DTO." }
-  joinedAt: { type: string, format: date-time , description: "Thông tin joined at của tài nguyên trong ngữ cảnh DTO." }
-  leftAt: { type: string, format: date-time, nullable: true , description: "Thông tin left at của tài nguyên trong ngữ cảnh DTO." }
+  joinedAt: { type: string, format: date , description: "Thông tin joined at của tài nguyên trong ngữ cảnh DTO." }
+  leftAt: { type: string, format: date, nullable: true , description: "Thông tin left at của tài nguyên trong ngữ cảnh DTO." }
 
 required:
   - id

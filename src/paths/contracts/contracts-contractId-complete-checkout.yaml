@@ -1,0 +1,124 @@
+post:
+  tags:
+  - Contract
+  x-apidog-folder: Contract
+  operationId: postContractsContractidCompleteCheckout
+  security:
+    - BearerAuth: []
+  summary: Complete checkout
+  description: "landlord. Hoàn tất trả phòng và kết thúc hợp đồng. Sau khi checkout thành công, phòng sẽ tự động chuyển sang trạng thái chờ dọn dẹp và chuẩn bị cho thuê mới (Room.status = pending_cleanup). Sau khi chủ trọ nghiệm thu dọn dẹp xong, gọi POST /rooms/{roomId}/mark-ready để đưa phòng về available. Lỗi nghiệp vụ: 409 CONTRACT NOT ACTIVE · 403 FORBIDDEN · 422 SETTLEMENT NOT READY.
+    NOT READY."
+  parameters:
+  - name: contractId
+    in: path
+    required: true
+    schema:
+      type: string
+      format: uuid
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: ../../openapi.yaml#/components/schemas/ContractCompleteCheckoutRequestDto
+        example:
+          completedOn: '2026-09-30'
+  responses:
+    '200':
+      description: 'Thành công: Hoàn tất trả phòng.'
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required:
+            - statusCode
+            - code
+            - data
+            properties:
+              statusCode:
+                type: integer
+                enum:
+                - 200
+              code:
+                type: string
+                enum:
+                - CONTRACT_CHECKOUT_COMPLETED
+              data:
+                $ref: ../../openapi.yaml#/components/schemas/ContractCompleteCheckoutResponseDto
+          example:
+            statusCode: 200
+            code: CONTRACT_CHECKOUT_COMPLETED
+            data:
+              id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+              status: expired
+              completedOn: '2026-09-30'
+    '400':
+      $ref: ../../openapi.yaml#/components/responses/BadRequestBodyPathError
+    '401':
+      $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
+    '403':
+      $ref: ../../openapi.yaml#/components/responses/ForbiddenError
+    '404':
+      $ref: ../../openapi.yaml#/components/responses/NotFoundError
+    '409':
+      x-apidog-name: Conflict
+      description: Yêu cầu xung đột với trạng thái hiện tại hoặc dữ liệu đã tồn tại.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code]
+            properties:
+              statusCode:
+                type: integer
+                enum: [409]
+              code:
+                type: string
+                enum:
+                  - CONTRACT_NOT_ACTIVE
+                description: |-
+                  - CONTRACT_NOT_ACTIVE: Hợp đồng không ở trạng thái đang hiệu lực.
+          examples:
+            contract_not_active:
+              summary: CONTRACT_NOT_ACTIVE — Hợp đồng không ở trạng thái đang hiệu lực.
+              value:
+                statusCode: 409
+                code: CONTRACT_NOT_ACTIVE
+    '422':
+      x-apidog-name: Unprocessable Entity
+      description: Dữ liệu hợp lệ về cấu trúc nhưng vi phạm ràng buộc trường hoặc quy tắc nghiệp vụ.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code]
+            properties:
+              statusCode:
+                type: integer
+                enum: [422]
+              code:
+                type: string
+                enum:
+                  - SETTLEMENT_NOT_READY
+                  - VALIDATION_FAILED
+                description: |-
+                  - SETTLEMENT_NOT_READY: Hợp đồng chưa đủ điều kiện để quyết toán.
+                  - VALIDATION_FAILED: Dữ liệu vi phạm ràng buộc schema hoặc quy tắc nghiệp vụ khác chưa có mã riêng.
+          examples:
+            settlement_not_ready:
+              summary: SETTLEMENT_NOT_READY — Hợp đồng chưa đủ điều kiện để quyết toán.
+              value:
+                statusCode: 422
+                code: SETTLEMENT_NOT_READY
+            validation_failed:
+              summary: VALIDATION_FAILED — Dữ liệu vi phạm ràng buộc schema hoặc quy tắc nghiệp vụ khác chưa có mã riêng.
+              value:
+                statusCode: 422
+                code: VALIDATION_FAILED
+    '429':
+      $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
+    '500':
+      $ref: ../../openapi.yaml#/components/responses/InternalServerError

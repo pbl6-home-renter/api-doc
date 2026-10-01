@@ -1,0 +1,311 @@
+post:
+  tags:
+  - Contract
+  x-apidog-folder: ContractMember
+  operationId: postContractMembers
+  security:
+    - BearerAuth: []
+  summary: Add contract member
+  description: 'landlord. Thêm một thành viên vào hợp đồng. Lỗi nghiệp vụ: 409 MEMBER ALREADY EXISTS · 403 FORBIDDEN
+    · 422 TENANT IDENTITY INVALID.'
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: ../../openapi.yaml#/components/schemas/ContractMemberAddRequestDto
+        example:
+          contractId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+          tenantId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+          tenantName: Nguyễn Thị C
+          tenantPhone: '0921234567'
+          joinedAt: '2026-09-01'
+  responses:
+    '201':
+      description: 'Thành công: Thêm một thành viên vào hợp đồng.'
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required:
+            - statusCode
+            - code
+            - data
+            properties:
+              statusCode:
+                type: integer
+                enum:
+                - 201
+              code:
+                type: string
+                enum:
+                - CONTRACT_MEMBER_ADDED
+              data:
+                $ref: ../../openapi.yaml#/components/schemas/ContractMemberAddResponseDto
+          example:
+            statusCode: 201
+            code: CONTRACT_MEMBER_ADDED
+            data:
+              id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+              contractId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+              tenantId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+              joinedAt: '2026-09-01'
+              leftAt: null
+      headers:
+        Location:
+          description: Đường dẫn tài nguyên được tạo.
+          schema:
+            type: string
+            example: /api/v1/contract-members/{contractMemberId}
+    '400':
+      $ref: ../../openapi.yaml#/components/responses/BadRequestBodyError
+    '401':
+      $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
+    '403':
+      $ref: ../../openapi.yaml#/components/responses/ForbiddenError
+    '409':
+      x-apidog-name: Conflict
+      description: Yêu cầu xung đột với trạng thái hiện tại hoặc dữ liệu đã tồn tại.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code]
+            properties:
+              statusCode:
+                type: integer
+                enum: [409]
+              code:
+                type: string
+                enum:
+                  - MEMBER_ALREADY_EXISTS
+                description: |-
+                  - MEMBER_ALREADY_EXISTS: Người này đã là thành viên của hợp đồng.
+          examples:
+            member_already_exists:
+              summary: MEMBER_ALREADY_EXISTS — Người này đã là thành viên của hợp đồng.
+              value:
+                statusCode: 409
+                code: MEMBER_ALREADY_EXISTS
+    '422':
+      x-apidog-name: Unprocessable Entity
+      description: Dữ liệu hợp lệ về cấu trúc nhưng vi phạm ràng buộc trường hoặc quy tắc nghiệp vụ.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code]
+            properties:
+              statusCode:
+                type: integer
+                enum: [422]
+              code:
+                type: string
+                enum:
+                  - TENANT_IDENTITY_INVALID
+                  - VALIDATION_FAILED
+                description: |-
+                  - TENANT_IDENTITY_INVALID: Thông tin nhận diện người thuê không hợp lệ.
+                  - VALIDATION_FAILED: Dữ liệu vi phạm ràng buộc schema hoặc quy tắc nghiệp vụ khác chưa có mã riêng.
+          examples:
+            tenant_identity_invalid:
+              summary: TENANT_IDENTITY_INVALID — Thông tin nhận diện người thuê không hợp lệ.
+              value:
+                statusCode: 422
+                code: TENANT_IDENTITY_INVALID
+            validation_failed:
+              summary: VALIDATION_FAILED — Dữ liệu vi phạm ràng buộc schema hoặc quy tắc nghiệp vụ khác chưa có mã riêng.
+              value:
+                statusCode: 422
+                code: VALIDATION_FAILED
+    '429':
+      $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
+    '500':
+      $ref: ../../openapi.yaml#/components/responses/InternalServerError
+get:
+  tags:
+  - Contract
+  x-apidog-folder: ContractMember
+  operationId: getContractMembers
+  security:
+    - BearerAuth: []
+  summary: List contract members
+  description: 'landlord, tenant. Liệt kê thành viên hoặc xuất dữ liệu. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 CONTRACT
+    ID REQUIRED · 404 NOT FOUND.'
+  parameters:
+  - name: filter
+    in: query
+    required: true
+    style: deepObject
+    explode: true
+    description: Bộ lọc được endpoint hỗ trợ.
+    schema:
+      type: object
+      additionalProperties: false
+      properties:
+        contractId:
+          type: string
+          format: uuid
+      required:
+      - contractId
+  - name: pageSize
+    in: query
+    schema:
+      type: integer
+      minimum: 1
+      maximum: 100
+      default: 20
+  - name: pageNo
+    in: query
+    schema:
+      type: integer
+      minimum: 1
+      default: 1
+  - name: format
+    in: query
+    description: json trả envelope; định dạng khác trả file stream.
+    schema:
+      type: string
+      enum:
+      - json
+      - xlsx
+      - csv
+      - pdf
+      default: json
+  responses:
+    '200':
+      description: 'Thành công: Liệt kê thành viên hoặc xuất dữ liệu.'
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required:
+            - statusCode
+            - code
+            - data
+            - pagination
+            properties:
+              statusCode:
+                type: integer
+                enum:
+                - 200
+              code:
+                type: string
+                enum:
+                - CONTRACT_MEMBERS_FETCHED
+              data:
+                type: array
+                items:
+                  $ref: ../../openapi.yaml#/components/schemas/ContractMemberListResponseDto
+              pagination:
+                type: object
+                additionalProperties: false
+                required:
+                - type
+                - pageNo
+                - pageSize
+                - totalItems
+                - totalPages
+                - hasNextPage
+                - hasPreviousPage
+                properties:
+                  type:
+                    type: string
+                    enum:
+                    - offset
+                  pageNo:
+                    type: integer
+                    minimum: 1
+                  pageSize:
+                    type: integer
+                    minimum: 1
+                    maximum: 100
+                  totalItems:
+                    type: integer
+                    minimum: 0
+                  totalPages:
+                    type: integer
+                    minimum: 0
+                  hasNextPage:
+                    type: boolean
+                  hasPreviousPage:
+                    type: boolean
+          example:
+            statusCode: 200
+            code: CONTRACT_MEMBERS_FETCHED
+            data:
+            - id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+              contractId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+              tenantName: Trần Văn B
+              joinedAt: '2026-09-01'
+              leftAt: null
+              isRepresentative: false
+              status: ACTIVE
+            pagination:
+              type: offset
+              pageNo: 1
+              pageSize: 20
+              totalItems: 1
+              totalPages: 1
+              hasNextPage: false
+              hasPreviousPage: false
+        text/csv:
+          schema:
+            type: string
+            format: binary
+        application/pdf:
+          schema:
+            type: string
+            format: binary
+        application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+          schema:
+            type: string
+            format: binary
+    '400':
+      $ref: ../../openapi.yaml#/components/responses/BadRequestQueryError
+    '401':
+      $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
+    '403':
+      $ref: ../../openapi.yaml#/components/responses/ForbiddenError
+    '404':
+      $ref: ../../openapi.yaml#/components/responses/NotFoundError
+    '422':
+      x-apidog-name: Unprocessable Entity
+      description: Dữ liệu hợp lệ về cấu trúc nhưng vi phạm ràng buộc trường hoặc quy tắc nghiệp vụ.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code]
+            properties:
+              statusCode:
+                type: integer
+                enum: [422]
+              code:
+                type: string
+                enum:
+                  - CONTRACT_ID_REQUIRED
+                  - VALIDATION_FAILED
+                description: |-
+                  - CONTRACT_ID_REQUIRED: Thiếu mã hợp đồng.
+                  - VALIDATION_FAILED: Dữ liệu vi phạm ràng buộc schema hoặc quy tắc nghiệp vụ khác chưa có mã riêng.
+          examples:
+            contract_id_required:
+              summary: CONTRACT_ID_REQUIRED — Thiếu mã hợp đồng.
+              value:
+                statusCode: 422
+                code: CONTRACT_ID_REQUIRED
+            validation_failed:
+              summary: VALIDATION_FAILED — Dữ liệu vi phạm ràng buộc schema hoặc quy tắc nghiệp vụ khác chưa có mã riêng.
+              value:
+                statusCode: 422
+                code: VALIDATION_FAILED
+    '429':
+      $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
+    '500':
+      $ref: ../../openapi.yaml#/components/responses/InternalServerError

@@ -1,0 +1,221 @@
+get:
+  tags:
+  - Property
+  x-apidog-folder: FavoriteRoom
+  operationId: getMeFavoriteRooms
+  security:
+    - BearerAuth: []
+  summary: List favorite rooms
+  description: 'tenant. Liệt kê phòng đã lưu. Lỗi nghiệp vụ: 401 INVALID TOKEN.'
+  parameters:
+  - name: pageSize
+    in: query
+    schema:
+      type: integer
+      minimum: 1
+      maximum: 100
+      default: 20
+  - name: pageNo
+    in: query
+    schema:
+      type: integer
+      minimum: 1
+      default: 1
+  - name: format
+    in: query
+    description: json trả envelope; định dạng khác trả file stream.
+    schema:
+      type: string
+      enum:
+      - json
+      - xlsx
+      - csv
+      - pdf
+      default: json
+  responses:
+    '200':
+      description: 'Thành công: Liệt kê phòng đã lưu.'
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required:
+            - statusCode
+            - code
+            - data
+            - pagination
+            properties:
+              statusCode:
+                type: integer
+                enum:
+                - 200
+              code:
+                type: string
+                enum:
+                - ROOMS_FAVORITE_FETCHED
+              data:
+                type: array
+                items:
+                  $ref: ../../openapi.yaml#/components/schemas/FavoriteRoomListResponseDto
+              pagination:
+                type: object
+                additionalProperties: false
+                required:
+                - type
+                - pageNo
+                - pageSize
+                - totalItems
+                - totalPages
+                - hasNextPage
+                - hasPreviousPage
+                properties:
+                  type:
+                    type: string
+                    enum:
+                    - offset
+                  pageNo:
+                    type: integer
+                    minimum: 1
+                  pageSize:
+                    type: integer
+                    minimum: 1
+                    maximum: 100
+                  totalItems:
+                    type: integer
+                    minimum: 0
+                  totalPages:
+                    type: integer
+                    minimum: 0
+                  hasNextPage:
+                    type: boolean
+                  hasPreviousPage:
+                    type: boolean
+          example:
+            statusCode: 200
+            code: ROOMS_FAVORITE_FETCHED
+            data:
+            - roomId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+              name: P.201
+              rentPrice: 3500000
+            pagination:
+              type: offset
+              pageNo: 1
+              pageSize: 20
+              totalItems: 1
+              totalPages: 1
+              hasNextPage: false
+              hasPreviousPage: false
+        text/csv:
+          schema:
+            type: string
+            format: binary
+        application/pdf:
+          schema:
+            type: string
+            format: binary
+        application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+          schema:
+            type: string
+            format: binary
+    '400':
+      $ref: ../../openapi.yaml#/components/responses/BadRequestQueryError
+    '401':
+      $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
+    '403':
+      $ref: ../../openapi.yaml#/components/responses/ForbiddenError
+    '429':
+      $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
+    '500':
+      $ref: ../../openapi.yaml#/components/responses/InternalServerError
+post:
+  tags:
+  - Property
+  x-apidog-folder: FavoriteRoom
+  operationId: postMeFavoriteRooms
+  security:
+    - BearerAuth: []
+  summary: Add favorite room
+  description: 'tenant. Lưu một phòng. Lỗi nghiệp vụ: 404 NOT FOUND · 409 ALREADY FAVORITED.'
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: ../../openapi.yaml#/components/schemas/FavoriteRoomToggleRequestDto
+        example:
+          roomId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+  responses:
+    '201':
+      description: 'Thành công: Lưu một phòng.'
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required:
+            - statusCode
+            - code
+            - data
+            properties:
+              statusCode:
+                type: integer
+                enum:
+                - 201
+              code:
+                type: string
+                enum:
+                - ROOM_FAVORITED
+              data:
+                $ref: ../../openapi.yaml#/components/schemas/FavoriteRoomToggleResponseDto
+          example:
+            statusCode: 201
+            code: ROOM_FAVORITED
+            data:
+              roomId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+              roomName: P.201
+      headers:
+        Location:
+          description: Đường dẫn tài nguyên được tạo.
+          schema:
+            type: string
+            example: /api/v1/me/favorite-rooms/{roomId}
+    '400':
+      $ref: ../../openapi.yaml#/components/responses/BadRequestBodyError
+    '401':
+      $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
+    '403':
+      $ref: ../../openapi.yaml#/components/responses/ForbiddenError
+    '404':
+      $ref: ../../openapi.yaml#/components/responses/NotFoundError
+    '409':
+      x-apidog-name: Conflict
+      description: Yêu cầu xung đột với trạng thái hiện tại hoặc dữ liệu đã tồn tại.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code]
+            properties:
+              statusCode:
+                type: integer
+                enum: [409]
+              code:
+                type: string
+                enum:
+                  - ALREADY_FAVORITED
+                description: |-
+                  - ALREADY_FAVORITED: Phòng đã được lưu.
+          examples:
+            already_favorited:
+              summary: ALREADY_FAVORITED — Phòng đã được lưu.
+              value:
+                statusCode: 409
+                code: ALREADY_FAVORITED
+    '422':
+      $ref: ../../openapi.yaml#/components/responses/ValidationError
+    '429':
+      $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
+    '500':
+      $ref: ../../openapi.yaml#/components/responses/InternalServerError
