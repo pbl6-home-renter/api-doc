@@ -1,0 +1,59 @@
+post:
+  tags:
+  - User
+  x-apidog-folder: User
+  operationId: unlockUser
+  summary: Unlock user
+  description: Chỉ admin; yêu cầu access token. Chuyển tài khoản locked về active và xóa thời điểm khóa.
+  parameters:
+  - name: userId
+    in: path
+    required: true
+    description: UUID của người dùng.
+    schema:
+      type: string
+      format: uuid
+  responses:
+    '200':
+      description: User unlocked
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required:
+            - statusCode
+            - code
+            - data
+            properties:
+              statusCode:
+                type: integer
+                enum:
+                - 200
+              code:
+                type: string
+                enum:
+                - USER_UNLOCKED
+              data:
+                $ref: ../../openapi.yaml#/components/schemas/UserUnlockResponseDto
+          example:
+            statusCode: 200
+            code: USER_UNLOCKED
+            data:
+              userId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+              status: active
+              unlockedAt: '2026-09-23T11:55:00.000Z'
+    '400':
+      $ref: ../../openapi.yaml#/components/responses/BadRequestError
+    '401':
+      $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
+    '403':
+      $ref: ../../openapi.yaml#/components/responses/ForbiddenError
+    '404':
+      $ref: ../../openapi.yaml#/components/responses/NotFoundError
+    '409':
+      $ref: ../../openapi.yaml#/components/responses/ConflictError
+    '429':
+      $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
+    '500':
+      $ref: ../../openapi.yaml#/components/responses/InternalServerError

@@ -429,6 +429,935 @@
           }
         }
       }
+    },
+    "/auth/password-resets": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "x-apidog-folder": "Auth",
+        "operationId": "resetPassword",
+        "summary": "Reset password",
+        "description": "Public. Dùng token đặt lại mật khẩu một lần, còn thời hạn. Token đã dùng hoặc hết hạn trả 409.",
+        "security": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AuthResetPasswordRequestDto"
+              },
+              "example": {
+                "token": "sR7pQx9Nm2Vk4...",
+                "newPassword": "NewP@ssw0rd123"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "$ref": "#/components/responses/NoContentResponse"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequestError"
+          },
+          "409": {
+            "$ref": "#/components/responses/ConflictError"
+          },
+          "422": {
+            "$ref": "#/components/responses/ValidationError"
+          },
+          "429": {
+            "$ref": "#/components/responses/TooManyRequestsError"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
+    "/me": {
+      "get": {
+        "tags": [
+          "User"
+        ],
+        "x-apidog-folder": "User",
+        "operationId": "getCurrentUser",
+        "summary": "Get current user",
+        "description": "Yêu cầu access token của tenant, landlord hoặc admin. Trả hồ sơ của chính người gọi; tài khoản nhận tiền chỉ có ở landlord.",
+        "responses": {
+          "200": {
+            "description": "Current user fetched",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code",
+                    "data"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        200
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "CURRENT_USER_FETCHED"
+                      ]
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/UserCurrentResponseDto"
+                    }
+                  }
+                },
+                "example": {
+                  "statusCode": 200,
+                  "code": "CURRENT_USER_FETCHED",
+                  "data": {
+                    "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                    "name": "Lê Văn An",
+                    "email": "lan@example.com",
+                    "phone": 901234567,
+                    "role": "tenant",
+                    "status": "active",
+                    "payoutAccount": null
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequestError"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "429": {
+            "$ref": "#/components/responses/TooManyRequestsError"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "User"
+        ],
+        "x-apidog-folder": "User",
+        "operationId": "updateCurrentUser",
+        "summary": "Update current user",
+        "description": "Yêu cầu access token của tenant, landlord hoặc admin. Cập nhật name và phone; landlord có thể cập nhật payoutAccount khi không còn hóa đơn pending. Email và role không thay đổi.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserCurrentUpdateRequestDto"
+              },
+              "example": {
+                "name": "Lê Văn An",
+                "phone": 901234567,
+                "payoutAccount": null
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Profile updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code",
+                    "data"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        200
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "PROFILE_UPDATED"
+                      ]
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/UserCurrentUpdateResponseDto"
+                    }
+                  }
+                },
+                "example": {
+                  "statusCode": 200,
+                  "code": "PROFILE_UPDATED",
+                  "data": {
+                    "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                    "name": "Lê Văn An",
+                    "phone": 901234567,
+                    "payoutAccount": null
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequestError"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "409": {
+            "$ref": "#/components/responses/ConflictError"
+          },
+          "422": {
+            "$ref": "#/components/responses/ValidationError"
+          },
+          "429": {
+            "$ref": "#/components/responses/TooManyRequestsError"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
+    "/me/password": {
+      "put": {
+        "tags": [
+          "User"
+        ],
+        "x-apidog-folder": "User",
+        "operationId": "changeCurrentUserPassword",
+        "summary": "Change password",
+        "description": "Yêu cầu access token của tenant, landlord hoặc admin. Đổi mật khẩu và thu hồi các phiên khác.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserChangePasswordRequestDto"
+              },
+              "example": {
+                "currentPassword": "OldP@ssw0rd",
+                "newPassword": "NewP@ssw0rd",
+                "confirmPassword": "NewP@ssw0rd"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "$ref": "#/components/responses/NoContentResponse"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequestError"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "422": {
+            "$ref": "#/components/responses/ValidationError"
+          },
+          "429": {
+            "$ref": "#/components/responses/TooManyRequestsError"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
+    "/users": {
+      "get": {
+        "tags": [
+          "User"
+        ],
+        "x-apidog-folder": "User",
+        "operationId": "listUsers",
+        "summary": "List users",
+        "description": "Chỉ admin; yêu cầu access token. Lọc, tìm kiếm và phân trang offset. format khác json trả file stream không có JSON wrapper.",
+        "parameters": [
+          {
+            "name": "filter",
+            "in": "query",
+            "description": "Lọc theo role, status hoặc chuỗi tìm kiếm q.",
+            "style": "deepObject",
+            "explode": true,
+            "schema": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "role": {
+                  "type": "string",
+                  "enum": [
+                    "tenant",
+                    "landlord",
+                    "admin"
+                  ]
+                },
+                "status": {
+                  "type": "string",
+                  "enum": [
+                    "active",
+                    "locked"
+                  ]
+                },
+                "q": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "description": "Một trường sắp xếp; mặc định createdAt.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "createdAt",
+                "name",
+                "role",
+                "status"
+              ],
+              "default": "createdAt"
+            }
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "description": "Chiều sắp xếp; mặc định desc.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ],
+              "default": "desc"
+            }
+          },
+          {
+            "name": "pageNo",
+            "in": "query",
+            "description": "Số trang offset, bắt đầu từ 1.",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "description": "Số bản ghi mỗi trang.",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20
+            }
+          },
+          {
+            "name": "format",
+            "in": "query",
+            "description": "json trả envelope và phân trang; xlsx, csv, pdf trả file stream.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "json",
+                "xlsx",
+                "csv",
+                "pdf"
+              ],
+              "default": "json"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Danh sách người dùng hoặc tệp xuất theo format.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code",
+                    "data",
+                    "pagination"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        200
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "USERS_FETCHED"
+                      ]
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/UserListResponseDto"
+                      }
+                    },
+                    "pagination": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "required": [
+                        "type",
+                        "pageNo",
+                        "pageSize",
+                        "totalItems",
+                        "totalPages",
+                        "hasNextPage",
+                        "hasPreviousPage"
+                      ],
+                      "properties": {
+                        "type": {
+                          "type": "string",
+                          "enum": [
+                            "offset"
+                          ]
+                        },
+                        "pageNo": {
+                          "type": "integer"
+                        },
+                        "pageSize": {
+                          "type": "integer"
+                        },
+                        "totalItems": {
+                          "type": "integer"
+                        },
+                        "totalPages": {
+                          "type": "integer"
+                        },
+                        "hasNextPage": {
+                          "type": "boolean"
+                        },
+                        "hasPreviousPage": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "statusCode": 200,
+                  "code": "USERS_FETCHED",
+                  "data": [
+                    {
+                      "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                      "name": "Lê Văn An",
+                      "phone": 901234567,
+                      "email": "lan@example.com",
+                      "role": "tenant",
+                      "status": "active",
+                      "createdAt": "2026-09-01T08:00:00.000Z"
+                    }
+                  ],
+                  "pagination": {
+                    "type": "offset",
+                    "pageNo": 1,
+                    "pageSize": 20,
+                    "totalItems": 1,
+                    "totalPages": 1,
+                    "hasNextPage": false,
+                    "hasPreviousPage": false
+                  }
+                }
+              },
+              "text/csv": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              },
+              "application/pdf": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              },
+              "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequestError"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "403": {
+            "$ref": "#/components/responses/ForbiddenError"
+          },
+          "422": {
+            "$ref": "#/components/responses/ValidationError"
+          },
+          "429": {
+            "$ref": "#/components/responses/TooManyRequestsError"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
+    "/users/{userId}": {
+      "get": {
+        "tags": [
+          "User"
+        ],
+        "x-apidog-folder": "User",
+        "operationId": "getUserById",
+        "summary": "Get user",
+        "description": "Chỉ admin; yêu cầu access token. Đọc hồ sơ và tổng quan vận hành của một người dùng.",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "description": "UUID của người dùng.",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User fetched",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code",
+                    "data"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        200
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "USER_FETCHED"
+                      ]
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/UserDetailResponseDto"
+                    }
+                  }
+                },
+                "example": {
+                  "statusCode": 200,
+                  "code": "USER_FETCHED",
+                  "data": {
+                    "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                    "name": "Lê Văn An",
+                    "phone": 901234567,
+                    "email": "lan@example.com",
+                    "role": "tenant",
+                    "status": "active",
+                    "identityVerified": false,
+                    "buildingCount": 0,
+                    "activeContractCount": 1,
+                    "createdAt": "2026-09-01T08:00:00.000Z"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequestError"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "403": {
+            "$ref": "#/components/responses/ForbiddenError"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundError"
+          },
+          "429": {
+            "$ref": "#/components/responses/TooManyRequestsError"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "User"
+        ],
+        "x-apidog-folder": "User",
+        "operationId": "updateUserById",
+        "summary": "Update user",
+        "description": "Chỉ admin; yêu cầu access token. Sửa name và phone theo UserUpdateRequestDto; không thay đổi role hoặc status.",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "description": "UUID của người dùng.",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserUpdateRequestDto"
+              },
+              "example": {
+                "name": "Nguyễn Văn An",
+                "phone": 901234567
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "User updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code",
+                    "data"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        200
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "USER_UPDATED"
+                      ]
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/UserUpdateResponseDto"
+                    }
+                  }
+                },
+                "example": {
+                  "statusCode": 200,
+                  "code": "USER_UPDATED",
+                  "data": {
+                    "userId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                    "name": "Nguyễn Văn An",
+                    "phone": 901234567,
+                    "status": "active"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequestError"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "403": {
+            "$ref": "#/components/responses/ForbiddenError"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundError"
+          },
+          "422": {
+            "$ref": "#/components/responses/ValidationError"
+          },
+          "429": {
+            "$ref": "#/components/responses/TooManyRequestsError"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "User"
+        ],
+        "x-apidog-folder": "User",
+        "operationId": "deleteUserById",
+        "summary": "Delete user",
+        "description": "Chỉ admin; yêu cầu access token. Xóa mềm người dùng và các bản ghi con vận hành. Giữ chứng từ tài chính, pháp lý và audit.",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "description": "UUID của người dùng.",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "$ref": "#/components/responses/NoContentResponse"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequestError"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "403": {
+            "$ref": "#/components/responses/ForbiddenError"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundError"
+          },
+          "409": {
+            "$ref": "#/components/responses/ConflictError"
+          },
+          "429": {
+            "$ref": "#/components/responses/TooManyRequestsError"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
+    "/users/{userId}/lock": {
+      "post": {
+        "tags": [
+          "User"
+        ],
+        "x-apidog-folder": "User",
+        "operationId": "lockUser",
+        "summary": "Lock user",
+        "description": "Chỉ admin; yêu cầu access token. Khóa tài khoản active, thu hồi phiên đang mở và ghi audit log.",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "description": "UUID của người dùng.",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserLockRequestDto"
+              },
+              "example": {
+                "lockReason": "Spam listing"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "User locked",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code",
+                    "data"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        200
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "USER_LOCKED"
+                      ]
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/UserLockResponseDto"
+                    }
+                  }
+                },
+                "example": {
+                  "statusCode": 200,
+                  "code": "USER_LOCKED",
+                  "data": {
+                    "userId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                    "status": "locked",
+                    "lockReason": "Spam listing",
+                    "lockedAt": "2026-09-23T11:55:00.000Z"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequestError"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "403": {
+            "$ref": "#/components/responses/ForbiddenError"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundError"
+          },
+          "409": {
+            "$ref": "#/components/responses/ConflictError"
+          },
+          "422": {
+            "$ref": "#/components/responses/ValidationError"
+          },
+          "429": {
+            "$ref": "#/components/responses/TooManyRequestsError"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
+    "/users/{userId}/unlock": {
+      "post": {
+        "tags": [
+          "User"
+        ],
+        "x-apidog-folder": "User",
+        "operationId": "unlockUser",
+        "summary": "Unlock user",
+        "description": "Chỉ admin; yêu cầu access token. Chuyển tài khoản locked về active và xóa thời điểm khóa.",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "description": "UUID của người dùng.",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User unlocked",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code",
+                    "data"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        200
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "USER_UNLOCKED"
+                      ]
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/UserUnlockResponseDto"
+                    }
+                  }
+                },
+                "example": {
+                  "statusCode": 200,
+                  "code": "USER_UNLOCKED",
+                  "data": {
+                    "userId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                    "status": "active",
+                    "unlockedAt": "2026-09-23T11:55:00.000Z"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequestError"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "403": {
+            "$ref": "#/components/responses/ForbiddenError"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundError"
+          },
+          "409": {
+            "$ref": "#/components/responses/ConflictError"
+          },
+          "429": {
+            "$ref": "#/components/responses/TooManyRequestsError"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -11164,6 +12093,28 @@
           "platform"
         ]
       },
+      "ErrorDefaultWrapper": {
+        "type": "object",
+        "x-apidog-folder": "Common/Wrapper",
+        "title": "ErrorDefaultWrapper",
+        "description": "Envelope phản hồi chuẩn cho lỗi (400, 401, 403, 404, 409, 500)",
+        "properties": {
+          "statusCode": {
+            "type": "integer",
+            "description": "HTTP status code",
+            "example": 404
+          },
+          "code": {
+            "type": "string",
+            "description": "Mã lỗi nghiệp vụ ổn định để client rẽ nhánh (in hoa)",
+            "example": "RESOURCE_NOT_FOUND"
+          }
+        },
+        "required": [
+          "statusCode",
+          "code"
+        ]
+      },
       "PagingMeta": {
         "type": "object",
         "title": "PagingMeta",
@@ -11214,28 +12165,6 @@
           "code",
           "data",
           "pagination"
-        ]
-      },
-      "ErrorDefaultWrapper": {
-        "type": "object",
-        "x-apidog-folder": "Common/Wrapper",
-        "title": "ErrorDefaultWrapper",
-        "description": "Envelope phản hồi chuẩn cho lỗi (400, 401, 403, 404, 409, 500)",
-        "properties": {
-          "statusCode": {
-            "type": "integer",
-            "description": "HTTP status code",
-            "example": 404
-          },
-          "code": {
-            "type": "string",
-            "description": "Mã lỗi nghiệp vụ ổn định để client rẽ nhánh (in hoa)",
-            "example": "RESOURCE_NOT_FOUND"
-          }
-        },
-        "required": [
-          "statusCode",
-          "code"
         ]
       }
     },

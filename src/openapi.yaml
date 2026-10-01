@@ -41,6 +41,20 @@ paths:
     $ref: './paths/auth/logout.yaml'
   /auth/password-reset-requests:
     $ref: './paths/auth/password-reset-requests.yaml'
+  /auth/password-resets:
+    $ref: './paths/auth/password-resets.yaml'
+  /me:
+    $ref: './paths/users/me.yaml'
+  /me/password:
+    $ref: './paths/users/me-password.yaml'
+  /users:
+    $ref: './paths/users/users.yaml'
+  /users/{userId}:
+    $ref: './paths/users/user-by-id.yaml'
+  /users/{userId}/lock:
+    $ref: './paths/users/user-lock.yaml'
+  /users/{userId}/unlock:
+    $ref: './paths/users/user-unlock.yaml'
 
 components:
   schemas:

@@ -1,0 +1,111 @@
+get:
+  tags:
+  - User
+  x-apidog-folder: User
+  operationId: getCurrentUser
+  summary: Get current user
+  description: Yêu cầu access token của tenant, landlord hoặc admin. Trả hồ sơ của chính người gọi; tài
+    khoản nhận tiền chỉ có ở landlord.
+  responses:
+    '200':
+      description: Current user fetched
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required:
+            - statusCode
+            - code
+            - data
+            properties:
+              statusCode:
+                type: integer
+                enum:
+                - 200
+              code:
+                type: string
+                enum:
+                - CURRENT_USER_FETCHED
+              data:
+                $ref: ../../openapi.yaml#/components/schemas/UserCurrentResponseDto
+          example:
+            statusCode: 200
+            code: CURRENT_USER_FETCHED
+            data:
+              id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+              name: Lê Văn An
+              email: lan@example.com
+              phone: 0901234567
+              role: tenant
+              status: active
+              payoutAccount: null
+    '400':
+      $ref: ../../openapi.yaml#/components/responses/BadRequestError
+    '401':
+      $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
+    '429':
+      $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
+    '500':
+      $ref: ../../openapi.yaml#/components/responses/InternalServerError
+patch:
+  tags:
+  - User
+  x-apidog-folder: User
+  operationId: updateCurrentUser
+  summary: Update current user
+  description: Yêu cầu access token của tenant, landlord hoặc admin. Cập nhật name và phone; landlord
+    có thể cập nhật payoutAccount khi không còn hóa đơn pending. Email và role không thay đổi.
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: ../../openapi.yaml#/components/schemas/UserCurrentUpdateRequestDto
+        example:
+          name: Lê Văn An
+          phone: 0901234567
+          payoutAccount: null
+  responses:
+    '200':
+      description: Profile updated
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required:
+            - statusCode
+            - code
+            - data
+            properties:
+              statusCode:
+                type: integer
+                enum:
+                - 200
+              code:
+                type: string
+                enum:
+                - PROFILE_UPDATED
+              data:
+                $ref: ../../openapi.yaml#/components/schemas/UserCurrentUpdateResponseDto
+          example:
+            statusCode: 200
+            code: PROFILE_UPDATED
+            data:
+              id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+              name: Lê Văn An
+              phone: 0901234567
+              payoutAccount: null
+    '400':
+      $ref: ../../openapi.yaml#/components/responses/BadRequestError
+    '401':
+      $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
+    '409':
+      $ref: ../../openapi.yaml#/components/responses/ConflictError
+    '422':
+      $ref: ../../openapi.yaml#/components/responses/ValidationError
+    '429':
+      $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
+    '500':
+      $ref: ../../openapi.yaml#/components/responses/InternalServerError
