@@ -161,3 +161,89 @@ get:
       $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
     '500':
       $ref: ../../openapi.yaml#/components/responses/InternalServerError
+post:
+  tags: [Billing]
+  x-apidog-folder: Invoice
+  operationId: createSettlementInvoice
+  summary: Create checkout settlement invoice
+  description: >-
+    Landlord tạo hóa đơn quyết toán trả phòng cho hợp đồng của mình.
+    Server tính rentAmount và breakdown từ chỉ số cùng chính sách giá;
+    client chỉ gửi các khoản phí khác và ghi chú. Tổng âm bị từ chối.
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: '../../openapi.yaml#/components/schemas/InvoiceCreateSettlementRequestDto'
+        example:
+          contractId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+          period: '2026-09'
+          otherFees:
+            - name: Phí vệ sinh
+              amount: 50000
+            - name: Hư hỏng nội thất
+              amount: -150000
+          note: Thanh lý hợp đồng, prorate theo ngày ở thực tế
+  responses:
+    '201':
+      description: Tạo hóa đơn quyết toán thành công
+      headers:
+        Location:
+          description: Đường dẫn đến hóa đơn vừa tạo
+          schema:
+            type: string
+            example: /api/v1/invoices/3fa85f64-5717-4562-b3fc-2c963f66afa6
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code, data]
+            properties:
+              statusCode:
+                type: integer
+                enum: [201]
+              code:
+                type: string
+                enum: [SETTLEMENT_INVOICE_CREATED]
+              data:
+                $ref: '../../openapi.yaml#/components/schemas/InvoiceCreateSettlementResponseDto'
+          example:
+            statusCode: 201
+            code: SETTLEMENT_INVOICE_CREATED
+            data:
+              id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+              code: INV-202609-8F2K
+              contractId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+              period: '2026-09'
+              rentAmount: 1750000
+              breakdown:
+                - type: electricity
+                  name: Điện EVN
+                  qtyKwh: 180
+                  amount: 720000
+              otherFees:
+                - name: Phí vệ sinh
+                  amount: 50000
+                - name: Hư hỏng nội thất
+                  amount: -150000
+              totalAmount: 2370000
+              invoiceStatus: pending
+              issuedAt: null
+    '400':
+      $ref: '../../openapi.yaml#/components/responses/BadRequestError'
+    '401':
+      $ref: '../../openapi.yaml#/components/responses/UnauthorizedError'
+    '403':
+      $ref: '../../openapi.yaml#/components/responses/ForbiddenError'
+    '404':
+      $ref: '../../openapi.yaml#/components/responses/NotFoundError'
+    '409':
+      $ref: '../../openapi.yaml#/components/responses/ConflictError'
+    '422':
+      $ref: '../../openapi.yaml#/components/responses/ValidationError'
+    '429':
+      $ref: '../../openapi.yaml#/components/responses/TooManyRequestsError'
+    '500':
+      $ref: '../../openapi.yaml#/components/responses/InternalServerError'
