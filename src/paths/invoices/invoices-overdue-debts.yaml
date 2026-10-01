@@ -1,0 +1,54 @@
+get:
+  tags:
+  - Billing
+  x-apidog-folder: Invoice
+  operationId: getOverdueDebts
+  summary: List overdue debts
+  description: "landlord. Danh sách các phòng nợ tiền quá hạn, mức độ quá hạn và lịch sử đôn đốc nợ. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 VALIDATION FAILED."
+  parameters:
+  - name: buildingId
+    in: query
+    required: false
+    description: Lọc danh sách công nợ theo tòa nhà.
+    schema:
+      type: string
+      format: uuid
+  - name: minDaysOverdue
+    in: query
+    required: false
+    description: "Số ngày quá hạn tối thiểu (VD: 3 ngày, 7 ngày)."
+    schema:
+      type: integer
+      minimum: 1
+      example: 3
+  responses:
+    "200":
+      description: "Thành công: Lấy danh sách công nợ quá hạn."
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required:
+            - statusCode
+            - code
+            - data
+            properties:
+              statusCode:
+                type: integer
+                enum:
+                - 200
+              code:
+                type: string
+                enum:
+                - OVERDUE_DEBTS_FETCHED
+              data:
+                $ref: ../../openapi.yaml#/components/schemas/OverdueDebtListResponseDto
+    "400":
+      $ref: ../../openapi.yaml#/components/responses/BadRequestError
+    "401":
+      $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
+    "403":
+      $ref: ../../openapi.yaml#/components/responses/ForbiddenError
+    "500":
+      $ref: ../../openapi.yaml#/components/responses/InternalServerError

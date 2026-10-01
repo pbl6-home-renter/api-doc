@@ -74,6 +74,10 @@ paths:
     $ref: './paths/buildings/admin-buildings.yaml'
   /buildings/{buildingId}:
     $ref: './paths/buildings/buildings-buildingId.yaml'
+  /buildings/{buildingId}/vietqr-config:
+    $ref: './paths/buildings/buildings-buildingId-vietqr-config.yaml'
+  /buildings/{buildingId}/rate-policies/batch:
+    $ref: './paths/buildings/buildings-buildingId-rate-policies-batch.yaml'
   /me/buildings/{buildingId}:
     $ref: './paths/buildings/me-buildings-buildingId.yaml'
   /buildings/{buildingId}/approve:
@@ -86,6 +90,8 @@ paths:
     $ref: './paths/rooms/rooms.yaml'
   /me/rooms:
     $ref: './paths/rooms/me-rooms.yaml'
+  /me/room-hub:
+    $ref: './paths/rooms/me-room-hub.yaml'
   /rooms/{roomId}:
     $ref: './paths/rooms/rooms-roomId.yaml'
   /rooms/{roomId}/mark-ready:
@@ -136,6 +142,8 @@ paths:
     $ref: './paths/contracts/contracts-contractId-activate-contract.yaml'
   /contracts/{contractId}/complete-checkout:
     $ref: './paths/contracts/contracts-contractId-complete-checkout.yaml'
+  /contracts/{contractId}/deposit-settlement:
+    $ref: './paths/contracts/contracts-contractId-deposit-settlement.yaml'
   /contract-members:
     $ref: './paths/contracts/contract-members.yaml'
   /contract-members/{contractMemberId}:
@@ -144,12 +152,18 @@ paths:
     $ref: './paths/contracts/contract-members-contractMemberId-leave-contract.yaml'
   /meter-readings:
     $ref: './paths/billing/meter-readings.yaml'
+  /meter-readings/bulk:
+    $ref: './paths/billing/meter-readings-bulk.yaml'
   /meter-readings/preview-ocr-result:
     $ref: './paths/billing/meter-readings-preview-ocr-result.yaml'
   /invoices/tenant:
     $ref: './paths/invoices/invoices-tenant.yaml'
   /invoices:
     $ref: './paths/invoices/invoices.yaml'
+  /invoices/settlement:
+    $ref: './paths/invoices/invoices-settlement.yaml'
+  /invoices/overdue-debts:
+    $ref: './paths/invoices/invoices-overdue-debts.yaml'
   /invoices/{invoiceId}:
     $ref: './paths/invoices/invoices-invoiceId.yaml'
   /invoices/issue-invoice:

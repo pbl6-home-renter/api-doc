@@ -4,8 +4,8 @@ post:
   x-apidog-folder: Contract
   operationId: postContractsContractidCompleteCheckout
   summary: Complete checkout
-  description: 'landlord. Hoàn tất trả phòng. Lỗi nghiệp vụ: 409 CONTRACT NOT ACTIVE · 403 FORBIDDEN · 422 SETTLEMENT
-    NOT READY.'
+  description: "landlord. Hoàn tất trả phòng và kết thúc hợp đồng. Sau khi checkout thành công, phòng sẽ tự động chuyển sang trạng thái chờ dọn dẹp và chuẩn bị cho thuê mới (Room.status = pending_cleanup). Sau khi chủ trọ nghiệm thu dọn dẹp xong, gọi POST /rooms/{roomId}/mark-ready để đưa phòng về available. Lỗi nghiệp vụ: 409 CONTRACT NOT ACTIVE · 403 FORBIDDEN · 422 SETTLEMENT NOT READY.
+    NOT READY."
   parameters:
   - name: contractId
     in: path

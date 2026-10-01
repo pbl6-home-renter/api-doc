@@ -1174,7 +1174,7 @@
         "x-apidog-folder": "User",
         "operationId": "lockUser",
         "summary": "Lock user",
-        "description": "Chỉ admin; yêu cầu access token. Khóa tài khoản active, thu hồi phiên đang mở và ghi audit log.",
+        "description": "Chỉ admin; yêu cầu access token. Khóa tài khoản, thu hồi phiên và ghi audit log. Nghiệp vụ: Khi khóa chủ trọ, toàn bộ thông tin/phòng của chủ trọ sẽ bị vô hiệu hóa (ẩn khỏi sàn), hợp đồng đang hiệu lực chuyển sang trạng thái tạm thời kết thúc (nếu đến hạn chưa mở khóa thì tự hủy). Khi khóa người thuê, người thuê vẫn được thanh toán hóa đơn hợp đồng hiện tại, nhưng không thể gia hạn và không thể thuê trọ mới.log.",
         "parameters": [
           {
             "name": "userId",
@@ -1366,7 +1366,7 @@
         ],
         "x-apidog-folder": "PushDevice",
         "operationId": "postMePushDevices",
-        "summary": "Đăng ký device token",
+        "summary": "Register push device",
         "description": "tenant, landlord, admin. Đăng ký device token. Lỗi nghiệp vụ: 422 VALIDATION FAILED · 409 DUPLICATE DEVICE.",
         "requestBody": {
           "required": true,
@@ -1461,7 +1461,7 @@
         ],
         "x-apidog-folder": "PushDevice",
         "operationId": "deleteMePushDevicesDeviceid",
-        "summary": "Gỡ device token",
+        "summary": "Unregister push device",
         "description": "tenant, landlord, admin. Gỡ device token. Lỗi nghiệp vụ: 404 NOT FOUND.",
         "parameters": [
           {
@@ -1503,8 +1503,8 @@
         ],
         "x-apidog-folder": "Media",
         "operationId": "postMediaPresignUpload",
-        "summary": "Xin URL upload đã ký",
-        "description": "tenant, landlord, admin. Xin URL upload đã ký. Lỗi nghiệp vụ: 422 MEDIA TYPE NOT ALLOWED · 422 INVALID PURPOSE · 403 FORBIDDEN.",
+        "summary": "Request presigned upload URL",
+        "description": "tenant, landlord, admin. Xin URL upload đã ký để đẩy file trực tiếp lên Storage. Nghiệp vụ: Với ảnh công tơ điện nước, tenant chỉ được dùng camera trực tiếp (camera_direct), landlord được upload từ bộ nhớ máy (device_storage). Lỗi nghiệp vụ: 403 FORBIDDEN · 422 VALIDATION FAILED.",
         "requestBody": {
           "required": true,
           "content": {
@@ -1609,7 +1609,7 @@
         ],
         "x-apidog-folder": "Media",
         "operationId": "postMediaMediaidCompleteUpload",
-        "summary": "Chốt upload",
+        "summary": "Complete media upload",
         "description": "tenant, landlord, admin. Chốt upload. Lỗi nghiệp vụ: 404 NOT FOUND · 403 FORBIDDEN · 409 UPLOAD NOT COMPLETED · 410 TICKET EXPIRED.",
         "parameters": [
           {
@@ -1709,7 +1709,7 @@
         ],
         "x-apidog-folder": "Media",
         "operationId": "getMediaMediaid",
-        "summary": "Đọc hoặc stream một tệp",
+        "summary": "Get or stream media",
         "description": "Quyền kế thừa từ tài nguyên cha. Đọc hoặc stream một tệp. Lỗi nghiệp vụ: 404 NOT FOUND · 403 FORBIDDEN · 410 MEDIA DELETED.",
         "parameters": [
           {
@@ -1781,7 +1781,7 @@
         ],
         "x-apidog-folder": "Media",
         "operationId": "deleteMediaMediaid",
-        "summary": "Xóa mềm tệp",
+        "summary": "Delete media",
         "description": "tenant, landlord, admin. Xóa mềm tệp. Lỗi nghiệp vụ: 403 FORBIDDEN · 409 CAN'T DELETE.",
         "parameters": [
           {
@@ -1826,7 +1826,7 @@
         ],
         "x-apidog-folder": "Building",
         "operationId": "getBuildings",
-        "summary": "Tìm tòa nhà trên sàn công khai",
+        "summary": "Search public buildings",
         "description": "public. Tìm tòa nhà trên sàn công khai. Lỗi nghiệp vụ: 422 VALIDATION FAILED · 429 RATE LIMIT EXCEEDED.",
         "security": [],
         "parameters": [
@@ -2051,7 +2051,7 @@
         ],
         "x-apidog-folder": "Building",
         "operationId": "postBuildings",
-        "summary": "Gửi tòa nhà để duyệt",
+        "summary": "Create building for approval",
         "description": "landlord. Gửi tòa nhà để duyệt. Lỗi nghiệp vụ: 422 VALIDATION FAILED · 403 FORBIDDEN.",
         "requestBody": {
           "required": true,
@@ -2155,7 +2155,7 @@
         ],
         "x-apidog-folder": "Building",
         "operationId": "getMeBuildings",
-        "summary": "Liệt kê tòa nhà của tôi",
+        "summary": "List my buildings",
         "description": "landlord. Liệt kê tòa nhà của tôi. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 VALIDATION FAILED.",
         "parameters": [
           {
@@ -2382,7 +2382,7 @@
         ],
         "x-apidog-folder": "Building",
         "operationId": "getAdminBuildings",
-        "summary": "Hàng đợi duyệt và quản lý toàn bộ tòa nhà",
+        "summary": "List buildings for admin approval",
         "description": "admin. Hàng đợi duyệt và quản lý toàn bộ tòa nhà. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 VALIDATION FAILED.",
         "parameters": [
           {
@@ -2625,7 +2625,7 @@
         ],
         "x-apidog-folder": "Building",
         "operationId": "getBuildingsBuildingid",
-        "summary": "Đọc tòa nhà (chế độ công khai)",
+        "summary": "Get public building details",
         "description": "public. Đọc tòa nhà (chế độ công khai). Lỗi nghiệp vụ: 404 NOT FOUND.",
         "security": [],
         "parameters": [
@@ -2705,7 +2705,7 @@
         ],
         "x-apidog-folder": "Building",
         "operationId": "patchBuildingsBuildingid",
-        "summary": "Cập nhật thông tin tòa nhà",
+        "summary": "Update building",
         "description": "landlord. Cập nhật thông tin tòa nhà. Lỗi nghiệp vụ: 404 NOT FOUND · 403 FORBIDDEN · 409 APPROVED BUILDING LOCKED · 422 VALIDATION FAILED.",
         "parameters": [
           {
@@ -2808,7 +2808,7 @@
         ],
         "x-apidog-folder": "Building",
         "operationId": "deleteBuildingsBuildingid",
-        "summary": "Xóa mềm tòa nhà",
+        "summary": "Delete building",
         "description": "landlord. Xóa mềm tòa nhà. Lỗi nghiệp vụ: 404 NOT FOUND · 409 BUILDING HAS ACTIVE CONTRACT.",
         "parameters": [
           {
@@ -2846,6 +2846,237 @@
         }
       }
     },
+    "/buildings/{buildingId}/vietqr-config": {
+      "put": {
+        "tags": [
+          "Property"
+        ],
+        "x-apidog-folder": "Building",
+        "operationId": "putBuildingVietQrConfig",
+        "summary": "Configure building VietQR payment",
+        "description": "landlord. Cấu hình tài khoản ngân hàng nhận tiền chuyển khoản và sinh mã VietQR động cho tòa nhà. Lỗi nghiệp vụ: 404 BUILDING NOT FOUND · 403 FORBIDDEN · 422 INVALID BANK ACCOUNT.",
+        "parameters": [
+          {
+            "name": "buildingId",
+            "in": "path",
+            "required": true,
+            "description": "UUID của tòa nhà cần cấu hình VietQR.",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BuildingVietQrConfigRequestDto"
+              },
+              "example": {
+                "bankCode": "MB",
+                "bankName": "Ngân hàng TMCP Quân Đội",
+                "accountNumber": "0987654321",
+                "accountHolderName": "NGUYEN VAN A",
+                "branch": "Chi nhánh Đà Nẵng",
+                "isDefault": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Thành công: Cấu hình tài khoản VietQR tòa nhà.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code",
+                    "data"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        200
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "BUILDING_VIETQR_CONFIGURED"
+                      ]
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/BuildingVietQrConfigResponseDto"
+                    }
+                  }
+                },
+                "example": {
+                  "statusCode": 200,
+                  "code": "BUILDING_VIETQR_CONFIGURED",
+                  "data": {
+                    "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                    "buildingId": "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d",
+                    "bankCode": "MB",
+                    "bankName": "Ngân hàng TMCP Quân Đội",
+                    "accountNumber": "0987654321",
+                    "accountHolderName": "NGUYEN VAN A",
+                    "branch": "Chi nhánh Đà Nẵng",
+                    "qrSampleUrl": "https://api.vietqr.io/image/970422-0987654321-sample.jpg",
+                    "isDefault": true,
+                    "createdAt": "2026-09-23T12:00:00.000Z",
+                    "updatedAt": "2026-09-23T12:00:00.000Z"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequestError"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "403": {
+            "$ref": "#/components/responses/ForbiddenError"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundError"
+          },
+          "422": {
+            "$ref": "#/components/responses/ValidationError"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
+    "/buildings/{buildingId}/rate-policies/batch": {
+      "post": {
+        "tags": [
+          "Billing"
+        ],
+        "x-apidog-folder": "RatePolicy",
+        "operationId": "postBuildingRatePoliciesBatch",
+        "summary": "Batch create rate policies for building",
+        "description": "landlord. Thiết lập hàng loạt các chính sách đơn giá tiện ích và phí dịch vụ cho tòa nhà (bước 3/3 wizard tạo tài sản). Lỗi nghiệp vụ: 404 BUILDING NOT FOUND · 403 FORBIDDEN · 422 VALIDATION FAILED.",
+        "parameters": [
+          {
+            "name": "buildingId",
+            "in": "path",
+            "required": true,
+            "description": "UUID của tòa nhà cần cấu hình biểu giá dịch vụ.",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BuildingRatePoliciesBatchCreateRequestDto"
+              },
+              "example": {
+                "buildingId": "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d",
+                "ratePolicies": [
+                  {
+                    "category": "ELECTRICITY",
+                    "name": "Tiền điện sinh hoạt",
+                    "rateKind": "PROGRESSIVE",
+                    "unit": "kWh",
+                    "progressiveTiers": [
+                      {
+                        "tierOrder": 1,
+                        "tierName": "Bậc 1 (0-50 kWh)",
+                        "fromQty": 0,
+                        "toQty": 50,
+                        "pricePerUnit": 1806
+                      }
+                    ]
+                  },
+                  {
+                    "category": "WATER",
+                    "name": "Tiền nước sinh hoạt",
+                    "rateKind": "PER_PERSON",
+                    "unit": "người/tháng",
+                    "unitPrice": 100000
+                  },
+                  {
+                    "category": "INTERNET",
+                    "name": "Internet Wifi tốc độ cao",
+                    "rateKind": "PER_ROOM",
+                    "unit": "phòng/tháng",
+                    "unitPrice": 100000
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Thành công: Thiết lập hàng loạt đơn giá dịch vụ tòa nhà.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code",
+                    "data"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        201
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "RATE_POLICIES_BATCH_CREATED"
+                      ]
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/RatePolicyListResponseDto"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequestError"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "403": {
+            "$ref": "#/components/responses/ForbiddenError"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundError"
+          },
+          "422": {
+            "$ref": "#/components/responses/ValidationError"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
     "/me/buildings/{buildingId}": {
       "get": {
         "tags": [
@@ -2853,7 +3084,7 @@
         ],
         "x-apidog-folder": "Building",
         "operationId": "getMeBuildingsBuildingid",
-        "summary": "Đọc tòa nhà của tôi (chế độ quản trị)",
+        "summary": "Get my building details",
         "description": "landlord. Đọc tòa nhà của tôi (chế độ quản trị). Lỗi nghiệp vụ: 404 NOT FOUND · 403 FORBIDDEN.",
         "parameters": [
           {
@@ -2946,7 +3177,7 @@
         ],
         "x-apidog-folder": "Building",
         "operationId": "postBuildingsBuildingidApprove",
-        "summary": "Duyệt tòa nhà",
+        "summary": "Approve building",
         "description": "admin. Duyệt tòa nhà. Lỗi nghiệp vụ: 404 NOT FOUND · 409 BUILDING NOT PENDING.",
         "parameters": [
           {
@@ -3043,7 +3274,7 @@
         ],
         "x-apidog-folder": "Building",
         "operationId": "postBuildingsBuildingidReject",
-        "summary": "Từ chối tòa nhà",
+        "summary": "Reject building",
         "description": "admin. Từ chối tòa nhà. Lỗi nghiệp vụ: 404 NOT FOUND · 409 BUILDING NOT PENDING · 422 NOTE REQUIRED.",
         "parameters": [
           {
@@ -3144,7 +3375,7 @@
         ],
         "x-apidog-folder": "Building",
         "operationId": "getAdminBuildingsBuildingid",
-        "summary": "Chi tiết tòa nhà trong hàng đợi duyệt",
+        "summary": "Get building details for approval",
         "description": "admin. Chi tiết tòa nhà trong hàng đợi duyệt. Lỗi nghiệp vụ: 404 NOT FOUND · 403 FORBIDDEN.",
         "parameters": [
           {
@@ -3243,7 +3474,7 @@
         ],
         "x-apidog-folder": "Room",
         "operationId": "getRooms",
-        "summary": "Tìm phòng trên sàn công khai",
+        "summary": "Search public rooms",
         "description": "public. Tìm phòng trên sàn công khai. Lỗi nghiệp vụ: 422 VALIDATION FAILED · 429 RATE LIMIT EXCEEDED.",
         "security": [],
         "parameters": [
@@ -3486,7 +3717,7 @@
         ],
         "x-apidog-folder": "Room",
         "operationId": "postRooms",
-        "summary": "Tạo phòng trong một tòa nhà",
+        "summary": "Create room",
         "description": "landlord. Tạo phòng trong một tòa nhà. Lỗi nghiệp vụ: 403 FORBIDDEN · 409 DUPLICATE ROOM · 422 BUILDING NOT APPROVED.",
         "requestBody": {
           "required": true,
@@ -3596,7 +3827,7 @@
         ],
         "x-apidog-folder": "Room",
         "operationId": "getMeRooms",
-        "summary": "Liệt kê phòng của tôi",
+        "summary": "List my rooms",
         "description": "landlord. Liệt kê phòng của tôi. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 VALIDATION FAILED.",
         "parameters": [
           {
@@ -3820,6 +4051,64 @@
         }
       }
     },
+    "/me/room-hub": {
+      "get": {
+        "tags": [
+          "Property"
+        ],
+        "x-apidog-folder": "Room",
+        "operationId": "getMeRoomHub",
+        "summary": "Get tenant room hub dashboard",
+        "description": "tenant. Lấy thông tin tổng hợp cho trang chủ trung tâm phòng của người thuê (hợp đồng hiện tại, hóa đơn chưa thanh toán, chỉ số điện nước, sự cố đang xử lý, bạn cùng phòng). Lỗi nghiệp vụ: 404 ACTIVE CONTRACT NOT FOUND · 403 FORBIDDEN.",
+        "responses": {
+          "200": {
+            "description": "Thành công: Lấy thông tin trung tâm phòng.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code",
+                    "data"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        200
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "ROOM_HUB_FETCHED"
+                      ]
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/MyRoomHubResponseDto"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "403": {
+            "$ref": "#/components/responses/ForbiddenError"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundError"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
     "/rooms/{roomId}": {
       "get": {
         "tags": [
@@ -3827,7 +4116,7 @@
         ],
         "x-apidog-folder": "Room",
         "operationId": "getRoomsRoomid",
-        "summary": "Đọc một phòng",
+        "summary": "Get room details",
         "description": "public, landlord, tenant, admin. Đọc một phòng. Lỗi nghiệp vụ: 404 NOT FOUND · 403 FORBIDDEN.",
         "security": [],
         "parameters": [
@@ -3922,7 +4211,7 @@
         ],
         "x-apidog-folder": "Room",
         "operationId": "patchRoomsRoomid",
-        "summary": "Cập nhật thông tin phòng",
+        "summary": "Update room",
         "description": "landlord. Cập nhật thông tin phòng. Lỗi nghiệp vụ: 404 NOT FOUND · 403 FORBIDDEN · 422 VALIDATION FAILED.",
         "parameters": [
           {
@@ -4023,7 +4312,7 @@
         ],
         "x-apidog-folder": "Room",
         "operationId": "deleteRoomsRoomid",
-        "summary": "Xóa mềm phòng",
+        "summary": "Delete room",
         "description": "landlord. Xóa mềm phòng. Lỗi nghiệp vụ: 404 NOT FOUND · 409 ROOM HAS ACTIVE CONTRACT · 403 FORBIDDEN.",
         "parameters": [
           {
@@ -4071,7 +4360,7 @@
         ],
         "x-apidog-folder": "Room",
         "operationId": "postRoomsRoomidMarkReady",
-        "summary": "Đánh dấu phòng sẵn sàng cho thuê",
+        "summary": "Mark room ready for rent",
         "description": "landlord. Đánh dấu phòng sẵn sàng cho thuê. Lỗi nghiệp vụ: 404 NOT FOUND · 403 FORBIDDEN · 409 INVALID ROOM TRANSITION.",
         "parameters": [
           {
@@ -4157,7 +4446,7 @@
         ],
         "x-apidog-folder": "FavoriteRoom",
         "operationId": "getMeFavoriteRooms",
-        "summary": "Liệt kê phòng đã lưu",
+        "summary": "List favorite rooms",
         "description": "tenant. Liệt kê phòng đã lưu. Lỗi nghiệp vụ: 401 INVALID TOKEN.",
         "parameters": [
           {
@@ -4335,7 +4624,7 @@
         ],
         "x-apidog-folder": "FavoriteRoom",
         "operationId": "postMeFavoriteRooms",
-        "summary": "Lưu một phòng",
+        "summary": "Add favorite room",
         "description": "tenant. Lưu một phòng. Lỗi nghiệp vụ: 404 NOT FOUND · 409 ALREADY FAVORITED.",
         "requestBody": {
           "required": true,
@@ -4429,7 +4718,7 @@
         ],
         "x-apidog-folder": "FavoriteRoom",
         "operationId": "deleteMeFavoriteRoomsRoomid",
-        "summary": "Bỏ lưu một phòng",
+        "summary": "Remove favorite room",
         "description": "tenant. Bỏ lưu một phòng. Lỗi nghiệp vụ: 404 NOT FOUND.",
         "parameters": [
           {
@@ -4471,7 +4760,7 @@
         ],
         "x-apidog-folder": "RoommateProfile",
         "operationId": "getRoommateProfiles",
-        "summary": "Duyệt feed hồ sơ tìm bạn ở",
+        "summary": "Search roommate profiles",
         "description": "tenant. Duyệt feed hồ sơ tìm bạn ở. Lỗi nghiệp vụ: 422 VALIDATION FAILED.",
         "parameters": [
           {
@@ -4643,7 +4932,7 @@
         ],
         "x-apidog-folder": "RoommateProfile",
         "operationId": "getRoommateProfilesRoommateprofileid",
-        "summary": "Đọc một hồ sơ theo định danh",
+        "summary": "Get roommate profile details",
         "description": "tenant. Đọc một hồ sơ theo định danh. Lỗi nghiệp vụ: 404 NOT FOUND · 403 PROFILE NOT VISIBLE.",
         "parameters": [
           {
@@ -4733,7 +5022,7 @@
         ],
         "x-apidog-folder": "RoommateProfile",
         "operationId": "getMeRoommateProfile",
-        "summary": "Đọc profile của chính mình",
+        "summary": "Get my roommate profile",
         "description": "tenant. Đọc profile của chính mình. Lỗi nghiệp vụ: 404 NOT FOUND.",
         "responses": {
           "200": {
@@ -4806,7 +5095,7 @@
         ],
         "x-apidog-folder": "RoommateProfile",
         "operationId": "putMeRoommateProfile",
-        "summary": "Tạo hoặc cập nhật profile của chính mình",
+        "summary": "Create or update my roommate profile",
         "description": "tenant. Tạo hoặc cập nhật profile của chính mình. Lỗi nghiệp vụ: 422 BUDGET RANGE INVALID · 422 VALIDATION FAILED.",
         "requestBody": {
           "required": true,
@@ -4899,7 +5188,7 @@
         ],
         "x-apidog-folder": "MatchRequest",
         "operationId": "getMatchRequests",
-        "summary": "Liệt kê yêu cầu đến hoặc đi",
+        "summary": "List match requests",
         "description": "tenant. Liệt kê yêu cầu đến hoặc đi. Lỗi nghiệp vụ: 422 VALIDATION FAILED.",
         "parameters": [
           {
@@ -5083,7 +5372,7 @@
         ],
         "x-apidog-folder": "MatchRequest",
         "operationId": "postMatchRequests",
-        "summary": "Gửi yêu cầu tìm bạn ở",
+        "summary": "Create match request",
         "description": "tenant. Gửi yêu cầu tìm bạn ở. Lỗi nghiệp vụ: 409 DUPLICATE MATCH REQUEST · 422 SELF MATCHING NOT ALLOWED · 404 NOT FOUND.",
         "requestBody": {
           "required": true,
@@ -5181,7 +5470,7 @@
         ],
         "x-apidog-folder": "MatchRequest",
         "operationId": "postMatchRequestsMatchrequestidAcceptRequest",
-        "summary": "Chấp nhận yêu cầu",
+        "summary": "Accept match request",
         "description": "tenant. Chấp nhận yêu cầu. Lỗi nghiệp vụ: 403 FORBIDDEN · 409 MATCH REQUEST NOT PENDING · 404 NOT FOUND.",
         "parameters": [
           {
@@ -5268,7 +5557,7 @@
         ],
         "x-apidog-folder": "MatchRequest",
         "operationId": "postMatchRequestsMatchrequestidRejectRequest",
-        "summary": "Từ chối yêu cầu",
+        "summary": "Reject match request",
         "description": "tenant. Từ chối yêu cầu. Lỗi nghiệp vụ: 403 FORBIDDEN · 409 MATCH REQUEST NOT PENDING.",
         "parameters": [
           {
@@ -5351,7 +5640,7 @@
         ],
         "x-apidog-folder": "MatchRequest",
         "operationId": "postMatchRequestsMatchrequestidWithdrawRequest",
-        "summary": "Người gửi rút yêu cầu",
+        "summary": "Withdraw match request",
         "description": "tenant. Người gửi rút yêu cầu. Lỗi nghiệp vụ: 403 FORBIDDEN · 404 NOT FOUND · 409 NOT REQUESTER · 409 MATCH REQUEST NOT PENDING.",
         "parameters": [
           {
@@ -5438,7 +5727,7 @@
         ],
         "x-apidog-folder": "RatePolicy",
         "operationId": "getRatePolicies",
-        "summary": "Liệt kê chính sách đơn giá và phí định kỳ",
+        "summary": "List rate policies",
         "description": "landlord. Liệt kê chính sách đơn giá và phí định kỳ. Lỗi nghiệp vụ: 422 VALIDATION FAILED · 403 FORBIDDEN.",
         "parameters": [
           {
@@ -5617,7 +5906,7 @@
         ],
         "x-apidog-folder": "RatePolicy",
         "operationId": "postRatePolicies",
-        "summary": "Tạo một chính sách đơn giá hoặc phí",
+        "summary": "Create rate policy",
         "description": "landlord. Tạo một chính sách đơn giá hoặc phí. Lỗi nghiệp vụ: 409 ACTIVE POLICY EXISTS · 422 INVALID RATE KIND · 403 FORBIDDEN.",
         "requestBody": {
           "required": true,
@@ -5728,7 +6017,7 @@
         ],
         "x-apidog-folder": "RatePolicy",
         "operationId": "patchRatePoliciesRatepolicyid",
-        "summary": "Đổi tên chính sách",
+        "summary": "Update rate policy",
         "description": "landlord. Đổi tên chính sách. Lỗi nghiệp vụ: 403 FORBIDDEN · 409 RATE POLICY LOCKED · 422 VALIDATION FAILED.",
         "parameters": [
           {
@@ -5827,7 +6116,7 @@
         ],
         "x-apidog-folder": "RatePolicy",
         "operationId": "postRatePoliciesRatepolicyidDeactivatePolicy",
-        "summary": "Vô hiệu hoá chính sách",
+        "summary": "Deactivate rate policy",
         "description": "landlord. Vô hiệu hoá chính sách. Lỗi nghiệp vụ: 403 FORBIDDEN · 409 POLICY NOT ACTIVE.",
         "parameters": [
           {
@@ -5910,7 +6199,7 @@
         ],
         "x-apidog-folder": "BillingSetting",
         "operationId": "getBillingSettings",
-        "summary": "Liệt kê cài đặt thanh toán và nhắc hóa đơn",
+        "summary": "List billing settings",
         "description": "landlord. Liệt kê cài đặt thanh toán và nhắc hóa đơn. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 VALIDATION FAILED.",
         "parameters": [
           {
@@ -6086,7 +6375,7 @@
         ],
         "x-apidog-folder": "BillingSetting",
         "operationId": "postBillingSettings",
-        "summary": "Tạo một cài đặt hóa đơn",
+        "summary": "Create billing setting",
         "description": "landlord. Tạo một cài đặt hóa đơn. Lỗi nghiệp vụ: 409 ACTIVE SETTING EXISTS · 422 DUE DAYS INVALID · 403 FORBIDDEN.",
         "requestBody": {
           "required": true,
@@ -6197,7 +6486,7 @@
         ],
         "x-apidog-folder": "BillingSetting",
         "operationId": "patchBillingSettingsBillingsettingid",
-        "summary": "Cập nhật cài đặt hóa đơn",
+        "summary": "Update billing setting",
         "description": "landlord. Cập nhật cài đặt hóa đơn. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 DUE DAYS INVALID.",
         "parameters": [
           {
@@ -6297,7 +6586,7 @@
         ],
         "x-apidog-folder": "ContractTemplate",
         "operationId": "getContractTemplates",
-        "summary": "Liệt kê mẫu khả dụng",
+        "summary": "List contract templates",
         "description": "landlord. Liệt kê mẫu khả dụng. Lỗi nghiệp vụ: 403 FORBIDDEN.",
         "parameters": [
           {
@@ -6447,7 +6736,7 @@
         ],
         "x-apidog-folder": "ContractTemplate",
         "operationId": "getContractTemplatesTemplatekey",
-        "summary": "Đọc một mẫu",
+        "summary": "Get contract template",
         "description": "landlord. Đọc một mẫu. Lỗi nghiệp vụ: 404 NOT FOUND.",
         "parameters": [
           {
@@ -6532,7 +6821,7 @@
         ],
         "x-apidog-folder": "Contract",
         "operationId": "getMeContracts",
-        "summary": "Hợp đồng của tôi",
+        "summary": "List my contracts",
         "description": "tenant. Hợp đồng của tôi. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 VALIDATION FAILED.",
         "parameters": [
           {
@@ -6746,7 +7035,7 @@
         ],
         "x-apidog-folder": "Contract",
         "operationId": "getContracts",
-        "summary": "Quản lý hợp đồng của tôi",
+        "summary": "List contracts",
         "description": "landlord. Quản lý hợp đồng của tôi. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 VALIDATION FAILED.",
         "parameters": [
           {
@@ -6967,7 +7256,7 @@
         ],
         "x-apidog-folder": "Contract",
         "operationId": "postContracts",
-        "summary": "Tạo hợp đồng nháp",
+        "summary": "Create draft contract",
         "description": "landlord. Tạo hợp đồng nháp. Lỗi nghiệp vụ: 409 ACTIVE CONTRACT EXISTS · 422 TENANT IDENTITY INVALID · 403 FORBIDDEN.",
         "requestBody": {
           "required": true,
@@ -7076,7 +7365,7 @@
         ],
         "x-apidog-folder": "Contract",
         "operationId": "getContractsContractid",
-        "summary": "Đọc một hợp đồng",
+        "summary": "Get contract details",
         "description": "landlord, tenant. Đọc một hợp đồng. Lỗi nghiệp vụ: 403 FORBIDDEN · 404 NOT FOUND.",
         "parameters": [
           {
@@ -7166,7 +7455,7 @@
         ],
         "x-apidog-folder": "Contract",
         "operationId": "patchContractsContractid",
-        "summary": "Sửa hợp đồng nháp",
+        "summary": "Update draft contract",
         "description": "landlord. Sửa hợp đồng nháp. Lỗi nghiệp vụ: 409 CONTRACT NOT DRAFT · 403 FORBIDDEN · 422 VALIDATION FAILED.",
         "parameters": [
           {
@@ -7266,7 +7555,7 @@
         ],
         "x-apidog-folder": "Contract",
         "operationId": "putContractsContractidApplyTemplate",
-        "summary": "Áp mẫu vào hợp đồng nháp",
+        "summary": "Apply template to draft contract",
         "description": "landlord. Áp mẫu vào hợp đồng nháp. Lỗi nghiệp vụ: 404 TEMPLATE NOT FOUND · 409 CONTRACT NOT DRAFT · 403 FORBIDDEN.",
         "parameters": [
           {
@@ -7366,7 +7655,7 @@
         ],
         "x-apidog-folder": "Contract",
         "operationId": "postContractsContractidGenerateDraftDocument",
-        "summary": "Sinh tài liệu nháp",
+        "summary": "Generate draft contract document",
         "description": "landlord. Sinh tài liệu nháp. Lỗi nghiệp vụ: 403 FORBIDDEN · 409 CONTRACT NOT DRAFT · 422 TEMPLATE DATA INVALID.",
         "parameters": [
           {
@@ -7475,7 +7764,7 @@
         ],
         "x-apidog-folder": "Contract",
         "operationId": "postContractsContractidActivateContract",
-        "summary": "Kích hoạt hợp đồng đã ký",
+        "summary": "Activate contract",
         "description": "landlord. Kích hoạt hợp đồng đã ký. Lỗi nghiệp vụ: 409 CONTRACT NOT READY · 409 SIGNED FILE MISSING · 403 FORBIDDEN.",
         "parameters": [
           {
@@ -7572,8 +7861,8 @@
         ],
         "x-apidog-folder": "Contract",
         "operationId": "postContractsContractidCompleteCheckout",
-        "summary": "Hoàn tất trả phòng",
-        "description": "landlord. Hoàn tất trả phòng. Lỗi nghiệp vụ: 409 CONTRACT NOT ACTIVE · 403 FORBIDDEN · 422 SETTLEMENT NOT READY.",
+        "summary": "Complete checkout",
+        "description": "landlord. Hoàn tất trả phòng và kết thúc hợp đồng. Sau khi checkout thành công, phòng sẽ tự động chuyển sang trạng thái chờ dọn dẹp và chuẩn bị cho thuê mới (Room.status = pending_cleanup). Sau khi chủ trọ nghiệm thu dọn dẹp xong, gọi POST /rooms/{roomId}/mark-ready để đưa phòng về available. Lỗi nghiệp vụ: 409 CONTRACT NOT ACTIVE · 403 FORBIDDEN · 422 SETTLEMENT NOT READY. NOT READY.",
         "parameters": [
           {
             "name": "contractId",
@@ -7665,6 +7954,109 @@
         }
       }
     },
+    "/contracts/{contractId}/deposit-settlement": {
+      "post": {
+        "tags": [
+          "Contract"
+        ],
+        "x-apidog-folder": "Contract",
+        "operationId": "postContractDepositSettlement",
+        "summary": "Create deposit settlement for checkout",
+        "description": "landlord. Quyết toán tiền cọc, cấn trừ các khoản nợ / hư hại tài sản và xác nhận số tiền hoàn trả cho người thuê khi kết thúc hợp đồng. Lỗi nghiệp vụ: 404 CONTRACT NOT FOUND · 403 FORBIDDEN · 422 SETTLEMENT INVALID.",
+        "parameters": [
+          {
+            "name": "contractId",
+            "in": "path",
+            "required": true,
+            "description": "UUID của hợp đồng cần quyết toán cọc.",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DepositSettlementRequestDto"
+              },
+              "example": {
+                "contractId": "a81d4284-5f6e-4b68-b762-d3369b12be12",
+                "originalDeposit": 3500000,
+                "deductions": [
+                  {
+                    "category": "DAMAGE_COMPENSATION",
+                    "description": "Vỡ cánh cửa tủ lạnh và hỏng ổ khóa phòng",
+                    "amount": 800000
+                  }
+                ],
+                "finalRefundAmount": 2700000,
+                "tenantBankCode": "VCB",
+                "tenantAccountNumber": "0123456789",
+                "tenantAccountHolder": "NGUYEN VAN B",
+                "settlementDate": "2026-09-30",
+                "note": "Đã kiểm tra phòng P201 và nghiệm thu xong"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Thành công: Quyết toán tiền cọc hoàn tất.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code",
+                    "data"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        201
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "DEPOSIT_SETTLEMENT_RECORDED"
+                      ]
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/DepositSettlementResponseDto"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequestError"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "403": {
+            "$ref": "#/components/responses/ForbiddenError"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundError"
+          },
+          "422": {
+            "$ref": "#/components/responses/ValidationError"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
     "/contract-members": {
       "post": {
         "tags": [
@@ -7672,7 +8064,7 @@
         ],
         "x-apidog-folder": "ContractMember",
         "operationId": "postContractMembers",
-        "summary": "Thêm một thành viên vào hợp đồng",
+        "summary": "Add contract member",
         "description": "landlord. Thêm một thành viên vào hợp đồng. Lỗi nghiệp vụ: 409 MEMBER ALREADY EXISTS · 403 FORBIDDEN · 422 TENANT IDENTITY INVALID.",
         "requestBody": {
           "required": true,
@@ -7774,7 +8166,7 @@
         ],
         "x-apidog-folder": "ContractMember",
         "operationId": "getContractMembers",
-        "summary": "Liệt kê thành viên hoặc xuất dữ liệu",
+        "summary": "List contract members",
         "description": "landlord, tenant. Liệt kê thành viên hoặc xuất dữ liệu. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 CONTRACT ID REQUIRED · 404 NOT FOUND.",
         "parameters": [
           {
@@ -7988,7 +8380,7 @@
         ],
         "x-apidog-folder": "ContractMember",
         "operationId": "patchContractMembersContractmemberid",
-        "summary": "Cập nhật thành viên",
+        "summary": "Update contract member",
         "description": "landlord. Cập nhật thành viên. Lỗi nghiệp vụ: 403 FORBIDDEN · 409 MEMBER LEFT · 422 VALIDATION FAILED.",
         "parameters": [
           {
@@ -8087,7 +8479,7 @@
         ],
         "x-apidog-folder": "ContractMember",
         "operationId": "postContractMembersContractmemberidLeaveContract",
-        "summary": "Ghi nhận thành viên rời đi",
+        "summary": "Record contract member leave",
         "description": "landlord. Ghi nhận thành viên rời đi. Lỗi nghiệp vụ: 403 FORBIDDEN · 409 MEMBER ALREADY LEFT · 422 LEFT DATE INVALID.",
         "parameters": [
           {
@@ -8186,7 +8578,7 @@
         ],
         "x-apidog-folder": "MeterReading",
         "operationId": "getMeterReadings",
-        "summary": "Liệt kê chỉ số đồng hồ",
+        "summary": "List meter readings",
         "description": "landlord. Liệt kê chỉ số đồng hồ. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 VALIDATION FAILED.",
         "parameters": [
           {
@@ -8367,7 +8759,7 @@
         ],
         "x-apidog-folder": "MeterReading",
         "operationId": "postMeterReadings",
-        "summary": "Tạo một chỉ số đã xác nhận",
+        "summary": "Create meter reading",
         "description": "landlord. Tạo một chỉ số đã xác nhận. Lỗi nghiệp vụ: 409 DUPLICATE METER READING · 422 CURRENT READING INVALID · 422 EVIDENCE REQUIRED · 403 FORBIDDEN.",
         "requestBody": {
           "required": true,
@@ -8467,6 +8859,95 @@
         }
       }
     },
+    "/meter-readings/bulk": {
+      "post": {
+        "tags": [
+          "Billing"
+        ],
+        "x-apidog-folder": "MeterReading",
+        "operationId": "postBulkMeterReadings",
+        "summary": "Bulk create meter readings",
+        "description": "landlord. Nhập và chốt chỉ số điện/nước hàng loạt cho nhiều phòng trong tòa nhà theo kỳ ghi số. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 VALIDATION FAILED · 409 DUPLICATE READING.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BulkMeterReadingCreateRequestDto"
+              },
+              "example": {
+                "buildingId": "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d",
+                "recordedMonth": "2026-09",
+                "readingMethod": "CAMERA_CAPTURE",
+                "readings": [
+                  {
+                    "roomId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                    "type": "electricity",
+                    "previousReading": "1250.0",
+                    "currentReading": "1380.0",
+                    "usage": 130,
+                    "photoMediaId": "48fae08f-e1a5-48b4-9c02-e2513470ff42"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Thành công: Ghi chỉ số hàng loạt.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code",
+                    "data"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        201
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "BULK_METER_READING_RECORDED"
+                      ]
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/BulkMeterReadingResponseDto"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequestError"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "403": {
+            "$ref": "#/components/responses/ForbiddenError"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundError"
+          },
+          "422": {
+            "$ref": "#/components/responses/ValidationError"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
     "/meter-readings/preview-ocr-result": {
       "post": {
         "tags": [
@@ -8474,7 +8955,7 @@
         ],
         "x-apidog-folder": "MeterReading",
         "operationId": "postMeterReadingsPreviewOcrResult",
-        "summary": "Xem trước kết quả chuẩn hoá OCR",
+        "summary": "Preview OCR meter reading result",
         "description": "landlord. Xem trước kết quả chuẩn hoá OCR. Lỗi nghiệp vụ: 422 OCR RESULT INVALID · 422 EVIDENCE REQUIRED · 403 FORBIDDEN.",
         "requestBody": {
           "required": true,
@@ -8563,7 +9044,7 @@
         ],
         "x-apidog-folder": "Invoice",
         "operationId": "getInvoicesTenant",
-        "summary": "Hóa đơn của tôi",
+        "summary": "List my invoices",
         "description": "tenant. Hóa đơn của tôi. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 VALIDATION FAILED.",
         "parameters": [
           {
@@ -8782,7 +9263,7 @@
         ],
         "x-apidog-folder": "Invoice",
         "operationId": "getInvoices",
-        "summary": "Theo dõi hóa đơn và công nợ",
+        "summary": "List invoices",
         "description": "landlord. Theo dõi hóa đơn và công nợ. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 VALIDATION FAILED.",
         "parameters": [
           {
@@ -9001,14 +9482,16 @@
             "$ref": "#/components/responses/InternalServerError"
           }
         }
-      },
+      }
+    },
+    "/invoices/settlement": {
       "post": {
         "tags": [
           "Billing"
         ],
         "x-apidog-folder": "Invoice",
-        "operationId": "postInvoices",
-        "summary": "Tạo hóa đơn quyết toán trả phòng",
+        "operationId": "postInvoicesSettlement",
+        "summary": "Create checkout settlement invoice",
         "description": "landlord. Tạo hóa đơn quyết toán trả phòng. Lỗi nghiệp vụ: 409 ACTIVE SETTLEMENT INVOICE EXISTS · 422 TOTAL NEGATIVE · 422 BREAKDOWN MISMATCH · 403 FORBIDDEN.",
         "requestBody": {
           "required": true,
@@ -9030,7 +9513,7 @@
                     "amount": -150000
                   }
                 ],
-                "note": "Thanh ly hợp đồng, prorate theo ngày ở thực tế"
+                "note": "Thanh lý hợp đồng, prorate theo ngày ở thực tế"
               }
             }
           }
@@ -9075,37 +9558,9 @@
                     "contractId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
                     "period": "2026-09",
                     "rentAmount": 1750000,
-                    "breakdown": [
-                      {
-                        "type": "electricity",
-                        "name": "Điện EVN",
-                        "qtyKwh": 180,
-                        "amount": 720000
-                      }
-                    ],
-                    "otherFees": [
-                      {
-                        "name": "Phí vệ sinh",
-                        "amount": 50000
-                      },
-                      {
-                        "name": "Hư hỏng nội thất",
-                        "amount": -150000
-                      }
-                    ],
                     "totalAmount": 2370000,
-                    "invoiceStatus": "pending",
-                    "issuedAt": null
+                    "invoiceStatus": "pending"
                   }
-                }
-              }
-            },
-            "headers": {
-              "Location": {
-                "description": "Đường dẫn tài nguyên được tạo.",
-                "schema": {
-                  "type": "string",
-                  "example": "/api/v1/invoices/{invoiceId}"
                 }
               }
             }
@@ -9119,14 +9574,95 @@
           "403": {
             "$ref": "#/components/responses/ForbiddenError"
           },
+          "404": {
+            "$ref": "#/components/responses/NotFoundError"
+          },
           "409": {
             "$ref": "#/components/responses/ConflictError"
           },
           "422": {
             "$ref": "#/components/responses/ValidationError"
           },
-          "429": {
-            "$ref": "#/components/responses/TooManyRequestsError"
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
+    "/invoices/overdue-debts": {
+      "get": {
+        "tags": [
+          "Billing"
+        ],
+        "x-apidog-folder": "Invoice",
+        "operationId": "getOverdueDebts",
+        "summary": "List overdue debts",
+        "description": "landlord. Danh sách các phòng nợ tiền quá hạn, mức độ quá hạn và lịch sử đôn đốc nợ. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 VALIDATION FAILED.",
+        "parameters": [
+          {
+            "name": "buildingId",
+            "in": "query",
+            "required": false,
+            "description": "Lọc danh sách công nợ theo tòa nhà.",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "minDaysOverdue",
+            "in": "query",
+            "required": false,
+            "description": "Số ngày quá hạn tối thiểu (VD: 3 ngày, 7 ngày).",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "example": 3
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Thành công: Lấy danh sách công nợ quá hạn.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code",
+                    "data"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        200
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "OVERDUE_DEBTS_FETCHED"
+                      ]
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/OverdueDebtListResponseDto"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequestError"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "403": {
+            "$ref": "#/components/responses/ForbiddenError"
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
@@ -9141,7 +9677,7 @@
         ],
         "x-apidog-folder": "Invoice",
         "operationId": "getInvoicesInvoiceid",
-        "summary": "Đọc hóa đơn kèm tổng hợp thanh toán",
+        "summary": "Get invoice details",
         "description": "landlord, tenant. Đọc hóa đơn kèm tổng hợp thanh toán. Lỗi nghiệp vụ: 403 FORBIDDEN · 404 NOT FOUND.",
         "parameters": [
           {
@@ -9242,7 +9778,7 @@
         ],
         "x-apidog-folder": "Invoice",
         "operationId": "patchInvoicesInvoiceid",
-        "summary": "Sửa hóa đơn đang chờ",
+        "summary": "Update pending invoice",
         "description": "landlord. Sửa hóa đơn đang chờ. Lỗi nghiệp vụ: 409 INVOICE ALREADY ISSUED · 422 TOTAL AMOUNT INVALID · 403 FORBIDDEN.",
         "parameters": [
           {
@@ -9353,7 +9889,7 @@
         ],
         "x-apidog-folder": "Invoice",
         "operationId": "postInvoicesIssueInvoice",
-        "summary": "Phát hành nhiều hóa đơn theo lô",
+        "summary": "Batch issue invoices",
         "description": "landlord. Phát hành nhiều hóa đơn theo lô. Lỗi nghiệp vụ: 422 INVOICE IDS REQUIRED · 422 INVOICE IDS TOO LARGE · 409 IDEMPOTENCY KEY REUSED · 403 FORBIDDEN.",
         "parameters": [
           {
@@ -9470,7 +10006,7 @@
         ],
         "x-apidog-folder": "Invoice",
         "operationId": "postInvoicesInvoiceidCancelInvoice",
-        "summary": "Huỷ một hóa đơn sai",
+        "summary": "Cancel invoice",
         "description": "landlord. Huỷ một hóa đơn sai. Lỗi nghiệp vụ: 409 INVOICE ALREADY PAID · 409 CAN'T DELETE · 403 FORBIDDEN.",
         "parameters": [
           {
@@ -9567,7 +10103,7 @@
         ],
         "x-apidog-folder": "Invoice",
         "operationId": "postInvoicesSendReminder",
-        "summary": "Nhắc ngày thu dự kiến theo lô",
+        "summary": "Batch send invoice reminders",
         "description": "landlord. Nhắc ngày thu dự kiến theo lô. Lỗi nghiệp vụ: 422 INVOICE IDS REQUIRED · 422 INVOICE IDS TOO LARGE · 409 IDEMPOTENCY KEY REUSED · 403 FORBIDDEN.",
         "parameters": [
           {
@@ -9682,7 +10218,7 @@
         ],
         "x-apidog-folder": "Payment",
         "operationId": "getMePayments",
-        "summary": "Lịch sử thanh toán của tôi",
+        "summary": "List my payment history",
         "description": "tenant. Lịch sử thanh toán của tôi. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 VALIDATION FAILED.",
         "parameters": [
           {
@@ -9895,7 +10431,7 @@
         ],
         "x-apidog-folder": "Payment",
         "operationId": "getPayments",
-        "summary": "Đối soát dòng tiền",
+        "summary": "List payment transactions",
         "description": "landlord. Đối soát dòng tiền. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 VALIDATION FAILED.",
         "parameters": [
           {
@@ -10112,7 +10648,7 @@
         ],
         "x-apidog-folder": "Payment",
         "operationId": "postPaymentsCreateIntent",
-        "summary": "Tạo ý định thanh toán",
+        "summary": "Create payment intent",
         "description": "tenant. Tạo ý định thanh toán. Lỗi nghiệp vụ: 409 IDEMPOTENCY KEY REUSED · 409 INVOICE NOT PAYABLE · 403 FORBIDDEN.",
         "parameters": [
           {
@@ -10227,7 +10763,7 @@
         ],
         "x-apidog-folder": "Payment",
         "operationId": "postPaymentsRecordCashPayment",
-        "summary": "Ghi nhận thanh toán tiền mặt",
+        "summary": "Record cash payment",
         "description": "landlord. Ghi nhận thanh toán tiền mặt. Lỗi nghiệp vụ: 409 IDEMPOTENCY KEY REUSED · 409 INVOICE NOT PAYABLE · 422 AMOUNT INVALID · 403 FORBIDDEN.",
         "parameters": [
           {
@@ -10347,7 +10883,7 @@
         ],
         "x-apidog-folder": "Payment",
         "operationId": "postPaymentsWebhooksProvider",
-        "summary": "Nhận callback đã ký từ provider",
+        "summary": "Handle payment provider webhook",
         "description": "system. Nhận callback đã ký từ provider. Lỗi nghiệp vụ: 401 INVALID SIGNATURE · 409 DUPLICATE WEBHOOK · 422 WEBHOOK INVALID.",
         "parameters": [
           {
@@ -10401,7 +10937,7 @@
         ],
         "x-apidog-folder": "IssueReport",
         "operationId": "getMeIssues",
-        "summary": "Sự cố của tôi",
+        "summary": "List my issues",
         "description": "tenant. Sự cố của tôi. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 VALIDATION FAILED.",
         "parameters": [
           {
@@ -10635,7 +11171,7 @@
         ],
         "x-apidog-folder": "IssueReport",
         "operationId": "getIssues",
-        "summary": "Hàng đợi sự cố bảo trì",
+        "summary": "List issues",
         "description": "landlord. Hàng đợi sự cố bảo trì. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 VALIDATION FAILED.",
         "parameters": [
           {
@@ -10873,7 +11409,7 @@
         ],
         "x-apidog-folder": "IssueReport",
         "operationId": "postIssues",
-        "summary": "Báo cáo sự cố",
+        "summary": "Report issue",
         "description": "tenant, landlord. Báo cáo sự cố. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 ISSUE PHOTO INVALID · 404 ROOM NOT FOUND.",
         "requestBody": {
           "required": true,
@@ -10978,7 +11514,7 @@
         ],
         "x-apidog-folder": "IssueReport",
         "operationId": "getIssuesIssueid",
-        "summary": "Đọc chi tiết sự cố",
+        "summary": "Get issue details",
         "description": "landlord, tenant. Đọc chi tiết sự cố. Lỗi nghiệp vụ: 403 FORBIDDEN · 404 NOT FOUND.",
         "parameters": [
           {
@@ -11074,7 +11610,7 @@
         ],
         "x-apidog-folder": "IssueReport",
         "operationId": "patchIssuesIssueid",
-        "summary": "Cập nhật tiến trình sự cố",
+        "summary": "Update issue status",
         "description": "landlord. Cập nhật tiến trình sự cố. Lỗi nghiệp vụ: 404 NOT FOUND · 403 FORBIDDEN · 409 INVALID ISSUE TRANSITION.",
         "parameters": [
           {
@@ -11175,7 +11711,7 @@
         ],
         "x-apidog-folder": "IssueReport",
         "operationId": "postIssuesIssueidCancel",
-        "summary": "Huỷ báo cáo sự cố",
+        "summary": "Cancel issue report",
         "description": "tenant. Huỷ báo cáo sự cố. Lỗi nghiệp vụ: 404 NOT FOUND · 403 FORBIDDEN · 422 CANNOT CANCEL RESOLVED ISSUE.",
         "parameters": [
           {
@@ -11261,7 +11797,7 @@
         ],
         "x-apidog-folder": "Conversation",
         "operationId": "getConversations",
-        "summary": "Liệt kê các hội thoại của người gọi",
+        "summary": "List conversations",
         "description": "tenant, landlord. Liệt kê các hội thoại của người gọi. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 VALIDATION FAILED.",
         "parameters": [
           {
@@ -11432,7 +11968,7 @@
         ],
         "x-apidog-folder": "Conversation",
         "operationId": "getConversationsConversationid",
-        "summary": "Đọc chi tiết hội thoại",
+        "summary": "Get conversation details",
         "description": "tenant, landlord. Đọc chi tiết hội thoại. Lỗi nghiệp vụ: 403 FORBIDDEN · 404 NOT FOUND.",
         "parameters": [
           {
@@ -11519,7 +12055,7 @@
         ],
         "x-apidog-folder": "Conversation",
         "operationId": "postConversationsResolveConversation",
-        "summary": "Lấy hội thoại của phòng hoặc tòa nhà",
+        "summary": "Resolve conversation",
         "description": "tenant, landlord. Lấy hội thoại của phòng hoặc tòa nhà. Lỗi nghiệp vụ: 422 EXACTLY ONE CONTEXT REQUIRED · 403 FORBIDDEN · 404 CONTEXT NOT FOUND.",
         "requestBody": {
           "required": true,
@@ -11608,7 +12144,7 @@
         ],
         "x-apidog-folder": "Message",
         "operationId": "getMessages",
-        "summary": "Liệt kê tin nhắn trong một hội thoại",
+        "summary": "List messages",
         "description": "tenant, landlord. Liệt kê tin nhắn trong một hội thoại. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 INVALID CURSOR · 404 CONVERSATION NOT FOUND.",
         "parameters": [
           {
@@ -11765,7 +12301,7 @@
         ],
         "x-apidog-folder": "Message",
         "operationId": "postMessages",
-        "summary": "Gửi tin nhắn",
+        "summary": "Send message",
         "description": "tenant, landlord. Gửi tin nhắn. Lỗi nghiệp vụ: 403 FORBIDDEN · 409 CONVERSATION ARCHIVED · 422 MESSAGE CONTENT INVALID.",
         "requestBody": {
           "required": true,
@@ -11868,7 +12404,7 @@
         ],
         "x-apidog-folder": "Message",
         "operationId": "postMessagesMarkRead",
-        "summary": "Đánh dấu đã đọc một hội thoại",
+        "summary": "Mark messages as read",
         "description": "tenant, landlord. Đánh dấu đã đọc một hội thoại. Lỗi nghiệp vụ: 403 FORBIDDEN · 404 MESSAGE NOT FOUND · 422 READ CURSOR INVALID · điều kiện migration cho con trỏ.",
         "requestBody": {
           "required": true,
@@ -11957,7 +12493,7 @@
         ],
         "x-apidog-folder": "Notification",
         "operationId": "getNotifications",
-        "summary": "Liệt kê thông báo",
+        "summary": "List notifications",
         "description": "tenant, landlord, admin. Liệt kê thông báo. Lỗi nghiệp vụ: 401 INVALID TOKEN · 422 VALIDATION FAILED.",
         "parameters": [
           {
@@ -12109,7 +12645,7 @@
         ],
         "x-apidog-folder": "Notification",
         "operationId": "postNotificationsNotificationidMarkRead",
-        "summary": "Đánh dấu đã đọc một thông báo",
+        "summary": "Mark notification as read",
         "description": "tenant, landlord, admin. Đánh dấu đã đọc một thông báo. Lỗi nghiệp vụ: 403 FORBIDDEN · 404 NOT FOUND.",
         "parameters": [
           {
@@ -12192,7 +12728,7 @@
         ],
         "x-apidog-folder": "Notification",
         "operationId": "postNotificationsMarkAllRead",
-        "summary": "Đánh dấu đã đọc toàn bộ thông báo chưa đọc",
+        "summary": "Mark all notifications as read",
         "description": "tenant, landlord, admin. Đánh dấu đã đọc toàn bộ thông báo chưa đọc. Lỗi nghiệp vụ: 401 INVALID TOKEN.",
         "responses": {
           "200": {
@@ -12257,7 +12793,7 @@
         ],
         "x-apidog-folder": "NotificationPreference",
         "operationId": "getMeNotificationPreference",
-        "summary": "Đọc tuỳ biến thông báo",
+        "summary": "Get notification preferences",
         "description": "tenant, landlord, admin. Đọc tuỳ biến thông báo. Lỗi nghiệp vụ: 401 INVALID TOKEN.",
         "responses": {
           "200": {
@@ -12342,7 +12878,7 @@
         ],
         "x-apidog-folder": "NotificationPreference",
         "operationId": "putMeNotificationPreference",
-        "summary": "Thay toàn bộ tuỳ biến thông báo",
+        "summary": "Update notification preferences",
         "description": "tenant, landlord, admin. Thay toàn bộ tuỳ biến thông báo. Lỗi nghiệp vụ: 422 INVALID NOTIFICATION TYPE · 422 VALIDATION FAILED.",
         "requestBody": {
           "required": true,
@@ -12432,7 +12968,7 @@
         ],
         "x-apidog-folder": "AuditLog",
         "operationId": "getAuditLogs",
-        "summary": "Tìm kiếm nhật ký chỉ ghi thêm",
+        "summary": "Search audit logs",
         "description": "admin. Tìm kiếm nhật ký chỉ ghi thêm. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 VALIDATION FAILED.",
         "parameters": [
           {
@@ -12658,7 +13194,7 @@
         ],
         "x-apidog-folder": "AuditLog",
         "operationId": "getAuditLogsAuditlogid",
-        "summary": "Đọc hoặc xuất một bản ghi kiểm toán",
+        "summary": "Get audit log details",
         "description": "admin. Đọc hoặc xuất một bản ghi kiểm toán. Lỗi nghiệp vụ: 403 FORBIDDEN · 404 NOT FOUND.",
         "parameters": [
           {
@@ -12749,7 +13285,7 @@
         ],
         "x-apidog-folder": "Dashboard",
         "operationId": "getDashboard",
-        "summary": "Đọc số liệu tổng hợp hệ thống",
+        "summary": "Get system dashboard metrics",
         "description": "admin. Đọc số liệu tổng hợp hệ thống. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 INVALID DATE RANGE.",
         "parameters": [
           {
@@ -22926,6 +23462,16 @@
             ],
             "description": "MIME type của file",
             "example": "image/jpeg"
+          },
+          "captureSource": {
+            "type": "string",
+            "enum": [
+              "camera_direct",
+              "device_storage"
+            ],
+            "nullable": true,
+            "description": "Nguồn tải tệp. Đối với ảnh công tơ điện nước (purpose: meter_reading_evidence), người thuê (tenant) bắt buộc phải chụp trực tiếp từ camera (camera_direct), chỉ chủ trọ (landlord) mới được tải tệp từ thiết bị (device_storage).",
+            "example": "camera_direct"
           },
           "size": {
             "type": "integer",

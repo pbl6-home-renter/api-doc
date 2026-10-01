@@ -4,8 +4,7 @@ post:
   x-apidog-folder: User
   operationId: lockUser
   summary: Lock user
-  description: Chỉ admin; yêu cầu access token. Khóa tài khoản active, thu hồi phiên đang mở và ghi audit
-    log.
+  description: "Chỉ admin; yêu cầu access token. Khóa tài khoản, thu hồi phiên và ghi audit log. Nghiệp vụ: Khi khóa chủ trọ, toàn bộ thông tin/phòng của chủ trọ sẽ bị vô hiệu hóa (ẩn khỏi sàn), hợp đồng đang hiệu lực chuyển sang trạng thái tạm thời kết thúc (nếu đến hạn chưa mở khóa thì tự hủy). Khi khóa người thuê, người thuê vẫn được thanh toán hóa đơn hợp đồng hiện tại, nhưng không thể gia hạn và không thể thuê trọ mới.log."
   parameters:
   - name: userId
     in: path

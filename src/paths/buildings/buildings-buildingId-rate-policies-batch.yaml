@@ -1,0 +1,79 @@
+post:
+  tags:
+  - Billing
+  x-apidog-folder: RatePolicy
+  operationId: postBuildingRatePoliciesBatch
+  summary: Batch create rate policies for building
+  description: "landlord. Thiết lập hàng loạt các chính sách đơn giá tiện ích và phí dịch vụ cho tòa nhà (bước 3/3 wizard tạo tài sản). Lỗi nghiệp vụ: 404 BUILDING NOT FOUND · 403 FORBIDDEN · 422 VALIDATION FAILED."
+  parameters:
+  - name: buildingId
+    in: path
+    required: true
+    description: UUID của tòa nhà cần cấu hình biểu giá dịch vụ.
+    schema:
+      type: string
+      format: uuid
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: ../../openapi.yaml#/components/schemas/BuildingRatePoliciesBatchCreateRequestDto
+        example:
+          buildingId: 9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d
+          ratePolicies:
+          - category: ELECTRICITY
+            name: Tiền điện sinh hoạt
+            rateKind: PROGRESSIVE
+            unit: kWh
+            progressiveTiers:
+            - tierOrder: 1
+              tierName: Bậc 1 (0-50 kWh)
+              fromQty: 0
+              toQty: 50
+              pricePerUnit: 1806
+          - category: WATER
+            name: Tiền nước sinh hoạt
+            rateKind: PER_PERSON
+            unit: người/tháng
+            unitPrice: 100000
+          - category: INTERNET
+            name: Internet Wifi tốc độ cao
+            rateKind: PER_ROOM
+            unit: phòng/tháng
+            unitPrice: 100000
+  responses:
+    "201":
+      description: "Thành công: Thiết lập hàng loạt đơn giá dịch vụ tòa nhà."
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required:
+            - statusCode
+            - code
+            - data
+            properties:
+              statusCode:
+                type: integer
+                enum:
+                - 201
+              code:
+                type: string
+                enum:
+                - RATE_POLICIES_BATCH_CREATED
+              data:
+                $ref: ../../openapi.yaml#/components/schemas/RatePolicyListResponseDto
+    "400":
+      $ref: ../../openapi.yaml#/components/responses/BadRequestError
+    "401":
+      $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
+    "403":
+      $ref: ../../openapi.yaml#/components/responses/ForbiddenError
+    "404":
+      $ref: ../../openapi.yaml#/components/responses/NotFoundError
+    "422":
+      $ref: ../../openapi.yaml#/components/responses/ValidationError
+    "500":
+      $ref: ../../openapi.yaml#/components/responses/InternalServerError

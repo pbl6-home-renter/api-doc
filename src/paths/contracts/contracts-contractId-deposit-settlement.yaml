@@ -1,0 +1,69 @@
+post:
+  tags:
+  - Contract
+  x-apidog-folder: Contract
+  operationId: postContractDepositSettlement
+  summary: Create deposit settlement for checkout
+  description: "landlord. Quyết toán tiền cọc, cấn trừ các khoản nợ / hư hại tài sản và xác nhận số tiền hoàn trả cho người thuê khi kết thúc hợp đồng. Lỗi nghiệp vụ: 404 CONTRACT NOT FOUND · 403 FORBIDDEN · 422 SETTLEMENT INVALID."
+  parameters:
+  - name: contractId
+    in: path
+    required: true
+    description: UUID của hợp đồng cần quyết toán cọc.
+    schema:
+      type: string
+      format: uuid
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: ../../openapi.yaml#/components/schemas/DepositSettlementRequestDto
+        example:
+          contractId: a81d4284-5f6e-4b68-b762-d3369b12be12
+          originalDeposit: 3500000
+          deductions:
+          - category: DAMAGE_COMPENSATION
+            description: Vỡ cánh cửa tủ lạnh và hỏng ổ khóa phòng
+            amount: 800000
+          finalRefundAmount: 2700000
+          tenantBankCode: VCB
+          tenantAccountNumber: "0123456789"
+          tenantAccountHolder: NGUYEN VAN B
+          settlementDate: "2026-09-30"
+          note: Đã kiểm tra phòng P201 và nghiệm thu xong
+  responses:
+    "201":
+      description: "Thành công: Quyết toán tiền cọc hoàn tất."
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required:
+            - statusCode
+            - code
+            - data
+            properties:
+              statusCode:
+                type: integer
+                enum:
+                - 201
+              code:
+                type: string
+                enum:
+                - DEPOSIT_SETTLEMENT_RECORDED
+              data:
+                $ref: ../../openapi.yaml#/components/schemas/DepositSettlementResponseDto
+    "400":
+      $ref: ../../openapi.yaml#/components/responses/BadRequestError
+    "401":
+      $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
+    "403":
+      $ref: ../../openapi.yaml#/components/responses/ForbiddenError
+    "404":
+      $ref: ../../openapi.yaml#/components/responses/NotFoundError
+    "422":
+      $ref: ../../openapi.yaml#/components/responses/ValidationError
+    "500":
+      $ref: ../../openapi.yaml#/components/responses/InternalServerError

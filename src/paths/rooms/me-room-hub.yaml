@@ -1,0 +1,38 @@
+get:
+  tags:
+  - Property
+  x-apidog-folder: Room
+  operationId: getMeRoomHub
+  summary: Get tenant room hub dashboard
+  description: "tenant. Lấy thông tin tổng hợp cho trang chủ trung tâm phòng của người thuê (hợp đồng hiện tại, hóa đơn chưa thanh toán, chỉ số điện nước, sự cố đang xử lý, bạn cùng phòng). Lỗi nghiệp vụ: 404 ACTIVE CONTRACT NOT FOUND · 403 FORBIDDEN."
+  responses:
+    "200":
+      description: "Thành công: Lấy thông tin trung tâm phòng."
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required:
+            - statusCode
+            - code
+            - data
+            properties:
+              statusCode:
+                type: integer
+                enum:
+                - 200
+              code:
+                type: string
+                enum:
+                - ROOM_HUB_FETCHED
+              data:
+                $ref: ../../openapi.yaml#/components/schemas/MyRoomHubResponseDto
+    "401":
+      $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
+    "403":
+      $ref: ../../openapi.yaml#/components/responses/ForbiddenError
+    "404":
+      $ref: ../../openapi.yaml#/components/responses/NotFoundError
+    "500":
+      $ref: ../../openapi.yaml#/components/responses/InternalServerError

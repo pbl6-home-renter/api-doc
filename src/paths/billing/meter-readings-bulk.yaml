@@ -1,0 +1,59 @@
+post:
+  tags:
+  - Billing
+  x-apidog-folder: MeterReading
+  operationId: postBulkMeterReadings
+  summary: Bulk create meter readings
+  description: "landlord. Nhập và chốt chỉ số điện/nước hàng loạt cho nhiều phòng trong tòa nhà theo kỳ ghi số. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 VALIDATION FAILED · 409 DUPLICATE READING."
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: ../../openapi.yaml#/components/schemas/BulkMeterReadingCreateRequestDto
+        example:
+          buildingId: 9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d
+          recordedMonth: "2026-09"
+          readingMethod: CAMERA_CAPTURE
+          readings:
+          - roomId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+            type: electricity
+            previousReading: "1250.0"
+            currentReading: "1380.0"
+            usage: 130
+            photoMediaId: 48fae08f-e1a5-48b4-9c02-e2513470ff42
+  responses:
+    "201":
+      description: "Thành công: Ghi chỉ số hàng loạt."
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required:
+            - statusCode
+            - code
+            - data
+            properties:
+              statusCode:
+                type: integer
+                enum:
+                - 201
+              code:
+                type: string
+                enum:
+                - BULK_METER_READING_RECORDED
+              data:
+                $ref: ../../openapi.yaml#/components/schemas/BulkMeterReadingResponseDto
+    "400":
+      $ref: ../../openapi.yaml#/components/responses/BadRequestError
+    "401":
+      $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
+    "403":
+      $ref: ../../openapi.yaml#/components/responses/ForbiddenError
+    "404":
+      $ref: ../../openapi.yaml#/components/responses/NotFoundError
+    "422":
+      $ref: ../../openapi.yaml#/components/responses/ValidationError
+    "500":
+      $ref: ../../openapi.yaml#/components/responses/InternalServerError
