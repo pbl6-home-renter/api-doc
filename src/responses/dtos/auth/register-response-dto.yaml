@@ -10,6 +10,29 @@ properties:
     description: ID tài khoản vừa được tạo
     example: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
 
+  email:
+    type: string
+    format: email
+    minLength: 5
+    maxLength: 254
+    description: Email của tài khoản vừa được tạo
+    example: "lan@example.com"
+
+  phone:
+    type: string
+    minLength: 10
+    maxLength: 12
+    pattern: '^0[0-9]{9}$|^\+84[0-9]{9}$'
+    description: Số điện thoại của tài khoản vừa được tạo
+    example: "0901234567"
+
+  name:
+    type: string
+    minLength: 1
+    maxLength: 254
+    description: Họ và tên của tài khoản vừa được tạo
+    example: "Lê Văn An"
+
   role:
     type: string
     enum:
@@ -28,5 +51,8 @@ properties:
 
 required:
   - id
+  - email
+  - phone
+  - name
   - role
   - status

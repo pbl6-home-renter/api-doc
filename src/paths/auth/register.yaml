@@ -1,0 +1,66 @@
+post:
+  tags: [Auth]
+  x-apidog-folder: Auth
+  operationId: registerAccount
+  summary: Register
+  description: >-
+    Public. Tạo tài khoản tenant hoặc landlord; admin không được tự đăng ký.
+    Thành công tạo phiên refresh và đặt cookie HttpOnly, Secure, SameSite=Lax,
+    Path=/api/v1/auth. Cookie chứa token opaque, không trả trong JSON.
+  security: []
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: '../../openapi.yaml#/components/schemas/AuthRegisterRequestDto'
+        example:
+          email: lan@example.com
+          phone: '0901234567'
+          password: P@ssw0rd123
+          name: Lê Văn An
+          role: tenant
+  responses:
+    '201':
+      description: Đăng ký tài khoản thành công
+      headers:
+        Location:
+          description: Đường dẫn đến hồ sơ của tài khoản vừa tạo
+          schema:
+            type: string
+            example: /api/v1/me
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code, data]
+            properties:
+              statusCode:
+                type: integer
+                enum: [201]
+              code:
+                type: string
+                enum: [REGISTERED]
+              data:
+                $ref: '../../openapi.yaml#/components/schemas/AuthRegisterResponseDto'
+          example:
+            statusCode: 201
+            code: REGISTERED
+            data:
+              id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+              email: lan@example.com
+              phone: '0901234567'
+              name: Lê Văn An
+              role: tenant
+              status: active
+    '400':
+      $ref: '../../openapi.yaml#/components/responses/BadRequestError'
+    '409':
+      $ref: '../../openapi.yaml#/components/responses/ConflictError'
+    '422':
+      $ref: '../../openapi.yaml#/components/responses/ValidationError'
+    '429':
+      $ref: '../../openapi.yaml#/components/responses/TooManyRequestsError'
+    '500':
+      $ref: '../../openapi.yaml#/components/responses/InternalServerError'

@@ -1,0 +1,21 @@
+post:
+  tags: [Auth]
+  x-apidog-folder: Auth
+  operationId: logoutSession
+  summary: Logout
+  description: >-
+    Dành cho tenant, landlord và admin. Không có request body. Thu hồi phiên
+    refresh hiện tại được xác định qua cookie refreshToken và xóa cookie.
+  security:
+    - RefreshCookie: []
+  responses:
+    '204':
+      $ref: '../../openapi.yaml#/components/responses/NoContentResponse'
+    '400':
+      $ref: '../../openapi.yaml#/components/responses/BadRequestError'
+    '401':
+      $ref: '../../openapi.yaml#/components/responses/UnauthorizedError'
+    '429':
+      $ref: '../../openapi.yaml#/components/responses/TooManyRequestsError'
+    '500':
+      $ref: '../../openapi.yaml#/components/responses/InternalServerError'

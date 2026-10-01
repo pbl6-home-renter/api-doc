@@ -10,14 +10,17 @@ properties:
     description: JWT access token dùng để truy cập các API được bảo vệ
     example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
 
-  expiresIn:
-    type: integer
-    enum:
-      - 900
-    description: Thời gian sống của access token tính bằng giây
-    example: 900
+  refreshToken:
+    type: string
+    minLength: 1
+    description: Refresh token opaque dùng để làm mới phiên đăng nhập
+    example: "rt_opaque_token_example"
+
+  profile:
+    $ref: '../../../openapi.yaml#/components/schemas/UserCurrentResponseDto'
 
 
 required:
   - accessToken
-  - expiresIn
+  - refreshToken
+  - profile

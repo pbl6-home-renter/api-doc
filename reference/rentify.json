@@ -49,7 +49,388 @@
       "description": "Thông báo người dùng và thiết bị push FCM"
     }
   ],
-  "paths": {},
+  "paths": {
+    "/auth/register": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "x-apidog-folder": "Auth",
+        "operationId": "registerAccount",
+        "summary": "Register",
+        "description": "Public. Tạo tài khoản tenant hoặc landlord; admin không được tự đăng ký. Thành công tạo phiên refresh và đặt cookie HttpOnly, Secure, SameSite=Lax, Path=/api/v1/auth. Cookie chứa token opaque, không trả trong JSON.",
+        "security": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AuthRegisterRequestDto"
+              },
+              "example": {
+                "email": "lan@example.com",
+                "phone": "0901234567",
+                "password": "P@ssw0rd123",
+                "name": "Lê Văn An",
+                "role": "tenant"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Đăng ký tài khoản thành công",
+            "headers": {
+              "Location": {
+                "description": "Đường dẫn đến hồ sơ của tài khoản vừa tạo",
+                "schema": {
+                  "type": "string",
+                  "example": "/api/v1/me"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code",
+                    "data"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        201
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "REGISTERED"
+                      ]
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/AuthRegisterResponseDto"
+                    }
+                  }
+                },
+                "example": {
+                  "statusCode": 201,
+                  "code": "REGISTERED",
+                  "data": {
+                    "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                    "email": "lan@example.com",
+                    "phone": "0901234567",
+                    "name": "Lê Văn An",
+                    "role": "tenant",
+                    "status": "active"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequestError"
+          },
+          "409": {
+            "$ref": "#/components/responses/ConflictError"
+          },
+          "422": {
+            "$ref": "#/components/responses/ValidationError"
+          },
+          "429": {
+            "$ref": "#/components/responses/TooManyRequestsError"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "x-apidog-folder": "Auth",
+        "operationId": "loginAccount",
+        "summary": "Login",
+        "description": "Public. Đăng nhập bằng identifier và password. Access token có thời hạn 900 giây; refresh token opaque được trả trong data của response và đặt trong cookie HttpOnly, Secure, SameSite=Lax, Path=/api/v1/auth.",
+        "security": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AuthLoginRequestDto"
+              },
+              "example": {
+                "identifier": "lan@example.com",
+                "password": "P@ssw0rd123",
+                "rememberMe": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Đăng nhập thành công",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code",
+                    "data"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        200
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "LOGGED_IN"
+                      ]
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/AuthLoginResponseDto"
+                    }
+                  }
+                },
+                "example": {
+                  "statusCode": 200,
+                  "code": "LOGGED_IN",
+                  "data": {
+                    "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+                    "refreshToken": "rt_opaque_token_example",
+                    "profile": {
+                      "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                      "email": "lan@example.com",
+                      "phone": "0901234567",
+                      "name": "Lê Văn An",
+                      "role": "tenant",
+                      "status": "active",
+                      "payoutAccount": null
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequestError"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "403": {
+            "$ref": "#/components/responses/ForbiddenError"
+          },
+          "422": {
+            "$ref": "#/components/responses/ValidationError"
+          },
+          "429": {
+            "$ref": "#/components/responses/TooManyRequestsError"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
+    "/auth/refresh": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "x-apidog-folder": "Auth",
+        "operationId": "refreshSession",
+        "summary": "Refresh token",
+        "description": "Dành cho tenant, landlord và admin. Không nhận request body hoặc bearer token; chỉ đọc cookie refreshToken. Token cũ bị vô hiệu ngay khi dùng; token mới được trả trong data của response và đặt lại trong cookie, đồng thời giữ nguyên mốc hết hạn 30 ngày tính từ lần đăng nhập. Nếu token đã bị xoay, hết hạn hoặc session đã bị thu hồi, client xóa phiên cục bộ và đăng nhập lại.",
+        "security": [
+          {
+            "RefreshCookie": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Phiên làm việc được làm mới thành công",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code",
+                    "data"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        200
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "SESSION_REFRESHED"
+                      ]
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/AuthRefreshResponseDto"
+                    }
+                  }
+                },
+                "example": {
+                  "statusCode": 200,
+                  "code": "SESSION_REFRESHED",
+                  "data": {
+                    "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+                    "refreshToken": "rt_opaque_token_example"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequestError"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "429": {
+            "$ref": "#/components/responses/TooManyRequestsError"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
+    "/auth/logout": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "x-apidog-folder": "Auth",
+        "operationId": "logoutSession",
+        "summary": "Logout",
+        "description": "Dành cho tenant, landlord và admin. Không có request body. Thu hồi phiên refresh hiện tại được xác định qua cookie refreshToken và xóa cookie.",
+        "security": [
+          {
+            "RefreshCookie": []
+          }
+        ],
+        "responses": {
+          "204": {
+            "$ref": "#/components/responses/NoContentResponse"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequestError"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "429": {
+            "$ref": "#/components/responses/TooManyRequestsError"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
+    "/auth/password-reset-requests": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "x-apidog-folder": "Auth",
+        "operationId": "requestPasswordReset",
+        "summary": "Password reset request",
+        "description": "Public. Tiếp nhận yêu cầu gửi email bất đồng bộ. Cùng một response trung tính được trả dù email có tài khoản hay không, để không lộ sự tồn tại của tài khoản. Client không cần polling; người dùng kiểm tra hộp thư để tiếp tục đặt lại mật khẩu.",
+        "security": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AuthRequestPasswordResetRequestDto"
+              },
+              "example": {
+                "email": "lan@example.com"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Đã tiếp nhận yêu cầu đặt lại mật khẩu",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code",
+                    "data"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        202
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "PASSWORD_RESET_REQUESTED"
+                      ]
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/AuthRequestPasswordResetResponseDto"
+                    }
+                  }
+                },
+                "example": {
+                  "statusCode": 202,
+                  "code": "PASSWORD_RESET_REQUESTED",
+                  "data": {
+                    "accepted": true
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequestError"
+          },
+          "422": {
+            "$ref": "#/components/responses/ValidationError"
+          },
+          "429": {
+            "$ref": "#/components/responses/TooManyRequestsError"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    }
+  },
   "components": {
     "schemas": {
       "AuthRegisterRequestDto": {
@@ -117,6 +498,29 @@
             "description": "ID tài khoản vừa được tạo",
             "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
           },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "minLength": 5,
+            "maxLength": 254,
+            "description": "Email của tài khoản vừa được tạo",
+            "example": "lan@example.com"
+          },
+          "phone": {
+            "type": "string",
+            "minLength": 10,
+            "maxLength": 12,
+            "pattern": "^0[0-9]{9}$|^\\+84[0-9]{9}$",
+            "description": "Số điện thoại của tài khoản vừa được tạo",
+            "example": "0901234567"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 254,
+            "description": "Họ và tên của tài khoản vừa được tạo",
+            "example": "Lê Văn An"
+          },
           "role": {
             "type": "string",
             "enum": [
@@ -137,6 +541,9 @@
         },
         "required": [
           "id",
+          "email",
+          "phone",
+          "name",
           "role",
           "status"
         ]
@@ -185,18 +592,20 @@
             "description": "JWT access token dùng để truy cập các API được bảo vệ",
             "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
           },
-          "expiresIn": {
-            "type": "integer",
-            "enum": [
-              900
-            ],
-            "description": "Thời gian sống của access token tính bằng giây",
-            "example": 900
+          "refreshToken": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Refresh token opaque dùng để làm mới phiên đăng nhập",
+            "example": "rt_opaque_token_example"
+          },
+          "profile": {
+            "$ref": "#/components/schemas/UserCurrentResponseDto"
           }
         },
         "required": [
           "accessToken",
-          "expiresIn"
+          "refreshToken",
+          "profile"
         ]
       },
       "AuthRefreshResponseDto": {
@@ -211,18 +620,16 @@
             "description": "Access token mới được phát hành",
             "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
           },
-          "expiresIn": {
-            "type": "integer",
-            "enum": [
-              900
-            ],
-            "description": "Thời gian sống của access token mới, tính bằng giây",
-            "example": 900
+          "refreshToken": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Refresh token opaque mới sau khi xoay vòng phiên",
+            "example": "rt_opaque_token_example"
           }
         },
         "required": [
           "accessToken",
-          "expiresIn"
+          "refreshToken"
         ]
       },
       "AuthRequestPasswordResetRequestDto": {
@@ -10757,32 +11164,23 @@
           "platform"
         ]
       },
-      "SuccessSingleWrapper": {
+      "PagingMeta": {
         "type": "object",
-        "x-apidog-folder": "Common/Wrapper",
-        "title": "SuccessSingleWrapper",
-        "description": "Envelope phản hồi chuẩn cho kết quả trả về một đối tượng đơn lẻ",
+        "title": "PagingMeta",
         "properties": {
-          "statusCode": {
-            "type": "integer",
-            "description": "HTTP status code",
-            "example": 200
+          "total": {
+            "type": "integer"
           },
-          "code": {
-            "type": "string",
-            "description": "Mã thành công nghiệp vụ ổn định (in hoa, SNAKE_CASE)",
-            "example": "RESOURCE_FETCHED"
+          "page": {
+            "type": "integer"
           },
-          "data": {
-            "type": "object",
-            "description": "Dữ liệu chi tiết của đối tượng"
+          "pageSize": {
+            "type": "integer"
+          },
+          "totalPages": {
+            "type": "integer"
           }
-        },
-        "required": [
-          "statusCode",
-          "code",
-          "data"
-        ]
+        }
       },
       "SuccessListWrapper": {
         "type": "object",
@@ -10808,8 +11206,7 @@
             "description": "Mảng các đối tượng dữ liệu"
           },
           "pagination": {
-            "type": "object",
-            "description": "Metadata phân trang (offset hoặc cursor)"
+            "$ref": "#/components/schemas/PagingMeta"
           }
         },
         "required": [
@@ -10840,37 +11237,46 @@
           "statusCode",
           "code"
         ]
-      },
-      "ErrorValidationWrapper": {
-        "type": "object",
-        "x-apidog-folder": "Common/Wrapper",
-        "title": "ErrorValidationWrapper",
-        "description": "Envelope phản hồi chuẩn cho lỗi validation (HTTP 422)",
-        "properties": {
-          "statusCode": {
-            "type": "integer",
-            "description": "HTTP status code",
-            "example": 422
-          },
-          "code": {
-            "type": "string",
-            "description": "Mã lỗi validation cố định",
-            "example": "VALIDATION FAILED"
-          }
-        },
-        "required": [
-          "statusCode",
-          "code"
-        ]
       }
     },
     "responses": {
       "SuccessSingleResponse": {
-        "description": "Phản hồi thành công cho một đối tượng đơn lẻ",
+        "x-apidog-name": "OK",
+        "description": "Yêu cầu được xử lý thành công",
         "content": {
           "application/json": {
             "schema": {
-              "$ref": "#/components/schemas/SuccessSingleWrapper"
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "statusCode",
+                "code",
+                "data"
+              ],
+              "properties": {
+                "statusCode": {
+                  "type": "integer",
+                  "enum": [
+                    200
+                  ]
+                },
+                "code": {
+                  "type": "string",
+                  "enum": [
+                    "OK"
+                  ]
+                },
+                "data": {
+                  "type": "object",
+                  "description": "Dữ liệu trả về theo nghiệp vụ của endpoint",
+                  "additionalProperties": true
+                }
+              }
+            },
+            "example": {
+              "statusCode": 200,
+              "code": "OK",
+              "data": {}
             }
           }
         }
@@ -10886,31 +11292,103 @@
         }
       },
       "BadRequestError": {
-        "description": "Yêu cầu không hợp lệ (400)",
+        "x-apidog-name": "Bad Request",
+        "description": "JSON, header hoặc media type sai cú pháp",
         "content": {
           "application/json": {
             "schema": {
-              "$ref": "#/components/schemas/ErrorDefaultWrapper"
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "statusCode",
+                "code"
+              ],
+              "properties": {
+                "statusCode": {
+                  "type": "integer",
+                  "enum": [
+                    400
+                  ]
+                },
+                "code": {
+                  "type": "string",
+                  "enum": [
+                    "BAD_REQUEST"
+                  ]
+                }
+              }
+            },
+            "example": {
+              "statusCode": 400,
+              "code": "BAD_REQUEST"
             }
           }
         }
       },
       "UnauthorizedError": {
-        "description": "Chưa xác thực danh tính (401)",
+        "x-apidog-name": "Unauthorized",
+        "description": "Thiếu hoặc không hợp lệ thông tin xác thực",
         "content": {
           "application/json": {
             "schema": {
-              "$ref": "#/components/schemas/ErrorDefaultWrapper"
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "statusCode",
+                "code"
+              ],
+              "properties": {
+                "statusCode": {
+                  "type": "integer",
+                  "enum": [
+                    401
+                  ]
+                },
+                "code": {
+                  "type": "string",
+                  "enum": [
+                    "UNAUTHORIZED"
+                  ]
+                }
+              }
+            },
+            "example": {
+              "statusCode": 401,
+              "code": "UNAUTHORIZED"
             }
           }
         }
       },
       "ForbiddenError": {
-        "description": "Không có quyền truy cập tài nguyên (403)",
+        "x-apidog-name": "Forbidden",
+        "description": "Không có quyền thực hiện yêu cầu",
         "content": {
           "application/json": {
             "schema": {
-              "$ref": "#/components/schemas/ErrorDefaultWrapper"
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "statusCode",
+                "code"
+              ],
+              "properties": {
+                "statusCode": {
+                  "type": "integer",
+                  "enum": [
+                    403
+                  ]
+                },
+                "code": {
+                  "type": "string",
+                  "enum": [
+                    "FORBIDDEN"
+                  ]
+                }
+              }
+            },
+            "example": {
+              "statusCode": 403,
+              "code": "FORBIDDEN"
             }
           }
         }
@@ -10926,14 +11404,262 @@
         }
       },
       "ValidationError": {
-        "description": "Dữ liệu gửi lên vi phạm quy tắc validation (422)",
+        "x-apidog-name": "Unprocessable Entity",
+        "description": "Dữ liệu yêu cầu không hợp lệ",
         "content": {
           "application/json": {
             "schema": {
-              "$ref": "#/components/schemas/ErrorValidationWrapper"
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "statusCode",
+                "code"
+              ],
+              "properties": {
+                "statusCode": {
+                  "type": "integer",
+                  "enum": [
+                    422
+                  ]
+                },
+                "code": {
+                  "type": "string",
+                  "enum": [
+                    "UNPROCESSABLE_ENTITY"
+                  ]
+                }
+              }
+            },
+            "example": {
+              "statusCode": 422,
+              "code": "UNPROCESSABLE_ENTITY"
             }
           }
         }
+      },
+      "CreatedResponse": {
+        "x-apidog-name": "Created",
+        "description": "Tài nguyên được tạo thành công",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "statusCode",
+                "code",
+                "data"
+              ],
+              "properties": {
+                "statusCode": {
+                  "type": "integer",
+                  "enum": [
+                    201
+                  ]
+                },
+                "code": {
+                  "type": "string",
+                  "enum": [
+                    "CREATED"
+                  ]
+                },
+                "data": {
+                  "type": "object",
+                  "description": "Dữ liệu trả về theo nghiệp vụ của endpoint",
+                  "additionalProperties": true
+                }
+              }
+            },
+            "example": {
+              "statusCode": 201,
+              "code": "CREATED",
+              "data": {}
+            }
+          }
+        }
+      },
+      "AcceptedResponse": {
+        "x-apidog-name": "Accepted",
+        "description": "Yêu cầu đã được tiếp nhận để xử lý",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "statusCode",
+                "code",
+                "data"
+              ],
+              "properties": {
+                "statusCode": {
+                  "type": "integer",
+                  "enum": [
+                    202
+                  ]
+                },
+                "code": {
+                  "type": "string",
+                  "enum": [
+                    "ACCEPTED"
+                  ]
+                },
+                "data": {
+                  "type": "object",
+                  "description": "Dữ liệu trả về theo nghiệp vụ của endpoint",
+                  "additionalProperties": true
+                }
+              }
+            },
+            "example": {
+              "statusCode": 202,
+              "code": "ACCEPTED",
+              "data": {}
+            }
+          }
+        }
+      },
+      "NoContentResponse": {
+        "x-apidog-name": "No Content",
+        "description": "Yêu cầu thành công, không có response body"
+      },
+      "ConflictError": {
+        "x-apidog-name": "Conflict",
+        "description": "Yêu cầu xung đột với trạng thái hiện tại",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "statusCode",
+                "code"
+              ],
+              "properties": {
+                "statusCode": {
+                  "type": "integer",
+                  "enum": [
+                    409
+                  ]
+                },
+                "code": {
+                  "type": "string",
+                  "enum": [
+                    "CONFLICT"
+                  ]
+                }
+              }
+            },
+            "example": {
+              "statusCode": 409,
+              "code": "CONFLICT"
+            }
+          }
+        }
+      },
+      "TooManyRequestsError": {
+        "x-apidog-name": "Too Many Requests",
+        "description": "Vượt giới hạn tần suất gọi API",
+        "headers": {
+          "Retry-After": {
+            "description": "Số giây cần đợi trước khi thử lại",
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "example": 60
+          },
+          "RateLimit-Limit": {
+            "description": "Hạn mức hiện tại do deployment cấu hình",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          "RateLimit-Remaining": {
+            "description": "Số request còn lại trong cửa sổ hiện tại",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          "RateLimit-Reset": {
+            "description": "Thời điểm đặt lại hạn mức do server cung cấp",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        },
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "statusCode",
+                "code"
+              ],
+              "properties": {
+                "statusCode": {
+                  "type": "integer",
+                  "enum": [
+                    429
+                  ]
+                },
+                "code": {
+                  "type": "string",
+                  "enum": [
+                    "TOO_MANY_REQUESTS"
+                  ]
+                }
+              }
+            },
+            "example": {
+              "statusCode": 429,
+              "code": "TOO_MANY_REQUESTS"
+            }
+          }
+        }
+      },
+      "InternalServerError": {
+        "x-apidog-name": "Internal Server Error",
+        "description": "Lỗi không mong đợi phía server",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "statusCode",
+                "code"
+              ],
+              "properties": {
+                "statusCode": {
+                  "type": "integer",
+                  "enum": [
+                    500
+                  ]
+                },
+                "code": {
+                  "type": "string",
+                  "enum": [
+                    "INTERNAL_SERVER_ERROR"
+                  ]
+                }
+              }
+            },
+            "example": {
+              "statusCode": 500,
+              "code": "INTERNAL_SERVER_ERROR"
+            }
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "RefreshCookie": {
+        "type": "apiKey",
+        "in": "cookie",
+        "name": "refreshToken",
+        "description": "Refresh token opaque trong cookie HttpOnly, Secure, SameSite=Lax, Path=/api/v1/auth. Chỉ dùng cho refresh và logout."
       }
     }
   }
