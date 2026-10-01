@@ -1,0 +1,59 @@
+post:
+  tags:
+  - Matching
+  x-apidog-folder: MatchRequest
+  operationId: postMatchRequestsMatchrequestidAcceptRequest
+  summary: Chấp nhận yêu cầu
+  description: 'tenant. Chấp nhận yêu cầu. Lỗi nghiệp vụ: 403 FORBIDDEN · 409 MATCH REQUEST NOT PENDING · 404 NOT
+    FOUND.'
+  parameters:
+  - name: matchRequestId
+    in: path
+    required: true
+    schema:
+      type: string
+      format: uuid
+  responses:
+    '200':
+      description: 'Thành công: Chấp nhận yêu cầu.'
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required:
+            - statusCode
+            - code
+            - data
+            properties:
+              statusCode:
+                type: integer
+                enum:
+                - 200
+              code:
+                type: string
+                enum:
+                - MATCH_REQUEST_ACCEPTED
+              data:
+                $ref: ../../openapi.yaml#/components/schemas/MatchRequestAcceptResponseDto
+          example:
+            statusCode: 200
+            code: MATCH_REQUEST_ACCEPTED
+            data:
+              id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+              status: accepted
+              conversationId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+    '400':
+      $ref: ../../openapi.yaml#/components/responses/BadRequestError
+    '401':
+      $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
+    '403':
+      $ref: ../../openapi.yaml#/components/responses/ForbiddenError
+    '404':
+      $ref: ../../openapi.yaml#/components/responses/NotFoundError
+    '409':
+      $ref: ../../openapi.yaml#/components/responses/ConflictError
+    '429':
+      $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
+    '500':
+      $ref: ../../openapi.yaml#/components/responses/InternalServerError

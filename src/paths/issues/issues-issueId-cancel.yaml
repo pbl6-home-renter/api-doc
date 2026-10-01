@@ -1,0 +1,58 @@
+post:
+  tags:
+  - Operation
+  x-apidog-folder: IssueReport
+  operationId: postIssuesIssueidCancel
+  summary: Huỷ báo cáo sự cố
+  description: 'tenant. Huỷ báo cáo sự cố. Lỗi nghiệp vụ: 404 NOT FOUND · 403 FORBIDDEN · 422 CANNOT CANCEL RESOLVED
+    ISSUE.'
+  parameters:
+  - name: issueId
+    in: path
+    required: true
+    schema:
+      type: string
+      format: uuid
+  responses:
+    '200':
+      description: 'Thành công: Huỷ báo cáo sự cố.'
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required:
+            - statusCode
+            - code
+            - data
+            properties:
+              statusCode:
+                type: integer
+                enum:
+                - 200
+              code:
+                type: string
+                enum:
+                - ISSUE_CANCELLED
+              data:
+                $ref: ../../openapi.yaml#/components/schemas/IssueReportCancelResponseDto
+          example:
+            statusCode: 200
+            code: ISSUE_CANCELLED
+            data:
+              id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+              status: cancel
+    '400':
+      $ref: ../../openapi.yaml#/components/responses/BadRequestError
+    '401':
+      $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
+    '403':
+      $ref: ../../openapi.yaml#/components/responses/ForbiddenError
+    '404':
+      $ref: ../../openapi.yaml#/components/responses/NotFoundError
+    '422':
+      $ref: ../../openapi.yaml#/components/responses/ValidationError
+    '429':
+      $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
+    '500':
+      $ref: ../../openapi.yaml#/components/responses/InternalServerError

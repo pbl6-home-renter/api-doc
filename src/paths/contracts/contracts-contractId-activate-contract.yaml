@@ -1,0 +1,65 @@
+post:
+  tags:
+  - Contract
+  x-apidog-folder: Contract
+  operationId: postContractsContractidActivateContract
+  summary: Kích hoạt hợp đồng đã ký
+  description: 'landlord. Kích hoạt hợp đồng đã ký. Lỗi nghiệp vụ: 409 CONTRACT NOT READY · 409 SIGNED FILE MISSING
+    · 403 FORBIDDEN.'
+  parameters:
+  - name: contractId
+    in: path
+    required: true
+    schema:
+      type: string
+      format: uuid
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: ../../openapi.yaml#/components/schemas/ContractActivateRequestDto
+        example:
+          signedContractMediaId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+  responses:
+    '200':
+      description: 'Thành công: Kích hoạt hợp đồng đã ký.'
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required:
+            - statusCode
+            - code
+            - data
+            properties:
+              statusCode:
+                type: integer
+                enum:
+                - 200
+              code:
+                type: string
+                enum:
+                - CONTRACT_ACTIVATED
+              data:
+                $ref: ../../openapi.yaml#/components/schemas/ContractActivateResponseDto
+          example:
+            statusCode: 200
+            code: CONTRACT_ACTIVATED
+            data:
+              id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+              status: active
+              activatedAt: '2026-09-23T11:10:00.000Z'
+    '400':
+      $ref: ../../openapi.yaml#/components/responses/BadRequestError
+    '401':
+      $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
+    '403':
+      $ref: ../../openapi.yaml#/components/responses/ForbiddenError
+    '409':
+      $ref: ../../openapi.yaml#/components/responses/ConflictError
+    '429':
+      $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
+    '500':
+      $ref: ../../openapi.yaml#/components/responses/InternalServerError

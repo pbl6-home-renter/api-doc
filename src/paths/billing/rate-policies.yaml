@@ -1,0 +1,205 @@
+get:
+  tags:
+  - Billing
+  x-apidog-folder: RatePolicy
+  operationId: getRatePolicies
+  summary: Liệt kê chính sách đơn giá và phí định kỳ
+  description: 'landlord. Liệt kê chính sách đơn giá và phí định kỳ. Lỗi nghiệp vụ: 422 VALIDATION FAILED · 403
+    FORBIDDEN.'
+  parameters:
+  - name: filter
+    in: query
+    required: false
+    style: deepObject
+    explode: true
+    description: Bộ lọc được endpoint hỗ trợ.
+    schema:
+      type: object
+      additionalProperties: false
+      properties:
+        scope:
+          type: string
+        roomId:
+          type: string
+          format: uuid
+        type:
+          type: string
+  - name: pageSize
+    in: query
+    schema:
+      type: integer
+      minimum: 1
+      maximum: 100
+      default: 20
+  - name: pageNo
+    in: query
+    schema:
+      type: integer
+      minimum: 1
+      default: 1
+  responses:
+    '200':
+      description: 'Thành công: Liệt kê chính sách đơn giá và phí định kỳ.'
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required:
+            - statusCode
+            - code
+            - data
+            - pagination
+            properties:
+              statusCode:
+                type: integer
+                enum:
+                - 200
+              code:
+                type: string
+                enum:
+                - RATE_POLICIES_FETCHED
+              data:
+                type: array
+                items:
+                  $ref: ../../openapi.yaml#/components/schemas/RatePolicyListResponseDto
+              pagination:
+                type: object
+                additionalProperties: false
+                required:
+                - type
+                - pageNo
+                - pageSize
+                - totalItems
+                - totalPages
+                - hasNextPage
+                - hasPreviousPage
+                properties:
+                  type:
+                    type: string
+                    enum:
+                    - offset
+                  pageNo:
+                    type: integer
+                    minimum: 1
+                  pageSize:
+                    type: integer
+                    minimum: 1
+                    maximum: 100
+                  totalItems:
+                    type: integer
+                    minimum: 0
+                  totalPages:
+                    type: integer
+                    minimum: 0
+                  hasNextPage:
+                    type: boolean
+                  hasPreviousPage:
+                    type: boolean
+          example:
+            statusCode: 200
+            code: RATE_POLICIES_FETCHED
+            data:
+            - id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+              landlordId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+              scope: room
+              roomId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+              type: electricity
+              rateKind: tiered
+              isActive: true
+            pagination:
+              type: offset
+              pageNo: 1
+              pageSize: 20
+              totalItems: 1
+              totalPages: 1
+              hasNextPage: false
+              hasPreviousPage: false
+    '400':
+      $ref: ../../openapi.yaml#/components/responses/BadRequestError
+    '401':
+      $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
+    '403':
+      $ref: ../../openapi.yaml#/components/responses/ForbiddenError
+    '422':
+      $ref: ../../openapi.yaml#/components/responses/ValidationError
+    '429':
+      $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
+    '500':
+      $ref: ../../openapi.yaml#/components/responses/InternalServerError
+post:
+  tags:
+  - Billing
+  x-apidog-folder: RatePolicy
+  operationId: postRatePolicies
+  summary: Tạo một chính sách đơn giá hoặc phí
+  description: 'landlord. Tạo một chính sách đơn giá hoặc phí. Lỗi nghiệp vụ: 409 ACTIVE POLICY EXISTS · 422 INVALID
+    RATE KIND · 403 FORBIDDEN.'
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: ../../openapi.yaml#/components/schemas/RatePolicyCreateRequestDto
+        example:
+          scope: room
+          roomId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+          name: Điện EVN
+          type: electricity
+          rateKind: tiered
+          steps:
+          - from: 0
+            to: 50
+            price: 1806
+  responses:
+    '201':
+      description: 'Thành công: Tạo một chính sách đơn giá hoặc phí.'
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required:
+            - statusCode
+            - code
+            - data
+            properties:
+              statusCode:
+                type: integer
+                enum:
+                - 201
+              code:
+                type: string
+                enum:
+                - RATE_POLICY_CREATED
+              data:
+                $ref: ../../openapi.yaml#/components/schemas/RatePolicyCreateResponseDto
+          example:
+            statusCode: 201
+            code: RATE_POLICY_CREATED
+            data:
+              id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+              scope: room
+              type: electricity
+              rateKind: tiered
+              isActive: true
+      headers:
+        Location:
+          description: Đường dẫn tài nguyên được tạo.
+          schema:
+            type: string
+            example: /api/v1/rate-policies
+    '400':
+      $ref: ../../openapi.yaml#/components/responses/BadRequestError
+    '401':
+      $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
+    '403':
+      $ref: ../../openapi.yaml#/components/responses/ForbiddenError
+    '409':
+      $ref: ../../openapi.yaml#/components/responses/ConflictError
+    '422':
+      $ref: ../../openapi.yaml#/components/responses/ValidationError
+    '429':
+      $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
+    '500':
+      $ref: ../../openapi.yaml#/components/responses/InternalServerError

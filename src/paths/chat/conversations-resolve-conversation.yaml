@@ -1,0 +1,60 @@
+post:
+  tags:
+  - Chat
+  x-apidog-folder: Conversation
+  operationId: postConversationsResolveConversation
+  summary: Lấy hội thoại của phòng hoặc tòa nhà
+  description: 'tenant, landlord. Lấy hội thoại của phòng hoặc tòa nhà. Lỗi nghiệp vụ: 422 EXACTLY ONE CONTEXT REQUIRED
+    · 403 FORBIDDEN · 404 CONTEXT NOT FOUND.'
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: ../../openapi.yaml#/components/schemas/ConversationResolveRequestDto
+        example:
+          contractId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+  responses:
+    '200':
+      description: 'Thành công: Lấy hội thoại của phòng hoặc tòa nhà.'
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required:
+            - statusCode
+            - code
+            - data
+            properties:
+              statusCode:
+                type: integer
+                enum:
+                - 200
+              code:
+                type: string
+                enum:
+                - CONVERSATION_RESOLVED
+              data:
+                $ref: ../../openapi.yaml#/components/schemas/ConversationResolveResponseDto
+          example:
+            statusCode: 200
+            code: CONVERSATION_RESOLVED
+            data:
+              id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+              type: room
+              contractId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+    '400':
+      $ref: ../../openapi.yaml#/components/responses/BadRequestError
+    '401':
+      $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
+    '403':
+      $ref: ../../openapi.yaml#/components/responses/ForbiddenError
+    '404':
+      $ref: ../../openapi.yaml#/components/responses/NotFoundError
+    '422':
+      $ref: ../../openapi.yaml#/components/responses/ValidationError
+    '429':
+      $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
+    '500':
+      $ref: ../../openapi.yaml#/components/responses/InternalServerError

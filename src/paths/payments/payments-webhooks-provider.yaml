@@ -1,0 +1,35 @@
+post:
+  tags:
+  - Billing
+  x-apidog-folder: Payment
+  operationId: postPaymentsWebhooksProvider
+  summary: Nhận callback đã ký từ provider
+  description: 'system. Nhận callback đã ký từ provider. Lỗi nghiệp vụ: 401 INVALID SIGNATURE · 409 DUPLICATE WEBHOOK
+    · 422 WEBHOOK INVALID.'
+  parameters:
+  - name: provider
+    in: path
+    required: true
+    schema:
+      type: string
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: ../../openapi.yaml#/components/schemas/PaymentWebhookRequestDto
+  responses:
+    '204':
+      $ref: ../../openapi.yaml#/components/responses/NoContentResponse
+    '400':
+      $ref: ../../openapi.yaml#/components/responses/BadRequestError
+    '401':
+      $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
+    '409':
+      $ref: ../../openapi.yaml#/components/responses/ConflictError
+    '422':
+      $ref: ../../openapi.yaml#/components/responses/ValidationError
+    '500':
+      $ref: ../../openapi.yaml#/components/responses/InternalServerError
+    '200':
+      description: Provider acknowledgement; không có JSON wrapper.

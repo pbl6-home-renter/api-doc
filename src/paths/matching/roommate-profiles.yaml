@@ -1,0 +1,122 @@
+get:
+  tags:
+  - Matching
+  x-apidog-folder: RoommateProfile
+  operationId: getRoommateProfiles
+  summary: Duyệt feed hồ sơ tìm bạn ở
+  description: 'tenant. Duyệt feed hồ sơ tìm bạn ở. Lỗi nghiệp vụ: 422 VALIDATION FAILED.'
+  parameters:
+  - name: filter
+    in: query
+    required: false
+    style: deepObject
+    explode: true
+    description: Bộ lọc được endpoint hỗ trợ.
+    schema:
+      type: object
+      additionalProperties: false
+      properties:
+        preferredArea:
+          type: string
+  - name: pageSize
+    in: query
+    schema:
+      type: integer
+      minimum: 1
+      maximum: 100
+      default: 20
+  - name: pageNo
+    in: query
+    schema:
+      type: integer
+      minimum: 1
+      default: 1
+  responses:
+    '200':
+      description: 'Thành công: Duyệt feed hồ sơ tìm bạn ở.'
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required:
+            - statusCode
+            - code
+            - data
+            - pagination
+            properties:
+              statusCode:
+                type: integer
+                enum:
+                - 200
+              code:
+                type: string
+                enum:
+                - ROOMMATE_PROFILES_FETCHED
+              data:
+                type: array
+                items:
+                  $ref: ../../openapi.yaml#/components/schemas/RoommateProfileListResponseDto
+              pagination:
+                type: object
+                additionalProperties: false
+                required:
+                - type
+                - pageNo
+                - pageSize
+                - totalItems
+                - totalPages
+                - hasNextPage
+                - hasPreviousPage
+                properties:
+                  type:
+                    type: string
+                    enum:
+                    - offset
+                  pageNo:
+                    type: integer
+                    minimum: 1
+                  pageSize:
+                    type: integer
+                    minimum: 1
+                    maximum: 100
+                  totalItems:
+                    type: integer
+                    minimum: 0
+                  totalPages:
+                    type: integer
+                    minimum: 0
+                  hasNextPage:
+                    type: boolean
+                  hasPreviousPage:
+                    type: boolean
+          example:
+            statusCode: 200
+            code: ROOMMATE_PROFILES_FETCHED
+            data:
+            - tenantId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+              bio: Hiền lành, sạch sẽ
+              budgetMin: 2000000
+              budgetMax: 3500000
+              isVisible: true
+              id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+              tenantName: Nguyễn Thu Hà
+              gender: female
+            pagination:
+              type: offset
+              pageNo: 1
+              pageSize: 20
+              totalItems: 1
+              totalPages: 1
+              hasNextPage: false
+              hasPreviousPage: false
+    '400':
+      $ref: ../../openapi.yaml#/components/responses/BadRequestError
+    '401':
+      $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
+    '422':
+      $ref: ../../openapi.yaml#/components/responses/ValidationError
+    '429':
+      $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
+    '500':
+      $ref: ../../openapi.yaml#/components/responses/InternalServerError

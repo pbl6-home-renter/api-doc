@@ -1,0 +1,77 @@
+get:
+  tags:
+  - Operation
+  x-apidog-folder: Media
+  operationId: getMediaMediaid
+  summary: Đọc hoặc stream một tệp
+  description: 'Quyền kế thừa từ tài nguyên cha. Đọc hoặc stream một tệp. Lỗi nghiệp vụ: 404 NOT FOUND · 403 FORBIDDEN
+    · 410 MEDIA DELETED.'
+  parameters:
+  - name: mediaId
+    in: path
+    required: true
+    schema:
+      type: string
+      format: uuid
+  responses:
+    '200':
+      description: 'Thành công: Đọc hoặc stream một tệp.'
+      headers:
+        Content-Disposition:
+          description: Tên tệp tải xuống.
+          schema:
+            type: string
+        Content-Type:
+          description: MIME type của tệp.
+          schema:
+            type: string
+      content:
+        application/octet-stream:
+          schema:
+            type: string
+            format: binary
+    '400':
+      $ref: ../../openapi.yaml#/components/responses/BadRequestError
+    '403':
+      $ref: ../../openapi.yaml#/components/responses/ForbiddenError
+    '404':
+      $ref: ../../openapi.yaml#/components/responses/NotFoundError
+    '429':
+      $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
+    '500':
+      $ref: ../../openapi.yaml#/components/responses/InternalServerError
+    '410':
+      description: Media đã bị xóa.
+      content:
+        application/json:
+          schema:
+            $ref: ../../responses/wrappers/error-default.yaml
+delete:
+  tags:
+  - Operation
+  x-apidog-folder: Media
+  operationId: deleteMediaMediaid
+  summary: Xóa mềm tệp
+  description: 'tenant, landlord, admin. Xóa mềm tệp. Lỗi nghiệp vụ: 403 FORBIDDEN · 409 CAN''T DELETE.'
+  parameters:
+  - name: mediaId
+    in: path
+    required: true
+    schema:
+      type: string
+      format: uuid
+  responses:
+    '204':
+      $ref: ../../openapi.yaml#/components/responses/NoContentResponse
+    '400':
+      $ref: ../../openapi.yaml#/components/responses/BadRequestError
+    '401':
+      $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
+    '403':
+      $ref: ../../openapi.yaml#/components/responses/ForbiddenError
+    '409':
+      $ref: ../../openapi.yaml#/components/responses/ConflictError
+    '429':
+      $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
+    '500':
+      $ref: ../../openapi.yaml#/components/responses/InternalServerError

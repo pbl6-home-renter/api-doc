@@ -1,0 +1,73 @@
+post:
+  tags:
+  - Contract
+  x-apidog-folder: Contract
+  operationId: postContractsContractidGenerateDraftDocument
+  summary: Sinh tài liệu nháp
+  description: 'landlord. Sinh tài liệu nháp. Lỗi nghiệp vụ: 403 FORBIDDEN · 409 CONTRACT NOT DRAFT · 422 TEMPLATE
+    DATA INVALID.'
+  parameters:
+  - name: contractId
+    in: path
+    required: true
+    schema:
+      type: string
+      format: uuid
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: ../../openapi.yaml#/components/schemas/ContractGenerateDraftRequestDto
+        example:
+          templateKey: standard_residential_v1
+  responses:
+    '201':
+      description: 'Thành công: Sinh tài liệu nháp.'
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required:
+            - statusCode
+            - code
+            - data
+            properties:
+              statusCode:
+                type: integer
+                enum:
+                - 201
+              code:
+                type: string
+                enum:
+                - CONTRACT_DRAFT_GENERATED
+              data:
+                $ref: ../../openapi.yaml#/components/schemas/ContractGenerateDraftResponseDto
+          example:
+            statusCode: 201
+            code: CONTRACT_DRAFT_GENERATED
+            data:
+              contractId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+              mediaId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+              purpose: contract_template
+      headers:
+        Location:
+          description: Đường dẫn tài nguyên được tạo.
+          schema:
+            type: string
+            example: /api/v1/media/{mediaId}
+    '400':
+      $ref: ../../openapi.yaml#/components/responses/BadRequestError
+    '401':
+      $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
+    '403':
+      $ref: ../../openapi.yaml#/components/responses/ForbiddenError
+    '409':
+      $ref: ../../openapi.yaml#/components/responses/ConflictError
+    '422':
+      $ref: ../../openapi.yaml#/components/responses/ValidationError
+    '429':
+      $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
+    '500':
+      $ref: ../../openapi.yaml#/components/responses/InternalServerError

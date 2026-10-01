@@ -1,0 +1,156 @@
+get:
+  tags:
+  - Property
+  x-apidog-folder: Building
+  operationId: getBuildingsBuildingid
+  summary: Đọc tòa nhà (chế độ công khai)
+  description: 'public. Đọc tòa nhà (chế độ công khai). Lỗi nghiệp vụ: 404 NOT FOUND.'
+  security: []
+  parameters:
+  - name: buildingId
+    in: path
+    required: true
+    schema:
+      type: string
+      format: uuid
+  responses:
+    '200':
+      description: 'Thành công: Đọc tòa nhà (chế độ công khai).'
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required:
+            - statusCode
+            - code
+            - data
+            properties:
+              statusCode:
+                type: integer
+                enum:
+                - 200
+              code:
+                type: string
+                enum:
+                - BUILDING_FETCHED
+              data:
+                $ref: ../../openapi.yaml#/components/schemas/BuildingPublicDetailResponseDto
+          example:
+            statusCode: 200
+            code: BUILDING_FETCHED
+            data:
+              id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+              name: Nhà trọ Thanh Xuân
+              province: Thành phố Hồ Chí Minh
+              ward: Phường Bến Nghé
+              address: 12 Nguyễn Trãi
+              status: approved
+    '400':
+      $ref: ../../openapi.yaml#/components/responses/BadRequestError
+    '404':
+      $ref: ../../openapi.yaml#/components/responses/NotFoundError
+    '429':
+      $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
+    '500':
+      $ref: ../../openapi.yaml#/components/responses/InternalServerError
+patch:
+  tags:
+  - Property
+  x-apidog-folder: Building
+  operationId: patchBuildingsBuildingid
+  summary: Cập nhật thông tin tòa nhà
+  description: 'landlord. Cập nhật thông tin tòa nhà. Lỗi nghiệp vụ: 404 NOT FOUND · 403 FORBIDDEN · 409 APPROVED
+    BUILDING LOCKED · 422 VALIDATION FAILED.'
+  parameters:
+  - name: buildingId
+    in: path
+    required: true
+    schema:
+      type: string
+      format: uuid
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: ../../openapi.yaml#/components/schemas/BuildingUpdateRequestDto
+        example:
+          name: Tòa nhà Rentify Central Park
+          address: 123 Nguyễn Thị Minh Khai
+  responses:
+    '200':
+      description: 'Thành công: Cập nhật thông tin tòa nhà.'
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required:
+            - statusCode
+            - code
+            - data
+            properties:
+              statusCode:
+                type: integer
+                enum:
+                - 200
+              code:
+                type: string
+                enum:
+                - BUILDING_UPDATED
+              data:
+                $ref: ../../openapi.yaml#/components/schemas/BuildingUpdateResponseDto
+          example:
+            statusCode: 200
+            code: BUILDING_UPDATED
+            data:
+              id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+              name: Tòa nhà Rentify Central Park
+              address: 123 Nguyễn Thị Minh Khai
+              status: approved
+    '400':
+      $ref: ../../openapi.yaml#/components/responses/BadRequestError
+    '401':
+      $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
+    '403':
+      $ref: ../../openapi.yaml#/components/responses/ForbiddenError
+    '404':
+      $ref: ../../openapi.yaml#/components/responses/NotFoundError
+    '409':
+      $ref: ../../openapi.yaml#/components/responses/ConflictError
+    '422':
+      $ref: ../../openapi.yaml#/components/responses/ValidationError
+    '429':
+      $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
+    '500':
+      $ref: ../../openapi.yaml#/components/responses/InternalServerError
+delete:
+  tags:
+  - Property
+  x-apidog-folder: Building
+  operationId: deleteBuildingsBuildingid
+  summary: Xóa mềm tòa nhà
+  description: 'landlord. Xóa mềm tòa nhà. Lỗi nghiệp vụ: 404 NOT FOUND · 409 BUILDING HAS ACTIVE CONTRACT.'
+  parameters:
+  - name: buildingId
+    in: path
+    required: true
+    schema:
+      type: string
+      format: uuid
+  responses:
+    '204':
+      $ref: ../../openapi.yaml#/components/responses/NoContentResponse
+    '400':
+      $ref: ../../openapi.yaml#/components/responses/BadRequestError
+    '401':
+      $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
+    '404':
+      $ref: ../../openapi.yaml#/components/responses/NotFoundError
+    '409':
+      $ref: ../../openapi.yaml#/components/responses/ConflictError
+    '429':
+      $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
+    '500':
+      $ref: ../../openapi.yaml#/components/responses/InternalServerError

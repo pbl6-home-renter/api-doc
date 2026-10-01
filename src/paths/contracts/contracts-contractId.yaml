@@ -1,0 +1,131 @@
+get:
+  tags:
+  - Contract
+  x-apidog-folder: Contract
+  operationId: getContractsContractid
+  summary: Đọc một hợp đồng
+  description: 'landlord, tenant. Đọc một hợp đồng. Lỗi nghiệp vụ: 403 FORBIDDEN · 404 NOT FOUND.'
+  parameters:
+  - name: contractId
+    in: path
+    required: true
+    schema:
+      type: string
+      format: uuid
+  responses:
+    '200':
+      description: 'Thành công: Đọc một hợp đồng.'
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required:
+            - statusCode
+            - code
+            - data
+            properties:
+              statusCode:
+                type: integer
+                enum:
+                - 200
+              code:
+                type: string
+                enum:
+                - CONTRACT_FETCHED
+              data:
+                $ref: ../../openapi.yaml#/components/schemas/ContractDetailResponseDto
+          example:
+            statusCode: 200
+            code: CONTRACT_FETCHED
+            data:
+              id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+              roomId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+              status: active
+              tenantId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+              tenantName: Trần Văn B
+              tenantPhone: 0912345678
+              rentPrice: 3500000
+              depositAmount: 7000000
+              startDate: '2026-09-01'
+              endDate: '2027-08-31'
+              signedContractMediaId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+    '400':
+      $ref: ../../openapi.yaml#/components/responses/BadRequestError
+    '401':
+      $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
+    '403':
+      $ref: ../../openapi.yaml#/components/responses/ForbiddenError
+    '404':
+      $ref: ../../openapi.yaml#/components/responses/NotFoundError
+    '429':
+      $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
+    '500':
+      $ref: ../../openapi.yaml#/components/responses/InternalServerError
+patch:
+  tags:
+  - Contract
+  x-apidog-folder: Contract
+  operationId: patchContractsContractid
+  summary: Sửa hợp đồng nháp
+  description: 'landlord. Sửa hợp đồng nháp. Lỗi nghiệp vụ: 409 CONTRACT NOT DRAFT · 403 FORBIDDEN · 422 VALIDATION
+    FAILED.'
+  parameters:
+  - name: contractId
+    in: path
+    required: true
+    schema:
+      type: string
+      format: uuid
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: ../../openapi.yaml#/components/schemas/ContractUpdateRequestDto
+        example:
+          description: Đóng tiền trước ngày 5 hàng tháng
+  responses:
+    '200':
+      description: 'Thành công: Sửa hợp đồng nháp.'
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required:
+            - statusCode
+            - code
+            - data
+            properties:
+              statusCode:
+                type: integer
+                enum:
+                - 200
+              code:
+                type: string
+                enum:
+                - CONTRACT_UPDATED
+              data:
+                $ref: ../../openapi.yaml#/components/schemas/ContractUpdateResponseDto
+          example:
+            statusCode: 200
+            code: CONTRACT_UPDATED
+            data:
+              id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+              status: draft
+              description: Đóng tiền trước ngày 5 hàng tháng
+    '400':
+      $ref: ../../openapi.yaml#/components/responses/BadRequestError
+    '401':
+      $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
+    '403':
+      $ref: ../../openapi.yaml#/components/responses/ForbiddenError
+    '409':
+      $ref: ../../openapi.yaml#/components/responses/ConflictError
+    '422':
+      $ref: ../../openapi.yaml#/components/responses/ValidationError
+    '429':
+      $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
+    '500':
+      $ref: ../../openapi.yaml#/components/responses/InternalServerError

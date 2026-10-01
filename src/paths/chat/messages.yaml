@@ -1,0 +1,182 @@
+get:
+  tags:
+  - Chat
+  x-apidog-folder: Message
+  operationId: getMessages
+  summary: Liệt kê tin nhắn trong một hội thoại
+  description: 'tenant, landlord. Liệt kê tin nhắn trong một hội thoại. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 INVALID
+    CURSOR · 404 CONVERSATION NOT FOUND.'
+  parameters:
+  - name: filter
+    in: query
+    required: false
+    style: deepObject
+    explode: true
+    description: Bộ lọc được endpoint hỗ trợ.
+    schema:
+      type: object
+      additionalProperties: false
+      properties:
+        conversationId:
+          type: string
+          format: uuid
+  - name: cursor
+    in: query
+    description: Cursor opaque từ trang trước; bỏ qua ở trang đầu.
+    schema:
+      type: string
+  - name: pageSize
+    in: query
+    schema:
+      type: integer
+      minimum: 1
+      maximum: 100
+      default: 30
+  responses:
+    '200':
+      description: 'Thành công: Liệt kê tin nhắn trong một hội thoại.'
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required:
+            - statusCode
+            - code
+            - data
+            - pagination
+            properties:
+              statusCode:
+                type: integer
+                enum:
+                - 200
+              code:
+                type: string
+                enum:
+                - MESSAGES_FETCHED
+              data:
+                type: array
+                items:
+                  $ref: ../../openapi.yaml#/components/schemas/MessageListResponseDto
+              pagination:
+                type: object
+                additionalProperties: false
+                required:
+                - type
+                - pageSize
+                - nextCursor
+                - hasNextPage
+                properties:
+                  type:
+                    type: string
+                    enum:
+                    - cursor
+                  pageSize:
+                    type: integer
+                    minimum: 1
+                    maximum: 100
+                  nextCursor:
+                    type: string
+                    nullable: true
+                  hasNextPage:
+                    type: boolean
+          example:
+            statusCode: 200
+            code: MESSAGES_FETCHED
+            data:
+            - id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+              conversationId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+              senderId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+              type: text
+              content: Dạ em gửi ảnh vòi xịt ạ
+              createdAt: '2026-09-23T11:30:00.000Z'
+            pagination:
+              type: cursor
+              pageSize: 30
+              nextCursor: null
+              hasNextPage: false
+    '400':
+      $ref: ../../openapi.yaml#/components/responses/BadRequestError
+    '401':
+      $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
+    '403':
+      $ref: ../../openapi.yaml#/components/responses/ForbiddenError
+    '404':
+      $ref: ../../openapi.yaml#/components/responses/NotFoundError
+    '422':
+      $ref: ../../openapi.yaml#/components/responses/ValidationError
+    '429':
+      $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
+    '500':
+      $ref: ../../openapi.yaml#/components/responses/InternalServerError
+post:
+  tags:
+  - Chat
+  x-apidog-folder: Message
+  operationId: postMessages
+  summary: Gửi tin nhắn
+  description: 'tenant, landlord. Gửi tin nhắn. Lỗi nghiệp vụ: 403 FORBIDDEN · 409 CONVERSATION ARCHIVED · 422 MESSAGE
+    CONTENT INVALID.'
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: ../../openapi.yaml#/components/schemas/MessageSendRequestDto
+        example:
+          conversationId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+          type: text
+          content: Dạ thợ mấy giờ qua kiểm được ạ
+          mediaId: null
+  responses:
+    '201':
+      description: 'Thành công: Gửi tin nhắn.'
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required:
+            - statusCode
+            - code
+            - data
+            properties:
+              statusCode:
+                type: integer
+                enum:
+                - 201
+              code:
+                type: string
+                enum:
+                - MESSAGE_SENT
+              data:
+                $ref: ../../openapi.yaml#/components/schemas/MessageSendResponseDto
+          example:
+            statusCode: 201
+            code: MESSAGE_SENT
+            data:
+              id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+              conversationId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+              type: text
+              content: Dạ thợ mấy giờ qua kiểm được ạ
+              createdAt: '2026-09-23T11:38:00.000Z'
+      headers:
+        Location:
+          description: Đường dẫn tài nguyên được tạo.
+          schema:
+            type: string
+            example: /api/v1/messages
+    '400':
+      $ref: ../../openapi.yaml#/components/responses/BadRequestError
+    '401':
+      $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
+    '403':
+      $ref: ../../openapi.yaml#/components/responses/ForbiddenError
+    '409':
+      $ref: ../../openapi.yaml#/components/responses/ConflictError
+    '422':
+      $ref: ../../openapi.yaml#/components/responses/ValidationError
+    '429':
+      $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
+    '500':
+      $ref: ../../openapi.yaml#/components/responses/InternalServerError

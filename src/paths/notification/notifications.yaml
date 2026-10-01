@@ -1,0 +1,104 @@
+get:
+  tags:
+  - Notification
+  x-apidog-folder: Notification
+  operationId: getNotifications
+  summary: Liệt kê thông báo
+  description: 'tenant, landlord, admin. Liệt kê thông báo. Lỗi nghiệp vụ: 401 INVALID TOKEN · 422 VALIDATION FAILED.'
+  parameters:
+  - name: filter
+    in: query
+    required: false
+    style: deepObject
+    explode: true
+    description: Bộ lọc được endpoint hỗ trợ.
+    schema:
+      type: object
+      additionalProperties: false
+      properties:
+        unreadOnly:
+          type: boolean
+  - name: cursor
+    in: query
+    description: Cursor opaque từ trang trước; bỏ qua ở trang đầu.
+    schema:
+      type: string
+  - name: pageSize
+    in: query
+    schema:
+      type: integer
+      minimum: 1
+      maximum: 100
+      default: 20
+  responses:
+    '200':
+      description: 'Thành công: Liệt kê thông báo.'
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required:
+            - statusCode
+            - code
+            - data
+            - pagination
+            properties:
+              statusCode:
+                type: integer
+                enum:
+                - 200
+              code:
+                type: string
+                enum:
+                - NOTIFICATIONS_FETCHED
+              data:
+                type: array
+                items:
+                  $ref: ../../openapi.yaml#/components/schemas/NotificationListResponseDto
+              pagination:
+                type: object
+                additionalProperties: false
+                required:
+                - type
+                - pageSize
+                - nextCursor
+                - hasNextPage
+                properties:
+                  type:
+                    type: string
+                    enum:
+                    - cursor
+                  pageSize:
+                    type: integer
+                    minimum: 1
+                    maximum: 100
+                  nextCursor:
+                    type: string
+                    nullable: true
+                  hasNextPage:
+                    type: boolean
+          example:
+            statusCode: 200
+            code: NOTIFICATIONS_FETCHED
+            data:
+            - id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+              type: invoice_due
+              data:
+                invoiceId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+              readAt: null
+            pagination:
+              type: cursor
+              pageSize: 20
+              nextCursor: null
+              hasNextPage: false
+    '400':
+      $ref: ../../openapi.yaml#/components/responses/BadRequestError
+    '401':
+      $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
+    '422':
+      $ref: ../../openapi.yaml#/components/responses/ValidationError
+    '429':
+      $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
+    '500':
+      $ref: ../../openapi.yaml#/components/responses/InternalServerError

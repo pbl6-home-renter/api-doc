@@ -1,0 +1,66 @@
+post:
+  tags:
+  - Contract
+  x-apidog-folder: ContractMember
+  operationId: postContractMembersContractmemberidLeaveContract
+  summary: Ghi nhận thành viên rời đi
+  description: 'landlord. Ghi nhận thành viên rời đi. Lỗi nghiệp vụ: 403 FORBIDDEN · 409 MEMBER ALREADY LEFT · 422
+    LEFT DATE INVALID.'
+  parameters:
+  - name: contractMemberId
+    in: path
+    required: true
+    schema:
+      type: string
+      format: uuid
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: ../../openapi.yaml#/components/schemas/ContractMemberLeaveRequestDto
+        example:
+          leftOn: '2026-10-01'
+  responses:
+    '200':
+      description: 'Thành công: Ghi nhận thành viên rời đi.'
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required:
+            - statusCode
+            - code
+            - data
+            properties:
+              statusCode:
+                type: integer
+                enum:
+                - 200
+              code:
+                type: string
+                enum:
+                - CONTRACT_MEMBER_LEFT
+              data:
+                $ref: ../../openapi.yaml#/components/schemas/ContractMemberLeaveResponseDto
+          example:
+            statusCode: 200
+            code: CONTRACT_MEMBER_LEFT
+            data:
+              id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+              leftAt: '2026-10-01'
+    '400':
+      $ref: ../../openapi.yaml#/components/responses/BadRequestError
+    '401':
+      $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
+    '403':
+      $ref: ../../openapi.yaml#/components/responses/ForbiddenError
+    '409':
+      $ref: ../../openapi.yaml#/components/responses/ConflictError
+    '422':
+      $ref: ../../openapi.yaml#/components/responses/ValidationError
+    '429':
+      $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
+    '500':
+      $ref: ../../openapi.yaml#/components/responses/InternalServerError

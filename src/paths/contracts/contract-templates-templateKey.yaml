@@ -1,0 +1,57 @@
+get:
+  tags:
+  - Contract
+  x-apidog-folder: ContractTemplate
+  operationId: getContractTemplatesTemplatekey
+  summary: Đọc một mẫu
+  description: 'landlord. Đọc một mẫu. Lỗi nghiệp vụ: 404 NOT FOUND.'
+  parameters:
+  - name: templateKey
+    in: path
+    required: true
+    schema:
+      type: string
+  responses:
+    '200':
+      description: 'Thành công: Đọc một mẫu.'
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required:
+            - statusCode
+            - code
+            - data
+            properties:
+              statusCode:
+                type: integer
+                enum:
+                - 200
+              code:
+                type: string
+                enum:
+                - CONTRACT_TEMPLATE_FETCHED
+              data:
+                $ref: ../../openapi.yaml#/components/schemas/ContractTemplateDetailResponseDto
+          example:
+            statusCode: 200
+            code: CONTRACT_TEMPLATE_FETCHED
+            data:
+              templateKey: standard_residential_v1
+              title: Residential lease
+              version: '1.0'
+              requiredVariables:
+              - landlordName
+              - tenantName
+              - rentPrice
+    '400':
+      $ref: ../../openapi.yaml#/components/responses/BadRequestError
+    '401':
+      $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
+    '404':
+      $ref: ../../openapi.yaml#/components/responses/NotFoundError
+    '429':
+      $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
+    '500':
+      $ref: ../../openapi.yaml#/components/responses/InternalServerError

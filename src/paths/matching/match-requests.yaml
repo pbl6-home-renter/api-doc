@@ -1,0 +1,198 @@
+get:
+  tags:
+  - Matching
+  x-apidog-folder: MatchRequest
+  operationId: getMatchRequests
+  summary: Liệt kê yêu cầu đến hoặc đi
+  description: 'tenant. Liệt kê yêu cầu đến hoặc đi. Lỗi nghiệp vụ: 422 VALIDATION FAILED.'
+  parameters:
+  - name: filter
+    in: query
+    required: false
+    style: deepObject
+    explode: true
+    description: Bộ lọc được endpoint hỗ trợ.
+    schema:
+      type: object
+      additionalProperties: false
+      properties:
+        direction:
+          type: string
+          enum:
+          - incoming
+          - outgoing
+        status:
+          type: string
+  - name: pageSize
+    in: query
+    schema:
+      type: integer
+      minimum: 1
+      maximum: 100
+      default: 20
+  - name: pageNo
+    in: query
+    schema:
+      type: integer
+      minimum: 1
+      default: 1
+  responses:
+    '200':
+      description: 'Thành công: Liệt kê yêu cầu đến hoặc đi.'
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required:
+            - statusCode
+            - code
+            - data
+            - pagination
+            properties:
+              statusCode:
+                type: integer
+                enum:
+                - 200
+              code:
+                type: string
+                enum:
+                - MATCH_REQUESTS_FETCHED
+              data:
+                type: array
+                items:
+                  $ref: ../../openapi.yaml#/components/schemas/MatchRequestListResponseDto
+              pagination:
+                type: object
+                additionalProperties: false
+                required:
+                - type
+                - pageNo
+                - pageSize
+                - totalItems
+                - totalPages
+                - hasNextPage
+                - hasPreviousPage
+                properties:
+                  type:
+                    type: string
+                    enum:
+                    - offset
+                  pageNo:
+                    type: integer
+                    minimum: 1
+                  pageSize:
+                    type: integer
+                    minimum: 1
+                    maximum: 100
+                  totalItems:
+                    type: integer
+                    minimum: 0
+                  totalPages:
+                    type: integer
+                    minimum: 0
+                  hasNextPage:
+                    type: boolean
+                  hasPreviousPage:
+                    type: boolean
+          example:
+            statusCode: 200
+            code: MATCH_REQUESTS_FETCHED
+            data:
+            - id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+              requesterId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+              targetId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+              status: pending
+              createdAt: '2026-09-23T10:00:00.000Z'
+              requester:
+                id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                name: Nguyễn Văn A
+                gender: male
+              target:
+                id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                name: Trần Thị B
+                gender: male
+            pagination:
+              type: offset
+              pageNo: 1
+              pageSize: 20
+              totalItems: 1
+              totalPages: 1
+              hasNextPage: false
+              hasPreviousPage: false
+    '400':
+      $ref: ../../openapi.yaml#/components/responses/BadRequestError
+    '401':
+      $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
+    '422':
+      $ref: ../../openapi.yaml#/components/responses/ValidationError
+    '429':
+      $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
+    '500':
+      $ref: ../../openapi.yaml#/components/responses/InternalServerError
+post:
+  tags:
+  - Matching
+  x-apidog-folder: MatchRequest
+  operationId: postMatchRequests
+  summary: Gửi yêu cầu tìm bạn ở
+  description: 'tenant. Gửi yêu cầu tìm bạn ở. Lỗi nghiệp vụ: 409 DUPLICATE MATCH REQUEST · 422 SELF MATCHING NOT
+    ALLOWED · 404 NOT FOUND.'
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: ../../openapi.yaml#/components/schemas/MatchRequestCreateRequestDto
+        example:
+          targetId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+  responses:
+    '201':
+      description: 'Thành công: Gửi yêu cầu tìm bạn ở.'
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required:
+            - statusCode
+            - code
+            - data
+            properties:
+              statusCode:
+                type: integer
+                enum:
+                - 201
+              code:
+                type: string
+                enum:
+                - MATCH_REQUEST_CREATED
+              data:
+                $ref: ../../openapi.yaml#/components/schemas/MatchRequestCreateResponseDto
+          example:
+            statusCode: 201
+            code: MATCH_REQUEST_CREATED
+            data:
+              id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+              status: pending
+              respondedAt: null
+      headers:
+        Location:
+          description: Đường dẫn tài nguyên được tạo.
+          schema:
+            type: string
+            example: /api/v1/match-requests
+    '400':
+      $ref: ../../openapi.yaml#/components/responses/BadRequestError
+    '401':
+      $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
+    '404':
+      $ref: ../../openapi.yaml#/components/responses/NotFoundError
+    '409':
+      $ref: ../../openapi.yaml#/components/responses/ConflictError
+    '422':
+      $ref: ../../openapi.yaml#/components/responses/ValidationError
+    '429':
+      $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
+    '500':
+      $ref: ../../openapi.yaml#/components/responses/InternalServerError

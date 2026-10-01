@@ -1,0 +1,62 @@
+get:
+  tags:
+  - Matching
+  x-apidog-folder: RoommateProfile
+  operationId: getRoommateProfilesRoommateprofileid
+  summary: Đọc một hồ sơ theo định danh
+  description: 'tenant. Đọc một hồ sơ theo định danh. Lỗi nghiệp vụ: 404 NOT FOUND · 403 PROFILE NOT VISIBLE.'
+  parameters:
+  - name: roommateProfileId
+    in: path
+    required: true
+    schema:
+      type: string
+      format: uuid
+  responses:
+    '200':
+      description: 'Thành công: Đọc một hồ sơ theo định danh.'
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required:
+            - statusCode
+            - code
+            - data
+            properties:
+              statusCode:
+                type: integer
+                enum:
+                - 200
+              code:
+                type: string
+                enum:
+                - ROOMMATE_PROFILE_FETCHED
+              data:
+                $ref: ../../openapi.yaml#/components/schemas/RoommateProfileDetailResponseDto
+          example:
+            statusCode: 200
+            code: ROOMMATE_PROFILE_FETCHED
+            data:
+              tenantId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+              bio: Hiền lành, sạch sẽ
+              budgetMin: 2000000
+              budgetMax: 3500000
+              preferredArea: Hòa Khánh, Liên Chiểu
+              isVisible: true
+              id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+              tenantName: Nguyễn Thu Hà
+              gender: female
+    '400':
+      $ref: ../../openapi.yaml#/components/responses/BadRequestError
+    '401':
+      $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
+    '403':
+      $ref: ../../openapi.yaml#/components/responses/ForbiddenError
+    '404':
+      $ref: ../../openapi.yaml#/components/responses/NotFoundError
+    '429':
+      $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
+    '500':
+      $ref: ../../openapi.yaml#/components/responses/InternalServerError

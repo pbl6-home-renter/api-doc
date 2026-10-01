@@ -1,0 +1,60 @@
+post:
+  tags:
+  - Chat
+  x-apidog-folder: Message
+  operationId: postMessagesMarkRead
+  summary: Đánh dấu đã đọc một hội thoại
+  description: 'tenant, landlord. Đánh dấu đã đọc một hội thoại. Lỗi nghiệp vụ: 403 FORBIDDEN · 404 MESSAGE NOT
+    FOUND · 422 READ CURSOR INVALID · điều kiện migration cho con trỏ.'
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: ../../openapi.yaml#/components/schemas/MessageMarkReadRequestDto
+        example:
+          conversationId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+          lastReadMessageId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+  responses:
+    '200':
+      description: 'Thành công: Đánh dấu đã đọc một hội thoại.'
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required:
+            - statusCode
+            - code
+            - data
+            properties:
+              statusCode:
+                type: integer
+                enum:
+                - 200
+              code:
+                type: string
+                enum:
+                - MESSAGES_MARKED_READ
+              data:
+                $ref: ../../openapi.yaml#/components/schemas/MessageMarkReadResponseDto
+          example:
+            statusCode: 200
+            code: MESSAGES_MARKED_READ
+            data:
+              conversationId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+              unreadCount: 0
+    '400':
+      $ref: ../../openapi.yaml#/components/responses/BadRequestError
+    '401':
+      $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
+    '403':
+      $ref: ../../openapi.yaml#/components/responses/ForbiddenError
+    '404':
+      $ref: ../../openapi.yaml#/components/responses/NotFoundError
+    '422':
+      $ref: ../../openapi.yaml#/components/responses/ValidationError
+    '429':
+      $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
+    '500':
+      $ref: ../../openapi.yaml#/components/responses/InternalServerError

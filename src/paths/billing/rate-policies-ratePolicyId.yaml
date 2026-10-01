@@ -1,0 +1,66 @@
+patch:
+  tags:
+  - Billing
+  x-apidog-folder: RatePolicy
+  operationId: patchRatePoliciesRatepolicyid
+  summary: Đổi tên chính sách
+  description: 'landlord. Đổi tên chính sách. Lỗi nghiệp vụ: 403 FORBIDDEN · 409 RATE POLICY LOCKED · 422 VALIDATION
+    FAILED.'
+  parameters:
+  - name: ratePolicyId
+    in: path
+    required: true
+    schema:
+      type: string
+      format: uuid
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: ../../openapi.yaml#/components/schemas/RatePolicyUpdateRequestDto
+        example:
+          name: Điện EVN 2026
+  responses:
+    '200':
+      description: 'Thành công: Đổi tên chính sách.'
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required:
+            - statusCode
+            - code
+            - data
+            properties:
+              statusCode:
+                type: integer
+                enum:
+                - 200
+              code:
+                type: string
+                enum:
+                - RATE_POLICY_UPDATED
+              data:
+                $ref: ../../openapi.yaml#/components/schemas/RatePolicyUpdateResponseDto
+          example:
+            statusCode: 200
+            code: RATE_POLICY_UPDATED
+            data:
+              id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+              name: Điện EVN 2026
+    '400':
+      $ref: ../../openapi.yaml#/components/responses/BadRequestError
+    '401':
+      $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
+    '403':
+      $ref: ../../openapi.yaml#/components/responses/ForbiddenError
+    '409':
+      $ref: ../../openapi.yaml#/components/responses/ConflictError
+    '422':
+      $ref: ../../openapi.yaml#/components/responses/ValidationError
+    '429':
+      $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
+    '500':
+      $ref: ../../openapi.yaml#/components/responses/InternalServerError

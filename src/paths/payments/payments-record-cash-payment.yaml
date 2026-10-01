@@ -1,0 +1,84 @@
+post:
+  tags:
+  - Billing
+  x-apidog-folder: Payment
+  operationId: postPaymentsRecordCashPayment
+  summary: Ghi nhận thanh toán tiền mặt
+  description: 'landlord. Ghi nhận thanh toán tiền mặt. Lỗi nghiệp vụ: 409 IDEMPOTENCY KEY REUSED · 409 INVOICE
+    NOT PAYABLE · 422 AMOUNT INVALID · 403 FORBIDDEN.'
+  parameters:
+  - name: Idempotency-Key
+    in: header
+    required: true
+    description: UUID chống xử lý trùng, lưu ít nhất 24 giờ.
+    schema:
+      type: string
+      format: uuid
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: ../../openapi.yaml#/components/schemas/PaymentRecordCashRequestDto
+        example:
+          invoiceId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+          amount: 4220000
+          transactionId: CASH-20260923
+          receiptMediaId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+          paymentDate: '2026-09-29T08:30:00Z'
+          payerName: Lê Văn C
+  responses:
+    '201':
+      description: 'Thành công: Ghi nhận thanh toán tiền mặt.'
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required:
+            - statusCode
+            - code
+            - data
+            properties:
+              statusCode:
+                type: integer
+                enum:
+                - 201
+              code:
+                type: string
+                enum:
+                - CASH_PAYMENT_RECORDED
+              data:
+                $ref: ../../openapi.yaml#/components/schemas/PaymentRecordCashResponseDto
+          example:
+            statusCode: 201
+            code: CASH_PAYMENT_RECORDED
+            data:
+              paymentId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+              invoiceId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+              paymentStatus: success
+              amount: 4220000
+              invoiceStatus: issued
+              paidAmount: 4220000
+              remainingAmount: 0
+              paymentState: paid
+      headers:
+        Location:
+          description: Đường dẫn tài nguyên được tạo.
+          schema:
+            type: string
+            example: /api/v1/payments
+    '400':
+      $ref: ../../openapi.yaml#/components/responses/BadRequestError
+    '401':
+      $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
+    '403':
+      $ref: ../../openapi.yaml#/components/responses/ForbiddenError
+    '409':
+      $ref: ../../openapi.yaml#/components/responses/ConflictError
+    '422':
+      $ref: ../../openapi.yaml#/components/responses/ValidationError
+    '429':
+      $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
+    '500':
+      $ref: ../../openapi.yaml#/components/responses/InternalServerError

@@ -1,0 +1,27 @@
+delete:
+  tags:
+  - Property
+  x-apidog-folder: FavoriteRoom
+  operationId: deleteMeFavoriteRoomsRoomid
+  summary: Bỏ lưu một phòng
+  description: 'tenant. Bỏ lưu một phòng. Lỗi nghiệp vụ: 404 NOT FOUND.'
+  parameters:
+  - name: roomId
+    in: path
+    required: true
+    schema:
+      type: string
+      format: uuid
+  responses:
+    '204':
+      $ref: ../../openapi.yaml#/components/responses/NoContentResponse
+    '400':
+      $ref: ../../openapi.yaml#/components/responses/BadRequestError
+    '401':
+      $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
+    '404':
+      $ref: ../../openapi.yaml#/components/responses/NotFoundError
+    '429':
+      $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
+    '500':
+      $ref: ../../openapi.yaml#/components/responses/InternalServerError

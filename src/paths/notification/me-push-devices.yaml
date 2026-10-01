@@ -1,0 +1,64 @@
+post:
+  tags:
+  - Notification
+  x-apidog-folder: PushDevice
+  operationId: postMePushDevices
+  summary: Đăng ký device token
+  description: 'tenant, landlord, admin. Đăng ký device token. Lỗi nghiệp vụ: 422 VALIDATION FAILED · 409 DUPLICATE
+    DEVICE.'
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: ../../openapi.yaml#/components/schemas/PushDeviceRegisterRequestDto
+        example:
+          platform: android
+          token: fcm-token-example
+  responses:
+    '201':
+      description: 'Thành công: Đăng ký device token.'
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required:
+            - statusCode
+            - code
+            - data
+            properties:
+              statusCode:
+                type: integer
+                enum:
+                - 201
+              code:
+                type: string
+                enum:
+                - PUSH_DEVICE_REGISTERED
+              data:
+                $ref: ../../openapi.yaml#/components/schemas/PushDeviceRegisterResponseDto
+          example:
+            statusCode: 201
+            code: PUSH_DEVICE_REGISTERED
+            data:
+              id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+              platform: android
+      headers:
+        Location:
+          description: Đường dẫn tài nguyên được tạo.
+          schema:
+            type: string
+            example: /api/v1/me/push-devices
+    '400':
+      $ref: ../../openapi.yaml#/components/responses/BadRequestError
+    '401':
+      $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
+    '409':
+      $ref: ../../openapi.yaml#/components/responses/ConflictError
+    '422':
+      $ref: ../../openapi.yaml#/components/responses/ValidationError
+    '429':
+      $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
+    '500':
+      $ref: ../../openapi.yaml#/components/responses/InternalServerError

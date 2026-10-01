@@ -1,0 +1,169 @@
+get:
+  tags:
+  - Property
+  x-apidog-folder: Room
+  operationId: getRoomsRoomid
+  summary: Đọc một phòng
+  description: 'public, landlord, tenant, admin. Đọc một phòng. Lỗi nghiệp vụ: 404 NOT FOUND · 403 FORBIDDEN.'
+  security: []
+  parameters:
+  - name: roomId
+    in: path
+    required: true
+    schema:
+      type: string
+      format: uuid
+  responses:
+    '200':
+      description: 'Thành công: Đọc một phòng.'
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required:
+            - statusCode
+            - code
+            - data
+            properties:
+              statusCode:
+                type: integer
+                enum:
+                - 200
+              code:
+                type: string
+                enum:
+                - ROOM_FETCHED
+              data:
+                $ref: ../../openapi.yaml#/components/schemas/RoomDetailResponseDto
+          example:
+            statusCode: 200
+            code: ROOM_FETCHED
+            data:
+              id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+              buildingId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+              name: P.201
+              description: Phòng trọ hiện đại
+              area: '18.5'
+              rentPrice: 3500000
+              status: available
+              effectiveRatePolicySummary:
+                electricity: flat
+                water: flat
+              buildingName: Ví dụ
+              depositAmount: 0
+              landlord:
+                id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                name: Ví dụ
+                phone: 0901234567
+    '400':
+      $ref: ../../openapi.yaml#/components/responses/BadRequestError
+    '403':
+      $ref: ../../openapi.yaml#/components/responses/ForbiddenError
+    '404':
+      $ref: ../../openapi.yaml#/components/responses/NotFoundError
+    '429':
+      $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
+    '500':
+      $ref: ../../openapi.yaml#/components/responses/InternalServerError
+patch:
+  tags:
+  - Property
+  x-apidog-folder: Room
+  operationId: patchRoomsRoomid
+  summary: Cập nhật thông tin phòng
+  description: 'landlord. Cập nhật thông tin phòng. Lỗi nghiệp vụ: 404 NOT FOUND · 403 FORBIDDEN · 422 VALIDATION
+    FAILED.'
+  parameters:
+  - name: roomId
+    in: path
+    required: true
+    schema:
+      type: string
+      format: uuid
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: ../../openapi.yaml#/components/schemas/RoomUpdateRequestDto
+        example:
+          name: P.201
+          rentPrice: 3600000
+          area: '19.0'
+  responses:
+    '200':
+      description: 'Thành công: Cập nhật thông tin phòng.'
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required:
+            - statusCode
+            - code
+            - data
+            properties:
+              statusCode:
+                type: integer
+                enum:
+                - 200
+              code:
+                type: string
+                enum:
+                - ROOM_UPDATED
+              data:
+                $ref: ../../openapi.yaml#/components/schemas/RoomUpdateResponseDto
+          example:
+            statusCode: 200
+            code: ROOM_UPDATED
+            data:
+              id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+              name: P.201
+              rentPrice: 3600000
+              area: '19.0'
+    '400':
+      $ref: ../../openapi.yaml#/components/responses/BadRequestError
+    '401':
+      $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
+    '403':
+      $ref: ../../openapi.yaml#/components/responses/ForbiddenError
+    '404':
+      $ref: ../../openapi.yaml#/components/responses/NotFoundError
+    '422':
+      $ref: ../../openapi.yaml#/components/responses/ValidationError
+    '429':
+      $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
+    '500':
+      $ref: ../../openapi.yaml#/components/responses/InternalServerError
+delete:
+  tags:
+  - Property
+  x-apidog-folder: Room
+  operationId: deleteRoomsRoomid
+  summary: Xóa mềm phòng
+  description: 'landlord. Xóa mềm phòng. Lỗi nghiệp vụ: 404 NOT FOUND · 409 ROOM HAS ACTIVE CONTRACT · 403 FORBIDDEN.'
+  parameters:
+  - name: roomId
+    in: path
+    required: true
+    schema:
+      type: string
+      format: uuid
+  responses:
+    '204':
+      $ref: ../../openapi.yaml#/components/responses/NoContentResponse
+    '400':
+      $ref: ../../openapi.yaml#/components/responses/BadRequestError
+    '401':
+      $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
+    '403':
+      $ref: ../../openapi.yaml#/components/responses/ForbiddenError
+    '404':
+      $ref: ../../openapi.yaml#/components/responses/NotFoundError
+    '409':
+      $ref: ../../openapi.yaml#/components/responses/ConflictError
+    '429':
+      $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
+    '500':
+      $ref: ../../openapi.yaml#/components/responses/InternalServerError

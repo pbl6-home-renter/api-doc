@@ -1,0 +1,68 @@
+post:
+  tags:
+  - Operation
+  x-apidog-folder: Media
+  operationId: postMediaMediaidCompleteUpload
+  summary: Chốt upload
+  description: 'tenant, landlord, admin. Chốt upload. Lỗi nghiệp vụ: 404 NOT FOUND · 403 FORBIDDEN · 409 UPLOAD
+    NOT COMPLETED · 410 TICKET EXPIRED.'
+  parameters:
+  - name: mediaId
+    in: path
+    required: true
+    schema:
+      type: string
+      format: uuid
+  responses:
+    '200':
+      description: 'Thành công: Chốt upload.'
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required:
+            - statusCode
+            - code
+            - data
+            properties:
+              statusCode:
+                type: integer
+                enum:
+                - 200
+              code:
+                type: string
+                enum:
+                - MEDIA_READY
+              data:
+                $ref: ../../openapi.yaml#/components/schemas/MediaCompleteUploadResponseDto
+          example:
+            statusCode: 200
+            code: MEDIA_READY
+            data:
+              id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+              ownerType: room
+              ownerId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+              purpose: cover_photo
+              fileType: image
+              url: https://example.com/upload
+    '400':
+      $ref: ../../openapi.yaml#/components/responses/BadRequestError
+    '401':
+      $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
+    '403':
+      $ref: ../../openapi.yaml#/components/responses/ForbiddenError
+    '404':
+      $ref: ../../openapi.yaml#/components/responses/NotFoundError
+    '409':
+      $ref: ../../openapi.yaml#/components/responses/ConflictError
+    '429':
+      $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
+    '500':
+      $ref: ../../openapi.yaml#/components/responses/InternalServerError
+    '410':
+      description: Upload ticket đã hết hạn.
+      content:
+        application/json:
+          schema:
+            $ref: ../../responses/wrappers/error-default.yaml
