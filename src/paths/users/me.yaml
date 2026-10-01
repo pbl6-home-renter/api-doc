@@ -65,7 +65,10 @@ patch:
         example:
           name: Lê Văn An
           phone: '0901234567'
-          payoutAccount: null
+          payoutAccount:
+            bankCode: '970415'
+            accountNumber: '102876543210'
+            accountName: LE VAN AN
   responses:
     '200':
       description: Profile updated
@@ -96,7 +99,10 @@ patch:
               id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
               name: Lê Văn An
               phone: '0901234567'
-              payoutAccount: null
+              payoutAccount:
+                bankCode: '970415'
+                accountNumber: '**43210'
+                accountName: LE VAN AN
     '400':
       $ref: ../../openapi.yaml#/components/responses/BadRequestError
     '401':
