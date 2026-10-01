@@ -19,7 +19,7 @@ patch:
         schema:
           $ref: ../../openapi.yaml#/components/schemas/ContractMemberUpdateRequestDto
         example:
-          tenantPhone: 0921234567
+          tenantPhone: '0921234567'
   responses:
     '200':
       description: 'Thành công: Cập nhật thành viên.'
@@ -48,7 +48,7 @@ patch:
             code: CONTRACT_MEMBER_UPDATED
             data:
               id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
-              tenantPhone: 0921234567
+              tenantPhone: '0921234567'
     '400':
       $ref: ../../openapi.yaml#/components/responses/BadRequestError
     '401':

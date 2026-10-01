@@ -42,7 +42,7 @@ get:
             data:
               id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
               name: Lê Văn An
-              phone: 0901234567
+              phone: '0901234567'
               email: lan@example.com
               role: tenant
               status: active
@@ -86,7 +86,7 @@ patch:
           $ref: ../../openapi.yaml#/components/schemas/UserUpdateRequestDto
         example:
           name: Nguyễn Văn An
-          phone: 0901234567
+          phone: '0901234567'
   responses:
     '200':
       description: User updated
@@ -116,7 +116,7 @@ patch:
             data:
               userId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
               name: Nguyễn Văn An
-              phone: 0901234567
+              phone: '0901234567'
               status: active
     '400':
       $ref: ../../openapi.yaml#/components/responses/BadRequestError

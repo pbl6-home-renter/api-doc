@@ -523,7 +523,7 @@
                     "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
                     "name": "Lê Văn An",
                     "email": "lan@example.com",
-                    "phone": 901234567,
+                    "phone": "0901234567",
                     "role": "tenant",
                     "status": "active",
                     "payoutAccount": null
@@ -563,7 +563,7 @@
               },
               "example": {
                 "name": "Lê Văn An",
-                "phone": 901234567,
+                "phone": "0901234567",
                 "payoutAccount": null
               }
             }
@@ -606,7 +606,7 @@
                   "data": {
                     "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
                     "name": "Lê Văn An",
-                    "phone": 901234567,
+                    "phone": "0901234567",
                     "payoutAccount": null
                   }
                 }
@@ -867,7 +867,7 @@
                     {
                       "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
                       "name": "Lê Văn An",
-                      "phone": 901234567,
+                      "phone": "0901234567",
                       "email": "lan@example.com",
                       "role": "tenant",
                       "status": "active",
@@ -984,7 +984,7 @@
                   "data": {
                     "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
                     "name": "Lê Văn An",
-                    "phone": 901234567,
+                    "phone": "0901234567",
                     "email": "lan@example.com",
                     "role": "tenant",
                     "status": "active",
@@ -1046,7 +1046,7 @@
               },
               "example": {
                 "name": "Nguyễn Văn An",
-                "phone": 901234567
+                "phone": "0901234567"
               }
             }
           }
@@ -1088,7 +1088,7 @@
                   "data": {
                     "userId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
                     "name": "Nguyễn Văn An",
-                    "phone": 901234567,
+                    "phone": "0901234567",
                     "status": "active"
                   }
                 }
@@ -2561,7 +2561,7 @@
                       "status": "pending",
                       "createdAt": "2026-09-20T08:00:00.000Z",
                       "landlordName": "Ví dụ",
-                      "landlordPhone": 901234567,
+                      "landlordPhone": "0901234567",
                       "totalRooms": 0,
                       "documentsCount": 0
                     }
@@ -3438,7 +3438,7 @@
                     "landlord": {
                       "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
                       "name": "Ví dụ",
-                      "phone": 901234567
+                      "phone": "0901234567"
                     },
                     "ownershipDocuments": []
                   }
@@ -4181,7 +4181,7 @@
                     "landlord": {
                       "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
                       "name": "Ví dụ",
-                      "phone": 901234567
+                      "phone": "0901234567"
                     }
                   }
                 }
@@ -7194,7 +7194,7 @@
                       "contractCode": "Ví dụ",
                       "roomName": "Ví dụ",
                       "tenantName": "Ví dụ",
-                      "tenantPhone": 901234567,
+                      "tenantPhone": "0901234567",
                       "startDate": "2026-09-23T11:55:00.000Z",
                       "endDate": "2026-09-23T11:55:00.000Z"
                     }
@@ -7269,7 +7269,7 @@
                 "roomId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
                 "tenantId": null,
                 "tenantName": "Trần Văn B",
-                "tenantPhone": 912345678,
+                "tenantPhone": "0912345678",
                 "depositAmount": 7000000,
                 "rentPrice": 3500000,
                 "startDate": "2026-09-01",
@@ -7418,7 +7418,7 @@
                     "status": "active",
                     "tenantId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
                     "tenantName": "Trần Văn B",
-                    "tenantPhone": 912345678,
+                    "tenantPhone": "0912345678",
                     "rentPrice": 3500000,
                     "depositAmount": 7000000,
                     "startDate": "2026-09-01",
@@ -8077,7 +8077,7 @@
                 "contractId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
                 "tenantId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
                 "tenantName": "Nguyễn Thị C",
-                "tenantPhone": 921234567,
+                "tenantPhone": "0921234567",
                 "joinedAt": "2026-09-01"
               }
             }
@@ -8401,7 +8401,7 @@
                 "$ref": "#/components/schemas/ContractMemberUpdateRequestDto"
               },
               "example": {
-                "tenantPhone": 921234567
+                "tenantPhone": "0921234567"
               }
             }
           }
@@ -8442,7 +8442,7 @@
                   "code": "CONTRACT_MEMBER_UPDATED",
                   "data": {
                     "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-                    "tenantPhone": 921234567
+                    "tenantPhone": "0921234567"
                   }
                 }
               }
@@ -13930,7 +13930,8 @@
             "type": "string",
             "description": "Thông tin phone của tài nguyên trong ngữ cảnh DTO.",
             "minLength": 10,
-            "maxLength": 12,
+            "maxLength": 10,
+            "pattern": "^0[0-9]{9}$",
             "example": "0901234567"
           },
           "payoutAccount": {
