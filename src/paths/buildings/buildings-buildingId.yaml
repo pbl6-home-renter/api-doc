@@ -3,7 +3,7 @@ get:
   - Property
   x-apidog-folder: Building
   operationId: getBuildingsBuildingid
-  summary: Đọc tòa nhà (chế độ công khai)
+  summary: Get public building details
   description: 'public. Đọc tòa nhà (chế độ công khai). Lỗi nghiệp vụ: 404 NOT FOUND.'
   security: []
   parameters:
@@ -59,7 +59,7 @@ patch:
   - Property
   x-apidog-folder: Building
   operationId: patchBuildingsBuildingid
-  summary: Cập nhật thông tin tòa nhà
+  summary: Update building
   description: 'landlord. Cập nhật thông tin tòa nhà. Lỗi nghiệp vụ: 404 NOT FOUND · 403 FORBIDDEN · 409 APPROVED
     BUILDING LOCKED · 422 VALIDATION FAILED.'
   parameters:
@@ -130,7 +130,7 @@ delete:
   - Property
   x-apidog-folder: Building
   operationId: deleteBuildingsBuildingid
-  summary: Xóa mềm tòa nhà
+  summary: Delete building
   description: 'landlord. Xóa mềm tòa nhà. Lỗi nghiệp vụ: 404 NOT FOUND · 409 BUILDING HAS ACTIVE CONTRACT.'
   parameters:
   - name: buildingId

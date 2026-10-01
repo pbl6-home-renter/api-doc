@@ -3,7 +3,7 @@ get:
   - Property
   x-apidog-folder: Room
   operationId: getRoomsRoomid
-  summary: Đọc một phòng
+  summary: Get room details
   description: 'public, landlord, tenant, admin. Đọc một phòng. Lỗi nghiệp vụ: 404 NOT FOUND · 403 FORBIDDEN.'
   security: []
   parameters:
@@ -71,7 +71,7 @@ patch:
   - Property
   x-apidog-folder: Room
   operationId: patchRoomsRoomid
-  summary: Cập nhật thông tin phòng
+  summary: Update room
   description: 'landlord. Cập nhật thông tin phòng. Lỗi nghiệp vụ: 404 NOT FOUND · 403 FORBIDDEN · 422 VALIDATION
     FAILED.'
   parameters:
@@ -141,7 +141,7 @@ delete:
   - Property
   x-apidog-folder: Room
   operationId: deleteRoomsRoomid
-  summary: Xóa mềm phòng
+  summary: Delete room
   description: 'landlord. Xóa mềm phòng. Lỗi nghiệp vụ: 404 NOT FOUND · 409 ROOM HAS ACTIVE CONTRACT · 403 FORBIDDEN.'
   parameters:
   - name: roomId

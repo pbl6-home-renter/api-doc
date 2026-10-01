@@ -3,7 +3,7 @@ get:
   - Billing
   x-apidog-folder: Invoice
   operationId: getInvoicesInvoiceid
-  summary: Đọc hóa đơn kèm tổng hợp thanh toán
+  summary: Get invoice details
   description: 'landlord, tenant. Đọc hóa đơn kèm tổng hợp thanh toán. Lỗi nghiệp vụ: 403 FORBIDDEN · 404 NOT FOUND.'
   parameters:
   - name: invoiceId
@@ -75,7 +75,7 @@ patch:
   - Billing
   x-apidog-folder: Invoice
   operationId: patchInvoicesInvoiceid
-  summary: Sửa hóa đơn đang chờ
+  summary: Update pending invoice
   description: 'landlord. Sửa hóa đơn đang chờ. Lỗi nghiệp vụ: 409 INVOICE ALREADY ISSUED · 422 TOTAL AMOUNT INVALID
     · 403 FORBIDDEN.'
   parameters:
