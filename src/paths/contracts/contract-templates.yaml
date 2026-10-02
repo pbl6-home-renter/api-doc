@@ -3,6 +3,8 @@ get:
   - Contract
   x-apidog-folder: ContractTemplate
   operationId: getContractTemplates
+  security:
+    - BearerAuth: []
   summary: List contract templates
   description: 'landlord. Liệt kê mẫu khả dụng. Lỗi nghiệp vụ: 403 FORBIDDEN.'
   parameters:

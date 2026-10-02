@@ -58,6 +58,8 @@ patch:
   - User
   x-apidog-folder: User
   operationId: updateCurrentUser
+  security:
+    - BearerAuth: []
   summary: Update current user
   description: Yêu cầu access token của tenant, landlord hoặc admin. Cập nhật name và phone; landlord
     có thể cập nhật payoutAccount khi không còn hóa đơn pending. Email và role không thay đổi.

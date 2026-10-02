@@ -3,6 +3,8 @@ post:
   - Billing
   x-apidog-folder: RatePolicy
   operationId: postBuildingRatePoliciesBatch
+  security:
+    - BearerAuth: []
   summary: Batch create rate policies for building
   description: "landlord. Thiết lập hàng loạt các chính sách đơn giá tiện ích và phí dịch vụ cho tòa nhà (bước 3/3 wizard tạo tài sản). Lỗi nghiệp vụ: 404 BUILDING NOT FOUND · 403 FORBIDDEN · 422 VALIDATION FAILED."
   parameters:

@@ -3,6 +3,8 @@ get:
   - Operation
   x-apidog-folder: IssueReport
   operationId: getIssuesIssueid
+  security:
+    - BearerAuth: []
   summary: Get issue details
   description: 'landlord, tenant. Đọc chi tiết sự cố. Lỗi nghiệp vụ: 403 FORBIDDEN · 404 NOT FOUND.'
   parameters:
@@ -72,6 +74,8 @@ patch:
   - Operation
   x-apidog-folder: IssueReport
   operationId: patchIssuesIssueid
+  security:
+    - BearerAuth: []
   summary: Update issue status
   description: 'landlord. Cập nhật tiến trình sự cố. Lỗi nghiệp vụ: 404 NOT FOUND · 403 FORBIDDEN · 409 INVALID
     ISSUE TRANSITION.'

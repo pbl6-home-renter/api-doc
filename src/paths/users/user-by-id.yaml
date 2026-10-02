@@ -3,6 +3,8 @@ get:
   - User
   x-apidog-folder: User
   operationId: getUserById
+  security:
+    - BearerAuth: []
   summary: Get user
   description: Chỉ admin; yêu cầu access token. Đọc hồ sơ và tổng quan vận hành của một người dùng.
   parameters:
@@ -67,6 +69,8 @@ patch:
   - User
   x-apidog-folder: User
   operationId: updateUserById
+  security:
+    - BearerAuth: []
   summary: Update user
   description: Chỉ admin; yêu cầu access token. Sửa name và phone theo UserUpdateRequestDto; không thay
     đổi role hoặc status.
@@ -137,6 +141,8 @@ delete:
   - User
   x-apidog-folder: User
   operationId: deleteUserById
+  security:
+    - BearerAuth: []
   summary: Delete user
   description: Chỉ admin; yêu cầu access token. Xóa mềm người dùng và các bản ghi con vận hành. Giữ chứng
     từ tài chính, pháp lý và audit.

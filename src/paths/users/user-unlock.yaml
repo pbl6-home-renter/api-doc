@@ -3,6 +3,8 @@ post:
   - User
   x-apidog-folder: User
   operationId: unlockUser
+  security:
+    - BearerAuth: []
   summary: Unlock user
   description: Chỉ admin; yêu cầu access token. Chuyển tài khoản locked về active và xóa thời điểm khóa.
   parameters:

@@ -3,6 +3,8 @@ patch:
   - Billing
   x-apidog-folder: RatePolicy
   operationId: patchRatePoliciesRatepolicyid
+  security:
+    - BearerAuth: []
   summary: Update rate policy
   description: 'landlord. Đổi tên chính sách. Lỗi nghiệp vụ: 403 FORBIDDEN · 409 RATE POLICY LOCKED · 422 VALIDATION
     FAILED.'

@@ -3,6 +3,8 @@ get:
   - Billing
   x-apidog-folder: Invoice
   operationId: getInvoicesTenant
+  security:
+    - BearerAuth: []
   summary: List my invoices
   description: 'tenant. Hóa đơn của tôi. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 VALIDATION FAILED.'
   parameters:

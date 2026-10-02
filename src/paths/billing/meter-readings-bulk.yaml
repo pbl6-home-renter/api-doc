@@ -3,6 +3,8 @@ post:
   - Billing
   x-apidog-folder: MeterReading
   operationId: postBulkMeterReadings
+  security:
+    - BearerAuth: []
   summary: Bulk create meter readings
   description: "landlord. Nhập và chốt chỉ số điện/nước hàng loạt cho nhiều phòng trong tòa nhà theo kỳ ghi số. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 VALIDATION FAILED · 409 DUPLICATE READING."
   requestBody:

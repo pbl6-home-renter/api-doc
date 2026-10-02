@@ -3,6 +3,8 @@ post:
   - Matching
   x-apidog-folder: MatchRequest
   operationId: postMatchRequestsMatchrequestidRejectRequest
+  security:
+    - BearerAuth: []
   summary: Reject match request
   description: 'tenant. Từ chối yêu cầu. Lỗi nghiệp vụ: 403 FORBIDDEN · 409 MATCH REQUEST NOT PENDING.'
   parameters:

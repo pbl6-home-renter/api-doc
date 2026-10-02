@@ -3,6 +3,8 @@ get:
   - Operation
   x-apidog-folder: Media
   operationId: getMediaMediaid
+  security:
+    - BearerAuth: []
   summary: Get or stream media
   description: 'Quyền kế thừa từ tài nguyên cha. Đọc hoặc stream một tệp. Lỗi nghiệp vụ: 404 NOT FOUND · 403 FORBIDDEN
     · 410 MEDIA DELETED.'
@@ -51,6 +53,8 @@ delete:
   - Operation
   x-apidog-folder: Media
   operationId: deleteMediaMediaid
+  security:
+    - BearerAuth: []
   summary: Delete media
   description: 'tenant, landlord, admin. Xóa mềm tệp. Lỗi nghiệp vụ: 403 FORBIDDEN · 409 CAN''T DELETE.'
   parameters:

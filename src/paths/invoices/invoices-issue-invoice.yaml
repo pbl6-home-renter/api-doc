@@ -3,6 +3,8 @@ post:
   - Billing
   x-apidog-folder: Invoice
   operationId: postInvoicesIssueInvoice
+  security:
+    - BearerAuth: []
   summary: Batch issue invoices
   description: 'landlord. Phát hành nhiều hóa đơn theo lô. Lỗi nghiệp vụ: 422 INVOICE IDS REQUIRED · 422 INVOICE
     IDS TOO LARGE · 409 IDEMPOTENCY KEY REUSED · 403 FORBIDDEN.'

@@ -162,6 +162,8 @@ post:
   - Property
   x-apidog-folder: Building
   operationId: postBuildings
+  security:
+    - BearerAuth: []
   summary: Create building for approval
   description: 'landlord. Gửi tòa nhà để duyệt. Lỗi nghiệp vụ: 422 VALIDATION FAILED · 403 FORBIDDEN.'
   requestBody:

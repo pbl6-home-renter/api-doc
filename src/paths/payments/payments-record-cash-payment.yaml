@@ -3,6 +3,8 @@ post:
   - Billing
   x-apidog-folder: Payment
   operationId: postPaymentsRecordCashPayment
+  security:
+    - BearerAuth: []
   summary: Record cash payment
   description: 'landlord. Ghi nhận thanh toán tiền mặt. Lỗi nghiệp vụ: 409 IDEMPOTENCY KEY REUSED · 409 INVOICE
     NOT PAYABLE · 422 AMOUNT INVALID · 403 FORBIDDEN.'

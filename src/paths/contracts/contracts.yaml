@@ -3,6 +3,8 @@ get:
   - Contract
   x-apidog-folder: Contract
   operationId: getContracts
+  security:
+    - BearerAuth: []
   summary: List contracts
   description: 'landlord. Quản lý hợp đồng của tôi. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 VALIDATION FAILED.'
   parameters:
@@ -162,6 +164,8 @@ post:
   - Contract
   x-apidog-folder: Contract
   operationId: postContracts
+  security:
+    - BearerAuth: []
   summary: Create draft contract
   description: 'landlord. Tạo hợp đồng nháp. Lỗi nghiệp vụ: 409 ACTIVE CONTRACT EXISTS · 422 TENANT IDENTITY INVALID
     · 403 FORBIDDEN.'

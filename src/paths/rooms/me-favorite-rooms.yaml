@@ -3,6 +3,8 @@ get:
   - Property
   x-apidog-folder: FavoriteRoom
   operationId: getMeFavoriteRooms
+  security:
+    - BearerAuth: []
   summary: List favorite rooms
   description: 'tenant. Liệt kê phòng đã lưu. Lỗi nghiệp vụ: 401 INVALID TOKEN.'
   parameters:
@@ -129,6 +131,8 @@ post:
   - Property
   x-apidog-folder: FavoriteRoom
   operationId: postMeFavoriteRooms
+  security:
+    - BearerAuth: []
   summary: Add favorite room
   description: 'tenant. Lưu một phòng. Lỗi nghiệp vụ: 404 NOT FOUND · 409 ALREADY FAVORITED.'
   requestBody:

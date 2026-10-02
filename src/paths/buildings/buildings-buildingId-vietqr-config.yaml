@@ -3,6 +3,8 @@ put:
   - Property
   x-apidog-folder: Building
   operationId: putBuildingVietQrConfig
+  security:
+    - BearerAuth: []
   summary: Configure building VietQR payment
   description: "landlord. Cấu hình tài khoản ngân hàng nhận tiền chuyển khoản và sinh mã VietQR động cho tòa nhà. Lỗi nghiệp vụ: 404 BUILDING NOT FOUND · 403 FORBIDDEN · 422 INVALID BANK ACCOUNT."
   parameters:

@@ -3,6 +3,8 @@ get:
   - Operation
   x-apidog-folder: IssueReport
   operationId: getIssues
+  security:
+    - BearerAuth: []
   summary: List issues
   description: 'landlord. Hàng đợi sự cố bảo trì. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 VALIDATION FAILED.'
   parameters:
@@ -173,6 +175,8 @@ post:
   - Operation
   x-apidog-folder: IssueReport
   operationId: postIssues
+  security:
+    - BearerAuth: []
   summary: Report issue
   description: 'tenant, landlord. Báo cáo sự cố. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 ISSUE PHOTO INVALID · 404 ROOM
     NOT FOUND.'

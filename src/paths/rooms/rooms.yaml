@@ -177,6 +177,8 @@ post:
   - Property
   x-apidog-folder: Room
   operationId: postRooms
+  security:
+    - BearerAuth: []
   summary: Create room
   description: 'landlord. Tạo phòng trong một tòa nhà. Lỗi nghiệp vụ: 403 FORBIDDEN · 409 DUPLICATE ROOM · 422 BUILDING
     NOT APPROVED.'

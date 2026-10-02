@@ -3,6 +3,8 @@ get:
   - Billing
   x-apidog-folder: Invoice
   operationId: getOverdueDebts
+  security:
+    - BearerAuth: []
   summary: List overdue debts
   description: "landlord. Danh sách các phòng nợ tiền quá hạn, mức độ quá hạn và lịch sử đôn đốc nợ. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 VALIDATION FAILED."
   parameters:

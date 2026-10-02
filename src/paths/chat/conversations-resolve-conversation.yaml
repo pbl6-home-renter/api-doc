@@ -3,6 +3,8 @@ post:
   - Chat
   x-apidog-folder: Conversation
   operationId: postConversationsResolveConversation
+  security:
+    - BearerAuth: []
   summary: Resolve conversation
   description: 'tenant, landlord. Lấy hội thoại của phòng hoặc tòa nhà. Lỗi nghiệp vụ: 422 EXACTLY ONE CONTEXT REQUIRED
     · 403 FORBIDDEN · 404 CONTEXT NOT FOUND.'

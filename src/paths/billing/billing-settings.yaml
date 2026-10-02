@@ -3,6 +3,8 @@ get:
   - Billing
   x-apidog-folder: BillingSetting
   operationId: getBillingSettings
+  security:
+    - BearerAuth: []
   summary: List billing settings
   description: 'landlord. Liệt kê cài đặt thanh toán và nhắc hóa đơn. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 VALIDATION
     FAILED.'
@@ -130,6 +132,8 @@ post:
   - Billing
   x-apidog-folder: BillingSetting
   operationId: postBillingSettings
+  security:
+    - BearerAuth: []
   summary: Create billing setting
   description: 'landlord. Tạo một cài đặt hóa đơn. Lỗi nghiệp vụ: 409 ACTIVE SETTING EXISTS · 422 DUE DAYS INVALID
     · 403 FORBIDDEN.'

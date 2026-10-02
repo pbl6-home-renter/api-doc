@@ -3,6 +3,8 @@ get:
   - Chat
   x-apidog-folder: Conversation
   operationId: getConversations
+  security:
+    - BearerAuth: []
   summary: List conversations
   description: 'tenant, landlord. Liệt kê các hội thoại của người gọi. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 VALIDATION
     FAILED.'

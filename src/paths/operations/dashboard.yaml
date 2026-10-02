@@ -3,6 +3,8 @@ get:
   - Operation
   x-apidog-folder: Dashboard
   operationId: getDashboard
+  security:
+    - BearerAuth: []
   summary: Get system dashboard metrics
   description: 'admin. Đọc số liệu tổng hợp hệ thống. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 INVALID DATE RANGE.'
   parameters:

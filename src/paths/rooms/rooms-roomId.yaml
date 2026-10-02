@@ -71,6 +71,8 @@ patch:
   - Property
   x-apidog-folder: Room
   operationId: patchRoomsRoomid
+  security:
+    - BearerAuth: []
   summary: Update room
   description: 'landlord. Cập nhật thông tin phòng. Lỗi nghiệp vụ: 404 NOT FOUND · 403 FORBIDDEN · 422 VALIDATION
     FAILED.'
@@ -141,6 +143,8 @@ delete:
   - Property
   x-apidog-folder: Room
   operationId: deleteRoomsRoomid
+  security:
+    - BearerAuth: []
   summary: Delete room
   description: 'landlord. Xóa mềm phòng. Lỗi nghiệp vụ: 404 NOT FOUND · 409 ROOM HAS ACTIVE CONTRACT · 403 FORBIDDEN.'
   parameters:

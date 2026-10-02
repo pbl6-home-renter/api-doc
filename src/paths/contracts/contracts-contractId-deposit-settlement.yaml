@@ -3,6 +3,8 @@ post:
   - Contract
   x-apidog-folder: Contract
   operationId: postContractDepositSettlement
+  security:
+    - BearerAuth: []
   summary: Create deposit settlement for checkout
   description: "landlord. Quyết toán tiền cọc, cấn trừ các khoản nợ / hư hại tài sản và xác nhận số tiền hoàn trả cho người thuê khi kết thúc hợp đồng. Lỗi nghiệp vụ: 404 CONTRACT NOT FOUND · 403 FORBIDDEN · 422 SETTLEMENT INVALID."
   parameters:

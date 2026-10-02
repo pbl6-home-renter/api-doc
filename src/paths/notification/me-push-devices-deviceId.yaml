@@ -3,6 +3,8 @@ delete:
   - Notification
   x-apidog-folder: PushDevice
   operationId: deleteMePushDevicesDeviceid
+  security:
+    - BearerAuth: []
   summary: Unregister push device
   description: 'tenant, landlord, admin. Gỡ device token. Lỗi nghiệp vụ: 404 NOT FOUND.'
   parameters:

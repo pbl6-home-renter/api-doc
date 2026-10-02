@@ -3,6 +3,8 @@ post:
   - Property
   x-apidog-folder: Building
   operationId: postBuildingsBuildingidApprove
+  security:
+    - BearerAuth: []
   summary: Approve building
   description: 'admin. Duyệt tòa nhà. Lỗi nghiệp vụ: 404 NOT FOUND · 409 BUILDING NOT PENDING.'
   parameters:

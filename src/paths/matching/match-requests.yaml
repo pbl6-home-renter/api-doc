@@ -3,6 +3,8 @@ get:
   - Matching
   x-apidog-folder: MatchRequest
   operationId: getMatchRequests
+  security:
+    - BearerAuth: []
   summary: List match requests
   description: 'tenant. Liệt kê yêu cầu đến hoặc đi. Lỗi nghiệp vụ: 422 VALIDATION FAILED.'
   parameters:
@@ -135,6 +137,8 @@ post:
   - Matching
   x-apidog-folder: MatchRequest
   operationId: postMatchRequests
+  security:
+    - BearerAuth: []
   summary: Create match request
   description: 'tenant. Gửi yêu cầu tìm bạn ở. Lỗi nghiệp vụ: 409 DUPLICATE MATCH REQUEST · 422 SELF MATCHING NOT
     ALLOWED · 404 NOT FOUND.'

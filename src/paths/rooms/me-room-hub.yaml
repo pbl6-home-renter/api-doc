@@ -3,6 +3,8 @@ get:
   - Property
   x-apidog-folder: Room
   operationId: getMeRoomHub
+  security:
+    - BearerAuth: []
   summary: Get tenant room hub dashboard
   description: "tenant. Lấy thông tin tổng hợp cho trang chủ trung tâm phòng của người thuê (hợp đồng hiện tại, hóa đơn chưa thanh toán, chỉ số điện nước, sự cố đang xử lý, bạn cùng phòng). Lỗi nghiệp vụ: 404 ACTIVE CONTRACT NOT FOUND · 403 FORBIDDEN."
   responses:

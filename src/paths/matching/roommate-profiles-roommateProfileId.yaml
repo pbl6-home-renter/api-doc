@@ -3,6 +3,8 @@ get:
   - Matching
   x-apidog-folder: RoommateProfile
   operationId: getRoommateProfilesRoommateprofileid
+  security:
+    - BearerAuth: []
   summary: Get roommate profile details
   description: 'tenant. Đọc một hồ sơ theo định danh. Lỗi nghiệp vụ: 404 NOT FOUND · 403 PROFILE NOT VISIBLE.'
   parameters:

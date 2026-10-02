@@ -3,6 +3,8 @@ get:
   - Contract
   x-apidog-folder: Contract
   operationId: getContractsContractid
+  security:
+    - BearerAuth: []
   summary: Get contract details
   description: 'landlord, tenant. Đọc một hợp đồng. Lỗi nghiệp vụ: 403 FORBIDDEN · 404 NOT FOUND.'
   parameters:
@@ -67,6 +69,8 @@ patch:
   - Contract
   x-apidog-folder: Contract
   operationId: patchContractsContractid
+  security:
+    - BearerAuth: []
   summary: Update draft contract
   description: 'landlord. Sửa hợp đồng nháp. Lỗi nghiệp vụ: 409 CONTRACT NOT DRAFT · 403 FORBIDDEN · 422 VALIDATION
     FAILED.'

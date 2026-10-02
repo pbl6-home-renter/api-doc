@@ -3,6 +3,8 @@ get:
   - Billing
   x-apidog-folder: Payment
   operationId: getMePayments
+  security:
+    - BearerAuth: []
   summary: List my payment history
   description: 'tenant. Lịch sử thanh toán của tôi. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 VALIDATION FAILED.'
   parameters:

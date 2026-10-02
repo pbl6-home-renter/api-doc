@@ -3,6 +3,8 @@ put:
   - Contract
   x-apidog-folder: Contract
   operationId: putContractsContractidApplyTemplate
+  security:
+    - BearerAuth: []
   summary: Apply template to draft contract
   description: 'landlord. Áp mẫu vào hợp đồng nháp. Lỗi nghiệp vụ: 404 TEMPLATE NOT FOUND · 409 CONTRACT NOT DRAFT
     · 403 FORBIDDEN.'

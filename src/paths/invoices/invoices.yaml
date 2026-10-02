@@ -3,6 +3,8 @@ get:
   - Billing
   x-apidog-folder: Invoice
   operationId: getInvoices
+  security:
+    - BearerAuth: []
   summary: List invoices
   description: 'landlord. Theo dõi hóa đơn và công nợ. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 VALIDATION FAILED.'
   parameters:
@@ -165,6 +167,8 @@ post:
   tags: [Billing]
   x-apidog-folder: Invoice
   operationId: createSettlementInvoice
+  security:
+    - BearerAuth: []
   summary: Create checkout settlement invoice
   description: >-
     Landlord tạo hóa đơn quyết toán trả phòng cho hợp đồng của mình.

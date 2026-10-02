@@ -3,6 +3,8 @@ post:
   - Contract
   x-apidog-folder: Contract
   operationId: postContractsContractidActivateContract
+  security:
+    - BearerAuth: []
   summary: Activate contract
   description: 'landlord. Kích hoạt hợp đồng đã ký. Lỗi nghiệp vụ: 409 CONTRACT NOT READY · 409 SIGNED FILE MISSING
     · 403 FORBIDDEN.'

@@ -3,6 +3,8 @@ get:
   - User
   x-apidog-folder: User
   operationId: listUsers
+  security:
+    - BearerAuth: []
   summary: List users
   description: Chỉ admin; yêu cầu access token. Lọc, tìm kiếm và phân trang offset. format khác json trả
     file stream không có JSON wrapper.

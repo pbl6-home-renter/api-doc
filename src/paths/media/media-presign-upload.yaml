@@ -3,6 +3,8 @@ post:
   - Operation
   x-apidog-folder: Media
   operationId: postMediaPresignUpload
+  security:
+    - BearerAuth: []
   summary: Request presigned upload URL
   description: "tenant, landlord, admin. Xin URL upload đã ký để đẩy file trực tiếp lên Storage. Nghiệp vụ: Với ảnh công tơ điện nước, tenant chỉ được dùng camera trực tiếp (camera_direct), landlord được upload từ bộ nhớ máy (device_storage). Lỗi nghiệp vụ: 403 FORBIDDEN · 422 VALIDATION FAILED."
   requestBody:

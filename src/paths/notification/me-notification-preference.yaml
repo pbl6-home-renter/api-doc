@@ -3,6 +3,8 @@ get:
   - Notification
   x-apidog-folder: NotificationPreference
   operationId: getMeNotificationPreference
+  security:
+    - BearerAuth: []
   summary: Get notification preferences
   description: 'tenant, landlord, admin. Đọc tuỳ biến thông báo. Lỗi nghiệp vụ: 401 INVALID TOKEN.'
   responses:
@@ -57,6 +59,8 @@ put:
   - Notification
   x-apidog-folder: NotificationPreference
   operationId: putMeNotificationPreference
+  security:
+    - BearerAuth: []
   summary: Update notification preferences
   description: 'tenant, landlord, admin. Thay toàn bộ tuỳ biến thông báo. Lỗi nghiệp vụ: 422 INVALID NOTIFICATION
     TYPE · 422 VALIDATION FAILED.'

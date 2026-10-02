@@ -3,6 +3,8 @@ post:
   - Notification
   x-apidog-folder: PushDevice
   operationId: postMePushDevices
+  security:
+    - BearerAuth: []
   summary: Register push device
   description: 'tenant, landlord, admin. Đăng ký device token. Lỗi nghiệp vụ: 422 VALIDATION FAILED · 409 DUPLICATE
     DEVICE.'

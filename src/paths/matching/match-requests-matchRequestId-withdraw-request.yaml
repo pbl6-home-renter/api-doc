@@ -3,6 +3,8 @@ post:
   - Matching
   x-apidog-folder: MatchRequest
   operationId: postMatchRequestsMatchrequestidWithdrawRequest
+  security:
+    - BearerAuth: []
   summary: Withdraw match request
   description: 'tenant. Người gửi rút yêu cầu. Lỗi nghiệp vụ: 403 FORBIDDEN · 404 NOT FOUND · 409 NOT REQUESTER
     · 409 MATCH REQUEST NOT PENDING.'

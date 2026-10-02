@@ -3,6 +3,8 @@ get:
   - Contract
   x-apidog-folder: Contract
   operationId: getMeContracts
+  security:
+    - BearerAuth: []
   summary: List my contracts
   description: 'tenant. Hợp đồng của tôi. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 VALIDATION FAILED.'
   parameters:

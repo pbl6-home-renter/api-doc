@@ -3,6 +3,8 @@ post:
   - Property
   x-apidog-folder: Room
   operationId: postRoomsRoomidMarkReady
+  security:
+    - BearerAuth: []
   summary: Mark room ready for rent
   description: 'landlord. Đánh dấu phòng sẵn sàng cho thuê. Lỗi nghiệp vụ: 404 NOT FOUND · 403 FORBIDDEN · 409 INVALID
     ROOM TRANSITION.'

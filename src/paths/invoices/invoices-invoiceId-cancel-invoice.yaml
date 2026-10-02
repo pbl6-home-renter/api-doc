@@ -3,6 +3,8 @@ post:
   - Billing
   x-apidog-folder: Invoice
   operationId: postInvoicesInvoiceidCancelInvoice
+  security:
+    - BearerAuth: []
   summary: Cancel invoice
   description: 'landlord. Huỷ một hóa đơn sai. Lỗi nghiệp vụ: 409 INVOICE ALREADY PAID · 409 CAN''T DELETE · 403
     FORBIDDEN.'

@@ -3,6 +3,8 @@ get:
   - Matching
   x-apidog-folder: RoommateProfile
   operationId: getMeRoommateProfile
+  security:
+    - BearerAuth: []
   summary: Get my roommate profile
   description: 'tenant. Đọc profile của chính mình. Lỗi nghiệp vụ: 404 NOT FOUND.'
   responses:
@@ -53,6 +55,8 @@ put:
   - Matching
   x-apidog-folder: RoommateProfile
   operationId: putMeRoommateProfile
+  security:
+    - BearerAuth: []
   summary: Create or update my roommate profile
   description: 'tenant. Tạo hoặc cập nhật profile của chính mình. Lỗi nghiệp vụ: 422 BUDGET RANGE INVALID · 422
     VALIDATION FAILED.'

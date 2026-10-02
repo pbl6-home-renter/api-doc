@@ -3,6 +3,8 @@ delete:
   - Property
   x-apidog-folder: FavoriteRoom
   operationId: deleteMeFavoriteRoomsRoomid
+  security:
+    - BearerAuth: []
   summary: Remove favorite room
   description: 'tenant. Bỏ lưu một phòng. Lỗi nghiệp vụ: 404 NOT FOUND.'
   parameters:

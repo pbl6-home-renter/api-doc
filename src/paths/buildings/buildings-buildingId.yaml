@@ -59,6 +59,8 @@ patch:
   - Property
   x-apidog-folder: Building
   operationId: patchBuildingsBuildingid
+  security:
+    - BearerAuth: []
   summary: Update building
   description: 'landlord. Cập nhật thông tin tòa nhà. Lỗi nghiệp vụ: 404 NOT FOUND · 403 FORBIDDEN · 409 APPROVED
     BUILDING LOCKED · 422 VALIDATION FAILED.'
@@ -130,6 +132,8 @@ delete:
   - Property
   x-apidog-folder: Building
   operationId: deleteBuildingsBuildingid
+  security:
+    - BearerAuth: []
   summary: Delete building
   description: 'landlord. Xóa mềm tòa nhà. Lỗi nghiệp vụ: 404 NOT FOUND · 409 BUILDING HAS ACTIVE CONTRACT.'
   parameters:

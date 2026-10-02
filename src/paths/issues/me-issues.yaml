@@ -3,6 +3,8 @@ get:
   - Operation
   x-apidog-folder: IssueReport
   operationId: getMeIssues
+  security:
+    - BearerAuth: []
   summary: List my issues
   description: 'tenant. Sự cố của tôi. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 VALIDATION FAILED.'
   parameters:

@@ -3,6 +3,8 @@ post:
   - Contract
   x-apidog-folder: ContractMember
   operationId: postContractMembers
+  security:
+    - BearerAuth: []
   summary: Add contract member
   description: 'landlord. Thêm một thành viên vào hợp đồng. Lỗi nghiệp vụ: 409 MEMBER ALREADY EXISTS · 403 FORBIDDEN
     · 422 TENANT IDENTITY INVALID.'
@@ -75,6 +77,8 @@ get:
   - Contract
   x-apidog-folder: ContractMember
   operationId: getContractMembers
+  security:
+    - BearerAuth: []
   summary: List contract members
   description: 'landlord, tenant. Liệt kê thành viên hoặc xuất dữ liệu. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 CONTRACT
     ID REQUIRED · 404 NOT FOUND.'

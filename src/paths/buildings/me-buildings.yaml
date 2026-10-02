@@ -3,6 +3,8 @@ get:
   - Property
   x-apidog-folder: Building
   operationId: getMeBuildings
+  security:
+    - BearerAuth: []
   summary: List my buildings
   description: 'landlord. Liệt kê tòa nhà của tôi. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 VALIDATION FAILED.'
   parameters:
