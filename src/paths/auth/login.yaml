@@ -33,12 +33,12 @@ post:
                 enum: [200]
               code:
                 type: string
-                enum: [LOGGED_IN]
+                enum: [SESSION_STARTED]
               data:
                 $ref: '../../openapi.yaml#/components/schemas/AuthLoginResponseDto'
           example:
             statusCode: 200
-            code: LOGGED_IN
+            code: SESSION_STARTED
             data:
               accessToken: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
               refreshToken: rt_opaque_token_example

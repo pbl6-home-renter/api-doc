@@ -11,6 +11,11 @@
       "description": "Môi trường phát triển cục bộ (Local Development)"
     }
   ],
+  "security": [
+    {
+      "BearerAuth": []
+    }
+  ],
   "tags": [
     {
       "name": "Auth",
@@ -109,7 +114,7 @@
                     "code": {
                       "type": "string",
                       "enum": [
-                        "REGISTERED"
+                        "USER_REGISTERED"
                       ]
                     },
                     "data": {
@@ -119,7 +124,7 @@
                 },
                 "example": {
                   "statusCode": 201,
-                  "code": "REGISTERED",
+                  "code": "USER_REGISTERED",
                   "data": {
                     "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
                     "email": "lan@example.com",
@@ -198,7 +203,7 @@
                     "code": {
                       "type": "string",
                       "enum": [
-                        "LOGGED_IN"
+                        "SESSION_STARTED"
                       ]
                     },
                     "data": {
@@ -208,7 +213,7 @@
                 },
                 "example": {
                   "statusCode": 200,
-                  "code": "LOGGED_IN",
+                  "code": "SESSION_STARTED",
                   "data": {
                     "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
                     "refreshToken": "rt_opaque_token_example",
@@ -508,7 +513,7 @@
                     "code": {
                       "type": "string",
                       "enum": [
-                        "CURRENT_USER_FETCHED"
+                        "USER_CURRENT_FETCHED"
                       ]
                     },
                     "data": {
@@ -518,7 +523,7 @@
                 },
                 "example": {
                   "statusCode": 200,
-                  "code": "CURRENT_USER_FETCHED",
+                  "code": "USER_CURRENT_FETCHED",
                   "data": {
                     "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
                     "name": "Lê Văn An",
@@ -596,7 +601,7 @@
                     "code": {
                       "type": "string",
                       "enum": [
-                        "PROFILE_UPDATED"
+                        "USER_CURRENT_UPDATED"
                       ]
                     },
                     "data": {
@@ -606,7 +611,7 @@
                 },
                 "example": {
                   "statusCode": 200,
-                  "code": "PROFILE_UPDATED",
+                  "code": "USER_CURRENT_UPDATED",
                   "data": {
                     "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
                     "name": "Lê Văn An",
@@ -1653,7 +1658,7 @@
                     "code": {
                       "type": "string",
                       "enum": [
-                        "MEDIA_READY"
+                        "MEDIA_UPLOAD_COMPLETED"
                       ]
                     },
                     "data": {
@@ -1663,7 +1668,7 @@
                 },
                 "example": {
                   "statusCode": 200,
-                  "code": "MEDIA_READY",
+                  "code": "MEDIA_UPLOAD_COMPLETED",
                   "data": {
                     "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
                     "ownerType": "room",
@@ -2263,7 +2268,7 @@
                     "code": {
                       "type": "string",
                       "enum": [
-                        "MY_BUILDINGS_FETCHED"
+                        "BUILDINGS_MY_FETCHED"
                       ]
                     },
                     "data": {
@@ -2320,7 +2325,7 @@
                 },
                 "example": {
                   "statusCode": 200,
-                  "code": "MY_BUILDINGS_FETCHED",
+                  "code": "BUILDINGS_MY_FETCHED",
                   "data": [
                     {
                       "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
@@ -2503,7 +2508,7 @@
                     "code": {
                       "type": "string",
                       "enum": [
-                        "ADMIN_BUILDINGS_FETCHED"
+                        "BUILDINGS_ADMIN_FETCHED"
                       ]
                     },
                     "data": {
@@ -2560,7 +2565,7 @@
                 },
                 "example": {
                   "statusCode": 200,
-                  "code": "ADMIN_BUILDINGS_FETCHED",
+                  "code": "BUILDINGS_ADMIN_FETCHED",
                   "data": [
                     {
                       "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
@@ -3128,7 +3133,7 @@
                     "code": {
                       "type": "string",
                       "enum": [
-                        "MY_BUILDING_FETCHED"
+                        "BUILDING_MY_FETCHED"
                       ]
                     },
                     "data": {
@@ -3138,7 +3143,7 @@
                 },
                 "example": {
                   "statusCode": 200,
-                  "code": "MY_BUILDING_FETCHED",
+                  "code": "BUILDING_MY_FETCHED",
                   "data": {
                     "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
                     "name": "Tòa nhà Rentify Central Park",
@@ -3419,7 +3424,7 @@
                     "code": {
                       "type": "string",
                       "enum": [
-                        "ADMIN_BUILDING_FETCHED"
+                        "BUILDING_ADMIN_FETCHED"
                       ]
                     },
                     "data": {
@@ -3429,7 +3434,7 @@
                 },
                 "example": {
                   "statusCode": 200,
-                  "code": "ADMIN_BUILDING_FETCHED",
+                  "code": "BUILDING_ADMIN_FETCHED",
                   "data": {
                     "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
                     "name": "Tòa nhà Rentify Central Park",
@@ -3939,7 +3944,7 @@
                     "code": {
                       "type": "string",
                       "enum": [
-                        "MY_ROOMS_FETCHED"
+                        "ROOMS_MY_FETCHED"
                       ]
                     },
                     "data": {
@@ -3996,7 +4001,7 @@
                 },
                 "example": {
                   "statusCode": 200,
-                  "code": "MY_ROOMS_FETCHED",
+                  "code": "ROOMS_MY_FETCHED",
                   "data": [
                     {
                       "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
@@ -4516,7 +4521,7 @@
                     "code": {
                       "type": "string",
                       "enum": [
-                        "FAVORITE_ROOMS_FETCHED"
+                        "ROOMS_FAVORITE_FETCHED"
                       ]
                     },
                     "data": {
@@ -4573,7 +4578,7 @@
                 },
                 "example": {
                   "statusCode": 200,
-                  "code": "FAVORITE_ROOMS_FETCHED",
+                  "code": "ROOMS_FAVORITE_FETCHED",
                   "data": [
                     {
                       "roomId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
@@ -6912,7 +6917,7 @@
                     "code": {
                       "type": "string",
                       "enum": [
-                        "MY_CONTRACTS_FETCHED"
+                        "CONTRACTS_MY_FETCHED"
                       ]
                     },
                     "data": {
@@ -6969,7 +6974,7 @@
                 },
                 "example": {
                   "statusCode": 200,
-                  "code": "MY_CONTRACTS_FETCHED",
+                  "code": "CONTRACTS_MY_FETCHED",
                   "data": [
                     {
                       "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
@@ -8033,7 +8038,7 @@
                     "code": {
                       "type": "string",
                       "enum": [
-                        "DEPOSIT_SETTLEMENT_RECORDED"
+                        "SETTLEMENT_DEPOSIT_RECORDED"
                       ]
                     },
                     "data": {
@@ -8924,7 +8929,7 @@
                     "code": {
                       "type": "string",
                       "enum": [
-                        "BULK_METER_READING_RECORDED"
+                        "METER_READINGS_BULK_RECORDED"
                       ]
                     },
                     "data": {
@@ -9139,7 +9144,7 @@
                     "code": {
                       "type": "string",
                       "enum": [
-                        "MY_INVOICES_FETCHED"
+                        "INVOICES_MY_FETCHED"
                       ]
                     },
                     "data": {
@@ -9196,7 +9201,7 @@
                 },
                 "example": {
                   "statusCode": 200,
-                  "code": "MY_INVOICES_FETCHED",
+                  "code": "INVOICES_MY_FETCHED",
                   "data": [
                     {
                       "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
@@ -9556,7 +9561,7 @@
                     "code": {
                       "type": "string",
                       "enum": [
-                        "SETTLEMENT_INVOICE_CREATED"
+                        "INVOICE_SETTLEMENT_CREATED"
                       ]
                     },
                     "data": {
@@ -9566,7 +9571,7 @@
                 },
                 "example": {
                   "statusCode": 201,
-                  "code": "SETTLEMENT_INVOICE_CREATED",
+                  "code": "INVOICE_SETTLEMENT_CREATED",
                   "data": {
                     "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
                     "code": "INV-202609-8F2K",
@@ -9681,7 +9686,7 @@
                     "code": {
                       "type": "string",
                       "enum": [
-                        "OVERDUE_DEBTS_FETCHED"
+                        "DEBTS_OVERDUE_FETCHED"
                       ]
                     },
                     "data": {
@@ -10341,7 +10346,7 @@
                     "code": {
                       "type": "string",
                       "enum": [
-                        "MY_PAYMENTS_FETCHED"
+                        "PAYMENTS_MY_FETCHED"
                       ]
                     },
                     "data": {
@@ -10398,7 +10403,7 @@
                 },
                 "example": {
                   "statusCode": 200,
-                  "code": "MY_PAYMENTS_FETCHED",
+                  "code": "PAYMENTS_MY_FETCHED",
                   "data": [
                     {
                       "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
@@ -10855,7 +10860,7 @@
                     "code": {
                       "type": "string",
                       "enum": [
-                        "CASH_PAYMENT_RECORDED"
+                        "PAYMENT_CASH_RECORDED"
                       ]
                     },
                     "data": {
@@ -10865,7 +10870,7 @@
                 },
                 "example": {
                   "statusCode": 201,
-                  "code": "CASH_PAYMENT_RECORDED",
+                  "code": "PAYMENT_CASH_RECORDED",
                   "data": {
                     "paymentId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
                     "invoiceId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
@@ -10921,6 +10926,7 @@
         "x-apidog-folder": "Payment",
         "operationId": "postPaymentsWebhooksProvider",
         "summary": "Handle payment provider webhook",
+        "security": [],
         "description": "system. Nhận callback đã ký từ provider. Lỗi nghiệp vụ: 401 INVALID SIGNATURE · 409 DUPLICATE WEBHOOK · 422 WEBHOOK INVALID.",
         "parameters": [
           {
@@ -11078,7 +11084,7 @@
                     "code": {
                       "type": "string",
                       "enum": [
-                        "MY_ISSUES_FETCHED"
+                        "ISSUES_MY_FETCHED"
                       ]
                     },
                     "data": {
@@ -11135,7 +11141,7 @@
                 },
                 "example": {
                   "statusCode": 200,
-                  "code": "MY_ISSUES_FETCHED",
+                  "code": "ISSUES_MY_FETCHED",
                   "data": [
                     {
                       "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
@@ -12790,7 +12796,7 @@
                     "code": {
                       "type": "string",
                       "enum": [
-                        "ALL_NOTIFICATIONS_MARKED_READ"
+                        "NOTIFICATIONS_ALL_MARKED_READ"
                       ]
                     },
                     "data": {
@@ -12800,7 +12806,7 @@
                 },
                 "example": {
                   "statusCode": 200,
-                  "code": "ALL_NOTIFICATIONS_MARKED_READ",
+                  "code": "NOTIFICATIONS_ALL_MARKED_READ",
                   "data": {
                     "markedCount": 3
                   }
@@ -13706,6 +13712,11 @@
             "type": "object",
             "nullable": true,
             "description": "Tài khoản nhận tiền của landlord; null dùng để xoá tài khoản nhận tiền theo business rule. Ba trường con phải đi cùng nhau khi gửi object.",
+            "example": {
+              "bankCode": "970415",
+              "accountNumber": "102876543210",
+              "accountName": "LE VAN AN"
+            },
             "properties": {
               "bankCode": {
                 "type": "string",
@@ -13945,6 +13956,11 @@
           "payoutAccount": {
             "type": "object",
             "nullable": true,
+            "example": {
+              "bankCode": "970415",
+              "accountNumber": "**43210",
+              "accountName": "LE VAN AN"
+            },
             "properties": {
               "bankCode": {
                 "type": "string",
@@ -24285,7 +24301,7 @@
       },
       "BadRequestError": {
         "x-apidog-name": "Bad Request",
-        "description": "JSON, header hoặc media type sai cú pháp",
+        "description": "JSON, body, query hoặc header không hợp lệ",
         "content": {
           "application/json": {
             "schema": {
@@ -24305,14 +24321,19 @@
                 "code": {
                   "type": "string",
                   "enum": [
-                    "BAD_REQUEST"
+                    "BAD_REQUEST",
+                    "VALIDATION_FAILED",
+                    "INVALID_JSON",
+                    "INVALID_REQUEST_BODY",
+                    "INVALID_QUERY_PARAMETER",
+                    "INVALID_HEADER"
                   ]
                 }
               }
             },
             "example": {
               "statusCode": 400,
-              "code": "BAD_REQUEST"
+              "code": "VALIDATION_FAILED"
             }
           }
         }
@@ -24647,6 +24668,12 @@
       }
     },
     "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "Access token trong header Authorization: Bearer <token>."
+      },
       "RefreshCookie": {
         "type": "apiKey",
         "in": "cookie",
