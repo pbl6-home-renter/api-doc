@@ -721,12 +721,12 @@
           }
         ],
         "summary": "List users",
-        "description": "Chỉ admin; yêu cầu access token. Lọc, tìm kiếm và phân trang offset. format khác json trả file stream không có JSON wrapper.",
+        "description": "Chỉ admin; yêu cầu access token. Lọc theo role, status và phân trang offset. format khác json trả file stream không có JSON wrapper.",
         "parameters": [
           {
             "name": "filter",
             "in": "query",
-            "description": "Lọc theo role, status hoặc chuỗi tìm kiếm q.",
+            "description": "Lọc theo role hoặc status.",
             "style": "deepObject",
             "explode": true,
             "schema": {
@@ -747,9 +747,6 @@
                     "active",
                     "locked"
                   ]
-                },
-                "q": {
-                  "type": "string"
                 }
               }
             }
