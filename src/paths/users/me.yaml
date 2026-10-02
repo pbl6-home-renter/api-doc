@@ -4,8 +4,13 @@ get:
   x-apidog-folder: User
   operationId: getCurrentUser
   summary: Get current user
-  description: Yêu cầu access token của tenant, landlord hoặc admin. Trả hồ sơ của chính người gọi; tài
-    khoản nhận tiền chỉ có ở landlord.
+  description: >-
+    **Request header bắt buộc:** `Authorization: Bearer <accessToken>`.
+    Không có request body hoặc tham số. Yêu cầu access token của tenant,
+    landlord hoặc admin. Trả hồ sơ của chính người gọi; tài khoản nhận tiền
+    chỉ có ở landlord.
+  security:
+  - BearerAuth: []
   responses:
     '200':
       description: Current user fetched

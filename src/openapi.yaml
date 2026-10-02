@@ -705,9 +705,37 @@ components:
                   - INVALID_REQUEST_BODY
                   - INVALID_QUERY_PARAMETER
                   - INVALID_HEADER
-          example:
-            statusCode: 400
-            code: VALIDATION_FAILED
+          examples:
+            validationFailed:
+              summary: Dữ liệu yêu cầu không hợp lệ
+              value:
+                statusCode: 400
+                code: VALIDATION_FAILED
+            invalidJson:
+              summary: JSON sai cú pháp
+              value:
+                statusCode: 400
+                code: INVALID_JSON
+            invalidRequestBody:
+              summary: Body không đúng cấu trúc
+              value:
+                statusCode: 400
+                code: INVALID_REQUEST_BODY
+            invalidQueryParameter:
+              summary: Tham số query không hợp lệ
+              value:
+                statusCode: 400
+                code: INVALID_QUERY_PARAMETER
+            invalidHeader:
+              summary: Header không hợp lệ
+              value:
+                statusCode: 400
+                code: INVALID_HEADER
+            badRequest:
+              summary: Yêu cầu không hợp lệ khác
+              value:
+                statusCode: 400
+                code: BAD_REQUEST
     UnauthorizedError:
       x-apidog-name: Unauthorized
       description: Thiếu hoặc không hợp lệ thông tin xác thực
