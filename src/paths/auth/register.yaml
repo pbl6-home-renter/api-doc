@@ -55,7 +55,58 @@ post:
               role: tenant
               status: active
     '400':
-      $ref: '../../openapi.yaml#/components/responses/BadRequestError'
+      x-apidog-name: Bad Request
+      description: >-
+        Yêu cầu đăng ký không thể xử lý do JSON sai cú pháp, thiếu body,
+        body không phải JSON object hoặc header đầu vào sai định dạng.
+        Khi body là JSON object, lỗi thiếu trường, sai kiểu/giá trị từng trường,
+        trường không được khai báo hoặc role không được phép trả HTTP 422.
+        Email hoặc số điện thoại đã được sử dụng trả HTTP 409.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code]
+            properties:
+              statusCode:
+                type: integer
+                enum: [400]
+              code:
+                type: string
+                enum:
+                  - INVALID_JSON
+                  - INVALID_REQUEST_BODY
+                  - INVALID_HEADER
+                  - BAD_REQUEST
+                description: |-
+                  Mỗi response trả một code tương ứng với lỗi được phát hiện.
+                  - INVALID_JSON: body có nội dung nhưng JSON sai cú pháp, ví dụ thiếu dấu đóng ngoặc hoặc có dấu phẩy thừa.
+                  - INVALID_REQUEST_BODY: không gửi body, body rỗng hoặc JSON cấp gốc là null, array, string, number hay boolean thay vì object. Object rỗng ({}) trả HTTP 422 với mã thiếu trường tương ứng.
+                  - INVALID_HEADER: header đầu vào sai định dạng; endpoint public, không yêu cầu Authorization.
+                  - BAD_REQUEST: yêu cầu không hợp lệ khác chưa có code cụ thể ở trên; không dùng thay các lỗi HTTP 409 hoặc 422.
+                example: INVALID_JSON
+          examples:
+            invalidJson:
+              summary: INVALID_JSON — JSON sai cú pháp
+              value:
+                statusCode: 400
+                code: INVALID_JSON
+            invalidRequestBody:
+              summary: INVALID_REQUEST_BODY — Thiếu body hoặc body không phải object
+              value:
+                statusCode: 400
+                code: INVALID_REQUEST_BODY
+            invalidHeader:
+              summary: INVALID_HEADER — Header đầu vào sai định dạng
+              value:
+                statusCode: 400
+                code: INVALID_HEADER
+            badRequest:
+              summary: BAD_REQUEST — Yêu cầu không hợp lệ khác
+              value:
+                statusCode: 400
+                code: BAD_REQUEST
     '409':
       description: >-
         Email hoặc số điện thoại đã được sử dụng, kể cả bởi tài khoản bị khóa

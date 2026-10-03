@@ -682,7 +682,11 @@ components:
             $ref: './responses/wrappers/success-list.yaml'
     BadRequestError:
       x-apidog-name: Bad Request
-      description: JSON, body, query hoặc header không hợp lệ
+      description: >-
+        Yêu cầu không thể xử lý do JSON sai cú pháp, body không đúng cấu trúc
+        hoặc query/header không hợp lệ. Chỉ áp dụng các mã lỗi tương ứng với
+        đầu vào của endpoint. Lỗi validation các trường trong body trả HTTP 422
+        theo định nghĩa của endpoint.
       content:
         application/json:
           schema:
@@ -699,41 +703,42 @@ components:
               code:
                 type: string
                 enum:
-                  - VALIDATION_FAILED
                   - INVALID_JSON
                   - INVALID_REQUEST_BODY
                   - INVALID_QUERY_PARAMETER
                   - INVALID_HEADER
                   - BAD_REQUEST
-                example: VALIDATION_FAILED
+                description: |-
+                  Mỗi response trả một code tương ứng với lỗi được phát hiện.
+                  - INVALID_JSON: body có nội dung nhưng không parse được thành JSON hợp lệ.
+                  - INVALID_REQUEST_BODY: thiếu body bắt buộc hoặc kiểu JSON ở cấp gốc không đúng với schema của endpoint; lỗi giá trị từng trường thuộc HTTP 422.
+                  - INVALID_QUERY_PARAMETER: query parameter sai kiểu, định dạng hoặc ngoài miền giá trị cho phép.
+                  - INVALID_HEADER: header đầu vào sai định dạng; lỗi xác thực thuộc HTTP 401, lỗi phân quyền thuộc HTTP 403.
+                  - BAD_REQUEST: yêu cầu không hợp lệ khác chưa có code cụ thể ở trên; không dùng thay lỗi validation HTTP 422.
+                example: INVALID_JSON
           examples:
-            validationFailed:
-              summary: Dữ liệu yêu cầu không hợp lệ
-              value:
-                statusCode: 400
-                code: VALIDATION_FAILED
             invalidJson:
-              summary: JSON sai cú pháp
+              summary: INVALID_JSON — JSON sai cú pháp
               value:
                 statusCode: 400
                 code: INVALID_JSON
             invalidRequestBody:
-              summary: Body không đúng cấu trúc
+              summary: INVALID_REQUEST_BODY — Thiếu body hoặc sai kiểu JSON cấp gốc
               value:
                 statusCode: 400
                 code: INVALID_REQUEST_BODY
             invalidQueryParameter:
-              summary: Tham số query không hợp lệ
+              summary: INVALID_QUERY_PARAMETER — Query sai kiểu, định dạng hoặc giá trị
               value:
                 statusCode: 400
                 code: INVALID_QUERY_PARAMETER
             invalidHeader:
-              summary: Header không hợp lệ
+              summary: INVALID_HEADER — Header đầu vào sai định dạng
               value:
                 statusCode: 400
                 code: INVALID_HEADER
             badRequest:
-              summary: Yêu cầu không hợp lệ khác
+              summary: BAD_REQUEST — Yêu cầu không hợp lệ khác
               value:
                 statusCode: 400
                 code: BAD_REQUEST
