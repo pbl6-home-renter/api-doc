@@ -57,7 +57,9 @@ post:
     '400':
       $ref: '../../openapi.yaml#/components/responses/BadRequestError'
     '409':
-      description: Email đã được sử dụng
+      description: >-
+        Email hoặc số điện thoại đã được sử dụng, kể cả bởi tài khoản bị khóa
+        hoặc đã xóa mềm nhưng vẫn giữ định danh trong database.
       content:
         application/json:
           schema:
@@ -70,10 +72,22 @@ post:
                 enum: [409]
               code:
                 type: string
-                enum: [DUPLICATE_EMAIL]
-          example:
-            statusCode: 409
-            code: DUPLICATE_EMAIL
+                enum: [DUPLICATE_EMAIL, DUPLICATE_PHONE]
+                description: >-
+                  DUPLICATE_EMAIL khi email đã tồn tại (email được trim và chuyển về chữ thường).
+                  DUPLICATE_PHONE khi số điện thoại đã tồn tại sau khi trim.
+                  Nếu cả hai cùng trùng, trả DUPLICATE_EMAIL.
+          examples:
+            duplicateEmail:
+              summary: DUPLICATE_EMAIL — Email đã được sử dụng
+              value:
+                statusCode: 409
+                code: DUPLICATE_EMAIL
+            duplicatePhone:
+              summary: DUPLICATE_PHONE — Số điện thoại đã được sử dụng
+              value:
+                statusCode: 409
+                code: DUPLICATE_PHONE
     '422':
       description: Dữ liệu đăng ký không hợp lệ hoặc role không được phép tự đăng ký
       content:
@@ -88,21 +102,97 @@ post:
                 enum: [422]
               code:
                 type: string
-                enum: [VALIDATION_FAILED, ROLE_NOT_ALLOWED]
-                description: >-
-                  VALIDATION_FAILED khi dữ liệu đăng ký không hợp lệ.
-                  ROLE_NOT_ALLOWED khi role không phải tenant hoặc landlord.
+                enum:
+                  - EMAIL_REQUIRED
+                  - PHONE_REQUIRED
+                  - PASSWORD_REQUIRED
+                  - NAME_REQUIRED
+                  - ROLE_REQUIRED
+                  - INVALID_EMAIL
+                  - INVALID_PHONE
+                  - INVALID_PASSWORD
+                  - INVALID_NAME
+                  - INVALID_ROLE
+                  - ROLE_NOT_ALLOWED
+                  - UNEXPECTED_FIELD
+                  - VALIDATION_FAILED
+                description: |-
+                  Mỗi response trả một code tương ứng với lỗi được phát hiện.
+                  - EMAIL_REQUIRED, PHONE_REQUIRED, PASSWORD_REQUIRED, NAME_REQUIRED, ROLE_REQUIRED: trường tương ứng bị thiếu hoặc có giá trị null.
+                  - INVALID_EMAIL: email không phải chuỗi, sai định dạng hoặc không dài từ 5 đến 254 ký tự sau khi trim.
+                  - INVALID_PHONE: phone không phải chuỗi hoặc không khớp 0 + 9 chữ số hay +84 + 9 chữ số sau khi trim.
+                  - INVALID_PASSWORD: password không phải chuỗi hoặc là chuỗi rỗng; không trim mật khẩu.
+                  - INVALID_NAME: name không phải chuỗi, rỗng sau khi trim hoặc vượt quá 254 ký tự.
+                  - INVALID_ROLE: role không phải chuỗi hoặc không thuộc tenant, landlord, admin (bao gồm chuỗi rỗng).
+                  - ROLE_NOT_ALLOWED: role là admin; chỉ tenant và landlord được tự đăng ký.
+                  - UNEXPECTED_FIELD: body chứa trường ngoài email, phone, password, name, role.
+                  - VALIDATION_FAILED: lỗi validation khác chưa có code cụ thể ở trên.
           examples:
-            validationFailed:
-              summary: Dữ liệu đăng ký không hợp lệ
+            emailRequired:
+              summary: EMAIL_REQUIRED — Thiếu email hoặc email là null
               value:
                 statusCode: 422
-                code: VALIDATION_FAILED
+                code: EMAIL_REQUIRED
+            phoneRequired:
+              summary: PHONE_REQUIRED — Thiếu phone hoặc phone là null
+              value:
+                statusCode: 422
+                code: PHONE_REQUIRED
+            passwordRequired:
+              summary: PASSWORD_REQUIRED — Thiếu password hoặc password là null
+              value:
+                statusCode: 422
+                code: PASSWORD_REQUIRED
+            nameRequired:
+              summary: NAME_REQUIRED — Thiếu name hoặc name là null
+              value:
+                statusCode: 422
+                code: NAME_REQUIRED
+            roleRequired:
+              summary: ROLE_REQUIRED — Thiếu role hoặc role là null
+              value:
+                statusCode: 422
+                code: ROLE_REQUIRED
+            invalidEmail:
+              summary: INVALID_EMAIL — Email sai kiểu, định dạng hoặc độ dài
+              value:
+                statusCode: 422
+                code: INVALID_EMAIL
+            invalidPhone:
+              summary: INVALID_PHONE — Số điện thoại sai kiểu hoặc định dạng Việt Nam
+              value:
+                statusCode: 422
+                code: INVALID_PHONE
+            invalidPassword:
+              summary: INVALID_PASSWORD — Mật khẩu sai kiểu hoặc rỗng
+              value:
+                statusCode: 422
+                code: INVALID_PASSWORD
+            invalidName:
+              summary: INVALID_NAME — Họ tên sai kiểu, rỗng hoặc quá dài
+              value:
+                statusCode: 422
+                code: INVALID_NAME
+            invalidRole:
+              summary: INVALID_ROLE — Role sai kiểu hoặc không tồn tại
+              value:
+                statusCode: 422
+                code: INVALID_ROLE
             roleNotAllowed:
-              summary: Role không được phép tự đăng ký
+              summary: ROLE_NOT_ALLOWED — Không cho phép tự đăng ký admin
               value:
                 statusCode: 422
                 code: ROLE_NOT_ALLOWED
+            unexpectedField:
+              summary: UNEXPECTED_FIELD — Body chứa trường không được khai báo
+              value:
+                statusCode: 422
+                code: UNEXPECTED_FIELD
+            validationFailed:
+              summary: VALIDATION_FAILED — Lỗi validation khác chưa có code cụ thể
+              value:
+                statusCode: 422
+                code: VALIDATION_FAILED
     '429':
       $ref: '../../openapi.yaml#/components/responses/TooManyRequestsError'
     '500':
