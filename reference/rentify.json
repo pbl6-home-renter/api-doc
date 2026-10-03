@@ -63,8 +63,23 @@
         "x-apidog-folder": "Auth",
         "operationId": "registerAccount",
         "summary": "Register",
-        "description": "Public. Tạo tài khoản tenant hoặc landlord; admin không được tự đăng ký. Thành công tạo phiên refresh và đặt cookie HttpOnly, Secure, SameSite=Lax, Path=/api/v1/auth. Cookie chứa token opaque, không trả trong JSON.",
+        "description": "Public. Tạo tài khoản tenant hoặc landlord; admin không được tự đăng ký.\nThành công tạo phiên refresh và đặt cookie HttpOnly, Secure, SameSite=Lax,\nPath=/api/v1/auth. Cookie chứa token opaque, không trả trong JSON.\n\nRequest: POST /auth/register, Content-Type: application/json,\nAccept: application/json. Không cần Authorization, cookie, path params hoặc query params.\nChọn request body example có cùng tên với response example để thử từng tình huống.\nCác ví dụ lỗi cố ý chứa dữ liệu không hợp lệ; không dùng làm body đăng ký thành công.\nFile reference/register-cases.postman.json cung cấp các case có đủ request headers,\nraw body và response tương ứng, bao gồm JSON sai cú pháp hoặc không gửi body.\nBAD_REQUEST, INVALID_HEADER, VALIDATION_FAILED, 429 và 500 cần điều kiện phía server\nhoặc mock được cấu hình tương ứng; body hợp lệ tự nó không gây ra các lỗi này.",
         "security": [],
+        "parameters": [
+          {
+            "name": "Accept",
+            "in": "header",
+            "required": false,
+            "description": "Nhận response JSON; Content-Type application/json được xác định bởi request body.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "application/json"
+              ]
+            },
+            "example": "application/json"
+          }
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -72,12 +87,172 @@
               "schema": {
                 "$ref": "#/components/schemas/AuthRegisterRequestDto"
               },
-              "example": {
-                "email": "lan@example.com",
-                "phone": "0901234567",
-                "password": "P@ssw0rd123",
-                "name": "Lê Văn An",
-                "role": "tenant"
+              "examples": {
+                "registeredTenant": {
+                  "summary": "201 USER_REGISTERED — Đăng ký tenant",
+                  "description": "Email và số điện thoại phải chưa được sử dụng. Header Content-Type và Accept là application/json.",
+                  "value": {
+                    "email": "lan@example.com",
+                    "phone": "0901234567",
+                    "password": "P@ssw0rd123",
+                    "name": "Lê Văn An",
+                    "role": "tenant"
+                  }
+                },
+                "registeredLandlord": {
+                  "summary": "201 USER_REGISTERED — Đăng ký landlord",
+                  "description": "Email và số điện thoại phải chưa được sử dụng.",
+                  "value": {
+                    "email": "landlord@example.com",
+                    "phone": "0901234568",
+                    "password": "P@ssw0rd123",
+                    "name": "Lê Văn An",
+                    "role": "landlord"
+                  }
+                },
+                "invalidRequestBody": {
+                  "summary": "400 INVALID_REQUEST_BODY — JSON cấp gốc là array",
+                  "description": "Body là [] thay vì object. Case không gửi body nằm trong collection đi kèm.",
+                  "value": []
+                },
+                "duplicateEmail": {
+                  "summary": "409 DUPLICATE_EMAIL — Email đã tồn tại",
+                  "description": "Tạo trước tài khoản lan@example.com; phone 0901234569 phải chưa được sử dụng.",
+                  "value": {
+                    "email": "lan@example.com",
+                    "phone": "0901234569",
+                    "password": "P@ssw0rd123",
+                    "name": "Lê Văn An",
+                    "role": "tenant"
+                  }
+                },
+                "duplicatePhone": {
+                  "summary": "409 DUPLICATE_PHONE — Số điện thoại đã tồn tại",
+                  "description": "Tạo trước tài khoản có phone 0901234567; email new-phone-test@example.com phải chưa được sử dụng.",
+                  "value": {
+                    "email": "new-phone-test@example.com",
+                    "phone": "0901234567",
+                    "password": "P@ssw0rd123",
+                    "name": "Lê Văn An",
+                    "role": "tenant"
+                  }
+                },
+                "emailRequired": {
+                  "summary": "422 EMAIL_REQUIRED — Thiếu email",
+                  "value": {
+                    "phone": "0901234567",
+                    "password": "P@ssw0rd123",
+                    "name": "Lê Văn An",
+                    "role": "tenant"
+                  }
+                },
+                "phoneRequired": {
+                  "summary": "422 PHONE_REQUIRED — Thiếu phone",
+                  "value": {
+                    "email": "lan@example.com",
+                    "password": "P@ssw0rd123",
+                    "name": "Lê Văn An",
+                    "role": "tenant"
+                  }
+                },
+                "passwordRequired": {
+                  "summary": "422 PASSWORD_REQUIRED — Thiếu password",
+                  "value": {
+                    "email": "lan@example.com",
+                    "phone": "0901234567",
+                    "name": "Lê Văn An",
+                    "role": "tenant"
+                  }
+                },
+                "nameRequired": {
+                  "summary": "422 NAME_REQUIRED — Thiếu name",
+                  "value": {
+                    "email": "lan@example.com",
+                    "phone": "0901234567",
+                    "password": "P@ssw0rd123",
+                    "role": "tenant"
+                  }
+                },
+                "roleRequired": {
+                  "summary": "422 ROLE_REQUIRED — Thiếu role",
+                  "value": {
+                    "email": "lan@example.com",
+                    "phone": "0901234567",
+                    "password": "P@ssw0rd123",
+                    "name": "Lê Văn An"
+                  }
+                },
+                "invalidEmail": {
+                  "summary": "422 INVALID_EMAIL — Email sai định dạng",
+                  "value": {
+                    "email": "not-an-email",
+                    "phone": "0901234567",
+                    "password": "P@ssw0rd123",
+                    "name": "Lê Văn An",
+                    "role": "tenant"
+                  }
+                },
+                "invalidPhone": {
+                  "summary": "422 INVALID_PHONE — Phone sai định dạng",
+                  "value": {
+                    "email": "lan@example.com",
+                    "phone": "12345",
+                    "password": "P@ssw0rd123",
+                    "name": "Lê Văn An",
+                    "role": "tenant"
+                  }
+                },
+                "invalidPassword": {
+                  "summary": "422 INVALID_PASSWORD — Mật khẩu rỗng",
+                  "value": {
+                    "email": "lan@example.com",
+                    "phone": "0901234567",
+                    "password": "",
+                    "name": "Lê Văn An",
+                    "role": "tenant"
+                  }
+                },
+                "invalidName": {
+                  "summary": "422 INVALID_NAME — Họ tên rỗng sau khi trim",
+                  "value": {
+                    "email": "lan@example.com",
+                    "phone": "0901234567",
+                    "password": "P@ssw0rd123",
+                    "name": "",
+                    "role": "tenant"
+                  }
+                },
+                "invalidRole": {
+                  "summary": "422 INVALID_ROLE — Role không tồn tại",
+                  "value": {
+                    "email": "lan@example.com",
+                    "phone": "0901234567",
+                    "password": "P@ssw0rd123",
+                    "name": "Lê Văn An",
+                    "role": "owner"
+                  }
+                },
+                "roleNotAllowed": {
+                  "summary": "422 ROLE_NOT_ALLOWED — Tự đăng ký admin",
+                  "value": {
+                    "email": "lan@example.com",
+                    "phone": "0901234567",
+                    "password": "P@ssw0rd123",
+                    "name": "Lê Văn An",
+                    "role": "admin"
+                  }
+                },
+                "unexpectedField": {
+                  "summary": "422 UNEXPECTED_FIELD — Thừa trường isAdmin",
+                  "value": {
+                    "email": "lan@example.com",
+                    "phone": "0901234567",
+                    "password": "P@ssw0rd123",
+                    "name": "Lê Văn An",
+                    "role": "tenant",
+                    "isAdmin": true
+                  }
+                }
               }
             }
           }
@@ -86,6 +261,13 @@
           "201": {
             "description": "Đăng ký tài khoản thành công",
             "headers": {
+              "Set-Cookie": {
+                "description": "Cookie phiên refresh; token minh họa không dùng để xác thực thật.",
+                "schema": {
+                  "type": "string"
+                },
+                "example": "refreshToken=mock-register-refresh-token; Path=/api/v1/auth; HttpOnly; Secure; SameSite=Lax"
+              },
               "Location": {
                 "description": "Đường dẫn đến hồ sơ của tài khoản vừa tạo",
                 "schema": {
@@ -18753,6 +18935,7 @@
           },
           "password": {
             "type": "string",
+            "minLength": 1,
             "description": "Mật khẩu thô do người dùng nhập khi đăng ký",
             "example": "P@ssw0rd123"
           },

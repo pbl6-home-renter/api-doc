@@ -122,6 +122,10 @@ git push origin feature/<tên-chức-năng>
 
 ## 3. Bảng lệnh nhanh
 
+Để thử từng tình huống Register với body/header riêng, xem
+[hướng dẫn mock Register](reference/register-mock-guide.md). `npm run bundle` cũng tạo
+`reference/register-cases.postman.json` để import thành API Cases trong Apidog.
+
 | Lệnh | Mô tả |
 |---|---|
 | `npm run bundle` | Gộp toàn bộ `src/` thành `reference/rentify.json` để Apidog đồng bộ |
