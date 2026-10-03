@@ -141,10 +141,84 @@
             "$ref": "#/components/responses/BadRequestError"
           },
           "409": {
-            "$ref": "#/components/responses/ConflictError"
+            "description": "Email đã được sử dụng",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        409
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "DUPLICATE_EMAIL"
+                      ]
+                    }
+                  }
+                },
+                "example": {
+                  "statusCode": 409,
+                  "code": "DUPLICATE_EMAIL"
+                }
+              }
+            }
           },
           "422": {
-            "$ref": "#/components/responses/ValidationError"
+            "description": "Dữ liệu đăng ký không hợp lệ hoặc role không được phép tự đăng ký",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        422
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "VALIDATION_FAILED",
+                        "ROLE_NOT_ALLOWED"
+                      ],
+                      "description": "VALIDATION_FAILED khi dữ liệu đăng ký không hợp lệ. ROLE_NOT_ALLOWED khi role không phải tenant hoặc landlord."
+                    }
+                  }
+                },
+                "examples": {
+                  "validationFailed": {
+                    "summary": "Dữ liệu đăng ký không hợp lệ",
+                    "value": {
+                      "statusCode": 422,
+                      "code": "VALIDATION_FAILED"
+                    }
+                  },
+                  "roleNotAllowed": {
+                    "summary": "Role không được phép tự đăng ký",
+                    "value": {
+                      "statusCode": 422,
+                      "code": "ROLE_NOT_ALLOWED"
+                    }
+                  }
+                }
+              }
+            }
           },
           "429": {
             "$ref": "#/components/responses/TooManyRequestsError"
