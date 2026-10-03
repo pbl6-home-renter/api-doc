@@ -56,13 +56,45 @@ patch:
               remindDays: 3
               botEnabled: false
     '400':
-      $ref: ../../openapi.yaml#/components/responses/BadRequestError
+      $ref: ../../openapi.yaml#/components/responses/BadRequestBodyPathError
     '401':
       $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
     '403':
       $ref: ../../openapi.yaml#/components/responses/ForbiddenError
+    '404':
+      $ref: ../../openapi.yaml#/components/responses/NotFoundError
     '422':
-      $ref: ../../openapi.yaml#/components/responses/ValidationError
+      x-apidog-name: Unprocessable Entity
+      description: Dữ liệu hợp lệ về cấu trúc nhưng vi phạm ràng buộc trường hoặc quy tắc nghiệp vụ.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code]
+            properties:
+              statusCode:
+                type: integer
+                enum: [422]
+              code:
+                type: string
+                enum:
+                  - DUE_DAYS_INVALID
+                  - VALIDATION_FAILED
+                description: |-
+                  - DUE_DAYS_INVALID: Số ngày đến hạn không hợp lệ.
+                  - VALIDATION_FAILED: Dữ liệu vi phạm ràng buộc schema hoặc quy tắc nghiệp vụ khác chưa có mã riêng.
+          examples:
+            due_days_invalid:
+              summary: DUE_DAYS_INVALID — Số ngày đến hạn không hợp lệ.
+              value:
+                statusCode: 422
+                code: DUE_DAYS_INVALID
+            validation_failed:
+              summary: VALIDATION_FAILED — Dữ liệu vi phạm ràng buộc schema hoặc quy tắc nghiệp vụ khác chưa có mã riêng.
+              value:
+                statusCode: 422
+                code: VALIDATION_FAILED
     '429':
       $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
     '500':

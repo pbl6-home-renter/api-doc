@@ -28,12 +28,10 @@ post:
             name: Tiền điện sinh hoạt
             rateKind: PROGRESSIVE
             unit: kWh
-            progressiveTiers:
-            - tierOrder: 1
-              tierName: Bậc 1 (0-50 kWh)
-              fromQty: 0
-              toQty: 50
-              pricePerUnit: 1806
+            steps:
+            - fromStep: 0
+              toStep: 50
+              stepPrice: 1806
           - category: WATER
             name: Tiền nước sinh hoạt
             rateKind: PER_PERSON
@@ -68,14 +66,74 @@ post:
               data:
                 $ref: ../../openapi.yaml#/components/schemas/RatePolicyListResponseDto
     "400":
-      $ref: ../../openapi.yaml#/components/responses/BadRequestError
+      $ref: ../../openapi.yaml#/components/responses/BadRequestBodyPathError
     "401":
       $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
     "403":
       $ref: ../../openapi.yaml#/components/responses/ForbiddenError
-    "404":
-      $ref: ../../openapi.yaml#/components/responses/NotFoundError
-    "422":
-      $ref: ../../openapi.yaml#/components/responses/ValidationError
+    '404':
+      x-apidog-name: Not Found
+      description: Không tìm thấy tài nguyên được yêu cầu.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code]
+            properties:
+              statusCode:
+                type: integer
+                enum: [404]
+              code:
+                type: string
+                enum:
+                  - BUILDING_NOT_FOUND
+                description: |-
+                  - BUILDING_NOT_FOUND: Không tìm thấy tòa nhà.
+          examples:
+            building_not_found:
+              summary: BUILDING_NOT_FOUND — Không tìm thấy tòa nhà.
+              value:
+                statusCode: 404
+                code: BUILDING_NOT_FOUND
+    '422':
+      x-apidog-name: Unprocessable Entity
+      description: Dữ liệu hợp lệ về cấu trúc nhưng vi phạm quy tắc của endpoint.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code]
+            properties:
+              statusCode:
+                type: integer
+                enum: [422]
+              code:
+                type: string
+                enum:
+                  - BUILDING_ID_MISMATCH
+                  - RATE_POLICIES_REQUIRED
+                  - VALIDATION_FAILED
+                description: |-
+                  - BUILDING_ID_MISMATCH: buildingId trong body khác buildingId trên đường dẫn.
+                  - RATE_POLICIES_REQUIRED: Danh sách ratePolicies rỗng hoặc không có biểu giá hợp lệ.
+                  - VALIDATION_FAILED: Dữ liệu biểu giá vi phạm ràng buộc khác của DTO.
+          examples:
+            building_id_mismatch:
+              summary: BUILDING_ID_MISMATCH — buildingId trong body khác buildingId trên đường dẫn.
+              value:
+                statusCode: 422
+                code: BUILDING_ID_MISMATCH
+            rate_policies_required:
+              summary: RATE_POLICIES_REQUIRED — Danh sách ratePolicies rỗng hoặc không có biểu giá hợp lệ.
+              value:
+                statusCode: 422
+                code: RATE_POLICIES_REQUIRED
+            validation_failed:
+              summary: VALIDATION_FAILED — Dữ liệu biểu giá vi phạm ràng buộc khác của DTO.
+              value:
+                statusCode: 422
+                code: VALIDATION_FAILED
     "500":
       $ref: ../../openapi.yaml#/components/responses/InternalServerError

@@ -47,10 +47,42 @@ get:
               data:
                 $ref: ../../openapi.yaml#/components/schemas/OverdueDebtListResponseDto
     "400":
-      $ref: ../../openapi.yaml#/components/responses/BadRequestError
+      $ref: ../../openapi.yaml#/components/responses/BadRequestQueryError
     "401":
       $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
     "403":
       $ref: ../../openapi.yaml#/components/responses/ForbiddenError
-    "500":
+    '422':
+      x-apidog-name: Unprocessable Entity
+      description: Dữ liệu hợp lệ về cấu trúc nhưng vi phạm quy tắc của endpoint.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code]
+            properties:
+              statusCode:
+                type: integer
+                enum: [422]
+              code:
+                type: string
+                enum:
+                  - INVALID_MIN_DAYS_OVERDUE
+                  - VALIDATION_FAILED
+                description: |-
+                  - INVALID_MIN_DAYS_OVERDUE: minDaysOverdue phải là số nguyên dương.
+                  - VALIDATION_FAILED: Bộ lọc công nợ vi phạm ràng buộc khác.
+          examples:
+            invalid_min_days_overdue:
+              summary: INVALID_MIN_DAYS_OVERDUE — minDaysOverdue phải là số nguyên dương.
+              value:
+                statusCode: 422
+                code: INVALID_MIN_DAYS_OVERDUE
+            validation_failed:
+              summary: VALIDATION_FAILED — Bộ lọc công nợ vi phạm ràng buộc khác.
+              value:
+                statusCode: 422
+                code: VALIDATION_FAILED
+    '500':
       $ref: ../../openapi.yaml#/components/responses/InternalServerError

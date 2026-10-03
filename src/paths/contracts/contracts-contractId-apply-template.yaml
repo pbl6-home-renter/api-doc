@@ -54,15 +54,70 @@ put:
               templateKey: standard_residential_v1
               status: draft
     '400':
-      $ref: ../../openapi.yaml#/components/responses/BadRequestError
+      $ref: ../../openapi.yaml#/components/responses/BadRequestBodyPathError
     '401':
       $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
     '403':
       $ref: ../../openapi.yaml#/components/responses/ForbiddenError
     '404':
-      $ref: ../../openapi.yaml#/components/responses/NotFoundError
+      x-apidog-name: Not Found
+      description: Không tìm thấy tài nguyên được yêu cầu.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code]
+            properties:
+              statusCode:
+                type: integer
+                enum: [404]
+              code:
+                type: string
+                enum:
+                  - TEMPLATE_NOT_FOUND
+                  - CONTRACT_NOT_FOUND
+                description: |-
+                  - TEMPLATE_NOT_FOUND: Không tìm thấy mẫu hợp đồng.
+                  - CONTRACT_NOT_FOUND: Không tìm thấy hợp đồng cần áp mẫu.
+          examples:
+            template_not_found:
+              summary: TEMPLATE_NOT_FOUND — Không tìm thấy mẫu hợp đồng.
+              value:
+                statusCode: 404
+                code: TEMPLATE_NOT_FOUND
+            contract_not_found:
+              summary: CONTRACT_NOT_FOUND — Không tìm thấy hợp đồng cần áp mẫu.
+              value:
+                statusCode: 404
+                code: CONTRACT_NOT_FOUND
     '409':
-      $ref: ../../openapi.yaml#/components/responses/ConflictError
+      x-apidog-name: Conflict
+      description: Yêu cầu xung đột với trạng thái hiện tại hoặc dữ liệu đã tồn tại.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code]
+            properties:
+              statusCode:
+                type: integer
+                enum: [409]
+              code:
+                type: string
+                enum:
+                  - CONTRACT_NOT_DRAFT
+                description: |-
+                  - CONTRACT_NOT_DRAFT: Hợp đồng không ở trạng thái nháp.
+          examples:
+            contract_not_draft:
+              summary: CONTRACT_NOT_DRAFT — Hợp đồng không ở trạng thái nháp.
+              value:
+                statusCode: 409
+                code: CONTRACT_NOT_DRAFT
+    '422':
+      $ref: ../../openapi.yaml#/components/responses/ValidationError
     '429':
       $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
     '500':

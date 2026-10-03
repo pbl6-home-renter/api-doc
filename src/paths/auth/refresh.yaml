@@ -36,9 +36,39 @@ post:
               accessToken: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
               refreshToken: rt_opaque_token_example
     '400':
-      $ref: '../../openapi.yaml#/components/responses/BadRequestError'
+      $ref: ../../openapi.yaml#/components/responses/BadRequestError
     '401':
-      $ref: '../../openapi.yaml#/components/responses/UnauthorizedError'
+      x-apidog-name: Unauthorized
+      description: Cookie refreshToken không hợp lệ hoặc phiên đã bị thu hồi.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code]
+            properties:
+              statusCode:
+                type: integer
+                enum: [401]
+              code:
+                type: string
+                enum:
+                  - INVALID_REFRESH_TOKEN
+                  - SESSION_REVOKED
+                description: |-
+                  - INVALID_REFRESH_TOKEN: Thiếu cookie, token sai hoặc đã hết hạn.
+                  - SESSION_REVOKED: Phiên hoặc cả nhóm refresh token đã bị thu hồi.
+          examples:
+            invalid_refresh_token:
+              summary: INVALID_REFRESH_TOKEN — Thiếu cookie, token sai hoặc đã hết hạn.
+              value:
+                statusCode: 401
+                code: INVALID_REFRESH_TOKEN
+            session_revoked:
+              summary: SESSION_REVOKED — Phiên hoặc cả nhóm refresh token đã bị thu hồi.
+              value:
+                statusCode: 401
+                code: SESSION_REVOKED
     '429':
       $ref: '../../openapi.yaml#/components/responses/TooManyRequestsError'
     '500':

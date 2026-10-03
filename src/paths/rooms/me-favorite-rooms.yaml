@@ -119,9 +119,11 @@ get:
             type: string
             format: binary
     '400':
-      $ref: ../../openapi.yaml#/components/responses/BadRequestError
+      $ref: ../../openapi.yaml#/components/responses/BadRequestQueryError
     '401':
       $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
+    '403':
+      $ref: ../../openapi.yaml#/components/responses/ForbiddenError
     '429':
       $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
     '500':
@@ -179,13 +181,40 @@ post:
             type: string
             example: /api/v1/me/favorite-rooms/{roomId}
     '400':
-      $ref: ../../openapi.yaml#/components/responses/BadRequestError
+      $ref: ../../openapi.yaml#/components/responses/BadRequestBodyError
     '401':
       $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
+    '403':
+      $ref: ../../openapi.yaml#/components/responses/ForbiddenError
     '404':
       $ref: ../../openapi.yaml#/components/responses/NotFoundError
     '409':
-      $ref: ../../openapi.yaml#/components/responses/ConflictError
+      x-apidog-name: Conflict
+      description: Yêu cầu xung đột với trạng thái hiện tại hoặc dữ liệu đã tồn tại.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code]
+            properties:
+              statusCode:
+                type: integer
+                enum: [409]
+              code:
+                type: string
+                enum:
+                  - ALREADY_FAVORITED
+                description: |-
+                  - ALREADY_FAVORITED: Phòng đã được lưu.
+          examples:
+            already_favorited:
+              summary: ALREADY_FAVORITED — Phòng đã được lưu.
+              value:
+                statusCode: 409
+                code: ALREADY_FAVORITED
+    '422':
+      $ref: ../../openapi.yaml#/components/responses/ValidationError
     '429':
       $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
     '500':

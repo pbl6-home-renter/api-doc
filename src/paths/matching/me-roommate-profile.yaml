@@ -44,6 +44,8 @@ get:
       $ref: ../../openapi.yaml#/components/responses/BadRequestError
     '401':
       $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
+    '403':
+      $ref: ../../openapi.yaml#/components/responses/ForbiddenError
     '404':
       $ref: ../../openapi.yaml#/components/responses/NotFoundError
     '429':
@@ -69,7 +71,7 @@ put:
         example:
           bio: Hiền lành, sạch sẽ
           lifestyle:
-            sleep: 23h-6h
+            nightOwl: false
           personality:
             introvert: true
           budgetMin: 2000000
@@ -107,11 +109,43 @@ put:
               tenantId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
               isVisible: true
     '400':
-      $ref: ../../openapi.yaml#/components/responses/BadRequestError
+      $ref: ../../openapi.yaml#/components/responses/BadRequestBodyError
     '401':
       $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
+    '403':
+      $ref: ../../openapi.yaml#/components/responses/ForbiddenError
     '422':
-      $ref: ../../openapi.yaml#/components/responses/ValidationError
+      x-apidog-name: Unprocessable Entity
+      description: Dữ liệu hợp lệ về cấu trúc nhưng vi phạm ràng buộc trường hoặc quy tắc nghiệp vụ.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code]
+            properties:
+              statusCode:
+                type: integer
+                enum: [422]
+              code:
+                type: string
+                enum:
+                  - BUDGET_RANGE_INVALID
+                  - VALIDATION_FAILED
+                description: |-
+                  - BUDGET_RANGE_INVALID: Khoảng ngân sách không hợp lệ.
+                  - VALIDATION_FAILED: Dữ liệu vi phạm ràng buộc schema hoặc quy tắc nghiệp vụ khác chưa có mã riêng.
+          examples:
+            budget_range_invalid:
+              summary: BUDGET_RANGE_INVALID — Khoảng ngân sách không hợp lệ.
+              value:
+                statusCode: 422
+                code: BUDGET_RANGE_INVALID
+            validation_failed:
+              summary: VALIDATION_FAILED — Dữ liệu vi phạm ràng buộc schema hoặc quy tắc nghiệp vụ khác chưa có mã riêng.
+              value:
+                statusCode: 422
+                code: VALIDATION_FAILED
     '429':
       $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
     '500':

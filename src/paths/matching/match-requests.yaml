@@ -123,9 +123,11 @@ get:
               hasNextPage: false
               hasPreviousPage: false
     '400':
-      $ref: ../../openapi.yaml#/components/responses/BadRequestError
+      $ref: ../../openapi.yaml#/components/responses/BadRequestQueryError
     '401':
       $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
+    '403':
+      $ref: ../../openapi.yaml#/components/responses/ForbiddenError
     '422':
       $ref: ../../openapi.yaml#/components/responses/ValidationError
     '429':
@@ -187,15 +189,70 @@ post:
             type: string
             example: /api/v1/match-requests
     '400':
-      $ref: ../../openapi.yaml#/components/responses/BadRequestError
+      $ref: ../../openapi.yaml#/components/responses/BadRequestBodyError
     '401':
       $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
+    '403':
+      $ref: ../../openapi.yaml#/components/responses/ForbiddenError
     '404':
       $ref: ../../openapi.yaml#/components/responses/NotFoundError
     '409':
-      $ref: ../../openapi.yaml#/components/responses/ConflictError
+      x-apidog-name: Conflict
+      description: Yêu cầu xung đột với trạng thái hiện tại hoặc dữ liệu đã tồn tại.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code]
+            properties:
+              statusCode:
+                type: integer
+                enum: [409]
+              code:
+                type: string
+                enum:
+                  - DUPLICATE_MATCH_REQUEST
+                description: |-
+                  - DUPLICATE_MATCH_REQUEST: Yêu cầu tìm bạn ở đã tồn tại.
+          examples:
+            duplicate_match_request:
+              summary: DUPLICATE_MATCH_REQUEST — Yêu cầu tìm bạn ở đã tồn tại.
+              value:
+                statusCode: 409
+                code: DUPLICATE_MATCH_REQUEST
     '422':
-      $ref: ../../openapi.yaml#/components/responses/ValidationError
+      x-apidog-name: Unprocessable Entity
+      description: Dữ liệu hợp lệ về cấu trúc nhưng vi phạm ràng buộc trường hoặc quy tắc nghiệp vụ.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code]
+            properties:
+              statusCode:
+                type: integer
+                enum: [422]
+              code:
+                type: string
+                enum:
+                  - SELF_MATCHING_NOT_ALLOWED
+                  - VALIDATION_FAILED
+                description: |-
+                  - SELF_MATCHING_NOT_ALLOWED: Không thể gửi yêu cầu ghép đôi cho chính mình.
+                  - VALIDATION_FAILED: Dữ liệu vi phạm ràng buộc schema hoặc quy tắc nghiệp vụ khác chưa có mã riêng.
+          examples:
+            self_matching_not_allowed:
+              summary: SELF_MATCHING_NOT_ALLOWED — Không thể gửi yêu cầu ghép đôi cho chính mình.
+              value:
+                statusCode: 422
+                code: SELF_MATCHING_NOT_ALLOWED
+            validation_failed:
+              summary: VALIDATION_FAILED — Dữ liệu vi phạm ràng buộc schema hoặc quy tắc nghiệp vụ khác chưa có mã riêng.
+              value:
+                statusCode: 422
+                code: VALIDATION_FAILED
     '429':
       $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
     '500':

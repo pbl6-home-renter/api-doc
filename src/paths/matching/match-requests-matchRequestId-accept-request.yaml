@@ -46,7 +46,7 @@ post:
               status: accepted
               conversationId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
     '400':
-      $ref: ../../openapi.yaml#/components/responses/BadRequestError
+      $ref: ../../openapi.yaml#/components/responses/BadRequestPathError
     '401':
       $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
     '403':
@@ -54,7 +54,30 @@ post:
     '404':
       $ref: ../../openapi.yaml#/components/responses/NotFoundError
     '409':
-      $ref: ../../openapi.yaml#/components/responses/ConflictError
+      x-apidog-name: Conflict
+      description: Yêu cầu xung đột với trạng thái hiện tại hoặc dữ liệu đã tồn tại.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code]
+            properties:
+              statusCode:
+                type: integer
+                enum: [409]
+              code:
+                type: string
+                enum:
+                  - MATCH_REQUEST_NOT_PENDING
+                description: |-
+                  - MATCH_REQUEST_NOT_PENDING: Yêu cầu tìm bạn ở không còn chờ xử lý.
+          examples:
+            match_request_not_pending:
+              summary: MATCH_REQUEST_NOT_PENDING — Yêu cầu tìm bạn ở không còn chờ xử lý.
+              value:
+                statusCode: 409
+                code: MATCH_REQUEST_NOT_PENDING
     '429':
       $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
     '500':

@@ -152,7 +152,7 @@ get:
             type: string
             format: binary
     '400':
-      $ref: ../../openapi.yaml#/components/responses/BadRequestError
+      $ref: ../../openapi.yaml#/components/responses/BadRequestQueryError
     '401':
       $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
     '403':
@@ -236,7 +236,7 @@ post:
               invoiceStatus: pending
               issuedAt: null
     '400':
-      $ref: '../../openapi.yaml#/components/responses/BadRequestError'
+      $ref: ../../openapi.yaml#/components/responses/BadRequestBodyError
     '401':
       $ref: '../../openapi.yaml#/components/responses/UnauthorizedError'
     '403':
@@ -244,9 +244,69 @@ post:
     '404':
       $ref: '../../openapi.yaml#/components/responses/NotFoundError'
     '409':
-      $ref: '../../openapi.yaml#/components/responses/ConflictError'
+      x-apidog-name: Conflict
+      description: Hóa đơn quyết toán đang hiệu lực đã tồn tại.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code]
+            properties:
+              statusCode:
+                type: integer
+                enum: [409]
+              code:
+                type: string
+                enum:
+                  - ACTIVE_SETTLEMENT_INVOICE_EXISTS
+                description: |-
+                  - ACTIVE_SETTLEMENT_INVOICE_EXISTS: Đã có hóa đơn quyết toán đang hiệu lực cho hợp đồng và kỳ này.
+          examples:
+            active_settlement_invoice_exists:
+              summary: ACTIVE_SETTLEMENT_INVOICE_EXISTS — Đã có hóa đơn quyết toán đang hiệu lực cho hợp đồng và kỳ này.
+              value:
+                statusCode: 409
+                code: ACTIVE_SETTLEMENT_INVOICE_EXISTS
     '422':
-      $ref: '../../openapi.yaml#/components/responses/ValidationError'
+      x-apidog-name: Unprocessable Entity
+      description: Dữ liệu quyết toán hoặc dữ liệu nguồn để tính hóa đơn không hợp lệ.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code]
+            properties:
+              statusCode:
+                type: integer
+                enum: [422]
+              code:
+                type: string
+                enum:
+                  - TOTAL_NEGATIVE
+                  - BREAKDOWN_MISMATCH
+                  - VALIDATION_FAILED
+                description: |-
+                  - TOTAL_NEGATIVE: Các khoản giảm trừ làm tổng hóa đơn âm.
+                  - BREAKDOWN_MISMATCH: Chỉ số, chính sách giá hoặc khoản phí nguồn không khớp để lập bảng tính.
+                  - VALIDATION_FAILED: Lỗi validation khác chưa có mã cụ thể.
+          examples:
+            total_negative:
+              summary: TOTAL_NEGATIVE — Các khoản giảm trừ làm tổng hóa đơn âm.
+              value:
+                statusCode: 422
+                code: TOTAL_NEGATIVE
+            breakdown_mismatch:
+              summary: BREAKDOWN_MISMATCH — Chỉ số, chính sách giá hoặc khoản phí nguồn không khớp để lập bảng tính.
+              value:
+                statusCode: 422
+                code: BREAKDOWN_MISMATCH
+            validation_failed:
+              summary: VALIDATION_FAILED — Lỗi validation khác chưa có mã cụ thể.
+              value:
+                statusCode: 422
+                code: VALIDATION_FAILED
     '429':
       $ref: '../../openapi.yaml#/components/responses/TooManyRequestsError'
     '500':

@@ -54,13 +54,43 @@ get:
               occupancyRate: '89.2'
               systemTransactionVolume: 3450000000
     '400':
-      $ref: ../../openapi.yaml#/components/responses/BadRequestError
+      $ref: ../../openapi.yaml#/components/responses/BadRequestQueryError
     '401':
       $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
     '403':
       $ref: ../../openapi.yaml#/components/responses/ForbiddenError
     '422':
-      $ref: ../../openapi.yaml#/components/responses/ValidationError
+      x-apidog-name: Unprocessable Entity
+      description: Dữ liệu hợp lệ về cấu trúc nhưng vi phạm ràng buộc trường hoặc quy tắc nghiệp vụ.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code]
+            properties:
+              statusCode:
+                type: integer
+                enum: [422]
+              code:
+                type: string
+                enum:
+                  - INVALID_DATE_RANGE
+                  - VALIDATION_FAILED
+                description: |-
+                  - INVALID_DATE_RANGE: Khoảng ngày không hợp lệ.
+                  - VALIDATION_FAILED: Dữ liệu vi phạm ràng buộc schema hoặc quy tắc nghiệp vụ khác chưa có mã riêng.
+          examples:
+            invalid_date_range:
+              summary: INVALID_DATE_RANGE — Khoảng ngày không hợp lệ.
+              value:
+                statusCode: 422
+                code: INVALID_DATE_RANGE
+            validation_failed:
+              summary: VALIDATION_FAILED — Dữ liệu vi phạm ràng buộc schema hoặc quy tắc nghiệp vụ khác chưa có mã riêng.
+              value:
+                statusCode: 422
+                code: VALIDATION_FAILED
     '429':
       $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
     '500':

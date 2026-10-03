@@ -28,11 +28,12 @@ post:
           - category: DAMAGE_COMPENSATION
             description: Vỡ cánh cửa tủ lạnh và hỏng ổ khóa phòng
             amount: 800000
-          finalRefundAmount: 2700000
-          tenantBankCode: VCB
-          tenantAccountNumber: "0123456789"
-          tenantAccountHolder: NGUYEN VAN B
-          settlementDate: "2026-09-30"
+          refundAmount: 2700000
+          paymentMethod: BANK_TRANSFER
+          refundPayoutAccount:
+            bankCode: VCB
+            accountNumber: "0123456789"
+            accountHolderName: NGUYEN VAN B
           note: Đã kiểm tra phòng P201 và nghiệm thu xong
   responses:
     "201":
@@ -58,14 +59,88 @@ post:
               data:
                 $ref: ../../openapi.yaml#/components/schemas/DepositSettlementResponseDto
     "400":
-      $ref: ../../openapi.yaml#/components/responses/BadRequestError
+      $ref: ../../openapi.yaml#/components/responses/BadRequestBodyPathError
     "401":
       $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
     "403":
       $ref: ../../openapi.yaml#/components/responses/ForbiddenError
-    "404":
-      $ref: ../../openapi.yaml#/components/responses/NotFoundError
-    "422":
-      $ref: ../../openapi.yaml#/components/responses/ValidationError
+    '404':
+      x-apidog-name: Not Found
+      description: Không tìm thấy tài nguyên được yêu cầu.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code]
+            properties:
+              statusCode:
+                type: integer
+                enum: [404]
+              code:
+                type: string
+                enum:
+                  - CONTRACT_NOT_FOUND
+                description: |-
+                  - CONTRACT_NOT_FOUND: Không tìm thấy hợp đồng.
+          examples:
+            contract_not_found:
+              summary: CONTRACT_NOT_FOUND — Không tìm thấy hợp đồng.
+              value:
+                statusCode: 404
+                code: CONTRACT_NOT_FOUND
+    '422':
+      x-apidog-name: Unprocessable Entity
+      description: Dữ liệu hợp lệ về cấu trúc nhưng vi phạm quy tắc của endpoint.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code]
+            properties:
+              statusCode:
+                type: integer
+                enum: [422]
+              code:
+                type: string
+                enum:
+                  - CONTRACT_ID_MISMATCH
+                  - REFUND_AMOUNT_MISMATCH
+                  - REFUND_PAYOUT_ACCOUNT_REQUIRED
+                  - SETTLEMENT_INVALID
+                  - VALIDATION_FAILED
+                description: |-
+                  - CONTRACT_ID_MISMATCH: contractId trong body khác contractId trên đường dẫn.
+                  - REFUND_AMOUNT_MISMATCH: refundAmount không khớp tiền cọc gốc trừ tổng các khoản khấu trừ.
+                  - REFUND_PAYOUT_ACCOUNT_REQUIRED: Hoàn cọc bằng chuyển khoản nhưng thiếu thông tin tài khoản nhận tiền.
+                  - SETTLEMENT_INVALID: Hợp đồng hoặc dữ liệu quyết toán chưa đủ điều kiện để chốt.
+                  - VALIDATION_FAILED: Dữ liệu vi phạm ràng buộc khác của DTO.
+          examples:
+            contract_id_mismatch:
+              summary: CONTRACT_ID_MISMATCH — contractId trong body khác contractId trên đường dẫn.
+              value:
+                statusCode: 422
+                code: CONTRACT_ID_MISMATCH
+            refund_amount_mismatch:
+              summary: REFUND_AMOUNT_MISMATCH — refundAmount không khớp tiền cọc gốc trừ tổng các khoản khấu trừ.
+              value:
+                statusCode: 422
+                code: REFUND_AMOUNT_MISMATCH
+            refund_payout_account_required:
+              summary: REFUND_PAYOUT_ACCOUNT_REQUIRED — Hoàn cọc bằng chuyển khoản nhưng thiếu thông tin tài khoản nhận tiền.
+              value:
+                statusCode: 422
+                code: REFUND_PAYOUT_ACCOUNT_REQUIRED
+            settlement_invalid:
+              summary: SETTLEMENT_INVALID — Hợp đồng hoặc dữ liệu quyết toán chưa đủ điều kiện để chốt.
+              value:
+                statusCode: 422
+                code: SETTLEMENT_INVALID
+            validation_failed:
+              summary: VALIDATION_FAILED — Dữ liệu vi phạm ràng buộc khác của DTO.
+              value:
+                statusCode: 422
+                code: VALIDATION_FAILED
     "500":
       $ref: ../../openapi.yaml#/components/responses/InternalServerError

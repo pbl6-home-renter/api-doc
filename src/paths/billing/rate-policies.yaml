@@ -118,7 +118,7 @@ get:
               hasNextPage: false
               hasPreviousPage: false
     '400':
-      $ref: ../../openapi.yaml#/components/responses/BadRequestError
+      $ref: ../../openapi.yaml#/components/responses/BadRequestQueryError
     '401':
       $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
     '403':
@@ -194,15 +194,68 @@ post:
             type: string
             example: /api/v1/rate-policies
     '400':
-      $ref: ../../openapi.yaml#/components/responses/BadRequestError
+      $ref: ../../openapi.yaml#/components/responses/BadRequestBodyError
     '401':
       $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
     '403':
       $ref: ../../openapi.yaml#/components/responses/ForbiddenError
     '409':
-      $ref: ../../openapi.yaml#/components/responses/ConflictError
+      x-apidog-name: Conflict
+      description: Yêu cầu xung đột với trạng thái hiện tại hoặc dữ liệu đã tồn tại.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code]
+            properties:
+              statusCode:
+                type: integer
+                enum: [409]
+              code:
+                type: string
+                enum:
+                  - ACTIVE_POLICY_EXISTS
+                description: |-
+                  - ACTIVE_POLICY_EXISTS: Đã có chính sách đang hiệu lực cho cùng phạm vi.
+          examples:
+            active_policy_exists:
+              summary: ACTIVE_POLICY_EXISTS — Đã có chính sách đang hiệu lực cho cùng phạm vi.
+              value:
+                statusCode: 409
+                code: ACTIVE_POLICY_EXISTS
     '422':
-      $ref: ../../openapi.yaml#/components/responses/ValidationError
+      x-apidog-name: Unprocessable Entity
+      description: Dữ liệu hợp lệ về cấu trúc nhưng vi phạm ràng buộc trường hoặc quy tắc nghiệp vụ.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code]
+            properties:
+              statusCode:
+                type: integer
+                enum: [422]
+              code:
+                type: string
+                enum:
+                  - INVALID_RATE_KIND
+                  - VALIDATION_FAILED
+                description: |-
+                  - INVALID_RATE_KIND: Loại chính sách giá không hợp lệ.
+                  - VALIDATION_FAILED: Dữ liệu vi phạm ràng buộc schema hoặc quy tắc nghiệp vụ khác chưa có mã riêng.
+          examples:
+            invalid_rate_kind:
+              summary: INVALID_RATE_KIND — Loại chính sách giá không hợp lệ.
+              value:
+                statusCode: 422
+                code: INVALID_RATE_KIND
+            validation_failed:
+              summary: VALIDATION_FAILED — Dữ liệu vi phạm ràng buộc schema hoặc quy tắc nghiệp vụ khác chưa có mã riêng.
+              value:
+                statusCode: 422
+                code: VALIDATION_FAILED
     '429':
       $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
     '500':

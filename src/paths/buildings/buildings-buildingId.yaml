@@ -47,7 +47,9 @@ get:
               address: 12 Nguyễn Trãi
               status: approved
     '400':
-      $ref: ../../openapi.yaml#/components/responses/BadRequestError
+      $ref: ../../openapi.yaml#/components/responses/BadRequestPathError
+    '403':
+      $ref: ../../openapi.yaml#/components/responses/ForbiddenError
     '404':
       $ref: ../../openapi.yaml#/components/responses/NotFoundError
     '429':
@@ -112,7 +114,7 @@ patch:
               address: 123 Nguyễn Thị Minh Khai
               status: approved
     '400':
-      $ref: ../../openapi.yaml#/components/responses/BadRequestError
+      $ref: ../../openapi.yaml#/components/responses/BadRequestBodyPathError
     '401':
       $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
     '403':
@@ -120,7 +122,30 @@ patch:
     '404':
       $ref: ../../openapi.yaml#/components/responses/NotFoundError
     '409':
-      $ref: ../../openapi.yaml#/components/responses/ConflictError
+      x-apidog-name: Conflict
+      description: Yêu cầu xung đột với trạng thái hiện tại hoặc dữ liệu đã tồn tại.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code]
+            properties:
+              statusCode:
+                type: integer
+                enum: [409]
+              code:
+                type: string
+                enum:
+                  - APPROVED_BUILDING_LOCKED
+                description: |-
+                  - APPROVED_BUILDING_LOCKED: Tòa nhà đã được duyệt nên không thể sửa các trường bị khóa.
+          examples:
+            approved_building_locked:
+              summary: APPROVED_BUILDING_LOCKED — Tòa nhà đã được duyệt nên không thể sửa các trường bị khóa.
+              value:
+                statusCode: 409
+                code: APPROVED_BUILDING_LOCKED
     '422':
       $ref: ../../openapi.yaml#/components/responses/ValidationError
     '429':
@@ -147,13 +172,38 @@ delete:
     '204':
       $ref: ../../openapi.yaml#/components/responses/NoContentResponse
     '400':
-      $ref: ../../openapi.yaml#/components/responses/BadRequestError
+      $ref: ../../openapi.yaml#/components/responses/BadRequestPathError
     '401':
       $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
+    '403':
+      $ref: ../../openapi.yaml#/components/responses/ForbiddenError
     '404':
       $ref: ../../openapi.yaml#/components/responses/NotFoundError
     '409':
-      $ref: ../../openapi.yaml#/components/responses/ConflictError
+      x-apidog-name: Conflict
+      description: Yêu cầu xung đột với trạng thái hiện tại hoặc dữ liệu đã tồn tại.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code]
+            properties:
+              statusCode:
+                type: integer
+                enum: [409]
+              code:
+                type: string
+                enum:
+                  - BUILDING_HAS_ACTIVE_CONTRACT
+                description: |-
+                  - BUILDING_HAS_ACTIVE_CONTRACT: Tòa nhà còn hợp đồng đang hiệu lực.
+          examples:
+            building_has_active_contract:
+              summary: BUILDING_HAS_ACTIVE_CONTRACT — Tòa nhà còn hợp đồng đang hiệu lực.
+              value:
+                statusCode: 409
+                code: BUILDING_HAS_ACTIVE_CONTRACT
     '429':
       $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
     '500':

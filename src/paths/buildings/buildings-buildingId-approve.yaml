@@ -53,13 +53,40 @@ post:
               status: approved
               reviewedAt: '2026-09-23T12:00:00.000Z'
     '400':
-      $ref: ../../openapi.yaml#/components/responses/BadRequestError
+      $ref: ../../openapi.yaml#/components/responses/BadRequestBodyPathError
     '401':
       $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
+    '403':
+      $ref: ../../openapi.yaml#/components/responses/ForbiddenError
     '404':
       $ref: ../../openapi.yaml#/components/responses/NotFoundError
     '409':
-      $ref: ../../openapi.yaml#/components/responses/ConflictError
+      x-apidog-name: Conflict
+      description: Yêu cầu xung đột với trạng thái hiện tại hoặc dữ liệu đã tồn tại.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code]
+            properties:
+              statusCode:
+                type: integer
+                enum: [409]
+              code:
+                type: string
+                enum:
+                  - BUILDING_NOT_PENDING
+                description: |-
+                  - BUILDING_NOT_PENDING: Tòa nhà không ở trạng thái chờ duyệt.
+          examples:
+            building_not_pending:
+              summary: BUILDING_NOT_PENDING — Tòa nhà không ở trạng thái chờ duyệt.
+              value:
+                statusCode: 409
+                code: BUILDING_NOT_PENDING
+    '422':
+      $ref: ../../openapi.yaml#/components/responses/ValidationError
     '429':
       $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
     '500':

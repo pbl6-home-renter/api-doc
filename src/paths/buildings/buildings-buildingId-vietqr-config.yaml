@@ -67,14 +67,67 @@ put:
               createdAt: "2026-09-23T12:00:00.000Z"
               updatedAt: "2026-09-23T12:00:00.000Z"
     "400":
-      $ref: ../../openapi.yaml#/components/responses/BadRequestError
+      $ref: ../../openapi.yaml#/components/responses/BadRequestBodyPathError
     "401":
       $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
     "403":
       $ref: ../../openapi.yaml#/components/responses/ForbiddenError
-    "404":
-      $ref: ../../openapi.yaml#/components/responses/NotFoundError
-    "422":
-      $ref: ../../openapi.yaml#/components/responses/ValidationError
+    '404':
+      x-apidog-name: Not Found
+      description: Không tìm thấy tài nguyên được yêu cầu.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code]
+            properties:
+              statusCode:
+                type: integer
+                enum: [404]
+              code:
+                type: string
+                enum:
+                  - BUILDING_NOT_FOUND
+                description: |-
+                  - BUILDING_NOT_FOUND: Không tìm thấy tòa nhà.
+          examples:
+            building_not_found:
+              summary: BUILDING_NOT_FOUND — Không tìm thấy tòa nhà.
+              value:
+                statusCode: 404
+                code: BUILDING_NOT_FOUND
+    '422':
+      x-apidog-name: Unprocessable Entity
+      description: Dữ liệu hợp lệ về cấu trúc nhưng vi phạm ràng buộc trường hoặc quy tắc nghiệp vụ.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code]
+            properties:
+              statusCode:
+                type: integer
+                enum: [422]
+              code:
+                type: string
+                enum:
+                  - INVALID_BANK_ACCOUNT
+                  - VALIDATION_FAILED
+                description: |-
+                  - INVALID_BANK_ACCOUNT: Thông tin tài khoản ngân hàng không hợp lệ.
+                  - VALIDATION_FAILED: Dữ liệu vi phạm ràng buộc schema hoặc quy tắc nghiệp vụ khác chưa có mã riêng.
+          examples:
+            invalid_bank_account:
+              summary: INVALID_BANK_ACCOUNT — Thông tin tài khoản ngân hàng không hợp lệ.
+              value:
+                statusCode: 422
+                code: INVALID_BANK_ACCOUNT
+            validation_failed:
+              summary: VALIDATION_FAILED — Dữ liệu vi phạm ràng buộc schema hoặc quy tắc nghiệp vụ khác chưa có mã riêng.
+              value:
+                statusCode: 422
+                code: VALIDATION_FAILED
     "500":
       $ref: ../../openapi.yaml#/components/responses/InternalServerError

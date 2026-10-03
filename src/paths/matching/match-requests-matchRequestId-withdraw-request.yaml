@@ -46,7 +46,7 @@ post:
               status: withdrawn
               respondedAt: '2026-09-27T03:10:00.000Z'
     '400':
-      $ref: ../../openapi.yaml#/components/responses/BadRequestError
+      $ref: ../../openapi.yaml#/components/responses/BadRequestPathError
     '401':
       $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
     '403':
@@ -54,7 +54,37 @@ post:
     '404':
       $ref: ../../openapi.yaml#/components/responses/NotFoundError
     '409':
-      $ref: ../../openapi.yaml#/components/responses/ConflictError
+      x-apidog-name: Conflict
+      description: Yêu cầu không thể rút do người gọi hoặc trạng thái hiện tại.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code]
+            properties:
+              statusCode:
+                type: integer
+                enum: [409]
+              code:
+                type: string
+                enum:
+                  - NOT_REQUESTER
+                  - MATCH_REQUEST_NOT_PENDING
+                description: |-
+                  - NOT_REQUESTER: Người gọi không phải người gửi yêu cầu.
+                  - MATCH_REQUEST_NOT_PENDING: Yêu cầu tìm bạn ở không còn chờ xử lý.
+          examples:
+            not_requester:
+              summary: NOT_REQUESTER — Người gọi không phải người gửi yêu cầu.
+              value:
+                statusCode: 409
+                code: NOT_REQUESTER
+            match_request_not_pending:
+              summary: MATCH_REQUEST_NOT_PENDING — Yêu cầu tìm bạn ở không còn chờ xử lý.
+              value:
+                statusCode: 409
+                code: MATCH_REQUEST_NOT_PENDING
     '429':
       $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
     '500':

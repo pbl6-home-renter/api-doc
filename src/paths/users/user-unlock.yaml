@@ -46,7 +46,7 @@ post:
               status: active
               unlockedAt: '2026-09-23T11:55:00.000Z'
     '400':
-      $ref: ../../openapi.yaml#/components/responses/BadRequestError
+      $ref: ../../openapi.yaml#/components/responses/BadRequestPathError
     '401':
       $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
     '403':
@@ -54,7 +54,30 @@ post:
     '404':
       $ref: ../../openapi.yaml#/components/responses/NotFoundError
     '409':
-      $ref: ../../openapi.yaml#/components/responses/ConflictError
+      x-apidog-name: Conflict
+      description: Yêu cầu xung đột với trạng thái hiện tại hoặc dữ liệu đã tồn tại.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code]
+            properties:
+              statusCode:
+                type: integer
+                enum: [409]
+              code:
+                type: string
+                enum:
+                  - USER_NOT_LOCKED
+                description: |-
+                  - USER_NOT_LOCKED: Tài khoản không ở trạng thái locked.
+          examples:
+            user_not_locked:
+              summary: USER_NOT_LOCKED — Tài khoản không ở trạng thái locked.
+              value:
+                statusCode: 409
+                code: USER_NOT_LOCKED
     '429':
       $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
     '500':

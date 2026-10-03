@@ -49,7 +49,7 @@ post:
               fileType: image
               url: https://example.com/upload
     '400':
-      $ref: ../../openapi.yaml#/components/responses/BadRequestError
+      $ref: ../../openapi.yaml#/components/responses/BadRequestPathError
     '401':
       $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
     '403':
@@ -57,14 +57,54 @@ post:
     '404':
       $ref: ../../openapi.yaml#/components/responses/NotFoundError
     '409':
-      $ref: ../../openapi.yaml#/components/responses/ConflictError
+      x-apidog-name: Conflict
+      description: Yêu cầu xung đột với trạng thái hiện tại hoặc dữ liệu đã tồn tại.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code]
+            properties:
+              statusCode:
+                type: integer
+                enum: [409]
+              code:
+                type: string
+                enum:
+                  - UPLOAD_NOT_COMPLETED
+                description: |-
+                  - UPLOAD_NOT_COMPLETED: Tệp chưa được tải lên hoàn tất.
+          examples:
+            upload_not_completed:
+              summary: UPLOAD_NOT_COMPLETED — Tệp chưa được tải lên hoàn tất.
+              value:
+                statusCode: 409
+                code: UPLOAD_NOT_COMPLETED
     '429':
       $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
     '500':
       $ref: ../../openapi.yaml#/components/responses/InternalServerError
     '410':
-      description: Upload ticket đã hết hạn.
+      x-apidog-name: Gone
+      description: Phiếu tải lên đã hết hạn.
       content:
         application/json:
           schema:
-            $ref: ../../responses/wrappers/error-default.yaml
+            type: object
+            additionalProperties: false
+            required: [statusCode, code]
+            properties:
+              statusCode:
+                type: integer
+                enum: [410]
+              code:
+                type: string
+                enum:
+                  - TICKET_EXPIRED
+          examples:
+            ticket_expired:
+              summary: TICKET_EXPIRED — Phiếu tải lên đã hết hạn.
+              value:
+                statusCode: 410
+                code: TICKET_EXPIRED

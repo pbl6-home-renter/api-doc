@@ -51,11 +51,38 @@ get:
               tenantName: Nguyễn Thu Hà
               gender: female
     '400':
-      $ref: ../../openapi.yaml#/components/responses/BadRequestError
+      $ref: ../../openapi.yaml#/components/responses/BadRequestPathError
     '401':
       $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
     '403':
-      $ref: ../../openapi.yaml#/components/responses/ForbiddenError
+      x-apidog-name: Forbidden
+      description: Người gọi sai vai trò hoặc hồ sơ không công khai cho người gọi.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code]
+            properties:
+              statusCode:
+                type: integer
+                enum: [403]
+              code:
+                type: string
+                enum:
+                  - FORBIDDEN
+                  - PROFILE_NOT_VISIBLE
+          examples:
+            forbidden:
+              summary: FORBIDDEN — Vai trò không được phép đọc hồ sơ tìm bạn ở.
+              value:
+                statusCode: 403
+                code: FORBIDDEN
+            profile_not_visible:
+              summary: PROFILE_NOT_VISIBLE — Hồ sơ không được phép hiển thị cho người gọi.
+              value:
+                statusCode: 403
+                code: PROFILE_NOT_VISIBLE
     '404':
       $ref: ../../openapi.yaml#/components/responses/NotFoundError
     '429':

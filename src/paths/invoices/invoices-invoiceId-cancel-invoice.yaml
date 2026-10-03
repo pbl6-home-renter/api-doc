@@ -54,13 +54,47 @@ post:
               invoiceStatus: void
               cancelReason: Wrong meter reading
     '400':
-      $ref: ../../openapi.yaml#/components/responses/BadRequestError
+      $ref: ../../openapi.yaml#/components/responses/BadRequestBodyPathError
     '401':
       $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
     '403':
       $ref: ../../openapi.yaml#/components/responses/ForbiddenError
+    '404':
+      $ref: ../../openapi.yaml#/components/responses/NotFoundError
     '409':
-      $ref: ../../openapi.yaml#/components/responses/ConflictError
+      x-apidog-name: Conflict
+      description: Yêu cầu xung đột với trạng thái hiện tại hoặc dữ liệu đã tồn tại.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code]
+            properties:
+              statusCode:
+                type: integer
+                enum: [409]
+              code:
+                type: string
+                enum:
+                  - INVOICE_ALREADY_PAID
+                  - CANNOT_DELETE
+                description: |-
+                  - INVOICE_ALREADY_PAID: Hóa đơn đã được thanh toán.
+                  - CANNOT_DELETE: Tài nguyên chưa đủ điều kiện để xóa.
+          examples:
+            invoice_already_paid:
+              summary: INVOICE_ALREADY_PAID — Hóa đơn đã được thanh toán.
+              value:
+                statusCode: 409
+                code: INVOICE_ALREADY_PAID
+            cannot_delete:
+              summary: CANNOT_DELETE — Tài nguyên chưa đủ điều kiện để xóa.
+              value:
+                statusCode: 409
+                code: CANNOT_DELETE
+    '422':
+      $ref: ../../openapi.yaml#/components/responses/ValidationError
     '429':
       $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
     '500':

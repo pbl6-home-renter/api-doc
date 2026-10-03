@@ -44,13 +44,38 @@ post:
               id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
               isActive: false
     '400':
-      $ref: ../../openapi.yaml#/components/responses/BadRequestError
+      $ref: ../../openapi.yaml#/components/responses/BadRequestPathError
     '401':
       $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
     '403':
       $ref: ../../openapi.yaml#/components/responses/ForbiddenError
+    '404':
+      $ref: ../../openapi.yaml#/components/responses/NotFoundError
     '409':
-      $ref: ../../openapi.yaml#/components/responses/ConflictError
+      x-apidog-name: Conflict
+      description: Yêu cầu xung đột với trạng thái hiện tại hoặc dữ liệu đã tồn tại.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code]
+            properties:
+              statusCode:
+                type: integer
+                enum: [409]
+              code:
+                type: string
+                enum:
+                  - POLICY_NOT_ACTIVE
+                description: |-
+                  - POLICY_NOT_ACTIVE: Chính sách không ở trạng thái đang hiệu lực.
+          examples:
+            policy_not_active:
+              summary: POLICY_NOT_ACTIVE — Chính sách không ở trạng thái đang hiệu lực.
+              value:
+                statusCode: 409
+                code: POLICY_NOT_ACTIVE
     '429':
       $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
     '500':

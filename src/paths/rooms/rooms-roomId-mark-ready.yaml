@@ -45,7 +45,7 @@ post:
               id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
               status: available
     '400':
-      $ref: ../../openapi.yaml#/components/responses/BadRequestError
+      $ref: ../../openapi.yaml#/components/responses/BadRequestPathError
     '401':
       $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
     '403':
@@ -53,7 +53,30 @@ post:
     '404':
       $ref: ../../openapi.yaml#/components/responses/NotFoundError
     '409':
-      $ref: ../../openapi.yaml#/components/responses/ConflictError
+      x-apidog-name: Conflict
+      description: Yêu cầu xung đột với trạng thái hiện tại hoặc dữ liệu đã tồn tại.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code]
+            properties:
+              statusCode:
+                type: integer
+                enum: [409]
+              code:
+                type: string
+                enum:
+                  - INVALID_ROOM_TRANSITION
+                description: |-
+                  - INVALID_ROOM_TRANSITION: Không thể chuyển phòng sang trạng thái yêu cầu.
+          examples:
+            invalid_room_transition:
+              summary: INVALID_ROOM_TRANSITION — Không thể chuyển phòng sang trạng thái yêu cầu.
+              value:
+                statusCode: 409
+                code: INVALID_ROOM_TRANSITION
     '429':
       $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
     '500':

@@ -53,11 +53,34 @@ post:
             type: string
             example: /api/v1/me/push-devices
     '400':
-      $ref: ../../openapi.yaml#/components/responses/BadRequestError
+      $ref: ../../openapi.yaml#/components/responses/BadRequestBodyError
     '401':
       $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
     '409':
-      $ref: ../../openapi.yaml#/components/responses/ConflictError
+      x-apidog-name: Conflict
+      description: Yêu cầu xung đột với trạng thái hiện tại hoặc dữ liệu đã tồn tại.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code]
+            properties:
+              statusCode:
+                type: integer
+                enum: [409]
+              code:
+                type: string
+                enum:
+                  - DUPLICATE_DEVICE
+                description: |-
+                  - DUPLICATE_DEVICE: Thiết bị đã được đăng ký.
+          examples:
+            duplicate_device:
+              summary: DUPLICATE_DEVICE — Thiết bị đã được đăng ký.
+              value:
+                statusCode: 409
+                code: DUPLICATE_DEVICE
     '422':
       $ref: ../../openapi.yaml#/components/responses/ValidationError
     '429':

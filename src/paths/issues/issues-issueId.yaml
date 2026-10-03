@@ -58,7 +58,7 @@ get:
               urgency: MEDIUM
               createdAt: '2026-09-23T11:55:00.000Z'
     '400':
-      $ref: ../../openapi.yaml#/components/responses/BadRequestError
+      $ref: ../../openapi.yaml#/components/responses/BadRequestPathError
     '401':
       $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
     '403':
@@ -94,7 +94,7 @@ patch:
           $ref: ../../openapi.yaml#/components/schemas/IssueReportUpdateRequestDto
         example:
           status: resolved
-          note: Đã thay dây vòi
+          resolutionNote: Đã thay dây vòi
   responses:
     '200':
       description: 'Thành công: Cập nhật tiến trình sự cố.'
@@ -126,7 +126,7 @@ patch:
               status: resolved
               closedAt: '2026-09-23T11:35:00.000Z'
     '400':
-      $ref: ../../openapi.yaml#/components/responses/BadRequestError
+      $ref: ../../openapi.yaml#/components/responses/BadRequestBodyPathError
     '401':
       $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
     '403':
@@ -134,7 +134,32 @@ patch:
     '404':
       $ref: ../../openapi.yaml#/components/responses/NotFoundError
     '409':
-      $ref: ../../openapi.yaml#/components/responses/ConflictError
+      x-apidog-name: Conflict
+      description: Yêu cầu xung đột với trạng thái hiện tại hoặc dữ liệu đã tồn tại.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code]
+            properties:
+              statusCode:
+                type: integer
+                enum: [409]
+              code:
+                type: string
+                enum:
+                  - INVALID_ISSUE_TRANSITION
+                description: |-
+                  - INVALID_ISSUE_TRANSITION: Không thể chuyển sự cố sang trạng thái yêu cầu.
+          examples:
+            invalid_issue_transition:
+              summary: INVALID_ISSUE_TRANSITION — Không thể chuyển sự cố sang trạng thái yêu cầu.
+              value:
+                statusCode: 409
+                code: INVALID_ISSUE_TRANSITION
+    '422':
+      $ref: ../../openapi.yaml#/components/responses/ValidationError
     '429':
       $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
     '500':

@@ -62,13 +62,50 @@ post:
             type: string
             example: /api/v1/media/{mediaId}
     '400':
-      $ref: ../../openapi.yaml#/components/responses/BadRequestError
+      $ref: ../../openapi.yaml#/components/responses/BadRequestBodyError
     '401':
       $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
     '403':
       $ref: ../../openapi.yaml#/components/responses/ForbiddenError
     '422':
-      $ref: ../../openapi.yaml#/components/responses/ValidationError
+      x-apidog-name: Unprocessable Entity
+      description: Thông tin tệp hoặc mục đích tải lên không hợp lệ.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code]
+            properties:
+              statusCode:
+                type: integer
+                enum: [422]
+              code:
+                type: string
+                enum:
+                  - MEDIA_TYPE_NOT_ALLOWED
+                  - INVALID_PURPOSE
+                  - VALIDATION_FAILED
+                description: |-
+                  - MEDIA_TYPE_NOT_ALLOWED: Loại MIME hoặc kích thước tệp không được phép.
+                  - INVALID_PURPOSE: Mục đích upload không phù hợp với tài nguyên cha.
+                  - VALIDATION_FAILED: Lỗi validation khác chưa có mã cụ thể.
+          examples:
+            media_type_not_allowed:
+              summary: MEDIA_TYPE_NOT_ALLOWED — Loại MIME hoặc kích thước tệp không được phép.
+              value:
+                statusCode: 422
+                code: MEDIA_TYPE_NOT_ALLOWED
+            invalid_purpose:
+              summary: INVALID_PURPOSE — Mục đích upload không phù hợp với tài nguyên cha.
+              value:
+                statusCode: 422
+                code: INVALID_PURPOSE
+            validation_failed:
+              summary: VALIDATION_FAILED — Lỗi validation khác chưa có mã cụ thể.
+              value:
+                statusCode: 422
+                code: VALIDATION_FAILED
     '429':
       $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
     '500':

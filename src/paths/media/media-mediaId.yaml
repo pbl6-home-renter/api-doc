@@ -33,7 +33,7 @@ get:
             type: string
             format: binary
     '400':
-      $ref: ../../openapi.yaml#/components/responses/BadRequestError
+      $ref: ../../openapi.yaml#/components/responses/BadRequestPathError
     '403':
       $ref: ../../openapi.yaml#/components/responses/ForbiddenError
     '404':
@@ -43,11 +43,28 @@ get:
     '500':
       $ref: ../../openapi.yaml#/components/responses/InternalServerError
     '410':
-      description: Media đã bị xóa.
+      x-apidog-name: Gone
+      description: Tệp đã bị xóa hoặc không còn truy cập được.
       content:
         application/json:
           schema:
-            $ref: ../../responses/wrappers/error-default.yaml
+            type: object
+            additionalProperties: false
+            required: [statusCode, code]
+            properties:
+              statusCode:
+                type: integer
+                enum: [410]
+              code:
+                type: string
+                enum:
+                  - MEDIA_DELETED
+          examples:
+            media_deleted:
+              summary: MEDIA_DELETED — Tệp đã bị xóa.
+              value:
+                statusCode: 410
+                code: MEDIA_DELETED
 delete:
   tags:
   - Operation
@@ -68,13 +85,38 @@ delete:
     '204':
       $ref: ../../openapi.yaml#/components/responses/NoContentResponse
     '400':
-      $ref: ../../openapi.yaml#/components/responses/BadRequestError
+      $ref: ../../openapi.yaml#/components/responses/BadRequestPathError
     '401':
       $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
     '403':
       $ref: ../../openapi.yaml#/components/responses/ForbiddenError
+    '404':
+      $ref: ../../openapi.yaml#/components/responses/NotFoundError
     '409':
-      $ref: ../../openapi.yaml#/components/responses/ConflictError
+      x-apidog-name: Conflict
+      description: Yêu cầu xung đột với trạng thái hiện tại hoặc dữ liệu đã tồn tại.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code]
+            properties:
+              statusCode:
+                type: integer
+                enum: [409]
+              code:
+                type: string
+                enum:
+                  - CANNOT_DELETE
+                description: |-
+                  - CANNOT_DELETE: Tài nguyên chưa đủ điều kiện để xóa.
+          examples:
+            cannot_delete:
+              summary: CANNOT_DELETE — Tài nguyên chưa đủ điều kiện để xóa.
+              value:
+                statusCode: 409
+                code: CANNOT_DELETE
     '429':
       $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
     '500':

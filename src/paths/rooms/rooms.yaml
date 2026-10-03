@@ -165,7 +165,7 @@ get:
             type: string
             format: binary
     '400':
-      $ref: ../../openapi.yaml#/components/responses/BadRequestError
+      $ref: ../../openapi.yaml#/components/responses/BadRequestQueryError
     '422':
       $ref: ../../openapi.yaml#/components/responses/ValidationError
     '429':
@@ -238,15 +238,68 @@ post:
             type: string
             example: /api/v1/rooms/{roomId}
     '400':
-      $ref: ../../openapi.yaml#/components/responses/BadRequestError
+      $ref: ../../openapi.yaml#/components/responses/BadRequestBodyError
     '401':
       $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
     '403':
       $ref: ../../openapi.yaml#/components/responses/ForbiddenError
     '409':
-      $ref: ../../openapi.yaml#/components/responses/ConflictError
+      x-apidog-name: Conflict
+      description: Yêu cầu xung đột với trạng thái hiện tại hoặc dữ liệu đã tồn tại.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code]
+            properties:
+              statusCode:
+                type: integer
+                enum: [409]
+              code:
+                type: string
+                enum:
+                  - DUPLICATE_ROOM
+                description: |-
+                  - DUPLICATE_ROOM: Tên phòng đã tồn tại trong tòa nhà.
+          examples:
+            duplicate_room:
+              summary: DUPLICATE_ROOM — Tên phòng đã tồn tại trong tòa nhà.
+              value:
+                statusCode: 409
+                code: DUPLICATE_ROOM
     '422':
-      $ref: ../../openapi.yaml#/components/responses/ValidationError
+      x-apidog-name: Unprocessable Entity
+      description: Dữ liệu hợp lệ về cấu trúc nhưng vi phạm ràng buộc trường hoặc quy tắc nghiệp vụ.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code]
+            properties:
+              statusCode:
+                type: integer
+                enum: [422]
+              code:
+                type: string
+                enum:
+                  - BUILDING_NOT_APPROVED
+                  - VALIDATION_FAILED
+                description: |-
+                  - BUILDING_NOT_APPROVED: Tòa nhà chưa được duyệt.
+                  - VALIDATION_FAILED: Dữ liệu vi phạm ràng buộc schema hoặc quy tắc nghiệp vụ khác chưa có mã riêng.
+          examples:
+            building_not_approved:
+              summary: BUILDING_NOT_APPROVED — Tòa nhà chưa được duyệt.
+              value:
+                statusCode: 422
+                code: BUILDING_NOT_APPROVED
+            validation_failed:
+              summary: VALIDATION_FAILED — Dữ liệu vi phạm ràng buộc schema hoặc quy tắc nghiệp vụ khác chưa có mã riêng.
+              value:
+                statusCode: 422
+                code: VALIDATION_FAILED
     '429':
       $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
     '500':

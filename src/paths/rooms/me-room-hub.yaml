@@ -34,7 +34,30 @@ get:
       $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
     "403":
       $ref: ../../openapi.yaml#/components/responses/ForbiddenError
-    "404":
-      $ref: ../../openapi.yaml#/components/responses/NotFoundError
+    '404':
+      x-apidog-name: Not Found
+      description: Không tìm thấy tài nguyên được yêu cầu.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code]
+            properties:
+              statusCode:
+                type: integer
+                enum: [404]
+              code:
+                type: string
+                enum:
+                  - ACTIVE_CONTRACT_NOT_FOUND
+                description: |-
+                  - ACTIVE_CONTRACT_NOT_FOUND: Không tìm thấy hợp đồng đang hiệu lực.
+          examples:
+            active_contract_not_found:
+              summary: ACTIVE_CONTRACT_NOT_FOUND — Không tìm thấy hợp đồng đang hiệu lực.
+              value:
+                statusCode: 404
+                code: ACTIVE_CONTRACT_NOT_FOUND
     "500":
       $ref: ../../openapi.yaml#/components/responses/InternalServerError

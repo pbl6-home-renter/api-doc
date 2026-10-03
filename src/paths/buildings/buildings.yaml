@@ -150,7 +150,7 @@ get:
             type: string
             format: binary
     '400':
-      $ref: ../../openapi.yaml#/components/responses/BadRequestError
+      $ref: ../../openapi.yaml#/components/responses/BadRequestQueryError
     '422':
       $ref: ../../openapi.yaml#/components/responses/ValidationError
     '429':
@@ -219,7 +219,7 @@ post:
             type: string
             example: /api/v1/buildings/{buildingId}
     '400':
-      $ref: ../../openapi.yaml#/components/responses/BadRequestError
+      $ref: ../../openapi.yaml#/components/responses/BadRequestBodyError
     '401':
       $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
     '403':

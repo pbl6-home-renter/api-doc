@@ -98,15 +98,68 @@ get:
               nextCursor: null
               hasNextPage: false
     '400':
-      $ref: ../../openapi.yaml#/components/responses/BadRequestError
+      $ref: ../../openapi.yaml#/components/responses/BadRequestQueryError
     '401':
       $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
     '403':
       $ref: ../../openapi.yaml#/components/responses/ForbiddenError
     '404':
-      $ref: ../../openapi.yaml#/components/responses/NotFoundError
+      x-apidog-name: Not Found
+      description: Không tìm thấy tài nguyên được yêu cầu.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code]
+            properties:
+              statusCode:
+                type: integer
+                enum: [404]
+              code:
+                type: string
+                enum:
+                  - CONVERSATION_NOT_FOUND
+                description: |-
+                  - CONVERSATION_NOT_FOUND: Không tìm thấy hội thoại.
+          examples:
+            conversation_not_found:
+              summary: CONVERSATION_NOT_FOUND — Không tìm thấy hội thoại.
+              value:
+                statusCode: 404
+                code: CONVERSATION_NOT_FOUND
     '422':
-      $ref: ../../openapi.yaml#/components/responses/ValidationError
+      x-apidog-name: Unprocessable Entity
+      description: Dữ liệu hợp lệ về cấu trúc nhưng vi phạm ràng buộc trường hoặc quy tắc nghiệp vụ.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code]
+            properties:
+              statusCode:
+                type: integer
+                enum: [422]
+              code:
+                type: string
+                enum:
+                  - INVALID_CURSOR
+                  - VALIDATION_FAILED
+                description: |-
+                  - INVALID_CURSOR: Con trỏ phân trang không hợp lệ.
+                  - VALIDATION_FAILED: Dữ liệu vi phạm ràng buộc schema hoặc quy tắc nghiệp vụ khác chưa có mã riêng.
+          examples:
+            invalid_cursor:
+              summary: INVALID_CURSOR — Con trỏ phân trang không hợp lệ.
+              value:
+                statusCode: 422
+                code: INVALID_CURSOR
+            validation_failed:
+              summary: VALIDATION_FAILED — Dữ liệu vi phạm ràng buộc schema hoặc quy tắc nghiệp vụ khác chưa có mã riêng.
+              value:
+                statusCode: 422
+                code: VALIDATION_FAILED
     '429':
       $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
     '500':
@@ -171,15 +224,68 @@ post:
             type: string
             example: /api/v1/messages
     '400':
-      $ref: ../../openapi.yaml#/components/responses/BadRequestError
+      $ref: ../../openapi.yaml#/components/responses/BadRequestBodyError
     '401':
       $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
     '403':
       $ref: ../../openapi.yaml#/components/responses/ForbiddenError
     '409':
-      $ref: ../../openapi.yaml#/components/responses/ConflictError
+      x-apidog-name: Conflict
+      description: Yêu cầu xung đột với trạng thái hiện tại hoặc dữ liệu đã tồn tại.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code]
+            properties:
+              statusCode:
+                type: integer
+                enum: [409]
+              code:
+                type: string
+                enum:
+                  - CONVERSATION_ARCHIVED
+                description: |-
+                  - CONVERSATION_ARCHIVED: Hội thoại đã được lưu trữ.
+          examples:
+            conversation_archived:
+              summary: CONVERSATION_ARCHIVED — Hội thoại đã được lưu trữ.
+              value:
+                statusCode: 409
+                code: CONVERSATION_ARCHIVED
     '422':
-      $ref: ../../openapi.yaml#/components/responses/ValidationError
+      x-apidog-name: Unprocessable Entity
+      description: Dữ liệu hợp lệ về cấu trúc nhưng vi phạm ràng buộc trường hoặc quy tắc nghiệp vụ.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code]
+            properties:
+              statusCode:
+                type: integer
+                enum: [422]
+              code:
+                type: string
+                enum:
+                  - MESSAGE_CONTENT_INVALID
+                  - VALIDATION_FAILED
+                description: |-
+                  - MESSAGE_CONTENT_INVALID: Nội dung tin nhắn không hợp lệ.
+                  - VALIDATION_FAILED: Dữ liệu vi phạm ràng buộc schema hoặc quy tắc nghiệp vụ khác chưa có mã riêng.
+          examples:
+            message_content_invalid:
+              summary: MESSAGE_CONTENT_INVALID — Nội dung tin nhắn không hợp lệ.
+              value:
+                statusCode: 422
+                code: MESSAGE_CONTENT_INVALID
+            validation_failed:
+              summary: VALIDATION_FAILED — Dữ liệu vi phạm ràng buộc schema hoặc quy tắc nghiệp vụ khác chưa có mã riêng.
+              value:
+                statusCode: 422
+                code: VALIDATION_FAILED
     '429':
       $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
     '500':

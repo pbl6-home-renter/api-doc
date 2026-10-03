@@ -682,63 +682,210 @@ components:
             $ref: './responses/wrappers/success-list.yaml'
     BadRequestError:
       x-apidog-name: Bad Request
-      description: >-
-        Yêu cầu không thể xử lý do JSON sai cú pháp, body không đúng cấu trúc
-        hoặc query/header không hợp lệ. Chỉ áp dụng các mã lỗi tương ứng với
-        đầu vào của endpoint. Lỗi validation các trường trong body trả HTTP 422
-        theo định nghĩa của endpoint.
+      description: Yêu cầu sai cú pháp hoặc sai cấu trúc đầu vào; lỗi giá trị từng trường trong body và quy tắc nghiệp vụ xem HTTP 422.
       content:
         application/json:
           schema:
             type: object
             additionalProperties: false
-            required:
-              - statusCode
-              - code
+            required: [statusCode, code]
             properties:
               statusCode:
                 type: integer
+                enum: [400]
+              code:
+                type: string
                 enum:
-                  - 400
+                  - INVALID_HEADER
+                  - BAD_REQUEST
+                description: |-
+                  - INVALID_HEADER: Header đầu vào sai định dạng; lỗi xác thực trả HTTP 401.
+                  - BAD_REQUEST: Yêu cầu không hợp lệ khác chưa có mã cụ thể.
+          examples:
+            invalid_header:
+              summary: INVALID_HEADER — Header đầu vào sai định dạng; lỗi xác thực trả HTTP 401.
+              value:
+                statusCode: 400
+                code: INVALID_HEADER
+            bad_request:
+              summary: BAD_REQUEST — Yêu cầu không hợp lệ khác chưa có mã cụ thể.
+              value:
+                statusCode: 400
+                code: BAD_REQUEST
+    BadRequestBodyError:
+      x-apidog-name: Bad Request
+      description: Yêu cầu sai cú pháp hoặc sai cấu trúc đầu vào; lỗi giá trị từng trường trong body và quy tắc nghiệp vụ xem HTTP 422.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code]
+            properties:
+              statusCode:
+                type: integer
+                enum: [400]
               code:
                 type: string
                 enum:
                   - INVALID_JSON
                   - INVALID_REQUEST_BODY
+                  - INVALID_HEADER
+                  - BAD_REQUEST
+                description: |-
+                  - INVALID_JSON: Body có nội dung nhưng JSON sai cú pháp.
+                  - INVALID_REQUEST_BODY: Thiếu body bắt buộc hoặc JSON cấp gốc không đúng cấu trúc; lỗi giá trị từng trường trả HTTP 422.
+                  - INVALID_HEADER: Header đầu vào sai định dạng; lỗi xác thực trả HTTP 401.
+                  - BAD_REQUEST: Yêu cầu không hợp lệ khác chưa có mã cụ thể.
+          examples:
+            invalid_json:
+              summary: INVALID_JSON — Body có nội dung nhưng JSON sai cú pháp.
+              value:
+                statusCode: 400
+                code: INVALID_JSON
+            invalid_request_body:
+              summary: INVALID_REQUEST_BODY — Thiếu body bắt buộc hoặc JSON cấp gốc không đúng cấu trúc; lỗi giá trị từng trường trả HTTP 422.
+              value:
+                statusCode: 400
+                code: INVALID_REQUEST_BODY
+            invalid_header:
+              summary: INVALID_HEADER — Header đầu vào sai định dạng; lỗi xác thực trả HTTP 401.
+              value:
+                statusCode: 400
+                code: INVALID_HEADER
+            bad_request:
+              summary: BAD_REQUEST — Yêu cầu không hợp lệ khác chưa có mã cụ thể.
+              value:
+                statusCode: 400
+                code: BAD_REQUEST
+    BadRequestQueryError:
+      x-apidog-name: Bad Request
+      description: Yêu cầu sai cú pháp hoặc sai cấu trúc đầu vào; lỗi giá trị từng trường trong body và quy tắc nghiệp vụ xem HTTP 422.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code]
+            properties:
+              statusCode:
+                type: integer
+                enum: [400]
+              code:
+                type: string
+                enum:
                   - INVALID_QUERY_PARAMETER
                   - INVALID_HEADER
                   - BAD_REQUEST
                 description: |-
-                  Mỗi response trả một code tương ứng với lỗi được phát hiện.
-                  - INVALID_JSON: body có nội dung nhưng không parse được thành JSON hợp lệ.
-                  - INVALID_REQUEST_BODY: thiếu body bắt buộc hoặc kiểu JSON ở cấp gốc không đúng với schema của endpoint; lỗi giá trị từng trường thuộc HTTP 422.
-                  - INVALID_QUERY_PARAMETER: query parameter sai kiểu, định dạng hoặc ngoài miền giá trị cho phép.
-                  - INVALID_HEADER: header đầu vào sai định dạng; lỗi xác thực thuộc HTTP 401, lỗi phân quyền thuộc HTTP 403.
-                  - BAD_REQUEST: yêu cầu không hợp lệ khác chưa có code cụ thể ở trên; không dùng thay lỗi validation HTTP 422.
-                example: INVALID_JSON
+                  - INVALID_QUERY_PARAMETER: Tham số query sai kiểu hoặc định dạng.
+                  - INVALID_HEADER: Header đầu vào sai định dạng; lỗi xác thực trả HTTP 401.
+                  - BAD_REQUEST: Yêu cầu không hợp lệ khác chưa có mã cụ thể.
           examples:
-            invalidJson:
-              summary: INVALID_JSON — JSON sai cú pháp
-              value:
-                statusCode: 400
-                code: INVALID_JSON
-            invalidRequestBody:
-              summary: INVALID_REQUEST_BODY — Thiếu body hoặc sai kiểu JSON cấp gốc
-              value:
-                statusCode: 400
-                code: INVALID_REQUEST_BODY
-            invalidQueryParameter:
-              summary: INVALID_QUERY_PARAMETER — Query sai kiểu, định dạng hoặc giá trị
+            invalid_query_parameter:
+              summary: INVALID_QUERY_PARAMETER — Tham số query sai kiểu hoặc định dạng.
               value:
                 statusCode: 400
                 code: INVALID_QUERY_PARAMETER
-            invalidHeader:
-              summary: INVALID_HEADER — Header đầu vào sai định dạng
+            invalid_header:
+              summary: INVALID_HEADER — Header đầu vào sai định dạng; lỗi xác thực trả HTTP 401.
               value:
                 statusCode: 400
                 code: INVALID_HEADER
-            badRequest:
-              summary: BAD_REQUEST — Yêu cầu không hợp lệ khác
+            bad_request:
+              summary: BAD_REQUEST — Yêu cầu không hợp lệ khác chưa có mã cụ thể.
+              value:
+                statusCode: 400
+                code: BAD_REQUEST
+    BadRequestPathError:
+      x-apidog-name: Bad Request
+      description: Yêu cầu sai cú pháp hoặc sai cấu trúc đầu vào; lỗi giá trị từng trường trong body và quy tắc nghiệp vụ xem HTTP 422.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code]
+            properties:
+              statusCode:
+                type: integer
+                enum: [400]
+              code:
+                type: string
+                enum:
+                  - INVALID_PATH_PARAMETER
+                  - INVALID_HEADER
+                  - BAD_REQUEST
+                description: |-
+                  - INVALID_PATH_PARAMETER: Tham số trên đường dẫn sai kiểu hoặc định dạng.
+                  - INVALID_HEADER: Header đầu vào sai định dạng; lỗi xác thực trả HTTP 401.
+                  - BAD_REQUEST: Yêu cầu không hợp lệ khác chưa có mã cụ thể.
+          examples:
+            invalid_path_parameter:
+              summary: INVALID_PATH_PARAMETER — Tham số trên đường dẫn sai kiểu hoặc định dạng.
+              value:
+                statusCode: 400
+                code: INVALID_PATH_PARAMETER
+            invalid_header:
+              summary: INVALID_HEADER — Header đầu vào sai định dạng; lỗi xác thực trả HTTP 401.
+              value:
+                statusCode: 400
+                code: INVALID_HEADER
+            bad_request:
+              summary: BAD_REQUEST — Yêu cầu không hợp lệ khác chưa có mã cụ thể.
+              value:
+                statusCode: 400
+                code: BAD_REQUEST
+    BadRequestBodyPathError:
+      x-apidog-name: Bad Request
+      description: Yêu cầu sai cú pháp hoặc sai cấu trúc đầu vào; lỗi giá trị từng trường trong body và quy tắc nghiệp vụ xem HTTP 422.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code]
+            properties:
+              statusCode:
+                type: integer
+                enum: [400]
+              code:
+                type: string
+                enum:
+                  - INVALID_JSON
+                  - INVALID_REQUEST_BODY
+                  - INVALID_PATH_PARAMETER
+                  - INVALID_HEADER
+                  - BAD_REQUEST
+                description: |-
+                  - INVALID_JSON: Body có nội dung nhưng JSON sai cú pháp.
+                  - INVALID_REQUEST_BODY: Thiếu body bắt buộc hoặc JSON cấp gốc không đúng cấu trúc; lỗi giá trị từng trường trả HTTP 422.
+                  - INVALID_PATH_PARAMETER: Tham số trên đường dẫn sai kiểu hoặc định dạng.
+                  - INVALID_HEADER: Header đầu vào sai định dạng; lỗi xác thực trả HTTP 401.
+                  - BAD_REQUEST: Yêu cầu không hợp lệ khác chưa có mã cụ thể.
+          examples:
+            invalid_json:
+              summary: INVALID_JSON — Body có nội dung nhưng JSON sai cú pháp.
+              value:
+                statusCode: 400
+                code: INVALID_JSON
+            invalid_request_body:
+              summary: INVALID_REQUEST_BODY — Thiếu body bắt buộc hoặc JSON cấp gốc không đúng cấu trúc; lỗi giá trị từng trường trả HTTP 422.
+              value:
+                statusCode: 400
+                code: INVALID_REQUEST_BODY
+            invalid_path_parameter:
+              summary: INVALID_PATH_PARAMETER — Tham số trên đường dẫn sai kiểu hoặc định dạng.
+              value:
+                statusCode: 400
+                code: INVALID_PATH_PARAMETER
+            invalid_header:
+              summary: INVALID_HEADER — Header đầu vào sai định dạng; lỗi xác thực trả HTTP 401.
+              value:
+                statusCode: 400
+                code: INVALID_HEADER
+            bad_request:
+              summary: BAD_REQUEST — Yêu cầu không hợp lệ khác chưa có mã cụ thể.
               value:
                 statusCode: 400
                 code: BAD_REQUEST
@@ -789,14 +936,27 @@ components:
             statusCode: 403
             code: FORBIDDEN
     NotFoundError:
-      description: Không tìm thấy tài nguyên (404)
+      x-apidog-name: Not Found
+      description: Không tìm thấy tài nguyên được yêu cầu
       content:
         application/json:
           schema:
-            $ref: './responses/wrappers/error-default.yaml'
+            type: object
+            additionalProperties: false
+            required: [statusCode, code]
+            properties:
+              statusCode:
+                type: integer
+                enum: [404]
+              code:
+                type: string
+                enum: [RESOURCE_NOT_FOUND]
+          example:
+            statusCode: 404
+            code: RESOURCE_NOT_FOUND
     ValidationError:
       x-apidog-name: Unprocessable Entity
-      description: Dữ liệu yêu cầu không hợp lệ
+      description: Dữ liệu hợp lệ về cấu trúc nhưng vi phạm ràng buộc trường hoặc quy tắc nghiệp vụ
       content:
         application/json:
           schema:
@@ -813,10 +973,10 @@ components:
               code:
                 type: string
                 enum:
-                  - UNPROCESSABLE_ENTITY
+                  - VALIDATION_FAILED
           example:
             statusCode: 422
-            code: UNPROCESSABLE_ENTITY
+            code: VALIDATION_FAILED
     CreatedResponse:
       x-apidog-name: Created
       description: Tài nguyên được tạo thành công
@@ -878,29 +1038,6 @@ components:
     NoContentResponse:
       x-apidog-name: No Content
       description: Yêu cầu thành công, không có response body
-    ConflictError:
-      x-apidog-name: Conflict
-      description: Yêu cầu xung đột với trạng thái hiện tại
-      content:
-        application/json:
-          schema:
-            type: object
-            additionalProperties: false
-            required:
-              - statusCode
-              - code
-            properties:
-              statusCode:
-                type: integer
-                enum:
-                  - 409
-              code:
-                type: string
-                enum:
-                  - CONFLICT
-          example:
-            statusCode: 409
-            code: CONFLICT
     TooManyRequestsError:
       x-apidog-name: Too Many Requests
       description: Vượt giới hạn tần suất gọi API

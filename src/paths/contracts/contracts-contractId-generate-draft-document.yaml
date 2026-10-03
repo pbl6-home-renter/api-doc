@@ -60,15 +60,70 @@ post:
             type: string
             example: /api/v1/media/{mediaId}
     '400':
-      $ref: ../../openapi.yaml#/components/responses/BadRequestError
+      $ref: ../../openapi.yaml#/components/responses/BadRequestBodyPathError
     '401':
       $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
     '403':
       $ref: ../../openapi.yaml#/components/responses/ForbiddenError
+    '404':
+      $ref: ../../openapi.yaml#/components/responses/NotFoundError
     '409':
-      $ref: ../../openapi.yaml#/components/responses/ConflictError
+      x-apidog-name: Conflict
+      description: Yêu cầu xung đột với trạng thái hiện tại hoặc dữ liệu đã tồn tại.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code]
+            properties:
+              statusCode:
+                type: integer
+                enum: [409]
+              code:
+                type: string
+                enum:
+                  - CONTRACT_NOT_DRAFT
+                description: |-
+                  - CONTRACT_NOT_DRAFT: Hợp đồng không ở trạng thái nháp.
+          examples:
+            contract_not_draft:
+              summary: CONTRACT_NOT_DRAFT — Hợp đồng không ở trạng thái nháp.
+              value:
+                statusCode: 409
+                code: CONTRACT_NOT_DRAFT
     '422':
-      $ref: ../../openapi.yaml#/components/responses/ValidationError
+      x-apidog-name: Unprocessable Entity
+      description: Dữ liệu hợp lệ về cấu trúc nhưng vi phạm ràng buộc trường hoặc quy tắc nghiệp vụ.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code]
+            properties:
+              statusCode:
+                type: integer
+                enum: [422]
+              code:
+                type: string
+                enum:
+                  - TEMPLATE_DATA_INVALID
+                  - VALIDATION_FAILED
+                description: |-
+                  - TEMPLATE_DATA_INVALID: Dữ liệu áp dụng mẫu hợp đồng không hợp lệ.
+                  - VALIDATION_FAILED: Dữ liệu vi phạm ràng buộc schema hoặc quy tắc nghiệp vụ khác chưa có mã riêng.
+          examples:
+            template_data_invalid:
+              summary: TEMPLATE_DATA_INVALID — Dữ liệu áp dụng mẫu hợp đồng không hợp lệ.
+              value:
+                statusCode: 422
+                code: TEMPLATE_DATA_INVALID
+            validation_failed:
+              summary: VALIDATION_FAILED — Dữ liệu vi phạm ràng buộc schema hoặc quy tắc nghiệp vụ khác chưa có mã riêng.
+              value:
+                statusCode: 422
+                code: VALIDATION_FAILED
     '429':
       $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
     '500':

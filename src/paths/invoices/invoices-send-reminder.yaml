@@ -25,7 +25,7 @@ post:
         example:
           invoiceIds:
           - 3fa85f64-5717-4562-b3fc-2c963f66afa6
-          - 3fa85f64-5717-4562-b3fc-2c963f66afa6
+          - 2bd82ee7-a74b-421f-bc38-c9f5e96c9065
           channel: push
   responses:
     '202':
@@ -62,15 +62,75 @@ post:
               - invoiceId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
                 code: INVOICE_NOT_OVERDUE
     '400':
-      $ref: ../../openapi.yaml#/components/responses/BadRequestError
+      $ref: ../../openapi.yaml#/components/responses/BadRequestBodyError
     '401':
       $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
     '403':
       $ref: ../../openapi.yaml#/components/responses/ForbiddenError
     '409':
-      $ref: ../../openapi.yaml#/components/responses/ConflictError
+      x-apidog-name: Conflict
+      description: Yêu cầu xung đột với trạng thái hiện tại hoặc dữ liệu đã tồn tại.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code]
+            properties:
+              statusCode:
+                type: integer
+                enum: [409]
+              code:
+                type: string
+                enum:
+                  - IDEMPOTENCY_KEY_REUSED
+                description: |-
+                  - IDEMPOTENCY_KEY_REUSED: Idempotency-Key đã dùng cho yêu cầu khác.
+          examples:
+            idempotency_key_reused:
+              summary: IDEMPOTENCY_KEY_REUSED — Idempotency-Key đã dùng cho yêu cầu khác.
+              value:
+                statusCode: 409
+                code: IDEMPOTENCY_KEY_REUSED
     '422':
-      $ref: ../../openapi.yaml#/components/responses/ValidationError
+      x-apidog-name: Unprocessable Entity
+      description: Dữ liệu hợp lệ về cấu trúc nhưng vi phạm ràng buộc trường hoặc quy tắc nghiệp vụ.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code]
+            properties:
+              statusCode:
+                type: integer
+                enum: [422]
+              code:
+                type: string
+                enum:
+                  - INVOICE_IDS_REQUIRED
+                  - INVOICE_IDS_TOO_LARGE
+                  - VALIDATION_FAILED
+                description: |-
+                  - INVOICE_IDS_REQUIRED: Danh sách mã hóa đơn là bắt buộc.
+                  - INVOICE_IDS_TOO_LARGE: Danh sách mã hóa đơn vượt giới hạn.
+                  - VALIDATION_FAILED: Dữ liệu vi phạm ràng buộc schema hoặc quy tắc nghiệp vụ khác chưa có mã riêng.
+          examples:
+            invoice_ids_required:
+              summary: INVOICE_IDS_REQUIRED — Danh sách mã hóa đơn là bắt buộc.
+              value:
+                statusCode: 422
+                code: INVOICE_IDS_REQUIRED
+            invoice_ids_too_large:
+              summary: INVOICE_IDS_TOO_LARGE — Danh sách mã hóa đơn vượt giới hạn.
+              value:
+                statusCode: 422
+                code: INVOICE_IDS_TOO_LARGE
+            validation_failed:
+              summary: VALIDATION_FAILED — Dữ liệu vi phạm ràng buộc schema hoặc quy tắc nghiệp vụ khác chưa có mã riêng.
+              value:
+                statusCode: 422
+                code: VALIDATION_FAILED
     '429':
       $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
     '500':

@@ -111,11 +111,41 @@ patch:
                 accountNumber: '**43210'
                 accountName: LE VAN AN
     '400':
-      $ref: ../../openapi.yaml#/components/responses/BadRequestError
+      $ref: ../../openapi.yaml#/components/responses/BadRequestBodyError
     '401':
       $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
     '409':
-      $ref: ../../openapi.yaml#/components/responses/ConflictError
+      x-apidog-name: Conflict
+      description: Số điện thoại trùng hoặc tài khoản nhận tiền đang được sử dụng.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code]
+            properties:
+              statusCode:
+                type: integer
+                enum: [409]
+              code:
+                type: string
+                enum:
+                  - DUPLICATE_PHONE
+                  - PAYOUT_ACCOUNT_IN_USE
+                description: |-
+                  - DUPLICATE_PHONE: Số điện thoại đã được sử dụng.
+                  - PAYOUT_ACCOUNT_IN_USE: Không thể đổi tài khoản nhận tiền khi còn hóa đơn pending.
+          examples:
+            duplicate_phone:
+              summary: DUPLICATE_PHONE — Số điện thoại đã được sử dụng.
+              value:
+                statusCode: 409
+                code: DUPLICATE_PHONE
+            payout_account_in_use:
+              summary: PAYOUT_ACCOUNT_IN_USE — Không thể đổi tài khoản nhận tiền khi còn hóa đơn pending.
+              value:
+                statusCode: 409
+                code: PAYOUT_ACCOUNT_IN_USE
     '422':
       $ref: ../../openapi.yaml#/components/responses/ValidationError
     '429':

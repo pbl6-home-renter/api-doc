@@ -55,7 +55,7 @@ post:
               lockReason: Spam listing
               lockedAt: '2026-09-23T11:55:00.000Z'
     '400':
-      $ref: ../../openapi.yaml#/components/responses/BadRequestError
+      $ref: ../../openapi.yaml#/components/responses/BadRequestBodyPathError
     '401':
       $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
     '403':
@@ -63,9 +63,62 @@ post:
     '404':
       $ref: ../../openapi.yaml#/components/responses/NotFoundError
     '409':
-      $ref: ../../openapi.yaml#/components/responses/ConflictError
+      x-apidog-name: Conflict
+      description: Yêu cầu xung đột với trạng thái hiện tại hoặc dữ liệu đã tồn tại.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code]
+            properties:
+              statusCode:
+                type: integer
+                enum: [409]
+              code:
+                type: string
+                enum:
+                  - USER_ALREADY_LOCKED
+                description: |-
+                  - USER_ALREADY_LOCKED: Tài khoản đã bị khóa.
+          examples:
+            user_already_locked:
+              summary: USER_ALREADY_LOCKED — Tài khoản đã bị khóa.
+              value:
+                statusCode: 409
+                code: USER_ALREADY_LOCKED
     '422':
-      $ref: ../../openapi.yaml#/components/responses/ValidationError
+      x-apidog-name: Unprocessable Entity
+      description: Lý do khóa tài khoản không hợp lệ.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code]
+            properties:
+              statusCode:
+                type: integer
+                enum: [422]
+              code:
+                type: string
+                enum:
+                  - LOCK_REASON_REQUIRED
+                  - VALIDATION_FAILED
+                description: |-
+                  - LOCK_REASON_REQUIRED: Thiếu lockReason hoặc lockReason là null.
+                  - VALIDATION_FAILED: Giá trị lockReason vi phạm ràng buộc khác.
+          examples:
+            lock_reason_required:
+              summary: LOCK_REASON_REQUIRED — Thiếu lockReason hoặc lockReason là null.
+              value:
+                statusCode: 422
+                code: LOCK_REASON_REQUIRED
+            validation_failed:
+              summary: VALIDATION_FAILED — Giá trị lockReason vi phạm ràng buộc khác.
+              value:
+                statusCode: 422
+                code: VALIDATION_FAILED
     '429':
       $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
     '500':
