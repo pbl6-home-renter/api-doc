@@ -1,0 +1,90 @@
+post:
+  tags:
+  - Operation
+  x-apidog-folder: IssueReport
+  operationId: postIssuesIssueidCancel
+  security:
+    - BearerAuth: []
+  summary: Cancel issue report
+  description: 'tenant. Huỷ báo cáo sự cố. Lỗi nghiệp vụ: 404 NOT FOUND · 403 FORBIDDEN · 422 CANNOT CANCEL RESOLVED
+    ISSUE.'
+  parameters:
+  - name: issueId
+    in: path
+    required: true
+    schema:
+      type: string
+      format: uuid
+  responses:
+    '200':
+      description: 'Thành công: Huỷ báo cáo sự cố.'
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required:
+            - statusCode
+            - code
+            - data
+            properties:
+              statusCode:
+                type: integer
+                enum:
+                - 200
+              code:
+                type: string
+                enum:
+                - ISSUE_CANCELLED
+              data:
+                $ref: ../../openapi.yaml#/components/schemas/IssueReportCancelResponseDto
+          example:
+            statusCode: 200
+            code: ISSUE_CANCELLED
+            data:
+              id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+              status: cancel
+    '400':
+      $ref: ../../openapi.yaml#/components/responses/BadRequestPathError
+    '401':
+      $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
+    '403':
+      $ref: ../../openapi.yaml#/components/responses/ForbiddenError
+    '404':
+      $ref: ../../openapi.yaml#/components/responses/NotFoundError
+    '422':
+      x-apidog-name: Unprocessable Entity
+      description: Dữ liệu hợp lệ về cấu trúc nhưng vi phạm ràng buộc trường hoặc quy tắc nghiệp vụ.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code]
+            properties:
+              statusCode:
+                type: integer
+                enum: [422]
+              code:
+                type: string
+                enum:
+                  - CANNOT_CANCEL_RESOLVED_ISSUE
+                  - VALIDATION_FAILED
+                description: |-
+                  - CANNOT_CANCEL_RESOLVED_ISSUE: Không thể hủy sự cố đã xử lý xong.
+                  - VALIDATION_FAILED: Dữ liệu vi phạm ràng buộc schema hoặc quy tắc nghiệp vụ khác chưa có mã riêng.
+          examples:
+            cannot_cancel_resolved_issue:
+              summary: CANNOT_CANCEL_RESOLVED_ISSUE — Không thể hủy sự cố đã xử lý xong.
+              value:
+                statusCode: 422
+                code: CANNOT_CANCEL_RESOLVED_ISSUE
+            validation_failed:
+              summary: VALIDATION_FAILED — Dữ liệu vi phạm ràng buộc schema hoặc quy tắc nghiệp vụ khác chưa có mã riêng.
+              value:
+                statusCode: 422
+                code: VALIDATION_FAILED
+    '429':
+      $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
+    '500':
+      $ref: ../../openapi.yaml#/components/responses/InternalServerError

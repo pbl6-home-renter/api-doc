@@ -1,0 +1,262 @@
+get:
+  tags:
+  - Billing
+  x-apidog-folder: BillingSetting
+  operationId: getBillingSettings
+  security:
+    - BearerAuth: []
+  summary: List billing settings
+  description: 'landlord. Liệt kê cài đặt thanh toán và nhắc hóa đơn. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 VALIDATION
+    FAILED.'
+  parameters:
+  - name: filter
+    in: query
+    required: false
+    style: deepObject
+    explode: true
+    description: Bộ lọc được endpoint hỗ trợ.
+    schema:
+      type: object
+      additionalProperties: false
+      properties:
+        scope:
+          type: string
+        roomId:
+          type: string
+          format: uuid
+  - name: pageSize
+    in: query
+    schema:
+      type: integer
+      minimum: 1
+      maximum: 100
+      default: 20
+  - name: pageNo
+    in: query
+    schema:
+      type: integer
+      minimum: 1
+      default: 1
+  responses:
+    '200':
+      description: 'Thành công: Liệt kê cài đặt thanh toán và nhắc hóa đơn.'
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required:
+            - statusCode
+            - code
+            - data
+            - pagination
+            properties:
+              statusCode:
+                type: integer
+                enum:
+                - 200
+              code:
+                type: string
+                enum:
+                - BILLING_SETTINGS_FETCHED
+              data:
+                type: array
+                items:
+                  $ref: ../../openapi.yaml#/components/schemas/BillingSettingListResponseDto
+              pagination:
+                type: object
+                additionalProperties: false
+                required:
+                - type
+                - pageNo
+                - pageSize
+                - totalItems
+                - totalPages
+                - hasNextPage
+                - hasPreviousPage
+                properties:
+                  type:
+                    type: string
+                    enum:
+                    - offset
+                  pageNo:
+                    type: integer
+                    minimum: 1
+                  pageSize:
+                    type: integer
+                    minimum: 1
+                    maximum: 100
+                  totalItems:
+                    type: integer
+                    minimum: 0
+                  totalPages:
+                    type: integer
+                    minimum: 0
+                  hasNextPage:
+                    type: boolean
+                  hasPreviousPage:
+                    type: boolean
+          example:
+            statusCode: 200
+            code: BILLING_SETTINGS_FETCHED
+            data:
+            - id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+              scope: room
+              roomId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+              dueDays: 5
+              remindDays: 3
+              botEnabled: true
+              isActive: true
+            pagination:
+              type: offset
+              pageNo: 1
+              pageSize: 20
+              totalItems: 1
+              totalPages: 1
+              hasNextPage: false
+              hasPreviousPage: false
+    '400':
+      $ref: ../../openapi.yaml#/components/responses/BadRequestQueryError
+    '401':
+      $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
+    '403':
+      $ref: ../../openapi.yaml#/components/responses/ForbiddenError
+    '422':
+      $ref: ../../openapi.yaml#/components/responses/ValidationError
+    '429':
+      $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
+    '500':
+      $ref: ../../openapi.yaml#/components/responses/InternalServerError
+post:
+  tags:
+  - Billing
+  x-apidog-folder: BillingSetting
+  operationId: postBillingSettings
+  security:
+    - BearerAuth: []
+  summary: Create billing setting
+  description: 'landlord. Tạo một cài đặt hóa đơn. Lỗi nghiệp vụ: 409 ACTIVE SETTING EXISTS · 422 DUE DAYS INVALID
+    · 403 FORBIDDEN.'
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: ../../openapi.yaml#/components/schemas/BillingSettingCreateRequestDto
+        example:
+          scope: room
+          roomId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+          dueDays: 5
+          remindDays: 3
+          botEnabled: true
+          paymentDueDay: 5
+          debtScanEnabled: true
+          gracePeriodDays: 3
+          overdueReminderIntervalDays: 3
+          reminderChannels:
+          - APP_PUSH
+          - ZALO
+  responses:
+    '201':
+      description: 'Thành công: Tạo một cài đặt hóa đơn.'
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required:
+            - statusCode
+            - code
+            - data
+            properties:
+              statusCode:
+                type: integer
+                enum:
+                - 201
+              code:
+                type: string
+                enum:
+                - BILLING_SETTING_CREATED
+              data:
+                $ref: ../../openapi.yaml#/components/schemas/BillingSettingCreateResponseDto
+          example:
+            statusCode: 201
+            code: BILLING_SETTING_CREATED
+            data:
+              id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+              dueDays: 5
+              remindDays: 3
+              botEnabled: true
+      headers:
+        Location:
+          description: Đường dẫn tài nguyên được tạo.
+          schema:
+            type: string
+            example: /api/v1/billing-settings
+    '400':
+      $ref: ../../openapi.yaml#/components/responses/BadRequestBodyError
+    '401':
+      $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
+    '403':
+      $ref: ../../openapi.yaml#/components/responses/ForbiddenError
+    '409':
+      x-apidog-name: Conflict
+      description: Yêu cầu xung đột với trạng thái hiện tại hoặc dữ liệu đã tồn tại.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code]
+            properties:
+              statusCode:
+                type: integer
+                enum: [409]
+              code:
+                type: string
+                enum:
+                  - ACTIVE_SETTING_EXISTS
+                description: |-
+                  - ACTIVE_SETTING_EXISTS: Đã có cấu hình hóa đơn đang hiệu lực.
+          examples:
+            active_setting_exists:
+              summary: ACTIVE_SETTING_EXISTS — Đã có cấu hình hóa đơn đang hiệu lực.
+              value:
+                statusCode: 409
+                code: ACTIVE_SETTING_EXISTS
+    '422':
+      x-apidog-name: Unprocessable Entity
+      description: Dữ liệu hợp lệ về cấu trúc nhưng vi phạm ràng buộc trường hoặc quy tắc nghiệp vụ.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code]
+            properties:
+              statusCode:
+                type: integer
+                enum: [422]
+              code:
+                type: string
+                enum:
+                  - DUE_DAYS_INVALID
+                  - VALIDATION_FAILED
+                description: |-
+                  - DUE_DAYS_INVALID: Số ngày đến hạn không hợp lệ.
+                  - VALIDATION_FAILED: Dữ liệu vi phạm ràng buộc schema hoặc quy tắc nghiệp vụ khác chưa có mã riêng.
+          examples:
+            due_days_invalid:
+              summary: DUE_DAYS_INVALID — Số ngày đến hạn không hợp lệ.
+              value:
+                statusCode: 422
+                code: DUE_DAYS_INVALID
+            validation_failed:
+              summary: VALIDATION_FAILED — Dữ liệu vi phạm ràng buộc schema hoặc quy tắc nghiệp vụ khác chưa có mã riêng.
+              value:
+                statusCode: 422
+                code: VALIDATION_FAILED
+    '429':
+      $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
+    '500':
+      $ref: ../../openapi.yaml#/components/responses/InternalServerError

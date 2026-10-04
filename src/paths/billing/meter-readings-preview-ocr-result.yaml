@@ -1,0 +1,100 @@
+post:
+  tags:
+  - Billing
+  x-apidog-folder: MeterReading
+  operationId: postMeterReadingsPreviewOcrResult
+  security:
+    - BearerAuth: []
+  summary: Preview OCR meter reading result
+  description: 'landlord. Xem trước kết quả chuẩn hoá OCR. Lỗi nghiệp vụ: 422 OCR RESULT INVALID · 422 EVIDENCE
+    REQUIRED · 403 FORBIDDEN.'
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: ../../openapi.yaml#/components/schemas/MeterReadingPreviewOcrRequestDto
+        example:
+          roomId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+          mediaId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+          type: electricity
+  responses:
+    '200':
+      description: 'Thành công: Xem trước kết quả chuẩn hoá OCR.'
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required:
+            - statusCode
+            - code
+            - data
+            properties:
+              statusCode:
+                type: integer
+                enum:
+                - 200
+              code:
+                type: string
+                enum:
+                - OCR_RESULT_PREVIEWED
+              data:
+                $ref: ../../openapi.yaml#/components/schemas/MeterReadingPreviewOcrResponseDto
+          example:
+            statusCode: 200
+            code: OCR_RESULT_PREVIEWED
+            data:
+              type: electricity
+              previousReading: '12680.5'
+              currentReading: '12850.5'
+              requiresConfirmation: true
+    '400':
+      $ref: ../../openapi.yaml#/components/responses/BadRequestBodyError
+    '401':
+      $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
+    '403':
+      $ref: ../../openapi.yaml#/components/responses/ForbiddenError
+    '422':
+      x-apidog-name: Unprocessable Entity
+      description: Dữ liệu hợp lệ về cấu trúc nhưng vi phạm ràng buộc trường hoặc quy tắc nghiệp vụ.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code]
+            properties:
+              statusCode:
+                type: integer
+                enum: [422]
+              code:
+                type: string
+                enum:
+                  - OCR_RESULT_INVALID
+                  - EVIDENCE_REQUIRED
+                  - VALIDATION_FAILED
+                description: |-
+                  - OCR_RESULT_INVALID: Kết quả nhận dạng chỉ số không hợp lệ.
+                  - EVIDENCE_REQUIRED: Thiếu bằng chứng bắt buộc.
+                  - VALIDATION_FAILED: Dữ liệu vi phạm ràng buộc schema hoặc quy tắc nghiệp vụ khác chưa có mã riêng.
+          examples:
+            ocr_result_invalid:
+              summary: OCR_RESULT_INVALID — Kết quả nhận dạng chỉ số không hợp lệ.
+              value:
+                statusCode: 422
+                code: OCR_RESULT_INVALID
+            evidence_required:
+              summary: EVIDENCE_REQUIRED — Thiếu bằng chứng bắt buộc.
+              value:
+                statusCode: 422
+                code: EVIDENCE_REQUIRED
+            validation_failed:
+              summary: VALIDATION_FAILED — Dữ liệu vi phạm ràng buộc schema hoặc quy tắc nghiệp vụ khác chưa có mã riêng.
+              value:
+                statusCode: 422
+                code: VALIDATION_FAILED
+    '429':
+      $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
+    '500':
+      $ref: ../../openapi.yaml#/components/responses/InternalServerError

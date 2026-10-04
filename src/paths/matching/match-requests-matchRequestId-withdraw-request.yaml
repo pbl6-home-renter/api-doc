@@ -1,0 +1,91 @@
+post:
+  tags:
+  - Matching
+  x-apidog-folder: MatchRequest
+  operationId: postMatchRequestsMatchrequestidWithdrawRequest
+  security:
+    - BearerAuth: []
+  summary: Withdraw match request
+  description: 'tenant. Người gửi rút yêu cầu. Lỗi nghiệp vụ: 403 FORBIDDEN · 404 NOT FOUND · 409 NOT REQUESTER
+    · 409 MATCH REQUEST NOT PENDING.'
+  parameters:
+  - name: matchRequestId
+    in: path
+    required: true
+    schema:
+      type: string
+      format: uuid
+  responses:
+    '200':
+      description: 'Thành công: Người gửi rút yêu cầu.'
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required:
+            - statusCode
+            - code
+            - data
+            properties:
+              statusCode:
+                type: integer
+                enum:
+                - 200
+              code:
+                type: string
+                enum:
+                - MATCH_REQUEST_WITHDRAWN
+              data:
+                $ref: ../../openapi.yaml#/components/schemas/MatchRequestWithdrawResponseDto
+          example:
+            statusCode: 200
+            code: MATCH_REQUEST_WITHDRAWN
+            data:
+              id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+              status: withdrawn
+              respondedAt: '2026-09-27T03:10:00.000Z'
+    '400':
+      $ref: ../../openapi.yaml#/components/responses/BadRequestPathError
+    '401':
+      $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
+    '403':
+      $ref: ../../openapi.yaml#/components/responses/ForbiddenError
+    '404':
+      $ref: ../../openapi.yaml#/components/responses/NotFoundError
+    '409':
+      x-apidog-name: Conflict
+      description: Yêu cầu không thể rút do người gọi hoặc trạng thái hiện tại.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code]
+            properties:
+              statusCode:
+                type: integer
+                enum: [409]
+              code:
+                type: string
+                enum:
+                  - NOT_REQUESTER
+                  - MATCH_REQUEST_NOT_PENDING
+                description: |-
+                  - NOT_REQUESTER: Người gọi không phải người gửi yêu cầu.
+                  - MATCH_REQUEST_NOT_PENDING: Yêu cầu tìm bạn ở không còn chờ xử lý.
+          examples:
+            not_requester:
+              summary: NOT_REQUESTER — Người gọi không phải người gửi yêu cầu.
+              value:
+                statusCode: 409
+                code: NOT_REQUESTER
+            match_request_not_pending:
+              summary: MATCH_REQUEST_NOT_PENDING — Yêu cầu tìm bạn ở không còn chờ xử lý.
+              value:
+                statusCode: 409
+                code: MATCH_REQUEST_NOT_PENDING
+    '429':
+      $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
+    '500':
+      $ref: ../../openapi.yaml#/components/responses/InternalServerError

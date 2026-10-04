@@ -47,13 +47,13 @@ properties:
         evidenceMediaId:
           type: string
           format: uuid
-          nullable: true
-          description: Định danh ảnh chụp công tơ đính kèm làm bằng chứng đối chiếu
+          description: Định danh ảnh chụp công tơ bắt buộc để đối chiếu
           example: "48fae08f-e1a5-48b4-9c02-e2513470ff42"
       required:
         - roomId
         - type
         - currentReading
+        - evidenceMediaId
 
 required:
   - buildingId

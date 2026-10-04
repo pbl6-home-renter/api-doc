@@ -1,0 +1,61 @@
+get:
+  tags:
+  - Chat
+  x-apidog-folder: Conversation
+  operationId: getConversationsConversationid
+  security:
+    - BearerAuth: []
+  summary: Get conversation details
+  description: 'tenant, landlord. Đọc chi tiết hội thoại. Lỗi nghiệp vụ: 403 FORBIDDEN · 404 NOT FOUND.'
+  parameters:
+  - name: conversationId
+    in: path
+    required: true
+    schema:
+      type: string
+      format: uuid
+  responses:
+    '200':
+      description: 'Thành công: Đọc chi tiết hội thoại.'
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required:
+            - statusCode
+            - code
+            - data
+            properties:
+              statusCode:
+                type: integer
+                enum:
+                - 200
+              code:
+                type: string
+                enum:
+                - CONVERSATION_FETCHED
+              data:
+                $ref: ../../openapi.yaml#/components/schemas/ConversationDetailResponseDto
+          example:
+            statusCode: 200
+            code: CONVERSATION_FETCHED
+            data:
+              id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+              type: room
+              roomId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+              contractId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+              title: Phòng P.302
+              unreadCount: 2
+    '400':
+      $ref: ../../openapi.yaml#/components/responses/BadRequestPathError
+    '401':
+      $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
+    '403':
+      $ref: ../../openapi.yaml#/components/responses/ForbiddenError
+    '404':
+      $ref: ../../openapi.yaml#/components/responses/NotFoundError
+    '429':
+      $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
+    '500':
+      $ref: ../../openapi.yaml#/components/responses/InternalServerError

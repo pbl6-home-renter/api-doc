@@ -1,0 +1,88 @@
+get:
+  tags:
+  - Billing
+  x-apidog-folder: Invoice
+  operationId: getOverdueDebts
+  security:
+    - BearerAuth: []
+  summary: List overdue debts
+  description: "landlord. Danh sách các phòng nợ tiền quá hạn, mức độ quá hạn và lịch sử đôn đốc nợ. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 VALIDATION FAILED."
+  parameters:
+  - name: buildingId
+    in: query
+    required: false
+    description: Lọc danh sách công nợ theo tòa nhà.
+    schema:
+      type: string
+      format: uuid
+  - name: minDaysOverdue
+    in: query
+    required: false
+    description: "Số ngày quá hạn tối thiểu (VD: 3 ngày, 7 ngày)."
+    schema:
+      type: integer
+      minimum: 1
+      example: 3
+  responses:
+    "200":
+      description: "Thành công: Lấy danh sách công nợ quá hạn."
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required:
+            - statusCode
+            - code
+            - data
+            properties:
+              statusCode:
+                type: integer
+                enum:
+                - 200
+              code:
+                type: string
+                enum:
+                - DEBTS_OVERDUE_FETCHED
+              data:
+                $ref: ../../openapi.yaml#/components/schemas/OverdueDebtListResponseDto
+    "400":
+      $ref: ../../openapi.yaml#/components/responses/BadRequestQueryError
+    "401":
+      $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
+    "403":
+      $ref: ../../openapi.yaml#/components/responses/ForbiddenError
+    '422':
+      x-apidog-name: Unprocessable Entity
+      description: Dữ liệu hợp lệ về cấu trúc nhưng vi phạm quy tắc của endpoint.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code]
+            properties:
+              statusCode:
+                type: integer
+                enum: [422]
+              code:
+                type: string
+                enum:
+                  - INVALID_MIN_DAYS_OVERDUE
+                  - VALIDATION_FAILED
+                description: |-
+                  - INVALID_MIN_DAYS_OVERDUE: minDaysOverdue phải là số nguyên dương.
+                  - VALIDATION_FAILED: Bộ lọc công nợ vi phạm ràng buộc khác.
+          examples:
+            invalid_min_days_overdue:
+              summary: INVALID_MIN_DAYS_OVERDUE — minDaysOverdue phải là số nguyên dương.
+              value:
+                statusCode: 422
+                code: INVALID_MIN_DAYS_OVERDUE
+            validation_failed:
+              summary: VALIDATION_FAILED — Bộ lọc công nợ vi phạm ràng buộc khác.
+              value:
+                statusCode: 422
+                code: VALIDATION_FAILED
+    '500':
+      $ref: ../../openapi.yaml#/components/responses/InternalServerError

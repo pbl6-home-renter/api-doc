@@ -1,0 +1,146 @@
+get:
+  tags:
+  - Notification
+  x-apidog-folder: NotificationPreference
+  operationId: getMeNotificationPreference
+  security:
+    - BearerAuth: []
+  summary: Get notification preferences
+  description: 'tenant, landlord, admin. Đọc tuỳ biến thông báo. Lỗi nghiệp vụ: 401 INVALID TOKEN.'
+  responses:
+    '200':
+      description: 'Thành công: Đọc tuỳ biến thông báo.'
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required:
+            - statusCode
+            - code
+            - data
+            properties:
+              statusCode:
+                type: integer
+                enum:
+                - 200
+              code:
+                type: string
+                enum:
+                - NOTIFICATION_PREFERENCES_FETCHED
+              data:
+                type: array
+                items:
+                  $ref: ../../openapi.yaml#/components/schemas/NotificationPreferenceDetailResponseDto
+          example:
+            statusCode: 200
+            code: NOTIFICATION_PREFERENCES_FETCHED
+            data:
+            - type: invoice
+              enabled: true
+            - type: chat
+              enabled: true
+            - type: issue
+              enabled: true
+            - type: match
+              enabled: true
+            - type: account
+              enabled: true
+    '400':
+      $ref: ../../openapi.yaml#/components/responses/BadRequestError
+    '401':
+      $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
+    '429':
+      $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
+    '500':
+      $ref: ../../openapi.yaml#/components/responses/InternalServerError
+put:
+  tags:
+  - Notification
+  x-apidog-folder: NotificationPreference
+  operationId: putMeNotificationPreference
+  security:
+    - BearerAuth: []
+  summary: Update notification preferences
+  description: 'tenant, landlord, admin. Thay toàn bộ tuỳ biến thông báo. Lỗi nghiệp vụ: 422 INVALID NOTIFICATION
+    TYPE · 422 VALIDATION FAILED.'
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: ../../openapi.yaml#/components/schemas/NotificationPreferenceUpdateRequestDto
+        example:
+          preferences:
+          - type: invoice
+            enabled: true
+          - type: chat
+            enabled: false
+  responses:
+    '200':
+      description: 'Thành công: Thay toàn bộ tuỳ biến thông báo.'
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required:
+            - statusCode
+            - code
+            - data
+            properties:
+              statusCode:
+                type: integer
+                enum:
+                - 200
+              code:
+                type: string
+                enum:
+                - NOTIFICATION_PREFERENCES_UPDATED
+              data:
+                $ref: ../../openapi.yaml#/components/schemas/NotificationPreferenceUpdateResponseDto
+          example:
+            statusCode: 200
+            code: NOTIFICATION_PREFERENCES_UPDATED
+            data:
+              updatedAt: '2026-09-23T11:45:00.000Z'
+    '400':
+      $ref: ../../openapi.yaml#/components/responses/BadRequestBodyError
+    '401':
+      $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
+    '422':
+      x-apidog-name: Unprocessable Entity
+      description: Dữ liệu hợp lệ về cấu trúc nhưng vi phạm ràng buộc trường hoặc quy tắc nghiệp vụ.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code]
+            properties:
+              statusCode:
+                type: integer
+                enum: [422]
+              code:
+                type: string
+                enum:
+                  - INVALID_NOTIFICATION_TYPE
+                  - VALIDATION_FAILED
+                description: |-
+                  - INVALID_NOTIFICATION_TYPE: Loại thông báo không hợp lệ.
+                  - VALIDATION_FAILED: Dữ liệu vi phạm ràng buộc schema hoặc quy tắc nghiệp vụ khác chưa có mã riêng.
+          examples:
+            invalid_notification_type:
+              summary: INVALID_NOTIFICATION_TYPE — Loại thông báo không hợp lệ.
+              value:
+                statusCode: 422
+                code: INVALID_NOTIFICATION_TYPE
+            validation_failed:
+              summary: VALIDATION_FAILED — Dữ liệu vi phạm ràng buộc schema hoặc quy tắc nghiệp vụ khác chưa có mã riêng.
+              value:
+                statusCode: 422
+                code: VALIDATION_FAILED
+    '429':
+      $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
+    '500':
+      $ref: ../../openapi.yaml#/components/responses/InternalServerError

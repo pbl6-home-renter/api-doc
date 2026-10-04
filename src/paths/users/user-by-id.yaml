@@ -1,0 +1,196 @@
+get:
+  tags:
+  - User
+  x-apidog-folder: User
+  operationId: getUserById
+  security:
+    - BearerAuth: []
+  summary: Get user
+  description: Chỉ admin; yêu cầu access token. Đọc hồ sơ và tổng quan vận hành của một người dùng.
+  parameters:
+  - name: userId
+    in: path
+    required: true
+    description: UUID của người dùng.
+    schema:
+      type: string
+      format: uuid
+  responses:
+    '200':
+      description: User fetched
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required:
+            - statusCode
+            - code
+            - data
+            properties:
+              statusCode:
+                type: integer
+                enum:
+                - 200
+              code:
+                type: string
+                enum:
+                - USER_FETCHED
+              data:
+                $ref: ../../openapi.yaml#/components/schemas/UserDetailResponseDto
+          example:
+            statusCode: 200
+            code: USER_FETCHED
+            data:
+              id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+              name: Lê Văn An
+              phone: '0901234567'
+              email: lan@example.com
+              role: tenant
+              status: active
+              identityVerified: false
+              buildingCount: 0
+              activeContractCount: 1
+              createdAt: '2026-09-01T08:00:00.000Z'
+    '400':
+      $ref: ../../openapi.yaml#/components/responses/BadRequestPathError
+    '401':
+      $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
+    '403':
+      $ref: ../../openapi.yaml#/components/responses/ForbiddenError
+    '404':
+      $ref: ../../openapi.yaml#/components/responses/NotFoundError
+    '429':
+      $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
+    '500':
+      $ref: ../../openapi.yaml#/components/responses/InternalServerError
+patch:
+  tags:
+  - User
+  x-apidog-folder: User
+  operationId: updateUserById
+  security:
+    - BearerAuth: []
+  summary: Update user
+  description: Chỉ admin; yêu cầu access token. Sửa name và phone theo UserUpdateRequestDto; không thay
+    đổi role hoặc status.
+  parameters:
+  - name: userId
+    in: path
+    required: true
+    description: UUID của người dùng.
+    schema:
+      type: string
+      format: uuid
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: ../../openapi.yaml#/components/schemas/UserUpdateRequestDto
+        example:
+          name: Nguyễn Văn An
+          phone: '0901234567'
+  responses:
+    '200':
+      description: User updated
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required:
+            - statusCode
+            - code
+            - data
+            properties:
+              statusCode:
+                type: integer
+                enum:
+                - 200
+              code:
+                type: string
+                enum:
+                - USER_UPDATED
+              data:
+                $ref: ../../openapi.yaml#/components/schemas/UserUpdateResponseDto
+          example:
+            statusCode: 200
+            code: USER_UPDATED
+            data:
+              userId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+              name: Nguyễn Văn An
+              phone: '0901234567'
+              status: active
+    '400':
+      $ref: ../../openapi.yaml#/components/responses/BadRequestBodyPathError
+    '401':
+      $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
+    '403':
+      $ref: ../../openapi.yaml#/components/responses/ForbiddenError
+    '404':
+      $ref: ../../openapi.yaml#/components/responses/NotFoundError
+    '422':
+      $ref: ../../openapi.yaml#/components/responses/ValidationError
+    '429':
+      $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
+    '500':
+      $ref: ../../openapi.yaml#/components/responses/InternalServerError
+delete:
+  tags:
+  - User
+  x-apidog-folder: User
+  operationId: deleteUserById
+  security:
+    - BearerAuth: []
+  summary: Delete user
+  description: Chỉ admin; yêu cầu access token. Xóa mềm người dùng và các bản ghi con vận hành. Giữ chứng
+    từ tài chính, pháp lý và audit.
+  parameters:
+  - name: userId
+    in: path
+    required: true
+    description: UUID của người dùng.
+    schema:
+      type: string
+      format: uuid
+  responses:
+    '204':
+      $ref: ../../openapi.yaml#/components/responses/NoContentResponse
+    '400':
+      $ref: ../../openapi.yaml#/components/responses/BadRequestPathError
+    '401':
+      $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
+    '403':
+      $ref: ../../openapi.yaml#/components/responses/ForbiddenError
+    '404':
+      $ref: ../../openapi.yaml#/components/responses/NotFoundError
+    '409':
+      x-apidog-name: Conflict
+      description: Người dùng đã bị xóa mềm.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code]
+            properties:
+              statusCode:
+                type: integer
+                enum: [409]
+              code:
+                type: string
+                enum:
+                  - USER_ALREADY_DELETED
+                description: |-
+                  - USER_ALREADY_DELETED: Tài khoản đã được xóa mềm trước đó.
+          examples:
+            user_already_deleted:
+              summary: USER_ALREADY_DELETED — Tài khoản đã được xóa mềm trước đó.
+              value:
+                statusCode: 409
+                code: USER_ALREADY_DELETED
+    '429':
+      $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
+    '500':
+      $ref: ../../openapi.yaml#/components/responses/InternalServerError

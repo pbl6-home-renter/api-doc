@@ -1,0 +1,130 @@
+post:
+  tags:
+  - Contract
+  x-apidog-folder: Contract
+  operationId: postContractsContractidGenerateDraftDocument
+  security:
+    - BearerAuth: []
+  summary: Generate draft contract document
+  description: 'landlord. Sinh tài liệu nháp. Lỗi nghiệp vụ: 403 FORBIDDEN · 409 CONTRACT NOT DRAFT · 422 TEMPLATE
+    DATA INVALID.'
+  parameters:
+  - name: contractId
+    in: path
+    required: true
+    schema:
+      type: string
+      format: uuid
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: ../../openapi.yaml#/components/schemas/ContractGenerateDraftRequestDto
+        example:
+          templateKey: standard_residential_v1
+  responses:
+    '201':
+      description: 'Thành công: Sinh tài liệu nháp.'
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required:
+            - statusCode
+            - code
+            - data
+            properties:
+              statusCode:
+                type: integer
+                enum:
+                - 201
+              code:
+                type: string
+                enum:
+                - CONTRACT_DRAFT_GENERATED
+              data:
+                $ref: ../../openapi.yaml#/components/schemas/ContractGenerateDraftResponseDto
+          example:
+            statusCode: 201
+            code: CONTRACT_DRAFT_GENERATED
+            data:
+              contractId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+              mediaId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+              purpose: contract_template
+      headers:
+        Location:
+          description: Đường dẫn tài nguyên được tạo.
+          schema:
+            type: string
+            example: /api/v1/media/{mediaId}
+    '400':
+      $ref: ../../openapi.yaml#/components/responses/BadRequestBodyPathError
+    '401':
+      $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
+    '403':
+      $ref: ../../openapi.yaml#/components/responses/ForbiddenError
+    '404':
+      $ref: ../../openapi.yaml#/components/responses/NotFoundError
+    '409':
+      x-apidog-name: Conflict
+      description: Yêu cầu xung đột với trạng thái hiện tại hoặc dữ liệu đã tồn tại.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code]
+            properties:
+              statusCode:
+                type: integer
+                enum: [409]
+              code:
+                type: string
+                enum:
+                  - CONTRACT_NOT_DRAFT
+                description: |-
+                  - CONTRACT_NOT_DRAFT: Hợp đồng không ở trạng thái nháp.
+          examples:
+            contract_not_draft:
+              summary: CONTRACT_NOT_DRAFT — Hợp đồng không ở trạng thái nháp.
+              value:
+                statusCode: 409
+                code: CONTRACT_NOT_DRAFT
+    '422':
+      x-apidog-name: Unprocessable Entity
+      description: Dữ liệu hợp lệ về cấu trúc nhưng vi phạm ràng buộc trường hoặc quy tắc nghiệp vụ.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code]
+            properties:
+              statusCode:
+                type: integer
+                enum: [422]
+              code:
+                type: string
+                enum:
+                  - TEMPLATE_DATA_INVALID
+                  - VALIDATION_FAILED
+                description: |-
+                  - TEMPLATE_DATA_INVALID: Dữ liệu áp dụng mẫu hợp đồng không hợp lệ.
+                  - VALIDATION_FAILED: Dữ liệu vi phạm ràng buộc schema hoặc quy tắc nghiệp vụ khác chưa có mã riêng.
+          examples:
+            template_data_invalid:
+              summary: TEMPLATE_DATA_INVALID — Dữ liệu áp dụng mẫu hợp đồng không hợp lệ.
+              value:
+                statusCode: 422
+                code: TEMPLATE_DATA_INVALID
+            validation_failed:
+              summary: VALIDATION_FAILED — Dữ liệu vi phạm ràng buộc schema hoặc quy tắc nghiệp vụ khác chưa có mã riêng.
+              value:
+                statusCode: 422
+                code: VALIDATION_FAILED
+    '429':
+      $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
+    '500':
+      $ref: ../../openapi.yaml#/components/responses/InternalServerError

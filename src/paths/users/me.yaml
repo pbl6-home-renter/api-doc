@@ -1,0 +1,154 @@
+get:
+  tags:
+  - User
+  x-apidog-folder: User
+  operationId: getCurrentUser
+  summary: Get current user
+  description: >-
+    **Request header bắt buộc:** `Authorization: Bearer <accessToken>`.
+    Không có request body hoặc tham số. Yêu cầu access token của tenant,
+    landlord hoặc admin. Trả hồ sơ của chính người gọi; tài khoản nhận tiền
+    chỉ có ở landlord.
+  security:
+  - BearerAuth: []
+  responses:
+    '200':
+      description: Current user fetched
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required:
+            - statusCode
+            - code
+            - data
+            properties:
+              statusCode:
+                type: integer
+                enum:
+                - 200
+              code:
+                type: string
+                enum:
+                - USER_CURRENT_FETCHED
+              data:
+                $ref: ../../openapi.yaml#/components/schemas/UserCurrentResponseDto
+          example:
+            statusCode: 200
+            code: USER_CURRENT_FETCHED
+            data:
+              id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+              name: Lê Văn An
+              email: lan@example.com
+              phone: '0901234567'
+              role: tenant
+              status: active
+              payoutAccount: null
+    '400':
+      $ref: ../../openapi.yaml#/components/responses/BadRequestError
+    '401':
+      $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
+    '429':
+      $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
+    '500':
+      $ref: ../../openapi.yaml#/components/responses/InternalServerError
+patch:
+  tags:
+  - User
+  x-apidog-folder: User
+  operationId: updateCurrentUser
+  security:
+    - BearerAuth: []
+  summary: Update current user
+  description: Yêu cầu access token của tenant, landlord hoặc admin. Cập nhật name và phone; landlord
+    có thể cập nhật payoutAccount khi không còn hóa đơn pending. Email và role không thay đổi.
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: ../../openapi.yaml#/components/schemas/UserCurrentUpdateRequestDto
+        example:
+          name: Lê Văn An
+          phone: '0901234567'
+          payoutAccount:
+            bankCode: '970415'
+            accountNumber: '102876543210'
+            accountName: LE VAN AN
+  responses:
+    '200':
+      description: Profile updated
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required:
+            - statusCode
+            - code
+            - data
+            properties:
+              statusCode:
+                type: integer
+                enum:
+                - 200
+              code:
+                type: string
+                enum:
+                - USER_CURRENT_UPDATED
+              data:
+                $ref: ../../openapi.yaml#/components/schemas/UserCurrentUpdateResponseDto
+          example:
+            statusCode: 200
+            code: USER_CURRENT_UPDATED
+            data:
+              id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+              name: Lê Văn An
+              phone: '0901234567'
+              payoutAccount:
+                bankCode: '970415'
+                accountNumber: '**43210'
+                accountName: LE VAN AN
+    '400':
+      $ref: ../../openapi.yaml#/components/responses/BadRequestBodyError
+    '401':
+      $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
+    '409':
+      x-apidog-name: Conflict
+      description: Số điện thoại trùng hoặc tài khoản nhận tiền đang được sử dụng.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code]
+            properties:
+              statusCode:
+                type: integer
+                enum: [409]
+              code:
+                type: string
+                enum:
+                  - DUPLICATE_PHONE
+                  - PAYOUT_ACCOUNT_IN_USE
+                description: |-
+                  - DUPLICATE_PHONE: Số điện thoại đã được sử dụng.
+                  - PAYOUT_ACCOUNT_IN_USE: Không thể đổi tài khoản nhận tiền khi còn hóa đơn pending.
+          examples:
+            duplicate_phone:
+              summary: DUPLICATE_PHONE — Số điện thoại đã được sử dụng.
+              value:
+                statusCode: 409
+                code: DUPLICATE_PHONE
+            payout_account_in_use:
+              summary: PAYOUT_ACCOUNT_IN_USE — Không thể đổi tài khoản nhận tiền khi còn hóa đơn pending.
+              value:
+                statusCode: 409
+                code: PAYOUT_ACCOUNT_IN_USE
+    '422':
+      $ref: ../../openapi.yaml#/components/responses/ValidationError
+    '429':
+      $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
+    '500':
+      $ref: ../../openapi.yaml#/components/responses/InternalServerError

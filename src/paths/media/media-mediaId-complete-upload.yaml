@@ -1,0 +1,110 @@
+post:
+  tags:
+  - Operation
+  x-apidog-folder: Media
+  operationId: postMediaMediaidCompleteUpload
+  security:
+    - BearerAuth: []
+  summary: Complete media upload
+  description: 'tenant, landlord, admin. Chốt upload. Lỗi nghiệp vụ: 404 NOT FOUND · 403 FORBIDDEN · 409 UPLOAD
+    NOT COMPLETED · 410 TICKET EXPIRED.'
+  parameters:
+  - name: mediaId
+    in: path
+    required: true
+    schema:
+      type: string
+      format: uuid
+  responses:
+    '200':
+      description: 'Thành công: Chốt upload.'
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required:
+            - statusCode
+            - code
+            - data
+            properties:
+              statusCode:
+                type: integer
+                enum:
+                - 200
+              code:
+                type: string
+                enum:
+                - MEDIA_UPLOAD_COMPLETED
+              data:
+                $ref: ../../openapi.yaml#/components/schemas/MediaCompleteUploadResponseDto
+          example:
+            statusCode: 200
+            code: MEDIA_UPLOAD_COMPLETED
+            data:
+              id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+              ownerType: room
+              ownerId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+              purpose: cover_photo
+              fileType: image
+              url: https://example.com/upload
+    '400':
+      $ref: ../../openapi.yaml#/components/responses/BadRequestPathError
+    '401':
+      $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
+    '403':
+      $ref: ../../openapi.yaml#/components/responses/ForbiddenError
+    '404':
+      $ref: ../../openapi.yaml#/components/responses/NotFoundError
+    '409':
+      x-apidog-name: Conflict
+      description: Yêu cầu xung đột với trạng thái hiện tại hoặc dữ liệu đã tồn tại.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code]
+            properties:
+              statusCode:
+                type: integer
+                enum: [409]
+              code:
+                type: string
+                enum:
+                  - UPLOAD_NOT_COMPLETED
+                description: |-
+                  - UPLOAD_NOT_COMPLETED: Tệp chưa được tải lên hoàn tất.
+          examples:
+            upload_not_completed:
+              summary: UPLOAD_NOT_COMPLETED — Tệp chưa được tải lên hoàn tất.
+              value:
+                statusCode: 409
+                code: UPLOAD_NOT_COMPLETED
+    '429':
+      $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
+    '500':
+      $ref: ../../openapi.yaml#/components/responses/InternalServerError
+    '410':
+      x-apidog-name: Gone
+      description: Phiếu tải lên đã hết hạn.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code]
+            properties:
+              statusCode:
+                type: integer
+                enum: [410]
+              code:
+                type: string
+                enum:
+                  - TICKET_EXPIRED
+          examples:
+            ticket_expired:
+              summary: TICKET_EXPIRED — Phiếu tải lên đã hết hạn.
+              value:
+                statusCode: 410
+                code: TICKET_EXPIRED

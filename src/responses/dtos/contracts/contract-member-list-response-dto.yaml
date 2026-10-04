@@ -16,8 +16,8 @@ properties:
     enum: [ACTIVE, TEMPORARY_ABSENT, LEFT]
     description: "Trạng thái cư trú: ACTIVE (đang ở), TEMPORARY_ABSENT (tạm vắng), LEFT (đã chuyển đi)."
     example: "ACTIVE"
-  joinedAt: { type: string, format: date-time, description: "Thời điểm thành viên bắt đầu vào ở." }
-  leftAt: { type: string, format: date-time, nullable: true, description: "Thời điểm thành viên rời khỏi phòng (null nếu đang ở)." }
+  joinedAt: { type: string, format: date, description: "Thời điểm thành viên bắt đầu vào ở." }
+  leftAt: { type: string, format: date, nullable: true, description: "Thời điểm thành viên rời khỏi phòng (null nếu đang ở)." }
 
 required:
   - id

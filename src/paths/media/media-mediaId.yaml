@@ -1,0 +1,123 @@
+get:
+  tags:
+  - Operation
+  x-apidog-folder: Media
+  operationId: getMediaMediaid
+  security:
+    - BearerAuth: []
+  summary: Get or stream media
+  description: 'Quyền kế thừa từ tài nguyên cha. Đọc hoặc stream một tệp. Lỗi nghiệp vụ: 404 NOT FOUND · 403 FORBIDDEN
+    · 410 MEDIA DELETED.'
+  parameters:
+  - name: mediaId
+    in: path
+    required: true
+    schema:
+      type: string
+      format: uuid
+  responses:
+    '200':
+      description: 'Thành công: Đọc hoặc stream một tệp.'
+      headers:
+        Content-Disposition:
+          description: Tên tệp tải xuống.
+          schema:
+            type: string
+        Content-Type:
+          description: MIME type của tệp.
+          schema:
+            type: string
+      content:
+        application/octet-stream:
+          schema:
+            type: string
+            format: binary
+    '400':
+      $ref: ../../openapi.yaml#/components/responses/BadRequestPathError
+    '403':
+      $ref: ../../openapi.yaml#/components/responses/ForbiddenError
+    '404':
+      $ref: ../../openapi.yaml#/components/responses/NotFoundError
+    '429':
+      $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
+    '500':
+      $ref: ../../openapi.yaml#/components/responses/InternalServerError
+    '410':
+      x-apidog-name: Gone
+      description: Tệp đã bị xóa hoặc không còn truy cập được.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code]
+            properties:
+              statusCode:
+                type: integer
+                enum: [410]
+              code:
+                type: string
+                enum:
+                  - MEDIA_DELETED
+          examples:
+            media_deleted:
+              summary: MEDIA_DELETED — Tệp đã bị xóa.
+              value:
+                statusCode: 410
+                code: MEDIA_DELETED
+delete:
+  tags:
+  - Operation
+  x-apidog-folder: Media
+  operationId: deleteMediaMediaid
+  security:
+    - BearerAuth: []
+  summary: Delete media
+  description: 'tenant, landlord, admin. Xóa mềm tệp. Lỗi nghiệp vụ: 403 FORBIDDEN · 409 CAN''T DELETE.'
+  parameters:
+  - name: mediaId
+    in: path
+    required: true
+    schema:
+      type: string
+      format: uuid
+  responses:
+    '204':
+      $ref: ../../openapi.yaml#/components/responses/NoContentResponse
+    '400':
+      $ref: ../../openapi.yaml#/components/responses/BadRequestPathError
+    '401':
+      $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
+    '403':
+      $ref: ../../openapi.yaml#/components/responses/ForbiddenError
+    '404':
+      $ref: ../../openapi.yaml#/components/responses/NotFoundError
+    '409':
+      x-apidog-name: Conflict
+      description: Yêu cầu xung đột với trạng thái hiện tại hoặc dữ liệu đã tồn tại.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code]
+            properties:
+              statusCode:
+                type: integer
+                enum: [409]
+              code:
+                type: string
+                enum:
+                  - CANNOT_DELETE
+                description: |-
+                  - CANNOT_DELETE: Tài nguyên chưa đủ điều kiện để xóa.
+          examples:
+            cannot_delete:
+              summary: CANNOT_DELETE — Tài nguyên chưa đủ điều kiện để xóa.
+              value:
+                statusCode: 409
+                code: CANNOT_DELETE
+    '429':
+      $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
+    '500':
+      $ref: ../../openapi.yaml#/components/responses/InternalServerError

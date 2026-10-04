@@ -17,8 +17,8 @@ properties:
   rentalType: { type: string, enum: [MONTHLY, DAILY], description: "Hình thức thuê dài hạn hoặc ngắn hạn theo ngày." }
   rentPrice: { type: integer, minimum: 0, description: "Giá thuê theo chu kỳ (VNĐ)." }
   depositAmount: { type: integer, minimum: 0, description: "Tiền đặt cọc phòng (VNĐ)." }
-  startDate: { type: string, format: date-time, description: "Thời điểm bắt đầu hợp đồng." }
-  endDate: { type: string, format: date-time, description: "Thời điểm kết thúc hợp đồng." }
+  startDate: { type: string, format: date, description: "Thời điểm bắt đầu hợp đồng." }
+  endDate: { type: string, format: date, description: "Thời điểm kết thúc hợp đồng." }
 
 required:
   - id

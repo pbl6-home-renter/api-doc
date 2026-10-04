@@ -12,9 +12,32 @@ post:
     '204':
       $ref: '../../openapi.yaml#/components/responses/NoContentResponse'
     '400':
-      $ref: '../../openapi.yaml#/components/responses/BadRequestError'
+      $ref: ../../openapi.yaml#/components/responses/BadRequestError
     '401':
-      $ref: '../../openapi.yaml#/components/responses/UnauthorizedError'
+      x-apidog-name: Unauthorized
+      description: Cookie refreshToken không xác thực được hoặc phiên đã hết hiệu lực.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code]
+            properties:
+              statusCode:
+                type: integer
+                enum: [401]
+              code:
+                type: string
+                enum:
+                  - INVALID_REFRESH_TOKEN
+                description: |-
+                  - INVALID_REFRESH_TOKEN: Cookie refreshToken thiếu, sai hoặc phiên đã hết hiệu lực.
+          examples:
+            invalid_refresh_token:
+              summary: INVALID_REFRESH_TOKEN — Cookie refreshToken thiếu, sai hoặc phiên đã hết hiệu lực.
+              value:
+                statusCode: 401
+                code: INVALID_REFRESH_TOKEN
     '429':
       $ref: '../../openapi.yaml#/components/responses/TooManyRequestsError'
     '500':

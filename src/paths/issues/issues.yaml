@@ -1,0 +1,299 @@
+get:
+  tags:
+  - Operation
+  x-apidog-folder: IssueReport
+  operationId: getIssues
+  security:
+    - BearerAuth: []
+  summary: List issues
+  description: 'landlord. Hàng đợi sự cố bảo trì. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 VALIDATION FAILED.'
+  parameters:
+  - name: filter
+    in: query
+    required: false
+    style: deepObject
+    explode: true
+    description: Bộ lọc được endpoint hỗ trợ.
+    schema:
+      type: object
+      additionalProperties: false
+      properties:
+        roomId:
+          type: string
+          format: uuid
+        buildingId:
+          type: string
+          format: uuid
+        status:
+          type: string
+  - name: sort
+    in: query
+    description: Một trường sắp xếp được endpoint hỗ trợ.
+    schema:
+      type: string
+      default: createdAt
+  - name: order
+    in: query
+    schema:
+      type: string
+      enum:
+      - asc
+      - desc
+      default: asc
+  - name: pageSize
+    in: query
+    schema:
+      type: integer
+      minimum: 1
+      maximum: 100
+      default: 20
+  - name: pageNo
+    in: query
+    schema:
+      type: integer
+      minimum: 1
+      default: 1
+  - name: format
+    in: query
+    description: json trả envelope; định dạng khác trả file stream.
+    schema:
+      type: string
+      enum:
+      - json
+      - xlsx
+      - csv
+      - pdf
+      default: json
+  responses:
+    '200':
+      description: 'Thành công: Hàng đợi sự cố bảo trì.'
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required:
+            - statusCode
+            - code
+            - data
+            - pagination
+            properties:
+              statusCode:
+                type: integer
+                enum:
+                - 200
+              code:
+                type: string
+                enum:
+                - ISSUES_FETCHED
+              data:
+                type: array
+                items:
+                  $ref: ../../openapi.yaml#/components/schemas/IssueReportListResponseDto
+              pagination:
+                type: object
+                additionalProperties: false
+                required:
+                - type
+                - pageNo
+                - pageSize
+                - totalItems
+                - totalPages
+                - hasNextPage
+                - hasPreviousPage
+                properties:
+                  type:
+                    type: string
+                    enum:
+                    - offset
+                  pageNo:
+                    type: integer
+                    minimum: 1
+                  pageSize:
+                    type: integer
+                    minimum: 1
+                    maximum: 100
+                  totalItems:
+                    type: integer
+                    minimum: 0
+                  totalPages:
+                    type: integer
+                    minimum: 0
+                  hasNextPage:
+                    type: boolean
+                  hasPreviousPage:
+                    type: boolean
+          example:
+            statusCode: 200
+            code: ISSUES_FETCHED
+            data:
+            - id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+              roomId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+              title: Vòi xịt bồn cầu bị rò rỉ
+              status: open
+              description: Nước rò rỉ liên tục
+              roomName: Ví dụ
+              buildingName: Ví dụ
+              reporterName: Ví dụ
+              category: PLUMBING
+              urgency: HIGH
+              createdAt: '2026-09-23T11:55:00.000Z'
+            pagination:
+              type: offset
+              pageNo: 1
+              pageSize: 20
+              totalItems: 1
+              totalPages: 1
+              hasNextPage: false
+              hasPreviousPage: false
+        text/csv:
+          schema:
+            type: string
+            format: binary
+        application/pdf:
+          schema:
+            type: string
+            format: binary
+        application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+          schema:
+            type: string
+            format: binary
+    '400':
+      $ref: ../../openapi.yaml#/components/responses/BadRequestQueryError
+    '401':
+      $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
+    '403':
+      $ref: ../../openapi.yaml#/components/responses/ForbiddenError
+    '422':
+      $ref: ../../openapi.yaml#/components/responses/ValidationError
+    '429':
+      $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
+    '500':
+      $ref: ../../openapi.yaml#/components/responses/InternalServerError
+post:
+  tags:
+  - Operation
+  x-apidog-folder: IssueReport
+  operationId: postIssues
+  security:
+    - BearerAuth: []
+  summary: Report issue
+  description: 'tenant, landlord. Báo cáo sự cố. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 ISSUE PHOTO INVALID · 404 ROOM
+    NOT FOUND.'
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: ../../openapi.yaml#/components/schemas/IssueReportCreateRequestDto
+        example:
+          roomId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+          title: Vòi xịt bồn cầu bị rò rỉ
+          description: Nước rò rỉ liên tục
+          issuePhotoMediaIds:
+          - 3fa85f64-5717-4562-b3fc-2c963f66afa6
+          category: PLUMBING
+          urgency: HIGH
+  responses:
+    '201':
+      description: 'Thành công: Báo cáo sự cố.'
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required:
+            - statusCode
+            - code
+            - data
+            properties:
+              statusCode:
+                type: integer
+                enum:
+                - 201
+              code:
+                type: string
+                enum:
+                - ISSUE_CREATED
+              data:
+                $ref: ../../openapi.yaml#/components/schemas/IssueReportCreateResponseDto
+          example:
+            statusCode: 201
+            code: ISSUE_CREATED
+            data:
+              id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+              status: open
+              title: Vòi xịt bồn cầu bị rò rỉ
+      headers:
+        Location:
+          description: Đường dẫn tài nguyên được tạo.
+          schema:
+            type: string
+            example: /api/v1/issues/{issueId}
+    '400':
+      $ref: ../../openapi.yaml#/components/responses/BadRequestBodyError
+    '401':
+      $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
+    '403':
+      $ref: ../../openapi.yaml#/components/responses/ForbiddenError
+    '404':
+      x-apidog-name: Not Found
+      description: Không tìm thấy tài nguyên được yêu cầu.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code]
+            properties:
+              statusCode:
+                type: integer
+                enum: [404]
+              code:
+                type: string
+                enum:
+                  - ROOM_NOT_FOUND
+                description: |-
+                  - ROOM_NOT_FOUND: Không tìm thấy phòng.
+          examples:
+            room_not_found:
+              summary: ROOM_NOT_FOUND — Không tìm thấy phòng.
+              value:
+                statusCode: 404
+                code: ROOM_NOT_FOUND
+    '422':
+      x-apidog-name: Unprocessable Entity
+      description: Dữ liệu hợp lệ về cấu trúc nhưng vi phạm ràng buộc trường hoặc quy tắc nghiệp vụ.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code]
+            properties:
+              statusCode:
+                type: integer
+                enum: [422]
+              code:
+                type: string
+                enum:
+                  - ISSUE_PHOTO_INVALID
+                  - VALIDATION_FAILED
+                description: |-
+                  - ISSUE_PHOTO_INVALID: Ảnh sự cố không hợp lệ.
+                  - VALIDATION_FAILED: Dữ liệu vi phạm ràng buộc schema hoặc quy tắc nghiệp vụ khác chưa có mã riêng.
+          examples:
+            issue_photo_invalid:
+              summary: ISSUE_PHOTO_INVALID — Ảnh sự cố không hợp lệ.
+              value:
+                statusCode: 422
+                code: ISSUE_PHOTO_INVALID
+            validation_failed:
+              summary: VALIDATION_FAILED — Dữ liệu vi phạm ràng buộc schema hoặc quy tắc nghiệp vụ khác chưa có mã riêng.
+              value:
+                statusCode: 422
+                code: VALIDATION_FAILED
+    '429':
+      $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
+    '500':
+      $ref: ../../openapi.yaml#/components/responses/InternalServerError

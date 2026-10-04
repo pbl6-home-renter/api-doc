@@ -1,0 +1,46 @@
+post:
+  tags:
+  - Notification
+  x-apidog-folder: Notification
+  operationId: postNotificationsMarkAllRead
+  security:
+    - BearerAuth: []
+  summary: Mark all notifications as read
+  description: 'tenant, landlord, admin. Đánh dấu đã đọc toàn bộ thông báo chưa đọc. Lỗi nghiệp vụ: 401 INVALID
+    TOKEN.'
+  responses:
+    '200':
+      description: 'Thành công: Đánh dấu đã đọc toàn bộ thông báo chưa đọc.'
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required:
+            - statusCode
+            - code
+            - data
+            properties:
+              statusCode:
+                type: integer
+                enum:
+                - 200
+              code:
+                type: string
+                enum:
+                - NOTIFICATIONS_ALL_MARKED_READ
+              data:
+                $ref: ../../openapi.yaml#/components/schemas/NotificationMarkAllReadResponseDto
+          example:
+            statusCode: 200
+            code: NOTIFICATIONS_ALL_MARKED_READ
+            data:
+              markedCount: 3
+    '400':
+      $ref: ../../openapi.yaml#/components/responses/BadRequestError
+    '401':
+      $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
+    '429':
+      $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
+    '500':
+      $ref: ../../openapi.yaml#/components/responses/InternalServerError

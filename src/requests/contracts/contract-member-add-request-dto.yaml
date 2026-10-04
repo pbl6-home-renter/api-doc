@@ -27,7 +27,7 @@ properties:
     nullable: true
     minLength: 10
     maxLength: 12
-    pattern: '^0[0-9]{9}$|^+84[0-9]{9}$'
+    pattern: '^(0[0-9]{9}|\+84[0-9]{9})$'
     description: Số điện thoại thành viên
     example: "0912345678"
   identityCardNumber:
@@ -56,9 +56,9 @@ properties:
     example: false
   joinedAt:
     type: string
-    format: date-time
+    format: date
     description: Ngày thành viên bắt đầu vào ở
-    example: "2026-10-01T00:00:00Z"
+    example: "2026-10-01"
 
 required:
   - contractId

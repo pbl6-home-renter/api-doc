@@ -1,0 +1,29 @@
+delete:
+  tags:
+  - Notification
+  x-apidog-folder: PushDevice
+  operationId: deleteMePushDevicesDeviceid
+  security:
+    - BearerAuth: []
+  summary: Unregister push device
+  description: 'tenant, landlord, admin. Gỡ device token. Lỗi nghiệp vụ: 404 NOT FOUND.'
+  parameters:
+  - name: deviceId
+    in: path
+    required: true
+    schema:
+      type: string
+      format: uuid
+  responses:
+    '204':
+      $ref: ../../openapi.yaml#/components/responses/NoContentResponse
+    '400':
+      $ref: ../../openapi.yaml#/components/responses/BadRequestPathError
+    '401':
+      $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
+    '404':
+      $ref: ../../openapi.yaml#/components/responses/NotFoundError
+    '429':
+      $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
+    '500':
+      $ref: ../../openapi.yaml#/components/responses/InternalServerError

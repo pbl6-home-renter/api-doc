@@ -1,0 +1,101 @@
+post:
+  tags:
+  - Contract
+  x-apidog-folder: Contract
+  operationId: postContractsContractidActivateContract
+  security:
+    - BearerAuth: []
+  summary: Activate contract
+  description: 'landlord. Kích hoạt hợp đồng đã ký. Lỗi nghiệp vụ: 409 CONTRACT NOT READY · 409 SIGNED FILE MISSING
+    · 403 FORBIDDEN.'
+  parameters:
+  - name: contractId
+    in: path
+    required: true
+    schema:
+      type: string
+      format: uuid
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: ../../openapi.yaml#/components/schemas/ContractActivateRequestDto
+        example:
+          signedContractMediaId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+  responses:
+    '200':
+      description: 'Thành công: Kích hoạt hợp đồng đã ký.'
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required:
+            - statusCode
+            - code
+            - data
+            properties:
+              statusCode:
+                type: integer
+                enum:
+                - 200
+              code:
+                type: string
+                enum:
+                - CONTRACT_ACTIVATED
+              data:
+                $ref: ../../openapi.yaml#/components/schemas/ContractActivateResponseDto
+          example:
+            statusCode: 200
+            code: CONTRACT_ACTIVATED
+            data:
+              id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+              status: active
+              activatedAt: '2026-09-23T11:10:00.000Z'
+    '400':
+      $ref: ../../openapi.yaml#/components/responses/BadRequestBodyPathError
+    '401':
+      $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
+    '403':
+      $ref: ../../openapi.yaml#/components/responses/ForbiddenError
+    '404':
+      $ref: ../../openapi.yaml#/components/responses/NotFoundError
+    '409':
+      x-apidog-name: Conflict
+      description: Yêu cầu xung đột với trạng thái hiện tại hoặc dữ liệu đã tồn tại.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code]
+            properties:
+              statusCode:
+                type: integer
+                enum: [409]
+              code:
+                type: string
+                enum:
+                  - CONTRACT_NOT_READY
+                  - SIGNED_FILE_MISSING
+                description: |-
+                  - CONTRACT_NOT_READY: Hợp đồng chưa đủ điều kiện để kích hoạt.
+                  - SIGNED_FILE_MISSING: Chưa có tệp hợp đồng đã ký.
+          examples:
+            contract_not_ready:
+              summary: CONTRACT_NOT_READY — Hợp đồng chưa đủ điều kiện để kích hoạt.
+              value:
+                statusCode: 409
+                code: CONTRACT_NOT_READY
+            signed_file_missing:
+              summary: SIGNED_FILE_MISSING — Chưa có tệp hợp đồng đã ký.
+              value:
+                statusCode: 409
+                code: SIGNED_FILE_MISSING
+    '422':
+      $ref: ../../openapi.yaml#/components/responses/ValidationError
+    '429':
+      $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
+    '500':
+      $ref: ../../openapi.yaml#/components/responses/InternalServerError

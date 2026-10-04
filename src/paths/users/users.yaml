@@ -1,0 +1,174 @@
+get:
+  tags:
+  - User
+  x-apidog-folder: User
+  operationId: listUsers
+  security:
+    - BearerAuth: []
+  summary: List users
+  description: Chỉ admin; yêu cầu access token. Lọc theo role, status và phân trang offset. format khác json trả
+    file stream không có JSON wrapper.
+  parameters:
+  - name: filter
+    in: query
+    description: Lọc theo role hoặc status.
+    style: deepObject
+    explode: true
+    schema:
+      type: object
+      additionalProperties: false
+      properties:
+        role:
+          type: string
+          enum:
+          - tenant
+          - landlord
+          - admin
+        status:
+          type: string
+          enum:
+          - active
+          - locked
+  - name: sort
+    in: query
+    description: Một trường sắp xếp; mặc định createdAt.
+    schema:
+      type: string
+      enum:
+      - createdAt
+      - name
+      - role
+      - status
+      default: createdAt
+  - name: order
+    in: query
+    description: Chiều sắp xếp; mặc định desc.
+    schema:
+      type: string
+      enum:
+      - asc
+      - desc
+      default: desc
+  - name: pageNo
+    in: query
+    description: Số trang offset, bắt đầu từ 1.
+    schema:
+      type: integer
+      minimum: 1
+      default: 1
+  - name: pageSize
+    in: query
+    description: Số bản ghi mỗi trang.
+    schema:
+      type: integer
+      minimum: 1
+      maximum: 100
+      default: 20
+  - name: format
+    in: query
+    description: json trả envelope và phân trang; xlsx, csv, pdf trả file stream.
+    schema:
+      type: string
+      enum:
+      - json
+      - xlsx
+      - csv
+      - pdf
+      default: json
+  responses:
+    '200':
+      description: Danh sách người dùng hoặc tệp xuất theo format.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required:
+            - statusCode
+            - code
+            - data
+            - pagination
+            properties:
+              statusCode:
+                type: integer
+                enum:
+                - 200
+              code:
+                type: string
+                enum:
+                - USERS_FETCHED
+              data:
+                type: array
+                items:
+                  $ref: ../../openapi.yaml#/components/schemas/UserListResponseDto
+              pagination:
+                type: object
+                additionalProperties: false
+                required:
+                - type
+                - pageNo
+                - pageSize
+                - totalItems
+                - totalPages
+                - hasNextPage
+                - hasPreviousPage
+                properties:
+                  type:
+                    type: string
+                    enum:
+                    - offset
+                  pageNo:
+                    type: integer
+                  pageSize:
+                    type: integer
+                  totalItems:
+                    type: integer
+                  totalPages:
+                    type: integer
+                  hasNextPage:
+                    type: boolean
+                  hasPreviousPage:
+                    type: boolean
+          example:
+            statusCode: 200
+            code: USERS_FETCHED
+            data:
+            - id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+              name: Lê Văn An
+              phone: '0901234567'
+              email: lan@example.com
+              role: tenant
+              status: active
+              createdAt: '2026-09-01T08:00:00.000Z'
+            pagination:
+              type: offset
+              pageNo: 1
+              pageSize: 20
+              totalItems: 1
+              totalPages: 1
+              hasNextPage: false
+              hasPreviousPage: false
+        text/csv:
+          schema:
+            type: string
+            format: binary
+        application/pdf:
+          schema:
+            type: string
+            format: binary
+        application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+          schema:
+            type: string
+            format: binary
+    '400':
+      $ref: ../../openapi.yaml#/components/responses/BadRequestQueryError
+    '401':
+      $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
+    '403':
+      $ref: ../../openapi.yaml#/components/responses/ForbiddenError
+    '422':
+      $ref: ../../openapi.yaml#/components/responses/ValidationError
+    '429':
+      $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
+    '500':
+      $ref: ../../openapi.yaml#/components/responses/InternalServerError

@@ -1,0 +1,166 @@
+get:
+  tags:
+  - Operation
+  x-apidog-folder: IssueReport
+  operationId: getIssuesIssueid
+  security:
+    - BearerAuth: []
+  summary: Get issue details
+  description: 'landlord, tenant. Đọc chi tiết sự cố. Lỗi nghiệp vụ: 403 FORBIDDEN · 404 NOT FOUND.'
+  parameters:
+  - name: issueId
+    in: path
+    required: true
+    schema:
+      type: string
+      format: uuid
+  responses:
+    '200':
+      description: 'Thành công: Đọc chi tiết sự cố.'
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required:
+            - statusCode
+            - code
+            - data
+            properties:
+              statusCode:
+                type: integer
+                enum:
+                - 200
+              code:
+                type: string
+                enum:
+                - ISSUE_FETCHED
+              data:
+                $ref: ../../openapi.yaml#/components/schemas/IssueReportDetailResponseDto
+          example:
+            statusCode: 200
+            code: ISSUE_FETCHED
+            data:
+              id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+              roomId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+              reporterId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+              title: Vòi xịt bồn cầu bị rò rỉ
+              description: Nước rò rỉ liên tục
+              status: in_progress
+              note: null
+              closedAt: null
+              issuePhotoMediaIds:
+              - 3fa85f64-5717-4562-b3fc-2c963f66afa6
+              roomName: Ví dụ
+              buildingName: Ví dụ
+              reporterName: Ví dụ
+              category: ELECTRICAL
+              urgency: MEDIUM
+              createdAt: '2026-09-23T11:55:00.000Z'
+    '400':
+      $ref: ../../openapi.yaml#/components/responses/BadRequestPathError
+    '401':
+      $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
+    '403':
+      $ref: ../../openapi.yaml#/components/responses/ForbiddenError
+    '404':
+      $ref: ../../openapi.yaml#/components/responses/NotFoundError
+    '429':
+      $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
+    '500':
+      $ref: ../../openapi.yaml#/components/responses/InternalServerError
+patch:
+  tags:
+  - Operation
+  x-apidog-folder: IssueReport
+  operationId: patchIssuesIssueid
+  security:
+    - BearerAuth: []
+  summary: Update issue status
+  description: 'landlord. Cập nhật tiến trình sự cố. Lỗi nghiệp vụ: 404 NOT FOUND · 403 FORBIDDEN · 409 INVALID
+    ISSUE TRANSITION.'
+  parameters:
+  - name: issueId
+    in: path
+    required: true
+    schema:
+      type: string
+      format: uuid
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: ../../openapi.yaml#/components/schemas/IssueReportUpdateRequestDto
+        example:
+          status: resolved
+          resolutionNote: Đã thay dây vòi
+  responses:
+    '200':
+      description: 'Thành công: Cập nhật tiến trình sự cố.'
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required:
+            - statusCode
+            - code
+            - data
+            properties:
+              statusCode:
+                type: integer
+                enum:
+                - 200
+              code:
+                type: string
+                enum:
+                - ISSUE_UPDATED
+              data:
+                $ref: ../../openapi.yaml#/components/schemas/IssueReportUpdateResponseDto
+          example:
+            statusCode: 200
+            code: ISSUE_UPDATED
+            data:
+              id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+              status: resolved
+              closedAt: '2026-09-23T11:35:00.000Z'
+    '400':
+      $ref: ../../openapi.yaml#/components/responses/BadRequestBodyPathError
+    '401':
+      $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
+    '403':
+      $ref: ../../openapi.yaml#/components/responses/ForbiddenError
+    '404':
+      $ref: ../../openapi.yaml#/components/responses/NotFoundError
+    '409':
+      x-apidog-name: Conflict
+      description: Yêu cầu xung đột với trạng thái hiện tại hoặc dữ liệu đã tồn tại.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code]
+            properties:
+              statusCode:
+                type: integer
+                enum: [409]
+              code:
+                type: string
+                enum:
+                  - INVALID_ISSUE_TRANSITION
+                description: |-
+                  - INVALID_ISSUE_TRANSITION: Không thể chuyển sự cố sang trạng thái yêu cầu.
+          examples:
+            invalid_issue_transition:
+              summary: INVALID_ISSUE_TRANSITION — Không thể chuyển sự cố sang trạng thái yêu cầu.
+              value:
+                statusCode: 409
+                code: INVALID_ISSUE_TRANSITION
+    '422':
+      $ref: ../../openapi.yaml#/components/responses/ValidationError
+    '429':
+      $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
+    '500':
+      $ref: ../../openapi.yaml#/components/responses/InternalServerError

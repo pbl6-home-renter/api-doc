@@ -1,0 +1,124 @@
+post:
+  tags:
+  - Property
+  x-apidog-folder: Building
+  operationId: postBuildingsBuildingidReject
+  security:
+    - BearerAuth: []
+  summary: Reject building
+  description: 'admin. Từ chối tòa nhà. Lỗi nghiệp vụ: 404 NOT FOUND · 409 BUILDING NOT PENDING · 422 NOTE REQUIRED.'
+  parameters:
+  - name: buildingId
+    in: path
+    required: true
+    schema:
+      type: string
+      format: uuid
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: ../../openapi.yaml#/components/schemas/BuildingRejectRequestDto
+        example:
+          note: Ownership proof is unreadable
+  responses:
+    '200':
+      description: 'Thành công: Từ chối tòa nhà.'
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required:
+            - statusCode
+            - code
+            - data
+            properties:
+              statusCode:
+                type: integer
+                enum:
+                - 200
+              code:
+                type: string
+                enum:
+                - BUILDING_REJECTED
+              data:
+                $ref: ../../openapi.yaml#/components/schemas/BuildingRejectResponseDto
+          example:
+            statusCode: 200
+            code: BUILDING_REJECTED
+            data:
+              id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+              status: rejected
+              reviewNote: Ownership proof is unreadable
+              reviewedAt: '2026-09-23T12:00:00.000Z'
+    '400':
+      $ref: ../../openapi.yaml#/components/responses/BadRequestBodyPathError
+    '401':
+      $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
+    '403':
+      $ref: ../../openapi.yaml#/components/responses/ForbiddenError
+    '404':
+      $ref: ../../openapi.yaml#/components/responses/NotFoundError
+    '409':
+      x-apidog-name: Conflict
+      description: Yêu cầu xung đột với trạng thái hiện tại hoặc dữ liệu đã tồn tại.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code]
+            properties:
+              statusCode:
+                type: integer
+                enum: [409]
+              code:
+                type: string
+                enum:
+                  - BUILDING_NOT_PENDING
+                description: |-
+                  - BUILDING_NOT_PENDING: Tòa nhà không ở trạng thái chờ duyệt.
+          examples:
+            building_not_pending:
+              summary: BUILDING_NOT_PENDING — Tòa nhà không ở trạng thái chờ duyệt.
+              value:
+                statusCode: 409
+                code: BUILDING_NOT_PENDING
+    '422':
+      x-apidog-name: Unprocessable Entity
+      description: Dữ liệu hợp lệ về cấu trúc nhưng vi phạm ràng buộc trường hoặc quy tắc nghiệp vụ.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code]
+            properties:
+              statusCode:
+                type: integer
+                enum: [422]
+              code:
+                type: string
+                enum:
+                  - NOTE_REQUIRED
+                  - VALIDATION_FAILED
+                description: |-
+                  - NOTE_REQUIRED: Ghi chú là bắt buộc.
+                  - VALIDATION_FAILED: Dữ liệu vi phạm ràng buộc schema hoặc quy tắc nghiệp vụ khác chưa có mã riêng.
+          examples:
+            note_required:
+              summary: NOTE_REQUIRED — Ghi chú là bắt buộc.
+              value:
+                statusCode: 422
+                code: NOTE_REQUIRED
+            validation_failed:
+              summary: VALIDATION_FAILED — Dữ liệu vi phạm ràng buộc schema hoặc quy tắc nghiệp vụ khác chưa có mã riêng.
+              value:
+                statusCode: 422
+                code: VALIDATION_FAILED
+    '429':
+      $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
+    '500':
+      $ref: ../../openapi.yaml#/components/responses/InternalServerError
