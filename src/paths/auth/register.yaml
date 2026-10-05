@@ -3,10 +3,77 @@ post:
   x-apidog-folder: Auth
   operationId: registerAccount
   summary: Register
-  description: >-
-    Public. Tạo tài khoản tenant hoặc landlord; admin không được tự đăng ký.
-    Thành công tạo phiên refresh và đặt cookie HttpOnly, Secure, SameSite=Lax,
-    Path=/api/v1/auth. Cookie chứa token opaque, không trả trong JSON.
+  description: |-
+    Public. Tạo tài khoản tenant hoặc landlord; admin không được tự đăng ký. Thành công tạo phiên refresh và đặt cookie HttpOnly, Secure, SameSite=Lax, Path=/api/v1/auth. Cookie chứa token opaque, không trả trong JSON.
+
+    ### Sequence diagram — Đăng ký tài khoản
+
+    Luồng theo kiến trúc microservice (§5.7–5.8): identity-service xử lý đăng ký trong identity_db;
+    sự kiện user.registered được ghi cùng transaction qua outbox và đồng bộ bất đồng bộ sang tenancy-service.
+
+    ```mermaid
+    sequenceDiagram
+        autonumber
+        participant C as Client (Web / Mobile)
+        participant G as API Gateway
+        participant R as Service Registry
+        participant I as identity-service
+        participant D as PostgreSQL identity_db
+        participant O as Outbox worker (identity)
+        participant Q as RabbitMQ
+        participant T as tenancy-service
+        participant TD as PostgreSQL tenancy_db
+
+        C->>G: POST /api/v1/auth/register (email, phone, password, name, role)
+        G->>G: Gắn correlation-id, kiểm tra rate limit theo IP
+        break Vượt giới hạn yêu cầu
+            G-->>C: 429 Too Many Requests
+        end
+        Note over C,I: Endpoint public, không yêu cầu Bearer token
+        G->>R: Tra cứu instance identity-service healthy
+        R-->>G: Địa chỉ instance
+        G->>I: Chuyển tiếp request + correlation-id + X-Service-Token
+        I->>I: Kiểm tra JSON, body và header
+        break JSON, body hoặc header không hợp lệ
+            I-->>G: 400 (INVALID_JSON / INVALID_REQUEST_BODY / INVALID_HEADER / BAD_REQUEST)
+            G-->>C: Chuyển tiếp phản hồi lỗi
+        end
+        I->>I: Validate trường, chỉ cho role tenant hoặc landlord<br/>Trim email, phone, name; chuyển email về chữ thường; không trim password
+        break Thiếu trường, sai kiểu hoặc giá trị, role admin, trường ngoài DTO
+            I-->>G: 422 (code validation tương ứng)
+            G-->>C: Chuyển tiếp phản hồi lỗi
+        end
+        I->>D: Kiểm tra email và phone, gồm tài khoản khóa hoặc xóa mềm
+        D-->>I: Kết quả kiểm tra định danh
+        break Email hoặc phone đã tồn tại
+            I-->>G: 409 (DUPLICATE_EMAIL / DUPLICATE_PHONE)
+            G-->>C: Chuyển tiếp phản hồi lỗi
+        end
+        Note over I: Nếu cả hai định danh trùng, ưu tiên DUPLICATE_EMAIL
+        I->>I: Hash password; sinh refresh token opaque và hash token
+        I->>D: BEGIN transaction
+        I->>D: INSERT users (role đã validate, status active, password hash)
+        Note over I,D: Unique constraint bảo vệ đăng ký đồng thời:<br/>nếu trùng định danh, ROLLBACK và trả 409
+        I->>D: INSERT refresh_tokens (chỉ lưu hash)
+        I->>D: INSERT outbox (user.registered)
+        Note over I,D: Event gồm eventId, userId, displayName = name,<br/>occurredAt, schemaVersion, correlationId
+        I->>D: COMMIT
+        D-->>I: Tài khoản, phiên refresh và outbox đã được lưu
+        I-->>G: 201 USER_REGISTERED + data tài khoản<br/>Location: /api/v1/me; Set-Cookie: refresh token opaque<br/>HttpOnly; Secure; SameSite=Lax; Path=/api/v1/auth
+        G-->>C: Chuyển tiếp JSON, Location và Set-Cookie<br/>Không có refresh token trong JSON
+
+        Note over O,TD: Đồng bộ bất đồng bộ; phản hồi 201 không chờ RabbitMQ hoặc tenancy-service
+        O->>D: Đọc event chưa gửi trong outbox
+        D-->>O: user.registered
+        O->>Q: Publish user.registered (kèm correlationId)
+        Q-->>O: Xác nhận publish thành công
+        O->>D: Xóa bản ghi outbox đã gửi
+        Q-->>T: Deliver user.registered (at-least-once)
+        T->>TD: UPSERT dữ liệu hiển thị (userId, displayName) theo userId
+        TD-->>T: Đã đồng bộ; xử lý được event trùng
+        T-->>Q: ACK
+        Note over O,Q: Broker lỗi: giữ event trong outbox để gửi lại<br/>Consumer lỗi: retry 1s / 4s / 16s, sau đó đưa vào DLQ
+    ```
   security: []
   requestBody:
     required: true
