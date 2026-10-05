@@ -6,8 +6,72 @@ post:
   security:
     - BearerAuth: []
   summary: Complete checkout
-  description: "landlord. Hoàn tất trả phòng và kết thúc hợp đồng. Sau khi checkout thành công, phòng sẽ tự động chuyển sang trạng thái chờ dọn dẹp và chuẩn bị cho thuê mới (Room.status = pending_cleanup). Sau khi chủ trọ nghiệm thu dọn dẹp xong, gọi POST /rooms/{roomId}/mark-ready để đưa phòng về available. Lỗi nghiệp vụ: 409 CONTRACT NOT ACTIVE · 403 FORBIDDEN · 422 SETTLEMENT NOT READY.
-    NOT READY."
+  description: |-
+    landlord. Hoàn tất trả phòng và kết thúc hợp đồng. Sau khi checkout thành công, phòng sẽ tự động chuyển sang trạng thái chờ dọn dẹp và chuẩn bị cho thuê mới (Room.status = pending_cleanup). Sau khi chủ trọ nghiệm thu dọn dẹp xong, gọi POST /rooms/{roomId}/mark-ready để đưa phòng về available. Lỗi nghiệp vụ: 409 CONTRACT NOT ACTIVE · 403 FORBIDDEN · 422 SETTLEMENT NOT READY. NOT READY.
+
+    ### Sequence diagram — Complete checkout
+
+    Luồng theo kiến trúc microservice: tenancy-service sở hữu nghiệp vụ và tenancy_db.
+
+    ```mermaid
+    sequenceDiagram
+        autonumber
+        participant C as Client (Web / Mobile)
+        participant G as API Gateway
+        participant R as Service Registry
+        participant S as tenancy-service
+        participant D as PostgreSQL tenancy_db
+        C->>G: POST /api/v1/contracts/{contractId}/complete-checkout<br/>Body: completedOn
+        G->>G: Gắn correlation-id, kiểm tra rate limit
+        break Vượt giới hạn yêu cầu
+            G-->>C: 429 (TOO_MANY_REQUESTS)
+        end
+        G->>G: Verify JWT cục bộ bằng JWKS cache
+        break Access token thiếu, sai hoặc hết hạn
+            G-->>C: 401 (UNAUTHORIZED)
+        end
+        G->>R: Tra cứu instance tenancy-service healthy
+        R-->>G: Địa chỉ instance
+        G->>S: Chuyển tiếp request, thông tin xác thực, correlation-id và X-Service-Token
+        S->>S: Verify JWT cục bộ#59; suy ra actor từ claim, không tin userId do client tự gán
+        S->>S: Kiểm tra JSON/body, path, header theo contract
+        break JSON/body, path, header sai cú pháp/định dạng hoặc thiếu JSON body bắt buộc
+            S-->>G: 400 (INVALID_JSON / INVALID_REQUEST_BODY / INVALID_PATH_PARAMETER / INVALID_HEADER / BAD_REQUEST)
+            G-->>C: Chuyển tiếp phản hồi lỗi
+        end
+        S->>S: Validate field theo schema, required/nullable/enum#59; từ chối field ngoài DTO khi additionalProperties=false
+        break Dữ liệu không đúng schema hoặc ràng buộc trường
+            S-->>G: 422 (VALIDATION_FAILED)
+            G-->>C: Chuyển tiếp phản hồi lỗi
+        end
+        S->>D: Đọc contract, room, chỉ số cuối kỳ và hóa đơn quyết toán liên quan
+        D-->>S: Dữ liệu hoặc kết quả không tìm thấy
+        break Không tìm thấy tài nguyên trong phạm vi truy cập
+            S-->>G: 404 (RESOURCE_NOT_FOUND)
+            G-->>C: Chuyển tiếp phản hồi lỗi
+        end
+        S->>S: Actor sở hữu hợp đồng#59; contract active và phần quyết toán đã sẵn sàng
+        Note over S,D: Chỉ số và hóa đơn quyết toán dùng endpoint riêng#59; không tự mark-ready<br/>Sau khi dọn dẹp, landlord gọi POST /rooms/{roomId}/mark-ready
+        break Không đúng role hoặc không có quyền trên tài nguyên
+            S-->>G: 403 (FORBIDDEN)
+            G-->>C: Chuyển tiếp phản hồi lỗi
+        end
+        break Vi phạm điều kiện trạng thái hoặc dữ liệu trùng đã kiểm tra
+            S-->>G: 409 (CONTRACT_NOT_ACTIVE)
+            G-->>C: Chuyển tiếp phản hồi lỗi
+        end
+        break Vi phạm quy tắc nghiệp vụ của endpoint sau khi kiểm tra dữ liệu
+            S-->>G: 422 (SETTLEMENT_NOT_READY / VALIDATION_FAILED)
+            G-->>C: Chuyển tiếp phản hồi lỗi
+        end
+        S->>D: BEGIN transaction
+        S->>D: Hoàn tất checkout theo completedOn, contract sang expired theo response DTO và Room.status sang pending_cleanup trong cùng transaction
+        S->>D: COMMIT
+        D-->>S: Dữ liệu đã lưu
+        Note over S,D: Lỗi nội bộ: rollback transaction chưa commit (nếu có), trả 500 INTERNAL_SERVER_ERROR qua gateway
+        S-->>G: 200 CONTRACT_CHECKOUT_COMPLETED + data theo DTO
+        G-->>C: Chuyển tiếp status, body và header theo contract
+    ```
   parameters:
   - name: contractId
     in: path

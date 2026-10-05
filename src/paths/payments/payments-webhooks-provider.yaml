@@ -5,8 +5,85 @@ post:
   operationId: postPaymentsWebhooksProvider
   summary: Handle payment provider webhook
   security: []
-  description: 'system. Nhận callback đã ký từ provider. Lỗi nghiệp vụ: 401 INVALID SIGNATURE · 409 DUPLICATE WEBHOOK
-    · 422 WEBHOOK INVALID.'
+  description: |-
+    system. Nhận callback đã ký từ provider. Lỗi nghiệp vụ: 401 INVALID SIGNATURE · 409 DUPLICATE WEBHOOK · 422 WEBHOOK INVALID.
+
+    ### Sequence diagram — Handle payment provider webhook
+
+    Luồng theo kiến trúc microservice: payment-service sở hữu nghiệp vụ và payment_db.
+
+    ```mermaid
+    sequenceDiagram
+        autonumber
+        participant C as Payment Provider
+        participant G as API Gateway
+        participant R as Service Registry
+        participant S as payment-service
+        participant D as PostgreSQL payment_db
+        participant O as Outbox worker (payment)
+        participant Q as RabbitMQ
+        participant N as tenancy-service
+        participant ND as PostgreSQL tenancy_db
+        participant K as community-service
+        participant KD as PostgreSQL community_db
+        C->>G: POST /api/v1/payments/webhooks/{provider}<br/>Body: transactionId, orderId, amount, signature
+        G->>G: Gắn correlation-id
+        Note over C,S: Xác thực bằng chữ ký provider#59; không dùng JWT người dùng
+        G->>R: Tra cứu instance payment-service healthy
+        R-->>G: Địa chỉ instance
+        G->>S: Chuyển tiếp request, thông tin xác thực, correlation-id và X-Service-Token
+        S->>S: Kiểm tra JSON/body, path, header theo contract
+        break JSON/body, path, header sai cú pháp/định dạng hoặc thiếu JSON body bắt buộc
+            S-->>G: 400 (INVALID_JSON / INVALID_REQUEST_BODY / INVALID_PATH_PARAMETER / INVALID_HEADER / BAD_REQUEST)
+            G-->>C: Chuyển tiếp phản hồi lỗi
+        end
+        S->>S: Validate field theo schema, required/nullable/enum#59; từ chối field ngoài DTO khi additionalProperties=false
+        break Dữ liệu không đúng schema hoặc ràng buộc trường
+            S-->>G: 422 (VALIDATION_FAILED)
+            G-->>C: Chuyển tiếp phản hồi lỗi
+        end
+        S->>S: Xác minh signature trên payload theo hợp đồng provider
+        break Chữ ký provider không hợp lệ
+            S-->>G: 401 (INVALID_SIGNATURE)
+            G-->>C: Chuyển tiếp phản hồi lỗi
+        end
+        S->>D: Tra payment_webhook_events theo provider/transactionId và intent theo orderId
+        D-->>S: Dữ liệu hoặc kết quả không tìm thấy
+        S->>S: Kiểm tra chữ ký provider trước side effect#59; đối chiếu orderId/amount và chống callback trùng
+        Note over S,D: Client trong sơ đồ là Payment Provider#59; không yêu cầu JWT người dùng<br/>Trả ACK 200 hoặc 204 theo provider, không JSON wrapper#59; callback trùng trả 409 DUPLICATE_WEBHOOK theo contract
+        break Vi phạm điều kiện trạng thái hoặc dữ liệu trùng đã kiểm tra
+            S-->>G: 409 (DUPLICATE_WEBHOOK)
+            G-->>C: Chuyển tiếp phản hồi lỗi
+        end
+        break Vi phạm quy tắc nghiệp vụ của endpoint sau khi kiểm tra dữ liệu
+            S-->>G: 422 (WEBHOOK_INVALID / VALIDATION_FAILED)
+            G-->>C: Chuyển tiếp phản hồi lỗi
+        end
+        S->>D: BEGIN transaction
+        S->>D: Lưu webhook event, cập nhật payment và outbox trong cùng transaction
+        S->>D: INSERT outbox (payment.webhook_received) cùng transaction
+        S->>D: COMMIT
+        D-->>S: Dữ liệu đã lưu
+        Note over S,D: Lỗi nội bộ: rollback transaction chưa commit (nếu có), trả 500 INTERNAL_SERVER_ERROR qua gateway
+        S-->>G: 200 hoặc 204 ACK theo hợp đồng provider#59; không JSON wrapper
+        G-->>C: Chuyển tiếp status, body và header theo contract
+        Note over O,ND: Xử lý bất đồng bộ sau commit#59; HTTP không chờ consumer hoàn tất
+        O->>D: Đọc công việc chưa gửi trong outbox
+        D-->>O: payment.webhook_received
+        Note over O,Q: Event có eventId, occurredAt, schemaVersion, correlationId
+        O->>Q: Publish payment.webhook_received
+        Q-->>O: Publisher confirm
+        O->>D: Xóa/đánh dấu bản ghi đã gửi
+        Q-->>N: Deliver payment.webhook_received (at-least-once)
+        N->>ND: Cập nhật billing_read_models và tổng payment theo providerTxnId#59; chống cộng tiền hai lần
+        ND-->>N: Dữ liệu đã commit
+        N-->>Q: ACK
+        Q-->>K: Deliver payment.webhook_received trên queue notification riêng
+        K->>KD: Ghi thông báo kết quả thanh toán theo preferences#59; chống trùng
+        KD-->>K: Dữ liệu đã commit
+        K-->>Q: ACK
+        Note over O,Q: Broker lỗi: giữ outbox để gửi lại#59; consumer lỗi: retry 1s / 4s / 16s rồi DLQ
+    ```
   parameters:
   - name: provider
     in: path

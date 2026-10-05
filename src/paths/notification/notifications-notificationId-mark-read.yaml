@@ -6,7 +6,58 @@ post:
   security:
     - BearerAuth: []
   summary: Mark notification as read
-  description: 'tenant, landlord, admin. Đánh dấu đã đọc một thông báo. Lỗi nghiệp vụ: 403 FORBIDDEN · 404 NOT FOUND.'
+  description: |-
+    tenant, landlord, admin. Đánh dấu đã đọc một thông báo. Lỗi nghiệp vụ: 403 FORBIDDEN · 404 NOT FOUND.
+
+    ### Sequence diagram — Mark notification as read
+
+    Luồng theo kiến trúc microservice: community-service sở hữu nghiệp vụ và community_db.
+
+    ```mermaid
+    sequenceDiagram
+        autonumber
+        participant C as Client (Web / Mobile)
+        participant G as API Gateway
+        participant R as Service Registry
+        participant S as community-service
+        participant D as PostgreSQL community_db
+        C->>G: POST /api/v1/notifications/{notificationId}/mark-read
+        G->>G: Gắn correlation-id, kiểm tra rate limit
+        break Vượt giới hạn yêu cầu
+            G-->>C: 429 (TOO_MANY_REQUESTS)
+        end
+        G->>G: Verify JWT cục bộ bằng JWKS cache
+        break Access token thiếu, sai hoặc hết hạn
+            G-->>C: 401 (UNAUTHORIZED)
+        end
+        G->>R: Tra cứu instance community-service healthy
+        R-->>G: Địa chỉ instance
+        G->>S: Chuyển tiếp request, thông tin xác thực, correlation-id và X-Service-Token
+        S->>S: Verify JWT cục bộ#59; suy ra actor từ claim, không tin userId do client tự gán
+        S->>S: Kiểm tra path, header theo contract
+        break path, header sai cú pháp/định dạng
+            S-->>G: 400 (INVALID_PATH_PARAMETER / INVALID_HEADER / BAD_REQUEST)
+            G-->>C: Chuyển tiếp phản hồi lỗi
+        end
+        S->>D: Đọc notification theo notificationId
+        D-->>S: Dữ liệu hoặc kết quả không tìm thấy
+        break Không tìm thấy tài nguyên trong phạm vi truy cập
+            S-->>G: 404 (RESOURCE_NOT_FOUND)
+            G-->>C: Chuyển tiếp phản hồi lỗi
+        end
+        S->>S: Notification tồn tại và thuộc actor
+        break Không đúng role hoặc không có quyền trên tài nguyên
+            S-->>G: 403 (FORBIDDEN)
+            G-->>C: Chuyển tiếp phản hồi lỗi
+        end
+        S->>D: BEGIN transaction
+        S->>D: Đánh dấu notification của actor đã đọc#59; giữ nguyên nếu đã đọc
+        S->>D: COMMIT
+        D-->>S: Dữ liệu đã lưu
+        Note over S,D: Lỗi nội bộ: rollback transaction chưa commit (nếu có), trả 500 INTERNAL_SERVER_ERROR qua gateway
+        S-->>G: 200 NOTIFICATION_MARKED_READ + data theo DTO
+        G-->>C: Chuyển tiếp status, body và header theo contract
+    ```
   parameters:
   - name: notificationId
     in: path

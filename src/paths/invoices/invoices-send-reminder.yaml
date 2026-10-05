@@ -6,8 +6,106 @@ post:
   security:
     - BearerAuth: []
   summary: Batch send invoice reminders
-  description: 'landlord. Nhắc ngày thu dự kiến theo lô. Lỗi nghiệp vụ: 422 INVOICE IDS REQUIRED · 422 INVOICE IDS
-    TOO LARGE · 409 IDEMPOTENCY KEY REUSED · 403 FORBIDDEN.'
+  description: |-
+    landlord. Nhắc ngày thu dự kiến theo lô. Lỗi nghiệp vụ: 422 INVOICE IDS REQUIRED · 422 INVOICE IDS TOO LARGE · 409 IDEMPOTENCY KEY REUSED · 403 FORBIDDEN.
+
+    ### Sequence diagram — Batch send invoice reminders
+
+    Luồng theo kiến trúc microservice: tenancy-service sở hữu nghiệp vụ và tenancy_db.
+
+    ```mermaid
+    sequenceDiagram
+        autonumber
+        participant C as Client (Web / Mobile)
+        participant G as API Gateway
+        participant R as Service Registry
+        participant S as tenancy-service
+        participant D as PostgreSQL tenancy_db
+        participant O as Outbox worker (tenancy)
+        participant Q as RabbitMQ
+        participant N as community-service
+        participant ND as PostgreSQL community_db
+        participant I as identity-service
+        participant F as FCM / Kênh thông báo
+        C->>G: POST /api/v1/invoices/send-reminder<br/>Body: invoiceIds, channel<br/>Header: Idempotency-Key
+        G->>G: Gắn correlation-id, kiểm tra rate limit
+        break Vượt giới hạn yêu cầu
+            G-->>C: 429 (TOO_MANY_REQUESTS)
+        end
+        G->>G: Verify JWT cục bộ bằng JWKS cache
+        break Access token thiếu, sai hoặc hết hạn
+            G-->>C: 401 (UNAUTHORIZED)
+        end
+        G->>R: Tra cứu instance tenancy-service healthy
+        R-->>G: Địa chỉ instance
+        G->>S: Chuyển tiếp request, thông tin xác thực, correlation-id và X-Service-Token
+        S->>S: Verify JWT cục bộ#59; suy ra actor từ claim, không tin userId do client tự gán
+        S->>S: Kiểm tra JSON/body, header theo contract
+        break JSON/body, header sai cú pháp/định dạng hoặc thiếu JSON body bắt buộc
+            S-->>G: 400 (INVALID_JSON / INVALID_REQUEST_BODY / INVALID_HEADER / BAD_REQUEST)
+            G-->>C: Chuyển tiếp phản hồi lỗi
+        end
+        S->>S: Validate field theo schema, required/nullable/enum#59; từ chối field ngoài DTO khi additionalProperties=false
+        break Dữ liệu không đúng schema hoặc ràng buộc trường
+            S-->>G: 422 (VALIDATION_FAILED)
+            G-->>C: Chuyển tiếp phản hồi lỗi
+        end
+        S->>D: Tra/giữ Idempotency-Key theo actor, endpoint và fingerprint payload
+        D-->>S: Trạng thái khóa và kết quả đã lưu
+        break Cùng key đã hoàn tất với cùng payload
+            S-->>G: Trả nguyên status, code, data và header của kết quả đã lưu
+            G-->>C: Kết quả cũ#59; không lặp side effect
+        end
+        break Key đã dùng với payload khác
+            S-->>G: 409 IDEMPOTENCY_KEY_REUSED
+            G-->>C: Chuyển tiếp phản hồi lỗi
+        end
+        Note over S,D: Lưu Idempotency-Key ít nhất 24 giờ#59; khóa/unique constraint ngăn side effect trùng<br/>Key đang xử lý: giữ nguyên khóa và trạng thái để retry, không bắt đầu thao tác lần hai
+        S->>D: Đọc invoices, tổng thu và BillingSetting trong phạm vi landlord
+        D-->>S: Dữ liệu hoặc kết quả không tìm thấy
+        S->>S: invoiceIds không rỗng, không vượt giới hạn#59; Idempotency-Key/channel hợp lệ
+        Note over S,D: 202 là đã xếp hàng#59; không khẳng định push đã giao đến thiết bị<br/>Áp rule ngày nhắc BillingSetting#59; không giới hạn chỉ hóa đơn quá hạn
+        break Không đúng role hoặc không có quyền trên tài nguyên
+            S-->>G: 403 (FORBIDDEN)
+            G-->>C: Chuyển tiếp phản hồi lỗi
+        end
+        break Vi phạm quy tắc nghiệp vụ của endpoint sau khi kiểm tra dữ liệu
+            S-->>G: 422 (INVOICE_IDS_REQUIRED / INVOICE_IDS_TOO_LARGE / VALIDATION_FAILED)
+            G-->>C: Chuyển tiếp phản hồi lỗi
+        end
+        loop Từng invoiceId
+            S->>D: Đọc quyền sở hữu, invoiceStatus, số tiền còn lại và lịch nhắc
+            D-->>S: Dữ liệu áp dụng rule nhắc
+            alt Invoice issued chưa thu đủ, đủ điều kiện nhắc
+                S->>D: Lưu công việc nhắc bền vững và số lần nhắc trong transaction
+                D-->>S: Công việc đã xếp hàng và sentCount
+                S->>S: Thêm invoiceId/sentCount vào queued
+            else Invoice không đủ điều kiện
+                S->>S: Thêm invoiceId/code vào failed
+            end
+        end
+        S->>D: Lưu requested/queued/failed theo Idempotency-Key
+        D-->>S: Kết quả batch bền vững
+        Note over S,D: Lỗi nội bộ: rollback transaction chưa commit (nếu có), trả 500 INTERNAL_SERVER_ERROR qua gateway
+        S-->>G: 202 INVOICE_REMINDERS_QUEUED + data theo DTO
+        G-->>C: Chuyển tiếp status, body và header theo contract
+        Note over O,ND: Xử lý bất đồng bộ sau commit#59; HTTP không chờ consumer hoàn tất
+        O->>D: Đọc công việc chưa gửi trong outbox
+        D-->>O: Công việc thông báo
+        Note over O,Q: Event có eventId, occurredAt, schemaVersion, correlationId
+        O->>Q: Publish Công việc thông báo
+        Q-->>O: Publisher confirm
+        O->>D: Xóa/đánh dấu bản ghi đã gửi
+        Q-->>N: Deliver Công việc thông báo (at-least-once)
+        Note over N: Chỉ công việc của invoices trong queued
+        N->>ND: Kiểm tra notification_preferences và ghi thông báo theo channel#59; chống lặp theo eventId
+        ND-->>N: Dữ liệu đã commit
+        N-->>Q: ACK
+        N->>I: Đọc device token người nhận nếu channel là push
+        I-->>N: Device token hiện hành
+        N->>F: Gửi theo channel/preferences
+        Note over O,Q: Broker lỗi: giữ outbox để gửi lại#59; consumer lỗi: retry 1s / 4s / 16s rồi DLQ
+    ```
   parameters:
   - name: Idempotency-Key
     in: header

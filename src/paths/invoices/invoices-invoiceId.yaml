@@ -6,7 +6,55 @@ get:
   security:
     - BearerAuth: []
   summary: Get invoice details
-  description: 'landlord, tenant. Đọc hóa đơn kèm tổng hợp thanh toán. Lỗi nghiệp vụ: 403 FORBIDDEN · 404 NOT FOUND.'
+  description: |-
+    landlord, tenant. Đọc hóa đơn kèm tổng hợp thanh toán. Lỗi nghiệp vụ: 403 FORBIDDEN · 404 NOT FOUND.
+
+    ### Sequence diagram — Get invoice details
+
+    Luồng theo kiến trúc microservice: tenancy-service sở hữu nghiệp vụ và tenancy_db.
+
+    ```mermaid
+    sequenceDiagram
+        autonumber
+        participant C as Client (Web / Mobile)
+        participant G as API Gateway
+        participant R as Service Registry
+        participant S as tenancy-service
+        participant D as PostgreSQL tenancy_db
+        C->>G: GET /api/v1/invoices/{invoiceId}
+        G->>G: Gắn correlation-id, kiểm tra rate limit
+        break Vượt giới hạn yêu cầu
+            G-->>C: 429 (TOO_MANY_REQUESTS)
+        end
+        G->>G: Verify JWT cục bộ bằng JWKS cache
+        break Access token thiếu, sai hoặc hết hạn
+            G-->>C: 401 (UNAUTHORIZED)
+        end
+        G->>R: Tra cứu instance tenancy-service healthy
+        R-->>G: Địa chỉ instance
+        G->>S: Chuyển tiếp request, thông tin xác thực, correlation-id và X-Service-Token
+        S->>S: Verify JWT cục bộ#59; suy ra actor từ claim, không tin userId do client tự gán
+        S->>S: Kiểm tra path, header theo contract
+        break path, header sai cú pháp/định dạng
+            S-->>G: 400 (INVALID_PATH_PARAMETER / INVALID_HEADER / BAD_REQUEST)
+            G-->>C: Chuyển tiếp phản hồi lỗi
+        end
+        S->>D: Đọc invoice và billing_read_models tổng hợp thanh toán
+        D-->>S: Dữ liệu hoặc kết quả không tìm thấy
+        break Không tìm thấy tài nguyên trong phạm vi truy cập
+            S-->>G: 404 (RESOURCE_NOT_FOUND)
+            G-->>C: Chuyển tiếp phản hồi lỗi
+        end
+        S->>S: Actor là landlord sở hữu hoặc tenant có quyền đọc invoice
+        Note over S,D: Tổng hợp payment qua read model trong tenancy_db#59; không JOIN payment_db
+        break Không đúng role hoặc không có quyền trên tài nguyên
+            S-->>G: 403 (FORBIDDEN)
+            G-->>C: Chuyển tiếp phản hồi lỗi
+        end
+        Note over S,D: Lỗi nội bộ: rollback transaction chưa commit (nếu có), trả 500 INTERNAL_SERVER_ERROR qua gateway
+        S-->>G: 200 INVOICE_FETCHED + data theo DTO
+        G-->>C: Chuyển tiếp status, body và header theo contract
+    ```
   parameters:
   - name: invoiceId
     in: path
@@ -80,8 +128,72 @@ patch:
   security:
     - BearerAuth: []
   summary: Update pending invoice
-  description: 'landlord. Sửa hóa đơn đang chờ. Lỗi nghiệp vụ: 409 INVOICE ALREADY ISSUED · 422 TOTAL AMOUNT INVALID
-    · 403 FORBIDDEN.'
+  description: |-
+    landlord. Sửa hóa đơn đang chờ. Lỗi nghiệp vụ: 409 INVOICE ALREADY ISSUED · 422 TOTAL AMOUNT INVALID · 403 FORBIDDEN.
+
+    ### Sequence diagram — Update pending invoice
+
+    Luồng theo kiến trúc microservice: tenancy-service sở hữu nghiệp vụ và tenancy_db.
+
+    ```mermaid
+    sequenceDiagram
+        autonumber
+        participant C as Client (Web / Mobile)
+        participant G as API Gateway
+        participant R as Service Registry
+        participant S as tenancy-service
+        participant D as PostgreSQL tenancy_db
+        C->>G: PATCH /api/v1/invoices/{invoiceId}<br/>Body: otherFees, note
+        G->>G: Gắn correlation-id, kiểm tra rate limit
+        break Vượt giới hạn yêu cầu
+            G-->>C: 429 (TOO_MANY_REQUESTS)
+        end
+        G->>G: Verify JWT cục bộ bằng JWKS cache
+        break Access token thiếu, sai hoặc hết hạn
+            G-->>C: 401 (UNAUTHORIZED)
+        end
+        G->>R: Tra cứu instance tenancy-service healthy
+        R-->>G: Địa chỉ instance
+        G->>S: Chuyển tiếp request, thông tin xác thực, correlation-id và X-Service-Token
+        S->>S: Verify JWT cục bộ#59; suy ra actor từ claim, không tin userId do client tự gán
+        S->>S: Kiểm tra JSON/body, path, header theo contract
+        break JSON/body, path, header sai cú pháp/định dạng hoặc thiếu JSON body bắt buộc
+            S-->>G: 400 (INVALID_JSON / INVALID_REQUEST_BODY / INVALID_PATH_PARAMETER / INVALID_HEADER / BAD_REQUEST)
+            G-->>C: Chuyển tiếp phản hồi lỗi
+        end
+        S->>S: Validate field theo schema, required/nullable/enum#59; từ chối field ngoài DTO khi additionalProperties=false
+        Note over S: PATCH chỉ cập nhật field được gửi#59; field bị omit giữ nguyên
+        break Dữ liệu không đúng schema hoặc ràng buộc trường
+            S-->>G: 422 (VALIDATION_FAILED)
+            G-->>C: Chuyển tiếp phản hồi lỗi
+        end
+        S->>D: Đọc invoice và trạng thái phát hành
+        D-->>S: Dữ liệu hoặc kết quả không tìm thấy
+        break Không tìm thấy tài nguyên trong phạm vi truy cập
+            S-->>G: 404 (RESOURCE_NOT_FOUND)
+            G-->>C: Chuyển tiếp phản hồi lỗi
+        end
+        S->>S: Actor sở hữu invoice#59; invoice đang pending, chưa issued#59; tổng sau sửa hợp lệ
+        break Không đúng role hoặc không có quyền trên tài nguyên
+            S-->>G: 403 (FORBIDDEN)
+            G-->>C: Chuyển tiếp phản hồi lỗi
+        end
+        break Vi phạm điều kiện trạng thái hoặc dữ liệu trùng đã kiểm tra
+            S-->>G: 409 (INVOICE_ALREADY_ISSUED)
+            G-->>C: Chuyển tiếp phản hồi lỗi
+        end
+        break Vi phạm quy tắc nghiệp vụ của endpoint sau khi kiểm tra dữ liệu
+            S-->>G: 422 (TOTAL_AMOUNT_INVALID / VALIDATION_FAILED)
+            G-->>C: Chuyển tiếp phản hồi lỗi
+        end
+        S->>D: BEGIN transaction
+        S->>D: Cập nhật các field DTO và tổng hóa đơn đang chờ
+        S->>D: COMMIT
+        D-->>S: Dữ liệu đã lưu
+        Note over S,D: Lỗi nội bộ: rollback transaction chưa commit (nếu có), trả 500 INTERNAL_SERVER_ERROR qua gateway
+        S-->>G: 200 INVOICE_UPDATED + data theo DTO
+        G-->>C: Chuyển tiếp status, body và header theo contract
+    ```
   parameters:
   - name: invoiceId
     in: path

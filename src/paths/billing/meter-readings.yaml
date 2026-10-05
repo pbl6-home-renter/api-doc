@@ -6,7 +6,59 @@ get:
   security:
     - BearerAuth: []
   summary: List meter readings
-  description: 'landlord. Liệt kê chỉ số đồng hồ. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 VALIDATION FAILED.'
+  description: |-
+    landlord. Liệt kê chỉ số đồng hồ. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 VALIDATION FAILED.
+
+    ### Sequence diagram — List meter readings
+
+    Luồng theo kiến trúc microservice: tenancy-service sở hữu nghiệp vụ và tenancy_db.
+
+    ```mermaid
+    sequenceDiagram
+        autonumber
+        participant C as Client (Web / Mobile)
+        participant G as API Gateway
+        participant R as Service Registry
+        participant S as tenancy-service
+        participant D as PostgreSQL tenancy_db
+        C->>G: GET /api/v1/meter-readings<br/>Query: filter, pageSize, pageNo
+        G->>G: Gắn correlation-id, kiểm tra rate limit
+        break Vượt giới hạn yêu cầu
+            G-->>C: 429 (TOO_MANY_REQUESTS)
+        end
+        G->>G: Verify JWT cục bộ bằng JWKS cache
+        break Access token thiếu, sai hoặc hết hạn
+            G-->>C: 401 (UNAUTHORIZED)
+        end
+        G->>R: Tra cứu instance tenancy-service healthy
+        R-->>G: Địa chỉ instance
+        G->>S: Chuyển tiếp request, thông tin xác thực, correlation-id và X-Service-Token
+        S->>S: Verify JWT cục bộ#59; suy ra actor từ claim, không tin userId do client tự gán
+        S->>S: Kiểm tra query, header theo contract
+        break query, header sai cú pháp/định dạng
+            S-->>G: 400 (INVALID_QUERY_PARAMETER / INVALID_HEADER / BAD_REQUEST)
+            G-->>C: Chuyển tiếp phản hồi lỗi
+        end
+        S->>S: Validate field theo schema, required/nullable/enum#59; từ chối field ngoài DTO khi additionalProperties=false
+        break Dữ liệu không đúng schema hoặc ràng buộc trường
+            S-->>G: 422 (VALIDATION_FAILED)
+            G-->>C: Chuyển tiếp phản hồi lỗi
+        end
+        S->>D: Đọc meter_readings theo phòng thuộc actor, kỳ và loại công tơ#59; filter/offset
+        D-->>S: Dữ liệu hoặc kết quả không tìm thấy
+        S->>S: Actor sở hữu các phòng được truy vấn
+        break Không đúng role hoặc không có quyền trên tài nguyên
+            S-->>G: 403 (FORBIDDEN)
+            G-->>C: Chuyển tiếp phản hồi lỗi
+        end
+        break Vi phạm quy tắc nghiệp vụ của endpoint sau khi kiểm tra dữ liệu
+            S-->>G: 422 (VALIDATION_FAILED)
+            G-->>C: Chuyển tiếp phản hồi lỗi
+        end
+        Note over S,D: Lỗi nội bộ: rollback transaction chưa commit (nếu có), trả 500 INTERNAL_SERVER_ERROR qua gateway
+        S-->>G: 200 METER_READINGS_FETCHED + data theo DTO
+        G-->>C: Chuyển tiếp status, body và header theo contract
+    ```
   parameters:
   - name: filter
     in: query
@@ -138,8 +190,71 @@ post:
   security:
     - BearerAuth: []
   summary: Create meter reading
-  description: 'landlord. Tạo một chỉ số đã xác nhận. Lỗi nghiệp vụ: 409 DUPLICATE METER READING · 422 CURRENT READING
-    INVALID · 422 EVIDENCE REQUIRED · 403 FORBIDDEN.'
+  description: |-
+    landlord. Tạo một chỉ số đã xác nhận. Lỗi nghiệp vụ: 409 DUPLICATE METER READING · 422 CURRENT READING INVALID · 422 EVIDENCE REQUIRED · 403 FORBIDDEN.
+
+    ### Sequence diagram — Create meter reading
+
+    Luồng theo kiến trúc microservice: tenancy-service sở hữu nghiệp vụ và tenancy_db.
+
+    ```mermaid
+    sequenceDiagram
+        autonumber
+        participant C as Client (Web / Mobile)
+        participant G as API Gateway
+        participant R as Service Registry
+        participant S as tenancy-service
+        participant D as PostgreSQL tenancy_db
+        participant I as identity-service
+        C->>G: POST /api/v1/meter-readings<br/>Body: roomId, type, period, previousReading, currentReading<br/>readingDate, isBaseline, evidenceMediaId
+        G->>G: Gắn correlation-id, kiểm tra rate limit
+        break Vượt giới hạn yêu cầu
+            G-->>C: 429 (TOO_MANY_REQUESTS)
+        end
+        G->>G: Verify JWT cục bộ bằng JWKS cache
+        break Access token thiếu, sai hoặc hết hạn
+            G-->>C: 401 (UNAUTHORIZED)
+        end
+        G->>R: Tra cứu instance tenancy-service healthy
+        R-->>G: Địa chỉ instance
+        G->>S: Chuyển tiếp request, thông tin xác thực, correlation-id và X-Service-Token
+        S->>S: Verify JWT cục bộ#59; suy ra actor từ claim, không tin userId do client tự gán
+        S->>S: Kiểm tra JSON/body, header theo contract
+        break JSON/body, header sai cú pháp/định dạng hoặc thiếu JSON body bắt buộc
+            S-->>G: 400 (INVALID_JSON / INVALID_REQUEST_BODY / INVALID_HEADER / BAD_REQUEST)
+            G-->>C: Chuyển tiếp phản hồi lỗi
+        end
+        S->>S: Validate field theo schema, required/nullable/enum#59; từ chối field ngoài DTO khi additionalProperties=false
+        break Dữ liệu không đúng schema hoặc ràng buộc trường
+            S-->>G: 422 (VALIDATION_FAILED)
+            G-->>C: Chuyển tiếp phản hồi lỗi
+        end
+        S->>D: Đọc room, chỉ số kỳ trước và bản ghi cùng room/type/period
+        D-->>S: Dữ liệu hoặc kết quả không tìm thấy
+        S->>I: Đọc metadata và quyền bằng chứng công tơ đã upload
+        I-->>S: Kết quả kiểm tra evidence media
+        S->>S: Actor sở hữu phòng#59; currentReading hợp lệ so với previousReading<br/>Có bằng chứng hợp lệ#59; chưa có meter reading cùng kỳ/loại
+        Note over S,D: isBaseline được xử lý theo quy tắc chỉ số đầu kỳ#59; các chỉ số thập phân dùng kiểu chính xác, không tính bằng float
+        break Không đúng role hoặc không có quyền trên tài nguyên
+            S-->>G: 403 (FORBIDDEN)
+            G-->>C: Chuyển tiếp phản hồi lỗi
+        end
+        break Vi phạm điều kiện trạng thái hoặc dữ liệu trùng đã kiểm tra
+            S-->>G: 409 (DUPLICATE_METER_READING)
+            G-->>C: Chuyển tiếp phản hồi lỗi
+        end
+        break Vi phạm quy tắc nghiệp vụ của endpoint sau khi kiểm tra dữ liệu
+            S-->>G: 422 (CURRENT_READING_INVALID / EVIDENCE_REQUIRED / VALIDATION_FAILED)
+            G-->>C: Chuyển tiếp phản hồi lỗi
+        end
+        S->>D: BEGIN transaction
+        S->>D: Tạo meter_reading đã xác nhận, lưu bằng chứng và lượng tiêu thụ
+        S->>D: COMMIT
+        D-->>S: Dữ liệu đã lưu
+        Note over S,D: Lỗi nội bộ: rollback transaction chưa commit (nếu có), trả 500 INTERNAL_SERVER_ERROR qua gateway
+        S-->>G: 201 METER_READING_CREATED + data theo DTO<br/>Location: /api/v1/meter-readings
+        G-->>C: Chuyển tiếp status, body và header theo contract
+    ```
   requestBody:
     required: true
     content:

@@ -6,8 +6,88 @@ post:
   security:
     - BearerAuth: []
   summary: Create payment intent
-  description: 'tenant. Tạo ý định thanh toán. Lỗi nghiệp vụ: 409 IDEMPOTENCY KEY REUSED · 409 INVOICE NOT PAYABLE
-    · 403 FORBIDDEN.'
+  description: |-
+    tenant. Tạo ý định thanh toán. Lỗi nghiệp vụ: 409 IDEMPOTENCY KEY REUSED · 409 INVOICE NOT PAYABLE · 403 FORBIDDEN.
+
+    ### Sequence diagram — Create payment intent
+
+    Luồng theo kiến trúc microservice: payment-service sở hữu nghiệp vụ và payment_db.
+
+    ```mermaid
+    sequenceDiagram
+        autonumber
+        participant C as Client (Web / Mobile)
+        participant G as API Gateway
+        participant R as Service Registry
+        participant S as payment-service
+        participant D as PostgreSQL payment_db
+        participant T as tenancy-service
+        participant I as identity-service
+        participant X as Payment Provider
+        C->>G: POST /api/v1/payments/create-intent<br/>Body: invoiceId, method<br/>Header: Idempotency-Key
+        G->>G: Gắn correlation-id, kiểm tra rate limit
+        break Vượt giới hạn yêu cầu
+            G-->>C: 429 (TOO_MANY_REQUESTS)
+        end
+        G->>G: Verify JWT cục bộ bằng JWKS cache
+        break Access token thiếu, sai hoặc hết hạn
+            G-->>C: 401 (UNAUTHORIZED)
+        end
+        G->>R: Tra cứu instance payment-service healthy
+        R-->>G: Địa chỉ instance
+        G->>S: Chuyển tiếp request, thông tin xác thực, correlation-id và X-Service-Token
+        S->>S: Verify JWT cục bộ#59; suy ra actor từ claim, không tin userId do client tự gán
+        S->>S: Kiểm tra JSON/body, header theo contract
+        break JSON/body, header sai cú pháp/định dạng hoặc thiếu JSON body bắt buộc
+            S-->>G: 400 (INVALID_JSON / INVALID_REQUEST_BODY / INVALID_HEADER / BAD_REQUEST)
+            G-->>C: Chuyển tiếp phản hồi lỗi
+        end
+        S->>S: Validate field theo schema, required/nullable/enum#59; từ chối field ngoài DTO khi additionalProperties=false
+        break Dữ liệu không đúng schema hoặc ràng buộc trường
+            S-->>G: 422 (VALIDATION_FAILED)
+            G-->>C: Chuyển tiếp phản hồi lỗi
+        end
+        S->>D: Tra/giữ Idempotency-Key theo actor, endpoint và fingerprint payload
+        D-->>S: Trạng thái khóa và kết quả đã lưu
+        break Cùng key đã hoàn tất với cùng payload
+            S-->>G: Trả nguyên status, code, data và header của kết quả đã lưu
+            G-->>C: Kết quả cũ#59; không lặp side effect
+        end
+        break Key đã dùng với payload khác
+            S-->>G: 409 IDEMPOTENCY_KEY_REUSED
+            G-->>C: Chuyển tiếp phản hồi lỗi
+        end
+        Note over S,D: Lưu Idempotency-Key ít nhất 24 giờ#59; khóa/unique constraint ngăn side effect trùng<br/>Key đang xử lý: giữ nguyên khóa và trạng thái để retry, không bắt đầu thao tác lần hai
+        S->>D: Đọc trạng thái xử lý Idempotency-Key và intent hiện có
+        D-->>S: Dữ liệu hoặc kết quả không tìm thấy
+        S->>T: Đọc invoice, quyền actor, số tiền còn lại và trạng thái mới nhất (service token)
+        T-->>S: Dữ liệu quyết định từ tenancy-service
+        S->>S: Actor có quyền thanh toán invoice#59; invoice còn payable#59; method đúng DTO
+        Note over S,D: Số tiền lấy từ invoice#59; tạo intent chưa phải thanh toán thành công<br/>Retry dùng cùng Idempotency-Key#59; không tạo lại intent đã hoàn tất
+        break Không đúng role hoặc không có quyền trên tài nguyên
+            S-->>G: 403 (FORBIDDEN)
+            G-->>C: Chuyển tiếp phản hồi lỗi
+        end
+        break Vi phạm điều kiện trạng thái hoặc dữ liệu trùng đã kiểm tra
+            S-->>G: 409 (INVOICE_NOT_PAYABLE)
+            G-->>C: Chuyển tiếp phản hồi lỗi
+        end
+        break Vi phạm quy tắc nghiệp vụ của endpoint sau khi kiểm tra dữ liệu
+            S-->>G: 422 (VALIDATION_FAILED)
+            G-->>C: Chuyển tiếp phản hồi lỗi
+        end
+        S->>I: Đọc/cached cấu hình nhận tiền landlord khi cần
+        I-->>S: Tài khoản nhận tiền được phép sử dụng
+        S->>X: Tạo intent/QR theo invoice và cùng khóa chống lặp (timeout 8s)
+        X-->>S: QR payload và mã giao dịch provider
+        S->>D: BEGIN transaction
+        S->>D: Lưu payment_intent, QR/providerTxnId và kết quả Idempotency-Key
+        S->>D: COMMIT
+        D-->>S: Dữ liệu đã lưu
+        Note over S,D: Lỗi nội bộ: rollback transaction chưa commit (nếu có), trả 500 INTERNAL_SERVER_ERROR qua gateway
+        S-->>G: 201 PAYMENT_INTENT_CREATED + data theo DTO<br/>Location: /api/v1/payments
+        G-->>C: Chuyển tiếp status, body và header theo contract
+    ```
   parameters:
   - name: Idempotency-Key
     in: header

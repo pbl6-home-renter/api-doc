@@ -3,9 +3,50 @@ post:
   x-apidog-folder: Auth
   operationId: logoutSession
   summary: Logout
-  description: >-
-    Dành cho tenant, landlord và admin. Không có request body. Thu hồi phiên
-    refresh hiện tại được xác định qua cookie refreshToken và xóa cookie.
+  description: |-
+    Dành cho tenant, landlord và admin. Không có request body. Thu hồi phiên refresh hiện tại được xác định qua cookie refreshToken và xóa cookie.
+
+    ### Sequence diagram — Logout
+
+    Luồng theo kiến trúc microservice: identity-service sở hữu nghiệp vụ và identity_db.
+
+    ```mermaid
+    sequenceDiagram
+        autonumber
+        participant C as Client (Web / Mobile)
+        participant G as API Gateway
+        participant R as Service Registry
+        participant S as identity-service
+        participant D as PostgreSQL identity_db
+        C->>G: POST /api/v1/auth/logout<br/>Cookie: refreshToken#59; không body, không Bearer
+        G->>G: Gắn correlation-id, kiểm tra rate limit
+        break Vượt giới hạn yêu cầu
+            G-->>C: 429 (TOO_MANY_REQUESTS)
+        end
+        Note over C,S: Phiên xác định bằng cookie refreshToken, không xác thực bằng access token
+        G->>R: Tra cứu instance identity-service healthy
+        R-->>G: Địa chỉ instance
+        G->>S: Chuyển tiếp request, thông tin xác thực, correlation-id và X-Service-Token
+        S->>S: Kiểm tra header theo contract
+        break header sai cú pháp/định dạng
+            S-->>G: 400 (INVALID_HEADER / BAD_REQUEST)
+            G-->>C: Chuyển tiếp phản hồi lỗi
+        end
+        S->>D: Tra phiên hiện tại từ hash cookie refreshToken
+        D-->>S: Dữ liệu hoặc kết quả không tìm thấy
+        S->>S: Kiểm tra cookie và phiên refresh còn hiệu lực
+        break Thông tin đăng nhập/cookie/currentPassword không xác thực được hoặc phiên đã thu hồi
+            S-->>G: 401 (INVALID_REFRESH_TOKEN)
+            G-->>C: Chuyển tiếp phản hồi lỗi
+        end
+        S->>D: BEGIN transaction
+        S->>D: Thu hồi phiên refresh hiện tại
+        S->>D: COMMIT
+        D-->>S: Dữ liệu đã lưu
+        Note over S,D: Lỗi nội bộ: rollback transaction chưa commit (nếu có), trả 500 INTERNAL_SERVER_ERROR qua gateway
+        S-->>G: 204 No Content#59; không JSON body<br/>Xóa cookie refreshToken tại Path=/api/v1/auth (Max-Age=0)
+        G-->>C: Chuyển tiếp status, body và header theo contract
+    ```
   security:
     - RefreshCookie: []
   responses:

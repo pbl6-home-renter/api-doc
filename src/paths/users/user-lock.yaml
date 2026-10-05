@@ -6,7 +6,89 @@ post:
   security:
     - BearerAuth: []
   summary: Lock user
-  description: "Chỉ admin; yêu cầu access token. Khóa tài khoản, thu hồi phiên và ghi audit log. Nghiệp vụ: Khi khóa chủ trọ, toàn bộ thông tin/phòng của chủ trọ sẽ bị vô hiệu hóa (ẩn khỏi sàn), hợp đồng đang hiệu lực chuyển sang trạng thái tạm thời kết thúc (nếu đến hạn chưa mở khóa thì tự hủy). Khi khóa người thuê, người thuê vẫn được thanh toán hóa đơn hợp đồng hiện tại, nhưng không thể gia hạn và không thể thuê trọ mới.log."
+  description: |-
+    Chỉ admin; yêu cầu access token. Khóa tài khoản, thu hồi phiên và ghi audit log. Nghiệp vụ: Khi khóa chủ trọ, toàn bộ thông tin/phòng của chủ trọ sẽ bị vô hiệu hóa (ẩn khỏi sàn), hợp đồng đang hiệu lực chuyển sang trạng thái tạm thời kết thúc (nếu đến hạn chưa mở khóa thì tự hủy). Khi khóa người thuê, người thuê vẫn được thanh toán hóa đơn hợp đồng hiện tại, nhưng không thể gia hạn và không thể thuê trọ mới.log.
+
+    ### Sequence diagram — Lock user
+
+    Luồng theo kiến trúc microservice: identity-service sở hữu nghiệp vụ và identity_db.
+
+    ```mermaid
+    sequenceDiagram
+        autonumber
+        participant C as Client (Web / Mobile)
+        participant G as API Gateway
+        participant R as Service Registry
+        participant S as identity-service
+        participant D as PostgreSQL identity_db
+        participant O as Outbox worker (identity)
+        participant Q as RabbitMQ
+        participant N as tenancy-service
+        participant ND as PostgreSQL tenancy_db
+        C->>G: POST /api/v1/users/{userId}/lock<br/>Body: lockReason
+        G->>G: Gắn correlation-id, kiểm tra rate limit
+        break Vượt giới hạn yêu cầu
+            G-->>C: 429 (TOO_MANY_REQUESTS)
+        end
+        G->>G: Verify JWT cục bộ bằng JWKS cache
+        break Access token thiếu, sai hoặc hết hạn
+            G-->>C: 401 (UNAUTHORIZED)
+        end
+        G->>R: Tra cứu instance identity-service healthy
+        R-->>G: Địa chỉ instance
+        G->>S: Chuyển tiếp request, thông tin xác thực, correlation-id và X-Service-Token
+        S->>S: Verify JWT cục bộ#59; suy ra actor từ claim, không tin userId do client tự gán
+        S->>S: Kiểm tra JSON/body, path, header theo contract
+        break JSON/body, path, header sai cú pháp/định dạng hoặc thiếu JSON body bắt buộc
+            S-->>G: 400 (INVALID_JSON / INVALID_REQUEST_BODY / INVALID_PATH_PARAMETER / INVALID_HEADER / BAD_REQUEST)
+            G-->>C: Chuyển tiếp phản hồi lỗi
+        end
+        S->>S: Validate field theo schema, required/nullable/enum#59; từ chối field ngoài DTO khi additionalProperties=false
+        break Dữ liệu không đúng schema hoặc ràng buộc trường
+            S-->>G: 422 (VALIDATION_FAILED)
+            G-->>C: Chuyển tiếp phản hồi lỗi
+        end
+        S->>D: Đọc user và trạng thái tài khoản
+        D-->>S: Dữ liệu hoặc kết quả không tìm thấy
+        break Không tìm thấy tài nguyên trong phạm vi truy cập
+            S-->>G: 404 (RESOURCE_NOT_FOUND)
+            G-->>C: Chuyển tiếp phản hồi lỗi
+        end
+        S->>S: Actor là admin#59; user chưa locked#59; lockReason hợp lệ
+        Note over S,D: Lưu công việc đồng bộ vòng đời user cùng transaction#59; tenancy xử lý hủy hợp đồng đến hạn nếu landlord chưa được mở khóa
+        break Không đúng role hoặc không có quyền trên tài nguyên
+            S-->>G: 403 (FORBIDDEN)
+            G-->>C: Chuyển tiếp phản hồi lỗi
+        end
+        break Vi phạm điều kiện trạng thái hoặc dữ liệu trùng đã kiểm tra
+            S-->>G: 409 (USER_ALREADY_LOCKED)
+            G-->>C: Chuyển tiếp phản hồi lỗi
+        end
+        break Vi phạm quy tắc nghiệp vụ của endpoint sau khi kiểm tra dữ liệu
+            S-->>G: 422 (LOCK_REASON_REQUIRED / VALIDATION_FAILED)
+            G-->>C: Chuyển tiếp phản hồi lỗi
+        end
+        S->>D: BEGIN transaction
+        S->>D: Chuyển user sang locked, lưu lockReason/lockedAt, thu hồi phiên và ghi audit log
+        S->>D: Lưu công việc đồng bộ bền vững cùng transaction
+        S->>D: COMMIT
+        D-->>S: Dữ liệu đã lưu
+        Note over S,D: Lỗi nội bộ: rollback transaction chưa commit (nếu có), trả 500 INTERNAL_SERVER_ERROR qua gateway
+        S-->>G: 200 USER_LOCKED + data theo DTO
+        G-->>C: Chuyển tiếp status, body và header theo contract
+        Note over O,ND: Xử lý bất đồng bộ sau commit#59; HTTP không chờ consumer hoàn tất
+        O->>D: Đọc công việc chưa gửi trong outbox
+        D-->>O: Công việc đồng bộ vòng đời user
+        Note over O,Q: Event có eventId, occurredAt, schemaVersion, correlationId
+        O->>Q: Publish Công việc đồng bộ vòng đời user
+        Q-->>O: Publisher confirm
+        O->>D: Xóa/đánh dấu bản ghi đã gửi
+        Q-->>N: Deliver Công việc đồng bộ vòng đời user (at-least-once)
+        N->>ND: Nếu landlord: ẩn thông tin/phòng khỏi sàn và tạm kết thúc hợp đồng theo rule khóa<br/>Nếu tenant: vẫn cho thanh toán hợp đồng hiện tại, chặn gia hạn và thuê mới
+        ND-->>N: Dữ liệu đã commit
+        N-->>Q: ACK
+        Note over O,Q: Broker lỗi: giữ outbox để gửi lại#59; consumer lỗi: retry 1s / 4s / 16s rồi DLQ
+    ```
   parameters:
   - name: userId
     in: path

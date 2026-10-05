@@ -6,8 +6,72 @@ patch:
   security:
     - BearerAuth: []
   summary: Update rate policy
-  description: 'landlord. Đổi tên chính sách. Lỗi nghiệp vụ: 403 FORBIDDEN · 409 RATE POLICY LOCKED · 422 VALIDATION
-    FAILED.'
+  description: |-
+    landlord. Đổi tên chính sách. Lỗi nghiệp vụ: 403 FORBIDDEN · 409 RATE POLICY LOCKED · 422 VALIDATION FAILED.
+
+    ### Sequence diagram — Update rate policy
+
+    Luồng theo kiến trúc microservice: tenancy-service sở hữu nghiệp vụ và tenancy_db.
+
+    ```mermaid
+    sequenceDiagram
+        autonumber
+        participant C as Client (Web / Mobile)
+        participant G as API Gateway
+        participant R as Service Registry
+        participant S as tenancy-service
+        participant D as PostgreSQL tenancy_db
+        C->>G: PATCH /api/v1/rate-policies/{ratePolicyId}<br/>Body: name
+        G->>G: Gắn correlation-id, kiểm tra rate limit
+        break Vượt giới hạn yêu cầu
+            G-->>C: 429 (TOO_MANY_REQUESTS)
+        end
+        G->>G: Verify JWT cục bộ bằng JWKS cache
+        break Access token thiếu, sai hoặc hết hạn
+            G-->>C: 401 (UNAUTHORIZED)
+        end
+        G->>R: Tra cứu instance tenancy-service healthy
+        R-->>G: Địa chỉ instance
+        G->>S: Chuyển tiếp request, thông tin xác thực, correlation-id và X-Service-Token
+        S->>S: Verify JWT cục bộ#59; suy ra actor từ claim, không tin userId do client tự gán
+        S->>S: Kiểm tra JSON/body, path, header theo contract
+        break JSON/body, path, header sai cú pháp/định dạng hoặc thiếu JSON body bắt buộc
+            S-->>G: 400 (INVALID_JSON / INVALID_REQUEST_BODY / INVALID_PATH_PARAMETER / INVALID_HEADER / BAD_REQUEST)
+            G-->>C: Chuyển tiếp phản hồi lỗi
+        end
+        S->>S: Validate field theo schema, required/nullable/enum#59; từ chối field ngoài DTO khi additionalProperties=false
+        Note over S: PATCH chỉ cập nhật field được gửi#59; field bị omit giữ nguyên
+        break Dữ liệu không đúng schema hoặc ràng buộc trường
+            S-->>G: 422 (VALIDATION_FAILED)
+            G-->>C: Chuyển tiếp phản hồi lỗi
+        end
+        S->>D: Đọc policy và trạng thái khóa
+        D-->>S: Dữ liệu hoặc kết quả không tìm thấy
+        break Không tìm thấy tài nguyên trong phạm vi truy cập
+            S-->>G: 404 (RESOURCE_NOT_FOUND)
+            G-->>C: Chuyển tiếp phản hồi lỗi
+        end
+        S->>S: Actor sở hữu phạm vi policy#59; policy chưa locked
+        break Không đúng role hoặc không có quyền trên tài nguyên
+            S-->>G: 403 (FORBIDDEN)
+            G-->>C: Chuyển tiếp phản hồi lỗi
+        end
+        break Vi phạm điều kiện trạng thái hoặc dữ liệu trùng đã kiểm tra
+            S-->>G: 409 (RATE_POLICY_LOCKED)
+            G-->>C: Chuyển tiếp phản hồi lỗi
+        end
+        break Vi phạm quy tắc nghiệp vụ của endpoint sau khi kiểm tra dữ liệu
+            S-->>G: 422 (VALIDATION_FAILED)
+            G-->>C: Chuyển tiếp phản hồi lỗi
+        end
+        S->>D: BEGIN transaction
+        S->>D: Chỉ cập nhật tên policy được gửi#59; không sửa đơn giá đã khóa
+        S->>D: COMMIT
+        D-->>S: Dữ liệu đã lưu
+        Note over S,D: Lỗi nội bộ: rollback transaction chưa commit (nếu có), trả 500 INTERNAL_SERVER_ERROR qua gateway
+        S-->>G: 200 RATE_POLICY_UPDATED + data theo DTO
+        G-->>C: Chuyển tiếp status, body và header theo contract
+    ```
   parameters:
   - name: ratePolicyId
     in: path

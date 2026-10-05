@@ -4,7 +4,64 @@ get:
   x-apidog-folder: Room
   operationId: getRooms
   summary: Search public rooms
-  description: 'public. Tìm phòng trên sàn công khai. Lỗi nghiệp vụ: 422 VALIDATION FAILED · 429 RATE LIMIT EXCEEDED.'
+  description: |-
+    public. Tìm phòng trên sàn công khai. Lỗi nghiệp vụ: 422 VALIDATION FAILED · 429 RATE LIMIT EXCEEDED.
+
+    ### Sequence diagram — Search public rooms
+
+    Luồng theo kiến trúc microservice: tenancy-service sở hữu nghiệp vụ và tenancy_db.
+
+    ```mermaid
+    sequenceDiagram
+        autonumber
+        participant C as Client (Web / Mobile)
+        participant G as API Gateway
+        participant R as Service Registry
+        participant S as tenancy-service
+        participant D as PostgreSQL tenancy_db
+        participant Z as Redis cache
+        C->>G: GET /api/v1/rooms<br/>Query: filter, sort, order, pageSize, pageNo, format
+        G->>G: Gắn correlation-id, kiểm tra rate limit
+        break Vượt giới hạn yêu cầu
+            G-->>C: 429 (TOO_MANY_REQUESTS)
+        end
+        Note over C,S: Endpoint public, không yêu cầu Bearer token
+        G->>R: Tra cứu instance tenancy-service healthy
+        R-->>G: Địa chỉ instance
+        G->>S: Chuyển tiếp request, thông tin xác thực, correlation-id và X-Service-Token
+        S->>S: Kiểm tra query, header theo contract
+        break query, header sai cú pháp/định dạng
+            S-->>G: 400 (INVALID_QUERY_PARAMETER / INVALID_HEADER / BAD_REQUEST)
+            G-->>C: Chuyển tiếp phản hồi lỗi
+        end
+        S->>S: Validate field theo schema, required/nullable/enum#59; từ chối field ngoài DTO khi additionalProperties=false
+        break Dữ liệu không đúng schema hoặc ràng buộc trường
+            S-->>G: 422 (VALIDATION_FAILED)
+            G-->>C: Chuyển tiếp phản hồi lỗi
+        end
+        S->>Z: Tra cache danh sách công khai theo query
+        Z-->>S: Cache hit hoặc miss
+        alt Cache hit
+            S->>S: Dùng trang dữ liệu cache còn hiệu lực
+        else Cache miss
+            S->>D: Đọc rooms available JOIN buildings approved, chưa xóa#59; áp filter/sort/offset
+            D-->>S: Dữ liệu trang và tổng số bản ghi
+            S->>Z: Lưu cache TTL 60s
+        end
+        S->>S: Loại tài sản của landlord bị ẩn#59; tên hiển thị từ dữ liệu đồng bộ, không JOIN identity_db
+        break Vi phạm quy tắc nghiệp vụ của endpoint sau khi kiểm tra dữ liệu
+            S-->>G: 422 (VALIDATION_FAILED)
+            G-->>C: Chuyển tiếp phản hồi lỗi
+        end
+        Note over S,D: Lỗi nội bộ: rollback transaction chưa commit (nếu có), trả 500 INTERNAL_SERVER_ERROR qua gateway
+        alt format=json hoặc mặc định
+            S-->>G: 200 ROOMS_FETCHED + data theo DTO
+            G-->>C: Chuyển tiếp JSON và header
+        else format xuất tệp được hỗ trợ
+            S-->>G: 200 File stream + Content-Type/Content-Disposition
+            G-->>C: Chuyển tiếp tệp#59; không JSON wrapper
+        end
+    ```
   security: []
   parameters:
   - name: filter
@@ -180,8 +237,70 @@ post:
   security:
     - BearerAuth: []
   summary: Create room
-  description: 'landlord. Tạo phòng trong một tòa nhà. Lỗi nghiệp vụ: 403 FORBIDDEN · 409 DUPLICATE ROOM · 422 BUILDING
-    NOT APPROVED.'
+  description: |-
+    landlord. Tạo phòng trong một tòa nhà. Lỗi nghiệp vụ: 403 FORBIDDEN · 409 DUPLICATE ROOM · 422 BUILDING NOT APPROVED.
+
+    ### Sequence diagram — Create room
+
+    Luồng theo kiến trúc microservice: tenancy-service sở hữu nghiệp vụ và tenancy_db.
+
+    ```mermaid
+    sequenceDiagram
+        autonumber
+        participant C as Client (Web / Mobile)
+        participant G as API Gateway
+        participant R as Service Registry
+        participant S as tenancy-service
+        participant D as PostgreSQL tenancy_db
+        participant I as identity-service
+        C->>G: POST /api/v1/rooms<br/>Body: buildingId, name, roomType, floorNumber, area<br/>rentPrice, depositAmount, maxOccupancy, genderPolicy, amenities<br/>photoMediaIds
+        G->>G: Gắn correlation-id, kiểm tra rate limit
+        break Vượt giới hạn yêu cầu
+            G-->>C: 429 (TOO_MANY_REQUESTS)
+        end
+        G->>G: Verify JWT cục bộ bằng JWKS cache
+        break Access token thiếu, sai hoặc hết hạn
+            G-->>C: 401 (UNAUTHORIZED)
+        end
+        G->>R: Tra cứu instance tenancy-service healthy
+        R-->>G: Địa chỉ instance
+        G->>S: Chuyển tiếp request, thông tin xác thực, correlation-id và X-Service-Token
+        S->>S: Verify JWT cục bộ#59; suy ra actor từ claim, không tin userId do client tự gán
+        S->>S: Kiểm tra JSON/body, header theo contract
+        break JSON/body, header sai cú pháp/định dạng hoặc thiếu JSON body bắt buộc
+            S-->>G: 400 (INVALID_JSON / INVALID_REQUEST_BODY / INVALID_HEADER / BAD_REQUEST)
+            G-->>C: Chuyển tiếp phản hồi lỗi
+        end
+        S->>S: Validate field theo schema, required/nullable/enum#59; từ chối field ngoài DTO khi additionalProperties=false
+        break Dữ liệu không đúng schema hoặc ràng buộc trường
+            S-->>G: 422 (VALIDATION_FAILED)
+            G-->>C: Chuyển tiếp phản hồi lỗi
+        end
+        S->>D: Đọc building và kiểm tra tên phòng trùng trong tòa nhà
+        D-->>S: Dữ liệu hoặc kết quả không tìm thấy
+        S->>I: Đọc metadata/quyền photoMediaIds nếu có
+        I-->>S: Kết quả kiểm tra ảnh phòng
+        S->>S: Actor sở hữu building#59; building approved#59; room chưa trùng và photoMediaIds hợp lệ
+        break Không đúng role hoặc không có quyền trên tài nguyên
+            S-->>G: 403 (FORBIDDEN)
+            G-->>C: Chuyển tiếp phản hồi lỗi
+        end
+        break Vi phạm điều kiện trạng thái hoặc dữ liệu trùng đã kiểm tra
+            S-->>G: 409 (DUPLICATE_ROOM)
+            G-->>C: Chuyển tiếp phản hồi lỗi
+        end
+        break Vi phạm quy tắc nghiệp vụ của endpoint sau khi kiểm tra dữ liệu
+            S-->>G: 422 (BUILDING_NOT_APPROVED / VALIDATION_FAILED)
+            G-->>C: Chuyển tiếp phản hồi lỗi
+        end
+        S->>D: BEGIN transaction
+        S->>D: Tạo room gắn building với thông tin đúng RoomCreateRequestDto
+        S->>D: COMMIT
+        D-->>S: Dữ liệu đã lưu
+        Note over S,D: Lỗi nội bộ: rollback transaction chưa commit (nếu có), trả 500 INTERNAL_SERVER_ERROR qua gateway
+        S-->>G: 201 ROOM_CREATED + data theo DTO<br/>Location: /api/v1/rooms/{roomId}
+        G-->>C: Chuyển tiếp status, body và header theo contract
+    ```
   requestBody:
     required: true
     content:

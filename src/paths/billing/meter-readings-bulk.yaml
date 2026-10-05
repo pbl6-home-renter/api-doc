@@ -6,7 +6,81 @@ post:
   security:
     - BearerAuth: []
   summary: Bulk create meter readings
-  description: "landlord. Nhập và chốt chỉ số điện/nước hàng loạt cho nhiều phòng trong tòa nhà theo kỳ ghi số. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 VALIDATION FAILED · 409 DUPLICATE READING."
+  description: |-
+    landlord. Nhập và chốt chỉ số điện/nước hàng loạt cho nhiều phòng trong tòa nhà theo kỳ ghi số. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 VALIDATION FAILED · 409 DUPLICATE READING.
+
+    ### Sequence diagram — Bulk create meter readings
+
+    Luồng theo kiến trúc microservice: tenancy-service sở hữu nghiệp vụ và tenancy_db.
+
+    ```mermaid
+    sequenceDiagram
+        autonumber
+        participant C as Client (Web / Mobile)
+        participant G as API Gateway
+        participant R as Service Registry
+        participant S as tenancy-service
+        participant D as PostgreSQL tenancy_db
+        participant I as identity-service
+        C->>G: POST /api/v1/meter-readings/bulk<br/>Body: buildingId, recordedMonth, readingMethod, readings
+        G->>G: Gắn correlation-id
+        G->>G: Verify JWT cục bộ bằng JWKS cache
+        break Access token thiếu, sai hoặc hết hạn
+            G-->>C: 401 (UNAUTHORIZED)
+        end
+        G->>R: Tra cứu instance tenancy-service healthy
+        R-->>G: Địa chỉ instance
+        G->>S: Chuyển tiếp request, thông tin xác thực, correlation-id và X-Service-Token
+        S->>S: Verify JWT cục bộ#59; suy ra actor từ claim, không tin userId do client tự gán
+        S->>S: Kiểm tra JSON/body, header theo contract
+        break JSON/body, header sai cú pháp/định dạng hoặc thiếu JSON body bắt buộc
+            S-->>G: 400 (INVALID_JSON / INVALID_REQUEST_BODY / INVALID_HEADER / BAD_REQUEST)
+            G-->>C: Chuyển tiếp phản hồi lỗi
+        end
+        S->>S: Validate field theo schema, required/nullable/enum#59; từ chối field ngoài DTO khi additionalProperties=false
+        break Dữ liệu không đúng schema hoặc ràng buộc trường
+            S-->>G: 422 (VALIDATION_FAILED)
+            G-->>C: Chuyển tiếp phản hồi lỗi
+        end
+        S->>D: Đọc building và các phòng/chỉ số theo recordedMonth
+        D-->>S: Dữ liệu hoặc kết quả không tìm thấy
+        break Không tìm thấy tài nguyên trong phạm vi truy cập
+            S-->>G: 404 (RESOURCE_NOT_FOUND)
+            G-->>C: Chuyển tiếp phản hồi lỗi
+        end
+        S->>S: Actor sở hữu building#59; readings và readingMethod đúng DTO#59; phòng thuộc building
+        Note over S,D: Lỗi request trả HTTP lỗi đã khai báo#59; kết quả từng phòng nằm trong results<br/>Không tự phát hành invoice từ thao tác nhập chỉ số
+        break Không đúng role hoặc không có quyền trên tài nguyên
+            S-->>G: 403 (FORBIDDEN)
+            G-->>C: Chuyển tiếp phản hồi lỗi
+        end
+        break Vi phạm điều kiện trạng thái hoặc dữ liệu trùng đã kiểm tra
+            S-->>G: 409 (DUPLICATE_READING)
+            G-->>C: Chuyển tiếp phản hồi lỗi
+        end
+        break Vi phạm quy tắc nghiệp vụ của endpoint sau khi kiểm tra dữ liệu
+            S-->>G: 422 (CURRENT_READING_INVALID / EVIDENCE_REQUIRED / VALIDATION_FAILED)
+            G-->>C: Chuyển tiếp phản hồi lỗi
+        end
+        loop Từng mục roomId/type trong readings
+            S->>D: Đọc chỉ số trước và kiểm tra trùng phòng/loại/kỳ
+            D-->>S: Chỉ số và trạng thái đã ghi
+            S->>I: Kiểm tra evidenceMediaId đã upload và quyền sử dụng
+            I-->>S: Kết quả kiểm tra bằng chứng
+            alt Mục hợp lệ, chưa trùng
+                S->>S: Tính usage và cảnh báo mức tiêu thụ bất thường
+                S->>D: Lưu chỉ số đã xác nhận cho mục hợp lệ
+                D-->>S: ReadingId và usage
+                S->>S: Ghi results theo phòng với SUCCESS hoặc WARNING
+            else Mục lỗi
+                S->>S: Ghi results theo phòng với ERROR và note theo DTO
+            end
+        end
+        S->>S: Tổng hợp totalRoomsRecorded, totalElectricityUsage, totalWaterUsage
+        Note over S,D: Lỗi nội bộ: rollback transaction chưa commit (nếu có), trả 500 INTERNAL_SERVER_ERROR qua gateway
+        S-->>G: 201 METER_READINGS_BULK_RECORDED + data theo DTO
+        G-->>C: Chuyển tiếp status, body và header theo contract
+    ```
   requestBody:
     required: true
     content:

@@ -6,7 +6,64 @@ get:
   security:
     - BearerAuth: []
   summary: List contracts
-  description: 'landlord. Quản lý hợp đồng của tôi. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 VALIDATION FAILED.'
+  description: |-
+    landlord. Quản lý hợp đồng của tôi. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 VALIDATION FAILED.
+
+    ### Sequence diagram — List contracts
+
+    Luồng theo kiến trúc microservice: tenancy-service sở hữu nghiệp vụ và tenancy_db.
+
+    ```mermaid
+    sequenceDiagram
+        autonumber
+        participant C as Client (Web / Mobile)
+        participant G as API Gateway
+        participant R as Service Registry
+        participant S as tenancy-service
+        participant D as PostgreSQL tenancy_db
+        C->>G: GET /api/v1/contracts<br/>Query: filter, pageSize, pageNo, format
+        G->>G: Gắn correlation-id, kiểm tra rate limit
+        break Vượt giới hạn yêu cầu
+            G-->>C: 429 (TOO_MANY_REQUESTS)
+        end
+        G->>G: Verify JWT cục bộ bằng JWKS cache
+        break Access token thiếu, sai hoặc hết hạn
+            G-->>C: 401 (UNAUTHORIZED)
+        end
+        G->>R: Tra cứu instance tenancy-service healthy
+        R-->>G: Địa chỉ instance
+        G->>S: Chuyển tiếp request, thông tin xác thực, correlation-id và X-Service-Token
+        S->>S: Verify JWT cục bộ#59; suy ra actor từ claim, không tin userId do client tự gán
+        S->>S: Kiểm tra query, header theo contract
+        break query, header sai cú pháp/định dạng
+            S-->>G: 400 (INVALID_QUERY_PARAMETER / INVALID_HEADER / BAD_REQUEST)
+            G-->>C: Chuyển tiếp phản hồi lỗi
+        end
+        S->>S: Validate field theo schema, required/nullable/enum#59; từ chối field ngoài DTO khi additionalProperties=false
+        break Dữ liệu không đúng schema hoặc ràng buộc trường
+            S-->>G: 422 (VALIDATION_FAILED)
+            G-->>C: Chuyển tiếp phản hồi lỗi
+        end
+        S->>D: Đọc contracts thuộc phòng của landlord actor#59; filter/offset
+        D-->>S: Dữ liệu hoặc kết quả không tìm thấy
+        S->>S: Chỉ đọc hợp đồng trong tài sản của actor
+        break Không đúng role hoặc không có quyền trên tài nguyên
+            S-->>G: 403 (FORBIDDEN)
+            G-->>C: Chuyển tiếp phản hồi lỗi
+        end
+        break Vi phạm quy tắc nghiệp vụ của endpoint sau khi kiểm tra dữ liệu
+            S-->>G: 422 (VALIDATION_FAILED)
+            G-->>C: Chuyển tiếp phản hồi lỗi
+        end
+        Note over S,D: Lỗi nội bộ: rollback transaction chưa commit (nếu có), trả 500 INTERNAL_SERVER_ERROR qua gateway
+        alt format=json hoặc mặc định
+            S-->>G: 200 CONTRACTS_FETCHED + data theo DTO
+            G-->>C: Chuyển tiếp JSON và header
+        else format xuất tệp được hỗ trợ
+            S-->>G: 200 File stream + Content-Type/Content-Disposition
+            G-->>C: Chuyển tiếp tệp#59; không JSON wrapper
+        end
+    ```
   parameters:
   - name: filter
     in: query
@@ -167,8 +224,73 @@ post:
   security:
     - BearerAuth: []
   summary: Create draft contract
-  description: 'landlord. Tạo hợp đồng nháp. Lỗi nghiệp vụ: 409 ACTIVE CONTRACT EXISTS · 422 TENANT IDENTITY INVALID
-    · 403 FORBIDDEN.'
+  description: |-
+    landlord. Tạo hợp đồng nháp. Lỗi nghiệp vụ: 409 ACTIVE CONTRACT EXISTS · 422 TENANT IDENTITY INVALID · 403 FORBIDDEN.
+
+    ### Sequence diagram — Create draft contract
+
+    Luồng theo kiến trúc microservice: tenancy-service sở hữu nghiệp vụ và tenancy_db.
+
+    ```mermaid
+    sequenceDiagram
+        autonumber
+        participant C as Client (Web / Mobile)
+        participant G as API Gateway
+        participant R as Service Registry
+        participant S as tenancy-service
+        participant D as PostgreSQL tenancy_db
+        participant I as identity-service
+        C->>G: POST /api/v1/contracts<br/>Body: roomId, rentalType, tenantId, tenantName, tenantPhone<br/>tenantCccd, depositAmount, rentPrice, paymentDueDay, startDate<br/>endDate, vehicleCount, templateKey, templateVariables
+        G->>G: Gắn correlation-id, kiểm tra rate limit
+        break Vượt giới hạn yêu cầu
+            G-->>C: 429 (TOO_MANY_REQUESTS)
+        end
+        G->>G: Verify JWT cục bộ bằng JWKS cache
+        break Access token thiếu, sai hoặc hết hạn
+            G-->>C: 401 (UNAUTHORIZED)
+        end
+        G->>R: Tra cứu instance tenancy-service healthy
+        R-->>G: Địa chỉ instance
+        G->>S: Chuyển tiếp request, thông tin xác thực, correlation-id và X-Service-Token
+        S->>S: Verify JWT cục bộ#59; suy ra actor từ claim, không tin userId do client tự gán
+        S->>S: Kiểm tra JSON/body, header theo contract
+        break JSON/body, header sai cú pháp/định dạng hoặc thiếu JSON body bắt buộc
+            S-->>G: 400 (INVALID_JSON / INVALID_REQUEST_BODY / INVALID_HEADER / BAD_REQUEST)
+            G-->>C: Chuyển tiếp phản hồi lỗi
+        end
+        S->>S: Validate field theo schema, required/nullable/enum#59; từ chối field ngoài DTO khi additionalProperties=false
+        break Dữ liệu không đúng schema hoặc ràng buộc trường
+            S-->>G: 422 (VALIDATION_FAILED)
+            G-->>C: Chuyển tiếp phản hồi lỗi
+        end
+        S->>D: Đọc room, building, hợp đồng active và template được chọn
+        D-->>S: Dữ liệu hoặc kết quả không tìm thấy
+        opt Có tenantId liên kết tài khoản
+            S->>I: Đọc user/role tenant theo tenantId (service token)
+            I-->>S: Danh tính tài khoản và trạng thái
+        end
+        Note over S,D: Cho phép thông tin người thuê chưa có tài khoản theo DTO#59; không bắt người thuê đăng nhập
+        S->>S: Actor sở hữu phòng#59; không có hợp đồng active xung đột#59; danh tính tenant và thời hạn đúng DTO
+        break Không đúng role hoặc không có quyền trên tài nguyên
+            S-->>G: 403 (FORBIDDEN)
+            G-->>C: Chuyển tiếp phản hồi lỗi
+        end
+        break Vi phạm điều kiện trạng thái hoặc dữ liệu trùng đã kiểm tra
+            S-->>G: 409 (ACTIVE_CONTRACT_EXISTS)
+            G-->>C: Chuyển tiếp phản hồi lỗi
+        end
+        break Vi phạm quy tắc nghiệp vụ của endpoint sau khi kiểm tra dữ liệu
+            S-->>G: 422 (TENANT_IDENTITY_INVALID / VALIDATION_FAILED)
+            G-->>C: Chuyển tiếp phản hồi lỗi
+        end
+        S->>D: BEGIN transaction
+        S->>D: Tạo hợp đồng draft cùng thông tin tenant và template trong transaction
+        S->>D: COMMIT
+        D-->>S: Dữ liệu đã lưu
+        Note over S,D: Lỗi nội bộ: rollback transaction chưa commit (nếu có), trả 500 INTERNAL_SERVER_ERROR qua gateway
+        S-->>G: 201 CONTRACT_CREATED + data theo DTO<br/>Location: /api/v1/contracts/{contractId}
+        G-->>C: Chuyển tiếp status, body và header theo contract
+    ```
   requestBody:
     required: true
     content:

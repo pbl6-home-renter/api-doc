@@ -6,7 +6,54 @@ get:
   security:
     - BearerAuth: []
   summary: Get tenant room hub dashboard
-  description: "tenant. Lấy thông tin tổng hợp cho trang chủ trung tâm phòng của người thuê (hợp đồng hiện tại, hóa đơn chưa thanh toán, chỉ số điện nước, sự cố đang xử lý, bạn cùng phòng). Lỗi nghiệp vụ: 404 ACTIVE CONTRACT NOT FOUND · 403 FORBIDDEN."
+  description: |-
+    tenant. Lấy thông tin tổng hợp cho trang chủ trung tâm phòng của người thuê (hợp đồng hiện tại, hóa đơn chưa thanh toán, chỉ số điện nước, sự cố đang xử lý, bạn cùng phòng). Lỗi nghiệp vụ: 404 ACTIVE CONTRACT NOT FOUND · 403 FORBIDDEN.
+
+    ### Sequence diagram — Get tenant room hub dashboard
+
+    Luồng theo kiến trúc microservice: tenancy-service sở hữu nghiệp vụ và tenancy_db.
+
+    ```mermaid
+    sequenceDiagram
+        autonumber
+        participant C as Client (Web / Mobile)
+        participant G as API Gateway
+        participant R as Service Registry
+        participant S as tenancy-service
+        participant D as PostgreSQL tenancy_db
+        participant I as identity-service
+        participant K as community-service
+        C->>G: GET /api/v1/me/room-hub
+        G->>G: Gắn correlation-id
+        G->>G: Verify JWT cục bộ bằng JWKS cache
+        break Access token thiếu, sai hoặc hết hạn
+            G-->>C: 401 (UNAUTHORIZED)
+        end
+        G->>R: Tra cứu instance tenancy-service healthy
+        R-->>G: Địa chỉ instance
+        G->>S: Chuyển tiếp request, thông tin xác thực, correlation-id và X-Service-Token
+        S->>S: Verify JWT cục bộ#59; suy ra actor từ claim, không tin userId do client tự gán
+        S->>S: Kiểm tra header theo contract
+        S->>D: Đọc hợp đồng active của actor cùng room, building, invoice hiện tại và contract_members
+        D-->>S: Dữ liệu hoặc kết quả không tìm thấy
+        break Không tìm thấy tài nguyên trong phạm vi truy cập
+            S-->>G: 404 (ACTIVE_CONTRACT_NOT_FOUND)
+            G-->>C: Chuyển tiếp phản hồi lỗi
+        end
+        S->>S: Actor là tenant thuộc hợp đồng active
+        break Không đúng role hoặc không có quyền trên tài nguyên
+            S-->>G: 403 (FORBIDDEN)
+            G-->>C: Chuyển tiếp phản hồi lỗi
+        end
+        S->>I: Đọc thông tin liên hệ landlord và avatar cần cho DTO
+        I-->>S: Dữ liệu hồ sơ được phép công bố
+        S->>K: Đọc số sự cố đang xử lý của phòng với quyền actor
+        K-->>S: activeIssuesCount
+        S->>S: Tổng hợp room, landlord, contract, currentInvoice và roommates
+        Note over S,D: Lỗi nội bộ: rollback transaction chưa commit (nếu có), trả 500 INTERNAL_SERVER_ERROR qua gateway
+        S-->>G: 200 ROOM_HUB_FETCHED + data theo DTO
+        G-->>C: Chuyển tiếp status, body và header theo contract
+    ```
   responses:
     "200":
       description: "Thành công: Lấy thông tin trung tâm phòng."

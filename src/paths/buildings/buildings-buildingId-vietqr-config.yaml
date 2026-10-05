@@ -6,7 +6,65 @@ put:
   security:
     - BearerAuth: []
   summary: Configure building VietQR payment
-  description: "landlord. Cấu hình tài khoản ngân hàng nhận tiền chuyển khoản và sinh mã VietQR động cho tòa nhà. Lỗi nghiệp vụ: 404 BUILDING NOT FOUND · 403 FORBIDDEN · 422 INVALID BANK ACCOUNT."
+  description: |-
+    landlord. Cấu hình tài khoản ngân hàng nhận tiền chuyển khoản và sinh mã VietQR động cho tòa nhà. Lỗi nghiệp vụ: 404 BUILDING NOT FOUND · 403 FORBIDDEN · 422 INVALID BANK ACCOUNT.
+
+    ### Sequence diagram — Configure building VietQR payment
+
+    Luồng theo kiến trúc microservice: tenancy-service sở hữu nghiệp vụ và tenancy_db.
+
+    ```mermaid
+    sequenceDiagram
+        autonumber
+        participant C as Client (Web / Mobile)
+        participant G as API Gateway
+        participant R as Service Registry
+        participant S as tenancy-service
+        participant D as PostgreSQL tenancy_db
+        C->>G: PUT /api/v1/buildings/{buildingId}/vietqr-config<br/>Body: bankCode, bankName, accountNumber, accountHolderName, branch<br/>isDefault
+        G->>G: Gắn correlation-id
+        G->>G: Verify JWT cục bộ bằng JWKS cache
+        break Access token thiếu, sai hoặc hết hạn
+            G-->>C: 401 (UNAUTHORIZED)
+        end
+        G->>R: Tra cứu instance tenancy-service healthy
+        R-->>G: Địa chỉ instance
+        G->>S: Chuyển tiếp request, thông tin xác thực, correlation-id và X-Service-Token
+        S->>S: Verify JWT cục bộ#59; suy ra actor từ claim, không tin userId do client tự gán
+        S->>S: Kiểm tra JSON/body, path, header theo contract
+        break JSON/body, path, header sai cú pháp/định dạng hoặc thiếu JSON body bắt buộc
+            S-->>G: 400 (INVALID_JSON / INVALID_REQUEST_BODY / INVALID_PATH_PARAMETER / INVALID_HEADER / BAD_REQUEST)
+            G-->>C: Chuyển tiếp phản hồi lỗi
+        end
+        S->>S: Validate field theo schema, required/nullable/enum#59; từ chối field ngoài DTO khi additionalProperties=false
+        break Dữ liệu không đúng schema hoặc ràng buộc trường
+            S-->>G: 422 (VALIDATION_FAILED)
+            G-->>C: Chuyển tiếp phản hồi lỗi
+        end
+        S->>D: Đọc building và cấu hình VietQR hiện tại
+        D-->>S: Dữ liệu hoặc kết quả không tìm thấy
+        break Không tìm thấy tài nguyên trong phạm vi truy cập
+            S-->>G: 404 (BUILDING_NOT_FOUND)
+            G-->>C: Chuyển tiếp phản hồi lỗi
+        end
+        S->>S: Actor sở hữu building#59; validate thông tin tài khoản ngân hàng
+        Note over S,D: Endpoint cấu hình nhận tiền#59; không tạo payment và không xác nhận chuyển khoản
+        break Không đúng role hoặc không có quyền trên tài nguyên
+            S-->>G: 403 (FORBIDDEN)
+            G-->>C: Chuyển tiếp phản hồi lỗi
+        end
+        break Vi phạm quy tắc nghiệp vụ của endpoint sau khi kiểm tra dữ liệu
+            S-->>G: 422 (INVALID_BANK_ACCOUNT / VALIDATION_FAILED)
+            G-->>C: Chuyển tiếp phản hồi lỗi
+        end
+        S->>D: BEGIN transaction
+        S->>D: Lưu cấu hình VietQR theo bankCode, bankName, accountNumber, accountHolderName, branch, isDefault
+        S->>D: COMMIT
+        D-->>S: Dữ liệu đã lưu
+        Note over S,D: Lỗi nội bộ: rollback transaction chưa commit (nếu có), trả 500 INTERNAL_SERVER_ERROR qua gateway
+        S-->>G: 200 BUILDING_VIETQR_CONFIGURED + data theo DTO
+        G-->>C: Chuyển tiếp status, body và header theo contract
+    ```
   parameters:
   - name: buildingId
     in: path

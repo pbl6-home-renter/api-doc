@@ -4,11 +4,46 @@ get:
   x-apidog-folder: User
   operationId: getCurrentUser
   summary: Get current user
-  description: >-
-    **Request header bắt buộc:** `Authorization: Bearer <accessToken>`.
-    Không có request body hoặc tham số. Yêu cầu access token của tenant,
-    landlord hoặc admin. Trả hồ sơ của chính người gọi; tài khoản nhận tiền
-    chỉ có ở landlord.
+  description: |-
+    **Request header bắt buộc:** `Authorization: Bearer <accessToken>`. Không có request body hoặc tham số. Yêu cầu access token của tenant, landlord hoặc admin. Trả hồ sơ của chính người gọi; tài khoản nhận tiền chỉ có ở landlord.
+
+    ### Sequence diagram — Get current user
+
+    Luồng theo kiến trúc microservice: identity-service sở hữu nghiệp vụ và identity_db.
+
+    ```mermaid
+    sequenceDiagram
+        autonumber
+        participant C as Client (Web / Mobile)
+        participant G as API Gateway
+        participant R as Service Registry
+        participant S as identity-service
+        participant D as PostgreSQL identity_db
+        C->>G: GET /api/v1/me
+        G->>G: Gắn correlation-id, kiểm tra rate limit
+        break Vượt giới hạn yêu cầu
+            G-->>C: 429 (TOO_MANY_REQUESTS)
+        end
+        G->>G: Verify JWT cục bộ bằng JWKS cache
+        break Access token thiếu, sai hoặc hết hạn
+            G-->>C: 401 (UNAUTHORIZED)
+        end
+        G->>R: Tra cứu instance identity-service healthy
+        R-->>G: Địa chỉ instance
+        G->>S: Chuyển tiếp request, thông tin xác thực, correlation-id và X-Service-Token
+        S->>S: Verify JWT cục bộ#59; suy ra actor từ claim, không tin userId do client tự gán
+        S->>S: Kiểm tra header theo contract
+        break header sai cú pháp/định dạng
+            S-->>G: 400 (INVALID_HEADER / BAD_REQUEST)
+            G-->>C: Chuyển tiếp phản hồi lỗi
+        end
+        S->>D: Đọc users và landlord_profiles theo userId từ JWT
+        D-->>S: Dữ liệu hoặc kết quả không tìm thấy
+        S->>S: Chỉ trả hồ sơ của chính actor#59; payoutAccount chỉ áp dụng cho landlord và che accountNumber
+        Note over S,D: Lỗi nội bộ: rollback transaction chưa commit (nếu có), trả 500 INTERNAL_SERVER_ERROR qua gateway
+        S-->>G: 200 USER_CURRENT_FETCHED + data theo DTO
+        G-->>C: Chuyển tiếp status, body và header theo contract
+    ```
   security:
   - BearerAuth: []
   responses:
@@ -61,8 +96,87 @@ patch:
   security:
     - BearerAuth: []
   summary: Update current user
-  description: Yêu cầu access token của tenant, landlord hoặc admin. Cập nhật name và phone; landlord
-    có thể cập nhật payoutAccount khi không còn hóa đơn pending. Email và role không thay đổi.
+  description: |-
+    Yêu cầu access token của tenant, landlord hoặc admin. Cập nhật name và phone; landlord có thể cập nhật payoutAccount khi không còn hóa đơn pending. Email và role không thay đổi.
+
+    ### Sequence diagram — Update current user
+
+    Luồng theo kiến trúc microservice: identity-service sở hữu nghiệp vụ và identity_db.
+
+    ```mermaid
+    sequenceDiagram
+        autonumber
+        participant C as Client (Web / Mobile)
+        participant G as API Gateway
+        participant R as Service Registry
+        participant S as identity-service
+        participant D as PostgreSQL identity_db
+        participant T as tenancy-service
+        participant O as Outbox worker (identity)
+        participant Q as RabbitMQ
+        participant N as tenancy-service
+        participant ND as PostgreSQL tenancy_db
+        C->>G: PATCH /api/v1/me<br/>Body: name, phone, payoutAccount
+        G->>G: Gắn correlation-id, kiểm tra rate limit
+        break Vượt giới hạn yêu cầu
+            G-->>C: 429 (TOO_MANY_REQUESTS)
+        end
+        G->>G: Verify JWT cục bộ bằng JWKS cache
+        break Access token thiếu, sai hoặc hết hạn
+            G-->>C: 401 (UNAUTHORIZED)
+        end
+        G->>R: Tra cứu instance identity-service healthy
+        R-->>G: Địa chỉ instance
+        G->>S: Chuyển tiếp request, thông tin xác thực, correlation-id và X-Service-Token
+        S->>S: Verify JWT cục bộ#59; suy ra actor từ claim, không tin userId do client tự gán
+        S->>S: Kiểm tra JSON/body, header theo contract
+        break JSON/body, header sai cú pháp/định dạng hoặc thiếu JSON body bắt buộc
+            S-->>G: 400 (INVALID_JSON / INVALID_REQUEST_BODY / INVALID_HEADER / BAD_REQUEST)
+            G-->>C: Chuyển tiếp phản hồi lỗi
+        end
+        S->>S: Validate field theo schema, required/nullable/enum#59; từ chối field ngoài DTO khi additionalProperties=false
+        Note over S: PATCH chỉ cập nhật field được gửi#59; field bị omit giữ nguyên
+        break Dữ liệu không đúng schema hoặc ràng buộc trường
+            S-->>G: 422 (VALIDATION_FAILED)
+            G-->>C: Chuyển tiếp phản hồi lỗi
+        end
+        S->>D: Đọc hồ sơ hiện tại và kiểm tra phone chưa trùng
+        D-->>S: Dữ liệu hoặc kết quả không tìm thấy
+        opt Có thay đổi payoutAccount
+            S->>T: Đọc các invoice pending của landlord (service token, correlation-id)
+            T-->>S: Có hoặc không có invoice pending
+            S->>S: Chặn thay đổi nếu payoutAccount đang được sử dụng
+        end
+        S->>S: Email và role bất biến#59; payoutAccount chỉ cho landlord, gửi đủ thông tin tài khoản nhận tiền
+        break Vi phạm điều kiện trạng thái hoặc dữ liệu trùng đã kiểm tra
+            S-->>G: 409 (DUPLICATE_PHONE / PAYOUT_ACCOUNT_IN_USE)
+            G-->>C: Chuyển tiếp phản hồi lỗi
+        end
+        break Vi phạm quy tắc nghiệp vụ của endpoint sau khi kiểm tra dữ liệu
+            S-->>G: 422 (VALIDATION_FAILED)
+            G-->>C: Chuyển tiếp phản hồi lỗi
+        end
+        S->>D: BEGIN transaction
+        S->>D: Cập nhật các field name, phone, payoutAccount được gửi theo DTO
+        S->>D: INSERT outbox (user.updated) cùng transaction
+        S->>D: COMMIT
+        D-->>S: Dữ liệu đã lưu
+        Note over S,D: Lỗi nội bộ: rollback transaction chưa commit (nếu có), trả 500 INTERNAL_SERVER_ERROR qua gateway
+        S-->>G: 200 USER_CURRENT_UPDATED + data theo DTO
+        G-->>C: Chuyển tiếp status, body và header theo contract
+        Note over O,ND: Xử lý bất đồng bộ sau commit#59; HTTP không chờ consumer hoàn tất
+        O->>D: Đọc công việc chưa gửi trong outbox
+        D-->>O: user.updated
+        Note over O,Q: Event có eventId, occurredAt, schemaVersion, correlationId
+        O->>Q: Publish user.updated
+        Q-->>O: Publisher confirm
+        O->>D: Xóa/đánh dấu bản ghi đã gửi
+        Q-->>N: Deliver user.updated (at-least-once)
+        N->>ND: UPSERT dữ liệu hiển thị theo userId#59; chỉ áp dụng phiên bản mới hơn
+        ND-->>N: Dữ liệu đã commit
+        N-->>Q: ACK
+        Note over O,Q: Broker lỗi: giữ outbox để gửi lại#59; consumer lỗi: retry 1s / 4s / 16s rồi DLQ
+    ```
   requestBody:
     required: true
     content:

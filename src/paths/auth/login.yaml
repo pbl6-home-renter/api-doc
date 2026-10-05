@@ -3,10 +3,64 @@ post:
   x-apidog-folder: Auth
   operationId: loginAccount
   summary: Login
-  description: >-
-    Public. Đăng nhập bằng identifier và password. Access token có thời hạn
-    900 giây; refresh token opaque được trả trong data của response và đặt
-    trong cookie HttpOnly, Secure, SameSite=Lax, Path=/api/v1/auth.
+  description: |-
+    Public. Đăng nhập bằng identifier và password. Access token có thời hạn 900 giây; refresh token opaque được trả trong data của response và đặt trong cookie HttpOnly, Secure, SameSite=Lax, Path=/api/v1/auth.
+
+    ### Sequence diagram — Login
+
+    Luồng theo kiến trúc microservice: identity-service sở hữu nghiệp vụ và identity_db.
+
+    ```mermaid
+    sequenceDiagram
+        autonumber
+        participant C as Client (Web / Mobile)
+        participant G as API Gateway
+        participant R as Service Registry
+        participant S as identity-service
+        participant D as PostgreSQL identity_db
+        C->>G: POST /api/v1/auth/login<br/>Body: identifier, password, rememberMe
+        G->>G: Gắn correlation-id, kiểm tra rate limit
+        break Vượt giới hạn yêu cầu
+            G-->>C: 429 (TOO_MANY_REQUESTS)
+        end
+        Note over C,S: Endpoint public, không yêu cầu Bearer token
+        G->>R: Tra cứu instance identity-service healthy
+        R-->>G: Địa chỉ instance
+        G->>S: Chuyển tiếp request, thông tin xác thực, correlation-id và X-Service-Token
+        S->>S: Kiểm tra JSON/body, header theo contract
+        break JSON/body, header sai cú pháp/định dạng hoặc thiếu JSON body bắt buộc
+            S-->>G: 400 (INVALID_JSON / INVALID_REQUEST_BODY / INVALID_HEADER / BAD_REQUEST)
+            G-->>C: Chuyển tiếp phản hồi lỗi
+        end
+        S->>S: Validate field theo schema, required/nullable/enum#59; từ chối field ngoài DTO khi additionalProperties=false
+        break Dữ liệu không đúng schema hoặc ràng buộc trường
+            S-->>G: 422 (IDENTIFIER_REQUIRED / INVALID_IDENTIFIER / PASSWORD_REQUIRED / INVALID_PASSWORD / REMEMBER_ME_REQUIRED / INVALID_REMEMBER_ME / UNEXPECTED_FIELD / VALIDATION_FAILED)
+            G-->>C: Chuyển tiếp phản hồi lỗi
+        end
+        S->>D: Tra người dùng theo identifier (email hoặc phone), password hash và hồ sơ
+        D-->>S: Dữ liệu hoặc kết quả không tìm thấy
+        S->>S: So khớp password hash, kiểm tra tài khoản không bị khóa
+        break Thông tin đăng nhập/cookie/currentPassword không xác thực được hoặc phiên đã thu hồi
+            S-->>G: 401 (INVALID_CREDENTIALS)
+            G-->>C: Chuyển tiếp phản hồi lỗi
+        end
+        break Tài khoản đã bị khóa
+            S-->>G: 403 (ACCOUNT_LOCKED)
+            G-->>C: Chuyển tiếp phản hồi lỗi
+        end
+        break Vi phạm quy tắc nghiệp vụ của endpoint sau khi kiểm tra dữ liệu
+            S-->>G: 422 (IDENTIFIER_REQUIRED / INVALID_IDENTIFIER / PASSWORD_REQUIRED / INVALID_PASSWORD / REMEMBER_ME_REQUIRED / INVALID_REMEMBER_ME / UNEXPECTED_FIELD / VALIDATION_FAILED)
+            G-->>C: Chuyển tiếp phản hồi lỗi
+        end
+        S->>D: BEGIN transaction
+        S->>D: Lưu hash refresh token opaque và phiên đăng nhập theo rememberMe
+        S->>D: COMMIT
+        D-->>S: Dữ liệu đã lưu
+        S->>S: Ký access token (thời hạn 900 giây) và dựng profile theo DTO
+        Note over S,D: Lỗi nội bộ: rollback transaction chưa commit (nếu có), trả 500 INTERNAL_SERVER_ERROR qua gateway
+        S-->>G: 200 SESSION_STARTED + data theo DTO<br/>Set-Cookie refreshToken opaque#59; HttpOnly#59; Secure#59; SameSite=Lax#59; Path=/api/v1/auth<br/>data có accessToken, refreshToken và profile theo contract hiện tại
+        G-->>C: Chuyển tiếp status, body và header theo contract
+    ```
   security: []
   requestBody:
     required: true

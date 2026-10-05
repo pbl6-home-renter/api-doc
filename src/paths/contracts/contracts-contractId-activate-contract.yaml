@@ -6,8 +6,98 @@ post:
   security:
     - BearerAuth: []
   summary: Activate contract
-  description: 'landlord. Kích hoạt hợp đồng đã ký. Lỗi nghiệp vụ: 409 CONTRACT NOT READY · 409 SIGNED FILE MISSING
-    · 403 FORBIDDEN.'
+  description: |-
+    landlord. Kích hoạt hợp đồng đã ký. Lỗi nghiệp vụ: 409 CONTRACT NOT READY · 409 SIGNED FILE MISSING · 403 FORBIDDEN.
+
+    ### Sequence diagram — Activate contract
+
+    Luồng theo kiến trúc microservice: tenancy-service sở hữu nghiệp vụ và tenancy_db.
+
+    ```mermaid
+    sequenceDiagram
+        autonumber
+        participant C as Client (Web / Mobile)
+        participant G as API Gateway
+        participant R as Service Registry
+        participant S as tenancy-service
+        participant D as PostgreSQL tenancy_db
+        participant I as identity-service
+        participant O as Outbox worker (tenancy)
+        participant Q as RabbitMQ
+        participant N as community-service
+        participant ND as PostgreSQL community_db
+        participant J as identity-service
+        participant JD as PostgreSQL identity_db
+        C->>G: POST /api/v1/contracts/{contractId}/activate-contract<br/>Body: signedContractMediaId
+        G->>G: Gắn correlation-id, kiểm tra rate limit
+        break Vượt giới hạn yêu cầu
+            G-->>C: 429 (TOO_MANY_REQUESTS)
+        end
+        G->>G: Verify JWT cục bộ bằng JWKS cache
+        break Access token thiếu, sai hoặc hết hạn
+            G-->>C: 401 (UNAUTHORIZED)
+        end
+        G->>R: Tra cứu instance tenancy-service healthy
+        R-->>G: Địa chỉ instance
+        G->>S: Chuyển tiếp request, thông tin xác thực, correlation-id và X-Service-Token
+        S->>S: Verify JWT cục bộ#59; suy ra actor từ claim, không tin userId do client tự gán
+        S->>S: Kiểm tra JSON/body, path, header theo contract
+        break JSON/body, path, header sai cú pháp/định dạng hoặc thiếu JSON body bắt buộc
+            S-->>G: 400 (INVALID_JSON / INVALID_REQUEST_BODY / INVALID_PATH_PARAMETER / INVALID_HEADER / BAD_REQUEST)
+            G-->>C: Chuyển tiếp phản hồi lỗi
+        end
+        S->>S: Validate field theo schema, required/nullable/enum#59; từ chối field ngoài DTO khi additionalProperties=false
+        break Dữ liệu không đúng schema hoặc ràng buộc trường
+            S-->>G: 422 (VALIDATION_FAILED)
+            G-->>C: Chuyển tiếp phản hồi lỗi
+        end
+        S->>D: Đọc contract, room và trạng thái sẵn sàng
+        D-->>S: Dữ liệu hoặc kết quả không tìm thấy
+        break Không tìm thấy tài nguyên trong phạm vi truy cập
+            S-->>G: 404 (RESOURCE_NOT_FOUND)
+            G-->>C: Chuyển tiếp phản hồi lỗi
+        end
+        S->>I: Đọc metadata, trạng thái upload và quyền của signedContractMediaId
+        I-->>S: Kết quả kiểm tra tệp đã ký
+        S->>S: Actor sở hữu hợp đồng#59; contract sẵn sàng#59; signedContractMediaId là tệp đã upload hợp lệ
+        Note over S,D: Giữ tệp đã ký làm chứng cứ#59; event contract.signed còn được identity tiêu thụ để ghi audit
+        break Không đúng role hoặc không có quyền trên tài nguyên
+            S-->>G: 403 (FORBIDDEN)
+            G-->>C: Chuyển tiếp phản hồi lỗi
+        end
+        break Vi phạm điều kiện trạng thái hoặc dữ liệu trùng đã kiểm tra
+            S-->>G: 409 (CONTRACT_NOT_READY / SIGNED_FILE_MISSING)
+            G-->>C: Chuyển tiếp phản hồi lỗi
+        end
+        break Vi phạm quy tắc nghiệp vụ của endpoint sau khi kiểm tra dữ liệu
+            S-->>G: 422 (VALIDATION_FAILED)
+            G-->>C: Chuyển tiếp phản hồi lỗi
+        end
+        S->>D: BEGIN transaction
+        S->>D: Gắn tệp đã ký, kích hoạt contract và cập nhật trạng thái room trong cùng transaction
+        S->>D: INSERT outbox (contract.signed) cùng transaction
+        S->>D: COMMIT
+        D-->>S: Dữ liệu đã lưu
+        Note over S,D: Lỗi nội bộ: rollback transaction chưa commit (nếu có), trả 500 INTERNAL_SERVER_ERROR qua gateway
+        S-->>G: 200 CONTRACT_ACTIVATED + data theo DTO
+        G-->>C: Chuyển tiếp status, body và header theo contract
+        Note over O,ND: Xử lý bất đồng bộ sau commit#59; HTTP không chờ consumer hoàn tất
+        O->>D: Đọc công việc chưa gửi trong outbox
+        D-->>O: contract.signed
+        Note over O,Q: Event có eventId, occurredAt, schemaVersion, correlationId
+        O->>Q: Publish contract.signed
+        Q-->>O: Publisher confirm
+        O->>D: Xóa/đánh dấu bản ghi đã gửi
+        Q-->>N: Deliver contract.signed (at-least-once)
+        N->>ND: Ghi notification hoặc cập nhật nghiệp vụ liên quan#59; chống xử lý trùng theo eventId
+        ND-->>N: Dữ liệu đã commit
+        N-->>Q: ACK
+        Q-->>J: Deliver contract.signed trên queue audit riêng
+        J->>JD: Ghi audit log#59; chống xử lý trùng theo eventId
+        JD-->>J: Audit đã commit
+        J-->>Q: ACK
+        Note over O,Q: Broker lỗi: giữ outbox để gửi lại#59; consumer lỗi: retry 1s / 4s / 16s rồi DLQ
+    ```
   parameters:
   - name: contractId
     in: path

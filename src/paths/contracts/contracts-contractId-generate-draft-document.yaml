@@ -6,8 +6,79 @@ post:
   security:
     - BearerAuth: []
   summary: Generate draft contract document
-  description: 'landlord. Sinh tài liệu nháp. Lỗi nghiệp vụ: 403 FORBIDDEN · 409 CONTRACT NOT DRAFT · 422 TEMPLATE
-    DATA INVALID.'
+  description: |-
+    landlord. Sinh tài liệu nháp. Lỗi nghiệp vụ: 403 FORBIDDEN · 409 CONTRACT NOT DRAFT · 422 TEMPLATE DATA INVALID.
+
+    ### Sequence diagram — Generate draft contract document
+
+    Luồng theo kiến trúc microservice: tenancy-service sở hữu nghiệp vụ và tenancy_db.
+
+    ```mermaid
+    sequenceDiagram
+        autonumber
+        participant C as Client (Web / Mobile)
+        participant G as API Gateway
+        participant R as Service Registry
+        participant S as tenancy-service
+        participant D as PostgreSQL tenancy_db
+        participant M as MinIO / Object Storage
+        participant I as identity-service
+        C->>G: POST /api/v1/contracts/{contractId}/generate-draft-document<br/>Body: templateKey
+        G->>G: Gắn correlation-id, kiểm tra rate limit
+        break Vượt giới hạn yêu cầu
+            G-->>C: 429 (TOO_MANY_REQUESTS)
+        end
+        G->>G: Verify JWT cục bộ bằng JWKS cache
+        break Access token thiếu, sai hoặc hết hạn
+            G-->>C: 401 (UNAUTHORIZED)
+        end
+        G->>R: Tra cứu instance tenancy-service healthy
+        R-->>G: Địa chỉ instance
+        G->>S: Chuyển tiếp request, thông tin xác thực, correlation-id và X-Service-Token
+        S->>S: Verify JWT cục bộ#59; suy ra actor từ claim, không tin userId do client tự gán
+        S->>S: Kiểm tra JSON/body, path, header theo contract
+        break JSON/body, path, header sai cú pháp/định dạng hoặc thiếu JSON body bắt buộc
+            S-->>G: 400 (INVALID_JSON / INVALID_REQUEST_BODY / INVALID_PATH_PARAMETER / INVALID_HEADER / BAD_REQUEST)
+            G-->>C: Chuyển tiếp phản hồi lỗi
+        end
+        S->>S: Validate field theo schema, required/nullable/enum#59; từ chối field ngoài DTO khi additionalProperties=false
+        break Dữ liệu không đúng schema hoặc ràng buộc trường
+            S-->>G: 422 (VALIDATION_FAILED)
+            G-->>C: Chuyển tiếp phản hồi lỗi
+        end
+        S->>D: Đọc contract draft, template và dữ liệu điền mẫu
+        D-->>S: Dữ liệu hoặc kết quả không tìm thấy
+        break Không tìm thấy tài nguyên trong phạm vi truy cập
+            S-->>G: 404 (RESOURCE_NOT_FOUND)
+            G-->>C: Chuyển tiếp phản hồi lỗi
+        end
+        S->>S: Actor sở hữu hợp đồng#59; contract còn draft#59; template data hợp lệ
+        Note over S,D: Không đánh dấu tài liệu nháp là tệp đã ký#59; không kích hoạt hợp đồng
+        break Không đúng role hoặc không có quyền trên tài nguyên
+            S-->>G: 403 (FORBIDDEN)
+            G-->>C: Chuyển tiếp phản hồi lỗi
+        end
+        break Vi phạm điều kiện trạng thái hoặc dữ liệu trùng đã kiểm tra
+            S-->>G: 409 (CONTRACT_NOT_DRAFT)
+            G-->>C: Chuyển tiếp phản hồi lỗi
+        end
+        break Vi phạm quy tắc nghiệp vụ của endpoint sau khi kiểm tra dữ liệu
+            S-->>G: 422 (TEMPLATE_DATA_INVALID / VALIDATION_FAILED)
+            G-->>C: Chuyển tiếp phản hồi lỗi
+        end
+        S->>S: Render tài liệu hợp đồng nháp theo templateKey
+        S->>M: Lưu file tài liệu nháp
+        M-->>S: Storage key
+        S->>I: Đăng ký metadata media tài liệu qua cơ chế nội bộ
+        I-->>S: mediaId và URL tài liệu
+        S->>D: BEGIN transaction
+        S->>D: Lưu liên kết metadata tài liệu nháp vào hợp đồng
+        S->>D: COMMIT
+        D-->>S: Dữ liệu đã lưu
+        Note over S,D: Lỗi nội bộ: rollback transaction chưa commit (nếu có), trả 500 INTERNAL_SERVER_ERROR qua gateway
+        S-->>G: 201 CONTRACT_DRAFT_GENERATED + data theo DTO<br/>Location: /api/v1/media/{mediaId}
+        G-->>C: Chuyển tiếp status, body và header theo contract
+    ```
   parameters:
   - name: contractId
     in: path

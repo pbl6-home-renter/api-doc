@@ -6,8 +6,64 @@ get:
   security:
     - BearerAuth: []
   summary: List messages
-  description: 'tenant, landlord. Liệt kê tin nhắn trong một hội thoại. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 INVALID
-    CURSOR · 404 CONVERSATION NOT FOUND.'
+  description: |-
+    tenant, landlord. Liệt kê tin nhắn trong một hội thoại. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 INVALID CURSOR · 404 CONVERSATION NOT FOUND.
+
+    ### Sequence diagram — List messages
+
+    Luồng theo kiến trúc microservice: community-service sở hữu nghiệp vụ và community_db.
+
+    ```mermaid
+    sequenceDiagram
+        autonumber
+        participant C as Client (Web / Mobile)
+        participant G as API Gateway
+        participant R as Service Registry
+        participant S as community-service
+        participant D as PostgreSQL community_db
+        C->>G: GET /api/v1/messages<br/>Query: filter, cursor, pageSize
+        G->>G: Gắn correlation-id, kiểm tra rate limit
+        break Vượt giới hạn yêu cầu
+            G-->>C: 429 (TOO_MANY_REQUESTS)
+        end
+        G->>G: Verify JWT cục bộ bằng JWKS cache
+        break Access token thiếu, sai hoặc hết hạn
+            G-->>C: 401 (UNAUTHORIZED)
+        end
+        G->>R: Tra cứu instance community-service healthy
+        R-->>G: Địa chỉ instance
+        G->>S: Chuyển tiếp request, thông tin xác thực, correlation-id và X-Service-Token
+        S->>S: Verify JWT cục bộ#59; suy ra actor từ claim, không tin userId do client tự gán
+        S->>S: Kiểm tra query, header theo contract
+        break query, header sai cú pháp/định dạng
+            S-->>G: 400 (INVALID_QUERY_PARAMETER / INVALID_HEADER / BAD_REQUEST)
+            G-->>C: Chuyển tiếp phản hồi lỗi
+        end
+        S->>S: Validate field theo schema, required/nullable/enum#59; từ chối field ngoài DTO khi additionalProperties=false
+        break Dữ liệu không đúng schema hoặc ràng buộc trường
+            S-->>G: 422 (VALIDATION_FAILED)
+            G-->>C: Chuyển tiếp phản hồi lỗi
+        end
+        S->>D: Đọc conversation/membership và messages theo cursor/pageSize
+        D-->>S: Dữ liệu hoặc kết quả không tìm thấy
+        break Không tìm thấy tài nguyên trong phạm vi truy cập
+            S-->>G: 404 (CONVERSATION_NOT_FOUND)
+            G-->>C: Chuyển tiếp phản hồi lỗi
+        end
+        S->>S: Actor là thành viên#59; conversation tồn tại#59; cursor đúng hội thoại
+        break Không đúng role hoặc không có quyền trên tài nguyên
+            S-->>G: 403 (FORBIDDEN)
+            G-->>C: Chuyển tiếp phản hồi lỗi
+        end
+        break Vi phạm quy tắc nghiệp vụ của endpoint sau khi kiểm tra dữ liệu
+            S-->>G: 422 (INVALID_CURSOR / VALIDATION_FAILED)
+            G-->>C: Chuyển tiếp phản hồi lỗi
+        end
+        S->>S: Dựng trang tin nhắn theo cursor#59; không dùng offset pagination
+        Note over S,D: Lỗi nội bộ: rollback transaction chưa commit (nếu có), trả 500 INTERNAL_SERVER_ERROR qua gateway
+        S-->>G: 200 MESSAGES_FETCHED + data theo DTO
+        G-->>C: Chuyển tiếp status, body và header theo contract
+    ```
   parameters:
   - name: filter
     in: query
@@ -172,8 +228,76 @@ post:
   security:
     - BearerAuth: []
   summary: Send message
-  description: 'tenant, landlord. Gửi tin nhắn. Lỗi nghiệp vụ: 403 FORBIDDEN · 409 CONVERSATION ARCHIVED · 422 MESSAGE
-    CONTENT INVALID.'
+  description: |-
+    tenant, landlord. Gửi tin nhắn. Lỗi nghiệp vụ: 403 FORBIDDEN · 409 CONVERSATION ARCHIVED · 422 MESSAGE CONTENT INVALID.
+
+    ### Sequence diagram — Send message
+
+    Luồng theo kiến trúc microservice: community-service sở hữu nghiệp vụ và community_db.
+
+    ```mermaid
+    sequenceDiagram
+        autonumber
+        participant C as Client (Web / Mobile)
+        participant G as API Gateway
+        participant R as Service Registry
+        participant S as community-service
+        participant D as PostgreSQL community_db
+        participant I as identity-service
+        participant Z as Redis / Socket.io adapter
+        C->>G: POST /api/v1/messages<br/>Body: conversationId, type, content, mediaId, mentions
+        G->>G: Gắn correlation-id, kiểm tra rate limit
+        break Vượt giới hạn yêu cầu
+            G-->>C: 429 (TOO_MANY_REQUESTS)
+        end
+        G->>G: Verify JWT cục bộ bằng JWKS cache
+        break Access token thiếu, sai hoặc hết hạn
+            G-->>C: 401 (UNAUTHORIZED)
+        end
+        G->>R: Tra cứu instance community-service healthy
+        R-->>G: Địa chỉ instance
+        G->>S: Chuyển tiếp request, thông tin xác thực, correlation-id và X-Service-Token
+        S->>S: Verify JWT cục bộ#59; suy ra actor từ claim, không tin userId do client tự gán
+        S->>S: Kiểm tra JSON/body, header theo contract
+        break JSON/body, header sai cú pháp/định dạng hoặc thiếu JSON body bắt buộc
+            S-->>G: 400 (INVALID_JSON / INVALID_REQUEST_BODY / INVALID_HEADER / BAD_REQUEST)
+            G-->>C: Chuyển tiếp phản hồi lỗi
+        end
+        S->>S: Validate field theo schema, required/nullable/enum#59; từ chối field ngoài DTO khi additionalProperties=false
+        break Dữ liệu không đúng schema hoặc ràng buộc trường
+            S-->>G: 422 (VALIDATION_FAILED)
+            G-->>C: Chuyển tiếp phản hồi lỗi
+        end
+        S->>D: Đọc conversation, membership và trạng thái archive
+        D-->>S: Dữ liệu hoặc kết quả không tìm thấy
+        opt Có mediaId
+            S->>I: Đọc metadata và quyền sử dụng tệp đính kèm
+            I-->>S: Kết quả kiểm tra media
+        end
+        S->>S: Actor là thành viên#59; conversation chưa archived<br/>Validate type/content/mediaId và mentions theo DTO
+        break Không đúng role hoặc không có quyền trên tài nguyên
+            S-->>G: 403 (FORBIDDEN)
+            G-->>C: Chuyển tiếp phản hồi lỗi
+        end
+        break Vi phạm điều kiện trạng thái hoặc dữ liệu trùng đã kiểm tra
+            S-->>G: 409 (CONVERSATION_ARCHIVED)
+            G-->>C: Chuyển tiếp phản hồi lỗi
+        end
+        break Vi phạm quy tắc nghiệp vụ của endpoint sau khi kiểm tra dữ liệu
+            S-->>G: 422 (MESSAGE_CONTENT_INVALID / VALIDATION_FAILED)
+            G-->>C: Chuyển tiếp phản hồi lỗi
+        end
+        S->>D: BEGIN transaction
+        S->>D: Lưu message, senderId từ actor và message_mentions trong transaction
+        S->>D: COMMIT
+        D-->>S: Dữ liệu đã lưu
+        Note over S,D: Lỗi nội bộ: rollback transaction chưa commit (nếu có), trả 500 INTERNAL_SERVER_ERROR qua gateway
+        S-->>G: 201 MESSAGE_SENT + data theo DTO<br/>Location: /api/v1/messages
+        G-->>C: Chuyển tiếp status, body và header theo contract
+        S->>Z: Phát message.posted sau commit, khóa theo messageId
+        Z-->>C: Socket.io tới thành viên online có quyền
+        Note over S,Z: Realtime best-effort#59; client có thể đọc lại message đã lưu qua GET /messages
+    ```
   requestBody:
     required: true
     content:

@@ -6,7 +6,56 @@ get:
   security:
     - BearerAuth: []
   summary: List favorite rooms
-  description: 'tenant. Liệt kê phòng đã lưu. Lỗi nghiệp vụ: 401 INVALID TOKEN.'
+  description: |-
+    tenant. Liệt kê phòng đã lưu. Lỗi nghiệp vụ: 401 INVALID TOKEN.
+
+    ### Sequence diagram — List favorite rooms
+
+    Luồng theo kiến trúc microservice: tenancy-service sở hữu nghiệp vụ và tenancy_db.
+
+    ```mermaid
+    sequenceDiagram
+        autonumber
+        participant C as Client (Web / Mobile)
+        participant G as API Gateway
+        participant R as Service Registry
+        participant S as tenancy-service
+        participant D as PostgreSQL tenancy_db
+        C->>G: GET /api/v1/me/favorite-rooms<br/>Query: pageSize, pageNo, format
+        G->>G: Gắn correlation-id, kiểm tra rate limit
+        break Vượt giới hạn yêu cầu
+            G-->>C: 429 (TOO_MANY_REQUESTS)
+        end
+        G->>G: Verify JWT cục bộ bằng JWKS cache
+        break Access token thiếu, sai hoặc hết hạn
+            G-->>C: 401 (UNAUTHORIZED)
+        end
+        G->>R: Tra cứu instance tenancy-service healthy
+        R-->>G: Địa chỉ instance
+        G->>S: Chuyển tiếp request, thông tin xác thực, correlation-id và X-Service-Token
+        S->>S: Verify JWT cục bộ#59; suy ra actor từ claim, không tin userId do client tự gán
+        S->>S: Kiểm tra query, header theo contract
+        break query, header sai cú pháp/định dạng
+            S-->>G: 400 (INVALID_QUERY_PARAMETER / INVALID_HEADER / BAD_REQUEST)
+            G-->>C: Chuyển tiếp phản hồi lỗi
+        end
+        S->>S: Validate field theo schema, required/nullable/enum#59; từ chối field ngoài DTO khi additionalProperties=false
+        S->>D: Đọc favorite_rooms của actor và phòng liên quan#59; phân trang offset
+        D-->>S: Dữ liệu hoặc kết quả không tìm thấy
+        S->>S: Actor là tenant#59; chỉ đọc danh sách đã lưu của mình
+        break Không đúng role hoặc không có quyền trên tài nguyên
+            S-->>G: 403 (FORBIDDEN)
+            G-->>C: Chuyển tiếp phản hồi lỗi
+        end
+        Note over S,D: Lỗi nội bộ: rollback transaction chưa commit (nếu có), trả 500 INTERNAL_SERVER_ERROR qua gateway
+        alt format=json hoặc mặc định
+            S-->>G: 200 ROOMS_FAVORITE_FETCHED + data theo DTO
+            G-->>C: Chuyển tiếp JSON và header
+        else format xuất tệp được hỗ trợ
+            S-->>G: 200 File stream + Content-Type/Content-Disposition
+            G-->>C: Chuyển tiếp tệp#59; không JSON wrapper
+        end
+    ```
   parameters:
   - name: pageSize
     in: query
@@ -136,7 +185,71 @@ post:
   security:
     - BearerAuth: []
   summary: Add favorite room
-  description: 'tenant. Lưu một phòng. Lỗi nghiệp vụ: 404 NOT FOUND · 409 ALREADY FAVORITED.'
+  description: |-
+    tenant. Lưu một phòng. Lỗi nghiệp vụ: 404 NOT FOUND · 409 ALREADY FAVORITED.
+
+    ### Sequence diagram — Add favorite room
+
+    Luồng theo kiến trúc microservice: tenancy-service sở hữu nghiệp vụ và tenancy_db.
+
+    ```mermaid
+    sequenceDiagram
+        autonumber
+        participant C as Client (Web / Mobile)
+        participant G as API Gateway
+        participant R as Service Registry
+        participant S as tenancy-service
+        participant D as PostgreSQL tenancy_db
+        C->>G: POST /api/v1/me/favorite-rooms<br/>Body: roomId
+        G->>G: Gắn correlation-id, kiểm tra rate limit
+        break Vượt giới hạn yêu cầu
+            G-->>C: 429 (TOO_MANY_REQUESTS)
+        end
+        G->>G: Verify JWT cục bộ bằng JWKS cache
+        break Access token thiếu, sai hoặc hết hạn
+            G-->>C: 401 (UNAUTHORIZED)
+        end
+        G->>R: Tra cứu instance tenancy-service healthy
+        R-->>G: Địa chỉ instance
+        G->>S: Chuyển tiếp request, thông tin xác thực, correlation-id và X-Service-Token
+        S->>S: Verify JWT cục bộ#59; suy ra actor từ claim, không tin userId do client tự gán
+        S->>S: Kiểm tra JSON/body, header theo contract
+        break JSON/body, header sai cú pháp/định dạng hoặc thiếu JSON body bắt buộc
+            S-->>G: 400 (INVALID_JSON / INVALID_REQUEST_BODY / INVALID_HEADER / BAD_REQUEST)
+            G-->>C: Chuyển tiếp phản hồi lỗi
+        end
+        S->>S: Validate field theo schema, required/nullable/enum#59; từ chối field ngoài DTO khi additionalProperties=false
+        break Dữ liệu không đúng schema hoặc ràng buộc trường
+            S-->>G: 422 (VALIDATION_FAILED)
+            G-->>C: Chuyển tiếp phản hồi lỗi
+        end
+        S->>D: Đọc roomId và kiểm tra favorite_rooms của actor
+        D-->>S: Dữ liệu hoặc kết quả không tìm thấy
+        break Không tìm thấy tài nguyên trong phạm vi truy cập
+            S-->>G: 404 (RESOURCE_NOT_FOUND)
+            G-->>C: Chuyển tiếp phản hồi lỗi
+        end
+        S->>S: Phòng tồn tại#59; actor chưa lưu phòng này
+        break Không đúng role hoặc không có quyền trên tài nguyên
+            S-->>G: 403 (FORBIDDEN)
+            G-->>C: Chuyển tiếp phản hồi lỗi
+        end
+        break Vi phạm điều kiện trạng thái hoặc dữ liệu trùng đã kiểm tra
+            S-->>G: 409 (ALREADY_FAVORITED)
+            G-->>C: Chuyển tiếp phản hồi lỗi
+        end
+        break Vi phạm quy tắc nghiệp vụ của endpoint sau khi kiểm tra dữ liệu
+            S-->>G: 422 (VALIDATION_FAILED)
+            G-->>C: Chuyển tiếp phản hồi lỗi
+        end
+        S->>D: BEGIN transaction
+        S->>D: Tạo favorite_rooms (actor, roomId) với ràng buộc không trùng
+        S->>D: COMMIT
+        D-->>S: Dữ liệu đã lưu
+        Note over S,D: Lỗi nội bộ: rollback transaction chưa commit (nếu có), trả 500 INTERNAL_SERVER_ERROR qua gateway
+        S-->>G: 201 ROOM_FAVORITED + data theo DTO<br/>Location: /api/v1/me/favorite-rooms/{roomId}
+        G-->>C: Chuyển tiếp status, body và header theo contract
+    ```
   requestBody:
     required: true
     content:
