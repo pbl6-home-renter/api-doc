@@ -1,79 +1,39 @@
 type: object
-x-apidog-folder: "User/Response"
+x-apidog-folder: User/Response
 title: UserDetailResponseDto
 description: Phản hồi chi tiết một người dùng dành cho admin quản trị tài khoản
-
 properties:
   id:
     type: string
     format: uuid
     description: Định danh duy nhất của người dùng.
-    example: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+    example: '3fa85f64-5717-4562-b3fc-2c963f66afa6'
   name:
     type: string
     description: Họ và tên người dùng.
-    example: "Lê Văn An"
-  phone:
-    type: string
-    description: Số điện thoại người dùng.
-    example: "0901234567"
+    example: Lê Văn An
   email:
     type: string
     format: email
-    nullable: true
-    description: Địa chỉ email.
-    example: "an.le@example.com"
-  avatarUrl:
+  phone:
     type: string
-    format: uri
-    nullable: true
-    description: Ảnh đại diện người dùng.
+    description: Số điện thoại người dùng.
+    example: '0901234567'
   role:
     type: string
     enum:
-      - tenant
-      - landlord
-      - admin
+    - tenant
+    - landlord
+    - admin
     description: Vai trò người dùng (bất biến).
-    example: "landlord"
+    example: landlord
   status:
     type: string
     enum:
-      - active
-      - locked
+    - active
+    - locked
     description: Trạng thái tài khoản.
-    example: "active"
-  identityVerified:
-    type: boolean
-    description: Đã xác thực giấy tờ tùy thân / CCCD hay chưa.
-    example: true
-  identityCardNumber:
-    type: string
-    nullable: true
-    description: Số CCCD/CMND đã xác thực.
-    example: "048195001234"
-  buildingCount:
-    type: integer
-    minimum: 0
-    description: Số lượng tòa nhà thuộc sở hữu (nếu là landlord).
-    example: 2
-  activeContractCount:
-    type: integer
-    minimum: 0
-    description: Số lượng hợp đồng đang có hiệu lực.
-    example: 1
-  ownedBuildings:
-    type: array
-    nullable: true
-    description: Danh sách tóm tắt các tòa nhà của chủ trọ này quản lý (nếu role = landlord)
-    items:
-      type: object
-      properties:
-        id: { type: string, format: uuid }
-        name: { type: string }
-        address: { type: string }
-        totalRooms: { type: integer, minimum: 0 }
-        status: { type: string, enum: [pending, approved, rejected] }
+    example: active
   lockReason:
     type: string
     nullable: true
@@ -85,17 +45,54 @@ properties:
     nullable: true
     description: Thời điểm bị khóa tài khoản.
     example: null
-  createdAt:
-    type: string
-    format: date-time
-    description: Thời điểm đăng ký tài khoản.
-    example: "2026-09-01T08:00:00Z"
+  payoutAccount:
+    type: object
+    nullable: true
+    description: 'Tài khoản nhận tiền của landlord. Tenant và admin nhận null. accountNumber được mask khi trả về
+      client.
 
+      '
+    properties:
+      bankCode:
+        type: string
+        description: Thông tin bank code của tài nguyên trong ngữ cảnh DTO.
+        minLength: 4
+        maxLength: 20
+        example: '970415'
+      accountNumber:
+        type: string
+        description: Số tài khoản đã được mask
+        example: '**43210'
+      accountName:
+        type: string
+        description: Thông tin account name của tài nguyên trong ngữ cảnh DTO.
+        minLength: 1
+        maxLength: 254
+        example: NGUYEN VAN AN
+    required:
+    - bankCode
+    - accountNumber
+    - accountName
+  buildingCount:
+    type: integer
+    minimum: 0
+    description: Số lượng tòa nhà thuộc sở hữu (nếu là landlord).
+    example: 2
+  activeContractCount:
+    type: integer
+    minimum: 0
+    description: Số lượng hợp đồng đang có hiệu lực.
+    example: 1
 required:
-  - id
-  - name
-  - phone
-  - role
-  - status
-  - identityVerified
-  - createdAt
+- id
+- name
+- email
+- phone
+- role
+- status
+- lockReason
+- lockedAt
+- payoutAccount
+- buildingCount
+- activeContractCount
+additionalProperties: false

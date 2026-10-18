@@ -1,53 +1,44 @@
 type: object
-x-apidog-folder: "User/Response"
+x-apidog-folder: User/Response
 title: UserListResponseDto
 description: Danh sách người dùng dành cho admin quản trị tài khoản
-
 properties:
   id:
     type: string
     format: uuid
     description: Định danh duy nhất của người dùng.
-    example: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+    example: '3fa85f64-5717-4562-b3fc-2c963f66afa6'
   name:
     type: string
     description: Họ và tên người dùng.
-    example: "Lê Văn An"
-  phone:
-    type: string
-    description: Số điện thoại người dùng.
-    example: "0901234567"
+    example: Lê Văn An
   email:
     type: string
     format: email
-    nullable: true
-    description: Địa chỉ email.
-    example: "an.le@example.com"
+  phone:
+    type: string
+    description: Số điện thoại người dùng.
+    example: '0901234567'
   role:
     type: string
     enum:
-      - tenant
-      - landlord
-      - admin
+    - tenant
+    - landlord
+    - admin
     description: Vai trò người dùng (bất biến, không thể thay đổi sau khi đăng ký).
-    example: "tenant"
+    example: tenant
   status:
     type: string
     enum:
-      - active
-      - locked
-    description: "Trạng thái tài khoản (active: bình thường, locked: bị khóa bởi admin)."
-    example: "active"
-  createdAt:
-    type: string
-    format: date-time
-    description: Thời điểm đăng ký tài khoản.
-    example: "2026-09-01T08:00:00Z"
-
+    - active
+    - locked
+    description: 'Trạng thái tài khoản (active: bình thường, locked: bị khóa bởi admin).'
+    example: active
 required:
-  - id
-  - name
-  - phone
-  - role
-  - status
-  - createdAt
+- id
+- name
+- email
+- phone
+- role
+- status
+additionalProperties: false

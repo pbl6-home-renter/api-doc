@@ -1,25 +1,26 @@
 type: object
-x-apidog-folder: "User/Request"
+x-apidog-folder: User/Request
 title: UserUpdateRequestDto
-description: Dữ liệu admin cập nhật thông tin một tài khoản
+description: Admin cập nhật name hoặc phone. Trường null được bỏ qua; phải có ít nhất một giá trị để cập nhật.
 additionalProperties: false
-
 properties:
   name:
     type: string
     description: Thông tin name của tài nguyên trong ngữ cảnh DTO.
     minLength: 1
     maxLength: 254
-    example: "Nguyễn Văn An"
-
+    example: Nguyễn Văn An
+    nullable: true
   phone:
     type: string
     description: Thông tin phone của tài nguyên trong ngữ cảnh DTO.
     minLength: 10
     maxLength: 12
-    pattern: '^0[0-9]{9}$|^\+84[0-9]{9}$'
-    example: "0901234567"
-
-required:
+    pattern: ^0[0-9]{9}$|^\+84[0-9]{9}$
+    example: '0901234567'
+    nullable: true
+anyOf:
+- required:
   - name
+- required:
   - phone

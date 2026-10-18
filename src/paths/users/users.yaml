@@ -2,33 +2,13 @@ get:
   tags:
   - User
   x-apidog-folder: User
-  operationId: listUsers
+  operationId: getUsersAdmin
   security:
-    - BearerAuth: []
+  - BearerAuth: []
   summary: List users
-  description: Chỉ admin; yêu cầu access token. Lọc theo role, status và phân trang offset. format khác json trả
-    file stream không có JSON wrapper.
+  description: Chỉ admin. Danh sách JSON và phân trang offset. Lọc bằng role, status ở query cấp ngoài; q tìm theo
+    tên/email/điện thoại. Không hỗ trợ filter object hoặc format xuất tệp.
   parameters:
-  - name: filter
-    in: query
-    description: Lọc theo role hoặc status.
-    style: deepObject
-    explode: true
-    schema:
-      type: object
-      additionalProperties: false
-      properties:
-        role:
-          type: string
-          enum:
-          - tenant
-          - landlord
-          - admin
-        status:
-          type: string
-          enum:
-          - active
-          - locked
   - name: sort
     in: query
     description: Một trường sắp xếp; mặc định createdAt.
@@ -64,17 +44,31 @@ get:
       minimum: 1
       maximum: 100
       default: 20
-  - name: format
+  - name: role
     in: query
-    description: json trả envelope và phân trang; xlsx, csv, pdf trả file stream.
+    required: false
+    description: Lọc theo vai trò.
     schema:
       type: string
       enum:
-      - json
-      - xlsx
-      - csv
-      - pdf
-      default: json
+      - landlord
+      - tenant
+      - admin
+  - name: status
+    in: query
+    required: false
+    description: Lọc theo trạng thái.
+    schema:
+      type: string
+      enum:
+      - active
+      - locked
+  - name: q
+    in: query
+    required: false
+    description: Tìm theo tên, email hoặc số điện thoại.
+    schema:
+      type: string
   responses:
     '200':
       description: Danh sách người dùng hoặc tệp xuất theo format.
@@ -96,7 +90,7 @@ get:
               code:
                 type: string
                 enum:
-                - USERS_FETCHED
+                - USER_LIST_FETCHED
               data:
                 type: array
                 items:
@@ -131,15 +125,14 @@ get:
                     type: boolean
           example:
             statusCode: 200
-            code: USERS_FETCHED
+            code: USER_LIST_FETCHED
             data:
-            - id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+            - id: '3fa85f64-5717-4562-b3fc-2c963f66afa6'
               name: Lê Văn An
               phone: '0901234567'
               email: lan@example.com
               role: tenant
               status: active
-              createdAt: '2026-09-01T08:00:00.000Z'
             pagination:
               type: offset
               pageNo: 1
@@ -148,27 +141,180 @@ get:
               totalPages: 1
               hasNextPage: false
               hasPreviousPage: false
-        text/csv:
-          schema:
-            type: string
-            format: binary
-        application/pdf:
-          schema:
-            type: string
-            format: binary
-        application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
-          schema:
-            type: string
-            format: binary
     '400':
-      $ref: ../../openapi.yaml#/components/responses/BadRequestQueryError
+      description: Yêu cầu không hợp lệ.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required:
+            - statusCode
+            - code
+            properties:
+              statusCode:
+                type: integer
+                enum:
+                - 400
+              code:
+                type: string
+                enum:
+                - BAD_REQUEST
+          examples:
+            error_1:
+              summary: BAD_REQUEST
+              value:
+                statusCode: 400
+                code: BAD_REQUEST
     '401':
-      $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
+      description: Không xác thực được yêu cầu.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required:
+            - statusCode
+            - code
+            properties:
+              statusCode:
+                type: integer
+                enum:
+                - 401
+              code:
+                type: string
+                enum:
+                - UNAUTHORIZED
+          examples:
+            error_1:
+              summary: UNAUTHORIZED
+              value:
+                statusCode: 401
+                code: UNAUTHORIZED
     '403':
-      $ref: ../../openapi.yaml#/components/responses/ForbiddenError
+      description: Không có quyền truy cập.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required:
+            - statusCode
+            - code
+            properties:
+              statusCode:
+                type: integer
+                enum:
+                - 403
+              code:
+                type: string
+                enum:
+                - FORBIDDEN
+          examples:
+            error_1:
+              summary: FORBIDDEN
+              value:
+                statusCode: 403
+                code: FORBIDDEN
     '422':
-      $ref: ../../openapi.yaml#/components/responses/ValidationError
-    '429':
-      $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
+      description: Vi phạm ràng buộc dữ liệu; trả mã của lỗi đầu tiên.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required:
+            - statusCode
+            - code
+            properties:
+              statusCode:
+                type: integer
+                enum:
+                - 422
+              code:
+                type: string
+                enum:
+                - UNEXPECTED_FIELD
+                - VALIDATION_FAILED
+                - pageNo must not be less than 1
+                - pageNo must be an integer number
+                - pageSize must not be less than 1
+                - pageSize must not be greater than 100
+                - pageSize must be an integer number
+                - sort must be a string
+                - 'sort must be one of: createdAt, name, role, status'
+                - order must be either asc or desc
+                - 'role must be one of the following values: landlord, tenant, admin'
+                - 'status must be one of the following values: active, locked'
+                - q must be a string
+          examples:
+            error_1:
+              summary: UNEXPECTED_FIELD
+              value:
+                statusCode: 422
+                code: UNEXPECTED_FIELD
+            error_2:
+              summary: VALIDATION_FAILED
+              value:
+                statusCode: 422
+                code: VALIDATION_FAILED
+            error_3:
+              summary: pageNo must not be less than 1
+              value:
+                statusCode: 422
+                code: pageNo must not be less than 1
+            error_4:
+              summary: pageNo must be an integer number
+              value:
+                statusCode: 422
+                code: pageNo must be an integer number
+            error_5:
+              summary: pageSize must not be less than 1
+              value:
+                statusCode: 422
+                code: pageSize must not be less than 1
+            error_6:
+              summary: pageSize must not be greater than 100
+              value:
+                statusCode: 422
+                code: pageSize must not be greater than 100
+            error_7:
+              summary: pageSize must be an integer number
+              value:
+                statusCode: 422
+                code: pageSize must be an integer number
+            error_8:
+              summary: sort must be a string
+              value:
+                statusCode: 422
+                code: sort must be a string
+            error_9:
+              summary: 'sort must be one of: createdAt, name, role, status'
+              value:
+                statusCode: 422
+                code: 'sort must be one of: createdAt, name, role, status'
+            error_10:
+              summary: order must be either asc or desc
+              value:
+                statusCode: 422
+                code: order must be either asc or desc
+            error_11:
+              summary: 'role must be one of the following values: landlord, tenant, admin'
+              value:
+                statusCode: 422
+                code: 'role must be one of the following values: landlord, tenant, admin'
+            error_12:
+              summary: 'status must be one of the following values: active, locked'
+              value:
+                statusCode: 422
+                code: 'status must be one of the following values: active, locked'
+            error_13:
+              summary: q must be a string
+              value:
+                statusCode: 422
+                code: q must be a string
     '500':
       $ref: ../../openapi.yaml#/components/responses/InternalServerError
+  servers:
+  - url: /identity-service/api/v1
+    description: Đường dẫn trực tiếp Identity-Service trên host đang chọn.

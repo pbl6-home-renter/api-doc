@@ -1,19 +1,18 @@
 post:
-  tags: [Auth]
+  tags:
+  - Auth
   x-apidog-folder: Auth
   operationId: loginAccount
   summary: Login
-  description: >-
-    Public. Đăng nhập bằng identifier và password. Access token có thời hạn
-    900 giây; refresh token opaque được trả trong data của response và đặt
-    trong cookie HttpOnly, Secure, SameSite=Lax, Path=/api/v1/auth.
+  description: 'Public. Đăng nhập bằng email hoặc số điện thoại. Trả accessToken, refreshToken và user trong JSON;
+    không đặt cookie. rememberMe=true: refresh token 7 ngày; false: 1 ngày.'
   security: []
   requestBody:
     required: true
     content:
       application/json:
         schema:
-          $ref: '../../openapi.yaml#/components/schemas/AuthLoginRequestDto'
+          $ref: ../../openapi.yaml#/components/schemas/AuthLoginRequestDto
         example:
           identifier: lan@example.com
           password: P@ssw0rd123
@@ -26,157 +25,201 @@ post:
           schema:
             type: object
             additionalProperties: false
-            required: [statusCode, code, data]
+            required:
+            - statusCode
+            - code
+            - data
             properties:
               statusCode:
                 type: integer
-                enum: [200]
+                enum:
+                - 200
               code:
                 type: string
-                enum: [SESSION_STARTED]
+                enum:
+                - SESSION_STARTED
               data:
-                $ref: '../../openapi.yaml#/components/schemas/AuthLoginResponseDto'
+                $ref: ../../openapi.yaml#/components/schemas/AuthLoginResponseDto
           example:
             statusCode: 200
             code: SESSION_STARTED
             data:
               accessToken: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
-              refreshToken: rt_opaque_token_example
-              profile:
-                id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+              refreshToken: m7Qp2vN8rT4xK9sL3wY6cB1hF5jD0uE_gAqZkRoUiVs
+              user:
+                id: '3fa85f64-5717-4562-b3fc-2c963f66afa6'
+                name: Lê Văn An
                 email: lan@example.com
                 phone: '0901234567'
-                name: Lê Văn An
                 role: tenant
-                status: active
-                payoutAccount: null
     '400':
-      $ref: ../../openapi.yaml#/components/responses/BadRequestBodyError
-    '401':
-      x-apidog-name: Unauthorized
-      description: Thông tin đăng nhập không hợp lệ.
+      description: Yêu cầu không hợp lệ.
       content:
         application/json:
           schema:
             type: object
             additionalProperties: false
-            required: [statusCode, code]
+            required:
+            - statusCode
+            - code
             properties:
               statusCode:
                 type: integer
-                enum: [401]
+                enum:
+                - 400
               code:
                 type: string
                 enum:
-                  - INVALID_CREDENTIALS
-                description: |-
-                  - INVALID_CREDENTIALS: Identifier hoặc mật khẩu không đúng.
+                - INVALID_JSON
+                - INVALID_REQUEST_BODY
+                - BAD_REQUEST
           examples:
-            invalid_credentials:
-              summary: INVALID_CREDENTIALS — Identifier hoặc mật khẩu không đúng.
+            error_1:
+              summary: INVALID_JSON
+              value:
+                statusCode: 400
+                code: INVALID_JSON
+            error_2:
+              summary: INVALID_REQUEST_BODY
+              value:
+                statusCode: 400
+                code: INVALID_REQUEST_BODY
+            error_3:
+              summary: BAD_REQUEST
+              value:
+                statusCode: 400
+                code: BAD_REQUEST
+    '401':
+      description: Không xác thực được yêu cầu.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required:
+            - statusCode
+            - code
+            properties:
+              statusCode:
+                type: integer
+                enum:
+                - 401
+              code:
+                type: string
+                enum:
+                - AUTH_LOGIN_INVALID_CREDENTIALS
+          examples:
+            error_1:
+              summary: AUTH_LOGIN_INVALID_CREDENTIALS
               value:
                 statusCode: 401
-                code: INVALID_CREDENTIALS
+                code: AUTH_LOGIN_INVALID_CREDENTIALS
     '403':
-      x-apidog-name: Forbidden
-      description: Tài khoản bị khóa, không thể bắt đầu phiên.
+      description: Không có quyền truy cập.
       content:
         application/json:
           schema:
             type: object
             additionalProperties: false
-            required: [statusCode, code]
+            required:
+            - statusCode
+            - code
             properties:
               statusCode:
                 type: integer
-                enum: [403]
+                enum:
+                - 403
               code:
                 type: string
                 enum:
-                  - ACCOUNT_LOCKED
-                description: |-
-                  - ACCOUNT_LOCKED: Tài khoản đã bị khóa.
+                - AUTH_LOGIN_ACCOUNT_LOCKED
           examples:
-            account_locked:
-              summary: ACCOUNT_LOCKED — Tài khoản đã bị khóa.
+            error_1:
+              summary: AUTH_LOGIN_ACCOUNT_LOCKED
               value:
                 statusCode: 403
-                code: ACCOUNT_LOCKED
+                code: AUTH_LOGIN_ACCOUNT_LOCKED
     '422':
-      x-apidog-name: Unprocessable Entity
-      description: Dữ liệu đăng nhập vi phạm ràng buộc trường.
+      description: Vi phạm ràng buộc dữ liệu; trả mã của lỗi đầu tiên.
       content:
         application/json:
           schema:
             type: object
             additionalProperties: false
-            required: [statusCode, code]
+            required:
+            - statusCode
+            - code
             properties:
               statusCode:
                 type: integer
-                enum: [422]
+                enum:
+                - 422
               code:
                 type: string
                 enum:
-                  - IDENTIFIER_REQUIRED
-                  - INVALID_IDENTIFIER
-                  - PASSWORD_REQUIRED
-                  - INVALID_PASSWORD
-                  - REMEMBER_ME_REQUIRED
-                  - INVALID_REMEMBER_ME
-                  - UNEXPECTED_FIELD
-                  - VALIDATION_FAILED
-                description: |-
-                  - IDENTIFIER_REQUIRED: Thiếu identifier hoặc identifier là null.
-                  - INVALID_IDENTIFIER: Identifier không phải chuỗi hoặc rỗng.
-                  - PASSWORD_REQUIRED: Thiếu password hoặc password là null.
-                  - INVALID_PASSWORD: Password không phải chuỗi hoặc rỗng.
-                  - REMEMBER_ME_REQUIRED: Thiếu rememberMe hoặc rememberMe là null.
-                  - INVALID_REMEMBER_ME: RememberMe không phải boolean.
-                  - UNEXPECTED_FIELD: Body chứa trường không được khai báo.
-                  - VALIDATION_FAILED: Lỗi validation khác chưa có mã cụ thể ở trên.
+                - IDENTIFIER_REQUIRED
+                - IDENTIFIER_MUST_BE_STRING
+                - IDENTIFIER_NOT_EMPTY
+                - PASSWORD_REQUIRED
+                - PASSWORD_MUST_BE_STRING
+                - PASSWORD_NOT_EMPTY
+                - REMEMBER_ME_REQUIRED
+                - REMEMBER_ME_MUST_BE_BOOLEAN
+                - UNEXPECTED_FIELD
+                - VALIDATION_FAILED
           examples:
-            identifier_required:
-              summary: IDENTIFIER_REQUIRED — Thiếu identifier hoặc identifier là null.
+            error_1:
+              summary: IDENTIFIER_REQUIRED
               value:
                 statusCode: 422
                 code: IDENTIFIER_REQUIRED
-            invalid_identifier:
-              summary: INVALID_IDENTIFIER — Identifier không phải chuỗi hoặc rỗng.
+            error_2:
+              summary: IDENTIFIER_MUST_BE_STRING
               value:
                 statusCode: 422
-                code: INVALID_IDENTIFIER
-            password_required:
-              summary: PASSWORD_REQUIRED — Thiếu password hoặc password là null.
+                code: IDENTIFIER_MUST_BE_STRING
+            error_3:
+              summary: IDENTIFIER_NOT_EMPTY
+              value:
+                statusCode: 422
+                code: IDENTIFIER_NOT_EMPTY
+            error_4:
+              summary: PASSWORD_REQUIRED
               value:
                 statusCode: 422
                 code: PASSWORD_REQUIRED
-            invalid_password:
-              summary: INVALID_PASSWORD — Password không phải chuỗi hoặc rỗng.
+            error_5:
+              summary: PASSWORD_MUST_BE_STRING
               value:
                 statusCode: 422
-                code: INVALID_PASSWORD
-            remember_me_required:
-              summary: REMEMBER_ME_REQUIRED — Thiếu rememberMe hoặc rememberMe là null.
+                code: PASSWORD_MUST_BE_STRING
+            error_6:
+              summary: PASSWORD_NOT_EMPTY
+              value:
+                statusCode: 422
+                code: PASSWORD_NOT_EMPTY
+            error_7:
+              summary: REMEMBER_ME_REQUIRED
               value:
                 statusCode: 422
                 code: REMEMBER_ME_REQUIRED
-            invalid_remember_me:
-              summary: INVALID_REMEMBER_ME — RememberMe không phải boolean.
+            error_8:
+              summary: REMEMBER_ME_MUST_BE_BOOLEAN
               value:
                 statusCode: 422
-                code: INVALID_REMEMBER_ME
-            unexpected_field:
-              summary: UNEXPECTED_FIELD — Body chứa trường không được khai báo.
+                code: REMEMBER_ME_MUST_BE_BOOLEAN
+            error_9:
+              summary: UNEXPECTED_FIELD
               value:
                 statusCode: 422
                 code: UNEXPECTED_FIELD
-            validation_failed:
-              summary: VALIDATION_FAILED — Lỗi validation khác chưa có mã cụ thể ở trên.
+            error_10:
+              summary: VALIDATION_FAILED
               value:
                 statusCode: 422
                 code: VALIDATION_FAILED
-    '429':
-      $ref: '../../openapi.yaml#/components/responses/TooManyRequestsError'
     '500':
-      $ref: '../../openapi.yaml#/components/responses/InternalServerError'
+      $ref: ../../openapi.yaml#/components/responses/InternalServerError
+  servers:
+  - url: /identity-service/api/v1
+    description: Đường dẫn trực tiếp Identity-Service trên host đang chọn.
