@@ -4,9 +4,9 @@ post:
   x-apidog-folder: User
   operationId: lockUser
   security:
-    - BearerAuth: []
+  - BearerAuth: []
   summary: Lock user
-  description: "Chỉ admin; yêu cầu access token. Khóa tài khoản, thu hồi phiên và ghi audit log. Nghiệp vụ: Khi khóa chủ trọ, toàn bộ thông tin/phòng của chủ trọ sẽ bị vô hiệu hóa (ẩn khỏi sàn), hợp đồng đang hiệu lực chuyển sang trạng thái tạm thời kết thúc (nếu đến hạn chưa mở khóa thì tự hủy). Khi khóa người thuê, người thuê vẫn được thanh toán hóa đơn hợp đồng hiện tại, nhưng không thể gia hạn và không thể thuê trọ mới.log."
+  description: Chỉ admin. Khóa tài khoản và thu hồi refresh token; không thể tự khóa.
   parameters:
   - name: userId
     in: path
@@ -43,83 +43,211 @@ post:
               code:
                 type: string
                 enum:
-                - USER_LOCKED
+                - USER_ACCOUNT_LOCKED
               data:
                 $ref: ../../openapi.yaml#/components/schemas/UserLockResponseDto
           example:
             statusCode: 200
-            code: USER_LOCKED
+            code: USER_ACCOUNT_LOCKED
             data:
-              userId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+              userId: '3fa85f64-5717-4562-b3fc-2c963f66afa6'
               status: locked
               lockReason: Spam listing
               lockedAt: '2026-09-23T11:55:00.000Z'
     '400':
-      $ref: ../../openapi.yaml#/components/responses/BadRequestBodyPathError
-    '401':
-      $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
-    '403':
-      $ref: ../../openapi.yaml#/components/responses/ForbiddenError
-    '404':
-      $ref: ../../openapi.yaml#/components/responses/NotFoundError
-    '409':
-      x-apidog-name: Conflict
-      description: Yêu cầu xung đột với trạng thái hiện tại hoặc dữ liệu đã tồn tại.
+      description: Yêu cầu không hợp lệ.
       content:
         application/json:
           schema:
             type: object
             additionalProperties: false
-            required: [statusCode, code]
+            required:
+            - statusCode
+            - code
             properties:
               statusCode:
                 type: integer
-                enum: [409]
+                enum:
+                - 400
               code:
                 type: string
                 enum:
-                  - USER_ALREADY_LOCKED
-                description: |-
-                  - USER_ALREADY_LOCKED: Tài khoản đã bị khóa.
+                - INVALID_JSON
+                - INVALID_REQUEST_BODY
+                - BAD_REQUEST
+                - USER_LOCK_CANNOT_SELF
           examples:
-            user_already_locked:
-              summary: USER_ALREADY_LOCKED — Tài khoản đã bị khóa.
+            error_1:
+              summary: INVALID_JSON
+              value:
+                statusCode: 400
+                code: INVALID_JSON
+            error_2:
+              summary: INVALID_REQUEST_BODY
+              value:
+                statusCode: 400
+                code: INVALID_REQUEST_BODY
+            error_3:
+              summary: BAD_REQUEST
+              value:
+                statusCode: 400
+                code: BAD_REQUEST
+            error_4:
+              summary: USER_LOCK_CANNOT_SELF
+              value:
+                statusCode: 400
+                code: USER_LOCK_CANNOT_SELF
+    '401':
+      description: Không xác thực được yêu cầu.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required:
+            - statusCode
+            - code
+            properties:
+              statusCode:
+                type: integer
+                enum:
+                - 401
+              code:
+                type: string
+                enum:
+                - UNAUTHORIZED
+          examples:
+            error_1:
+              summary: UNAUTHORIZED
+              value:
+                statusCode: 401
+                code: UNAUTHORIZED
+    '403':
+      description: Không có quyền truy cập.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required:
+            - statusCode
+            - code
+            properties:
+              statusCode:
+                type: integer
+                enum:
+                - 403
+              code:
+                type: string
+                enum:
+                - FORBIDDEN
+          examples:
+            error_1:
+              summary: FORBIDDEN
+              value:
+                statusCode: 403
+                code: FORBIDDEN
+    '404':
+      description: Không tìm thấy người dùng.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required:
+            - statusCode
+            - code
+            properties:
+              statusCode:
+                type: integer
+                enum:
+                - 404
+              code:
+                type: string
+                enum:
+                - USER_NOT_FOUND
+          examples:
+            error_1:
+              summary: USER_NOT_FOUND
+              value:
+                statusCode: 404
+                code: USER_NOT_FOUND
+    '409':
+      description: Xung đột dữ liệu hoặc trạng thái.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required:
+            - statusCode
+            - code
+            properties:
+              statusCode:
+                type: integer
+                enum:
+                - 409
+              code:
+                type: string
+                enum:
+                - USER_LOCK_ALREADY_LOCKED
+          examples:
+            error_1:
+              summary: USER_LOCK_ALREADY_LOCKED
               value:
                 statusCode: 409
-                code: USER_ALREADY_LOCKED
+                code: USER_LOCK_ALREADY_LOCKED
     '422':
-      x-apidog-name: Unprocessable Entity
-      description: Lý do khóa tài khoản không hợp lệ.
+      description: Vi phạm ràng buộc dữ liệu; trả mã của lỗi đầu tiên.
       content:
         application/json:
           schema:
             type: object
             additionalProperties: false
-            required: [statusCode, code]
+            required:
+            - statusCode
+            - code
             properties:
               statusCode:
                 type: integer
-                enum: [422]
+                enum:
+                - 422
               code:
                 type: string
                 enum:
-                  - LOCK_REASON_REQUIRED
-                  - VALIDATION_FAILED
-                description: |-
-                  - LOCK_REASON_REQUIRED: Thiếu lockReason hoặc lockReason là null.
-                  - VALIDATION_FAILED: Giá trị lockReason vi phạm ràng buộc khác.
+                - LOCK_REASON_REQUIRED
+                - LOCK_REASON_MUST_BE_STRING
+                - LOCK_REASON_NOT_EMPTY
+                - LOCK_REASON_INVALID_LENGTH
+                - VALIDATION_FAILED
           examples:
-            lock_reason_required:
-              summary: LOCK_REASON_REQUIRED — Thiếu lockReason hoặc lockReason là null.
+            error_1:
+              summary: LOCK_REASON_REQUIRED
               value:
                 statusCode: 422
                 code: LOCK_REASON_REQUIRED
-            validation_failed:
-              summary: VALIDATION_FAILED — Giá trị lockReason vi phạm ràng buộc khác.
+            error_2:
+              summary: LOCK_REASON_MUST_BE_STRING
+              value:
+                statusCode: 422
+                code: LOCK_REASON_MUST_BE_STRING
+            error_3:
+              summary: LOCK_REASON_NOT_EMPTY
+              value:
+                statusCode: 422
+                code: LOCK_REASON_NOT_EMPTY
+            error_4:
+              summary: LOCK_REASON_INVALID_LENGTH
+              value:
+                statusCode: 422
+                code: LOCK_REASON_INVALID_LENGTH
+            error_5:
+              summary: VALIDATION_FAILED
               value:
                 statusCode: 422
                 code: VALIDATION_FAILED
-    '429':
-      $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
     '500':
       $ref: ../../openapi.yaml#/components/responses/InternalServerError
+  servers:
+  - url: /identity-service/api/v1
+    description: Đường dẫn trực tiếp Identity-Service trên host đang chọn.

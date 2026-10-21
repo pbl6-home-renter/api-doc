@@ -4,9 +4,9 @@ post:
   x-apidog-folder: User
   operationId: unlockUser
   security:
-    - BearerAuth: []
+  - BearerAuth: []
   summary: Unlock user
-  description: Chỉ admin; yêu cầu access token. Chuyển tài khoản locked về active và xóa thời điểm khóa.
+  description: 'Chỉ admin. Chuyển locked sang active, trả lockedAt: null.'
   parameters:
   - name: userId
     in: path
@@ -35,50 +35,143 @@ post:
               code:
                 type: string
                 enum:
-                - USER_UNLOCKED
+                - USER_ACCOUNT_UNLOCKED
               data:
                 $ref: ../../openapi.yaml#/components/schemas/UserUnlockResponseDto
           example:
             statusCode: 200
-            code: USER_UNLOCKED
+            code: USER_ACCOUNT_UNLOCKED
             data:
-              userId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+              userId: '3fa85f64-5717-4562-b3fc-2c963f66afa6'
               status: active
-              unlockedAt: '2026-09-23T11:55:00.000Z'
+              lockedAt: null
     '400':
-      $ref: ../../openapi.yaml#/components/responses/BadRequestPathError
-    '401':
-      $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
-    '403':
-      $ref: ../../openapi.yaml#/components/responses/ForbiddenError
-    '404':
-      $ref: ../../openapi.yaml#/components/responses/NotFoundError
-    '409':
-      x-apidog-name: Conflict
-      description: Yêu cầu xung đột với trạng thái hiện tại hoặc dữ liệu đã tồn tại.
+      description: Yêu cầu không hợp lệ.
       content:
         application/json:
           schema:
             type: object
             additionalProperties: false
-            required: [statusCode, code]
+            required:
+            - statusCode
+            - code
             properties:
               statusCode:
                 type: integer
-                enum: [409]
+                enum:
+                - 400
               code:
                 type: string
                 enum:
-                  - USER_NOT_LOCKED
-                description: |-
-                  - USER_NOT_LOCKED: Tài khoản không ở trạng thái locked.
+                - BAD_REQUEST
           examples:
-            user_not_locked:
-              summary: USER_NOT_LOCKED — Tài khoản không ở trạng thái locked.
+            error_1:
+              summary: BAD_REQUEST
+              value:
+                statusCode: 400
+                code: BAD_REQUEST
+    '401':
+      description: Không xác thực được yêu cầu.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required:
+            - statusCode
+            - code
+            properties:
+              statusCode:
+                type: integer
+                enum:
+                - 401
+              code:
+                type: string
+                enum:
+                - UNAUTHORIZED
+          examples:
+            error_1:
+              summary: UNAUTHORIZED
+              value:
+                statusCode: 401
+                code: UNAUTHORIZED
+    '403':
+      description: Không có quyền truy cập.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required:
+            - statusCode
+            - code
+            properties:
+              statusCode:
+                type: integer
+                enum:
+                - 403
+              code:
+                type: string
+                enum:
+                - FORBIDDEN
+          examples:
+            error_1:
+              summary: FORBIDDEN
+              value:
+                statusCode: 403
+                code: FORBIDDEN
+    '404':
+      description: Không tìm thấy người dùng.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required:
+            - statusCode
+            - code
+            properties:
+              statusCode:
+                type: integer
+                enum:
+                - 404
+              code:
+                type: string
+                enum:
+                - USER_NOT_FOUND
+          examples:
+            error_1:
+              summary: USER_NOT_FOUND
+              value:
+                statusCode: 404
+                code: USER_NOT_FOUND
+    '409':
+      description: Xung đột dữ liệu hoặc trạng thái.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required:
+            - statusCode
+            - code
+            properties:
+              statusCode:
+                type: integer
+                enum:
+                - 409
+              code:
+                type: string
+                enum:
+                - USER_UNLOCK_NOT_LOCKED
+          examples:
+            error_1:
+              summary: USER_UNLOCK_NOT_LOCKED
               value:
                 statusCode: 409
-                code: USER_NOT_LOCKED
-    '429':
-      $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
+                code: USER_UNLOCK_NOT_LOCKED
     '500':
       $ref: ../../openapi.yaml#/components/responses/InternalServerError
+  servers:
+  - url: /identity-service/api/v1
+    description: Đường dẫn trực tiếp Identity-Service trên host đang chọn.

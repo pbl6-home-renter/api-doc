@@ -4,9 +4,10 @@ get:
   x-apidog-folder: User
   operationId: getUserById
   security:
-    - BearerAuth: []
+  - BearerAuth: []
   summary: Get user
-  description: Chỉ admin; yêu cầu access token. Đọc hồ sơ và tổng quan vận hành của một người dùng.
+  description: Chỉ admin. Lấy chi tiết tài khoản, thông tin khóa, payoutAccount đã mask và số lượng tòa nhà/hợp
+    đồng.
   parameters:
   - name: userId
     in: path
@@ -35,45 +36,138 @@ get:
               code:
                 type: string
                 enum:
-                - USER_FETCHED
+                - USER_DETAIL_FETCHED
               data:
                 $ref: ../../openapi.yaml#/components/schemas/UserDetailResponseDto
           example:
             statusCode: 200
-            code: USER_FETCHED
+            code: USER_DETAIL_FETCHED
             data:
-              id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+              id: '3fa85f64-5717-4562-b3fc-2c963f66afa6'
               name: Lê Văn An
               phone: '0901234567'
               email: lan@example.com
               role: tenant
               status: active
-              identityVerified: false
               buildingCount: 0
               activeContractCount: 1
-              createdAt: '2026-09-01T08:00:00.000Z'
+              lockReason: null
+              lockedAt: null
+              payoutAccount: null
     '400':
-      $ref: ../../openapi.yaml#/components/responses/BadRequestPathError
+      description: Yêu cầu không hợp lệ.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required:
+            - statusCode
+            - code
+            properties:
+              statusCode:
+                type: integer
+                enum:
+                - 400
+              code:
+                type: string
+                enum:
+                - BAD_REQUEST
+          examples:
+            error_1:
+              summary: BAD_REQUEST
+              value:
+                statusCode: 400
+                code: BAD_REQUEST
     '401':
-      $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
+      description: Không xác thực được yêu cầu.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required:
+            - statusCode
+            - code
+            properties:
+              statusCode:
+                type: integer
+                enum:
+                - 401
+              code:
+                type: string
+                enum:
+                - UNAUTHORIZED
+          examples:
+            error_1:
+              summary: UNAUTHORIZED
+              value:
+                statusCode: 401
+                code: UNAUTHORIZED
     '403':
-      $ref: ../../openapi.yaml#/components/responses/ForbiddenError
+      description: Không có quyền truy cập.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required:
+            - statusCode
+            - code
+            properties:
+              statusCode:
+                type: integer
+                enum:
+                - 403
+              code:
+                type: string
+                enum:
+                - FORBIDDEN
+          examples:
+            error_1:
+              summary: FORBIDDEN
+              value:
+                statusCode: 403
+                code: FORBIDDEN
     '404':
-      $ref: ../../openapi.yaml#/components/responses/NotFoundError
-    '429':
-      $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
+      description: Không tìm thấy người dùng.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required:
+            - statusCode
+            - code
+            properties:
+              statusCode:
+                type: integer
+                enum:
+                - 404
+              code:
+                type: string
+                enum:
+                - USER_NOT_FOUND
+          examples:
+            error_1:
+              summary: USER_NOT_FOUND
+              value:
+                statusCode: 404
+                code: USER_NOT_FOUND
     '500':
       $ref: ../../openapi.yaml#/components/responses/InternalServerError
+  servers:
+  - url: /identity-service/api/v1
+    description: Đường dẫn trực tiếp Identity-Service trên host đang chọn.
 patch:
   tags:
   - User
   x-apidog-folder: User
   operationId: updateUserById
   security:
-    - BearerAuth: []
+  - BearerAuth: []
   summary: Update user
-  description: Chỉ admin; yêu cầu access token. Sửa name và phone theo UserUpdateRequestDto; không thay
-    đổi role hoặc status.
+  description: Chỉ admin. Cập nhật ít nhất một trong name hoặc phone; null được bỏ qua.
   parameters:
   - name: userId
     in: path
@@ -118,34 +212,241 @@ patch:
             statusCode: 200
             code: USER_UPDATED
             data:
-              userId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+              userId: '3fa85f64-5717-4562-b3fc-2c963f66afa6'
               name: Nguyễn Văn An
               phone: '0901234567'
               status: active
+              email: lan@example.com
     '400':
-      $ref: ../../openapi.yaml#/components/responses/BadRequestBodyPathError
+      description: Yêu cầu không hợp lệ.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required:
+            - statusCode
+            - code
+            properties:
+              statusCode:
+                type: integer
+                enum:
+                - 400
+              code:
+                type: string
+                enum:
+                - INVALID_JSON
+                - INVALID_REQUEST_BODY
+                - BAD_REQUEST
+          examples:
+            error_1:
+              summary: INVALID_JSON
+              value:
+                statusCode: 400
+                code: INVALID_JSON
+            error_2:
+              summary: INVALID_REQUEST_BODY
+              value:
+                statusCode: 400
+                code: INVALID_REQUEST_BODY
+            error_3:
+              summary: BAD_REQUEST
+              value:
+                statusCode: 400
+                code: BAD_REQUEST
     '401':
-      $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
+      description: Không xác thực được yêu cầu.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required:
+            - statusCode
+            - code
+            properties:
+              statusCode:
+                type: integer
+                enum:
+                - 401
+              code:
+                type: string
+                enum:
+                - UNAUTHORIZED
+          examples:
+            error_1:
+              summary: UNAUTHORIZED
+              value:
+                statusCode: 401
+                code: UNAUTHORIZED
     '403':
-      $ref: ../../openapi.yaml#/components/responses/ForbiddenError
+      description: Không có quyền truy cập.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required:
+            - statusCode
+            - code
+            properties:
+              statusCode:
+                type: integer
+                enum:
+                - 403
+              code:
+                type: string
+                enum:
+                - FORBIDDEN
+          examples:
+            error_1:
+              summary: FORBIDDEN
+              value:
+                statusCode: 403
+                code: FORBIDDEN
     '404':
-      $ref: ../../openapi.yaml#/components/responses/NotFoundError
+      description: Không tìm thấy người dùng.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required:
+            - statusCode
+            - code
+            properties:
+              statusCode:
+                type: integer
+                enum:
+                - 404
+              code:
+                type: string
+                enum:
+                - USER_NOT_FOUND
+          examples:
+            error_1:
+              summary: USER_NOT_FOUND
+              value:
+                statusCode: 404
+                code: USER_NOT_FOUND
+    '409':
+      description: Xung đột dữ liệu hoặc trạng thái.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required:
+            - statusCode
+            - code
+            properties:
+              statusCode:
+                type: integer
+                enum:
+                - 409
+              code:
+                type: string
+                enum:
+                - DUPLICATE_PHONE
+          examples:
+            error_1:
+              summary: DUPLICATE_PHONE
+              value:
+                statusCode: 409
+                code: DUPLICATE_PHONE
     '422':
-      $ref: ../../openapi.yaml#/components/responses/ValidationError
-    '429':
-      $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
+      description: Vi phạm ràng buộc dữ liệu; trả mã của lỗi đầu tiên.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required:
+            - statusCode
+            - code
+            properties:
+              statusCode:
+                type: integer
+                enum:
+                - 422
+              code:
+                type: string
+                enum:
+                - NAME_REQUIRED
+                - NAME_MUST_BE_STRING
+                - NAME_NOT_EMPTY
+                - NAME_INVALID_LENGTH
+                - PHONE_REQUIRED
+                - PHONE_MUST_BE_STRING
+                - PHONE_NOT_EMPTY
+                - PHONE_INVALID_FORMAT
+                - USER_UPDATE_PAYLOAD_REQUIRED
+                - VALIDATION_FAILED
+          examples:
+            error_1:
+              summary: NAME_REQUIRED
+              value:
+                statusCode: 422
+                code: NAME_REQUIRED
+            error_2:
+              summary: NAME_MUST_BE_STRING
+              value:
+                statusCode: 422
+                code: NAME_MUST_BE_STRING
+            error_3:
+              summary: NAME_NOT_EMPTY
+              value:
+                statusCode: 422
+                code: NAME_NOT_EMPTY
+            error_4:
+              summary: NAME_INVALID_LENGTH
+              value:
+                statusCode: 422
+                code: NAME_INVALID_LENGTH
+            error_5:
+              summary: PHONE_REQUIRED
+              value:
+                statusCode: 422
+                code: PHONE_REQUIRED
+            error_6:
+              summary: PHONE_MUST_BE_STRING
+              value:
+                statusCode: 422
+                code: PHONE_MUST_BE_STRING
+            error_7:
+              summary: PHONE_NOT_EMPTY
+              value:
+                statusCode: 422
+                code: PHONE_NOT_EMPTY
+            error_8:
+              summary: PHONE_INVALID_FORMAT
+              value:
+                statusCode: 422
+                code: PHONE_INVALID_FORMAT
+            error_9:
+              summary: USER_UPDATE_PAYLOAD_REQUIRED
+              value:
+                statusCode: 422
+                code: USER_UPDATE_PAYLOAD_REQUIRED
+            error_10:
+              summary: VALIDATION_FAILED
+              value:
+                statusCode: 422
+                code: VALIDATION_FAILED
     '500':
       $ref: ../../openapi.yaml#/components/responses/InternalServerError
+  servers:
+  - url: /identity-service/api/v1
+    description: Đường dẫn trực tiếp Identity-Service trên host đang chọn.
 delete:
   tags:
   - User
   x-apidog-folder: User
   operationId: deleteUserById
   security:
-    - BearerAuth: []
+  - BearerAuth: []
   summary: Delete user
-  description: Chỉ admin; yêu cầu access token. Xóa mềm người dùng và các bản ghi con vận hành. Giữ chứng
-    từ tài chính, pháp lý và audit.
+  description: Chỉ admin. Xóa mềm tài khoản; không thể tự xóa. Thành công trả 204, không có body.
   parameters:
   - name: userId
     in: path
@@ -158,39 +459,138 @@ delete:
     '204':
       $ref: ../../openapi.yaml#/components/responses/NoContentResponse
     '400':
-      $ref: ../../openapi.yaml#/components/responses/BadRequestPathError
-    '401':
-      $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
-    '403':
-      $ref: ../../openapi.yaml#/components/responses/ForbiddenError
-    '404':
-      $ref: ../../openapi.yaml#/components/responses/NotFoundError
-    '409':
-      x-apidog-name: Conflict
-      description: Người dùng đã bị xóa mềm.
+      description: Yêu cầu không hợp lệ.
       content:
         application/json:
           schema:
             type: object
             additionalProperties: false
-            required: [statusCode, code]
+            required:
+            - statusCode
+            - code
             properties:
               statusCode:
                 type: integer
-                enum: [409]
+                enum:
+                - 400
               code:
                 type: string
                 enum:
-                  - USER_ALREADY_DELETED
-                description: |-
-                  - USER_ALREADY_DELETED: Tài khoản đã được xóa mềm trước đó.
+                - BAD_REQUEST
+                - USER_DELETE_CANNOT_SELF
           examples:
-            user_already_deleted:
-              summary: USER_ALREADY_DELETED — Tài khoản đã được xóa mềm trước đó.
+            error_1:
+              summary: BAD_REQUEST
+              value:
+                statusCode: 400
+                code: BAD_REQUEST
+            error_2:
+              summary: USER_DELETE_CANNOT_SELF
+              value:
+                statusCode: 400
+                code: USER_DELETE_CANNOT_SELF
+    '401':
+      description: Không xác thực được yêu cầu.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required:
+            - statusCode
+            - code
+            properties:
+              statusCode:
+                type: integer
+                enum:
+                - 401
+              code:
+                type: string
+                enum:
+                - UNAUTHORIZED
+          examples:
+            error_1:
+              summary: UNAUTHORIZED
+              value:
+                statusCode: 401
+                code: UNAUTHORIZED
+    '403':
+      description: Không có quyền truy cập.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required:
+            - statusCode
+            - code
+            properties:
+              statusCode:
+                type: integer
+                enum:
+                - 403
+              code:
+                type: string
+                enum:
+                - FORBIDDEN
+          examples:
+            error_1:
+              summary: FORBIDDEN
+              value:
+                statusCode: 403
+                code: FORBIDDEN
+    '404':
+      description: Không tìm thấy người dùng.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required:
+            - statusCode
+            - code
+            properties:
+              statusCode:
+                type: integer
+                enum:
+                - 404
+              code:
+                type: string
+                enum:
+                - USER_NOT_FOUND
+          examples:
+            error_1:
+              summary: USER_NOT_FOUND
+              value:
+                statusCode: 404
+                code: USER_NOT_FOUND
+    '409':
+      description: Xung đột dữ liệu hoặc trạng thái.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required:
+            - statusCode
+            - code
+            properties:
+              statusCode:
+                type: integer
+                enum:
+                - 409
+              code:
+                type: string
+                enum:
+                - USER_DELETE_ALREADY_DELETED
+          examples:
+            error_1:
+              summary: USER_DELETE_ALREADY_DELETED
               value:
                 statusCode: 409
-                code: USER_ALREADY_DELETED
-    '429':
-      $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
+                code: USER_DELETE_ALREADY_DELETED
     '500':
       $ref: ../../openapi.yaml#/components/responses/InternalServerError
+  servers:
+  - url: /identity-service/api/v1
+    description: Đường dẫn trực tiếp Identity-Service trên host đang chọn.

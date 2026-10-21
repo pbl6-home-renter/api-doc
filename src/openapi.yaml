@@ -38,10 +38,6 @@ paths:
     $ref: './paths/auth/register.yaml'
   /auth/login:
     $ref: './paths/auth/login.yaml'
-  /auth/refresh:
-    $ref: './paths/auth/refresh.yaml'
-  /auth/logout:
-    $ref: './paths/auth/logout.yaml'
   /auth/password-reset-requests:
     $ref: './paths/auth/password-reset-requests.yaml'
   /auth/password-resets:
@@ -232,9 +228,6 @@ components:
 
     AuthLoginResponseDto:
       $ref: './responses/dtos/auth/login-response-dto.yaml'
-
-    AuthRefreshResponseDto:
-      $ref: './responses/dtos/auth/refresh-response-dto.yaml'
 
     AuthRequestPasswordResetRequestDto:
       $ref: './requests/auth/request-password-reset-request-dto.yaml'
@@ -1109,8 +1102,3 @@ components:
       scheme: bearer
       bearerFormat: JWT
       description: 'Access token trong header Authorization: Bearer <token>.'
-    RefreshCookie:
-      type: apiKey
-      in: cookie
-      name: refreshToken
-      description: Refresh token opaque trong cookie HttpOnly, Secure, SameSite=Lax, Path=/api/v1/auth. Chỉ dùng cho refresh và logout.

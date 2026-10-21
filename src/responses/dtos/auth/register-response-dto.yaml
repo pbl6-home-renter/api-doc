@@ -1,58 +1,44 @@
 type: object
-x-apidog-folder: "Auth/Response"
+x-apidog-folder: Auth/Response
 title: AuthRegisterResponseDto
 description: Phản hồi khi đăng ký tài khoản thành công
-
 properties:
-  id:
-    type: string
-    format: uuid
-    description: ID tài khoản vừa được tạo
-    example: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
-
-  email:
-    type: string
-    format: email
-    minLength: 5
-    maxLength: 254
-    description: Email của tài khoản vừa được tạo
-    example: "lan@example.com"
-
-  phone:
-    type: string
-    minLength: 10
-    maxLength: 12
-    pattern: '^0[0-9]{9}$|^\+84[0-9]{9}$'
-    description: Số điện thoại của tài khoản vừa được tạo
-    example: "0901234567"
-
-  name:
+  accessToken:
     type: string
     minLength: 1
-    maxLength: 254
-    description: Họ và tên của tài khoản vừa được tạo
-    example: "Lê Văn An"
-
-  role:
+    description: JWT access token, thời hạn 15 phút.
+  refreshToken:
     type: string
-    enum:
-      - tenant
-      - landlord
-    description: Vai trò của tài khoản
-    example: "tenant"
-
-  status:
-    type: string
-    enum:
-      - active
-    description: Trạng thái ban đầu của tài khoản
-    example: "active"
-
-
+    minLength: 1
+    description: Token opaque Base64URL từ 32 byte ngẫu nhiên, được trả trong JSON.
+  user:
+    type: object
+    additionalProperties: false
+    properties:
+      id:
+        type: string
+        format: uuid
+      name:
+        type: string
+      email:
+        type: string
+        format: email
+      phone:
+        type: string
+      role:
+        type: string
+        enum:
+        - landlord
+        - tenant
+        - admin
+    required:
+    - id
+    - name
+    - email
+    - phone
+    - role
 required:
-  - id
-  - email
-  - phone
-  - name
-  - role
-  - status
+- accessToken
+- refreshToken
+- user
+additionalProperties: false

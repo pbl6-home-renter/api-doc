@@ -63,7 +63,7 @@
         "x-apidog-folder": "Auth",
         "operationId": "registerAccount",
         "summary": "Register",
-        "description": "Public. Tạo tài khoản tenant hoặc landlord; admin không được tự đăng ký. Thành công tạo phiên refresh và đặt cookie HttpOnly, Secure, SameSite=Lax, Path=/api/v1/auth. Cookie chứa token opaque, không trả trong JSON.",
+        "description": "Public. Tạo tài khoản tenant hoặc landlord và phiên đăng nhập. Trả accessToken, refreshToken và user trong JSON; không đặt cookie. Location: /api/v1/me.",
         "security": [],
         "requestBody": {
           "required": true,
@@ -126,20 +126,22 @@
                   "statusCode": 201,
                   "code": "USER_REGISTERED",
                   "data": {
-                    "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-                    "email": "lan@example.com",
-                    "phone": "0901234567",
-                    "name": "Lê Văn An",
-                    "role": "tenant",
-                    "status": "active"
+                    "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+                    "refreshToken": "m7Qp2vN8rT4xK9sL3wY6cB1hF5jD0uE_gAqZkRoUiVs",
+                    "user": {
+                      "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                      "name": "Lê Văn An",
+                      "email": "lan@example.com",
+                      "phone": "0901234567",
+                      "role": "tenant"
+                    }
                   }
                 }
               }
             }
           },
           "400": {
-            "x-apidog-name": "Bad Request",
-            "description": "Yêu cầu đăng ký không thể xử lý do JSON sai cú pháp, thiếu body, body không phải JSON object hoặc header đầu vào sai định dạng. Khi body là JSON object, lỗi thiếu trường, sai kiểu/giá trị từng trường, trường không được khai báo hoặc role không được phép trả HTTP 422. Email hoặc số điện thoại đã được sử dụng trả HTTP 409.",
+            "description": "Yêu cầu không hợp lệ.",
             "content": {
               "application/json": {
                 "schema": {
@@ -161,38 +163,28 @@
                       "enum": [
                         "INVALID_JSON",
                         "INVALID_REQUEST_BODY",
-                        "INVALID_HEADER",
                         "BAD_REQUEST"
-                      ],
-                      "description": "Mỗi response trả một code tương ứng với lỗi được phát hiện.\n- INVALID_JSON: body có nội dung nhưng JSON sai cú pháp, ví dụ thiếu dấu đóng ngoặc hoặc có dấu phẩy thừa.\n- INVALID_REQUEST_BODY: không gửi body, body rỗng hoặc JSON cấp gốc là null, array, string, number hay boolean thay vì object. Object rỗng ({}) trả HTTP 422 với mã thiếu trường tương ứng.\n- INVALID_HEADER: header đầu vào sai định dạng; endpoint public, không yêu cầu Authorization.\n- BAD_REQUEST: yêu cầu không hợp lệ khác chưa có code cụ thể ở trên; không dùng thay các lỗi HTTP 409 hoặc 422.",
-                      "example": "INVALID_JSON"
+                      ]
                     }
                   }
                 },
                 "examples": {
-                  "invalidJson": {
-                    "summary": "INVALID_JSON — JSON sai cú pháp",
+                  "error_1": {
+                    "summary": "INVALID_JSON",
                     "value": {
                       "statusCode": 400,
                       "code": "INVALID_JSON"
                     }
                   },
-                  "invalidRequestBody": {
-                    "summary": "INVALID_REQUEST_BODY — Thiếu body hoặc body không phải object",
+                  "error_2": {
+                    "summary": "INVALID_REQUEST_BODY",
                     "value": {
                       "statusCode": 400,
                       "code": "INVALID_REQUEST_BODY"
                     }
                   },
-                  "invalidHeader": {
-                    "summary": "INVALID_HEADER — Header đầu vào sai định dạng",
-                    "value": {
-                      "statusCode": 400,
-                      "code": "INVALID_HEADER"
-                    }
-                  },
-                  "badRequest": {
-                    "summary": "BAD_REQUEST — Yêu cầu không hợp lệ khác",
+                  "error_3": {
+                    "summary": "BAD_REQUEST",
                     "value": {
                       "statusCode": 400,
                       "code": "BAD_REQUEST"
@@ -203,7 +195,7 @@
             }
           },
           "409": {
-            "description": "Email hoặc số điện thoại đã được sử dụng, kể cả bởi tài khoản bị khóa hoặc đã xóa mềm nhưng vẫn giữ định danh trong database.",
+            "description": "Xung đột dữ liệu hoặc trạng thái.",
             "content": {
               "application/json": {
                 "schema": {
@@ -225,21 +217,20 @@
                       "enum": [
                         "DUPLICATE_EMAIL",
                         "DUPLICATE_PHONE"
-                      ],
-                      "description": "DUPLICATE_EMAIL khi email đã tồn tại (email được trim và chuyển về chữ thường). DUPLICATE_PHONE khi số điện thoại đã tồn tại sau khi trim. Nếu cả hai cùng trùng, trả DUPLICATE_EMAIL."
+                      ]
                     }
                   }
                 },
                 "examples": {
-                  "duplicateEmail": {
-                    "summary": "DUPLICATE_EMAIL — Email đã được sử dụng",
+                  "error_1": {
+                    "summary": "DUPLICATE_EMAIL",
                     "value": {
                       "statusCode": 409,
                       "code": "DUPLICATE_EMAIL"
                     }
                   },
-                  "duplicatePhone": {
-                    "summary": "DUPLICATE_PHONE — Số điện thoại đã được sử dụng",
+                  "error_2": {
+                    "summary": "DUPLICATE_PHONE",
                     "value": {
                       "statusCode": 409,
                       "code": "DUPLICATE_PHONE"
@@ -250,7 +241,7 @@
             }
           },
           "422": {
-            "description": "Dữ liệu đăng ký không hợp lệ hoặc role không được phép tự đăng ký",
+            "description": "Vi phạm ràng buộc dữ liệu; trả mã của lỗi đầu tiên.",
             "content": {
               "application/json": {
                 "schema": {
@@ -270,111 +261,190 @@
                     "code": {
                       "type": "string",
                       "enum": [
-                        "EMAIL_REQUIRED",
-                        "PHONE_REQUIRED",
                         "PASSWORD_REQUIRED",
+                        "PASSWORD_MUST_BE_STRING",
+                        "PASSWORD_NOT_EMPTY",
+                        "PASSWORD_INVALID_LENGTH",
+                        "PASSWORD_INVALID_FORMAT",
+                        "EMAIL_REQUIRED",
+                        "EMAIL_MUST_BE_STRING",
+                        "EMAIL_NOT_EMPTY",
+                        "EMAIL_INVALID_LENGTH",
+                        "EMAIL_INVALID_FORMAT",
+                        "PHONE_REQUIRED",
+                        "PHONE_MUST_BE_STRING",
+                        "PHONE_NOT_EMPTY",
+                        "PHONE_INVALID_FORMAT",
                         "NAME_REQUIRED",
+                        "NAME_MUST_BE_STRING",
+                        "NAME_NOT_EMPTY",
+                        "NAME_INVALID_LENGTH",
                         "ROLE_REQUIRED",
-                        "INVALID_EMAIL",
-                        "INVALID_PHONE",
-                        "INVALID_PASSWORD",
-                        "INVALID_NAME",
-                        "INVALID_ROLE",
-                        "ROLE_NOT_ALLOWED",
+                        "ROLE_INVALID",
+                        "AUTH_REGISTER_ROLE_NOT_ALLOWED",
                         "UNEXPECTED_FIELD",
                         "VALIDATION_FAILED"
-                      ],
-                      "description": "Mỗi response trả một code tương ứng với lỗi được phát hiện.\n- EMAIL_REQUIRED, PHONE_REQUIRED, PASSWORD_REQUIRED, NAME_REQUIRED, ROLE_REQUIRED: trường tương ứng bị thiếu hoặc có giá trị null.\n- INVALID_EMAIL: email không phải chuỗi, sai định dạng hoặc không dài từ 5 đến 254 ký tự sau khi trim.\n- INVALID_PHONE: phone không phải chuỗi hoặc không khớp 0 + 9 chữ số hay +84 + 9 chữ số sau khi trim.\n- INVALID_PASSWORD: password không phải chuỗi hoặc là chuỗi rỗng; không trim mật khẩu.\n- INVALID_NAME: name không phải chuỗi, rỗng sau khi trim hoặc vượt quá 254 ký tự.\n- INVALID_ROLE: role không phải chuỗi hoặc không thuộc tenant, landlord, admin (bao gồm chuỗi rỗng).\n- ROLE_NOT_ALLOWED: role là admin; chỉ tenant và landlord được tự đăng ký.\n- UNEXPECTED_FIELD: body chứa trường ngoài email, phone, password, name, role.\n- VALIDATION_FAILED: lỗi validation khác chưa có code cụ thể ở trên."
+                      ]
                     }
                   }
                 },
                 "examples": {
-                  "emailRequired": {
-                    "summary": "EMAIL_REQUIRED — Thiếu email hoặc email là null",
-                    "value": {
-                      "statusCode": 422,
-                      "code": "EMAIL_REQUIRED"
-                    }
-                  },
-                  "phoneRequired": {
-                    "summary": "PHONE_REQUIRED — Thiếu phone hoặc phone là null",
-                    "value": {
-                      "statusCode": 422,
-                      "code": "PHONE_REQUIRED"
-                    }
-                  },
-                  "passwordRequired": {
-                    "summary": "PASSWORD_REQUIRED — Thiếu password hoặc password là null",
+                  "error_1": {
+                    "summary": "PASSWORD_REQUIRED",
                     "value": {
                       "statusCode": 422,
                       "code": "PASSWORD_REQUIRED"
                     }
                   },
-                  "nameRequired": {
-                    "summary": "NAME_REQUIRED — Thiếu name hoặc name là null",
+                  "error_2": {
+                    "summary": "PASSWORD_MUST_BE_STRING",
+                    "value": {
+                      "statusCode": 422,
+                      "code": "PASSWORD_MUST_BE_STRING"
+                    }
+                  },
+                  "error_3": {
+                    "summary": "PASSWORD_NOT_EMPTY",
+                    "value": {
+                      "statusCode": 422,
+                      "code": "PASSWORD_NOT_EMPTY"
+                    }
+                  },
+                  "error_4": {
+                    "summary": "PASSWORD_INVALID_LENGTH",
+                    "value": {
+                      "statusCode": 422,
+                      "code": "PASSWORD_INVALID_LENGTH"
+                    }
+                  },
+                  "error_5": {
+                    "summary": "PASSWORD_INVALID_FORMAT",
+                    "value": {
+                      "statusCode": 422,
+                      "code": "PASSWORD_INVALID_FORMAT"
+                    }
+                  },
+                  "error_6": {
+                    "summary": "EMAIL_REQUIRED",
+                    "value": {
+                      "statusCode": 422,
+                      "code": "EMAIL_REQUIRED"
+                    }
+                  },
+                  "error_7": {
+                    "summary": "EMAIL_MUST_BE_STRING",
+                    "value": {
+                      "statusCode": 422,
+                      "code": "EMAIL_MUST_BE_STRING"
+                    }
+                  },
+                  "error_8": {
+                    "summary": "EMAIL_NOT_EMPTY",
+                    "value": {
+                      "statusCode": 422,
+                      "code": "EMAIL_NOT_EMPTY"
+                    }
+                  },
+                  "error_9": {
+                    "summary": "EMAIL_INVALID_LENGTH",
+                    "value": {
+                      "statusCode": 422,
+                      "code": "EMAIL_INVALID_LENGTH"
+                    }
+                  },
+                  "error_10": {
+                    "summary": "EMAIL_INVALID_FORMAT",
+                    "value": {
+                      "statusCode": 422,
+                      "code": "EMAIL_INVALID_FORMAT"
+                    }
+                  },
+                  "error_11": {
+                    "summary": "PHONE_REQUIRED",
+                    "value": {
+                      "statusCode": 422,
+                      "code": "PHONE_REQUIRED"
+                    }
+                  },
+                  "error_12": {
+                    "summary": "PHONE_MUST_BE_STRING",
+                    "value": {
+                      "statusCode": 422,
+                      "code": "PHONE_MUST_BE_STRING"
+                    }
+                  },
+                  "error_13": {
+                    "summary": "PHONE_NOT_EMPTY",
+                    "value": {
+                      "statusCode": 422,
+                      "code": "PHONE_NOT_EMPTY"
+                    }
+                  },
+                  "error_14": {
+                    "summary": "PHONE_INVALID_FORMAT",
+                    "value": {
+                      "statusCode": 422,
+                      "code": "PHONE_INVALID_FORMAT"
+                    }
+                  },
+                  "error_15": {
+                    "summary": "NAME_REQUIRED",
                     "value": {
                       "statusCode": 422,
                       "code": "NAME_REQUIRED"
                     }
                   },
-                  "roleRequired": {
-                    "summary": "ROLE_REQUIRED — Thiếu role hoặc role là null",
+                  "error_16": {
+                    "summary": "NAME_MUST_BE_STRING",
+                    "value": {
+                      "statusCode": 422,
+                      "code": "NAME_MUST_BE_STRING"
+                    }
+                  },
+                  "error_17": {
+                    "summary": "NAME_NOT_EMPTY",
+                    "value": {
+                      "statusCode": 422,
+                      "code": "NAME_NOT_EMPTY"
+                    }
+                  },
+                  "error_18": {
+                    "summary": "NAME_INVALID_LENGTH",
+                    "value": {
+                      "statusCode": 422,
+                      "code": "NAME_INVALID_LENGTH"
+                    }
+                  },
+                  "error_19": {
+                    "summary": "ROLE_REQUIRED",
                     "value": {
                       "statusCode": 422,
                       "code": "ROLE_REQUIRED"
                     }
                   },
-                  "invalidEmail": {
-                    "summary": "INVALID_EMAIL — Email sai kiểu, định dạng hoặc độ dài",
+                  "error_20": {
+                    "summary": "ROLE_INVALID",
                     "value": {
                       "statusCode": 422,
-                      "code": "INVALID_EMAIL"
+                      "code": "ROLE_INVALID"
                     }
                   },
-                  "invalidPhone": {
-                    "summary": "INVALID_PHONE — Số điện thoại sai kiểu hoặc định dạng Việt Nam",
+                  "error_21": {
+                    "summary": "AUTH_REGISTER_ROLE_NOT_ALLOWED",
                     "value": {
                       "statusCode": 422,
-                      "code": "INVALID_PHONE"
+                      "code": "AUTH_REGISTER_ROLE_NOT_ALLOWED"
                     }
                   },
-                  "invalidPassword": {
-                    "summary": "INVALID_PASSWORD — Mật khẩu sai kiểu hoặc rỗng",
-                    "value": {
-                      "statusCode": 422,
-                      "code": "INVALID_PASSWORD"
-                    }
-                  },
-                  "invalidName": {
-                    "summary": "INVALID_NAME — Họ tên sai kiểu, rỗng hoặc quá dài",
-                    "value": {
-                      "statusCode": 422,
-                      "code": "INVALID_NAME"
-                    }
-                  },
-                  "invalidRole": {
-                    "summary": "INVALID_ROLE — Role sai kiểu hoặc không tồn tại",
-                    "value": {
-                      "statusCode": 422,
-                      "code": "INVALID_ROLE"
-                    }
-                  },
-                  "roleNotAllowed": {
-                    "summary": "ROLE_NOT_ALLOWED — Không cho phép tự đăng ký admin",
-                    "value": {
-                      "statusCode": 422,
-                      "code": "ROLE_NOT_ALLOWED"
-                    }
-                  },
-                  "unexpectedField": {
-                    "summary": "UNEXPECTED_FIELD — Body chứa trường không được khai báo",
+                  "error_22": {
+                    "summary": "UNEXPECTED_FIELD",
                     "value": {
                       "statusCode": 422,
                       "code": "UNEXPECTED_FIELD"
                     }
                   },
-                  "validationFailed": {
-                    "summary": "VALIDATION_FAILED — Lỗi validation khác chưa có code cụ thể",
+                  "error_23": {
+                    "summary": "VALIDATION_FAILED",
                     "value": {
                       "statusCode": 422,
                       "code": "VALIDATION_FAILED"
@@ -384,13 +454,16 @@
               }
             }
           },
-          "429": {
-            "$ref": "#/components/responses/TooManyRequestsError"
-          },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
           }
-        }
+        },
+        "servers": [
+          {
+            "url": "/identity-service/api/v1",
+            "description": "Đường dẫn trực tiếp Identity-Service trên host đang chọn."
+          }
+        ]
       }
     },
     "/auth/login": {
@@ -401,7 +474,7 @@
         "x-apidog-folder": "Auth",
         "operationId": "loginAccount",
         "summary": "Login",
-        "description": "Public. Đăng nhập bằng identifier và password. Access token có thời hạn 900 giây; refresh token opaque được trả trong data của response và đặt trong cookie HttpOnly, Secure, SameSite=Lax, Path=/api/v1/auth.",
+        "description": "Public. Đăng nhập bằng email hoặc số điện thoại. Trả accessToken, refreshToken và user trong JSON; không đặt cookie. rememberMe=true: refresh token 7 ngày; false: 1 ngày.",
         "security": [],
         "requestBody": {
           "required": true,
@@ -454,15 +527,13 @@
                   "code": "SESSION_STARTED",
                   "data": {
                     "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-                    "refreshToken": "rt_opaque_token_example",
-                    "profile": {
+                    "refreshToken": "m7Qp2vN8rT4xK9sL3wY6cB1hF5jD0uE_gAqZkRoUiVs",
+                    "user": {
                       "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                      "name": "Lê Văn An",
                       "email": "lan@example.com",
                       "phone": "0901234567",
-                      "name": "Lê Văn An",
-                      "role": "tenant",
-                      "status": "active",
-                      "payoutAccount": null
+                      "role": "tenant"
                     }
                   }
                 }
@@ -470,11 +541,61 @@
             }
           },
           "400": {
-            "$ref": "#/components/responses/BadRequestBodyError"
+            "description": "Yêu cầu không hợp lệ.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        400
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "INVALID_JSON",
+                        "INVALID_REQUEST_BODY",
+                        "BAD_REQUEST"
+                      ]
+                    }
+                  }
+                },
+                "examples": {
+                  "error_1": {
+                    "summary": "INVALID_JSON",
+                    "value": {
+                      "statusCode": 400,
+                      "code": "INVALID_JSON"
+                    }
+                  },
+                  "error_2": {
+                    "summary": "INVALID_REQUEST_BODY",
+                    "value": {
+                      "statusCode": 400,
+                      "code": "INVALID_REQUEST_BODY"
+                    }
+                  },
+                  "error_3": {
+                    "summary": "BAD_REQUEST",
+                    "value": {
+                      "statusCode": 400,
+                      "code": "BAD_REQUEST"
+                    }
+                  }
+                }
+              }
+            }
           },
           "401": {
-            "x-apidog-name": "Unauthorized",
-            "description": "Thông tin đăng nhập không hợp lệ.",
+            "description": "Không xác thực được yêu cầu.",
             "content": {
               "application/json": {
                 "schema": {
@@ -494,18 +615,17 @@
                     "code": {
                       "type": "string",
                       "enum": [
-                        "INVALID_CREDENTIALS"
-                      ],
-                      "description": "- INVALID_CREDENTIALS: Identifier hoặc mật khẩu không đúng."
+                        "AUTH_LOGIN_INVALID_CREDENTIALS"
+                      ]
                     }
                   }
                 },
                 "examples": {
-                  "invalid_credentials": {
-                    "summary": "INVALID_CREDENTIALS — Identifier hoặc mật khẩu không đúng.",
+                  "error_1": {
+                    "summary": "AUTH_LOGIN_INVALID_CREDENTIALS",
                     "value": {
                       "statusCode": 401,
-                      "code": "INVALID_CREDENTIALS"
+                      "code": "AUTH_LOGIN_INVALID_CREDENTIALS"
                     }
                   }
                 }
@@ -513,8 +633,7 @@
             }
           },
           "403": {
-            "x-apidog-name": "Forbidden",
-            "description": "Tài khoản bị khóa, không thể bắt đầu phiên.",
+            "description": "Không có quyền truy cập.",
             "content": {
               "application/json": {
                 "schema": {
@@ -534,18 +653,17 @@
                     "code": {
                       "type": "string",
                       "enum": [
-                        "ACCOUNT_LOCKED"
-                      ],
-                      "description": "- ACCOUNT_LOCKED: Tài khoản đã bị khóa."
+                        "AUTH_LOGIN_ACCOUNT_LOCKED"
+                      ]
                     }
                   }
                 },
                 "examples": {
-                  "account_locked": {
-                    "summary": "ACCOUNT_LOCKED — Tài khoản đã bị khóa.",
+                  "error_1": {
+                    "summary": "AUTH_LOGIN_ACCOUNT_LOCKED",
                     "value": {
                       "statusCode": 403,
-                      "code": "ACCOUNT_LOCKED"
+                      "code": "AUTH_LOGIN_ACCOUNT_LOCKED"
                     }
                   }
                 }
@@ -553,8 +671,7 @@
             }
           },
           "422": {
-            "x-apidog-name": "Unprocessable Entity",
-            "description": "Dữ liệu đăng nhập vi phạm ràng buộc trường.",
+            "description": "Vi phạm ràng buộc dữ liệu; trả mã của lỗi đầu tiên.",
             "content": {
               "application/json": {
                 "schema": {
@@ -575,70 +692,85 @@
                       "type": "string",
                       "enum": [
                         "IDENTIFIER_REQUIRED",
-                        "INVALID_IDENTIFIER",
+                        "IDENTIFIER_MUST_BE_STRING",
+                        "IDENTIFIER_NOT_EMPTY",
                         "PASSWORD_REQUIRED",
-                        "INVALID_PASSWORD",
+                        "PASSWORD_MUST_BE_STRING",
+                        "PASSWORD_NOT_EMPTY",
                         "REMEMBER_ME_REQUIRED",
-                        "INVALID_REMEMBER_ME",
+                        "REMEMBER_ME_MUST_BE_BOOLEAN",
                         "UNEXPECTED_FIELD",
                         "VALIDATION_FAILED"
-                      ],
-                      "description": "- IDENTIFIER_REQUIRED: Thiếu identifier hoặc identifier là null.\n- INVALID_IDENTIFIER: Identifier không phải chuỗi hoặc rỗng.\n- PASSWORD_REQUIRED: Thiếu password hoặc password là null.\n- INVALID_PASSWORD: Password không phải chuỗi hoặc rỗng.\n- REMEMBER_ME_REQUIRED: Thiếu rememberMe hoặc rememberMe là null.\n- INVALID_REMEMBER_ME: RememberMe không phải boolean.\n- UNEXPECTED_FIELD: Body chứa trường không được khai báo.\n- VALIDATION_FAILED: Lỗi validation khác chưa có mã cụ thể ở trên."
+                      ]
                     }
                   }
                 },
                 "examples": {
-                  "identifier_required": {
-                    "summary": "IDENTIFIER_REQUIRED — Thiếu identifier hoặc identifier là null.",
+                  "error_1": {
+                    "summary": "IDENTIFIER_REQUIRED",
                     "value": {
                       "statusCode": 422,
                       "code": "IDENTIFIER_REQUIRED"
                     }
                   },
-                  "invalid_identifier": {
-                    "summary": "INVALID_IDENTIFIER — Identifier không phải chuỗi hoặc rỗng.",
+                  "error_2": {
+                    "summary": "IDENTIFIER_MUST_BE_STRING",
                     "value": {
                       "statusCode": 422,
-                      "code": "INVALID_IDENTIFIER"
+                      "code": "IDENTIFIER_MUST_BE_STRING"
                     }
                   },
-                  "password_required": {
-                    "summary": "PASSWORD_REQUIRED — Thiếu password hoặc password là null.",
+                  "error_3": {
+                    "summary": "IDENTIFIER_NOT_EMPTY",
+                    "value": {
+                      "statusCode": 422,
+                      "code": "IDENTIFIER_NOT_EMPTY"
+                    }
+                  },
+                  "error_4": {
+                    "summary": "PASSWORD_REQUIRED",
                     "value": {
                       "statusCode": 422,
                       "code": "PASSWORD_REQUIRED"
                     }
                   },
-                  "invalid_password": {
-                    "summary": "INVALID_PASSWORD — Password không phải chuỗi hoặc rỗng.",
+                  "error_5": {
+                    "summary": "PASSWORD_MUST_BE_STRING",
                     "value": {
                       "statusCode": 422,
-                      "code": "INVALID_PASSWORD"
+                      "code": "PASSWORD_MUST_BE_STRING"
                     }
                   },
-                  "remember_me_required": {
-                    "summary": "REMEMBER_ME_REQUIRED — Thiếu rememberMe hoặc rememberMe là null.",
+                  "error_6": {
+                    "summary": "PASSWORD_NOT_EMPTY",
+                    "value": {
+                      "statusCode": 422,
+                      "code": "PASSWORD_NOT_EMPTY"
+                    }
+                  },
+                  "error_7": {
+                    "summary": "REMEMBER_ME_REQUIRED",
                     "value": {
                       "statusCode": 422,
                       "code": "REMEMBER_ME_REQUIRED"
                     }
                   },
-                  "invalid_remember_me": {
-                    "summary": "INVALID_REMEMBER_ME — RememberMe không phải boolean.",
+                  "error_8": {
+                    "summary": "REMEMBER_ME_MUST_BE_BOOLEAN",
                     "value": {
                       "statusCode": 422,
-                      "code": "INVALID_REMEMBER_ME"
+                      "code": "REMEMBER_ME_MUST_BE_BOOLEAN"
                     }
                   },
-                  "unexpected_field": {
-                    "summary": "UNEXPECTED_FIELD — Body chứa trường không được khai báo.",
+                  "error_9": {
+                    "summary": "UNEXPECTED_FIELD",
                     "value": {
                       "statusCode": 422,
                       "code": "UNEXPECTED_FIELD"
                     }
                   },
-                  "validation_failed": {
-                    "summary": "VALIDATION_FAILED — Lỗi validation khác chưa có mã cụ thể ở trên.",
+                  "error_10": {
+                    "summary": "VALIDATION_FAILED",
                     "value": {
                       "statusCode": 422,
                       "code": "VALIDATION_FAILED"
@@ -648,199 +780,16 @@
               }
             }
           },
-          "429": {
-            "$ref": "#/components/responses/TooManyRequestsError"
-          },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
           }
-        }
-      }
-    },
-    "/auth/refresh": {
-      "post": {
-        "tags": [
-          "Auth"
-        ],
-        "x-apidog-folder": "Auth",
-        "operationId": "refreshSession",
-        "summary": "Refresh token",
-        "description": "Dành cho tenant, landlord và admin. Không nhận request body hoặc bearer token; chỉ đọc cookie refreshToken. Token cũ bị vô hiệu ngay khi dùng; token mới được trả trong data của response và đặt lại trong cookie, đồng thời giữ nguyên mốc hết hạn 30 ngày tính từ lần đăng nhập. Nếu token đã bị xoay, hết hạn hoặc session đã bị thu hồi, client xóa phiên cục bộ và đăng nhập lại.",
-        "security": [
+        },
+        "servers": [
           {
-            "RefreshCookie": []
+            "url": "/identity-service/api/v1",
+            "description": "Đường dẫn trực tiếp Identity-Service trên host đang chọn."
           }
-        ],
-        "responses": {
-          "200": {
-            "description": "Phiên làm việc được làm mới thành công",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "additionalProperties": false,
-                  "required": [
-                    "statusCode",
-                    "code",
-                    "data"
-                  ],
-                  "properties": {
-                    "statusCode": {
-                      "type": "integer",
-                      "enum": [
-                        200
-                      ]
-                    },
-                    "code": {
-                      "type": "string",
-                      "enum": [
-                        "SESSION_REFRESHED"
-                      ]
-                    },
-                    "data": {
-                      "$ref": "#/components/schemas/AuthRefreshResponseDto"
-                    }
-                  }
-                },
-                "example": {
-                  "statusCode": 200,
-                  "code": "SESSION_REFRESHED",
-                  "data": {
-                    "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-                    "refreshToken": "rt_opaque_token_example"
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/BadRequestError"
-          },
-          "401": {
-            "x-apidog-name": "Unauthorized",
-            "description": "Cookie refreshToken không hợp lệ hoặc phiên đã bị thu hồi.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "additionalProperties": false,
-                  "required": [
-                    "statusCode",
-                    "code"
-                  ],
-                  "properties": {
-                    "statusCode": {
-                      "type": "integer",
-                      "enum": [
-                        401
-                      ]
-                    },
-                    "code": {
-                      "type": "string",
-                      "enum": [
-                        "INVALID_REFRESH_TOKEN",
-                        "SESSION_REVOKED"
-                      ],
-                      "description": "- INVALID_REFRESH_TOKEN: Thiếu cookie, token sai hoặc đã hết hạn.\n- SESSION_REVOKED: Phiên hoặc cả nhóm refresh token đã bị thu hồi."
-                    }
-                  }
-                },
-                "examples": {
-                  "invalid_refresh_token": {
-                    "summary": "INVALID_REFRESH_TOKEN — Thiếu cookie, token sai hoặc đã hết hạn.",
-                    "value": {
-                      "statusCode": 401,
-                      "code": "INVALID_REFRESH_TOKEN"
-                    }
-                  },
-                  "session_revoked": {
-                    "summary": "SESSION_REVOKED — Phiên hoặc cả nhóm refresh token đã bị thu hồi.",
-                    "value": {
-                      "statusCode": 401,
-                      "code": "SESSION_REVOKED"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "429": {
-            "$ref": "#/components/responses/TooManyRequestsError"
-          },
-          "500": {
-            "$ref": "#/components/responses/InternalServerError"
-          }
-        }
-      }
-    },
-    "/auth/logout": {
-      "post": {
-        "tags": [
-          "Auth"
-        ],
-        "x-apidog-folder": "Auth",
-        "operationId": "logoutSession",
-        "summary": "Logout",
-        "description": "Dành cho tenant, landlord và admin. Không có request body. Thu hồi phiên refresh hiện tại được xác định qua cookie refreshToken và xóa cookie.",
-        "security": [
-          {
-            "RefreshCookie": []
-          }
-        ],
-        "responses": {
-          "204": {
-            "$ref": "#/components/responses/NoContentResponse"
-          },
-          "400": {
-            "$ref": "#/components/responses/BadRequestError"
-          },
-          "401": {
-            "x-apidog-name": "Unauthorized",
-            "description": "Cookie refreshToken không xác thực được hoặc phiên đã hết hiệu lực.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "additionalProperties": false,
-                  "required": [
-                    "statusCode",
-                    "code"
-                  ],
-                  "properties": {
-                    "statusCode": {
-                      "type": "integer",
-                      "enum": [
-                        401
-                      ]
-                    },
-                    "code": {
-                      "type": "string",
-                      "enum": [
-                        "INVALID_REFRESH_TOKEN"
-                      ],
-                      "description": "- INVALID_REFRESH_TOKEN: Cookie refreshToken thiếu, sai hoặc phiên đã hết hiệu lực."
-                    }
-                  }
-                },
-                "examples": {
-                  "invalid_refresh_token": {
-                    "summary": "INVALID_REFRESH_TOKEN — Cookie refreshToken thiếu, sai hoặc phiên đã hết hiệu lực.",
-                    "value": {
-                      "statusCode": 401,
-                      "code": "INVALID_REFRESH_TOKEN"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "429": {
-            "$ref": "#/components/responses/TooManyRequestsError"
-          },
-          "500": {
-            "$ref": "#/components/responses/InternalServerError"
-          }
-        }
+        ]
       }
     },
     "/auth/password-reset-requests": {
@@ -851,7 +800,7 @@
         "x-apidog-folder": "Auth",
         "operationId": "requestPasswordReset",
         "summary": "Password reset request",
-        "description": "Public. Tiếp nhận yêu cầu gửi email bất đồng bộ. Cùng một response trung tính được trả dù email có tài khoản hay không, để không lộ sự tồn tại của tài khoản. Client không cần polling; người dùng kiểm tra hộp thư để tiếp tục đặt lại mật khẩu.",
+        "description": "Public. Tiếp nhận yêu cầu đặt lại mật khẩu; luôn trả accepted=true kể cả email không tồn tại hoặc tài khoản bị khóa.",
         "security": [],
         "requestBody": {
           "required": true,
@@ -908,11 +857,61 @@
             }
           },
           "400": {
-            "$ref": "#/components/responses/BadRequestBodyError"
+            "description": "Yêu cầu không hợp lệ.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        400
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "INVALID_JSON",
+                        "INVALID_REQUEST_BODY",
+                        "BAD_REQUEST"
+                      ]
+                    }
+                  }
+                },
+                "examples": {
+                  "error_1": {
+                    "summary": "INVALID_JSON",
+                    "value": {
+                      "statusCode": 400,
+                      "code": "INVALID_JSON"
+                    }
+                  },
+                  "error_2": {
+                    "summary": "INVALID_REQUEST_BODY",
+                    "value": {
+                      "statusCode": 400,
+                      "code": "INVALID_REQUEST_BODY"
+                    }
+                  },
+                  "error_3": {
+                    "summary": "BAD_REQUEST",
+                    "value": {
+                      "statusCode": 400,
+                      "code": "BAD_REQUEST"
+                    }
+                  }
+                }
+              }
+            }
           },
           "422": {
-            "x-apidog-name": "Unprocessable Entity",
-            "description": "Email yêu cầu đặt lại mật khẩu không hợp lệ; không tiết lộ email có tài khoản hay không.",
+            "description": "Vi phạm ràng buộc dữ liệu; trả mã của lỗi đầu tiên.",
             "content": {
               "application/json": {
                 "schema": {
@@ -936,35 +935,34 @@
                         "INVALID_EMAIL",
                         "UNEXPECTED_FIELD",
                         "VALIDATION_FAILED"
-                      ],
-                      "description": "- EMAIL_REQUIRED: Thiếu email hoặc email là null.\n- INVALID_EMAIL: Email sai kiểu, định dạng hoặc độ dài.\n- UNEXPECTED_FIELD: Body chứa trường không được khai báo.\n- VALIDATION_FAILED: Lỗi validation khác chưa có mã cụ thể ở trên."
+                      ]
                     }
                   }
                 },
                 "examples": {
-                  "email_required": {
-                    "summary": "EMAIL_REQUIRED — Thiếu email hoặc email là null.",
+                  "error_1": {
+                    "summary": "EMAIL_REQUIRED",
                     "value": {
                       "statusCode": 422,
                       "code": "EMAIL_REQUIRED"
                     }
                   },
-                  "invalid_email": {
-                    "summary": "INVALID_EMAIL — Email sai kiểu, định dạng hoặc độ dài.",
+                  "error_2": {
+                    "summary": "INVALID_EMAIL",
                     "value": {
                       "statusCode": 422,
                       "code": "INVALID_EMAIL"
                     }
                   },
-                  "unexpected_field": {
-                    "summary": "UNEXPECTED_FIELD — Body chứa trường không được khai báo.",
+                  "error_3": {
+                    "summary": "UNEXPECTED_FIELD",
                     "value": {
                       "statusCode": 422,
                       "code": "UNEXPECTED_FIELD"
                     }
                   },
-                  "validation_failed": {
-                    "summary": "VALIDATION_FAILED — Lỗi validation khác chưa có mã cụ thể ở trên.",
+                  "error_4": {
+                    "summary": "VALIDATION_FAILED",
                     "value": {
                       "statusCode": 422,
                       "code": "VALIDATION_FAILED"
@@ -974,13 +972,16 @@
               }
             }
           },
-          "429": {
-            "$ref": "#/components/responses/TooManyRequestsError"
-          },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
           }
-        }
+        },
+        "servers": [
+          {
+            "url": "/identity-service/api/v1",
+            "description": "Đường dẫn trực tiếp Identity-Service trên host đang chọn."
+          }
+        ]
       }
     },
     "/auth/password-resets": {
@@ -991,7 +992,7 @@
         "x-apidog-folder": "Auth",
         "operationId": "resetPassword",
         "summary": "Reset password",
-        "description": "Public. Dùng token đặt lại mật khẩu một lần, còn thời hạn. Token đã dùng hoặc hết hạn trả 409.",
+        "description": "Public. Đặt lại mật khẩu bằng token một lần. Token không tồn tại hoặc đã dùng trả TOKEN_USED; hết hạn trả TOKEN_EXPIRED.",
         "security": [],
         "requestBody": {
           "required": true,
@@ -1012,11 +1013,61 @@
             "$ref": "#/components/responses/NoContentResponse"
           },
           "400": {
-            "$ref": "#/components/responses/BadRequestBodyError"
+            "description": "Yêu cầu không hợp lệ.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        400
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "INVALID_JSON",
+                        "INVALID_REQUEST_BODY",
+                        "BAD_REQUEST"
+                      ]
+                    }
+                  }
+                },
+                "examples": {
+                  "error_1": {
+                    "summary": "INVALID_JSON",
+                    "value": {
+                      "statusCode": 400,
+                      "code": "INVALID_JSON"
+                    }
+                  },
+                  "error_2": {
+                    "summary": "INVALID_REQUEST_BODY",
+                    "value": {
+                      "statusCode": 400,
+                      "code": "INVALID_REQUEST_BODY"
+                    }
+                  },
+                  "error_3": {
+                    "summary": "BAD_REQUEST",
+                    "value": {
+                      "statusCode": 400,
+                      "code": "BAD_REQUEST"
+                    }
+                  }
+                }
+              }
+            }
           },
           "409": {
-            "x-apidog-name": "Conflict",
-            "description": "Token đặt lại mật khẩu đã được dùng hoặc hết hạn.",
+            "description": "Xung đột dữ liệu hoặc trạng thái.",
             "content": {
               "application/json": {
                 "schema": {
@@ -1038,21 +1089,20 @@
                       "enum": [
                         "TOKEN_USED",
                         "TOKEN_EXPIRED"
-                      ],
-                      "description": "- TOKEN_USED: Token đặt lại mật khẩu đã được sử dụng.\n- TOKEN_EXPIRED: Token đặt lại mật khẩu đã hết hạn."
+                      ]
                     }
                   }
                 },
                 "examples": {
-                  "token_used": {
-                    "summary": "TOKEN_USED — Token đặt lại mật khẩu đã được sử dụng.",
+                  "error_1": {
+                    "summary": "TOKEN_USED",
                     "value": {
                       "statusCode": 409,
                       "code": "TOKEN_USED"
                     }
                   },
-                  "token_expired": {
-                    "summary": "TOKEN_EXPIRED — Token đặt lại mật khẩu đã hết hạn.",
+                  "error_2": {
+                    "summary": "TOKEN_EXPIRED",
                     "value": {
                       "statusCode": 409,
                       "code": "TOKEN_EXPIRED"
@@ -1063,8 +1113,7 @@
             }
           },
           "422": {
-            "x-apidog-name": "Unprocessable Entity",
-            "description": "Dữ liệu đặt lại mật khẩu vi phạm ràng buộc trường.",
+            "description": "Vi phạm ràng buộc dữ liệu; trả mã của lỗi đầu tiên.",
             "content": {
               "application/json": {
                 "schema": {
@@ -1090,49 +1139,48 @@
                         "INVALID_NEW_PASSWORD",
                         "UNEXPECTED_FIELD",
                         "VALIDATION_FAILED"
-                      ],
-                      "description": "- TOKEN_REQUIRED: Thiếu token hoặc token là null.\n- INVALID_TOKEN: Token không phải chuỗi hoặc rỗng.\n- NEW_PASSWORD_REQUIRED: Thiếu newPassword hoặc newPassword là null.\n- INVALID_NEW_PASSWORD: NewPassword không phải chuỗi hoặc rỗng.\n- UNEXPECTED_FIELD: Body chứa trường không được khai báo.\n- VALIDATION_FAILED: Lỗi validation khác chưa có mã cụ thể ở trên."
+                      ]
                     }
                   }
                 },
                 "examples": {
-                  "token_required": {
-                    "summary": "TOKEN_REQUIRED — Thiếu token hoặc token là null.",
+                  "error_1": {
+                    "summary": "TOKEN_REQUIRED",
                     "value": {
                       "statusCode": 422,
                       "code": "TOKEN_REQUIRED"
                     }
                   },
-                  "invalid_token": {
-                    "summary": "INVALID_TOKEN — Token không phải chuỗi hoặc rỗng.",
+                  "error_2": {
+                    "summary": "INVALID_TOKEN",
                     "value": {
                       "statusCode": 422,
                       "code": "INVALID_TOKEN"
                     }
                   },
-                  "new_password_required": {
-                    "summary": "NEW_PASSWORD_REQUIRED — Thiếu newPassword hoặc newPassword là null.",
+                  "error_3": {
+                    "summary": "NEW_PASSWORD_REQUIRED",
                     "value": {
                       "statusCode": 422,
                       "code": "NEW_PASSWORD_REQUIRED"
                     }
                   },
-                  "invalid_new_password": {
-                    "summary": "INVALID_NEW_PASSWORD — NewPassword không phải chuỗi hoặc rỗng.",
+                  "error_4": {
+                    "summary": "INVALID_NEW_PASSWORD",
                     "value": {
                       "statusCode": 422,
                       "code": "INVALID_NEW_PASSWORD"
                     }
                   },
-                  "unexpected_field": {
-                    "summary": "UNEXPECTED_FIELD — Body chứa trường không được khai báo.",
+                  "error_5": {
+                    "summary": "UNEXPECTED_FIELD",
                     "value": {
                       "statusCode": 422,
                       "code": "UNEXPECTED_FIELD"
                     }
                   },
-                  "validation_failed": {
-                    "summary": "VALIDATION_FAILED — Lỗi validation khác chưa có mã cụ thể ở trên.",
+                  "error_6": {
+                    "summary": "VALIDATION_FAILED",
                     "value": {
                       "statusCode": 422,
                       "code": "VALIDATION_FAILED"
@@ -1142,13 +1190,16 @@
               }
             }
           },
-          "429": {
-            "$ref": "#/components/responses/TooManyRequestsError"
-          },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
           }
-        }
+        },
+        "servers": [
+          {
+            "url": "/identity-service/api/v1",
+            "description": "Đường dẫn trực tiếp Identity-Service trên host đang chọn."
+          }
+        ]
       }
     },
     "/me": {
@@ -1159,7 +1210,7 @@
         "x-apidog-folder": "User",
         "operationId": "getCurrentUser",
         "summary": "Get current user",
-        "description": "**Request header bắt buộc:** `Authorization: Bearer <accessToken>`. Không có request body hoặc tham số. Yêu cầu access token của tenant, landlord hoặc admin. Trả hồ sơ của chính người gọi; tài khoản nhận tiền chỉ có ở landlord.",
+        "description": "Lấy hồ sơ người dùng hiện tại. Yêu cầu Bearer access token.",
         "security": [
           {
             "BearerAuth": []
@@ -1188,7 +1239,7 @@
                     "code": {
                       "type": "string",
                       "enum": [
-                        "USER_CURRENT_FETCHED"
+                        "CURRENT_USER_PROFILE_FETCHED"
                       ]
                     },
                     "data": {
@@ -1198,7 +1249,7 @@
                 },
                 "example": {
                   "statusCode": 200,
-                  "code": "USER_CURRENT_FETCHED",
+                  "code": "CURRENT_USER_PROFILE_FETCHED",
                   "data": {
                     "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
                     "name": "Lê Văn An",
@@ -1213,18 +1264,167 @@
             }
           },
           "400": {
-            "$ref": "#/components/responses/BadRequestError"
+            "description": "Yêu cầu không hợp lệ.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        400
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "BAD_REQUEST"
+                      ]
+                    }
+                  }
+                },
+                "examples": {
+                  "error_1": {
+                    "summary": "BAD_REQUEST",
+                    "value": {
+                      "statusCode": 400,
+                      "code": "BAD_REQUEST"
+                    }
+                  }
+                }
+              }
+            }
           },
           "401": {
-            "$ref": "#/components/responses/UnauthorizedError"
+            "description": "Không xác thực được yêu cầu.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        401
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "UNAUTHORIZED"
+                      ]
+                    }
+                  }
+                },
+                "examples": {
+                  "error_1": {
+                    "summary": "UNAUTHORIZED",
+                    "value": {
+                      "statusCode": 401,
+                      "code": "UNAUTHORIZED"
+                    }
+                  }
+                }
+              }
+            }
           },
-          "429": {
-            "$ref": "#/components/responses/TooManyRequestsError"
+          "403": {
+            "description": "Không có quyền truy cập.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        403
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "FORBIDDEN"
+                      ]
+                    }
+                  }
+                },
+                "examples": {
+                  "error_1": {
+                    "summary": "FORBIDDEN",
+                    "value": {
+                      "statusCode": 403,
+                      "code": "FORBIDDEN"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Không tìm thấy người dùng.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        404
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "USER_NOT_FOUND"
+                      ]
+                    }
+                  }
+                },
+                "examples": {
+                  "error_1": {
+                    "summary": "USER_NOT_FOUND",
+                    "value": {
+                      "statusCode": 404,
+                      "code": "USER_NOT_FOUND"
+                    }
+                  }
+                }
+              }
+            }
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
           }
-        }
+        },
+        "servers": [
+          {
+            "url": "/identity-service/api/v1",
+            "description": "Đường dẫn trực tiếp Identity-Service trên host đang chọn."
+          }
+        ]
       },
       "patch": {
         "tags": [
@@ -1238,7 +1438,7 @@
           }
         ],
         "summary": "Update current user",
-        "description": "Yêu cầu access token của tenant, landlord hoặc admin. Cập nhật name và phone; landlord có thể cập nhật payoutAccount khi không còn hóa đơn pending. Email và role không thay đổi.",
+        "description": "Cập nhật hồ sơ hiện tại. Bắt buộc name, phone, payoutAccount (có thể null). Chỉ landlord được gửi object payoutAccount. Số tài khoản trả về được mask; phone đổi từ +84 sang 0.",
         "requestBody": {
           "required": true,
           "content": {
@@ -1281,7 +1481,7 @@
                     "code": {
                       "type": "string",
                       "enum": [
-                        "USER_CURRENT_UPDATED"
+                        "CURRENT_USER_PROFILE_UPDATED"
                       ]
                     },
                     "data": {
@@ -1291,7 +1491,7 @@
                 },
                 "example": {
                   "statusCode": 200,
-                  "code": "USER_CURRENT_UPDATED",
+                  "code": "CURRENT_USER_PROFILE_UPDATED",
                   "data": {
                     "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
                     "name": "Lê Văn An",
@@ -1307,14 +1507,175 @@
             }
           },
           "400": {
-            "$ref": "#/components/responses/BadRequestBodyError"
+            "description": "Yêu cầu không hợp lệ.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        400
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "INVALID_JSON",
+                        "INVALID_REQUEST_BODY",
+                        "BAD_REQUEST"
+                      ]
+                    }
+                  }
+                },
+                "examples": {
+                  "error_1": {
+                    "summary": "INVALID_JSON",
+                    "value": {
+                      "statusCode": 400,
+                      "code": "INVALID_JSON"
+                    }
+                  },
+                  "error_2": {
+                    "summary": "INVALID_REQUEST_BODY",
+                    "value": {
+                      "statusCode": 400,
+                      "code": "INVALID_REQUEST_BODY"
+                    }
+                  },
+                  "error_3": {
+                    "summary": "BAD_REQUEST",
+                    "value": {
+                      "statusCode": 400,
+                      "code": "BAD_REQUEST"
+                    }
+                  }
+                }
+              }
+            }
           },
           "401": {
-            "$ref": "#/components/responses/UnauthorizedError"
+            "description": "Không xác thực được yêu cầu.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        401
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "UNAUTHORIZED"
+                      ]
+                    }
+                  }
+                },
+                "examples": {
+                  "error_1": {
+                    "summary": "UNAUTHORIZED",
+                    "value": {
+                      "statusCode": 401,
+                      "code": "UNAUTHORIZED"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Không có quyền truy cập.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        403
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "FORBIDDEN"
+                      ]
+                    }
+                  }
+                },
+                "examples": {
+                  "error_1": {
+                    "summary": "FORBIDDEN",
+                    "value": {
+                      "statusCode": 403,
+                      "code": "FORBIDDEN"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Không tìm thấy người dùng.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        404
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "USER_NOT_FOUND"
+                      ]
+                    }
+                  }
+                },
+                "examples": {
+                  "error_1": {
+                    "summary": "USER_NOT_FOUND",
+                    "value": {
+                      "statusCode": 404,
+                      "code": "USER_NOT_FOUND"
+                    }
+                  }
+                }
+              }
+            }
           },
           "409": {
-            "x-apidog-name": "Conflict",
-            "description": "Số điện thoại trùng hoặc tài khoản nhận tiền đang được sử dụng.",
+            "description": "Xung đột dữ liệu hoặc trạng thái.",
             "content": {
               "application/json": {
                 "schema": {
@@ -1334,26 +1695,17 @@
                     "code": {
                       "type": "string",
                       "enum": [
-                        "DUPLICATE_PHONE",
-                        "PAYOUT_ACCOUNT_IN_USE"
-                      ],
-                      "description": "- DUPLICATE_PHONE: Số điện thoại đã được sử dụng.\n- PAYOUT_ACCOUNT_IN_USE: Không thể đổi tài khoản nhận tiền khi còn hóa đơn pending."
+                        "DUPLICATE_PHONE"
+                      ]
                     }
                   }
                 },
                 "examples": {
-                  "duplicate_phone": {
-                    "summary": "DUPLICATE_PHONE — Số điện thoại đã được sử dụng.",
+                  "error_1": {
+                    "summary": "DUPLICATE_PHONE",
                     "value": {
                       "statusCode": 409,
                       "code": "DUPLICATE_PHONE"
-                    }
-                  },
-                  "payout_account_in_use": {
-                    "summary": "PAYOUT_ACCOUNT_IN_USE — Không thể đổi tài khoản nhận tiền khi còn hóa đơn pending.",
-                    "value": {
-                      "statusCode": 409,
-                      "code": "PAYOUT_ACCOUNT_IN_USE"
                     }
                   }
                 }
@@ -1361,15 +1713,229 @@
             }
           },
           "422": {
-            "$ref": "#/components/responses/ValidationError"
-          },
-          "429": {
-            "$ref": "#/components/responses/TooManyRequestsError"
+            "description": "Vi phạm ràng buộc dữ liệu; trả mã của lỗi đầu tiên.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        422
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "NAME_REQUIRED",
+                        "NAME_MUST_BE_STRING",
+                        "NAME_NOT_EMPTY",
+                        "NAME_INVALID_LENGTH",
+                        "PHONE_REQUIRED",
+                        "PHONE_MUST_BE_STRING",
+                        "PHONE_NOT_EMPTY",
+                        "PHONE_INVALID_FORMAT",
+                        "PAYOUT_ACCOUNT_MUST_BE_OBJECT",
+                        "BANK_CODE_REQUIRED",
+                        "BANK_CODE_MUST_BE_STRING",
+                        "BANK_CODE_NOT_EMPTY",
+                        "BANK_CODE_INVALID_LENGTH",
+                        "ACCOUNT_NUMBER_REQUIRED",
+                        "ACCOUNT_NUMBER_MUST_BE_STRING",
+                        "ACCOUNT_NUMBER_NOT_EMPTY",
+                        "ACCOUNT_NUMBER_INVALID_LENGTH",
+                        "ACCOUNT_NAME_REQUIRED",
+                        "ACCOUNT_NAME_MUST_BE_STRING",
+                        "ACCOUNT_NAME_NOT_EMPTY",
+                        "ACCOUNT_NAME_INVALID_LENGTH",
+                        "USER_UPDATE_PAYOUT_NOT_ALLOWED",
+                        "VALIDATION_FAILED"
+                      ]
+                    }
+                  }
+                },
+                "examples": {
+                  "error_1": {
+                    "summary": "NAME_REQUIRED",
+                    "value": {
+                      "statusCode": 422,
+                      "code": "NAME_REQUIRED"
+                    }
+                  },
+                  "error_2": {
+                    "summary": "NAME_MUST_BE_STRING",
+                    "value": {
+                      "statusCode": 422,
+                      "code": "NAME_MUST_BE_STRING"
+                    }
+                  },
+                  "error_3": {
+                    "summary": "NAME_NOT_EMPTY",
+                    "value": {
+                      "statusCode": 422,
+                      "code": "NAME_NOT_EMPTY"
+                    }
+                  },
+                  "error_4": {
+                    "summary": "NAME_INVALID_LENGTH",
+                    "value": {
+                      "statusCode": 422,
+                      "code": "NAME_INVALID_LENGTH"
+                    }
+                  },
+                  "error_5": {
+                    "summary": "PHONE_REQUIRED",
+                    "value": {
+                      "statusCode": 422,
+                      "code": "PHONE_REQUIRED"
+                    }
+                  },
+                  "error_6": {
+                    "summary": "PHONE_MUST_BE_STRING",
+                    "value": {
+                      "statusCode": 422,
+                      "code": "PHONE_MUST_BE_STRING"
+                    }
+                  },
+                  "error_7": {
+                    "summary": "PHONE_NOT_EMPTY",
+                    "value": {
+                      "statusCode": 422,
+                      "code": "PHONE_NOT_EMPTY"
+                    }
+                  },
+                  "error_8": {
+                    "summary": "PHONE_INVALID_FORMAT",
+                    "value": {
+                      "statusCode": 422,
+                      "code": "PHONE_INVALID_FORMAT"
+                    }
+                  },
+                  "error_9": {
+                    "summary": "PAYOUT_ACCOUNT_MUST_BE_OBJECT",
+                    "value": {
+                      "statusCode": 422,
+                      "code": "PAYOUT_ACCOUNT_MUST_BE_OBJECT"
+                    }
+                  },
+                  "error_10": {
+                    "summary": "BANK_CODE_REQUIRED",
+                    "value": {
+                      "statusCode": 422,
+                      "code": "BANK_CODE_REQUIRED"
+                    }
+                  },
+                  "error_11": {
+                    "summary": "BANK_CODE_MUST_BE_STRING",
+                    "value": {
+                      "statusCode": 422,
+                      "code": "BANK_CODE_MUST_BE_STRING"
+                    }
+                  },
+                  "error_12": {
+                    "summary": "BANK_CODE_NOT_EMPTY",
+                    "value": {
+                      "statusCode": 422,
+                      "code": "BANK_CODE_NOT_EMPTY"
+                    }
+                  },
+                  "error_13": {
+                    "summary": "BANK_CODE_INVALID_LENGTH",
+                    "value": {
+                      "statusCode": 422,
+                      "code": "BANK_CODE_INVALID_LENGTH"
+                    }
+                  },
+                  "error_14": {
+                    "summary": "ACCOUNT_NUMBER_REQUIRED",
+                    "value": {
+                      "statusCode": 422,
+                      "code": "ACCOUNT_NUMBER_REQUIRED"
+                    }
+                  },
+                  "error_15": {
+                    "summary": "ACCOUNT_NUMBER_MUST_BE_STRING",
+                    "value": {
+                      "statusCode": 422,
+                      "code": "ACCOUNT_NUMBER_MUST_BE_STRING"
+                    }
+                  },
+                  "error_16": {
+                    "summary": "ACCOUNT_NUMBER_NOT_EMPTY",
+                    "value": {
+                      "statusCode": 422,
+                      "code": "ACCOUNT_NUMBER_NOT_EMPTY"
+                    }
+                  },
+                  "error_17": {
+                    "summary": "ACCOUNT_NUMBER_INVALID_LENGTH",
+                    "value": {
+                      "statusCode": 422,
+                      "code": "ACCOUNT_NUMBER_INVALID_LENGTH"
+                    }
+                  },
+                  "error_18": {
+                    "summary": "ACCOUNT_NAME_REQUIRED",
+                    "value": {
+                      "statusCode": 422,
+                      "code": "ACCOUNT_NAME_REQUIRED"
+                    }
+                  },
+                  "error_19": {
+                    "summary": "ACCOUNT_NAME_MUST_BE_STRING",
+                    "value": {
+                      "statusCode": 422,
+                      "code": "ACCOUNT_NAME_MUST_BE_STRING"
+                    }
+                  },
+                  "error_20": {
+                    "summary": "ACCOUNT_NAME_NOT_EMPTY",
+                    "value": {
+                      "statusCode": 422,
+                      "code": "ACCOUNT_NAME_NOT_EMPTY"
+                    }
+                  },
+                  "error_21": {
+                    "summary": "ACCOUNT_NAME_INVALID_LENGTH",
+                    "value": {
+                      "statusCode": 422,
+                      "code": "ACCOUNT_NAME_INVALID_LENGTH"
+                    }
+                  },
+                  "error_22": {
+                    "summary": "USER_UPDATE_PAYOUT_NOT_ALLOWED",
+                    "value": {
+                      "statusCode": 422,
+                      "code": "USER_UPDATE_PAYOUT_NOT_ALLOWED"
+                    }
+                  },
+                  "error_23": {
+                    "summary": "VALIDATION_FAILED",
+                    "value": {
+                      "statusCode": 422,
+                      "code": "VALIDATION_FAILED"
+                    }
+                  }
+                }
+              }
+            }
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
           }
-        }
+        },
+        "servers": [
+          {
+            "url": "/identity-service/api/v1",
+            "description": "Đường dẫn trực tiếp Identity-Service trên host đang chọn."
+          }
+        ]
       }
     },
     "/me/password": {
@@ -1385,7 +1951,7 @@
           }
         ],
         "summary": "Change password",
-        "description": "Yêu cầu access token của tenant, landlord hoặc admin. Đổi mật khẩu và thu hồi các phiên khác.",
+        "description": "Đổi mật khẩu hiện tại; thu hồi refresh token. Thành công trả 204, không có body.",
         "requestBody": {
           "required": true,
           "content": {
@@ -1406,11 +1972,61 @@
             "$ref": "#/components/responses/NoContentResponse"
           },
           "400": {
-            "$ref": "#/components/responses/BadRequestBodyError"
+            "description": "Yêu cầu không hợp lệ.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        400
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "INVALID_JSON",
+                        "INVALID_REQUEST_BODY",
+                        "BAD_REQUEST"
+                      ]
+                    }
+                  }
+                },
+                "examples": {
+                  "error_1": {
+                    "summary": "INVALID_JSON",
+                    "value": {
+                      "statusCode": 400,
+                      "code": "INVALID_JSON"
+                    }
+                  },
+                  "error_2": {
+                    "summary": "INVALID_REQUEST_BODY",
+                    "value": {
+                      "statusCode": 400,
+                      "code": "INVALID_REQUEST_BODY"
+                    }
+                  },
+                  "error_3": {
+                    "summary": "BAD_REQUEST",
+                    "value": {
+                      "statusCode": 400,
+                      "code": "BAD_REQUEST"
+                    }
+                  }
+                }
+              }
+            }
           },
           "401": {
-            "x-apidog-name": "Unauthorized",
-            "description": "Thiếu xác thực hoặc mật khẩu hiện tại không đúng.",
+            "description": "Không xác thực được yêu cầu.",
             "content": {
               "application/json": {
                 "schema": {
@@ -1431,25 +2047,100 @@
                       "type": "string",
                       "enum": [
                         "UNAUTHORIZED",
-                        "INVALID_CREDENTIALS"
-                      ],
-                      "description": "- UNAUTHORIZED: Access token thiếu, hết hạn hoặc không hợp lệ.\n- INVALID_CREDENTIALS: Mật khẩu hiện tại không đúng."
+                        "USER_CHANGE_PASSWORD_INVALID_CURRENT"
+                      ]
                     }
                   }
                 },
                 "examples": {
-                  "unauthorized": {
-                    "summary": "UNAUTHORIZED — Access token thiếu, hết hạn hoặc không hợp lệ.",
+                  "error_1": {
+                    "summary": "UNAUTHORIZED",
                     "value": {
                       "statusCode": 401,
                       "code": "UNAUTHORIZED"
                     }
                   },
-                  "invalid_credentials": {
-                    "summary": "INVALID_CREDENTIALS — Mật khẩu hiện tại không đúng.",
+                  "error_2": {
+                    "summary": "USER_CHANGE_PASSWORD_INVALID_CURRENT",
                     "value": {
                       "statusCode": 401,
-                      "code": "INVALID_CREDENTIALS"
+                      "code": "USER_CHANGE_PASSWORD_INVALID_CURRENT"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Không có quyền truy cập.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        403
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "FORBIDDEN"
+                      ]
+                    }
+                  }
+                },
+                "examples": {
+                  "error_1": {
+                    "summary": "FORBIDDEN",
+                    "value": {
+                      "statusCode": 403,
+                      "code": "FORBIDDEN"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Không tìm thấy người dùng.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        404
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "USER_NOT_FOUND"
+                      ]
+                    }
+                  }
+                },
+                "examples": {
+                  "error_1": {
+                    "summary": "USER_NOT_FOUND",
+                    "value": {
+                      "statusCode": 404,
+                      "code": "USER_NOT_FOUND"
                     }
                   }
                 }
@@ -1457,8 +2148,7 @@
             }
           },
           "422": {
-            "x-apidog-name": "Unprocessable Entity",
-            "description": "Dữ liệu đổi mật khẩu không hợp lệ.",
+            "description": "Vi phạm ràng buộc dữ liệu; trả mã của lỗi đầu tiên.",
             "content": {
               "application/json": {
                 "schema": {
@@ -1479,86 +2169,117 @@
                       "type": "string",
                       "enum": [
                         "CURRENT_PASSWORD_REQUIRED",
-                        "INVALID_CURRENT_PASSWORD",
+                        "CURRENT_PASSWORD_MUST_BE_STRING",
+                        "CURRENT_PASSWORD_NOT_EMPTY",
                         "NEW_PASSWORD_REQUIRED",
-                        "INVALID_NEW_PASSWORD",
+                        "NEW_PASSWORD_MUST_BE_STRING",
+                        "NEW_PASSWORD_NOT_EMPTY",
+                        "NEW_PASSWORD_INVALID_LENGTH",
+                        "NEW_PASSWORD_INVALID_FORMAT",
                         "CONFIRM_PASSWORD_REQUIRED",
-                        "INVALID_CONFIRM_PASSWORD",
-                        "PASSWORD_MISMATCH",
-                        "WEAK_PASSWORD",
+                        "CONFIRM_PASSWORD_MUST_BE_STRING",
+                        "CONFIRM_PASSWORD_NOT_EMPTY",
+                        "USER_CHANGE_PASSWORD_MISMATCH",
                         "UNEXPECTED_FIELD",
                         "VALIDATION_FAILED"
-                      ],
-                      "description": "- CURRENT_PASSWORD_REQUIRED: Thiếu currentPassword hoặc currentPassword là null.\n- INVALID_CURRENT_PASSWORD: CurrentPassword không phải chuỗi hoặc rỗng.\n- NEW_PASSWORD_REQUIRED: Thiếu newPassword hoặc newPassword là null.\n- INVALID_NEW_PASSWORD: NewPassword không phải chuỗi hoặc rỗng.\n- CONFIRM_PASSWORD_REQUIRED: Thiếu confirmPassword hoặc confirmPassword là null.\n- INVALID_CONFIRM_PASSWORD: ConfirmPassword không phải chuỗi hoặc rỗng.\n- PASSWORD_MISMATCH: confirmPassword không trùng với newPassword.\n- WEAK_PASSWORD: Mật khẩu mới không đáp ứng chính sách độ mạnh.\n- UNEXPECTED_FIELD: Body chứa trường không được khai báo.\n- VALIDATION_FAILED: Lỗi validation khác chưa có mã cụ thể."
+                      ]
                     }
                   }
                 },
                 "examples": {
-                  "current_password_required": {
-                    "summary": "CURRENT_PASSWORD_REQUIRED — Thiếu currentPassword hoặc currentPassword là null.",
+                  "error_1": {
+                    "summary": "CURRENT_PASSWORD_REQUIRED",
                     "value": {
                       "statusCode": 422,
                       "code": "CURRENT_PASSWORD_REQUIRED"
                     }
                   },
-                  "invalid_current_password": {
-                    "summary": "INVALID_CURRENT_PASSWORD — CurrentPassword không phải chuỗi hoặc rỗng.",
+                  "error_2": {
+                    "summary": "CURRENT_PASSWORD_MUST_BE_STRING",
                     "value": {
                       "statusCode": 422,
-                      "code": "INVALID_CURRENT_PASSWORD"
+                      "code": "CURRENT_PASSWORD_MUST_BE_STRING"
                     }
                   },
-                  "new_password_required": {
-                    "summary": "NEW_PASSWORD_REQUIRED — Thiếu newPassword hoặc newPassword là null.",
+                  "error_3": {
+                    "summary": "CURRENT_PASSWORD_NOT_EMPTY",
+                    "value": {
+                      "statusCode": 422,
+                      "code": "CURRENT_PASSWORD_NOT_EMPTY"
+                    }
+                  },
+                  "error_4": {
+                    "summary": "NEW_PASSWORD_REQUIRED",
                     "value": {
                       "statusCode": 422,
                       "code": "NEW_PASSWORD_REQUIRED"
                     }
                   },
-                  "invalid_new_password": {
-                    "summary": "INVALID_NEW_PASSWORD — NewPassword không phải chuỗi hoặc rỗng.",
+                  "error_5": {
+                    "summary": "NEW_PASSWORD_MUST_BE_STRING",
                     "value": {
                       "statusCode": 422,
-                      "code": "INVALID_NEW_PASSWORD"
+                      "code": "NEW_PASSWORD_MUST_BE_STRING"
                     }
                   },
-                  "confirm_password_required": {
-                    "summary": "CONFIRM_PASSWORD_REQUIRED — Thiếu confirmPassword hoặc confirmPassword là null.",
+                  "error_6": {
+                    "summary": "NEW_PASSWORD_NOT_EMPTY",
+                    "value": {
+                      "statusCode": 422,
+                      "code": "NEW_PASSWORD_NOT_EMPTY"
+                    }
+                  },
+                  "error_7": {
+                    "summary": "NEW_PASSWORD_INVALID_LENGTH",
+                    "value": {
+                      "statusCode": 422,
+                      "code": "NEW_PASSWORD_INVALID_LENGTH"
+                    }
+                  },
+                  "error_8": {
+                    "summary": "NEW_PASSWORD_INVALID_FORMAT",
+                    "value": {
+                      "statusCode": 422,
+                      "code": "NEW_PASSWORD_INVALID_FORMAT"
+                    }
+                  },
+                  "error_9": {
+                    "summary": "CONFIRM_PASSWORD_REQUIRED",
                     "value": {
                       "statusCode": 422,
                       "code": "CONFIRM_PASSWORD_REQUIRED"
                     }
                   },
-                  "invalid_confirm_password": {
-                    "summary": "INVALID_CONFIRM_PASSWORD — ConfirmPassword không phải chuỗi hoặc rỗng.",
+                  "error_10": {
+                    "summary": "CONFIRM_PASSWORD_MUST_BE_STRING",
                     "value": {
                       "statusCode": 422,
-                      "code": "INVALID_CONFIRM_PASSWORD"
+                      "code": "CONFIRM_PASSWORD_MUST_BE_STRING"
                     }
                   },
-                  "password_mismatch": {
-                    "summary": "PASSWORD_MISMATCH — confirmPassword không trùng với newPassword.",
+                  "error_11": {
+                    "summary": "CONFIRM_PASSWORD_NOT_EMPTY",
                     "value": {
                       "statusCode": 422,
-                      "code": "PASSWORD_MISMATCH"
+                      "code": "CONFIRM_PASSWORD_NOT_EMPTY"
                     }
                   },
-                  "weak_password": {
-                    "summary": "WEAK_PASSWORD — Mật khẩu mới không đáp ứng chính sách độ mạnh.",
+                  "error_12": {
+                    "summary": "USER_CHANGE_PASSWORD_MISMATCH",
                     "value": {
                       "statusCode": 422,
-                      "code": "WEAK_PASSWORD"
+                      "code": "USER_CHANGE_PASSWORD_MISMATCH"
                     }
                   },
-                  "unexpected_field": {
-                    "summary": "UNEXPECTED_FIELD — Body chứa trường không được khai báo.",
+                  "error_13": {
+                    "summary": "UNEXPECTED_FIELD",
                     "value": {
                       "statusCode": 422,
                       "code": "UNEXPECTED_FIELD"
                     }
                   },
-                  "validation_failed": {
-                    "summary": "VALIDATION_FAILED — Lỗi validation khác chưa có mã cụ thể.",
+                  "error_14": {
+                    "summary": "VALIDATION_FAILED",
                     "value": {
                       "statusCode": 422,
                       "code": "VALIDATION_FAILED"
@@ -1568,13 +2289,16 @@
               }
             }
           },
-          "429": {
-            "$ref": "#/components/responses/TooManyRequestsError"
-          },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
           }
-        }
+        },
+        "servers": [
+          {
+            "url": "/identity-service/api/v1",
+            "description": "Đường dẫn trực tiếp Identity-Service trên host đang chọn."
+          }
+        ]
       }
     },
     "/users": {
@@ -1583,43 +2307,15 @@
           "User"
         ],
         "x-apidog-folder": "User",
-        "operationId": "listUsers",
+        "operationId": "getUsersAdmin",
         "security": [
           {
             "BearerAuth": []
           }
         ],
         "summary": "List users",
-        "description": "Chỉ admin; yêu cầu access token. Lọc theo role, status và phân trang offset. format khác json trả file stream không có JSON wrapper.",
+        "description": "Chỉ admin. Danh sách JSON và phân trang offset. Lọc bằng role, status ở query cấp ngoài; q tìm theo tên/email/điện thoại. Không hỗ trợ filter object hoặc format xuất tệp.",
         "parameters": [
-          {
-            "name": "filter",
-            "in": "query",
-            "description": "Lọc theo role hoặc status.",
-            "style": "deepObject",
-            "explode": true,
-            "schema": {
-              "type": "object",
-              "additionalProperties": false,
-              "properties": {
-                "role": {
-                  "type": "string",
-                  "enum": [
-                    "tenant",
-                    "landlord",
-                    "admin"
-                  ]
-                },
-                "status": {
-                  "type": "string",
-                  "enum": [
-                    "active",
-                    "locked"
-                  ]
-                }
-              }
-            }
-          },
           {
             "name": "sort",
             "in": "query",
@@ -1670,18 +2366,39 @@
             }
           },
           {
-            "name": "format",
+            "name": "role",
             "in": "query",
-            "description": "json trả envelope và phân trang; xlsx, csv, pdf trả file stream.",
+            "required": false,
+            "description": "Lọc theo vai trò.",
             "schema": {
               "type": "string",
               "enum": [
-                "json",
-                "xlsx",
-                "csv",
-                "pdf"
-              ],
-              "default": "json"
+                "landlord",
+                "tenant",
+                "admin"
+              ]
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "description": "Lọc theo trạng thái.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "active",
+                "locked"
+              ]
+            }
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "description": "Tìm theo tên, email hoặc số điện thoại.",
+            "schema": {
+              "type": "string"
             }
           }
         ],
@@ -1709,7 +2426,7 @@
                     "code": {
                       "type": "string",
                       "enum": [
-                        "USERS_FETCHED"
+                        "USER_LIST_FETCHED"
                       ]
                     },
                     "data": {
@@ -1761,7 +2478,7 @@
                 },
                 "example": {
                   "statusCode": 200,
-                  "code": "USERS_FETCHED",
+                  "code": "USER_LIST_FETCHED",
                   "data": [
                     {
                       "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
@@ -1769,8 +2486,7 @@
                       "phone": "0901234567",
                       "email": "lan@example.com",
                       "role": "tenant",
-                      "status": "active",
-                      "createdAt": "2026-09-01T08:00:00.000Z"
+                      "status": "active"
                     }
                   ],
                   "pagination": {
@@ -1783,46 +2499,267 @@
                     "hasPreviousPage": false
                   }
                 }
-              },
-              "text/csv": {
-                "schema": {
-                  "type": "string",
-                  "format": "binary"
-                }
-              },
-              "application/pdf": {
-                "schema": {
-                  "type": "string",
-                  "format": "binary"
-                }
-              },
-              "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": {
-                "schema": {
-                  "type": "string",
-                  "format": "binary"
-                }
               }
             }
           },
           "400": {
-            "$ref": "#/components/responses/BadRequestQueryError"
+            "description": "Yêu cầu không hợp lệ.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        400
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "BAD_REQUEST"
+                      ]
+                    }
+                  }
+                },
+                "examples": {
+                  "error_1": {
+                    "summary": "BAD_REQUEST",
+                    "value": {
+                      "statusCode": 400,
+                      "code": "BAD_REQUEST"
+                    }
+                  }
+                }
+              }
+            }
           },
           "401": {
-            "$ref": "#/components/responses/UnauthorizedError"
+            "description": "Không xác thực được yêu cầu.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        401
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "UNAUTHORIZED"
+                      ]
+                    }
+                  }
+                },
+                "examples": {
+                  "error_1": {
+                    "summary": "UNAUTHORIZED",
+                    "value": {
+                      "statusCode": 401,
+                      "code": "UNAUTHORIZED"
+                    }
+                  }
+                }
+              }
+            }
           },
           "403": {
-            "$ref": "#/components/responses/ForbiddenError"
+            "description": "Không có quyền truy cập.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        403
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "FORBIDDEN"
+                      ]
+                    }
+                  }
+                },
+                "examples": {
+                  "error_1": {
+                    "summary": "FORBIDDEN",
+                    "value": {
+                      "statusCode": 403,
+                      "code": "FORBIDDEN"
+                    }
+                  }
+                }
+              }
+            }
           },
           "422": {
-            "$ref": "#/components/responses/ValidationError"
-          },
-          "429": {
-            "$ref": "#/components/responses/TooManyRequestsError"
+            "description": "Vi phạm ràng buộc dữ liệu; trả mã của lỗi đầu tiên.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        422
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "UNEXPECTED_FIELD",
+                        "VALIDATION_FAILED",
+                        "pageNo must not be less than 1",
+                        "pageNo must be an integer number",
+                        "pageSize must not be less than 1",
+                        "pageSize must not be greater than 100",
+                        "pageSize must be an integer number",
+                        "sort must be a string",
+                        "sort must be one of: createdAt, name, role, status",
+                        "order must be either asc or desc",
+                        "role must be one of the following values: landlord, tenant, admin",
+                        "status must be one of the following values: active, locked",
+                        "q must be a string"
+                      ]
+                    }
+                  }
+                },
+                "examples": {
+                  "error_1": {
+                    "summary": "UNEXPECTED_FIELD",
+                    "value": {
+                      "statusCode": 422,
+                      "code": "UNEXPECTED_FIELD"
+                    }
+                  },
+                  "error_2": {
+                    "summary": "VALIDATION_FAILED",
+                    "value": {
+                      "statusCode": 422,
+                      "code": "VALIDATION_FAILED"
+                    }
+                  },
+                  "error_3": {
+                    "summary": "pageNo must not be less than 1",
+                    "value": {
+                      "statusCode": 422,
+                      "code": "pageNo must not be less than 1"
+                    }
+                  },
+                  "error_4": {
+                    "summary": "pageNo must be an integer number",
+                    "value": {
+                      "statusCode": 422,
+                      "code": "pageNo must be an integer number"
+                    }
+                  },
+                  "error_5": {
+                    "summary": "pageSize must not be less than 1",
+                    "value": {
+                      "statusCode": 422,
+                      "code": "pageSize must not be less than 1"
+                    }
+                  },
+                  "error_6": {
+                    "summary": "pageSize must not be greater than 100",
+                    "value": {
+                      "statusCode": 422,
+                      "code": "pageSize must not be greater than 100"
+                    }
+                  },
+                  "error_7": {
+                    "summary": "pageSize must be an integer number",
+                    "value": {
+                      "statusCode": 422,
+                      "code": "pageSize must be an integer number"
+                    }
+                  },
+                  "error_8": {
+                    "summary": "sort must be a string",
+                    "value": {
+                      "statusCode": 422,
+                      "code": "sort must be a string"
+                    }
+                  },
+                  "error_9": {
+                    "summary": "sort must be one of: createdAt, name, role, status",
+                    "value": {
+                      "statusCode": 422,
+                      "code": "sort must be one of: createdAt, name, role, status"
+                    }
+                  },
+                  "error_10": {
+                    "summary": "order must be either asc or desc",
+                    "value": {
+                      "statusCode": 422,
+                      "code": "order must be either asc or desc"
+                    }
+                  },
+                  "error_11": {
+                    "summary": "role must be one of the following values: landlord, tenant, admin",
+                    "value": {
+                      "statusCode": 422,
+                      "code": "role must be one of the following values: landlord, tenant, admin"
+                    }
+                  },
+                  "error_12": {
+                    "summary": "status must be one of the following values: active, locked",
+                    "value": {
+                      "statusCode": 422,
+                      "code": "status must be one of the following values: active, locked"
+                    }
+                  },
+                  "error_13": {
+                    "summary": "q must be a string",
+                    "value": {
+                      "statusCode": 422,
+                      "code": "q must be a string"
+                    }
+                  }
+                }
+              }
+            }
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
           }
-        }
+        },
+        "servers": [
+          {
+            "url": "/identity-service/api/v1",
+            "description": "Đường dẫn trực tiếp Identity-Service trên host đang chọn."
+          }
+        ]
       }
     },
     "/users/{userId}": {
@@ -1838,7 +2775,7 @@
           }
         ],
         "summary": "Get user",
-        "description": "Chỉ admin; yêu cầu access token. Đọc hồ sơ và tổng quan vận hành của một người dùng.",
+        "description": "Chỉ admin. Lấy chi tiết tài khoản, thông tin khóa, payoutAccount đã mask và số lượng tòa nhà/hợp đồng.",
         "parameters": [
           {
             "name": "userId",
@@ -1874,7 +2811,7 @@
                     "code": {
                       "type": "string",
                       "enum": [
-                        "USER_FETCHED"
+                        "USER_DETAIL_FETCHED"
                       ]
                     },
                     "data": {
@@ -1884,7 +2821,7 @@
                 },
                 "example": {
                   "statusCode": 200,
-                  "code": "USER_FETCHED",
+                  "code": "USER_DETAIL_FETCHED",
                   "data": {
                     "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
                     "name": "Lê Văn An",
@@ -1892,34 +2829,178 @@
                     "email": "lan@example.com",
                     "role": "tenant",
                     "status": "active",
-                    "identityVerified": false,
                     "buildingCount": 0,
                     "activeContractCount": 1,
-                    "createdAt": "2026-09-01T08:00:00.000Z"
+                    "lockReason": null,
+                    "lockedAt": null,
+                    "payoutAccount": null
                   }
                 }
               }
             }
           },
           "400": {
-            "$ref": "#/components/responses/BadRequestPathError"
+            "description": "Yêu cầu không hợp lệ.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        400
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "BAD_REQUEST"
+                      ]
+                    }
+                  }
+                },
+                "examples": {
+                  "error_1": {
+                    "summary": "BAD_REQUEST",
+                    "value": {
+                      "statusCode": 400,
+                      "code": "BAD_REQUEST"
+                    }
+                  }
+                }
+              }
+            }
           },
           "401": {
-            "$ref": "#/components/responses/UnauthorizedError"
+            "description": "Không xác thực được yêu cầu.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        401
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "UNAUTHORIZED"
+                      ]
+                    }
+                  }
+                },
+                "examples": {
+                  "error_1": {
+                    "summary": "UNAUTHORIZED",
+                    "value": {
+                      "statusCode": 401,
+                      "code": "UNAUTHORIZED"
+                    }
+                  }
+                }
+              }
+            }
           },
           "403": {
-            "$ref": "#/components/responses/ForbiddenError"
+            "description": "Không có quyền truy cập.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        403
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "FORBIDDEN"
+                      ]
+                    }
+                  }
+                },
+                "examples": {
+                  "error_1": {
+                    "summary": "FORBIDDEN",
+                    "value": {
+                      "statusCode": 403,
+                      "code": "FORBIDDEN"
+                    }
+                  }
+                }
+              }
+            }
           },
           "404": {
-            "$ref": "#/components/responses/NotFoundError"
-          },
-          "429": {
-            "$ref": "#/components/responses/TooManyRequestsError"
+            "description": "Không tìm thấy người dùng.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        404
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "USER_NOT_FOUND"
+                      ]
+                    }
+                  }
+                },
+                "examples": {
+                  "error_1": {
+                    "summary": "USER_NOT_FOUND",
+                    "value": {
+                      "statusCode": 404,
+                      "code": "USER_NOT_FOUND"
+                    }
+                  }
+                }
+              }
+            }
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
           }
-        }
+        },
+        "servers": [
+          {
+            "url": "/identity-service/api/v1",
+            "description": "Đường dẫn trực tiếp Identity-Service trên host đang chọn."
+          }
+        ]
       },
       "patch": {
         "tags": [
@@ -1933,7 +3014,7 @@
           }
         ],
         "summary": "Update user",
-        "description": "Chỉ admin; yêu cầu access token. Sửa name và phone theo UserUpdateRequestDto; không thay đổi role hoặc status.",
+        "description": "Chỉ admin. Cập nhật ít nhất một trong name hoặc phone; null được bỏ qua.",
         "parameters": [
           {
             "name": "userId",
@@ -1998,79 +3079,183 @@
                     "userId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
                     "name": "Nguyễn Văn An",
                     "phone": "0901234567",
-                    "status": "active"
+                    "status": "active",
+                    "email": "lan@example.com"
                   }
                 }
               }
             }
           },
           "400": {
-            "$ref": "#/components/responses/BadRequestBodyPathError"
-          },
-          "401": {
-            "$ref": "#/components/responses/UnauthorizedError"
-          },
-          "403": {
-            "$ref": "#/components/responses/ForbiddenError"
-          },
-          "404": {
-            "$ref": "#/components/responses/NotFoundError"
-          },
-          "422": {
-            "$ref": "#/components/responses/ValidationError"
-          },
-          "429": {
-            "$ref": "#/components/responses/TooManyRequestsError"
-          },
-          "500": {
-            "$ref": "#/components/responses/InternalServerError"
-          }
-        }
-      },
-      "delete": {
-        "tags": [
-          "User"
-        ],
-        "x-apidog-folder": "User",
-        "operationId": "deleteUserById",
-        "security": [
-          {
-            "BearerAuth": []
-          }
-        ],
-        "summary": "Delete user",
-        "description": "Chỉ admin; yêu cầu access token. Xóa mềm người dùng và các bản ghi con vận hành. Giữ chứng từ tài chính, pháp lý và audit.",
-        "parameters": [
-          {
-            "name": "userId",
-            "in": "path",
-            "required": true,
-            "description": "UUID của người dùng.",
-            "schema": {
-              "type": "string",
-              "format": "uuid"
+            "description": "Yêu cầu không hợp lệ.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        400
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "INVALID_JSON",
+                        "INVALID_REQUEST_BODY",
+                        "BAD_REQUEST"
+                      ]
+                    }
+                  }
+                },
+                "examples": {
+                  "error_1": {
+                    "summary": "INVALID_JSON",
+                    "value": {
+                      "statusCode": 400,
+                      "code": "INVALID_JSON"
+                    }
+                  },
+                  "error_2": {
+                    "summary": "INVALID_REQUEST_BODY",
+                    "value": {
+                      "statusCode": 400,
+                      "code": "INVALID_REQUEST_BODY"
+                    }
+                  },
+                  "error_3": {
+                    "summary": "BAD_REQUEST",
+                    "value": {
+                      "statusCode": 400,
+                      "code": "BAD_REQUEST"
+                    }
+                  }
+                }
+              }
             }
-          }
-        ],
-        "responses": {
-          "204": {
-            "$ref": "#/components/responses/NoContentResponse"
-          },
-          "400": {
-            "$ref": "#/components/responses/BadRequestPathError"
           },
           "401": {
-            "$ref": "#/components/responses/UnauthorizedError"
+            "description": "Không xác thực được yêu cầu.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        401
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "UNAUTHORIZED"
+                      ]
+                    }
+                  }
+                },
+                "examples": {
+                  "error_1": {
+                    "summary": "UNAUTHORIZED",
+                    "value": {
+                      "statusCode": 401,
+                      "code": "UNAUTHORIZED"
+                    }
+                  }
+                }
+              }
+            }
           },
           "403": {
-            "$ref": "#/components/responses/ForbiddenError"
+            "description": "Không có quyền truy cập.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        403
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "FORBIDDEN"
+                      ]
+                    }
+                  }
+                },
+                "examples": {
+                  "error_1": {
+                    "summary": "FORBIDDEN",
+                    "value": {
+                      "statusCode": 403,
+                      "code": "FORBIDDEN"
+                    }
+                  }
+                }
+              }
+            }
           },
           "404": {
-            "$ref": "#/components/responses/NotFoundError"
+            "description": "Không tìm thấy người dùng.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        404
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "USER_NOT_FOUND"
+                      ]
+                    }
+                  }
+                },
+                "examples": {
+                  "error_1": {
+                    "summary": "USER_NOT_FOUND",
+                    "value": {
+                      "statusCode": 404,
+                      "code": "USER_NOT_FOUND"
+                    }
+                  }
+                }
+              }
+            }
           },
           "409": {
-            "x-apidog-name": "Conflict",
-            "description": "Người dùng đã bị xóa mềm.",
+            "description": "Xung đột dữ liệu hoặc trạng thái.",
             "content": {
               "application/json": {
                 "schema": {
@@ -2090,31 +3275,381 @@
                     "code": {
                       "type": "string",
                       "enum": [
-                        "USER_ALREADY_DELETED"
-                      ],
-                      "description": "- USER_ALREADY_DELETED: Tài khoản đã được xóa mềm trước đó."
+                        "DUPLICATE_PHONE"
+                      ]
                     }
                   }
                 },
                 "examples": {
-                  "user_already_deleted": {
-                    "summary": "USER_ALREADY_DELETED — Tài khoản đã được xóa mềm trước đó.",
+                  "error_1": {
+                    "summary": "DUPLICATE_PHONE",
                     "value": {
                       "statusCode": 409,
-                      "code": "USER_ALREADY_DELETED"
+                      "code": "DUPLICATE_PHONE"
                     }
                   }
                 }
               }
             }
           },
-          "429": {
-            "$ref": "#/components/responses/TooManyRequestsError"
+          "422": {
+            "description": "Vi phạm ràng buộc dữ liệu; trả mã của lỗi đầu tiên.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        422
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "NAME_REQUIRED",
+                        "NAME_MUST_BE_STRING",
+                        "NAME_NOT_EMPTY",
+                        "NAME_INVALID_LENGTH",
+                        "PHONE_REQUIRED",
+                        "PHONE_MUST_BE_STRING",
+                        "PHONE_NOT_EMPTY",
+                        "PHONE_INVALID_FORMAT",
+                        "USER_UPDATE_PAYLOAD_REQUIRED",
+                        "VALIDATION_FAILED"
+                      ]
+                    }
+                  }
+                },
+                "examples": {
+                  "error_1": {
+                    "summary": "NAME_REQUIRED",
+                    "value": {
+                      "statusCode": 422,
+                      "code": "NAME_REQUIRED"
+                    }
+                  },
+                  "error_2": {
+                    "summary": "NAME_MUST_BE_STRING",
+                    "value": {
+                      "statusCode": 422,
+                      "code": "NAME_MUST_BE_STRING"
+                    }
+                  },
+                  "error_3": {
+                    "summary": "NAME_NOT_EMPTY",
+                    "value": {
+                      "statusCode": 422,
+                      "code": "NAME_NOT_EMPTY"
+                    }
+                  },
+                  "error_4": {
+                    "summary": "NAME_INVALID_LENGTH",
+                    "value": {
+                      "statusCode": 422,
+                      "code": "NAME_INVALID_LENGTH"
+                    }
+                  },
+                  "error_5": {
+                    "summary": "PHONE_REQUIRED",
+                    "value": {
+                      "statusCode": 422,
+                      "code": "PHONE_REQUIRED"
+                    }
+                  },
+                  "error_6": {
+                    "summary": "PHONE_MUST_BE_STRING",
+                    "value": {
+                      "statusCode": 422,
+                      "code": "PHONE_MUST_BE_STRING"
+                    }
+                  },
+                  "error_7": {
+                    "summary": "PHONE_NOT_EMPTY",
+                    "value": {
+                      "statusCode": 422,
+                      "code": "PHONE_NOT_EMPTY"
+                    }
+                  },
+                  "error_8": {
+                    "summary": "PHONE_INVALID_FORMAT",
+                    "value": {
+                      "statusCode": 422,
+                      "code": "PHONE_INVALID_FORMAT"
+                    }
+                  },
+                  "error_9": {
+                    "summary": "USER_UPDATE_PAYLOAD_REQUIRED",
+                    "value": {
+                      "statusCode": 422,
+                      "code": "USER_UPDATE_PAYLOAD_REQUIRED"
+                    }
+                  },
+                  "error_10": {
+                    "summary": "VALIDATION_FAILED",
+                    "value": {
+                      "statusCode": 422,
+                      "code": "VALIDATION_FAILED"
+                    }
+                  }
+                }
+              }
+            }
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
           }
-        }
+        },
+        "servers": [
+          {
+            "url": "/identity-service/api/v1",
+            "description": "Đường dẫn trực tiếp Identity-Service trên host đang chọn."
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "User"
+        ],
+        "x-apidog-folder": "User",
+        "operationId": "deleteUserById",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "Delete user",
+        "description": "Chỉ admin. Xóa mềm tài khoản; không thể tự xóa. Thành công trả 204, không có body.",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "description": "UUID của người dùng.",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "$ref": "#/components/responses/NoContentResponse"
+          },
+          "400": {
+            "description": "Yêu cầu không hợp lệ.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        400
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "BAD_REQUEST",
+                        "USER_DELETE_CANNOT_SELF"
+                      ]
+                    }
+                  }
+                },
+                "examples": {
+                  "error_1": {
+                    "summary": "BAD_REQUEST",
+                    "value": {
+                      "statusCode": 400,
+                      "code": "BAD_REQUEST"
+                    }
+                  },
+                  "error_2": {
+                    "summary": "USER_DELETE_CANNOT_SELF",
+                    "value": {
+                      "statusCode": 400,
+                      "code": "USER_DELETE_CANNOT_SELF"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Không xác thực được yêu cầu.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        401
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "UNAUTHORIZED"
+                      ]
+                    }
+                  }
+                },
+                "examples": {
+                  "error_1": {
+                    "summary": "UNAUTHORIZED",
+                    "value": {
+                      "statusCode": 401,
+                      "code": "UNAUTHORIZED"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Không có quyền truy cập.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        403
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "FORBIDDEN"
+                      ]
+                    }
+                  }
+                },
+                "examples": {
+                  "error_1": {
+                    "summary": "FORBIDDEN",
+                    "value": {
+                      "statusCode": 403,
+                      "code": "FORBIDDEN"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Không tìm thấy người dùng.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        404
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "USER_NOT_FOUND"
+                      ]
+                    }
+                  }
+                },
+                "examples": {
+                  "error_1": {
+                    "summary": "USER_NOT_FOUND",
+                    "value": {
+                      "statusCode": 404,
+                      "code": "USER_NOT_FOUND"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Xung đột dữ liệu hoặc trạng thái.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        409
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "USER_DELETE_ALREADY_DELETED"
+                      ]
+                    }
+                  }
+                },
+                "examples": {
+                  "error_1": {
+                    "summary": "USER_DELETE_ALREADY_DELETED",
+                    "value": {
+                      "statusCode": 409,
+                      "code": "USER_DELETE_ALREADY_DELETED"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "servers": [
+          {
+            "url": "/identity-service/api/v1",
+            "description": "Đường dẫn trực tiếp Identity-Service trên host đang chọn."
+          }
+        ]
       }
     },
     "/users/{userId}/lock": {
@@ -2130,7 +3665,7 @@
           }
         ],
         "summary": "Lock user",
-        "description": "Chỉ admin; yêu cầu access token. Khóa tài khoản, thu hồi phiên và ghi audit log. Nghiệp vụ: Khi khóa chủ trọ, toàn bộ thông tin/phòng của chủ trọ sẽ bị vô hiệu hóa (ẩn khỏi sàn), hợp đồng đang hiệu lực chuyển sang trạng thái tạm thời kết thúc (nếu đến hạn chưa mở khóa thì tự hủy). Khi khóa người thuê, người thuê vẫn được thanh toán hóa đơn hợp đồng hiện tại, nhưng không thể gia hạn và không thể thuê trọ mới.log.",
+        "description": "Chỉ admin. Khóa tài khoản và thu hồi refresh token; không thể tự khóa.",
         "parameters": [
           {
             "name": "userId",
@@ -2179,7 +3714,7 @@
                     "code": {
                       "type": "string",
                       "enum": [
-                        "USER_LOCKED"
+                        "USER_ACCOUNT_LOCKED"
                       ]
                     },
                     "data": {
@@ -2189,7 +3724,7 @@
                 },
                 "example": {
                   "statusCode": 200,
-                  "code": "USER_LOCKED",
+                  "code": "USER_ACCOUNT_LOCKED",
                   "data": {
                     "userId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
                     "status": "locked",
@@ -2201,20 +3736,183 @@
             }
           },
           "400": {
-            "$ref": "#/components/responses/BadRequestBodyPathError"
+            "description": "Yêu cầu không hợp lệ.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        400
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "INVALID_JSON",
+                        "INVALID_REQUEST_BODY",
+                        "BAD_REQUEST",
+                        "USER_LOCK_CANNOT_SELF"
+                      ]
+                    }
+                  }
+                },
+                "examples": {
+                  "error_1": {
+                    "summary": "INVALID_JSON",
+                    "value": {
+                      "statusCode": 400,
+                      "code": "INVALID_JSON"
+                    }
+                  },
+                  "error_2": {
+                    "summary": "INVALID_REQUEST_BODY",
+                    "value": {
+                      "statusCode": 400,
+                      "code": "INVALID_REQUEST_BODY"
+                    }
+                  },
+                  "error_3": {
+                    "summary": "BAD_REQUEST",
+                    "value": {
+                      "statusCode": 400,
+                      "code": "BAD_REQUEST"
+                    }
+                  },
+                  "error_4": {
+                    "summary": "USER_LOCK_CANNOT_SELF",
+                    "value": {
+                      "statusCode": 400,
+                      "code": "USER_LOCK_CANNOT_SELF"
+                    }
+                  }
+                }
+              }
+            }
           },
           "401": {
-            "$ref": "#/components/responses/UnauthorizedError"
+            "description": "Không xác thực được yêu cầu.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        401
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "UNAUTHORIZED"
+                      ]
+                    }
+                  }
+                },
+                "examples": {
+                  "error_1": {
+                    "summary": "UNAUTHORIZED",
+                    "value": {
+                      "statusCode": 401,
+                      "code": "UNAUTHORIZED"
+                    }
+                  }
+                }
+              }
+            }
           },
           "403": {
-            "$ref": "#/components/responses/ForbiddenError"
+            "description": "Không có quyền truy cập.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        403
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "FORBIDDEN"
+                      ]
+                    }
+                  }
+                },
+                "examples": {
+                  "error_1": {
+                    "summary": "FORBIDDEN",
+                    "value": {
+                      "statusCode": 403,
+                      "code": "FORBIDDEN"
+                    }
+                  }
+                }
+              }
+            }
           },
           "404": {
-            "$ref": "#/components/responses/NotFoundError"
+            "description": "Không tìm thấy người dùng.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        404
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "USER_NOT_FOUND"
+                      ]
+                    }
+                  }
+                },
+                "examples": {
+                  "error_1": {
+                    "summary": "USER_NOT_FOUND",
+                    "value": {
+                      "statusCode": 404,
+                      "code": "USER_NOT_FOUND"
+                    }
+                  }
+                }
+              }
+            }
           },
           "409": {
-            "x-apidog-name": "Conflict",
-            "description": "Yêu cầu xung đột với trạng thái hiện tại hoặc dữ liệu đã tồn tại.",
+            "description": "Xung đột dữ liệu hoặc trạng thái.",
             "content": {
               "application/json": {
                 "schema": {
@@ -2234,18 +3932,17 @@
                     "code": {
                       "type": "string",
                       "enum": [
-                        "USER_ALREADY_LOCKED"
-                      ],
-                      "description": "- USER_ALREADY_LOCKED: Tài khoản đã bị khóa."
+                        "USER_LOCK_ALREADY_LOCKED"
+                      ]
                     }
                   }
                 },
                 "examples": {
-                  "user_already_locked": {
-                    "summary": "USER_ALREADY_LOCKED — Tài khoản đã bị khóa.",
+                  "error_1": {
+                    "summary": "USER_LOCK_ALREADY_LOCKED",
                     "value": {
                       "statusCode": 409,
-                      "code": "USER_ALREADY_LOCKED"
+                      "code": "USER_LOCK_ALREADY_LOCKED"
                     }
                   }
                 }
@@ -2253,8 +3950,7 @@
             }
           },
           "422": {
-            "x-apidog-name": "Unprocessable Entity",
-            "description": "Lý do khóa tài khoản không hợp lệ.",
+            "description": "Vi phạm ràng buộc dữ liệu; trả mã của lỗi đầu tiên.",
             "content": {
               "application/json": {
                 "schema": {
@@ -2275,22 +3971,45 @@
                       "type": "string",
                       "enum": [
                         "LOCK_REASON_REQUIRED",
+                        "LOCK_REASON_MUST_BE_STRING",
+                        "LOCK_REASON_NOT_EMPTY",
+                        "LOCK_REASON_INVALID_LENGTH",
                         "VALIDATION_FAILED"
-                      ],
-                      "description": "- LOCK_REASON_REQUIRED: Thiếu lockReason hoặc lockReason là null.\n- VALIDATION_FAILED: Giá trị lockReason vi phạm ràng buộc khác."
+                      ]
                     }
                   }
                 },
                 "examples": {
-                  "lock_reason_required": {
-                    "summary": "LOCK_REASON_REQUIRED — Thiếu lockReason hoặc lockReason là null.",
+                  "error_1": {
+                    "summary": "LOCK_REASON_REQUIRED",
                     "value": {
                       "statusCode": 422,
                       "code": "LOCK_REASON_REQUIRED"
                     }
                   },
-                  "validation_failed": {
-                    "summary": "VALIDATION_FAILED — Giá trị lockReason vi phạm ràng buộc khác.",
+                  "error_2": {
+                    "summary": "LOCK_REASON_MUST_BE_STRING",
+                    "value": {
+                      "statusCode": 422,
+                      "code": "LOCK_REASON_MUST_BE_STRING"
+                    }
+                  },
+                  "error_3": {
+                    "summary": "LOCK_REASON_NOT_EMPTY",
+                    "value": {
+                      "statusCode": 422,
+                      "code": "LOCK_REASON_NOT_EMPTY"
+                    }
+                  },
+                  "error_4": {
+                    "summary": "LOCK_REASON_INVALID_LENGTH",
+                    "value": {
+                      "statusCode": 422,
+                      "code": "LOCK_REASON_INVALID_LENGTH"
+                    }
+                  },
+                  "error_5": {
+                    "summary": "VALIDATION_FAILED",
                     "value": {
                       "statusCode": 422,
                       "code": "VALIDATION_FAILED"
@@ -2300,13 +4019,16 @@
               }
             }
           },
-          "429": {
-            "$ref": "#/components/responses/TooManyRequestsError"
-          },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
           }
-        }
+        },
+        "servers": [
+          {
+            "url": "/identity-service/api/v1",
+            "description": "Đường dẫn trực tiếp Identity-Service trên host đang chọn."
+          }
+        ]
       }
     },
     "/users/{userId}/unlock": {
@@ -2322,7 +4044,7 @@
           }
         ],
         "summary": "Unlock user",
-        "description": "Chỉ admin; yêu cầu access token. Chuyển tài khoản locked về active và xóa thời điểm khóa.",
+        "description": "Chỉ admin. Chuyển locked sang active, trả lockedAt: null.",
         "parameters": [
           {
             "name": "userId",
@@ -2358,7 +4080,7 @@
                     "code": {
                       "type": "string",
                       "enum": [
-                        "USER_UNLOCKED"
+                        "USER_ACCOUNT_UNLOCKED"
                       ]
                     },
                     "data": {
@@ -2368,31 +4090,170 @@
                 },
                 "example": {
                   "statusCode": 200,
-                  "code": "USER_UNLOCKED",
+                  "code": "USER_ACCOUNT_UNLOCKED",
                   "data": {
                     "userId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
                     "status": "active",
-                    "unlockedAt": "2026-09-23T11:55:00.000Z"
+                    "lockedAt": null
                   }
                 }
               }
             }
           },
           "400": {
-            "$ref": "#/components/responses/BadRequestPathError"
+            "description": "Yêu cầu không hợp lệ.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        400
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "BAD_REQUEST"
+                      ]
+                    }
+                  }
+                },
+                "examples": {
+                  "error_1": {
+                    "summary": "BAD_REQUEST",
+                    "value": {
+                      "statusCode": 400,
+                      "code": "BAD_REQUEST"
+                    }
+                  }
+                }
+              }
+            }
           },
           "401": {
-            "$ref": "#/components/responses/UnauthorizedError"
+            "description": "Không xác thực được yêu cầu.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        401
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "UNAUTHORIZED"
+                      ]
+                    }
+                  }
+                },
+                "examples": {
+                  "error_1": {
+                    "summary": "UNAUTHORIZED",
+                    "value": {
+                      "statusCode": 401,
+                      "code": "UNAUTHORIZED"
+                    }
+                  }
+                }
+              }
+            }
           },
           "403": {
-            "$ref": "#/components/responses/ForbiddenError"
+            "description": "Không có quyền truy cập.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        403
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "FORBIDDEN"
+                      ]
+                    }
+                  }
+                },
+                "examples": {
+                  "error_1": {
+                    "summary": "FORBIDDEN",
+                    "value": {
+                      "statusCode": 403,
+                      "code": "FORBIDDEN"
+                    }
+                  }
+                }
+              }
+            }
           },
           "404": {
-            "$ref": "#/components/responses/NotFoundError"
+            "description": "Không tìm thấy người dùng.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        404
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "USER_NOT_FOUND"
+                      ]
+                    }
+                  }
+                },
+                "examples": {
+                  "error_1": {
+                    "summary": "USER_NOT_FOUND",
+                    "value": {
+                      "statusCode": 404,
+                      "code": "USER_NOT_FOUND"
+                    }
+                  }
+                }
+              }
+            }
           },
           "409": {
-            "x-apidog-name": "Conflict",
-            "description": "Yêu cầu xung đột với trạng thái hiện tại hoặc dữ liệu đã tồn tại.",
+            "description": "Xung đột dữ liệu hoặc trạng thái.",
             "content": {
               "application/json": {
                 "schema": {
@@ -2412,31 +4273,33 @@
                     "code": {
                       "type": "string",
                       "enum": [
-                        "USER_NOT_LOCKED"
-                      ],
-                      "description": "- USER_NOT_LOCKED: Tài khoản không ở trạng thái locked."
+                        "USER_UNLOCK_NOT_LOCKED"
+                      ]
                     }
                   }
                 },
                 "examples": {
-                  "user_not_locked": {
-                    "summary": "USER_NOT_LOCKED — Tài khoản không ở trạng thái locked.",
+                  "error_1": {
+                    "summary": "USER_UNLOCK_NOT_LOCKED",
                     "value": {
                       "statusCode": 409,
-                      "code": "USER_NOT_LOCKED"
+                      "code": "USER_UNLOCK_NOT_LOCKED"
                     }
                   }
                 }
               }
             }
           },
-          "429": {
-            "$ref": "#/components/responses/TooManyRequestsError"
-          },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
           }
-        }
+        },
+        "servers": [
+          {
+            "url": "/identity-service/api/v1",
+            "description": "Đường dẫn trực tiếp Identity-Service trên host đang chọn."
+          }
+        ]
       }
     },
     "/me/push-devices": {
@@ -18754,7 +20617,10 @@
           "password": {
             "type": "string",
             "description": "Mật khẩu thô do người dùng nhập khi đăng ký",
-            "example": "P@ssw0rd123"
+            "example": "P@ssw0rd123",
+            "minLength": 8,
+            "maxLength": 255,
+            "pattern": "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).{8,}$"
           },
           "name": {
             "type": "string",
@@ -18767,9 +20633,10 @@
             "type": "string",
             "enum": [
               "tenant",
-              "landlord"
+              "landlord",
+              "admin"
             ],
-            "description": "Vai trò tài khoản được phép tự đăng ký. Admin không được đăng ký qua API này.",
+            "description": "Role hợp lệ về cú pháp; admin bị từ chối bằng 422 AUTH_REGISTER_ROLE_NOT_ALLOWED.",
             "example": "tenant"
           }
         },
@@ -18787,61 +20654,58 @@
         "title": "AuthRegisterResponseDto",
         "description": "Phản hồi khi đăng ký tài khoản thành công",
         "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid",
-            "description": "ID tài khoản vừa được tạo",
-            "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
-          },
-          "email": {
-            "type": "string",
-            "format": "email",
-            "minLength": 5,
-            "maxLength": 254,
-            "description": "Email của tài khoản vừa được tạo",
-            "example": "lan@example.com"
-          },
-          "phone": {
-            "type": "string",
-            "minLength": 10,
-            "maxLength": 12,
-            "pattern": "^0[0-9]{9}$|^\\+84[0-9]{9}$",
-            "description": "Số điện thoại của tài khoản vừa được tạo",
-            "example": "0901234567"
-          },
-          "name": {
+          "accessToken": {
             "type": "string",
             "minLength": 1,
-            "maxLength": 254,
-            "description": "Họ và tên của tài khoản vừa được tạo",
-            "example": "Lê Văn An"
+            "description": "JWT access token, thời hạn 15 phút."
           },
-          "role": {
+          "refreshToken": {
             "type": "string",
-            "enum": [
-              "tenant",
-              "landlord"
-            ],
-            "description": "Vai trò của tài khoản",
-            "example": "tenant"
+            "minLength": 1,
+            "description": "Token opaque Base64URL từ 32 byte ngẫu nhiên, được trả trong JSON."
           },
-          "status": {
-            "type": "string",
-            "enum": [
-              "active"
-            ],
-            "description": "Trạng thái ban đầu của tài khoản",
-            "example": "active"
+          "user": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "id": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "name": {
+                "type": "string"
+              },
+              "email": {
+                "type": "string",
+                "format": "email"
+              },
+              "phone": {
+                "type": "string"
+              },
+              "role": {
+                "type": "string",
+                "enum": [
+                  "landlord",
+                  "tenant",
+                  "admin"
+                ]
+              }
+            },
+            "required": [
+              "id",
+              "name",
+              "email",
+              "phone",
+              "role"
+            ]
           }
         },
         "required": [
-          "id",
-          "email",
-          "phone",
-          "name",
-          "role",
-          "status"
-        ]
+          "accessToken",
+          "refreshToken",
+          "user"
+        ],
+        "additionalProperties": false
       },
       "AuthLoginRequestDto": {
         "type": "object",
@@ -18884,48 +20748,55 @@
           "accessToken": {
             "type": "string",
             "minLength": 1,
-            "description": "JWT access token dùng để truy cập các API được bảo vệ",
-            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+            "description": "JWT access token, thời hạn 15 phút."
           },
           "refreshToken": {
             "type": "string",
             "minLength": 1,
-            "description": "Refresh token opaque dùng để làm mới phiên đăng nhập",
-            "example": "rt_opaque_token_example"
+            "description": "Token opaque Base64URL từ 32 byte ngẫu nhiên, được trả trong JSON."
           },
-          "profile": {
-            "$ref": "#/components/schemas/UserCurrentResponseDto"
+          "user": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "id": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "name": {
+                "type": "string"
+              },
+              "email": {
+                "type": "string",
+                "format": "email"
+              },
+              "phone": {
+                "type": "string"
+              },
+              "role": {
+                "type": "string",
+                "enum": [
+                  "landlord",
+                  "tenant",
+                  "admin"
+                ]
+              }
+            },
+            "required": [
+              "id",
+              "name",
+              "email",
+              "phone",
+              "role"
+            ]
           }
         },
         "required": [
           "accessToken",
           "refreshToken",
-          "profile"
-        ]
-      },
-      "AuthRefreshResponseDto": {
-        "type": "object",
-        "x-apidog-folder": "Auth/Response",
-        "title": "AuthRefreshResponseDto",
-        "description": "Phản hồi khi xoay vòng refresh session thành công",
-        "properties": {
-          "accessToken": {
-            "type": "string",
-            "minLength": 1,
-            "description": "Access token mới được phát hành",
-            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
-          },
-          "refreshToken": {
-            "type": "string",
-            "minLength": 1,
-            "description": "Refresh token opaque mới sau khi xoay vòng phiên",
-            "example": "rt_opaque_token_example"
-          }
-        },
-        "required": [
-          "accessToken",
-          "refreshToken"
-        ]
+          "user"
+        ],
+        "additionalProperties": false
       },
       "AuthRequestPasswordResetRequestDto": {
         "type": "object",
@@ -18983,10 +20854,12 @@
           },
           "newPassword": {
             "type": "string",
-            "minLength": 1,
+            "minLength": 8,
             "writeOnly": true,
             "description": "Mật khẩu mới do người dùng thiết lập",
-            "example": "NewP@ssw0rd123"
+            "example": "NewP@ssw0rd123",
+            "maxLength": 255,
+            "pattern": "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).{8,}$"
           }
         },
         "required": [
@@ -18998,7 +20871,7 @@
         "type": "object",
         "x-apidog-folder": "User/Request",
         "title": "UserCurrentUpdateRequestDto",
-        "description": "Cập nhật hồ sơ hiện tại. Tenant/admin gửi name và phone. Landlord có thể gửi thêm payoutAccount.\n",
+        "description": "Bắt buộc gửi name, phone và payoutAccount. Tenant/admin gửi payoutAccount: null; object chỉ dành cho landlord. Không kiểm tra hóa đơn pending khi đổi tài khoản.",
         "additionalProperties": false,
         "properties": {
           "name": {
@@ -19051,7 +20924,8 @@
               "bankCode",
               "accountNumber",
               "accountName"
-            ]
+            ],
+            "additionalProperties": false
           }
         },
         "required": [
@@ -19076,10 +20950,12 @@
           },
           "newPassword": {
             "type": "string",
-            "minLength": 1,
+            "minLength": 8,
             "writeOnly": true,
             "description": "Mật khẩu mới",
-            "example": "NewP@ssw0rd"
+            "example": "NewP@ssw0rd",
+            "maxLength": 255,
+            "pattern": "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).{8,}$"
           },
           "confirmPassword": {
             "type": "string",
@@ -19099,7 +20975,7 @@
         "type": "object",
         "x-apidog-folder": "User/Request",
         "title": "UserUpdateRequestDto",
-        "description": "Dữ liệu admin cập nhật thông tin một tài khoản",
+        "description": "Admin cập nhật name hoặc phone. Trường null được bỏ qua; phải có ít nhất một giá trị để cập nhật.",
         "additionalProperties": false,
         "properties": {
           "name": {
@@ -19107,7 +20983,8 @@
             "description": "Thông tin name của tài nguyên trong ngữ cảnh DTO.",
             "minLength": 1,
             "maxLength": 254,
-            "example": "Nguyễn Văn An"
+            "example": "Nguyễn Văn An",
+            "nullable": true
           },
           "phone": {
             "type": "string",
@@ -19115,12 +20992,21 @@
             "minLength": 10,
             "maxLength": 12,
             "pattern": "^0[0-9]{9}$|^\\+84[0-9]{9}$",
-            "example": "0901234567"
+            "example": "0901234567",
+            "nullable": true
           }
         },
-        "required": [
-          "name",
-          "phone"
+        "anyOf": [
+          {
+            "required": [
+              "name"
+            ]
+          },
+          {
+            "required": [
+              "phone"
+            ]
+          }
         ]
       },
       "UserLockRequestDto": {
@@ -19317,17 +21203,14 @@
             "description": "Họ và tên người dùng.",
             "example": "Lê Văn An"
           },
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
           "phone": {
             "type": "string",
             "description": "Số điện thoại người dùng.",
             "example": "0901234567"
-          },
-          "email": {
-            "type": "string",
-            "format": "email",
-            "nullable": true,
-            "description": "Địa chỉ email.",
-            "example": "an.le@example.com"
           },
           "role": {
             "type": "string",
@@ -19347,22 +21230,17 @@
             ],
             "description": "Trạng thái tài khoản (active: bình thường, locked: bị khóa bởi admin).",
             "example": "active"
-          },
-          "createdAt": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Thời điểm đăng ký tài khoản.",
-            "example": "2026-09-01T08:00:00Z"
           }
         },
         "required": [
           "id",
           "name",
+          "email",
           "phone",
           "role",
-          "status",
-          "createdAt"
-        ]
+          "status"
+        ],
+        "additionalProperties": false
       },
       "UserDetailResponseDto": {
         "type": "object",
@@ -19381,23 +21259,14 @@
             "description": "Họ và tên người dùng.",
             "example": "Lê Văn An"
           },
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
           "phone": {
             "type": "string",
             "description": "Số điện thoại người dùng.",
             "example": "0901234567"
-          },
-          "email": {
-            "type": "string",
-            "format": "email",
-            "nullable": true,
-            "description": "Địa chỉ email.",
-            "example": "an.le@example.com"
-          },
-          "avatarUrl": {
-            "type": "string",
-            "format": "uri",
-            "nullable": true,
-            "description": "Ảnh đại diện người dùng."
           },
           "role": {
             "type": "string",
@@ -19418,61 +21287,6 @@
             "description": "Trạng thái tài khoản.",
             "example": "active"
           },
-          "identityVerified": {
-            "type": "boolean",
-            "description": "Đã xác thực giấy tờ tùy thân / CCCD hay chưa.",
-            "example": true
-          },
-          "identityCardNumber": {
-            "type": "string",
-            "nullable": true,
-            "description": "Số CCCD/CMND đã xác thực.",
-            "example": "048195001234"
-          },
-          "buildingCount": {
-            "type": "integer",
-            "minimum": 0,
-            "description": "Số lượng tòa nhà thuộc sở hữu (nếu là landlord).",
-            "example": 2
-          },
-          "activeContractCount": {
-            "type": "integer",
-            "minimum": 0,
-            "description": "Số lượng hợp đồng đang có hiệu lực.",
-            "example": 1
-          },
-          "ownedBuildings": {
-            "type": "array",
-            "nullable": true,
-            "description": "Danh sách tóm tắt các tòa nhà của chủ trọ này quản lý (nếu role = landlord)",
-            "items": {
-              "type": "object",
-              "properties": {
-                "id": {
-                  "type": "string",
-                  "format": "uuid"
-                },
-                "name": {
-                  "type": "string"
-                },
-                "address": {
-                  "type": "string"
-                },
-                "totalRooms": {
-                  "type": "integer",
-                  "minimum": 0
-                },
-                "status": {
-                  "type": "string",
-                  "enum": [
-                    "pending",
-                    "approved",
-                    "rejected"
-                  ]
-                }
-              }
-            }
-          },
           "lockReason": {
             "type": "string",
             "nullable": true,
@@ -19486,22 +21300,64 @@
             "description": "Thời điểm bị khóa tài khoản.",
             "example": null
           },
-          "createdAt": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Thời điểm đăng ký tài khoản.",
-            "example": "2026-09-01T08:00:00Z"
+          "payoutAccount": {
+            "type": "object",
+            "nullable": true,
+            "description": "Tài khoản nhận tiền của landlord. Tenant và admin nhận null. accountNumber được mask khi trả về client.\n",
+            "properties": {
+              "bankCode": {
+                "type": "string",
+                "description": "Thông tin bank code của tài nguyên trong ngữ cảnh DTO.",
+                "minLength": 4,
+                "maxLength": 20,
+                "example": "970415"
+              },
+              "accountNumber": {
+                "type": "string",
+                "description": "Số tài khoản đã được mask",
+                "example": "**43210"
+              },
+              "accountName": {
+                "type": "string",
+                "description": "Thông tin account name của tài nguyên trong ngữ cảnh DTO.",
+                "minLength": 1,
+                "maxLength": 254,
+                "example": "NGUYEN VAN AN"
+              }
+            },
+            "required": [
+              "bankCode",
+              "accountNumber",
+              "accountName"
+            ]
+          },
+          "buildingCount": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Số lượng tòa nhà thuộc sở hữu (nếu là landlord).",
+            "example": 2
+          },
+          "activeContractCount": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Số lượng hợp đồng đang có hiệu lực.",
+            "example": 1
           }
         },
         "required": [
           "id",
           "name",
+          "email",
           "phone",
           "role",
           "status",
-          "identityVerified",
-          "createdAt"
-        ]
+          "lockReason",
+          "lockedAt",
+          "payoutAccount",
+          "buildingCount",
+          "activeContractCount"
+        ],
+        "additionalProperties": false
       },
       "UserUpdateResponseDto": {
         "type": "object",
@@ -19532,14 +21388,21 @@
               "locked"
             ],
             "example": "active"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "example": "lan@example.com"
           }
         },
         "required": [
           "userId",
           "name",
           "phone",
-          "status"
-        ]
+          "status",
+          "email"
+        ],
+        "additionalProperties": false
       },
       "UserLockResponseDto": {
         "type": "object",
@@ -19601,18 +21464,23 @@
             ],
             "example": "active"
           },
-          "unlockedAt": {
+          "lockedAt": {
             "type": "string",
             "format": "date-time",
-            "description": "Thời điểm tài khoản được admin mở khóa thành công.",
-            "example": "2026-09-29T14:30:00Z"
+            "nullable": true,
+            "enum": [
+              null
+            ],
+            "description": "Luôn null sau khi mở khóa.",
+            "example": null
           }
         },
         "required": [
           "userId",
           "status",
-          "unlockedAt"
-        ]
+          "lockedAt"
+        ],
+        "additionalProperties": false
       },
       "BaseEntity": {
         "type": "object",
@@ -30208,12 +32076,6 @@
         "scheme": "bearer",
         "bearerFormat": "JWT",
         "description": "Access token trong header Authorization: Bearer <token>."
-      },
-      "RefreshCookie": {
-        "type": "apiKey",
-        "in": "cookie",
-        "name": "refreshToken",
-        "description": "Refresh token opaque trong cookie HttpOnly, Secure, SameSite=Lax, Path=/api/v1/auth. Chỉ dùng cho refresh và logout."
       }
     }
   }
