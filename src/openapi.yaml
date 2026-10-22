@@ -42,6 +42,12 @@ paths:
     $ref: './paths/auth/password-reset-requests.yaml'
   /auth/password-resets:
     $ref: './paths/auth/password-resets.yaml'
+  /auth/refresh:
+    $ref: './paths/auth/refresh.yaml'
+  /auth/logout:
+    $ref: './paths/auth/logout.yaml'
+  /.well-known/jwks.json:
+    $ref: './paths/auth/jwks.yaml'
   /me:
     $ref: './paths/users/me.yaml'
   /me/password:
@@ -237,6 +243,17 @@ components:
 
     AuthResetPasswordRequestDto:
       $ref: './requests/auth/password-reset-request-dto.yaml'
+    AuthRefreshRequestDto:
+      $ref: './requests/auth/refresh-request-dto.yaml'
+
+    AuthRefreshResponseDto:
+      $ref: './responses/dtos/auth/refresh-response-dto.yaml'
+
+    AuthLogoutRequestDto:
+      $ref: './requests/auth/logout-request-dto.yaml'
+
+    AuthJwksResponseDto:
+      $ref: './responses/dtos/auth/jwks-response-dto.yaml'
 
     # User Request / Response DTOs
     UserCurrentUpdateRequestDto:

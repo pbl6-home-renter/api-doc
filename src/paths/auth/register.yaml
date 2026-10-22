@@ -2,10 +2,39 @@ post:
   tags:
   - Auth
   x-apidog-folder: Auth
+  x-apidog-status: released
   operationId: registerAccount
   summary: Register
-  description: 'Public. Tạo tài khoản tenant hoặc landlord và phiên đăng nhập. Trả accessToken, refreshToken và
-    user trong JSON; không đặt cookie. Location: /api/v1/me.'
+  description: |-
+    Public. Tạo tài khoản tenant hoặc landlord và phiên đăng nhập. Trả accessToken, refreshToken và user trong JSON; không đặt cookie. Location: /api/v1/me.
+
+    **Lưu ý**
+
+    - Chỉ `tenant`/`landlord` được tự đăng ký; admin được seed sẵn. Role không đổi được sau khi đăng ký.
+    - Chưa triển khai: publish `user.registered`.
+
+    ```mermaid
+    sequenceDiagram
+        autonumber
+        participant GW as API Gateway
+        participant ID as Identity
+        participant DB as Identity DB
+        participant MQ as RabbitMQ
+        participant TEN as Tenancy
+        participant COM as Community
+
+        GW->>ID: POST /auth/register {email, phone, password, name, role}
+        ID->>DB: Kiểm tra email/phone đã được user chưa bị xóa sử dụng
+        alt Trùng email hoặc phone
+            ID-->>GW: 409 DUPLICATE_EMAIL / DUPLICATE_PHONE
+        end
+        ID->>DB: [Transaction] Insert users (password bcrypt, status=active)<br/>+ insert refresh_tokens (tokenHash)<br/>+ outbox user.registered
+        ID->>ID: Ký access token RS256 {sub, role, status}
+        ID-->>GW: 201 USER_REGISTERED {accessToken, refreshToken, user}
+        ID-)MQ: user.registered {userId, name, email, phone, role, status}
+        MQ-)TEN: Upsert user snapshot
+        MQ-)COM: Tạo profile chat/notification
+    ```
   security: []
   requestBody:
     required: true

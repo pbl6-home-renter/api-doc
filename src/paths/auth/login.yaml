@@ -2,10 +2,36 @@ post:
   tags:
   - Auth
   x-apidog-folder: Auth
+  x-apidog-status: released
   operationId: loginAccount
   summary: Login
-  description: 'Public. Đăng nhập bằng email hoặc số điện thoại. Trả accessToken, refreshToken và user trong JSON;
-    không đặt cookie. rememberMe=true: refresh token 7 ngày; false: 1 ngày.'
+  description: |-
+    Public. Đăng nhập bằng email hoặc số điện thoại. Trả accessToken, refreshToken và user trong JSON; không đặt cookie. rememberMe=true: refresh token 7 ngày; false: 1 ngày.
+
+    **Lưu ý**
+
+    - User bị khóa **vẫn đăng nhập được**; access token mang claim `status` để Tenancy/Community chặn chức năng. Chưa triển khai claim `status`.
+    - User đã xóa mềm được coi như không tồn tại, trả `401`.
+    - Đang cân nhắc: refresh token hiện trả trong JSON, `api-conventions.md` §4 muốn dùng HttpOnly cookie.
+
+    ```mermaid
+    sequenceDiagram
+        autonumber
+        participant GW as API Gateway
+        participant ID as Identity
+        participant DB as Identity DB
+
+        GW->>ID: POST /auth/login {identifier, password, rememberMe}
+        ID->>DB: Tìm user chưa bị xóa theo email hoặc phone
+        ID->>ID: bcrypt compare password
+        alt Không tìm thấy hoặc sai mật khẩu
+            ID-->>GW: 401 AUTH_LOGIN_INVALID_CREDENTIALS
+        end
+        Note over ID: status=locked vẫn được cấp token
+        ID->>DB: Insert refresh_tokens (tokenHash, expiresAt 7 ngày nếu rememberMe, ngược lại 1 ngày)
+        ID->>ID: Ký access token RS256 {sub, role, status} (15 phút)
+        ID-->>GW: 200 SESSION_STARTED {accessToken, refreshToken, user}
+    ```
   security: []
   requestBody:
     required: true
@@ -114,31 +140,6 @@ post:
               value:
                 statusCode: 401
                 code: AUTH_LOGIN_INVALID_CREDENTIALS
-    '403':
-      description: Không có quyền truy cập.
-      content:
-        application/json:
-          schema:
-            type: object
-            additionalProperties: false
-            required:
-            - statusCode
-            - code
-            properties:
-              statusCode:
-                type: integer
-                enum:
-                - 403
-              code:
-                type: string
-                enum:
-                - AUTH_LOGIN_ACCOUNT_LOCKED
-          examples:
-            error_1:
-              summary: AUTH_LOGIN_ACCOUNT_LOCKED
-              value:
-                statusCode: 403
-                code: AUTH_LOGIN_ACCOUNT_LOCKED
     '422':
       description: Vi phạm ràng buộc dữ liệu; trả mã của lỗi đầu tiên.
       content:

@@ -2,11 +2,42 @@ post:
   tags:
   - User
   x-apidog-folder: User
+  x-apidog-status: released
   operationId: unlockUser
   security:
   - BearerAuth: []
   summary: Unlock user
-  description: 'Chỉ admin. Chuyển locked sang active, trả lockedAt: null.'
+  description: |-
+    Chỉ admin. Chuyển locked sang active, trả lockedAt: null.
+
+    **Lưu ý**
+
+    - Token cấp trước khi mở khóa còn mang `status=locked` tối đa 15 phút.
+    - Chưa triển khai: publish `user.unlocked`.
+
+    ```mermaid
+    sequenceDiagram
+        autonumber
+        participant GW as API Gateway
+        participant ID as Identity
+        participant DB as Identity DB
+        participant MQ as RabbitMQ
+        participant TEN as Tenancy
+        participant COM as Community
+
+        GW->>ID: POST /users/{userId}/unlock
+        ID->>DB: Đọc user
+        alt Không tìm thấy
+            ID-->>GW: 404 USER_NOT_FOUND
+        else Chưa bị khóa
+            ID-->>GW: 409 USER_UNLOCK_NOT_LOCKED
+        end
+        ID->>DB: [Transaction] Update users (status=active, lockReason=null, lockedAt=null)<br/>+ outbox user.unlocked
+        ID-->>GW: 200 USER_ACCOUNT_UNLOCKED {userId, status, lockedAt: null}
+        ID-)MQ: user.unlocked {userId, status}
+        MQ-)TEN: Nếu role=landlord: hiện lại BĐS, khôi phục HĐ đang tạm ngưng
+        MQ-)COM: Xử lý dữ liệu liên quan (nếu có)
+    ```
   parameters:
   - name: userId
     in: path

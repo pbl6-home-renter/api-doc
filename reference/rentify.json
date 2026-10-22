@@ -61,9 +61,10 @@
           "Auth"
         ],
         "x-apidog-folder": "Auth",
+        "x-apidog-status": "released",
         "operationId": "registerAccount",
         "summary": "Register",
-        "description": "Public. Tạo tài khoản tenant hoặc landlord và phiên đăng nhập. Trả accessToken, refreshToken và user trong JSON; không đặt cookie. Location: /api/v1/me.",
+        "description": "Public. Tạo tài khoản tenant hoặc landlord và phiên đăng nhập. Trả accessToken, refreshToken và user trong JSON; không đặt cookie. Location: /api/v1/me.\n\n**Lưu ý**\n\n- Chỉ `tenant`/`landlord` được tự đăng ký; admin được seed sẵn. Role không đổi được sau khi đăng ký.\n- Chưa triển khai: publish `user.registered`.\n\n```mermaid\nsequenceDiagram\n    autonumber\n    participant GW as API Gateway\n    participant ID as Identity\n    participant DB as Identity DB\n    participant MQ as RabbitMQ\n    participant TEN as Tenancy\n    participant COM as Community\n\n    GW->>ID: POST /auth/register {email, phone, password, name, role}\n    ID->>DB: Kiểm tra email/phone đã được user chưa bị xóa sử dụng\n    alt Trùng email hoặc phone\n        ID-->>GW: 409 DUPLICATE_EMAIL / DUPLICATE_PHONE\n    end\n    ID->>DB: [Transaction] Insert users (password bcrypt, status=active)<br/>+ insert refresh_tokens (tokenHash)<br/>+ outbox user.registered\n    ID->>ID: Ký access token RS256 {sub, role, status}\n    ID-->>GW: 201 USER_REGISTERED {accessToken, refreshToken, user}\n    ID-)MQ: user.registered {userId, name, email, phone, role, status}\n    MQ-)TEN: Upsert user snapshot\n    MQ-)COM: Tạo profile chat/notification\n```",
         "security": [],
         "requestBody": {
           "required": true,
@@ -472,9 +473,10 @@
           "Auth"
         ],
         "x-apidog-folder": "Auth",
+        "x-apidog-status": "released",
         "operationId": "loginAccount",
         "summary": "Login",
-        "description": "Public. Đăng nhập bằng email hoặc số điện thoại. Trả accessToken, refreshToken và user trong JSON; không đặt cookie. rememberMe=true: refresh token 7 ngày; false: 1 ngày.",
+        "description": "Public. Đăng nhập bằng email hoặc số điện thoại. Trả accessToken, refreshToken và user trong JSON; không đặt cookie. rememberMe=true: refresh token 7 ngày; false: 1 ngày.\n\n**Lưu ý**\n\n- User bị khóa **vẫn đăng nhập được**; access token mang claim `status` để Tenancy/Community chặn chức năng. Chưa triển khai claim `status`.\n- User đã xóa mềm được coi như không tồn tại, trả `401`.\n- Đang cân nhắc: refresh token hiện trả trong JSON, `api-conventions.md` §4 muốn dùng HttpOnly cookie.\n\n```mermaid\nsequenceDiagram\n    autonumber\n    participant GW as API Gateway\n    participant ID as Identity\n    participant DB as Identity DB\n\n    GW->>ID: POST /auth/login {identifier, password, rememberMe}\n    ID->>DB: Tìm user chưa bị xóa theo email hoặc phone\n    ID->>ID: bcrypt compare password\n    alt Không tìm thấy hoặc sai mật khẩu\n        ID-->>GW: 401 AUTH_LOGIN_INVALID_CREDENTIALS\n    end\n    Note over ID: status=locked vẫn được cấp token\n    ID->>DB: Insert refresh_tokens (tokenHash, expiresAt 7 ngày nếu rememberMe, ngược lại 1 ngày)\n    ID->>ID: Ký access token RS256 {sub, role, status} (15 phút)\n    ID-->>GW: 200 SESSION_STARTED {accessToken, refreshToken, user}\n```",
         "security": [],
         "requestBody": {
           "required": true,
@@ -632,44 +634,6 @@
               }
             }
           },
-          "403": {
-            "description": "Không có quyền truy cập.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "additionalProperties": false,
-                  "required": [
-                    "statusCode",
-                    "code"
-                  ],
-                  "properties": {
-                    "statusCode": {
-                      "type": "integer",
-                      "enum": [
-                        403
-                      ]
-                    },
-                    "code": {
-                      "type": "string",
-                      "enum": [
-                        "AUTH_LOGIN_ACCOUNT_LOCKED"
-                      ]
-                    }
-                  }
-                },
-                "examples": {
-                  "error_1": {
-                    "summary": "AUTH_LOGIN_ACCOUNT_LOCKED",
-                    "value": {
-                      "statusCode": 403,
-                      "code": "AUTH_LOGIN_ACCOUNT_LOCKED"
-                    }
-                  }
-                }
-              }
-            }
-          },
           "422": {
             "description": "Vi phạm ràng buộc dữ liệu; trả mã của lỗi đầu tiên.",
             "content": {
@@ -798,9 +762,10 @@
           "Auth"
         ],
         "x-apidog-folder": "Auth",
+        "x-apidog-status": "released",
         "operationId": "requestPasswordReset",
         "summary": "Password reset request",
-        "description": "Public. Tiếp nhận yêu cầu đặt lại mật khẩu; luôn trả accepted=true kể cả email không tồn tại hoặc tài khoản bị khóa.",
+        "description": "Public. Tiếp nhận yêu cầu đặt lại mật khẩu; luôn trả accepted=true kể cả email không tồn tại hoặc tài khoản bị khóa.\n\n**Lưu ý**\n\n- Luôn trả `202` giống nhau để không lộ email có tồn tại hay không.\n- Email do Community gửi khi nhận `user.password_reset_requested`. Payload chứa token thô: không log payload, dọn outbox sau khi relay, DLQ không giữ lâu.\n- Chưa triển khai: code chưa gửi email (TODO) và đang chặn user bị khóa; thiết kế cho phép user bị khóa reset.\n\n```mermaid\nsequenceDiagram\n    autonumber\n    participant GW as API Gateway\n    participant ID as Identity\n    participant DB as Identity DB\n    participant MQ as RabbitMQ\n    participant COM as Community\n\n    GW->>ID: POST /auth/password-reset-requests {email}\n    ID->>DB: Tìm user chưa bị xóa theo email\n    opt User tồn tại\n        ID->>ID: Sinh token ngẫu nhiên + tokenHash (SHA-256), expiresAt = +15 phút\n        ID->>DB: [Transaction] Insert password_reset_tokens (tokenHash, expiresAt)<br/>+ outbox user.password_reset_requested\n    end\n    ID-->>GW: 202 PASSWORD_RESET_REQUESTED {accepted: true}\n    Note over ID: Luôn trả 202 giống nhau, không lộ email có tồn tại hay không\n    ID-)MQ: user.password_reset_requested {userId, email, name, token, expiresAt}\n    MQ-)COM: Gửi email chứa link đặt lại mật khẩu\n```",
         "security": [],
         "requestBody": {
           "required": true,
@@ -990,9 +955,10 @@
           "Auth"
         ],
         "x-apidog-folder": "Auth",
+        "x-apidog-status": "released",
         "operationId": "resetPassword",
         "summary": "Reset password",
-        "description": "Public. Đặt lại mật khẩu bằng token một lần. Token không tồn tại hoặc đã dùng trả TOKEN_USED; hết hạn trả TOKEN_EXPIRED.",
+        "description": "Public. Đặt lại mật khẩu bằng token một lần. Token không tồn tại hoặc đã dùng trả TOKEN_USED; hết hạn trả TOKEN_EXPIRED.\n\n**Lưu ý**\n\n- Token sống 15 phút, chỉ dùng 1 lần.\n- Reset thành công thì revoke toàn bộ refresh token; access token đang có vẫn dùng được tới khi hết hạn (tối đa 15 phút).\n\n```mermaid\nsequenceDiagram\n    autonumber\n    participant GW as API Gateway\n    participant ID as Identity\n    participant DB as Identity DB\n\n    GW->>ID: POST /auth/password-resets {token, newPassword}\n    ID->>ID: Hash token (SHA-256)\n    ID->>DB: Tìm password_reset_tokens theo tokenHash\n    alt Token không tồn tại\n        ID-->>GW: 422 INVALID_TOKEN\n    else Token đã dùng / hết hạn\n        ID-->>GW: 409 TOKEN_USED / TOKEN_EXPIRED\n    end\n    ID->>DB: [Transaction] Update users.password (bcrypt)<br/>+ đánh dấu token đã dùng<br/>+ revoke toàn bộ refresh_tokens của user\n    ID-->>GW: 204\n```",
         "security": [],
         "requestBody": {
           "required": true,
@@ -1202,15 +1168,581 @@
         ]
       }
     },
+    "/auth/refresh": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "x-apidog-folder": "Auth",
+        "x-apidog-status": "designing",
+        "operationId": "refreshSession",
+        "security": [],
+        "summary": "Refresh token",
+        "description": "Public, xác thực bằng refresh token trong body. Xoay vòng refresh token và cấp access token mới; token cũ bị vô hiệu ngay khi dùng.\n\n**Lưu ý**\n\n- Chưa triển khai (P4-04).\n- Refresh token rotation: dùng lại token đã revoke thì revoke cả family (`401 TOKEN_REUSED`).\n- `status` đọc lại từ DB khi ký token mới, nên trạng thái khóa/mở khóa được cập nhật sau lần refresh.\n- Đang cân nhắc: refresh token gửi trong body JSON (khớp login/register hiện tại) hay HttpOnly cookie như `api-conventions.md` §4 và P4-04.\n\n```mermaid\nsequenceDiagram\n    autonumber\n    participant GW as API Gateway\n    participant ID as Identity\n    participant DB as Identity DB\n\n    GW->>ID: POST /auth/refresh {refreshToken}\n    ID->>DB: Tìm refresh_tokens theo tokenHash\n    alt Không tồn tại / hết hạn\n        ID-->>GW: 401 INVALID_REFRESH_TOKEN\n    else Token đã bị revoke (dùng lại token cũ)\n        ID->>DB: Revoke toàn bộ token cùng family\n        ID-->>GW: 401 TOKEN_REUSED\n    end\n    ID->>DB: Tìm user chưa bị xóa của token\n    alt User đã bị xóa\n        ID-->>GW: 401 INVALID_REFRESH_TOKEN\n    end\n    ID->>DB: [Transaction] Revoke token cũ + insert token mới (cùng family)\n    ID->>ID: Ký access token RS256 mới {sub, role, status} (status đọc lại từ DB)\n    ID-->>GW: 200 {accessToken, refreshToken}\n```",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AuthRefreshRequestDto"
+              },
+              "example": {
+                "refreshToken": "m7Qp2vN8rT4xK9sL3wY6cB1hF5jD0uE_gAqZkRoUiVs"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Làm mới phiên thành công",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code",
+                    "data"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        200
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "SESSION_REFRESHED"
+                      ]
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/AuthRefreshResponseDto"
+                    }
+                  }
+                },
+                "example": {
+                  "statusCode": 200,
+                  "code": "SESSION_REFRESHED",
+                  "data": {
+                    "accessToken": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9...",
+                    "refreshToken": "Xk3Lp9Qw2Er7Ty5Ui1Op8As4Df6Gh0Jk_zXcVbNmQwE"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Yêu cầu không hợp lệ.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        400
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "INVALID_JSON",
+                        "INVALID_REQUEST_BODY",
+                        "BAD_REQUEST"
+                      ]
+                    }
+                  }
+                },
+                "examples": {
+                  "error_1": {
+                    "summary": "INVALID_JSON",
+                    "value": {
+                      "statusCode": 400,
+                      "code": "INVALID_JSON"
+                    }
+                  },
+                  "error_2": {
+                    "summary": "INVALID_REQUEST_BODY",
+                    "value": {
+                      "statusCode": 400,
+                      "code": "INVALID_REQUEST_BODY"
+                    }
+                  },
+                  "error_3": {
+                    "summary": "BAD_REQUEST",
+                    "value": {
+                      "statusCode": 400,
+                      "code": "BAD_REQUEST"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Refresh token không hợp lệ hoặc đã bị dùng lại.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        401
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "INVALID_REFRESH_TOKEN",
+                        "TOKEN_REUSED"
+                      ]
+                    }
+                  }
+                },
+                "examples": {
+                  "error_1": {
+                    "summary": "INVALID_REFRESH_TOKEN",
+                    "value": {
+                      "statusCode": 401,
+                      "code": "INVALID_REFRESH_TOKEN"
+                    }
+                  },
+                  "error_2": {
+                    "summary": "TOKEN_REUSED",
+                    "value": {
+                      "statusCode": 401,
+                      "code": "TOKEN_REUSED"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Vi phạm ràng buộc dữ liệu; trả mã của lỗi đầu tiên.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        422
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "REFRESH_TOKEN_REQUIRED",
+                        "REFRESH_TOKEN_MUST_BE_STRING",
+                        "REFRESH_TOKEN_NOT_EMPTY",
+                        "UNEXPECTED_FIELD",
+                        "VALIDATION_FAILED"
+                      ]
+                    }
+                  }
+                },
+                "examples": {
+                  "error_1": {
+                    "summary": "REFRESH_TOKEN_REQUIRED",
+                    "value": {
+                      "statusCode": 422,
+                      "code": "REFRESH_TOKEN_REQUIRED"
+                    }
+                  },
+                  "error_2": {
+                    "summary": "REFRESH_TOKEN_MUST_BE_STRING",
+                    "value": {
+                      "statusCode": 422,
+                      "code": "REFRESH_TOKEN_MUST_BE_STRING"
+                    }
+                  },
+                  "error_3": {
+                    "summary": "REFRESH_TOKEN_NOT_EMPTY",
+                    "value": {
+                      "statusCode": 422,
+                      "code": "REFRESH_TOKEN_NOT_EMPTY"
+                    }
+                  },
+                  "error_4": {
+                    "summary": "UNEXPECTED_FIELD",
+                    "value": {
+                      "statusCode": 422,
+                      "code": "UNEXPECTED_FIELD"
+                    }
+                  },
+                  "error_5": {
+                    "summary": "VALIDATION_FAILED",
+                    "value": {
+                      "statusCode": 422,
+                      "code": "VALIDATION_FAILED"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "servers": [
+          {
+            "url": "/identity-service/api/v1",
+            "description": "Đường dẫn trực tiếp Identity-Service trên host đang chọn."
+          }
+        ]
+      }
+    },
+    "/auth/logout": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "x-apidog-folder": "Auth",
+        "x-apidog-status": "designing",
+        "operationId": "logoutSession",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "Logout",
+        "description": "Dành cho tenant, landlord và admin. Thu hồi refresh token family của phiên hiện tại. Thành công trả 204, không có body.\n\n**Lưu ý**\n\n- Chưa triển khai (P4-04).\n- Access token hiện tại vẫn dùng được tới khi hết hạn (tối đa 15 phút); client tự xóa token.\n- Đang cân nhắc: refresh token gửi trong body JSON hay HttpOnly cookie (cùng quyết định với refresh).\n\n```mermaid\nsequenceDiagram\n    autonumber\n    participant GW as API Gateway\n    participant ID as Identity\n    participant DB as Identity DB\n\n    GW->>ID: POST /auth/logout {refreshToken} + x-user-id\n    ID->>DB: Revoke refresh token family của phiên hiện tại\n    ID-->>GW: 204\n```",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AuthLogoutRequestDto"
+              },
+              "example": {
+                "refreshToken": "m7Qp2vN8rT4xK9sL3wY6cB1hF5jD0uE_gAqZkRoUiVs"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "$ref": "#/components/responses/NoContentResponse"
+          },
+          "400": {
+            "description": "Yêu cầu không hợp lệ.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        400
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "INVALID_JSON",
+                        "INVALID_REQUEST_BODY",
+                        "BAD_REQUEST"
+                      ]
+                    }
+                  }
+                },
+                "examples": {
+                  "error_1": {
+                    "summary": "INVALID_JSON",
+                    "value": {
+                      "statusCode": 400,
+                      "code": "INVALID_JSON"
+                    }
+                  },
+                  "error_2": {
+                    "summary": "INVALID_REQUEST_BODY",
+                    "value": {
+                      "statusCode": 400,
+                      "code": "INVALID_REQUEST_BODY"
+                    }
+                  },
+                  "error_3": {
+                    "summary": "BAD_REQUEST",
+                    "value": {
+                      "statusCode": 400,
+                      "code": "BAD_REQUEST"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Không xác thực được yêu cầu.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        401
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "UNAUTHORIZED"
+                      ]
+                    }
+                  }
+                },
+                "examples": {
+                  "error_1": {
+                    "summary": "UNAUTHORIZED",
+                    "value": {
+                      "statusCode": 401,
+                      "code": "UNAUTHORIZED"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Không có quyền truy cập.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        403
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "FORBIDDEN"
+                      ]
+                    }
+                  }
+                },
+                "examples": {
+                  "error_1": {
+                    "summary": "FORBIDDEN",
+                    "value": {
+                      "statusCode": 403,
+                      "code": "FORBIDDEN"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Vi phạm ràng buộc dữ liệu; trả mã của lỗi đầu tiên.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        422
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "REFRESH_TOKEN_REQUIRED",
+                        "REFRESH_TOKEN_MUST_BE_STRING",
+                        "REFRESH_TOKEN_NOT_EMPTY",
+                        "UNEXPECTED_FIELD",
+                        "VALIDATION_FAILED"
+                      ]
+                    }
+                  }
+                },
+                "examples": {
+                  "error_1": {
+                    "summary": "REFRESH_TOKEN_REQUIRED",
+                    "value": {
+                      "statusCode": 422,
+                      "code": "REFRESH_TOKEN_REQUIRED"
+                    }
+                  },
+                  "error_2": {
+                    "summary": "REFRESH_TOKEN_MUST_BE_STRING",
+                    "value": {
+                      "statusCode": 422,
+                      "code": "REFRESH_TOKEN_MUST_BE_STRING"
+                    }
+                  },
+                  "error_3": {
+                    "summary": "REFRESH_TOKEN_NOT_EMPTY",
+                    "value": {
+                      "statusCode": 422,
+                      "code": "REFRESH_TOKEN_NOT_EMPTY"
+                    }
+                  },
+                  "error_4": {
+                    "summary": "UNEXPECTED_FIELD",
+                    "value": {
+                      "statusCode": 422,
+                      "code": "UNEXPECTED_FIELD"
+                    }
+                  },
+                  "error_5": {
+                    "summary": "VALIDATION_FAILED",
+                    "value": {
+                      "statusCode": 422,
+                      "code": "VALIDATION_FAILED"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "servers": [
+          {
+            "url": "/identity-service/api/v1",
+            "description": "Đường dẫn trực tiếp Identity-Service trên host đang chọn."
+          }
+        ]
+      }
+    },
+    "/.well-known/jwks.json": {
+      "get": {
+        "tags": [
+          "Auth"
+        ],
+        "x-apidog-folder": "Auth",
+        "x-apidog-status": "released",
+        "operationId": "getJwks",
+        "security": [],
+        "summary": "Get JWKS",
+        "description": "Public. Trả public key RS256 để API Gateway và các service verify access token.\n\n**Lưu ý**\n\n- Response hiện đang bị bọc `{statusCode, code, data}` bởi `ResponseTransformInterceptor`. Chuẩn JWKS (RFC 7517) và thư viện `jose` mà API Gateway dùng (`createRemoteJWKSet`) cần `keys` ở cấp ngoài cùng, nên API Gateway không đọc được key và không verify được JWT. Cần sửa Identity-Service để endpoint này trả `{keys}` không bọc.\n- API Gateway cache key; khi xoay key, giữ key cũ trong JWKS tới khi mọi access token ký bằng key cũ hết hạn.\n\n```mermaid\nsequenceDiagram\n    autonumber\n    participant GW as API Gateway\n    participant ID as Identity\n\n    Note over GW: Lúc khởi động, khi cache hết hạn<br/>hoặc gặp kid lạ\n    GW->>ID: GET /.well-known/jwks.json\n    ID-->>GW: 200 {keys: [{kty, n, e, use: sig, alg: RS256, kid}]}\n    GW->>GW: Cache public key để verify JWT\n```",
+        "responses": {
+          "200": {
+            "description": "Danh sách public key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code",
+                    "data"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        200
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "SUCCESS"
+                      ]
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/AuthJwksResponseDto"
+                    }
+                  }
+                },
+                "example": {
+                  "statusCode": 200,
+                  "code": "SUCCESS",
+                  "data": {
+                    "keys": [
+                      {
+                        "kty": "RSA",
+                        "n": "np-J6FU-Jan_SEoockjWWE8WG9AIqdV-5JAsEOY3w84f0Cp8z3h72vhUAj7BqnHpeMDVZFjIGzhtcMBKBaUvAP-SEP7kakhY9ohz8TQau8lg4Ee5QKwdOuogqk6x6P6KHkc_sZFjCRYDxYpy7cqk3c2kqd6x1kNqbevZAowLsq8UnHsOgb59UYHJUe0BkrRe7yZaHK2laTzslQOMQ-JhXZd848ZKxwrGSDM645zxdvyeK_fPakgS76tzesi9qQ5j7CMbukvsLUV6gjmj7onVrQk8qN61ulOHpTqqbTZQIUbThtAE8lygqK_RO5nvoz80QDxBzXwRBQEq5CuHtSsK6w",
+                        "e": "AQAB",
+                        "use": "sig",
+                        "alg": "RS256",
+                        "kid": "rentify-identity"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "servers": [
+          {
+            "url": "/identity-service/api/v1",
+            "description": "Đường dẫn trực tiếp Identity-Service trên host đang chọn."
+          }
+        ]
+      }
+    },
     "/me": {
       "get": {
         "tags": [
           "User"
         ],
         "x-apidog-folder": "User",
+        "x-apidog-status": "released",
         "operationId": "getCurrentUser",
         "summary": "Get current user",
-        "description": "Lấy hồ sơ người dùng hiện tại. Yêu cầu Bearer access token.",
+        "description": "Lấy hồ sơ người dùng hiện tại. Yêu cầu Bearer access token.\n\n**Lưu ý**\n\n- `payoutAccount.accountNumber` luôn bị che (`**xxxxx`).\n\n```mermaid\nsequenceDiagram\n    autonumber\n    participant GW as API Gateway\n    participant ID as Identity\n    participant DB as Identity DB\n\n    GW->>ID: GET /me + x-user-id\n    ID->>DB: Đọc users + landlord_profiles theo userId\n    ID->>ID: Che accountNumber thành \"**xxxxx\"\n    ID-->>GW: 200 CURRENT_USER_PROFILE_FETCHED {id, name, email, phone, role, status, payoutAccount}\n```",
         "security": [
           {
             "BearerAuth": []
@@ -1431,6 +1963,7 @@
           "User"
         ],
         "x-apidog-folder": "User",
+        "x-apidog-status": "released",
         "operationId": "updateCurrentUser",
         "security": [
           {
@@ -1438,7 +1971,7 @@
           }
         ],
         "summary": "Update current user",
-        "description": "Cập nhật hồ sơ hiện tại. Bắt buộc name, phone, payoutAccount (có thể null). Chỉ landlord được gửi object payoutAccount. Số tài khoản trả về được mask; phone đổi từ +84 sang 0.",
+        "description": "Cập nhật hồ sơ hiện tại. Bắt buộc name, phone, payoutAccount (có thể null). Chỉ landlord được gửi object payoutAccount. Số tài khoản trả về được mask; phone đổi từ +84 sang 0.\n\n**Lưu ý**\n\n- Ngữ nghĩa thay toàn bộ: bắt buộc gửi `name`, `phone`, `payoutAccount`; gửi `payoutAccount: null` để xóa.\n- Chỉ landlord được có `payoutAccount`.\n- Chưa triển khai: publish `user.updated`, `landlord.payout_account_updated`. Event payout là tùy chọn, có thể bỏ nếu chấp nhận cache của Payment cũ tối đa 5 phút.\n\n```mermaid\nsequenceDiagram\n    autonumber\n    participant GW as API Gateway\n    participant ID as Identity\n    participant DB as Identity DB\n    participant MQ as RabbitMQ\n    participant TEN as Tenancy\n    participant COM as Community\n    participant PAY as Payment\n\n    GW->>ID: PATCH /me {name, phone, payoutAccount} + x-user-id, x-user-role\n    alt payoutAccount khác null nhưng role không phải landlord\n        ID-->>GW: 422 USER_UPDATE_PAYOUT_NOT_ALLOWED\n    end\n    ID->>DB: Kiểm tra phone trùng với user khác\n    alt Trùng phone\n        ID-->>GW: 409 DUPLICATE_PHONE\n    end\n    ID->>DB: [Transaction] Update users (name, phone)<br/>+ upsert landlord_profiles (bankCode, accountNumber, accountName)<br/>+ outbox user.updated (nếu name/phone đổi)<br/>+ outbox landlord.payout_account_updated (nếu payoutAccount đổi)\n    ID-->>GW: 200 CURRENT_USER_PROFILE_UPDATED {id, name, phone, payoutAccount}\n    opt name/phone đổi\n        ID-)MQ: user.updated {userId, name, phone}\n        MQ-)TEN: Cập nhật user snapshot\n        MQ-)COM: Cập nhật user snapshot\n    end\n    opt payoutAccount đổi\n        ID-)MQ: landlord.payout_account_updated {userId}\n        MQ-)PAY: Xóa cache payout của landlord\n    end\n```",
         "requestBody": {
           "required": true,
           "content": {
@@ -1944,6 +2477,7 @@
           "User"
         ],
         "x-apidog-folder": "User",
+        "x-apidog-status": "released",
         "operationId": "changeCurrentUserPassword",
         "security": [
           {
@@ -1951,7 +2485,7 @@
           }
         ],
         "summary": "Change password",
-        "description": "Đổi mật khẩu hiện tại; thu hồi refresh token. Thành công trả 204, không có body.",
+        "description": "Đổi mật khẩu hiện tại; thu hồi refresh token. Thành công trả 204, không có body.\n\n**Lưu ý**\n\n- Revoke toàn bộ refresh token, kể cả phiên hiện tại: client nên đăng nhập lại sau khi đổi mật khẩu.\n\n```mermaid\nsequenceDiagram\n    autonumber\n    participant GW as API Gateway\n    participant ID as Identity\n    participant DB as Identity DB\n\n    GW->>ID: PUT /me/password {currentPassword, newPassword, confirmPassword} + x-user-id\n    ID->>DB: Đọc users theo userId\n    ID->>ID: bcrypt compare currentPassword\n    alt Sai mật khẩu hiện tại\n        ID-->>GW: 401 USER_CHANGE_PASSWORD_INVALID_CURRENT\n    end\n    ID->>DB: [Transaction] Update users.password (bcrypt)<br/>+ revoke toàn bộ refresh_tokens của user\n    ID-->>GW: 204\n```",
         "requestBody": {
           "required": true,
           "content": {
@@ -2307,6 +2841,7 @@
           "User"
         ],
         "x-apidog-folder": "User",
+        "x-apidog-status": "released",
         "operationId": "getUsersAdmin",
         "security": [
           {
@@ -2314,7 +2849,7 @@
           }
         ],
         "summary": "List users",
-        "description": "Chỉ admin. Danh sách JSON và phân trang offset. Lọc bằng role, status ở query cấp ngoài; q tìm theo tên/email/điện thoại. Không hỗ trợ filter object hoặc format xuất tệp.",
+        "description": "Chỉ admin. Danh sách JSON và phân trang offset. Lọc bằng role, status ở query cấp ngoài; q tìm theo tên/email/điện thoại. Không hỗ trợ filter object hoặc format xuất tệp.\n\n```mermaid\nsequenceDiagram\n    autonumber\n    participant GW as API Gateway\n    participant ID as Identity\n    participant DB as Identity DB\n\n    GW->>ID: GET /users?pageNo&pageSize&sort&role&status&q\n    ID->>DB: Query users chưa bị xóa (filter role/status, q theo name/email/phone, sort, offset)<br/>+ count tổng\n    ID-->>GW: 200 USER_LIST_FETCHED [{id, name, email, phone, role, status}] + pagination\n```",
         "parameters": [
           {
             "name": "sort",
@@ -2768,6 +3303,7 @@
           "User"
         ],
         "x-apidog-folder": "User",
+        "x-apidog-status": "released",
         "operationId": "getUserById",
         "security": [
           {
@@ -2775,7 +3311,7 @@
           }
         ],
         "summary": "Get user",
-        "description": "Chỉ admin. Lấy chi tiết tài khoản, thông tin khóa, payoutAccount đã mask và số lượng tòa nhà/hợp đồng.",
+        "description": "Chỉ admin. Lấy chi tiết tài khoản, thông tin khóa, payoutAccount đã mask và số lượng tòa nhà/hợp đồng.\n\n**Lưu ý**\n\n- `buildingCount`, `activeContractCount` lấy từ Tenancy qua HTTP nội bộ; Tenancy lỗi hoặc timeout thì trả `null`.\n- Chưa triển khai: code đang trả cố định `0`; Tenancy cần build `GET /internal/users/{userId}/stats`.\n\n```mermaid\nsequenceDiagram\n    autonumber\n    participant GW as API Gateway\n    participant ID as Identity\n    participant DB as Identity DB\n    participant TEN as Tenancy\n\n    GW->>ID: GET /users/{userId}\n    ID->>DB: Đọc users + landlord_profiles theo userId\n    alt Không tìm thấy\n        ID-->>GW: 404 USER_NOT_FOUND\n    end\n    ID->>TEN: GET /internal/users/{userId}/stats (service token, timeout 3s)\n    alt Tenancy trả kết quả\n        TEN-->>ID: 200 {buildingCount, activeContractCount}\n    else Tenancy lỗi / timeout\n        ID->>ID: buildingCount = null, activeContractCount = null\n    end\n    ID-->>GW: 200 USER_DETAIL_FETCHED {..., lockReason, lockedAt, payoutAccount, buildingCount, activeContractCount}\n```",
         "parameters": [
           {
             "name": "userId",
@@ -3007,6 +3543,7 @@
           "User"
         ],
         "x-apidog-folder": "User",
+        "x-apidog-status": "released",
         "operationId": "updateUserById",
         "security": [
           {
@@ -3014,7 +3551,7 @@
           }
         ],
         "summary": "Update user",
-        "description": "Chỉ admin. Cập nhật ít nhất một trong name hoặc phone; null được bỏ qua.",
+        "description": "Chỉ admin. Cập nhật ít nhất một trong name hoặc phone; null được bỏ qua.\n\n**Lưu ý**\n\n- Không đổi được `email`, `role`, `status` qua API này; khóa/mở khóa dùng API lock/unlock.\n- Chưa triển khai: publish `user.updated`.\n\n```mermaid\nsequenceDiagram\n    autonumber\n    participant GW as API Gateway\n    participant ID as Identity\n    participant DB as Identity DB\n    participant MQ as RabbitMQ\n    participant TEN as Tenancy\n    participant COM as Community\n\n    GW->>ID: PATCH /users/{userId} {name?, phone?}\n    ID->>DB: Đọc user, kiểm tra phone trùng\n    alt Không tìm thấy\n        ID-->>GW: 404 USER_NOT_FOUND\n    else Trùng phone\n        ID-->>GW: 409 DUPLICATE_PHONE\n    end\n    ID->>DB: [Transaction] Update users (name, phone)<br/>+ outbox user.updated\n    ID-->>GW: 200 USER_UPDATED {userId, name, phone, email, status}\n    ID-)MQ: user.updated {userId, name, phone}\n    MQ-)TEN: Cập nhật user snapshot\n    MQ-)COM: Cập nhật user snapshot\n```",
         "parameters": [
           {
             "name": "userId",
@@ -3418,6 +3955,7 @@
           "User"
         ],
         "x-apidog-folder": "User",
+        "x-apidog-status": "released",
         "operationId": "deleteUserById",
         "security": [
           {
@@ -3425,7 +3963,7 @@
           }
         ],
         "summary": "Delete user",
-        "description": "Chỉ admin. Xóa mềm tài khoản; không thể tự xóa. Thành công trả 204, không có body.",
+        "description": "Chỉ admin. Xóa mềm tài khoản; không thể tự xóa. Thành công trả 204, không có body.\n\n**Lưu ý**\n\n- Xóa mềm (`is_deleted = true`); user đã xóa không đăng nhập được.\n- Không xóa được user còn HĐ hiệu lực. Không hỏi được Tenancy thì từ chối xóa (`503`, fail-closed).\n- Chưa triển khai: kiểm tra qua Tenancy, mã `409 USER_DELETE_HAS_ACTIVE_CONTRACT`, `503 SERVICE_UNAVAILABLE` và publish `user.deleted`.\n\n```mermaid\nsequenceDiagram\n    autonumber\n    participant GW as API Gateway\n    participant ID as Identity\n    participant DB as Identity DB\n    participant MQ as RabbitMQ\n    participant TEN as Tenancy\n    participant COM as Community\n\n    GW->>ID: DELETE /users/{userId} + x-user-id (admin)\n    alt Admin tự xóa chính mình\n        ID-->>GW: 400 USER_DELETE_CANNOT_SELF\n    end\n    ID->>DB: Đọc user\n    alt Không tìm thấy\n        ID-->>GW: 404 USER_NOT_FOUND\n    else Đã bị xóa\n        ID-->>GW: 409 USER_DELETE_ALREADY_DELETED\n    end\n    ID->>TEN: GET /internal/users/{userId}/stats (service token, timeout 3s)\n    alt Tenancy lỗi / timeout (fail-closed)\n        ID-->>GW: 503 SERVICE_UNAVAILABLE\n    end\n    TEN-->>ID: 200 {buildingCount, activeContractCount}\n    alt activeContractCount > 0\n        ID-->>GW: 409 USER_DELETE_HAS_ACTIVE_CONTRACT\n    end\n    ID->>DB: [Transaction] Soft delete users (is_deleted=true) + landlord_profiles<br/>+ revoke toàn bộ refresh_tokens<br/>+ outbox user.deleted\n    ID-->>GW: 204\n    ID-)MQ: user.deleted {userId, role}\n    MQ-)TEN: Ẩn user, không cho gán vào HĐ mới\n    MQ-)COM: Ngắt socket, xóa push devices\n```",
         "parameters": [
           {
             "name": "userId",
@@ -3658,6 +4196,7 @@
           "User"
         ],
         "x-apidog-folder": "User",
+        "x-apidog-status": "released",
         "operationId": "lockUser",
         "security": [
           {
@@ -3665,7 +4204,7 @@
           }
         ],
         "summary": "Lock user",
-        "description": "Chỉ admin. Khóa tài khoản và thu hồi refresh token; không thể tự khóa.",
+        "description": "Chỉ admin. Khóa tài khoản; không thể tự khóa. User bị khóa vẫn đăng nhập được nhưng bị chặn một số chức năng.\n\n**Lưu ý**\n\n- User bị khóa **vẫn đăng nhập được**. Chặn chức năng dựa vào header `x-user-status`; token cấp trước khi khóa còn mang `status=active` tối đa 15 phút.\n- Event `user.locked` chỉ để Tenancy đổi dữ liệu của mình (ẩn BĐS, tạm ngưng HĐ của landlord).\n- Đang cân nhắc (thuộc Tenancy): landlord bị khóa quá grace period thì hủy HĐ và hoàn cọc.\n- Chưa triển khai: publish `user.locked`; code hiện vẫn revoke refresh token khi khóa, cần bỏ.\n\n```mermaid\nsequenceDiagram\n    autonumber\n    participant GW as API Gateway\n    participant ID as Identity\n    participant DB as Identity DB\n    participant MQ as RabbitMQ\n    participant TEN as Tenancy\n    participant COM as Community\n\n    GW->>ID: POST /users/{userId}/lock {lockReason} + x-user-id (admin)\n    alt Admin tự khóa chính mình\n        ID-->>GW: 400 USER_LOCK_CANNOT_SELF\n    end\n    ID->>DB: Đọc user\n    alt Không tìm thấy\n        ID-->>GW: 404 USER_NOT_FOUND\n    else Đã bị khóa\n        ID-->>GW: 409 USER_LOCK_ALREADY_LOCKED\n    end\n    ID->>DB: [Transaction] Update users (status=locked, lockReason, lockedAt)<br/>+ outbox user.locked\n    Note over ID: Không revoke refresh token:<br/>user bị khóa vẫn đăng nhập được\n    ID-->>GW: 200 USER_ACCOUNT_LOCKED {userId, status, lockReason, lockedAt}\n    ID-)MQ: user.locked {userId, role, status, lockReason, lockedAt}\n    MQ-)TEN: Nếu role=landlord: ẩn BĐS khỏi tìm kiếm, tạm ngưng HĐ\n    MQ-)COM: Xử lý dữ liệu liên quan (nếu có)\n    Note over TEN,COM: Chặn thao tác của user bị khóa dựa vào header x-user-status,<br/>không dựa vào event này\n```",
         "parameters": [
           {
             "name": "userId",
@@ -4037,6 +4576,7 @@
           "User"
         ],
         "x-apidog-folder": "User",
+        "x-apidog-status": "released",
         "operationId": "unlockUser",
         "security": [
           {
@@ -4044,7 +4584,7 @@
           }
         ],
         "summary": "Unlock user",
-        "description": "Chỉ admin. Chuyển locked sang active, trả lockedAt: null.",
+        "description": "Chỉ admin. Chuyển locked sang active, trả lockedAt: null.\n\n**Lưu ý**\n\n- Token cấp trước khi mở khóa còn mang `status=locked` tối đa 15 phút.\n- Chưa triển khai: publish `user.unlocked`.\n\n```mermaid\nsequenceDiagram\n    autonumber\n    participant GW as API Gateway\n    participant ID as Identity\n    participant DB as Identity DB\n    participant MQ as RabbitMQ\n    participant TEN as Tenancy\n    participant COM as Community\n\n    GW->>ID: POST /users/{userId}/unlock\n    ID->>DB: Đọc user\n    alt Không tìm thấy\n        ID-->>GW: 404 USER_NOT_FOUND\n    else Chưa bị khóa\n        ID-->>GW: 409 USER_UNLOCK_NOT_LOCKED\n    end\n    ID->>DB: [Transaction] Update users (status=active, lockReason=null, lockedAt=null)<br/>+ outbox user.unlocked\n    ID-->>GW: 200 USER_ACCOUNT_UNLOCKED {userId, status, lockedAt: null}\n    ID-)MQ: user.unlocked {userId, status}\n    MQ-)TEN: Nếu role=landlord: hiện lại BĐS, khôi phục HĐ đang tạm ngưng\n    MQ-)COM: Xử lý dữ liệu liên quan (nếu có)\n```",
         "parameters": [
           {
             "name": "userId",
@@ -4308,6 +4848,7 @@
           "Notification"
         ],
         "x-apidog-folder": "PushDevice",
+        "x-apidog-status": "designing",
         "operationId": "postMePushDevices",
         "security": [
           {
@@ -4445,6 +4986,7 @@
           "Notification"
         ],
         "x-apidog-folder": "PushDevice",
+        "x-apidog-status": "designing",
         "operationId": "deleteMePushDevicesDeviceid",
         "security": [
           {
@@ -4492,6 +5034,7 @@
           "Operation"
         ],
         "x-apidog-folder": "Media",
+        "x-apidog-status": "designing",
         "operationId": "postMediaPresignUpload",
         "security": [
           {
@@ -4656,6 +5199,7 @@
           "Operation"
         ],
         "x-apidog-folder": "Media",
+        "x-apidog-status": "designing",
         "operationId": "postMediaMediaidCompleteUpload",
         "security": [
           {
@@ -4827,6 +5371,7 @@
           "Operation"
         ],
         "x-apidog-folder": "Media",
+        "x-apidog-status": "designing",
         "operationId": "getMediaMediaid",
         "security": [
           {
@@ -4933,6 +5478,7 @@
           "Operation"
         ],
         "x-apidog-folder": "Media",
+        "x-apidog-status": "designing",
         "operationId": "deleteMediaMediaid",
         "security": [
           {
@@ -5023,6 +5569,7 @@
           "Property"
         ],
         "x-apidog-folder": "Building",
+        "x-apidog-status": "designing",
         "operationId": "getBuildings",
         "summary": "Search public buildings",
         "description": "public. Tìm tòa nhà trên sàn công khai. Lỗi nghiệp vụ: 422 VALIDATION FAILED · 429 RATE LIMIT EXCEEDED.",
@@ -5248,6 +5795,7 @@
           "Property"
         ],
         "x-apidog-folder": "Building",
+        "x-apidog-status": "designing",
         "operationId": "postBuildings",
         "security": [
           {
@@ -5357,6 +5905,7 @@
           "Property"
         ],
         "x-apidog-folder": "Building",
+        "x-apidog-status": "designing",
         "operationId": "getMeBuildings",
         "security": [
           {
@@ -5589,6 +6138,7 @@
           "Property"
         ],
         "x-apidog-folder": "Building",
+        "x-apidog-status": "designing",
         "operationId": "getAdminBuildings",
         "security": [
           {
@@ -5837,6 +6387,7 @@
           "Property"
         ],
         "x-apidog-folder": "Building",
+        "x-apidog-status": "designing",
         "operationId": "getBuildingsBuildingid",
         "summary": "Get public building details",
         "description": "public. Đọc tòa nhà (chế độ công khai). Lỗi nghiệp vụ: 404 NOT FOUND.",
@@ -5920,6 +6471,7 @@
           "Property"
         ],
         "x-apidog-folder": "Building",
+        "x-apidog-status": "designing",
         "operationId": "patchBuildingsBuildingid",
         "security": [
           {
@@ -6065,6 +6617,7 @@
           "Property"
         ],
         "x-apidog-folder": "Building",
+        "x-apidog-status": "designing",
         "operationId": "deleteBuildingsBuildingid",
         "security": [
           {
@@ -6155,6 +6708,7 @@
           "Property"
         ],
         "x-apidog-folder": "Building",
+        "x-apidog-status": "designing",
         "operationId": "putBuildingVietQrConfig",
         "security": [
           {
@@ -6353,6 +6907,7 @@
           "Billing"
         ],
         "x-apidog-folder": "RatePolicy",
+        "x-apidog-status": "designing",
         "operationId": "postBuildingRatePoliciesBatch",
         "security": [
           {
@@ -6566,6 +7121,7 @@
           "Property"
         ],
         "x-apidog-folder": "Building",
+        "x-apidog-status": "designing",
         "operationId": "getMeBuildingsBuildingid",
         "security": [
           {
@@ -6664,6 +7220,7 @@
           "Property"
         ],
         "x-apidog-folder": "Building",
+        "x-apidog-status": "designing",
         "operationId": "postBuildingsBuildingidApprove",
         "security": [
           {
@@ -6809,6 +7366,7 @@
           "Property"
         ],
         "x-apidog-folder": "Building",
+        "x-apidog-status": "designing",
         "operationId": "postBuildingsBuildingidReject",
         "security": [
           {
@@ -7000,6 +7558,7 @@
           "Property"
         ],
         "x-apidog-folder": "Building",
+        "x-apidog-status": "designing",
         "operationId": "getAdminBuildingsBuildingid",
         "security": [
           {
@@ -7104,6 +7663,7 @@
           "Property"
         ],
         "x-apidog-folder": "Room",
+        "x-apidog-status": "designing",
         "operationId": "getRooms",
         "summary": "Search public rooms",
         "description": "public. Tìm phòng trên sàn công khai. Lỗi nghiệp vụ: 422 VALIDATION FAILED · 429 RATE LIMIT EXCEEDED.",
@@ -7347,6 +7907,7 @@
           "Property"
         ],
         "x-apidog-folder": "Room",
+        "x-apidog-status": "designing",
         "operationId": "postRooms",
         "security": [
           {
@@ -7544,6 +8105,7 @@
           "Property"
         ],
         "x-apidog-folder": "Room",
+        "x-apidog-status": "designing",
         "operationId": "getMeRooms",
         "security": [
           {
@@ -7780,6 +8342,7 @@
           "Property"
         ],
         "x-apidog-folder": "Room",
+        "x-apidog-status": "designing",
         "operationId": "getMeRoomHub",
         "security": [
           {
@@ -7880,6 +8443,7 @@
           "Property"
         ],
         "x-apidog-folder": "Room",
+        "x-apidog-status": "designing",
         "operationId": "getRoomsRoomid",
         "summary": "Get room details",
         "description": "public, landlord, tenant, admin. Đọc một phòng. Lỗi nghiệp vụ: 404 NOT FOUND · 403 FORBIDDEN.",
@@ -7975,6 +8539,7 @@
           "Property"
         ],
         "x-apidog-folder": "Room",
+        "x-apidog-status": "designing",
         "operationId": "patchRoomsRoomid",
         "security": [
           {
@@ -8081,6 +8646,7 @@
           "Property"
         ],
         "x-apidog-folder": "Room",
+        "x-apidog-status": "designing",
         "operationId": "deleteRoomsRoomid",
         "security": [
           {
@@ -8171,6 +8737,7 @@
           "Property"
         ],
         "x-apidog-folder": "Room",
+        "x-apidog-status": "designing",
         "operationId": "postRoomsRoomidMarkReady",
         "security": [
           {
@@ -8299,6 +8866,7 @@
           "Property"
         ],
         "x-apidog-folder": "FavoriteRoom",
+        "x-apidog-status": "designing",
         "operationId": "getMeFavoriteRooms",
         "security": [
           {
@@ -8485,6 +9053,7 @@
           "Property"
         ],
         "x-apidog-folder": "FavoriteRoom",
+        "x-apidog-status": "designing",
         "operationId": "postMeFavoriteRooms",
         "security": [
           {
@@ -8627,6 +9196,7 @@
           "Property"
         ],
         "x-apidog-folder": "FavoriteRoom",
+        "x-apidog-status": "designing",
         "operationId": "deleteMeFavoriteRoomsRoomid",
         "security": [
           {
@@ -8677,6 +9247,7 @@
           "Matching"
         ],
         "x-apidog-folder": "RoommateProfile",
+        "x-apidog-status": "designing",
         "operationId": "getRoommateProfiles",
         "security": [
           {
@@ -8857,6 +9428,7 @@
           "Matching"
         ],
         "x-apidog-folder": "RoommateProfile",
+        "x-apidog-status": "designing",
         "operationId": "getRoommateProfilesRoommateprofileid",
         "security": [
           {
@@ -8996,6 +9568,7 @@
           "Matching"
         ],
         "x-apidog-folder": "RoommateProfile",
+        "x-apidog-status": "designing",
         "operationId": "getMeRoommateProfile",
         "security": [
           {
@@ -9077,6 +9650,7 @@
           "Matching"
         ],
         "x-apidog-folder": "RoommateProfile",
+        "x-apidog-status": "designing",
         "operationId": "putMeRoommateProfile",
         "security": [
           {
@@ -9223,6 +9797,7 @@
           "Matching"
         ],
         "x-apidog-folder": "MatchRequest",
+        "x-apidog-status": "designing",
         "operationId": "getMatchRequests",
         "security": [
           {
@@ -9415,6 +9990,7 @@
           "Matching"
         ],
         "x-apidog-folder": "MatchRequest",
+        "x-apidog-status": "designing",
         "operationId": "postMatchRequests",
         "security": [
           {
@@ -9603,6 +10179,7 @@
           "Matching"
         ],
         "x-apidog-folder": "MatchRequest",
+        "x-apidog-status": "designing",
         "operationId": "postMatchRequestsMatchrequestidAcceptRequest",
         "security": [
           {
@@ -9732,6 +10309,7 @@
           "Matching"
         ],
         "x-apidog-folder": "MatchRequest",
+        "x-apidog-status": "designing",
         "operationId": "postMatchRequestsMatchrequestidRejectRequest",
         "security": [
           {
@@ -9860,6 +10438,7 @@
           "Matching"
         ],
         "x-apidog-folder": "MatchRequest",
+        "x-apidog-status": "designing",
         "operationId": "postMatchRequestsMatchrequestidWithdrawRequest",
         "security": [
           {
@@ -9997,6 +10576,7 @@
           "Billing"
         ],
         "x-apidog-folder": "RatePolicy",
+        "x-apidog-status": "designing",
         "operationId": "getRatePolicies",
         "security": [
           {
@@ -10181,6 +10761,7 @@
           "Billing"
         ],
         "x-apidog-folder": "RatePolicy",
+        "x-apidog-status": "designing",
         "operationId": "postRatePolicies",
         "security": [
           {
@@ -10379,6 +10960,7 @@
           "Billing"
         ],
         "x-apidog-folder": "RatePolicy",
+        "x-apidog-status": "designing",
         "operationId": "patchRatePoliciesRatepolicyid",
         "security": [
           {
@@ -10523,6 +11105,7 @@
           "Billing"
         ],
         "x-apidog-folder": "RatePolicy",
+        "x-apidog-status": "designing",
         "operationId": "postRatePoliciesRatepolicyidDeactivatePolicy",
         "security": [
           {
@@ -10651,6 +11234,7 @@
           "Billing"
         ],
         "x-apidog-folder": "BillingSetting",
+        "x-apidog-status": "designing",
         "operationId": "getBillingSettings",
         "security": [
           {
@@ -10832,6 +11416,7 @@
           "Billing"
         ],
         "x-apidog-folder": "BillingSetting",
+        "x-apidog-status": "designing",
         "operationId": "postBillingSettings",
         "security": [
           {
@@ -11030,6 +11615,7 @@
           "Billing"
         ],
         "x-apidog-folder": "BillingSetting",
+        "x-apidog-status": "designing",
         "operationId": "patchBillingSettingsBillingsettingid",
         "security": [
           {
@@ -11183,6 +11769,7 @@
           "Contract"
         ],
         "x-apidog-folder": "ContractTemplate",
+        "x-apidog-status": "designing",
         "operationId": "getContractTemplates",
         "security": [
           {
@@ -11338,6 +11925,7 @@
           "Contract"
         ],
         "x-apidog-folder": "ContractTemplate",
+        "x-apidog-status": "designing",
         "operationId": "getContractTemplatesTemplatekey",
         "security": [
           {
@@ -11431,6 +12019,7 @@
           "Contract"
         ],
         "x-apidog-folder": "Contract",
+        "x-apidog-status": "designing",
         "operationId": "getMeContracts",
         "security": [
           {
@@ -11650,6 +12239,7 @@
           "Contract"
         ],
         "x-apidog-folder": "Contract",
+        "x-apidog-status": "designing",
         "operationId": "getContracts",
         "security": [
           {
@@ -11876,6 +12466,7 @@
           "Contract"
         ],
         "x-apidog-folder": "Contract",
+        "x-apidog-status": "designing",
         "operationId": "postContracts",
         "security": [
           {
@@ -12072,6 +12663,7 @@
           "Contract"
         ],
         "x-apidog-folder": "Contract",
+        "x-apidog-status": "designing",
         "operationId": "getContractsContractid",
         "security": [
           {
@@ -12167,6 +12759,7 @@
           "Contract"
         ],
         "x-apidog-folder": "Contract",
+        "x-apidog-status": "designing",
         "operationId": "patchContractsContractid",
         "security": [
           {
@@ -12312,6 +12905,7 @@
           "Contract"
         ],
         "x-apidog-folder": "Contract",
+        "x-apidog-status": "designing",
         "operationId": "putContractsContractidApplyTemplate",
         "security": [
           {
@@ -12502,6 +13096,7 @@
           "Contract"
         ],
         "x-apidog-folder": "Contract",
+        "x-apidog-status": "designing",
         "operationId": "postContractsContractidGenerateDraftDocument",
         "security": [
           {
@@ -12701,6 +13296,7 @@
           "Contract"
         ],
         "x-apidog-folder": "Contract",
+        "x-apidog-status": "designing",
         "operationId": "postContractsContractidActivateContract",
         "security": [
           {
@@ -12854,6 +13450,7 @@
           "Contract"
         ],
         "x-apidog-folder": "Contract",
+        "x-apidog-status": "designing",
         "operationId": "postContractsContractidCompleteCheckout",
         "security": [
           {
@@ -13044,6 +13641,7 @@
           "Contract"
         ],
         "x-apidog-folder": "Contract",
+        "x-apidog-status": "designing",
         "operationId": "postContractDepositSettlement",
         "security": [
           {
@@ -13260,6 +13858,7 @@
           "Contract"
         ],
         "x-apidog-folder": "ContractMember",
+        "x-apidog-status": "designing",
         "operationId": "postContractMembers",
         "security": [
           {
@@ -13449,6 +14048,7 @@
           "Contract"
         ],
         "x-apidog-folder": "ContractMember",
+        "x-apidog-status": "designing",
         "operationId": "getContractMembers",
         "security": [
           {
@@ -13713,6 +14313,7 @@
           "Contract"
         ],
         "x-apidog-folder": "ContractMember",
+        "x-apidog-status": "designing",
         "operationId": "patchContractMembersContractmemberid",
         "security": [
           {
@@ -13857,6 +14458,7 @@
           "Contract"
         ],
         "x-apidog-folder": "ContractMember",
+        "x-apidog-status": "designing",
         "operationId": "postContractMembersContractmemberidLeaveContract",
         "security": [
           {
@@ -14046,6 +14648,7 @@
           "Billing"
         ],
         "x-apidog-folder": "MeterReading",
+        "x-apidog-status": "designing",
         "operationId": "getMeterReadings",
         "security": [
           {
@@ -14232,6 +14835,7 @@
           "Billing"
         ],
         "x-apidog-folder": "MeterReading",
+        "x-apidog-status": "designing",
         "operationId": "postMeterReadings",
         "security": [
           {
@@ -14434,6 +15038,7 @@
           "Billing"
         ],
         "x-apidog-folder": "MeterReading",
+        "x-apidog-status": "designing",
         "operationId": "postBulkMeterReadings",
         "security": [
           {
@@ -14620,6 +15225,7 @@
           "Billing"
         ],
         "x-apidog-folder": "MeterReading",
+        "x-apidog-status": "designing",
         "operationId": "postMeterReadingsPreviewOcrResult",
         "security": [
           {
@@ -14767,6 +15373,7 @@
           "Billing"
         ],
         "x-apidog-folder": "Invoice",
+        "x-apidog-status": "designing",
         "operationId": "getInvoicesTenant",
         "security": [
           {
@@ -14991,6 +15598,7 @@
           "Billing"
         ],
         "x-apidog-folder": "Invoice",
+        "x-apidog-status": "designing",
         "operationId": "getInvoices",
         "security": [
           {
@@ -15222,6 +15830,7 @@
           "Billing"
         ],
         "x-apidog-folder": "Invoice",
+        "x-apidog-status": "designing",
         "operationId": "createSettlementInvoice",
         "security": [
           {
@@ -15453,6 +16062,7 @@
           "Billing"
         ],
         "x-apidog-folder": "Invoice",
+        "x-apidog-status": "designing",
         "operationId": "getOverdueDebts",
         "security": [
           {
@@ -15587,6 +16197,7 @@
           "Billing"
         ],
         "x-apidog-folder": "Invoice",
+        "x-apidog-status": "designing",
         "operationId": "getInvoicesInvoiceid",
         "security": [
           {
@@ -15693,6 +16304,7 @@
           "Billing"
         ],
         "x-apidog-folder": "Invoice",
+        "x-apidog-status": "designing",
         "operationId": "patchInvoicesInvoiceid",
         "security": [
           {
@@ -15894,6 +16506,7 @@
           "Billing"
         ],
         "x-apidog-folder": "Invoice",
+        "x-apidog-status": "designing",
         "operationId": "postInvoicesIssueInvoice",
         "security": [
           {
@@ -16106,6 +16719,7 @@
           "Billing"
         ],
         "x-apidog-folder": "Invoice",
+        "x-apidog-status": "designing",
         "operationId": "postInvoicesInvoiceidCancelInvoice",
         "security": [
           {
@@ -16259,6 +16873,7 @@
           "Billing"
         ],
         "x-apidog-folder": "Invoice",
+        "x-apidog-status": "designing",
         "operationId": "postInvoicesSendReminder",
         "security": [
           {
@@ -16469,6 +17084,7 @@
           "Billing"
         ],
         "x-apidog-folder": "Payment",
+        "x-apidog-status": "designing",
         "operationId": "getMePayments",
         "security": [
           {
@@ -16687,6 +17303,7 @@
           "Billing"
         ],
         "x-apidog-folder": "Payment",
+        "x-apidog-status": "designing",
         "operationId": "getPayments",
         "security": [
           {
@@ -16909,6 +17526,7 @@
           "Billing"
         ],
         "x-apidog-folder": "Payment",
+        "x-apidog-status": "designing",
         "operationId": "postPaymentsCreateIntent",
         "security": [
           {
@@ -17077,6 +17695,7 @@
           "Billing"
         ],
         "x-apidog-folder": "Payment",
+        "x-apidog-status": "designing",
         "operationId": "postPaymentsRecordCashPayment",
         "security": [
           {
@@ -17292,6 +17911,7 @@
           "Billing"
         ],
         "x-apidog-folder": "Payment",
+        "x-apidog-status": "designing",
         "operationId": "postPaymentsWebhooksProvider",
         "summary": "Handle payment provider webhook",
         "security": [],
@@ -17465,6 +18085,7 @@
           "Operation"
         ],
         "x-apidog-folder": "IssueReport",
+        "x-apidog-status": "designing",
         "operationId": "getMeIssues",
         "security": [
           {
@@ -17704,6 +18325,7 @@
           "Operation"
         ],
         "x-apidog-folder": "IssueReport",
+        "x-apidog-status": "designing",
         "operationId": "getIssues",
         "security": [
           {
@@ -17947,6 +18569,7 @@
           "Operation"
         ],
         "x-apidog-folder": "IssueReport",
+        "x-apidog-status": "designing",
         "operationId": "postIssues",
         "security": [
           {
@@ -18139,6 +18762,7 @@
           "Operation"
         ],
         "x-apidog-folder": "IssueReport",
+        "x-apidog-status": "designing",
         "operationId": "getIssuesIssueid",
         "security": [
           {
@@ -18240,6 +18864,7 @@
           "Operation"
         ],
         "x-apidog-folder": "IssueReport",
+        "x-apidog-status": "designing",
         "operationId": "patchIssuesIssueid",
         "security": [
           {
@@ -18386,6 +19011,7 @@
           "Operation"
         ],
         "x-apidog-folder": "IssueReport",
+        "x-apidog-status": "designing",
         "operationId": "postIssuesIssueidCancel",
         "security": [
           {
@@ -18522,6 +19148,7 @@
           "Chat"
         ],
         "x-apidog-folder": "Conversation",
+        "x-apidog-status": "designing",
         "operationId": "getConversations",
         "security": [
           {
@@ -18698,6 +19325,7 @@
           "Chat"
         ],
         "x-apidog-folder": "Conversation",
+        "x-apidog-status": "designing",
         "operationId": "getConversationsConversationid",
         "security": [
           {
@@ -18790,6 +19418,7 @@
           "Chat"
         ],
         "x-apidog-folder": "Conversation",
+        "x-apidog-status": "designing",
         "operationId": "postConversationsResolveConversation",
         "security": [
           {
@@ -18966,6 +19595,7 @@
           "Chat"
         ],
         "x-apidog-folder": "Message",
+        "x-apidog-status": "designing",
         "operationId": "getMessages",
         "security": [
           {
@@ -19210,6 +19840,7 @@
           "Chat"
         ],
         "x-apidog-folder": "Message",
+        "x-apidog-status": "designing",
         "operationId": "postMessages",
         "security": [
           {
@@ -19400,6 +20031,7 @@
           "Chat"
         ],
         "x-apidog-folder": "Message",
+        "x-apidog-status": "designing",
         "operationId": "postMessagesMarkRead",
         "security": [
           {
@@ -19576,6 +20208,7 @@
           "Notification"
         ],
         "x-apidog-folder": "Notification",
+        "x-apidog-status": "designing",
         "operationId": "getNotifications",
         "security": [
           {
@@ -19733,6 +20366,7 @@
           "Notification"
         ],
         "x-apidog-folder": "Notification",
+        "x-apidog-status": "designing",
         "operationId": "postNotificationsNotificationidMarkRead",
         "security": [
           {
@@ -19821,6 +20455,7 @@
           "Notification"
         ],
         "x-apidog-folder": "Notification",
+        "x-apidog-status": "designing",
         "operationId": "postNotificationsMarkAllRead",
         "security": [
           {
@@ -19891,6 +20526,7 @@
           "Notification"
         ],
         "x-apidog-folder": "NotificationPreference",
+        "x-apidog-status": "designing",
         "operationId": "getMeNotificationPreference",
         "security": [
           {
@@ -19981,6 +20617,7 @@
           "Notification"
         ],
         "x-apidog-folder": "NotificationPreference",
+        "x-apidog-status": "designing",
         "operationId": "putMeNotificationPreference",
         "security": [
           {
@@ -20121,6 +20758,7 @@
           "Operation"
         ],
         "x-apidog-folder": "AuditLog",
+        "x-apidog-status": "designing",
         "operationId": "getAuditLogs",
         "security": [
           {
@@ -20352,6 +20990,7 @@
           "Operation"
         ],
         "x-apidog-folder": "AuditLog",
+        "x-apidog-status": "designing",
         "operationId": "getAuditLogsAuditlogid",
         "security": [
           {
@@ -20448,6 +21087,7 @@
           "Operation"
         ],
         "x-apidog-folder": "Dashboard",
+        "x-apidog-status": "designing",
         "operationId": "getDashboard",
         "security": [
           {
@@ -20866,6 +21506,127 @@
           "token",
           "newPassword"
         ]
+      },
+      "AuthRefreshRequestDto": {
+        "type": "object",
+        "x-apidog-folder": "Auth/Request",
+        "title": "AuthRefreshRequestDto",
+        "description": "Dữ liệu dùng refresh token để làm mới phiên",
+        "additionalProperties": false,
+        "properties": {
+          "refreshToken": {
+            "type": "string",
+            "minLength": 1,
+            "writeOnly": true,
+            "description": "Refresh token opaque nhận được khi đăng ký, đăng nhập hoặc refresh lần trước",
+            "example": "m7Qp2vN8rT4xK9sL3wY6cB1hF5jD0uE_gAqZkRoUiVs"
+          }
+        },
+        "required": [
+          "refreshToken"
+        ]
+      },
+      "AuthRefreshResponseDto": {
+        "type": "object",
+        "x-apidog-folder": "Auth/Response",
+        "title": "AuthRefreshResponseDto",
+        "description": "Phản hồi khi làm mới phiên thành công",
+        "properties": {
+          "accessToken": {
+            "type": "string",
+            "minLength": 1,
+            "description": "JWT access token mới, thời hạn 15 phút."
+          },
+          "refreshToken": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Refresh token opaque mới sau khi xoay vòng, được trả trong JSON."
+          }
+        },
+        "required": [
+          "accessToken",
+          "refreshToken"
+        ],
+        "additionalProperties": false
+      },
+      "AuthLogoutRequestDto": {
+        "type": "object",
+        "x-apidog-folder": "Auth/Request",
+        "title": "AuthLogoutRequestDto",
+        "description": "Dữ liệu xác định phiên cần đăng xuất",
+        "additionalProperties": false,
+        "properties": {
+          "refreshToken": {
+            "type": "string",
+            "minLength": 1,
+            "writeOnly": true,
+            "description": "Refresh token của phiên hiện tại",
+            "example": "m7Qp2vN8rT4xK9sL3wY6cB1hF5jD0uE_gAqZkRoUiVs"
+          }
+        },
+        "required": [
+          "refreshToken"
+        ]
+      },
+      "AuthJwksResponseDto": {
+        "type": "object",
+        "x-apidog-folder": "Auth/Response",
+        "title": "AuthJwksResponseDto",
+        "description": "JSON Web Key Set chứa public key RS256 để verify access token",
+        "properties": {
+          "keys": {
+            "type": "array",
+            "description": "Danh sách public key đang hiệu lực.",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "kty": {
+                  "type": "string",
+                  "enum": [
+                    "RSA"
+                  ]
+                },
+                "n": {
+                  "type": "string",
+                  "description": "Modulus của RSA public key (base64url)."
+                },
+                "e": {
+                  "type": "string",
+                  "description": "Exponent của RSA public key (base64url)."
+                },
+                "use": {
+                  "type": "string",
+                  "enum": [
+                    "sig"
+                  ]
+                },
+                "alg": {
+                  "type": "string",
+                  "enum": [
+                    "RS256"
+                  ]
+                },
+                "kid": {
+                  "type": "string",
+                  "description": "Key ID, khớp với header kid của JWT."
+                }
+              },
+              "required": [
+                "kty",
+                "n",
+                "e",
+                "use",
+                "alg",
+                "kid"
+              ]
+            }
+          }
+        },
+        "required": [
+          "keys"
+        ],
+        "additionalProperties": false
       },
       "UserCurrentUpdateRequestDto": {
         "type": "object",
