@@ -1,0 +1,14 @@
+type: object
+x-apidog-folder: Auth/Request
+title: AuthLogoutRequestDto
+description: Dữ liệu xác định phiên cần đăng xuất
+additionalProperties: false
+properties:
+  refreshToken:
+    type: string
+    minLength: 1
+    writeOnly: true
+    description: Refresh token của phiên hiện tại
+    example: m7Qp2vN8rT4xK9sL3wY6cB1hF5jD0uE_gAqZkRoUiVs
+required:
+- refreshToken

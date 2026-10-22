@@ -2,12 +2,25 @@ get:
   tags:
   - User
   x-apidog-folder: User
+  x-apidog-status: released
   operationId: getUsersAdmin
   security:
   - BearerAuth: []
   summary: List users
-  description: Chỉ admin. Danh sách JSON và phân trang offset. Lọc bằng role, status ở query cấp ngoài; q tìm theo
-    tên/email/điện thoại. Không hỗ trợ filter object hoặc format xuất tệp.
+  description: |-
+    Chỉ admin. Danh sách JSON và phân trang offset. Lọc bằng role, status ở query cấp ngoài; q tìm theo tên/email/điện thoại. Không hỗ trợ filter object hoặc format xuất tệp.
+
+    ```mermaid
+    sequenceDiagram
+        autonumber
+        participant GW as API Gateway
+        participant ID as Identity
+        participant DB as Identity DB
+
+        GW->>ID: GET /users?pageNo&pageSize&sort&role&status&q
+        ID->>DB: Query users chưa bị xóa (filter role/status, q theo name/email/phone, sort, offset)<br/>+ count tổng
+        ID-->>GW: 200 USER_LIST_FETCHED [{id, name, email, phone, role, status}] + pagination
+    ```
   parameters:
   - name: sort
     in: query

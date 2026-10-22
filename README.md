@@ -2,7 +2,7 @@
 
 Repository này là trung tâm lưu trữ, định nghĩa và đồng bộ đặc tả API (OpenAPI 3.0) của dự án **PBL6 (Hệ thống quản lý nhà trọ và tìm bạn ở ghép)** với nền tảng **Apidog**.
 
-Các API Auth/User phản ánh hành vi Identity-Service hiện tại. Khi gọi trực tiếp service, dùng prefix `/identity-service/api/v1` (server override trong từng operation); các domain khác giữ server chung. Login/register trả token trong JSON và không đặt cookie. Refresh/logout chưa được triển khai nên không xuất trong `openapi.yaml` hoặc bundle; các file thiết kế tương ứng được giữ để tham khảo. Mã lỗi validation giữ nguyên giá trị do service trả, kể cả thông báo tiếng Anh của query validator. Sau khi sửa tài liệu, chạy `npm run bundle` và đồng bộ nhánh trong Apidog để nạp thay đổi.
+Các API Auth/User phản ánh hành vi Identity-Service hiện tại. Khi gọi trực tiếp service, dùng prefix `/identity-service/api/v1` (server override trong từng operation); các domain khác giữ server chung. Login/register trả token trong JSON và không đặt cookie. Refresh/logout (P4-04) đã có trong `openapi.yaml` theo thiết kế, nhận refresh token trong body JSON, nhưng service chưa triển khai. Mã lỗi validation giữ nguyên giá trị do service trả, kể cả thông báo tiếng Anh của query validator. Sau khi sửa tài liệu, chạy `npm run bundle` và đồng bộ nhánh trong Apidog để nạp thay đổi.
 
 ---
 

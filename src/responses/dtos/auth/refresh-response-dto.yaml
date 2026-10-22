@@ -1,21 +1,17 @@
 type: object
-x-apidog-folder: "Auth/Response"
+x-apidog-folder: Auth/Response
 title: AuthRefreshResponseDto
-description: Phản hồi khi xoay vòng refresh session thành công
-
+description: Phản hồi khi làm mới phiên thành công
 properties:
   accessToken:
     type: string
     minLength: 1
-    description: Access token mới được phát hành
-    example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
-
+    description: JWT access token mới, thời hạn 15 phút.
   refreshToken:
     type: string
     minLength: 1
-    description: Refresh token opaque mới sau khi xoay vòng phiên
-    example: "rt_opaque_token_example"
-
+    description: Refresh token opaque mới sau khi xoay vòng, được trả trong JSON.
 required:
-  - accessToken
-  - refreshToken
+- accessToken
+- refreshToken
+additionalProperties: false

@@ -2,12 +2,40 @@ get:
   tags:
   - User
   x-apidog-folder: User
+  x-apidog-status: released
   operationId: getUserById
   security:
   - BearerAuth: []
   summary: Get user
-  description: Chỉ admin. Lấy chi tiết tài khoản, thông tin khóa, payoutAccount đã mask và số lượng tòa nhà/hợp
-    đồng.
+  description: |-
+    Chỉ admin. Lấy chi tiết tài khoản, thông tin khóa, payoutAccount đã mask và số lượng tòa nhà/hợp đồng.
+
+    **Lưu ý**
+
+    - `buildingCount`, `activeContractCount` lấy từ Tenancy qua HTTP nội bộ; Tenancy lỗi hoặc timeout thì trả `null`.
+    - Chưa triển khai: code đang trả cố định `0`; Tenancy cần build `GET /internal/users/{userId}/stats`.
+
+    ```mermaid
+    sequenceDiagram
+        autonumber
+        participant GW as API Gateway
+        participant ID as Identity
+        participant DB as Identity DB
+        participant TEN as Tenancy
+
+        GW->>ID: GET /users/{userId}
+        ID->>DB: Đọc users + landlord_profiles theo userId
+        alt Không tìm thấy
+            ID-->>GW: 404 USER_NOT_FOUND
+        end
+        ID->>TEN: GET /internal/users/{userId}/stats (service token, timeout 3s)
+        alt Tenancy trả kết quả
+            TEN-->>ID: 200 {buildingCount, activeContractCount}
+        else Tenancy lỗi / timeout
+            ID->>ID: buildingCount = null, activeContractCount = null
+        end
+        ID-->>GW: 200 USER_DETAIL_FETCHED {..., lockReason, lockedAt, payoutAccount, buildingCount, activeContractCount}
+    ```
   parameters:
   - name: userId
     in: path
@@ -163,11 +191,42 @@ patch:
   tags:
   - User
   x-apidog-folder: User
+  x-apidog-status: released
   operationId: updateUserById
   security:
   - BearerAuth: []
   summary: Update user
-  description: Chỉ admin. Cập nhật ít nhất một trong name hoặc phone; null được bỏ qua.
+  description: |-
+    Chỉ admin. Cập nhật ít nhất một trong name hoặc phone; null được bỏ qua.
+
+    **Lưu ý**
+
+    - Không đổi được `email`, `role`, `status` qua API này; khóa/mở khóa dùng API lock/unlock.
+    - Chưa triển khai: publish `user.updated`.
+
+    ```mermaid
+    sequenceDiagram
+        autonumber
+        participant GW as API Gateway
+        participant ID as Identity
+        participant DB as Identity DB
+        participant MQ as RabbitMQ
+        participant TEN as Tenancy
+        participant COM as Community
+
+        GW->>ID: PATCH /users/{userId} {name?, phone?}
+        ID->>DB: Đọc user, kiểm tra phone trùng
+        alt Không tìm thấy
+            ID-->>GW: 404 USER_NOT_FOUND
+        else Trùng phone
+            ID-->>GW: 409 DUPLICATE_PHONE
+        end
+        ID->>DB: [Transaction] Update users (name, phone)<br/>+ outbox user.updated
+        ID-->>GW: 200 USER_UPDATED {userId, name, phone, email, status}
+        ID-)MQ: user.updated {userId, name, phone}
+        MQ-)TEN: Cập nhật user snapshot
+        MQ-)COM: Cập nhật user snapshot
+    ```
   parameters:
   - name: userId
     in: path
@@ -442,11 +501,54 @@ delete:
   tags:
   - User
   x-apidog-folder: User
+  x-apidog-status: released
   operationId: deleteUserById
   security:
   - BearerAuth: []
   summary: Delete user
-  description: Chỉ admin. Xóa mềm tài khoản; không thể tự xóa. Thành công trả 204, không có body.
+  description: |-
+    Chỉ admin. Xóa mềm tài khoản; không thể tự xóa. Thành công trả 204, không có body.
+
+    **Lưu ý**
+
+    - Xóa mềm (`is_deleted = true`); user đã xóa không đăng nhập được.
+    - Không xóa được user còn HĐ hiệu lực. Không hỏi được Tenancy thì từ chối xóa (`503`, fail-closed).
+    - Chưa triển khai: kiểm tra qua Tenancy, mã `409 USER_DELETE_HAS_ACTIVE_CONTRACT`, `503 SERVICE_UNAVAILABLE` và publish `user.deleted`.
+
+    ```mermaid
+    sequenceDiagram
+        autonumber
+        participant GW as API Gateway
+        participant ID as Identity
+        participant DB as Identity DB
+        participant MQ as RabbitMQ
+        participant TEN as Tenancy
+        participant COM as Community
+
+        GW->>ID: DELETE /users/{userId} + x-user-id (admin)
+        alt Admin tự xóa chính mình
+            ID-->>GW: 400 USER_DELETE_CANNOT_SELF
+        end
+        ID->>DB: Đọc user
+        alt Không tìm thấy
+            ID-->>GW: 404 USER_NOT_FOUND
+        else Đã bị xóa
+            ID-->>GW: 409 USER_DELETE_ALREADY_DELETED
+        end
+        ID->>TEN: GET /internal/users/{userId}/stats (service token, timeout 3s)
+        alt Tenancy lỗi / timeout (fail-closed)
+            ID-->>GW: 503 SERVICE_UNAVAILABLE
+        end
+        TEN-->>ID: 200 {buildingCount, activeContractCount}
+        alt activeContractCount > 0
+            ID-->>GW: 409 USER_DELETE_HAS_ACTIVE_CONTRACT
+        end
+        ID->>DB: [Transaction] Soft delete users (is_deleted=true) + landlord_profiles<br/>+ revoke toàn bộ refresh_tokens<br/>+ outbox user.deleted
+        ID-->>GW: 204
+        ID-)MQ: user.deleted {userId, role}
+        MQ-)TEN: Ẩn user, không cho gán vào HĐ mới
+        MQ-)COM: Ngắt socket, xóa push devices
+    ```
   parameters:
   - name: userId
     in: path

@@ -1,0 +1,14 @@
+type: object
+x-apidog-folder: Auth/Request
+title: AuthRefreshRequestDto
+description: Dữ liệu dùng refresh token để làm mới phiên
+additionalProperties: false
+properties:
+  refreshToken:
+    type: string
+    minLength: 1
+    writeOnly: true
+    description: Refresh token opaque nhận được khi đăng ký, đăng nhập hoặc refresh lần trước
+    example: m7Qp2vN8rT4xK9sL3wY6cB1hF5jD0uE_gAqZkRoUiVs
+required:
+- refreshToken

@@ -2,11 +2,49 @@ post:
   tags:
   - User
   x-apidog-folder: User
+  x-apidog-status: released
   operationId: lockUser
   security:
   - BearerAuth: []
   summary: Lock user
-  description: Chỉ admin. Khóa tài khoản và thu hồi refresh token; không thể tự khóa.
+  description: |-
+    Chỉ admin. Khóa tài khoản; không thể tự khóa. User bị khóa vẫn đăng nhập được nhưng bị chặn một số chức năng.
+
+    **Lưu ý**
+
+    - User bị khóa **vẫn đăng nhập được**. Chặn chức năng dựa vào header `x-user-status`; token cấp trước khi khóa còn mang `status=active` tối đa 15 phút.
+    - Event `user.locked` chỉ để Tenancy đổi dữ liệu của mình (ẩn BĐS, tạm ngưng HĐ của landlord).
+    - Đang cân nhắc (thuộc Tenancy): landlord bị khóa quá grace period thì hủy HĐ và hoàn cọc.
+    - Chưa triển khai: publish `user.locked`; code hiện vẫn revoke refresh token khi khóa, cần bỏ.
+
+    ```mermaid
+    sequenceDiagram
+        autonumber
+        participant GW as API Gateway
+        participant ID as Identity
+        participant DB as Identity DB
+        participant MQ as RabbitMQ
+        participant TEN as Tenancy
+        participant COM as Community
+
+        GW->>ID: POST /users/{userId}/lock {lockReason} + x-user-id (admin)
+        alt Admin tự khóa chính mình
+            ID-->>GW: 400 USER_LOCK_CANNOT_SELF
+        end
+        ID->>DB: Đọc user
+        alt Không tìm thấy
+            ID-->>GW: 404 USER_NOT_FOUND
+        else Đã bị khóa
+            ID-->>GW: 409 USER_LOCK_ALREADY_LOCKED
+        end
+        ID->>DB: [Transaction] Update users (status=locked, lockReason, lockedAt)<br/>+ outbox user.locked
+        Note over ID: Không revoke refresh token:<br/>user bị khóa vẫn đăng nhập được
+        ID-->>GW: 200 USER_ACCOUNT_LOCKED {userId, status, lockReason, lockedAt}
+        ID-)MQ: user.locked {userId, role, status, lockReason, lockedAt}
+        MQ-)TEN: Nếu role=landlord: ẩn BĐS khỏi tìm kiếm, tạm ngưng HĐ
+        MQ-)COM: Xử lý dữ liệu liên quan (nếu có)
+        Note over TEN,COM: Chặn thao tác của user bị khóa dựa vào header x-user-status,<br/>không dựa vào event này
+    ```
   parameters:
   - name: userId
     in: path

@@ -1,0 +1,43 @@
+type: object
+x-apidog-folder: Auth/Response
+title: AuthJwksResponseDto
+description: JSON Web Key Set chứa public key RS256 để verify access token
+properties:
+  keys:
+    type: array
+    description: Danh sách public key đang hiệu lực.
+    items:
+      type: object
+      additionalProperties: false
+      properties:
+        kty:
+          type: string
+          enum:
+          - RSA
+        n:
+          type: string
+          description: Modulus của RSA public key (base64url).
+        e:
+          type: string
+          description: Exponent của RSA public key (base64url).
+        use:
+          type: string
+          enum:
+          - sig
+        alg:
+          type: string
+          enum:
+          - RS256
+        kid:
+          type: string
+          description: Key ID, khớp với header kid của JWT.
+      required:
+      - kty
+      - n
+      - e
+      - use
+      - alg
+      - kid
+required:
+- keys
+additionalProperties: false

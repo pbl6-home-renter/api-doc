@@ -1,44 +1,181 @@
 post:
-  tags: [Auth]
+  tags:
+  - Auth
   x-apidog-folder: Auth
+  x-apidog-status: designing
   operationId: logoutSession
-  summary: Logout
-  description: >-
-    Dành cho tenant, landlord và admin. Không có request body. Thu hồi phiên
-    refresh hiện tại được xác định qua cookie refreshToken và xóa cookie.
   security:
-    - RefreshCookie: []
+  - BearerAuth: []
+  summary: Logout
+  description: |-
+    Dành cho tenant, landlord và admin. Thu hồi refresh token family của phiên hiện tại. Thành công trả 204, không có body.
+
+    **Lưu ý**
+
+    - Chưa triển khai (P4-04).
+    - Access token hiện tại vẫn dùng được tới khi hết hạn (tối đa 15 phút); client tự xóa token.
+    - Đang cân nhắc: refresh token gửi trong body JSON hay HttpOnly cookie (cùng quyết định với refresh).
+
+    ```mermaid
+    sequenceDiagram
+        autonumber
+        participant GW as API Gateway
+        participant ID as Identity
+        participant DB as Identity DB
+
+        GW->>ID: POST /auth/logout {refreshToken} + x-user-id
+        ID->>DB: Revoke refresh token family của phiên hiện tại
+        ID-->>GW: 204
+    ```
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: ../../openapi.yaml#/components/schemas/AuthLogoutRequestDto
+        example:
+          refreshToken: m7Qp2vN8rT4xK9sL3wY6cB1hF5jD0uE_gAqZkRoUiVs
   responses:
     '204':
-      $ref: '../../openapi.yaml#/components/responses/NoContentResponse'
+      $ref: ../../openapi.yaml#/components/responses/NoContentResponse
     '400':
-      $ref: ../../openapi.yaml#/components/responses/BadRequestError
-    '401':
-      x-apidog-name: Unauthorized
-      description: Cookie refreshToken không xác thực được hoặc phiên đã hết hiệu lực.
+      description: Yêu cầu không hợp lệ.
       content:
         application/json:
           schema:
             type: object
             additionalProperties: false
-            required: [statusCode, code]
+            required:
+            - statusCode
+            - code
             properties:
               statusCode:
                 type: integer
-                enum: [401]
+                enum:
+                - 400
               code:
                 type: string
                 enum:
-                  - INVALID_REFRESH_TOKEN
-                description: |-
-                  - INVALID_REFRESH_TOKEN: Cookie refreshToken thiếu, sai hoặc phiên đã hết hiệu lực.
+                - INVALID_JSON
+                - INVALID_REQUEST_BODY
+                - BAD_REQUEST
           examples:
-            invalid_refresh_token:
-              summary: INVALID_REFRESH_TOKEN — Cookie refreshToken thiếu, sai hoặc phiên đã hết hiệu lực.
+            error_1:
+              summary: INVALID_JSON
+              value:
+                statusCode: 400
+                code: INVALID_JSON
+            error_2:
+              summary: INVALID_REQUEST_BODY
+              value:
+                statusCode: 400
+                code: INVALID_REQUEST_BODY
+            error_3:
+              summary: BAD_REQUEST
+              value:
+                statusCode: 400
+                code: BAD_REQUEST
+    '401':
+      description: Không xác thực được yêu cầu.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required:
+            - statusCode
+            - code
+            properties:
+              statusCode:
+                type: integer
+                enum:
+                - 401
+              code:
+                type: string
+                enum:
+                - UNAUTHORIZED
+          examples:
+            error_1:
+              summary: UNAUTHORIZED
               value:
                 statusCode: 401
-                code: INVALID_REFRESH_TOKEN
-    '429':
-      $ref: '../../openapi.yaml#/components/responses/TooManyRequestsError'
+                code: UNAUTHORIZED
+    '403':
+      description: Không có quyền truy cập.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required:
+            - statusCode
+            - code
+            properties:
+              statusCode:
+                type: integer
+                enum:
+                - 403
+              code:
+                type: string
+                enum:
+                - FORBIDDEN
+          examples:
+            error_1:
+              summary: FORBIDDEN
+              value:
+                statusCode: 403
+                code: FORBIDDEN
+    '422':
+      description: Vi phạm ràng buộc dữ liệu; trả mã của lỗi đầu tiên.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required:
+            - statusCode
+            - code
+            properties:
+              statusCode:
+                type: integer
+                enum:
+                - 422
+              code:
+                type: string
+                enum:
+                - REFRESH_TOKEN_REQUIRED
+                - REFRESH_TOKEN_MUST_BE_STRING
+                - REFRESH_TOKEN_NOT_EMPTY
+                - UNEXPECTED_FIELD
+                - VALIDATION_FAILED
+          examples:
+            error_1:
+              summary: REFRESH_TOKEN_REQUIRED
+              value:
+                statusCode: 422
+                code: REFRESH_TOKEN_REQUIRED
+            error_2:
+              summary: REFRESH_TOKEN_MUST_BE_STRING
+              value:
+                statusCode: 422
+                code: REFRESH_TOKEN_MUST_BE_STRING
+            error_3:
+              summary: REFRESH_TOKEN_NOT_EMPTY
+              value:
+                statusCode: 422
+                code: REFRESH_TOKEN_NOT_EMPTY
+            error_4:
+              summary: UNEXPECTED_FIELD
+              value:
+                statusCode: 422
+                code: UNEXPECTED_FIELD
+            error_5:
+              summary: VALIDATION_FAILED
+              value:
+                statusCode: 422
+                code: VALIDATION_FAILED
     '500':
-      $ref: '../../openapi.yaml#/components/responses/InternalServerError'
+      $ref: ../../openapi.yaml#/components/responses/InternalServerError
+  servers:
+  - url: /identity-service/api/v1
+    description: Đường dẫn trực tiếp Identity-Service trên host đang chọn.

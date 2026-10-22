@@ -2,9 +2,28 @@ get:
   tags:
   - User
   x-apidog-folder: User
+  x-apidog-status: released
   operationId: getCurrentUser
   summary: Get current user
-  description: Lấy hồ sơ người dùng hiện tại. Yêu cầu Bearer access token.
+  description: |-
+    Lấy hồ sơ người dùng hiện tại. Yêu cầu Bearer access token.
+
+    **Lưu ý**
+
+    - `payoutAccount.accountNumber` luôn bị che (`**xxxxx`).
+
+    ```mermaid
+    sequenceDiagram
+        autonumber
+        participant GW as API Gateway
+        participant ID as Identity
+        participant DB as Identity DB
+
+        GW->>ID: GET /me + x-user-id
+        ID->>DB: Đọc users + landlord_profiles theo userId
+        ID->>ID: Che accountNumber thành "**xxxxx"
+        ID-->>GW: 200 CURRENT_USER_PROFILE_FETCHED {id, name, email, phone, role, status, payoutAccount}
+    ```
   security:
   - BearerAuth: []
   responses:
@@ -150,12 +169,51 @@ patch:
   tags:
   - User
   x-apidog-folder: User
+  x-apidog-status: released
   operationId: updateCurrentUser
   security:
   - BearerAuth: []
   summary: Update current user
-  description: Cập nhật hồ sơ hiện tại. Bắt buộc name, phone, payoutAccount (có thể null). Chỉ landlord được gửi
-    object payoutAccount. Số tài khoản trả về được mask; phone đổi từ +84 sang 0.
+  description: |-
+    Cập nhật hồ sơ hiện tại. Bắt buộc name, phone, payoutAccount (có thể null). Chỉ landlord được gửi object payoutAccount. Số tài khoản trả về được mask; phone đổi từ +84 sang 0.
+
+    **Lưu ý**
+
+    - Ngữ nghĩa thay toàn bộ: bắt buộc gửi `name`, `phone`, `payoutAccount`; gửi `payoutAccount: null` để xóa.
+    - Chỉ landlord được có `payoutAccount`.
+    - Chưa triển khai: publish `user.updated`, `landlord.payout_account_updated`. Event payout là tùy chọn, có thể bỏ nếu chấp nhận cache của Payment cũ tối đa 5 phút.
+
+    ```mermaid
+    sequenceDiagram
+        autonumber
+        participant GW as API Gateway
+        participant ID as Identity
+        participant DB as Identity DB
+        participant MQ as RabbitMQ
+        participant TEN as Tenancy
+        participant COM as Community
+        participant PAY as Payment
+
+        GW->>ID: PATCH /me {name, phone, payoutAccount} + x-user-id, x-user-role
+        alt payoutAccount khác null nhưng role không phải landlord
+            ID-->>GW: 422 USER_UPDATE_PAYOUT_NOT_ALLOWED
+        end
+        ID->>DB: Kiểm tra phone trùng với user khác
+        alt Trùng phone
+            ID-->>GW: 409 DUPLICATE_PHONE
+        end
+        ID->>DB: [Transaction] Update users (name, phone)<br/>+ upsert landlord_profiles (bankCode, accountNumber, accountName)<br/>+ outbox user.updated (nếu name/phone đổi)<br/>+ outbox landlord.payout_account_updated (nếu payoutAccount đổi)
+        ID-->>GW: 200 CURRENT_USER_PROFILE_UPDATED {id, name, phone, payoutAccount}
+        opt name/phone đổi
+            ID-)MQ: user.updated {userId, name, phone}
+            MQ-)TEN: Cập nhật user snapshot
+            MQ-)COM: Cập nhật user snapshot
+        end
+        opt payoutAccount đổi
+            ID-)MQ: landlord.payout_account_updated {userId}
+            MQ-)PAY: Xóa cache payout của landlord
+        end
+    ```
   requestBody:
     required: true
     content:
