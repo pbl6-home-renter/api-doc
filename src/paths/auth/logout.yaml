@@ -12,9 +12,9 @@ post:
 
     **Lưu ý**
 
-    - Chưa triển khai (P4-04).
     - Access token hiện tại vẫn dùng được tới khi hết hạn (tối đa 15 phút); client tự xóa token.
-    - Đang cân nhắc: refresh token gửi trong body JSON hay HttpOnly cookie (cùng quyết định với refresh).
+    - Refresh token gửi trong body JSON. Token không tồn tại hoặc không thuộc user hiện tại thì bỏ qua, vẫn trả 204.
+    - Tài khoản bị khóa vẫn logout được.
 
     ```mermaid
     sequenceDiagram
@@ -23,7 +23,8 @@ post:
         participant ID as Identity
         participant DB as Identity DB
 
-        GW->>ID: POST /auth/logout {refreshToken} + x-user-id
+        GW->>ID: POST /auth/logout {refreshToken} + Authorization
+        ID->>ID: Verify access token (JWKS / public key)
         ID->>DB: Revoke refresh token family của phiên hiện tại
         ID-->>GW: 204
     ```

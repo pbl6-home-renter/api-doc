@@ -11,10 +11,10 @@ post:
 
     **Lưu ý**
 
-    - Chưa triển khai (P4-04).
     - Refresh token rotation: dùng lại token đã revoke thì revoke cả family (`401 TOKEN_REUSED`).
     - `status` đọc lại từ DB khi ký token mới, nên trạng thái khóa/mở khóa được cập nhật sau lần refresh.
-    - Đang cân nhắc: refresh token gửi trong body JSON (khớp login/register hiện tại) hay HttpOnly cookie như `api-conventions.md` §4 và P4-04.
+    - Refresh token gửi trong body JSON cho cả web và mobile (không dùng cookie).
+    - Refresh token mới giữ nguyên thời hạn phiên ban đầu (7 ngày nếu `rememberMe`, 1 ngày nếu không).
 
     ```mermaid
     sequenceDiagram
