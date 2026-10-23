@@ -19,7 +19,7 @@ get:
         participant ID as Identity
         participant DB as Identity DB
 
-        GW->>ID: GET /me + x-user-id
+        GW->>ID: GET /me + Authorization
         ID->>DB: Đọc users + landlord_profiles theo userId
         ID->>ID: Che accountNumber thành "**xxxxx"
         ID-->>GW: 200 CURRENT_USER_PROFILE_FETCHED {id, name, email, phone, role, status, payoutAccount}
@@ -194,7 +194,7 @@ patch:
         participant COM as Community
         participant PAY as Payment
 
-        GW->>ID: PATCH /me {name, phone, payoutAccount} + x-user-id, x-user-role
+        GW->>ID: PATCH /me {name, phone, payoutAccount} + Authorization
         alt payoutAccount khác null nhưng role không phải landlord
             ID-->>GW: 422 USER_UPDATE_PAYOUT_NOT_ALLOWED
         end

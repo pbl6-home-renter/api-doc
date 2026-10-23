@@ -525,7 +525,7 @@ delete:
         participant TEN as Tenancy
         participant COM as Community
 
-        GW->>ID: DELETE /users/{userId} + x-user-id (admin)
+        GW->>ID: DELETE /users/{userId} + Authorization (admin)
         alt Admin tự xóa chính mình
             ID-->>GW: 400 USER_DELETE_CANNOT_SELF
         end
