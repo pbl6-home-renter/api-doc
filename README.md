@@ -39,6 +39,12 @@ be/
 ├── reference/
 │   └── rentify.json                     # [AUTO-GENERATED] File OpenAPI đã bundle để Apidog đồng bộ
 │
+├── reports/
+│   ├── api-changelog.{json,md}          # [BOT] Lịch sử thay đổi contract, chỉ GitHub Actions ghi
+│   └── demo/                            # Report mẫu từ fixture
+│
+├── scripts/                             # contract-change-report, inject-changelog, fixtures
+├── .github/                             # Workflow contract-check / contract-log, PR template
 ├── package.json                         # Chứa các script npx tiện ích (bundle, lint, preview)
 └── README.md
 ```
@@ -50,7 +56,7 @@ be/
 Quy trình chuẩn khi làm việc với API hàng ngày giữa VS Code / IDE và Apidog gồm các bước sau:
 
 ```text
-[Tạo nhánh Git] ➔ [Thiết kế API/DTO trong src/] ➔ [npm run bundle] ➔ [Push nhánh] ➔ [Vào Apidog Pull nhánh] ➔ [Kiểm tra Specs & APIs]
+[Tạo nhánh Git] ➔ [Thiết kế API/DTO trong src/] ➔ [npm run bundle] ➔ [Push nhánh] ➔ [Mở PR + đọc báo cáo bot] ➔ [Vào Apidog Pull nhánh] ➔ [Kiểm tra Specs & APIs]
 ```
 
 ### Bước 1: Mở repo & Tạo nhánh làm việc mới
@@ -106,7 +112,17 @@ git push origin feature/<tên-chức-năng>
 
 ---
 
-### Bước 5: Lên Apidog đồng bộ nhánh mới về
+### Bước 5: Mở Pull Request vào `main`
+1. Tạo PR từ nhánh vừa push vào `main`; mô tả PR có sẵn template.
+2. Nếu PR sửa `src/`, **điền mục `## Lý do thay đổi API`** (lý do nghiệp vụ, 1–2 câu). Nội dung này được ghi vào changelog và hiện trên Apidog.
+3. Sau 1–2 phút, bot comment **Kết quả kiểm tra API contract** lên PR (xem [mục 4](#4-contract-change-log-tự-động)):
+   - `NON_BREAKING` / `NO_CHANGE`: review và merge như bình thường.
+   - `BREAKING` / `NEEDS_REVIEW`: PR được gắn label `api-breaking`. Trước khi merge, thống nhất với FE/Mobile cách cập nhật client (cột *Hành động FE / Mobile* trong báo cáo).
+4. Mỗi lần push thêm commit, bot cập nhật lại cùng một comment.
+
+---
+
+### Bước 6: Lên Apidog đồng bộ nhánh mới về
 1. Mở ứng dụng **Apidog**, vào dự án **`rentify`**.
 2. Nhìn lên góc trên bên trái (chỗ dropdown chọn nhánh Git bên cạnh chữ APIs):
    - Bấm vào tên nhánh -> Chọn **Fetch from remote** (hoặc vào **Settings -> Git Branches** để kéo danh sách nhánh mới về).
@@ -115,7 +131,7 @@ git push origin feature/<tên-chức-năng>
 
 ---
 
-### Bước 6: Kiểm tra trên Apidog
+### Bước 7: Kiểm tra trên Apidog
 1. **Kiểm tra ở tab `Specs` (icon `{}`):**
    - Mở file `src/openapi.yaml` hoặc `reference/rentify.json` để kiểm tra preview cú pháp và outline tổng quan.
 2. **Kiểm tra ở tab `APIs` (icon cắm điện):**
@@ -140,6 +156,25 @@ git push origin feature/<tên-chức-năng>
 
 Mỗi thay đổi API contract được tự động phát hiện, phân loại và ghi lại. **Dev chỉ cần điền mục `## Lý do thay đổi API` trong mô tả PR**; mọi bước còn lại do GitHub Actions làm.
 
+```text
+Dev sửa src/ ─► mở PR vào main
+                 │
+                 ▼
+        [contract-check]  lint → so sánh contract base ↔ head (oasdiff)
+                 │        → bot comment báo cáo lên PR
+                 │        → BREAKING/NEEDS_REVIEW: label api-breaking + request reviewer
+                 ▼
+        Reviewer duyệt, thống nhất với FE/Mobile nếu breaking ─► merge
+                 │
+                 ▼
+        [contract-log]    ghi entry (kèm link PR + lý do) vào reports/api-changelog.*
+                          → npm run bundle: chèn lịch sử vào description từng endpoint
+                          → github-actions[bot] commit lên main
+                 │
+                 ▼
+        Apidog sync main ─► FE/Mobile thấy bảng "Lịch sử thay đổi contract" ở từng endpoint
+```
+
 | Thời điểm | Workflow | Kết quả |
 |---|---|---|
 | Mở/cập nhật PR vào `main` có sửa `src/` | `contract-check.yml` | Bot comment báo cáo lên PR. Nếu `BREAKING`/`NEEDS_REVIEW`: gắn label `api-breaking` và request reviewer. **Không chặn merge.** |
@@ -153,6 +188,9 @@ Phân loại: **BREAKING** = client cũ có thể hỏng · **NEEDS_REVIEW** = c
 
 **Lưu ý:**
 - Không sửa tay `reports/api-changelog.*`; file này chỉ do bot ghi.
+- Sau khi merge, `git pull` trước khi làm tiếp vì bot vừa commit lên `main`.
+- Commit có `[skip ci]` sẽ không được ghi log. Chỉ dùng khi revert một thay đổi thử nghiệm (kèm xoá tay entry tương ứng), không dùng cho thay đổi contract thật.
+- Muốn thử workflow: mở PR, xem comment của bot, rồi **đóng PR không merge**. Merge là thay đổi được ghi vào changelog thật.
 - Reviewer được request tự động lấy từ repository variable `CONTRACT_REVIEWERS` (danh sách username GitHub, cách nhau bởi dấu phẩy). Không đặt thì chỉ gắn label.
 - Nếu bật branch protection cho `main`, cần thêm **GitHub Actions** vào bypass list của ruleset, nếu không bot sẽ không push được.
 - Chạy local cần [oasdiff 1.34.1](https://github.com/oasdiff/oasdiff/releases/tag/v1.34.1) trong `PATH` hoặc đặt biến `OASDIFF_BIN`.
