@@ -4,8 +4,10 @@
   "private": true,
   "description": "PBL6 Home Renter - API Specification & Documentation Hub (Synced with Apidog)",
   "scripts": {
-    "bundle": "npx @redocly/cli bundle src/openapi.yaml -o reference/rentify.json --ext json --component-names-strategy title",
-    "lint": "npx @redocly/cli lint src/openapi.yaml",
-    "preview": "npx @redocly/cli preview-docs src/openapi.yaml"
+    "bundle": "npx --yes @redocly/cli@2.64.1 bundle src/openapi.yaml -o reference/rentify.json --ext json --component-names-strategy title && node scripts/inject-changelog.mjs",
+    "lint": "npx --yes @redocly/cli@2.64.1 lint src/openapi.yaml",
+    "preview": "npx --yes @redocly/cli@2.64.1 preview-docs src/openapi.yaml",
+    "contract:report": "node scripts/contract-change-report.mjs",
+    "contract:demo": "node scripts/contract-change-report.mjs --demo --out reports/demo/contract-change-report.md"
   }
 }

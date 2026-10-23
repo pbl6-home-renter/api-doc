@@ -92,6 +92,8 @@ Chạy lệnh bundle để tự động giải quyết các `$ref` và cập nh�
 npm run bundle
 ```
 > *Lệnh này chạy qua `npx` của Node.js, bạn không cần phải chạy `npm install` trước.*
+>
+> *Sau khi bundle, lệnh tự chèn lịch sử thay đổi contract (từ `reports/api-changelog.json`) vào description của từng endpoint. YAML trong `src/` không bị sửa.*
 
 ---
 
@@ -129,3 +131,28 @@ git push origin feature/<tên-chức-năng>
 | `npm run bundle` | Gộp toàn bộ `src/` thành `reference/rentify.json` để Apidog đồng bộ |
 | `npm run lint` | Kiểm tra cú pháp và quy chuẩn OpenAPI trước khi commit |
 | `npm run preview` | Khởi chạy giao diện xem trước tài liệu trực tiếp trên trình duyệt |
+| `npm run contract:report -- --base-ref <sha> --head-ref <sha>` | Báo cáo thay đổi contract giữa hai commit (cần oasdiff) |
+| `npm run contract:demo` | Chạy 4 fixture mẫu, ghi `reports/demo/` (cần oasdiff) |
+
+---
+
+## 4. Contract change log (tự động)
+
+Mỗi thay đổi API contract được tự động phát hiện, phân loại và ghi lại. **Dev chỉ cần điền mục `## Lý do thay đổi API` trong mô tả PR**; mọi bước còn lại do GitHub Actions làm.
+
+| Thời điểm | Workflow | Kết quả |
+|---|---|---|
+| Mở/cập nhật PR vào `main` có sửa `src/` | `contract-check.yml` | Bot comment báo cáo lên PR. Nếu `BREAKING`/`NEEDS_REVIEW`: gắn label `api-breaking` và request reviewer. **Không chặn merge.** |
+| Merge vào `main` | `contract-log.yml` | Bot ghi entry vào `reports/api-changelog.{json,md}`, bundle lại `reference/rentify.json` kèm lịch sử theo endpoint và commit (`[skip ci]`). |
+
+Phân loại: **BREAKING** = client cũ có thể hỏng · **NEEDS_REVIEW** = cần người xác nhận (mọi thay đổi security luôn ở mức này trở lên) · **NON_BREAKING** = tương thích. Sửa description/example/summary/title được coi là không đổi contract.
+
+**FE/Mobile xem ở đâu:**
+- Trên Apidog: cuối description của mỗi endpoint có bảng **Lịch sử thay đổi contract** (5 lần gần nhất).
+- Lịch sử đầy đủ: [`reports/api-changelog.md`](reports/api-changelog.md).
+
+**Lưu ý:**
+- Không sửa tay `reports/api-changelog.*`; file này chỉ do bot ghi.
+- Reviewer được request tự động lấy từ repository variable `CONTRACT_REVIEWERS` (danh sách username GitHub, cách nhau bởi dấu phẩy). Không đặt thì chỉ gắn label.
+- Nếu bật branch protection cho `main`, cần thêm **GitHub Actions** vào bypass list của ruleset, nếu không bot sẽ không push được.
+- Chạy local cần [oasdiff 1.34.1](https://github.com/oasdiff/oasdiff/releases/tag/v1.34.1) trong `PATH` hoặc đặt biến `OASDIFF_BIN`.

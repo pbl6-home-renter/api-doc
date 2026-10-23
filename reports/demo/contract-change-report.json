@@ -2,21 +2,21 @@
   "formatVersion": 1,
   "entries": [
     {
-      "id": "3b146ace6a61b0d7cb2af3afd7da4a3a8dae985a6a49c19d5b8bb90b0f17dc53",
+      "id": "65613c5f46821c6e0be0f59cbaa2a81beb67047935751c1cb204b3d31d4b40fd",
       "label": "Fixture breaking: buildingId trở thành bắt buộc",
       "classification": "BREAKING",
       "contractId": "rentify-public",
-      "repository": "https://github.com/pbl6-home-renter/api-doc",
+      "repository": "https://github.com/pbl6-home-renter/be",
       "baseHash": "2e4042635100c0e5f161917b514da3da73763faac1a7505d072877d915d9be8b",
       "headHash": "7068dfd551093a83558f9775a4baca47776e29a5ba338acabc3fc47dc8c67e76",
-      "baseSource": "scripts/fixtures/contract-change/base/openapi.yaml",
-      "headSource": "scripts/fixtures/contract-change/breaking/openapi.yaml",
-      "detectedAt": "2026-10-22T08:16:17.540Z",
-      "committedAt": "2026-10-21T22:15:54+07:00",
+      "baseSource": "scripts\\fixtures\\contract-change\\base\\openapi.yaml",
+      "headSource": "scripts\\fixtures\\contract-change\\breaking\\openapi.yaml",
+      "detectedAt": "2026-10-23T16:36:13.385Z",
+      "committedAt": "2026-10-23T23:28:14+07:00",
       "baseCommit": null,
-      "headCommit": "225e1db1672577cfe7a1b9b7919fc51c3370c7f5",
-      "prUrl": "https://example.invalid/rentify/pull/123",
-      "commitUrl": "https://github.com/pbl6-home-renter/api-doc/commit/225e1db1672577cfe7a1b9b7919fc51c3370c7f5",
+      "headCommit": "2573d866ee44ddfd155c70d93726fdbd2d635bd3",
+      "prUrl": null,
+      "commitUrl": "https://github.com/pbl6-home-renter/be/commit/2573d866ee44ddfd155c70d93726fdbd2d635bd3",
       "metadataKind": "Fixture minh họa; SHA là bối cảnh chạy, không phải thay đổi API thật",
       "reason": "Minh họa kiểm chứng phân loại contract theo yêu cầu nghiên cứu; không áp dụng vào API hiện tại.",
       "tools": {
@@ -102,21 +102,21 @@
       }
     },
     {
-      "id": "c5c2b0da86189422cecbac35ed68bb73a4eadfc9bffe0150c1bdcbeba4a4eb0a",
+      "id": "6da10690a8693b0eaaadda55348ddf9713b8ffe3e68444ab0abd86c68cd70a0e",
       "label": "Fixture non-breaking: thêm displayName tùy chọn",
       "classification": "NON_BREAKING",
       "contractId": "rentify-public",
-      "repository": "https://github.com/pbl6-home-renter/api-doc",
+      "repository": "https://github.com/pbl6-home-renter/be",
       "baseHash": "2e4042635100c0e5f161917b514da3da73763faac1a7505d072877d915d9be8b",
       "headHash": "18bff1261a4a0b175009cdb90ed742dca5d37727b881a69f7836dcc4413c2a7c",
-      "baseSource": "scripts/fixtures/contract-change/base/openapi.yaml",
-      "headSource": "scripts/fixtures/contract-change/non-breaking/openapi.yaml",
-      "detectedAt": "2026-10-22T08:16:17.540Z",
-      "committedAt": "2026-10-21T22:15:54+07:00",
+      "baseSource": "scripts\\fixtures\\contract-change\\base\\openapi.yaml",
+      "headSource": "scripts\\fixtures\\contract-change\\non-breaking\\openapi.yaml",
+      "detectedAt": "2026-10-23T16:36:13.385Z",
+      "committedAt": "2026-10-23T23:28:14+07:00",
       "baseCommit": null,
-      "headCommit": "225e1db1672577cfe7a1b9b7919fc51c3370c7f5",
-      "prUrl": "https://example.invalid/rentify/pull/123",
-      "commitUrl": "https://github.com/pbl6-home-renter/api-doc/commit/225e1db1672577cfe7a1b9b7919fc51c3370c7f5",
+      "headCommit": "2573d866ee44ddfd155c70d93726fdbd2d635bd3",
+      "prUrl": null,
+      "commitUrl": "https://github.com/pbl6-home-renter/be/commit/2573d866ee44ddfd155c70d93726fdbd2d635bd3",
       "metadataKind": "Fixture minh họa; SHA là bối cảnh chạy, không phải thay đổi API thật",
       "reason": "Minh họa kiểm chứng phân loại contract theo yêu cầu nghiên cứu; không áp dụng vào API hiện tại.",
       "tools": {
@@ -190,6 +190,115 @@
                 }
               }
             }
+          }
+        }
+      }
+    },
+    {
+      "id": "8686fee93227d463bae542200a9bed6f8e0673efbbccc8c3cc36767dd977f69d",
+      "label": "Fixture security: POST /rooms yêu cầu bearer token",
+      "classification": "BREAKING",
+      "contractId": "rentify-public",
+      "repository": "https://github.com/pbl6-home-renter/be",
+      "baseHash": "2e4042635100c0e5f161917b514da3da73763faac1a7505d072877d915d9be8b",
+      "headHash": "f3f501dfeea0ff4bb19c68a6804d3c50130099360277c2976ce667c674744fc0",
+      "baseSource": "scripts\\fixtures\\contract-change\\base\\openapi.yaml",
+      "headSource": "scripts\\fixtures\\contract-change\\security\\openapi.yaml",
+      "detectedAt": "2026-10-23T16:36:13.385Z",
+      "committedAt": "2026-10-23T23:28:14+07:00",
+      "baseCommit": null,
+      "headCommit": "2573d866ee44ddfd155c70d93726fdbd2d635bd3",
+      "prUrl": null,
+      "commitUrl": "https://github.com/pbl6-home-renter/be/commit/2573d866ee44ddfd155c70d93726fdbd2d635bd3",
+      "metadataKind": "Fixture minh họa; SHA là bối cảnh chạy, không phải thay đổi API thật",
+      "reason": "Minh họa kiểm chứng phân loại contract theo yêu cầu nghiên cứu; không áp dụng vào API hiện tại.",
+      "tools": {
+        "redocly": "2.64.1",
+        "oasdiff": "1.34.1"
+      },
+      "changes": [
+        {
+          "id": "api-security-anonymous-access-removed",
+          "text": "the endpoint no longer allows anonymous access and now only accepts `bearerAuth`",
+          "level": 3,
+          "operation": "POST",
+          "operationId": "createRoom",
+          "path": "/rooms",
+          "section": "paths",
+          "fingerprint": "188189e2a1b4",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra token, header, scope và luồng đăng nhập; BE xác nhận quyền truy cập thực tế, thời điểm áp dụng và tương thích app cũ."
+        },
+        {
+          "id": "api-security-component-added",
+          "text": "the component security scheme `bearerAuth` was added",
+          "level": 1,
+          "section": "components",
+          "fingerprint": "8b1e0fa5aee3",
+          "classification": "NEEDS_REVIEW",
+          "clientImpact": "FE và Mobile: kiểm tra token, header, scope và luồng đăng nhập; BE xác nhận quyền truy cập thực tế, thời điểm áp dụng và tương thích app cũ."
+        },
+        {
+          "id": "api-version-not-bumped",
+          "text": "a breaking change was detected but the version is still `1.0.0`",
+          "level": 1,
+          "section": "info",
+          "fingerprint": "d3f96cd643c1",
+          "classification": "NON_BREAKING",
+          "clientImpact": "BE: xem lại quy ước version trước khi chấp nhận breaking change. FE/Mobile: theo kế hoạch chuyển đổi của entry này; version trong OpenAPI chưa chứng minh backend đã triển khai."
+        }
+      ],
+      "locations": [
+        {
+          "pointer": "/components/securitySchemes",
+          "before": null,
+          "after": {
+            "bearerAuth": {
+              "type": "http",
+              "scheme": "bearer",
+              "bearerFormat": "JWT"
+            }
+          }
+        },
+        {
+          "pointer": "/paths/~1rooms/post/security",
+          "before": null,
+          "after": [
+            {
+              "bearerAuth": []
+            }
+          ]
+        }
+      ],
+      "semanticDiff": {
+        "paths": {
+          "modified": {
+            "/rooms": {
+              "operations": {
+                "modified": {
+                  "POST": {
+                    "securityRequirements": {
+                      "added": [
+                        {
+                          "index": 0,
+                          "schemes": {
+                            "bearerAuth": []
+                          }
+                        }
+                      ],
+                      "listAdded": true
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "components": {
+          "securitySchemes": {
+            "added": [
+              "bearerAuth"
+            ]
           }
         }
       }
