@@ -1,0 +1,20 @@
+name: Setup contract tools
+description: Cài Node.js và oasdiff (pin version + checksum) cho scripts/contract-change-report.mjs.
+runs:
+  using: composite
+  steps:
+    - uses: actions/setup-node@v4
+      with:
+        node-version: 22
+    - name: Install oasdiff
+      shell: bash
+      env:
+        OASDIFF_VERSION: 1.34.1
+        OASDIFF_SHA256: 75775f65b0adebd26a8e013af51a799342dfdc6262d89efa9e3b7bdf89657d90
+      run: |
+        archive="oasdiff_${OASDIFF_VERSION}_linux_amd64.tar.gz"
+        curl -fsSL -o "$RUNNER_TEMP/$archive" "https://github.com/oasdiff/oasdiff/releases/download/v${OASDIFF_VERSION}/${archive}"
+        echo "${OASDIFF_SHA256}  $RUNNER_TEMP/$archive" | sha256sum -c -
+        mkdir -p "$RUNNER_TEMP/oasdiff"
+        tar -xzf "$RUNNER_TEMP/$archive" -C "$RUNNER_TEMP/oasdiff" oasdiff
+        echo "OASDIFF_BIN=$RUNNER_TEMP/oasdiff/oasdiff" >> "$GITHUB_ENV"

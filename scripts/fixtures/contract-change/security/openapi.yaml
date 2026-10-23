@@ -1,0 +1,32 @@
+openapi: 3.0.3
+info:
+  title: Contract change tracking — dữ liệu minh họa
+  version: 1.0.0
+servers:
+  - url: https://example.invalid/api/v1
+paths:
+  /rooms:
+    post:
+      operationId: createRoom
+      summary: Tạo phòng (fixture, không sửa contract thật)
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './schemas.yaml#/RoomCreate'
+      responses:
+        '201':
+          description: Phòng đã tạo
+          content:
+            application/json:
+              schema:
+                $ref: './schemas.yaml#/Room'
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

@@ -1,0 +1,24 @@
+openapi: 3.0.3
+info:
+  title: Contract change tracking — dữ liệu minh họa
+  version: 1.0.0
+servers:
+  - url: https://example.invalid/api/v1
+paths:
+  /rooms:
+    post:
+      operationId: createRoom
+      summary: Tạo phòng mới (fixture, chỉ sửa tài liệu)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './schemas.yaml#/RoomCreate'
+      responses:
+        '201':
+          description: Phòng vừa được tạo thành công
+          content:
+            application/json:
+              schema:
+                $ref: './schemas.yaml#/Room'
