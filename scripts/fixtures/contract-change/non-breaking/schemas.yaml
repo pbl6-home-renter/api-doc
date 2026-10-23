@@ -1,0 +1,23 @@
+RoomCreate:
+  title: RoomCreate
+  type: object
+  required: [name]
+  properties:
+    name:
+      type: string
+    buildingId:
+      type: string
+      format: uuid
+Room:
+  title: Room
+  type: object
+  required: [id, name]
+  properties:
+    id:
+      type: string
+      format: uuid
+    name:
+      type: string
+    displayName:
+      type: string
+      description: Tên hiển thị tùy chọn, client cũ có thể bỏ qua.
