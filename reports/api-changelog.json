@@ -1,4 +1,101 @@
 {
   "formatVersion": 1,
-  "entries": []
+  "entries": [
+    {
+      "id": "a87798f7f4c96626c35dea39e5c6064c8ef48aa06917bd8eb8d414c1873770c7",
+      "label": "Thay đổi contract từ Git",
+      "classification": "NON_BREAKING",
+      "contractId": "rentify-public",
+      "repository": "https://github.com/pbl6-home-renter/api-doc",
+      "baseHash": "61c08c859df8cdf85cbfb99cef8066b36da39af283649346de2b3fe9f432de2e",
+      "headHash": "57db72778033e1ad76b059f351d5991fdfa84b1ed75409932dc80fff770a95bc",
+      "baseSource": "src/openapi.yaml",
+      "headSource": "src/openapi.yaml",
+      "detectedAt": "2026-10-23T16:50:23.683Z",
+      "committedAt": "2026-10-23T23:50:06+07:00",
+      "baseCommit": "cb0c9fe47f0b403f70618ef36c790ac2697e1d61",
+      "headCommit": "abe5f9d947c9bbe3751418e23252401fbaa9329f",
+      "prUrl": null,
+      "commitUrl": "https://github.com/pbl6-home-renter/api-doc/commit/abe5f9d947c9bbe3751418e23252401fbaa9329f",
+      "metadataKind": "Git revision thực tế",
+      "reason": "CHƯA CUNG CẤP — tác giả PR phải bổ sung lý do nghiệp vụ; không thể suy ra từ OpenAPI diff.",
+      "tools": {
+        "redocly": "2.64.1",
+        "oasdiff": "1.34.1"
+      },
+      "changes": [
+        {
+          "id": "request-property-max-length-increased",
+          "text": "the `note` request property's maxLength was increased from `200` to `500`",
+          "level": 1,
+          "operation": "POST",
+          "operationId": "postBuildingsBuildingidApprove",
+          "path": "/buildings/{buildingId}/approve",
+          "section": "paths",
+          "fingerprint": "ffefab630b4e",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        }
+      ],
+      "locations": [
+        {
+          "pointer": "/components/schemas/BuildingApproveRequestDto/properties/note/maxLength",
+          "before": 200,
+          "after": 500
+        }
+      ],
+      "semanticDiff": {
+        "paths": {
+          "modified": {
+            "/buildings/{buildingId}/approve": {
+              "operations": {
+                "modified": {
+                  "POST": {
+                    "requestBody": {
+                      "content": {
+                        "modified": {
+                          "application/json": {
+                            "schema": {
+                              "properties": {
+                                "modified": {
+                                  "note": {
+                                    "maxLength": {
+                                      "from": 200,
+                                      "to": 500
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "components": {
+          "schemas": {
+            "modified": {
+              "BuildingApproveRequestDto": {
+                "properties": {
+                  "modified": {
+                    "note": {
+                      "maxLength": {
+                        "from": 200,
+                        "to": 500
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
 }
