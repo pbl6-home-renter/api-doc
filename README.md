@@ -2,7 +2,42 @@
 
 Repository này là trung tâm lưu trữ, định nghĩa và đồng bộ đặc tả API (OpenAPI 3.0) của dự án **PBL6 (Hệ thống quản lý nhà trọ và tìm bạn ở ghép)** với nền tảng **Apidog**.
 
-Các API Auth/User phản ánh hành vi Identity-Service hiện tại. Khi gọi trực tiếp service, dùng prefix `/identity-service/api/v1` (server override trong từng operation); các domain khác giữ server chung. Login/register trả token trong JSON và không đặt cookie. Refresh/logout (P4-04) đã có trong `openapi.yaml` theo thiết kế, nhận refresh token trong body JSON, nhưng service chưa triển khai. Mã lỗi validation giữ nguyên giá trị do service trả, kể cả thông báo tiếng Anh của query validator. Sau khi sửa tài liệu, chạy `npm run bundle` và đồng bộ nhánh trong Apidog để nạp thay đổi.
+Các API Auth/User phản ánh hành vi Identity-Service hiện tại. Khi gọi trực tiếp service, dùng prefix `/identity-service/api/v1` (server override trong từng operation); các domain khác giữ server chung. Login/register trả token trong JSON và không đặt cookie. Refresh/logout nhận refresh token trong body JSON và backend thực hiện refresh-token rotation. Mã lỗi validation giữ nguyên giá trị do service trả, kể cả thông báo tiếng Anh của query validator. Sau khi sửa tài liệu, chạy `npm run bundle` và đồng bộ nhánh trong Apidog để nạp thay đổi.
+
+## Apidog environment và tự động refresh token
+
+Template biến môi trường nằm tại [`apidog/environment.local.example.json`](apidog/environment.local.example.json). Template này không chứa credential hoặc token thật. Tạo environment trong Apidog với các biến tương ứng; đặt `LOGIN_IDENTIFIER`, `LOGIN_PASSWORD`, `accessToken` và `refreshToken` ở **Local Value**.
+
+Environment mặc định dùng API Gateway demo:
+
+```text
+BASE_URL=http://3.26.114.197/api/v1
+```
+
+### Login
+
+Gọi `POST {{BASE_URL}}/auth/login` với body:
+
+```json
+{
+  "identifier": "{{LOGIN_IDENTIFIER}}",
+  "password": "{{LOGIN_PASSWORD}}",
+  "rememberMe": true
+}
+```
+
+Gắn [`apidog/scripts/login-post-response.js`](apidog/scripts/login-post-response.js) vào **Post Processors** của request login. Script đọc `data.accessToken` và `data.refreshToken` trong response envelope, sau đó lưu token cùng thời điểm hết hạn của access token.
+
+### Request protected
+
+Gắn [`apidog/scripts/protected-pre-request.js`](apidog/scripts/protected-pre-request.js) vào **Pre Processors** của folder hoặc request protected. Script sẽ:
+
+- Gắn `Authorization: Bearer {{accessToken}}` nếu access token còn hạn.
+- Gọi `POST {{BASE_URL}}/auth/refresh` với `{ "refreshToken": "..." }` trước request nếu token hết hạn/gần hết hạn.
+- Lưu cả access token và refresh token mới sau rotation.
+- Xóa session local và yêu cầu login lại nếu refresh thất bại.
+
+Không gắn script này cho `/auth/login`, `/auth/register` hoặc `/auth/refresh`. Public endpoints không cần Bearer token. Script refresh là proactive trước request; Apidog không tự retry lại request đã nhận `401`. Nếu cần chạy flow nhiều bước, dùng Test Scenario thay vì `pm.nextRequest()`.
 
 ---
 
