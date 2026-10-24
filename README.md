@@ -6,7 +6,7 @@ Các API Auth/User phản ánh hành vi Identity-Service hiện tại. Khi gọi
 
 ## Apidog environment và tự động refresh token
 
-Template biến môi trường nằm tại [`apidog/environment.local.example.json`](apidog/environment.local.example.json). Template này không chứa credential hoặc token thật. Tạo environment trong Apidog với các biến tương ứng; đặt `LOGIN_IDENTIFIER`, `LOGIN_PASSWORD`, `accessToken` và `refreshToken` ở **Local Value**.
+Template biến môi trường nằm tại [`apidog/environment.local.example.json`](apidog/environment.local.example.json). Template này không chứa credential hoặc token thật. Credential đăng nhập không nằm trong environment; token chỉ được lưu ở **Local Value**.
 
 Environment mặc định dùng API Gateway demo:
 
@@ -20,13 +20,13 @@ Gọi `POST {{BASE_URL}}/auth/login` với body:
 
 ```json
 {
-  "identifier": "{{LOGIN_IDENTIFIER}}",
-  "password": "{{LOGIN_PASSWORD}}",
+  "identifier": "email-hoac-so-dien-thoai-cua-ban",
+  "password": "mat-khau-cua-ban",
   "rememberMe": true
 }
 ```
 
-Gắn [`apidog/scripts/login-post-response.js`](apidog/scripts/login-post-response.js) vào **Post Processors** của request login. Script đọc `data.accessToken` và `data.refreshToken` trong response envelope, sau đó lưu token cùng thời điểm hết hạn của access token.
+Gắn [`apidog/scripts/login-post-response.js`](apidog/scripts/login-post-response.js) vào **Post Processors** của request login. Script đọc `data.accessToken` và `data.refreshToken` trong response envelope, sau đó lưu token cùng thời điểm hết hạn của access token. Credential chỉ nhập trực tiếp trong body Login và không cần tạo biến `LOGIN_IDENTIFIER` hoặc `LOGIN_PASSWORD`.
 
 ### Request protected
 
