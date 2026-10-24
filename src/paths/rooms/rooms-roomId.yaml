@@ -60,7 +60,7 @@ get:
     '400':
       $ref: ../../openapi.yaml#/components/responses/BadRequestPathError
     '403':
-      $ref: ../../openapi.yaml#/components/responses/ForbiddenError
+      $ref: ../../openapi.yaml#/components/responses/ForbiddenOnlyError
     '404':
       $ref: ../../openapi.yaml#/components/responses/NotFoundError
     '429':
@@ -130,6 +130,8 @@ patch:
       $ref: ../../openapi.yaml#/components/responses/BadRequestBodyPathError
     '401':
       $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
+    '503':
+      $ref: ../../openapi.yaml#/components/responses/AuthUnavailableError
     '403':
       $ref: ../../openapi.yaml#/components/responses/ForbiddenError
     '404':
@@ -164,6 +166,8 @@ delete:
       $ref: ../../openapi.yaml#/components/responses/BadRequestPathError
     '401':
       $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
+    '503':
+      $ref: ../../openapi.yaml#/components/responses/AuthUnavailableError
     '403':
       $ref: ../../openapi.yaml#/components/responses/ForbiddenError
     '404':

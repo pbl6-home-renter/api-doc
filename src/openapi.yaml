@@ -924,6 +924,38 @@ components:
             code: UNAUTHORIZED
     ForbiddenError:
       x-apidog-name: Forbidden
+      description: Không có quyền thực hiện yêu cầu hoặc tài khoản đã bị khóa
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required:
+              - statusCode
+              - code
+            properties:
+              statusCode:
+                type: integer
+                enum:
+                  - 403
+              code:
+                type: string
+                enum:
+                  - FORBIDDEN
+                  - ACCOUNT_LOCKED
+          examples:
+            forbidden:
+              summary: Không có quyền thực hiện yêu cầu
+              value:
+                statusCode: 403
+                code: FORBIDDEN
+            account_locked:
+              summary: Tài khoản đã bị khóa
+              value:
+                statusCode: 403
+                code: ACCOUNT_LOCKED
+    ForbiddenOnlyError:
+      x-apidog-name: Forbidden
       description: Không có quyền thực hiện yêu cầu
       content:
         application/json:
@@ -945,6 +977,29 @@ components:
           example:
             statusCode: 403
             code: FORBIDDEN
+    AuthUnavailableError:
+      x-apidog-name: Authentication Unavailable
+      description: Hạ tầng xác thực tạm thời không khả dụng
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required:
+              - statusCode
+              - code
+            properties:
+              statusCode:
+                type: integer
+                enum:
+                  - 503
+              code:
+                type: string
+                enum:
+                  - AUTH_UNAVAILABLE
+          example:
+            statusCode: 503
+            code: AUTH_UNAVAILABLE
     NotFoundError:
       x-apidog-name: Not Found
       description: Không tìm thấy tài nguyên được yêu cầu
