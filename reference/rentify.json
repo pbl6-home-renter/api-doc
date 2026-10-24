@@ -1430,7 +1430,7 @@
           }
         ],
         "summary": "Logout",
-        "description": "Dành cho tenant, landlord và admin. Thu hồi refresh token family của phiên hiện tại. Thành công trả 204, không có body.\n\n**Lưu ý**\n\n- Access token hiện tại vẫn dùng được tới khi hết hạn (tối đa 15 phút); client tự xóa token.\n- Refresh token gửi trong body JSON. Token không tồn tại hoặc không thuộc user hiện tại thì bỏ qua, vẫn trả 204.\n- Tài khoản bị khóa vẫn logout được.\n\n```mermaid\nsequenceDiagram\n    autonumber\n    participant GW as API Gateway\n    participant ID as Identity\n    participant DB as Identity DB\n\n    GW->>ID: POST /auth/logout {refreshToken} + Authorization\n    ID->>ID: Verify access token (JWKS / public key)\n    ID->>DB: Revoke refresh token family của phiên hiện tại\n    ID-->>GW: 204\n```",
+        "description": "Dành cho tenant, landlord và admin. Thu hồi refresh token family của phiên hiện tại. Thành công trả 204, không có body.\n\n**Lưu ý**\n\n- Access token hiện tại vẫn dùng được tới khi hết hạn (tối đa 15 phút); client tự xóa token.\n- Refresh token gửi trong body JSON. Token không tồn tại hoặc không thuộc user hiện tại thì bỏ qua, vẫn trả 204.\n- Tài khoản bị khóa vẫn logout được.\n\n```mermaid\nsequenceDiagram\n    autonumber\n    participant GW as API Gateway\n    participant ID as Identity\n    participant DB as Identity DB\n\n    GW->>ID: POST /auth/logout {refreshToken} + Authorization\n    ID->>ID: Verify access token (JWKS / public key)\n    ID->>DB: Revoke refresh token family của phiên hiện tại\n    ID-->>GW: 204\n```\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "requestBody": {
           "required": true,
           "content": {
@@ -1745,7 +1745,7 @@
         "x-apidog-status": "released",
         "operationId": "getCurrentUser",
         "summary": "Get current user",
-        "description": "Lấy hồ sơ người dùng hiện tại. Yêu cầu Bearer access token.\n\n**Lưu ý**\n\n- `payoutAccount.accountNumber` luôn bị che (`**xxxxx`).\n\n```mermaid\nsequenceDiagram\n    autonumber\n    participant GW as API Gateway\n    participant ID as Identity\n    participant DB as Identity DB\n\n    GW->>ID: GET /me + Authorization\n    ID->>DB: Đọc users + landlord_profiles theo userId\n    ID->>ID: Che accountNumber thành \"**xxxxx\"\n    ID-->>GW: 200 CURRENT_USER_PROFILE_FETCHED {id, name, email, phone, role, status, payoutAccount}\n```",
+        "description": "Lấy hồ sơ người dùng hiện tại. Yêu cầu Bearer access token.\n\n**Lưu ý**\n\n- `payoutAccount.accountNumber` luôn bị che (`**xxxxx`).\n\n```mermaid\nsequenceDiagram\n    autonumber\n    participant GW as API Gateway\n    participant ID as Identity\n    participant DB as Identity DB\n\n    GW->>ID: GET /me + Authorization\n    ID->>DB: Đọc users + landlord_profiles theo userId\n    ID->>ID: Che accountNumber thành \"**xxxxx\"\n    ID-->>GW: 200 CURRENT_USER_PROFILE_FETCHED {id, name, email, phone, role, status, payoutAccount}\n```\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "security": [
           {
             "BearerAuth": []
@@ -1977,7 +1977,7 @@
           }
         ],
         "summary": "Update current user",
-        "description": "Cập nhật hồ sơ hiện tại. Bắt buộc name, phone, payoutAccount (có thể null). Chỉ landlord được gửi object payoutAccount. Số tài khoản trả về được mask; phone đổi từ +84 sang 0.\n\n**Lưu ý**\n\n- Ngữ nghĩa thay toàn bộ: bắt buộc gửi `name`, `phone`, `payoutAccount`; gửi `payoutAccount: null` để xóa.\n- Chỉ landlord được có `payoutAccount`.\n- Chưa triển khai: publish `user.updated`, `landlord.payout_account_updated`. Event payout là tùy chọn, có thể bỏ nếu chấp nhận cache của Payment cũ tối đa 5 phút.\n\n```mermaid\nsequenceDiagram\n    autonumber\n    participant GW as API Gateway\n    participant ID as Identity\n    participant DB as Identity DB\n    participant MQ as RabbitMQ\n    participant TEN as Tenancy\n    participant COM as Community\n    participant PAY as Payment\n\n    GW->>ID: PATCH /me {name, phone, payoutAccount} + Authorization\n    alt payoutAccount khác null nhưng role không phải landlord\n        ID-->>GW: 422 USER_UPDATE_PAYOUT_NOT_ALLOWED\n    end\n    ID->>DB: Kiểm tra phone trùng với user khác\n    alt Trùng phone\n        ID-->>GW: 409 DUPLICATE_PHONE\n    end\n    ID->>DB: [Transaction] Update users (name, phone)<br/>+ upsert landlord_profiles (bankCode, accountNumber, accountName)<br/>+ outbox user.updated (nếu name/phone đổi)<br/>+ outbox landlord.payout_account_updated (nếu payoutAccount đổi)\n    ID-->>GW: 200 CURRENT_USER_PROFILE_UPDATED {id, name, phone, payoutAccount}\n    opt name/phone đổi\n        ID-)MQ: user.updated {userId, name, phone}\n        MQ-)TEN: Cập nhật user snapshot\n        MQ-)COM: Cập nhật user snapshot\n    end\n    opt payoutAccount đổi\n        ID-)MQ: landlord.payout_account_updated {userId}\n        MQ-)PAY: Xóa cache payout của landlord\n    end\n```",
+        "description": "Cập nhật hồ sơ hiện tại. Bắt buộc name, phone, payoutAccount (có thể null). Chỉ landlord được gửi object payoutAccount. Số tài khoản trả về được mask; phone đổi từ +84 sang 0.\n\n**Lưu ý**\n\n- Ngữ nghĩa thay toàn bộ: bắt buộc gửi `name`, `phone`, `payoutAccount`; gửi `payoutAccount: null` để xóa.\n- Chỉ landlord được có `payoutAccount`.\n- Chưa triển khai: publish `user.updated`, `landlord.payout_account_updated`. Event payout là tùy chọn, có thể bỏ nếu chấp nhận cache của Payment cũ tối đa 5 phút.\n\n```mermaid\nsequenceDiagram\n    autonumber\n    participant GW as API Gateway\n    participant ID as Identity\n    participant DB as Identity DB\n    participant MQ as RabbitMQ\n    participant TEN as Tenancy\n    participant COM as Community\n    participant PAY as Payment\n\n    GW->>ID: PATCH /me {name, phone, payoutAccount} + Authorization\n    alt payoutAccount khác null nhưng role không phải landlord\n        ID-->>GW: 422 USER_UPDATE_PAYOUT_NOT_ALLOWED\n    end\n    ID->>DB: Kiểm tra phone trùng với user khác\n    alt Trùng phone\n        ID-->>GW: 409 DUPLICATE_PHONE\n    end\n    ID->>DB: [Transaction] Update users (name, phone)<br/>+ upsert landlord_profiles (bankCode, accountNumber, accountName)<br/>+ outbox user.updated (nếu name/phone đổi)<br/>+ outbox landlord.payout_account_updated (nếu payoutAccount đổi)\n    ID-->>GW: 200 CURRENT_USER_PROFILE_UPDATED {id, name, phone, payoutAccount}\n    opt name/phone đổi\n        ID-)MQ: user.updated {userId, name, phone}\n        MQ-)TEN: Cập nhật user snapshot\n        MQ-)COM: Cập nhật user snapshot\n    end\n    opt payoutAccount đổi\n        ID-)MQ: landlord.payout_account_updated {userId}\n        MQ-)PAY: Xóa cache payout của landlord\n    end\n```\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "requestBody": {
           "required": true,
           "content": {
@@ -2494,7 +2494,7 @@
           }
         ],
         "summary": "Change password",
-        "description": "Đổi mật khẩu hiện tại; thu hồi refresh token. Thành công trả 204, không có body.\n\n**Lưu ý**\n\n- Revoke toàn bộ refresh token, kể cả phiên hiện tại: client nên đăng nhập lại sau khi đổi mật khẩu.\n\n```mermaid\nsequenceDiagram\n    autonumber\n    participant GW as API Gateway\n    participant ID as Identity\n    participant DB as Identity DB\n\n    GW->>ID: PUT /me/password {currentPassword, newPassword, confirmPassword} + Authorization\n    ID->>DB: Đọc users theo userId\n    ID->>ID: bcrypt compare currentPassword\n    alt Sai mật khẩu hiện tại\n        ID-->>GW: 401 USER_CHANGE_PASSWORD_INVALID_CURRENT\n    end\n    ID->>DB: [Transaction] Update users.password (bcrypt)<br/>+ revoke toàn bộ refresh_tokens của user\n    ID-->>GW: 204\n```",
+        "description": "Đổi mật khẩu hiện tại; thu hồi refresh token. Thành công trả 204, không có body.\n\n**Lưu ý**\n\n- Revoke toàn bộ refresh token, kể cả phiên hiện tại: client nên đăng nhập lại sau khi đổi mật khẩu.\n\n```mermaid\nsequenceDiagram\n    autonumber\n    participant GW as API Gateway\n    participant ID as Identity\n    participant DB as Identity DB\n\n    GW->>ID: PUT /me/password {currentPassword, newPassword, confirmPassword} + Authorization\n    ID->>DB: Đọc users theo userId\n    ID->>ID: bcrypt compare currentPassword\n    alt Sai mật khẩu hiện tại\n        ID-->>GW: 401 USER_CHANGE_PASSWORD_INVALID_CURRENT\n    end\n    ID->>DB: [Transaction] Update users.password (bcrypt)<br/>+ revoke toàn bộ refresh_tokens của user\n    ID-->>GW: 204\n```\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "requestBody": {
           "required": true,
           "content": {
@@ -2861,7 +2861,7 @@
           }
         ],
         "summary": "List users",
-        "description": "Chỉ admin. Danh sách JSON và phân trang offset. Lọc bằng role, status ở query cấp ngoài; q tìm theo tên/email/điện thoại. Không hỗ trợ filter object hoặc format xuất tệp.\n\n```mermaid\nsequenceDiagram\n    autonumber\n    participant GW as API Gateway\n    participant ID as Identity\n    participant DB as Identity DB\n\n    GW->>ID: GET /users?pageNo&pageSize&sort&role&status&q\n    ID->>DB: Query users chưa bị xóa (filter role/status, q theo name/email/phone, sort, offset)<br/>+ count tổng\n    ID-->>GW: 200 USER_LIST_FETCHED [{id, name, email, phone, role, status}] + pagination\n```",
+        "description": "Chỉ admin. Danh sách JSON và phân trang offset. Lọc bằng role, status ở query cấp ngoài; q tìm theo tên/email/điện thoại. Không hỗ trợ filter object hoặc format xuất tệp.\n\n```mermaid\nsequenceDiagram\n    autonumber\n    participant GW as API Gateway\n    participant ID as Identity\n    participant DB as Identity DB\n\n    GW->>ID: GET /users?pageNo&pageSize&sort&role&status&q\n    ID->>DB: Query users chưa bị xóa (filter role/status, q theo name/email/phone, sort, offset)<br/>+ count tổng\n    ID-->>GW: 200 USER_LIST_FETCHED [{id, name, email, phone, role, status}] + pagination\n```\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "parameters": [
           {
             "name": "sort",
@@ -3291,7 +3291,7 @@
           }
         ],
         "summary": "Get user",
-        "description": "Chỉ admin. Lấy chi tiết tài khoản, thông tin khóa, payoutAccount đã mask và số lượng tòa nhà/hợp đồng.\n\n**Lưu ý**\n\n- `buildingCount`, `activeContractCount` lấy từ Tenancy qua HTTP nội bộ; Tenancy lỗi hoặc timeout thì trả `null`.\n- Chưa triển khai: code đang trả cố định `0`; Tenancy cần build `GET /internal/users/{userId}/stats`.\n\n```mermaid\nsequenceDiagram\n    autonumber\n    participant GW as API Gateway\n    participant ID as Identity\n    participant DB as Identity DB\n    participant TEN as Tenancy\n\n    GW->>ID: GET /users/{userId}\n    ID->>DB: Đọc users + landlord_profiles theo userId\n    alt Không tìm thấy\n        ID-->>GW: 404 USER_NOT_FOUND\n    end\n    ID->>TEN: GET /internal/users/{userId}/stats (service token, timeout 3s)\n    alt Tenancy trả kết quả\n        TEN-->>ID: 200 {buildingCount, activeContractCount}\n    else Tenancy lỗi / timeout\n        ID->>ID: buildingCount = null, activeContractCount = null\n    end\n    ID-->>GW: 200 USER_DETAIL_FETCHED {..., lockReason, lockedAt, payoutAccount, buildingCount, activeContractCount}\n```",
+        "description": "Chỉ admin. Lấy chi tiết tài khoản, thông tin khóa, payoutAccount đã mask và số lượng tòa nhà/hợp đồng.\n\n**Lưu ý**\n\n- `buildingCount`, `activeContractCount` lấy từ Tenancy qua HTTP nội bộ; Tenancy lỗi hoặc timeout thì trả `null`.\n- Chưa triển khai: code đang trả cố định `0`; Tenancy cần build `GET /internal/users/{userId}/stats`.\n\n```mermaid\nsequenceDiagram\n    autonumber\n    participant GW as API Gateway\n    participant ID as Identity\n    participant DB as Identity DB\n    participant TEN as Tenancy\n\n    GW->>ID: GET /users/{userId}\n    ID->>DB: Đọc users + landlord_profiles theo userId\n    alt Không tìm thấy\n        ID-->>GW: 404 USER_NOT_FOUND\n    end\n    ID->>TEN: GET /internal/users/{userId}/stats (service token, timeout 3s)\n    alt Tenancy trả kết quả\n        TEN-->>ID: 200 {buildingCount, activeContractCount}\n    else Tenancy lỗi / timeout\n        ID->>ID: buildingCount = null, activeContractCount = null\n    end\n    ID-->>GW: 200 USER_DETAIL_FETCHED {..., lockReason, lockedAt, payoutAccount, buildingCount, activeContractCount}\n```\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "parameters": [
           {
             "name": "userId",
@@ -3499,7 +3499,7 @@
           }
         ],
         "summary": "Update user",
-        "description": "Chỉ admin. Cập nhật ít nhất một trong name hoặc phone; null được bỏ qua.\n\n**Lưu ý**\n\n- Không đổi được `email`, `role`, `status` qua API này; khóa/mở khóa dùng API lock/unlock.\n- Chưa triển khai: publish `user.updated`.\n\n```mermaid\nsequenceDiagram\n    autonumber\n    participant GW as API Gateway\n    participant ID as Identity\n    participant DB as Identity DB\n    participant MQ as RabbitMQ\n    participant TEN as Tenancy\n    participant COM as Community\n\n    GW->>ID: PATCH /users/{userId} {name?, phone?}\n    ID->>DB: Đọc user, kiểm tra phone trùng\n    alt Không tìm thấy\n        ID-->>GW: 404 USER_NOT_FOUND\n    else Trùng phone\n        ID-->>GW: 409 DUPLICATE_PHONE\n    end\n    ID->>DB: [Transaction] Update users (name, phone)<br/>+ outbox user.updated\n    ID-->>GW: 200 USER_UPDATED {userId, name, phone, email, status}\n    ID-)MQ: user.updated {userId, name, phone}\n    MQ-)TEN: Cập nhật user snapshot\n    MQ-)COM: Cập nhật user snapshot\n```",
+        "description": "Chỉ admin. Cập nhật ít nhất một trong name hoặc phone; null được bỏ qua.\n\n**Lưu ý**\n\n- Không đổi được `email`, `role`, `status` qua API này; khóa/mở khóa dùng API lock/unlock.\n- Chưa triển khai: publish `user.updated`.\n\n```mermaid\nsequenceDiagram\n    autonumber\n    participant GW as API Gateway\n    participant ID as Identity\n    participant DB as Identity DB\n    participant MQ as RabbitMQ\n    participant TEN as Tenancy\n    participant COM as Community\n\n    GW->>ID: PATCH /users/{userId} {name?, phone?}\n    ID->>DB: Đọc user, kiểm tra phone trùng\n    alt Không tìm thấy\n        ID-->>GW: 404 USER_NOT_FOUND\n    else Trùng phone\n        ID-->>GW: 409 DUPLICATE_PHONE\n    end\n    ID->>DB: [Transaction] Update users (name, phone)<br/>+ outbox user.updated\n    ID-->>GW: 200 USER_UPDATED {userId, name, phone, email, status}\n    ID-)MQ: user.updated {userId, name, phone}\n    MQ-)TEN: Cập nhật user snapshot\n    MQ-)COM: Cập nhật user snapshot\n```\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "parameters": [
           {
             "name": "userId",
@@ -3879,7 +3879,7 @@
           }
         ],
         "summary": "Delete user",
-        "description": "Chỉ admin. Xóa mềm tài khoản; không thể tự xóa. Thành công trả 204, không có body.\n\n**Lưu ý**\n\n- Xóa mềm (`is_deleted = true`); user đã xóa không đăng nhập được.\n- Không xóa được user còn HĐ hiệu lực. Không hỏi được Tenancy thì từ chối xóa (`503`, fail-closed).\n- Chưa triển khai: kiểm tra qua Tenancy, mã `409 USER_DELETE_HAS_ACTIVE_CONTRACT`, `503 SERVICE_UNAVAILABLE` và publish `user.deleted`.\n\n```mermaid\nsequenceDiagram\n    autonumber\n    participant GW as API Gateway\n    participant ID as Identity\n    participant DB as Identity DB\n    participant MQ as RabbitMQ\n    participant TEN as Tenancy\n    participant COM as Community\n\n    GW->>ID: DELETE /users/{userId} + Authorization (admin)\n    alt Admin tự xóa chính mình\n        ID-->>GW: 400 USER_DELETE_CANNOT_SELF\n    end\n    ID->>DB: Đọc user\n    alt Không tìm thấy\n        ID-->>GW: 404 USER_NOT_FOUND\n    else Đã bị xóa\n        ID-->>GW: 409 USER_DELETE_ALREADY_DELETED\n    end\n    ID->>TEN: GET /internal/users/{userId}/stats (service token, timeout 3s)\n    alt Tenancy lỗi / timeout (fail-closed)\n        ID-->>GW: 503 SERVICE_UNAVAILABLE\n    end\n    TEN-->>ID: 200 {buildingCount, activeContractCount}\n    alt activeContractCount > 0\n        ID-->>GW: 409 USER_DELETE_HAS_ACTIVE_CONTRACT\n    end\n    ID->>DB: [Transaction] Soft delete users (is_deleted=true) + landlord_profiles<br/>+ revoke toàn bộ refresh_tokens<br/>+ outbox user.deleted\n    ID-->>GW: 204\n    ID-)MQ: user.deleted {userId, role}\n    MQ-)TEN: Ẩn user, không cho gán vào HĐ mới\n    MQ-)COM: Ngắt socket, xóa push devices\n```",
+        "description": "Chỉ admin. Xóa mềm tài khoản; không thể tự xóa. Thành công trả 204, không có body.\n\n**Lưu ý**\n\n- Xóa mềm (`is_deleted = true`); user đã xóa không đăng nhập được.\n- Không xóa được user còn HĐ hiệu lực. Không hỏi được Tenancy thì từ chối xóa (`503`, fail-closed).\n- Chưa triển khai: kiểm tra qua Tenancy, mã `409 USER_DELETE_HAS_ACTIVE_CONTRACT`, `503 SERVICE_UNAVAILABLE` và publish `user.deleted`.\n\n```mermaid\nsequenceDiagram\n    autonumber\n    participant GW as API Gateway\n    participant ID as Identity\n    participant DB as Identity DB\n    participant MQ as RabbitMQ\n    participant TEN as Tenancy\n    participant COM as Community\n\n    GW->>ID: DELETE /users/{userId} + Authorization (admin)\n    alt Admin tự xóa chính mình\n        ID-->>GW: 400 USER_DELETE_CANNOT_SELF\n    end\n    ID->>DB: Đọc user\n    alt Không tìm thấy\n        ID-->>GW: 404 USER_NOT_FOUND\n    else Đã bị xóa\n        ID-->>GW: 409 USER_DELETE_ALREADY_DELETED\n    end\n    ID->>TEN: GET /internal/users/{userId}/stats (service token, timeout 3s)\n    alt Tenancy lỗi / timeout (fail-closed)\n        ID-->>GW: 503 SERVICE_UNAVAILABLE\n    end\n    TEN-->>ID: 200 {buildingCount, activeContractCount}\n    alt activeContractCount > 0\n        ID-->>GW: 409 USER_DELETE_HAS_ACTIVE_CONTRACT\n    end\n    ID->>DB: [Transaction] Soft delete users (is_deleted=true) + landlord_profiles<br/>+ revoke toàn bộ refresh_tokens<br/>+ outbox user.deleted\n    ID-->>GW: 204\n    ID-)MQ: user.deleted {userId, role}\n    MQ-)TEN: Ẩn user, không cho gán vào HĐ mới\n    MQ-)COM: Ngắt socket, xóa push devices\n```\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "parameters": [
           {
             "name": "userId",
@@ -4088,7 +4088,7 @@
           }
         ],
         "summary": "Lock user",
-        "description": "Chỉ admin. Khóa tài khoản; không thể tự khóa. User bị khóa vẫn đăng nhập được nhưng bị chặn một số chức năng.\n\n**Lưu ý**\n\n- User bị khóa **vẫn đăng nhập được**. Các service chặn chức năng dựa vào claim `status` trong access token (tự verify); token cấp trước khi khóa còn mang `status=active` tối đa 15 phút.\n- Event `user.locked` chỉ để Tenancy đổi dữ liệu của mình (ẩn BĐS, tạm ngưng HĐ của landlord).\n- Đang cân nhắc (thuộc Tenancy): landlord bị khóa quá grace period thì hủy HĐ và hoàn cọc.\n- Chưa triển khai: publish `user.locked`; code hiện vẫn revoke refresh token khi khóa, cần bỏ.\n\n```mermaid\nsequenceDiagram\n    autonumber\n    participant GW as API Gateway\n    participant ID as Identity\n    participant DB as Identity DB\n    participant MQ as RabbitMQ\n    participant TEN as Tenancy\n    participant COM as Community\n\n    GW->>ID: POST /users/{userId}/lock {lockReason} + Authorization (admin)\n    alt Admin tự khóa chính mình\n        ID-->>GW: 400 USER_LOCK_CANNOT_SELF\n    end\n    ID->>DB: Đọc user\n    alt Không tìm thấy\n        ID-->>GW: 404 USER_NOT_FOUND\n    else Đã bị khóa\n        ID-->>GW: 409 USER_LOCK_ALREADY_LOCKED\n    end\n    ID->>DB: [Transaction] Update users (status=locked, lockReason, lockedAt)<br/>+ outbox user.locked\n    Note over ID: Không revoke refresh token:<br/>user bị khóa vẫn đăng nhập được\n    ID-->>GW: 200 USER_ACCOUNT_LOCKED {userId, status, lockReason, lockedAt}\n    ID-)MQ: user.locked {userId, role, status, lockReason, lockedAt}\n    MQ-)TEN: Nếu role=landlord: ẩn BĐS khỏi tìm kiếm, tạm ngưng HĐ\n    MQ-)COM: Xử lý dữ liệu liên quan (nếu có)\n    Note over TEN,COM: Chặn thao tác của user bị khóa dựa vào claim status trong JWT,<br/>không dựa vào event này\n```",
+        "description": "Chỉ admin. Khóa tài khoản; không thể tự khóa. User bị khóa vẫn đăng nhập được nhưng bị chặn một số chức năng.\n\n**Lưu ý**\n\n- User bị khóa **vẫn đăng nhập được**. Các service chặn chức năng dựa vào claim `status` trong access token (tự verify); token cấp trước khi khóa còn mang `status=active` tối đa 15 phút.\n- Event `user.locked` chỉ để Tenancy đổi dữ liệu của mình (ẩn BĐS, tạm ngưng HĐ của landlord).\n- Đang cân nhắc (thuộc Tenancy): landlord bị khóa quá grace period thì hủy HĐ và hoàn cọc.\n- Chưa triển khai: publish `user.locked`; code hiện vẫn revoke refresh token khi khóa, cần bỏ.\n\n```mermaid\nsequenceDiagram\n    autonumber\n    participant GW as API Gateway\n    participant ID as Identity\n    participant DB as Identity DB\n    participant MQ as RabbitMQ\n    participant TEN as Tenancy\n    participant COM as Community\n\n    GW->>ID: POST /users/{userId}/lock {lockReason} + Authorization (admin)\n    alt Admin tự khóa chính mình\n        ID-->>GW: 400 USER_LOCK_CANNOT_SELF\n    end\n    ID->>DB: Đọc user\n    alt Không tìm thấy\n        ID-->>GW: 404 USER_NOT_FOUND\n    else Đã bị khóa\n        ID-->>GW: 409 USER_LOCK_ALREADY_LOCKED\n    end\n    ID->>DB: [Transaction] Update users (status=locked, lockReason, lockedAt)<br/>+ outbox user.locked\n    Note over ID: Không revoke refresh token:<br/>user bị khóa vẫn đăng nhập được\n    ID-->>GW: 200 USER_ACCOUNT_LOCKED {userId, status, lockReason, lockedAt}\n    ID-)MQ: user.locked {userId, role, status, lockReason, lockedAt}\n    MQ-)TEN: Nếu role=landlord: ẩn BĐS khỏi tìm kiếm, tạm ngưng HĐ\n    MQ-)COM: Xử lý dữ liệu liên quan (nếu có)\n    Note over TEN,COM: Chặn thao tác của user bị khóa dựa vào claim status trong JWT,<br/>không dựa vào event này\n```\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "parameters": [
           {
             "name": "userId",
@@ -4436,7 +4436,7 @@
           }
         ],
         "summary": "Unlock user",
-        "description": "Chỉ admin. Chuyển locked sang active, trả lockedAt: null.\n\n**Lưu ý**\n\n- Token cấp trước khi mở khóa còn mang `status=locked` tối đa 15 phút.\n- Chưa triển khai: publish `user.unlocked`.\n\n```mermaid\nsequenceDiagram\n    autonumber\n    participant GW as API Gateway\n    participant ID as Identity\n    participant DB as Identity DB\n    participant MQ as RabbitMQ\n    participant TEN as Tenancy\n    participant COM as Community\n\n    GW->>ID: POST /users/{userId}/unlock\n    ID->>DB: Đọc user\n    alt Không tìm thấy\n        ID-->>GW: 404 USER_NOT_FOUND\n    else Chưa bị khóa\n        ID-->>GW: 409 USER_UNLOCK_NOT_LOCKED\n    end\n    ID->>DB: [Transaction] Update users (status=active, lockReason=null, lockedAt=null)<br/>+ outbox user.unlocked\n    ID-->>GW: 200 USER_ACCOUNT_UNLOCKED {userId, status, lockedAt: null}\n    ID-)MQ: user.unlocked {userId, status}\n    MQ-)TEN: Nếu role=landlord: hiện lại BĐS, khôi phục HĐ đang tạm ngưng\n    MQ-)COM: Xử lý dữ liệu liên quan (nếu có)\n```",
+        "description": "Chỉ admin. Chuyển locked sang active, trả lockedAt: null.\n\n**Lưu ý**\n\n- Token cấp trước khi mở khóa còn mang `status=locked` tối đa 15 phút.\n- Chưa triển khai: publish `user.unlocked`.\n\n```mermaid\nsequenceDiagram\n    autonumber\n    participant GW as API Gateway\n    participant ID as Identity\n    participant DB as Identity DB\n    participant MQ as RabbitMQ\n    participant TEN as Tenancy\n    participant COM as Community\n\n    GW->>ID: POST /users/{userId}/unlock\n    ID->>DB: Đọc user\n    alt Không tìm thấy\n        ID-->>GW: 404 USER_NOT_FOUND\n    else Chưa bị khóa\n        ID-->>GW: 409 USER_UNLOCK_NOT_LOCKED\n    end\n    ID->>DB: [Transaction] Update users (status=active, lockReason=null, lockedAt=null)<br/>+ outbox user.unlocked\n    ID-->>GW: 200 USER_ACCOUNT_UNLOCKED {userId, status, lockedAt: null}\n    ID-)MQ: user.unlocked {userId, status}\n    MQ-)TEN: Nếu role=landlord: hiện lại BĐS, khôi phục HĐ đang tạm ngưng\n    MQ-)COM: Xử lý dữ liệu liên quan (nếu có)\n```\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "parameters": [
           {
             "name": "userId",
@@ -4676,7 +4676,7 @@
           }
         ],
         "summary": "Register push device",
-        "description": "tenant, landlord, admin. Đăng ký device token. Lỗi nghiệp vụ: 422 VALIDATION FAILED · 409 DUPLICATE DEVICE.",
+        "description": "tenant, landlord, admin. Đăng ký device token. Lỗi nghiệp vụ: 422 VALIDATION FAILED · 409 DUPLICATE DEVICE.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "requestBody": {
           "required": true,
           "content": {
@@ -4817,7 +4817,7 @@
           }
         ],
         "summary": "Unregister push device",
-        "description": "tenant, landlord, admin. Gỡ device token. Lỗi nghiệp vụ: 404 NOT FOUND.",
+        "description": "tenant, landlord, admin. Gỡ device token. Lỗi nghiệp vụ: 404 NOT FOUND.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "parameters": [
           {
             "name": "deviceId",
@@ -4868,7 +4868,7 @@
           }
         ],
         "summary": "Request presigned upload URL",
-        "description": "tenant, landlord, admin. Xin URL upload đã ký để đẩy file trực tiếp lên Storage. Nghiệp vụ: Với ảnh công tơ điện nước, tenant chỉ được dùng camera trực tiếp (camera_direct), landlord được upload từ bộ nhớ máy (device_storage). Lỗi nghiệp vụ: 403 FORBIDDEN · 422 VALIDATION FAILED.",
+        "description": "tenant, landlord, admin. Xin URL upload đã ký để đẩy file trực tiếp lên Storage. Nghiệp vụ: Với ảnh công tơ điện nước, tenant chỉ được dùng camera trực tiếp (camera_direct), landlord được upload từ bộ nhớ máy (device_storage). Lỗi nghiệp vụ: 403 FORBIDDEN · 422 VALIDATION FAILED.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "requestBody": {
           "required": true,
           "content": {
@@ -5036,7 +5036,7 @@
           }
         ],
         "summary": "Complete media upload",
-        "description": "tenant, landlord, admin. Chốt upload. Lỗi nghiệp vụ: 404 NOT FOUND · 403 FORBIDDEN · 409 UPLOAD NOT COMPLETED · 410 TICKET EXPIRED.",
+        "description": "tenant, landlord, admin. Chốt upload. Lỗi nghiệp vụ: 404 NOT FOUND · 403 FORBIDDEN · 409 UPLOAD NOT COMPLETED · 410 TICKET EXPIRED.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "parameters": [
           {
             "name": "mediaId",
@@ -5211,7 +5211,7 @@
           }
         ],
         "summary": "Get or stream media",
-        "description": "Quyền kế thừa từ tài nguyên cha. Đọc hoặc stream một tệp. Lỗi nghiệp vụ: 404 NOT FOUND · 403 FORBIDDEN · 410 MEDIA DELETED.",
+        "description": "Quyền kế thừa từ tài nguyên cha. Đọc hoặc stream một tệp. Lỗi nghiệp vụ: 404 NOT FOUND · 403 FORBIDDEN · 410 MEDIA DELETED.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `401` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "parameters": [
           {
             "name": "mediaId",
@@ -5324,7 +5324,7 @@
           }
         ],
         "summary": "Delete media",
-        "description": "tenant, landlord, admin. Xóa mềm tệp. Lỗi nghiệp vụ: 403 FORBIDDEN · 409 CAN'T DELETE.",
+        "description": "tenant, landlord, admin. Xóa mềm tệp. Lỗi nghiệp vụ: 403 FORBIDDEN · 409 CAN'T DELETE.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "parameters": [
           {
             "name": "mediaId",
@@ -5644,7 +5644,7 @@
           }
         ],
         "summary": "Create building for approval",
-        "description": "landlord. Gửi tòa nhà để duyệt. Lỗi nghiệp vụ: 422 VALIDATION FAILED · 403 FORBIDDEN.",
+        "description": "landlord. Gửi tòa nhà để duyệt. Lỗi nghiệp vụ: 422 VALIDATION FAILED · 403 FORBIDDEN.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "requestBody": {
           "required": true,
           "content": {
@@ -5757,7 +5757,7 @@
           }
         ],
         "summary": "List my buildings",
-        "description": "landlord. Liệt kê tòa nhà của tôi. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 VALIDATION FAILED.",
+        "description": "landlord. Liệt kê tòa nhà của tôi. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 VALIDATION FAILED.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "parameters": [
           {
             "name": "filter",
@@ -5993,7 +5993,7 @@
           }
         ],
         "summary": "List buildings for admin approval",
-        "description": "admin. Hàng đợi duyệt và quản lý toàn bộ tòa nhà. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 VALIDATION FAILED.",
+        "description": "admin. Hàng đợi duyệt và quản lý toàn bộ tòa nhà. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 VALIDATION FAILED.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "parameters": [
           {
             "name": "filter",
@@ -6329,7 +6329,7 @@
           }
         ],
         "summary": "Update building",
-        "description": "landlord. Cập nhật thông tin tòa nhà. Lỗi nghiệp vụ: 404 NOT FOUND · 403 FORBIDDEN · 409 APPROVED BUILDING LOCKED · 422 VALIDATION FAILED.",
+        "description": "landlord. Cập nhật thông tin tòa nhà. Lỗi nghiệp vụ: 404 NOT FOUND · 403 FORBIDDEN · 409 APPROVED BUILDING LOCKED · 422 VALIDATION FAILED.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "parameters": [
           {
             "name": "buildingId",
@@ -6478,7 +6478,7 @@
           }
         ],
         "summary": "Delete building",
-        "description": "landlord. Xóa mềm tòa nhà. Lỗi nghiệp vụ: 404 NOT FOUND · 409 BUILDING HAS ACTIVE CONTRACT.",
+        "description": "landlord. Xóa mềm tòa nhà. Lỗi nghiệp vụ: 404 NOT FOUND · 409 BUILDING HAS ACTIVE CONTRACT.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "parameters": [
           {
             "name": "buildingId",
@@ -6572,7 +6572,7 @@
           }
         ],
         "summary": "Configure building VietQR payment",
-        "description": "landlord. Cấu hình tài khoản ngân hàng nhận tiền chuyển khoản và sinh mã VietQR động cho tòa nhà. Lỗi nghiệp vụ: 404 BUILDING NOT FOUND · 403 FORBIDDEN · 422 INVALID BANK ACCOUNT.",
+        "description": "landlord. Cấu hình tài khoản ngân hàng nhận tiền chuyển khoản và sinh mã VietQR động cho tòa nhà. Lỗi nghiệp vụ: 404 BUILDING NOT FOUND · 403 FORBIDDEN · 422 INVALID BANK ACCOUNT.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "parameters": [
           {
             "name": "buildingId",
@@ -6774,7 +6774,7 @@
           }
         ],
         "summary": "Batch create rate policies for building",
-        "description": "landlord. Thiết lập hàng loạt các chính sách đơn giá tiện ích và phí dịch vụ cho tòa nhà (bước 3/3 wizard tạo tài sản). Lỗi nghiệp vụ: 404 BUILDING NOT FOUND · 403 FORBIDDEN · 422 VALIDATION FAILED.",
+        "description": "landlord. Thiết lập hàng loạt các chính sách đơn giá tiện ích và phí dịch vụ cho tòa nhà (bước 3/3 wizard tạo tài sản). Lỗi nghiệp vụ: 404 BUILDING NOT FOUND · 403 FORBIDDEN · 422 VALIDATION FAILED.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "parameters": [
           {
             "name": "buildingId",
@@ -6991,7 +6991,7 @@
           }
         ],
         "summary": "Get my building details",
-        "description": "landlord. Đọc tòa nhà của tôi (chế độ quản trị). Lỗi nghiệp vụ: 404 NOT FOUND · 403 FORBIDDEN.",
+        "description": "landlord. Đọc tòa nhà của tôi (chế độ quản trị). Lỗi nghiệp vụ: 404 NOT FOUND · 403 FORBIDDEN.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "parameters": [
           {
             "name": "buildingId",
@@ -7093,7 +7093,7 @@
           }
         ],
         "summary": "Approve building",
-        "description": "admin. Duyệt tòa nhà. Lỗi nghiệp vụ: 404 NOT FOUND · 409 BUILDING NOT PENDING.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-23 | 🟢 NON_BREAKING | the `note` request property's maxLength was increased from `200` to `500` | [abe5f9d](https://github.com/pbl6-home-renter/api-doc/commit/abe5f9d947c9bbe3751418e23252401fbaa9329f) |\n",
+        "description": "admin. Duyệt tòa nhà. Lỗi nghiệp vụ: 404 NOT FOUND · 409 BUILDING NOT PENDING.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-23 | 🟢 NON_BREAKING | the `note` request property's maxLength was increased from `200` to `500` | [abe5f9d](https://github.com/pbl6-home-renter/api-doc/commit/abe5f9d947c9bbe3751418e23252401fbaa9329f) |\n",
         "parameters": [
           {
             "name": "buildingId",
@@ -7242,7 +7242,7 @@
           }
         ],
         "summary": "Reject building",
-        "description": "admin. Từ chối tòa nhà. Lỗi nghiệp vụ: 404 NOT FOUND · 409 BUILDING NOT PENDING · 422 NOTE REQUIRED.",
+        "description": "admin. Từ chối tòa nhà. Lỗi nghiệp vụ: 404 NOT FOUND · 409 BUILDING NOT PENDING · 422 NOTE REQUIRED.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "parameters": [
           {
             "name": "buildingId",
@@ -7437,7 +7437,7 @@
           }
         ],
         "summary": "Get building details for approval",
-        "description": "admin. Chi tiết tòa nhà trong hàng đợi duyệt. Lỗi nghiệp vụ: 404 NOT FOUND · 403 FORBIDDEN.",
+        "description": "admin. Chi tiết tòa nhà trong hàng đợi duyệt. Lỗi nghiệp vụ: 404 NOT FOUND · 403 FORBIDDEN.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "parameters": [
           {
             "name": "buildingId",
@@ -7789,7 +7789,7 @@
           }
         ],
         "summary": "Create room",
-        "description": "landlord. Tạo phòng trong một tòa nhà. Lỗi nghiệp vụ: 403 FORBIDDEN · 409 DUPLICATE ROOM · 422 BUILDING NOT APPROVED.",
+        "description": "landlord. Tạo phòng trong một tòa nhà. Lỗi nghiệp vụ: 403 FORBIDDEN · 409 DUPLICATE ROOM · 422 BUILDING NOT APPROVED.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "requestBody": {
           "required": true,
           "content": {
@@ -7990,7 +7990,7 @@
           }
         ],
         "summary": "List my rooms",
-        "description": "landlord. Liệt kê phòng của tôi. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 VALIDATION FAILED.",
+        "description": "landlord. Liệt kê phòng của tôi. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 VALIDATION FAILED.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "parameters": [
           {
             "name": "filter",
@@ -8230,7 +8230,7 @@
           }
         ],
         "summary": "Get tenant room hub dashboard",
-        "description": "tenant. Lấy thông tin tổng hợp cho trang chủ trung tâm phòng của người thuê (hợp đồng hiện tại, hóa đơn chưa thanh toán, chỉ số điện nước, sự cố đang xử lý, bạn cùng phòng). Lỗi nghiệp vụ: 404 ACTIVE CONTRACT NOT FOUND · 403 FORBIDDEN.",
+        "description": "tenant. Lấy thông tin tổng hợp cho trang chủ trung tâm phòng của người thuê (hợp đồng hiện tại, hóa đơn chưa thanh toán, chỉ số điện nước, sự cố đang xử lý, bạn cùng phòng). Lỗi nghiệp vụ: 404 ACTIVE CONTRACT NOT FOUND · 403 FORBIDDEN.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "responses": {
           "200": {
             "description": "Thành công: Lấy thông tin trung tâm phòng.",
@@ -8430,7 +8430,7 @@
           }
         ],
         "summary": "Update room",
-        "description": "landlord. Cập nhật thông tin phòng. Lỗi nghiệp vụ: 404 NOT FOUND · 403 FORBIDDEN · 422 VALIDATION FAILED.",
+        "description": "landlord. Cập nhật thông tin phòng. Lỗi nghiệp vụ: 404 NOT FOUND · 403 FORBIDDEN · 422 VALIDATION FAILED.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "parameters": [
           {
             "name": "roomId",
@@ -8540,7 +8540,7 @@
           }
         ],
         "summary": "Delete room",
-        "description": "landlord. Xóa mềm phòng. Lỗi nghiệp vụ: 404 NOT FOUND · 409 ROOM HAS ACTIVE CONTRACT · 403 FORBIDDEN.",
+        "description": "landlord. Xóa mềm phòng. Lỗi nghiệp vụ: 404 NOT FOUND · 409 ROOM HAS ACTIVE CONTRACT · 403 FORBIDDEN.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "parameters": [
           {
             "name": "roomId",
@@ -8634,7 +8634,7 @@
           }
         ],
         "summary": "Mark room ready for rent",
-        "description": "landlord. Đánh dấu phòng sẵn sàng cho thuê. Lỗi nghiệp vụ: 404 NOT FOUND · 403 FORBIDDEN · 409 INVALID ROOM TRANSITION.",
+        "description": "landlord. Đánh dấu phòng sẵn sàng cho thuê. Lỗi nghiệp vụ: 404 NOT FOUND · 403 FORBIDDEN · 409 INVALID ROOM TRANSITION.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "parameters": [
           {
             "name": "roomId",
@@ -8766,7 +8766,7 @@
           }
         ],
         "summary": "List favorite rooms",
-        "description": "tenant. Liệt kê phòng đã lưu. Lỗi nghiệp vụ: 401 INVALID TOKEN.",
+        "description": "tenant. Liệt kê phòng đã lưu. Lỗi nghiệp vụ: 401 INVALID TOKEN.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "parameters": [
           {
             "name": "pageSize",
@@ -8956,7 +8956,7 @@
           }
         ],
         "summary": "Add favorite room",
-        "description": "tenant. Lưu một phòng. Lỗi nghiệp vụ: 404 NOT FOUND · 409 ALREADY FAVORITED.",
+        "description": "tenant. Lưu một phòng. Lỗi nghiệp vụ: 404 NOT FOUND · 409 ALREADY FAVORITED.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "requestBody": {
           "required": true,
           "content": {
@@ -9102,7 +9102,7 @@
           }
         ],
         "summary": "Remove favorite room",
-        "description": "tenant. Bỏ lưu một phòng. Lỗi nghiệp vụ: 404 NOT FOUND.",
+        "description": "tenant. Bỏ lưu một phòng. Lỗi nghiệp vụ: 404 NOT FOUND.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "parameters": [
           {
             "name": "roomId",
@@ -9156,7 +9156,7 @@
           }
         ],
         "summary": "Search roommate profiles",
-        "description": "tenant. Duyệt feed hồ sơ tìm bạn ở. Lỗi nghiệp vụ: 422 VALIDATION FAILED.",
+        "description": "tenant. Duyệt feed hồ sơ tìm bạn ở. Lỗi nghiệp vụ: 422 VALIDATION FAILED.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "parameters": [
           {
             "name": "filter",
@@ -9340,7 +9340,7 @@
           }
         ],
         "summary": "Get roommate profile details",
-        "description": "tenant. Đọc một hồ sơ theo định danh. Lỗi nghiệp vụ: 404 NOT FOUND · 403 PROFILE NOT VISIBLE.",
+        "description": "tenant. Đọc một hồ sơ theo định danh. Lỗi nghiệp vụ: 404 NOT FOUND · 403 PROFILE NOT VISIBLE.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "parameters": [
           {
             "name": "roommateProfileId",
@@ -9491,7 +9491,7 @@
           }
         ],
         "summary": "Get my roommate profile",
-        "description": "tenant. Đọc profile của chính mình. Lỗi nghiệp vụ: 404 NOT FOUND.",
+        "description": "tenant. Đọc profile của chính mình. Lỗi nghiệp vụ: 404 NOT FOUND.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "responses": {
           "200": {
             "description": "Thành công: Đọc profile của chính mình.",
@@ -9576,7 +9576,7 @@
           }
         ],
         "summary": "Create or update my roommate profile",
-        "description": "tenant. Tạo hoặc cập nhật profile của chính mình. Lỗi nghiệp vụ: 422 BUDGET RANGE INVALID · 422 VALIDATION FAILED.",
+        "description": "tenant. Tạo hoặc cập nhật profile của chính mình. Lỗi nghiệp vụ: 422 BUDGET RANGE INVALID · 422 VALIDATION FAILED.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "requestBody": {
           "required": true,
           "content": {
@@ -9726,7 +9726,7 @@
           }
         ],
         "summary": "List match requests",
-        "description": "tenant. Liệt kê yêu cầu đến hoặc đi. Lỗi nghiệp vụ: 422 VALIDATION FAILED.",
+        "description": "tenant. Liệt kê yêu cầu đến hoặc đi. Lỗi nghiệp vụ: 422 VALIDATION FAILED.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "parameters": [
           {
             "name": "filter",
@@ -9922,7 +9922,7 @@
           }
         ],
         "summary": "Create match request",
-        "description": "tenant. Gửi yêu cầu tìm bạn ở. Lỗi nghiệp vụ: 409 DUPLICATE MATCH REQUEST · 422 SELF MATCHING NOT ALLOWED · 404 NOT FOUND.",
+        "description": "tenant. Gửi yêu cầu tìm bạn ở. Lỗi nghiệp vụ: 409 DUPLICATE MATCH REQUEST · 422 SELF MATCHING NOT ALLOWED · 404 NOT FOUND.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "requestBody": {
           "required": true,
           "content": {
@@ -10114,7 +10114,7 @@
           }
         ],
         "summary": "Accept match request",
-        "description": "tenant. Chấp nhận yêu cầu. Lỗi nghiệp vụ: 403 FORBIDDEN · 409 MATCH REQUEST NOT PENDING · 404 NOT FOUND.",
+        "description": "tenant. Chấp nhận yêu cầu. Lỗi nghiệp vụ: 403 FORBIDDEN · 409 MATCH REQUEST NOT PENDING · 404 NOT FOUND.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "parameters": [
           {
             "name": "matchRequestId",
@@ -10247,7 +10247,7 @@
           }
         ],
         "summary": "Reject match request",
-        "description": "tenant. Từ chối yêu cầu. Lỗi nghiệp vụ: 403 FORBIDDEN · 409 MATCH REQUEST NOT PENDING.",
+        "description": "tenant. Từ chối yêu cầu. Lỗi nghiệp vụ: 403 FORBIDDEN · 409 MATCH REQUEST NOT PENDING.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "parameters": [
           {
             "name": "matchRequestId",
@@ -10379,7 +10379,7 @@
           }
         ],
         "summary": "Withdraw match request",
-        "description": "tenant. Người gửi rút yêu cầu. Lỗi nghiệp vụ: 403 FORBIDDEN · 404 NOT FOUND · 409 NOT REQUESTER · 409 MATCH REQUEST NOT PENDING.",
+        "description": "tenant. Người gửi rút yêu cầu. Lỗi nghiệp vụ: 403 FORBIDDEN · 404 NOT FOUND · 409 NOT REQUESTER · 409 MATCH REQUEST NOT PENDING.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "parameters": [
           {
             "name": "matchRequestId",
@@ -10520,7 +10520,7 @@
           }
         ],
         "summary": "List rate policies",
-        "description": "landlord. Liệt kê chính sách đơn giá và phí định kỳ. Lỗi nghiệp vụ: 422 VALIDATION FAILED · 403 FORBIDDEN.",
+        "description": "landlord. Liệt kê chính sách đơn giá và phí định kỳ. Lỗi nghiệp vụ: 422 VALIDATION FAILED · 403 FORBIDDEN.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "parameters": [
           {
             "name": "filter",
@@ -10708,7 +10708,7 @@
           }
         ],
         "summary": "Create rate policy",
-        "description": "landlord. Tạo một chính sách đơn giá hoặc phí. Lỗi nghiệp vụ: 409 ACTIVE POLICY EXISTS · 422 INVALID RATE KIND · 403 FORBIDDEN.",
+        "description": "landlord. Tạo một chính sách đơn giá hoặc phí. Lỗi nghiệp vụ: 409 ACTIVE POLICY EXISTS · 422 INVALID RATE KIND · 403 FORBIDDEN.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "requestBody": {
           "required": true,
           "content": {
@@ -10910,7 +10910,7 @@
           }
         ],
         "summary": "Update rate policy",
-        "description": "landlord. Đổi tên chính sách. Lỗi nghiệp vụ: 403 FORBIDDEN · 409 RATE POLICY LOCKED · 422 VALIDATION FAILED.",
+        "description": "landlord. Đổi tên chính sách. Lỗi nghiệp vụ: 403 FORBIDDEN · 409 RATE POLICY LOCKED · 422 VALIDATION FAILED.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "parameters": [
           {
             "name": "ratePolicyId",
@@ -11058,7 +11058,7 @@
           }
         ],
         "summary": "Deactivate rate policy",
-        "description": "landlord. Vô hiệu hoá chính sách. Lỗi nghiệp vụ: 403 FORBIDDEN · 409 POLICY NOT ACTIVE.",
+        "description": "landlord. Vô hiệu hoá chính sách. Lỗi nghiệp vụ: 403 FORBIDDEN · 409 POLICY NOT ACTIVE.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "parameters": [
           {
             "name": "ratePolicyId",
@@ -11190,7 +11190,7 @@
           }
         ],
         "summary": "List billing settings",
-        "description": "landlord. Liệt kê cài đặt thanh toán và nhắc hóa đơn. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 VALIDATION FAILED.",
+        "description": "landlord. Liệt kê cài đặt thanh toán và nhắc hóa đơn. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 VALIDATION FAILED.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "parameters": [
           {
             "name": "filter",
@@ -11375,7 +11375,7 @@
           }
         ],
         "summary": "Create billing setting",
-        "description": "landlord. Tạo một cài đặt hóa đơn. Lỗi nghiệp vụ: 409 ACTIVE SETTING EXISTS · 422 DUE DAYS INVALID · 403 FORBIDDEN.",
+        "description": "landlord. Tạo một cài đặt hóa đơn. Lỗi nghiệp vụ: 409 ACTIVE SETTING EXISTS · 422 DUE DAYS INVALID · 403 FORBIDDEN.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "requestBody": {
           "required": true,
           "content": {
@@ -11577,7 +11577,7 @@
           }
         ],
         "summary": "Update billing setting",
-        "description": "landlord. Cập nhật cài đặt hóa đơn. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 DUE DAYS INVALID.",
+        "description": "landlord. Cập nhật cài đặt hóa đơn. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 DUE DAYS INVALID.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "parameters": [
           {
             "name": "billingSettingId",
@@ -11734,7 +11734,7 @@
           }
         ],
         "summary": "List contract templates",
-        "description": "landlord. Liệt kê mẫu khả dụng. Lỗi nghiệp vụ: 403 FORBIDDEN.",
+        "description": "landlord. Liệt kê mẫu khả dụng. Lỗi nghiệp vụ: 403 FORBIDDEN.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "parameters": [
           {
             "name": "pageSize",
@@ -11893,7 +11893,7 @@
           }
         ],
         "summary": "Get contract template",
-        "description": "landlord. Đọc một mẫu. Lỗi nghiệp vụ: 404 NOT FOUND.",
+        "description": "landlord. Đọc một mẫu. Lỗi nghiệp vụ: 404 NOT FOUND.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "parameters": [
           {
             "name": "templateKey",
@@ -11990,7 +11990,7 @@
           }
         ],
         "summary": "List my contracts",
-        "description": "tenant. Hợp đồng của tôi. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 VALIDATION FAILED.",
+        "description": "tenant. Hợp đồng của tôi. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 VALIDATION FAILED.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "parameters": [
           {
             "name": "filter",
@@ -12213,7 +12213,7 @@
           }
         ],
         "summary": "List contracts",
-        "description": "landlord. Quản lý hợp đồng của tôi. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 VALIDATION FAILED.",
+        "description": "landlord. Quản lý hợp đồng của tôi. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 VALIDATION FAILED.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "parameters": [
           {
             "name": "filter",
@@ -12443,7 +12443,7 @@
           }
         ],
         "summary": "Create draft contract",
-        "description": "landlord. Tạo hợp đồng nháp. Lỗi nghiệp vụ: 409 ACTIVE CONTRACT EXISTS · 422 TENANT IDENTITY INVALID · 403 FORBIDDEN.",
+        "description": "landlord. Tạo hợp đồng nháp. Lỗi nghiệp vụ: 409 ACTIVE CONTRACT EXISTS · 422 TENANT IDENTITY INVALID · 403 FORBIDDEN.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "requestBody": {
           "required": true,
           "content": {
@@ -12643,7 +12643,7 @@
           }
         ],
         "summary": "Get contract details",
-        "description": "landlord, tenant. Đọc một hợp đồng. Lỗi nghiệp vụ: 403 FORBIDDEN · 404 NOT FOUND.",
+        "description": "landlord, tenant. Đọc một hợp đồng. Lỗi nghiệp vụ: 403 FORBIDDEN · 404 NOT FOUND.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "parameters": [
           {
             "name": "contractId",
@@ -12742,7 +12742,7 @@
           }
         ],
         "summary": "Update draft contract",
-        "description": "landlord. Sửa hợp đồng nháp. Lỗi nghiệp vụ: 409 CONTRACT NOT DRAFT · 403 FORBIDDEN · 422 VALIDATION FAILED.",
+        "description": "landlord. Sửa hợp đồng nháp. Lỗi nghiệp vụ: 409 CONTRACT NOT DRAFT · 403 FORBIDDEN · 422 VALIDATION FAILED.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "parameters": [
           {
             "name": "contractId",
@@ -12891,7 +12891,7 @@
           }
         ],
         "summary": "Apply template to draft contract",
-        "description": "landlord. Áp mẫu vào hợp đồng nháp. Lỗi nghiệp vụ: 404 TEMPLATE NOT FOUND · 409 CONTRACT NOT DRAFT · 403 FORBIDDEN.",
+        "description": "landlord. Áp mẫu vào hợp đồng nháp. Lỗi nghiệp vụ: 404 TEMPLATE NOT FOUND · 409 CONTRACT NOT DRAFT · 403 FORBIDDEN.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "parameters": [
           {
             "name": "contractId",
@@ -13085,7 +13085,7 @@
           }
         ],
         "summary": "Generate draft contract document",
-        "description": "landlord. Sinh tài liệu nháp. Lỗi nghiệp vụ: 403 FORBIDDEN · 409 CONTRACT NOT DRAFT · 422 TEMPLATE DATA INVALID.",
+        "description": "landlord. Sinh tài liệu nháp. Lỗi nghiệp vụ: 403 FORBIDDEN · 409 CONTRACT NOT DRAFT · 422 TEMPLATE DATA INVALID.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "parameters": [
           {
             "name": "contractId",
@@ -13288,7 +13288,7 @@
           }
         ],
         "summary": "Activate contract",
-        "description": "landlord. Kích hoạt hợp đồng đã ký. Lỗi nghiệp vụ: 409 CONTRACT NOT READY · 409 SIGNED FILE MISSING · 403 FORBIDDEN.",
+        "description": "landlord. Kích hoạt hợp đồng đã ký. Lỗi nghiệp vụ: 409 CONTRACT NOT READY · 409 SIGNED FILE MISSING · 403 FORBIDDEN.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "parameters": [
           {
             "name": "contractId",
@@ -13445,7 +13445,7 @@
           }
         ],
         "summary": "Complete checkout",
-        "description": "landlord. Hoàn tất trả phòng và kết thúc hợp đồng. Sau khi checkout thành công, phòng sẽ tự động chuyển sang trạng thái chờ dọn dẹp và chuẩn bị cho thuê mới (Room.status = pending_cleanup). Sau khi chủ trọ nghiệm thu dọn dẹp xong, gọi POST /rooms/{roomId}/mark-ready để đưa phòng về available. Lỗi nghiệp vụ: 409 CONTRACT NOT ACTIVE · 403 FORBIDDEN · 422 SETTLEMENT NOT READY. NOT READY.",
+        "description": "landlord. Hoàn tất trả phòng và kết thúc hợp đồng. Sau khi checkout thành công, phòng sẽ tự động chuyển sang trạng thái chờ dọn dẹp và chuẩn bị cho thuê mới (Room.status = pending_cleanup). Sau khi chủ trọ nghiệm thu dọn dẹp xong, gọi POST /rooms/{roomId}/mark-ready để đưa phòng về available. Lỗi nghiệp vụ: 409 CONTRACT NOT ACTIVE · 403 FORBIDDEN · 422 SETTLEMENT NOT READY. NOT READY.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "parameters": [
           {
             "name": "contractId",
@@ -13639,7 +13639,7 @@
           }
         ],
         "summary": "Create deposit settlement for checkout",
-        "description": "landlord. Quyết toán tiền cọc, cấn trừ các khoản nợ / hư hại tài sản và xác nhận số tiền hoàn trả cho người thuê khi kết thúc hợp đồng. Lỗi nghiệp vụ: 404 CONTRACT NOT FOUND · 403 FORBIDDEN · 422 SETTLEMENT INVALID.",
+        "description": "landlord. Quyết toán tiền cọc, cấn trừ các khoản nợ / hư hại tài sản và xác nhận số tiền hoàn trả cho người thuê khi kết thúc hợp đồng. Lỗi nghiệp vụ: 404 CONTRACT NOT FOUND · 403 FORBIDDEN · 422 SETTLEMENT INVALID.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "parameters": [
           {
             "name": "contractId",
@@ -13859,7 +13859,7 @@
           }
         ],
         "summary": "Add contract member",
-        "description": "landlord. Thêm một thành viên vào hợp đồng. Lỗi nghiệp vụ: 409 MEMBER ALREADY EXISTS · 403 FORBIDDEN · 422 TENANT IDENTITY INVALID.",
+        "description": "landlord. Thêm một thành viên vào hợp đồng. Lỗi nghiệp vụ: 409 MEMBER ALREADY EXISTS · 403 FORBIDDEN · 422 TENANT IDENTITY INVALID.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "requestBody": {
           "required": true,
           "content": {
@@ -14052,7 +14052,7 @@
           }
         ],
         "summary": "List contract members",
-        "description": "landlord, tenant. Liệt kê thành viên hoặc xuất dữ liệu. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 CONTRACT ID REQUIRED · 404 NOT FOUND.",
+        "description": "landlord, tenant. Liệt kê thành viên hoặc xuất dữ liệu. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 CONTRACT ID REQUIRED · 404 NOT FOUND.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "parameters": [
           {
             "name": "filter",
@@ -14320,7 +14320,7 @@
           }
         ],
         "summary": "Update contract member",
-        "description": "landlord. Cập nhật thành viên. Lỗi nghiệp vụ: 403 FORBIDDEN · 409 MEMBER LEFT · 422 VALIDATION FAILED.",
+        "description": "landlord. Cập nhật thành viên. Lỗi nghiệp vụ: 403 FORBIDDEN · 409 MEMBER LEFT · 422 VALIDATION FAILED.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "parameters": [
           {
             "name": "contractMemberId",
@@ -14468,7 +14468,7 @@
           }
         ],
         "summary": "Record contract member leave",
-        "description": "landlord. Ghi nhận thành viên rời đi. Lỗi nghiệp vụ: 403 FORBIDDEN · 409 MEMBER ALREADY LEFT · 422 LEFT DATE INVALID.",
+        "description": "landlord. Ghi nhận thành viên rời đi. Lỗi nghiệp vụ: 403 FORBIDDEN · 409 MEMBER ALREADY LEFT · 422 LEFT DATE INVALID.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "parameters": [
           {
             "name": "contractMemberId",
@@ -14661,7 +14661,7 @@
           }
         ],
         "summary": "List meter readings",
-        "description": "landlord. Liệt kê chỉ số đồng hồ. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 VALIDATION FAILED.",
+        "description": "landlord. Liệt kê chỉ số đồng hồ. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 VALIDATION FAILED.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "parameters": [
           {
             "name": "filter",
@@ -14851,7 +14851,7 @@
           }
         ],
         "summary": "Create meter reading",
-        "description": "landlord. Tạo một chỉ số đã xác nhận. Lỗi nghiệp vụ: 409 DUPLICATE METER READING · 422 CURRENT READING INVALID · 422 EVIDENCE REQUIRED · 403 FORBIDDEN.",
+        "description": "landlord. Tạo một chỉ số đã xác nhận. Lỗi nghiệp vụ: 409 DUPLICATE METER READING · 422 CURRENT READING INVALID · 422 EVIDENCE REQUIRED · 403 FORBIDDEN.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "requestBody": {
           "required": true,
           "content": {
@@ -15057,7 +15057,7 @@
           }
         ],
         "summary": "Bulk create meter readings",
-        "description": "landlord. Nhập và chốt chỉ số điện/nước hàng loạt cho nhiều phòng trong tòa nhà theo kỳ ghi số. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 VALIDATION FAILED · 409 DUPLICATE READING.",
+        "description": "landlord. Nhập và chốt chỉ số điện/nước hàng loạt cho nhiều phòng trong tòa nhà theo kỳ ghi số. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 VALIDATION FAILED · 409 DUPLICATE READING.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "requestBody": {
           "required": true,
           "content": {
@@ -15247,7 +15247,7 @@
           }
         ],
         "summary": "Preview OCR meter reading result",
-        "description": "landlord. Xem trước kết quả chuẩn hoá OCR. Lỗi nghiệp vụ: 422 OCR RESULT INVALID · 422 EVIDENCE REQUIRED · 403 FORBIDDEN.",
+        "description": "landlord. Xem trước kết quả chuẩn hoá OCR. Lỗi nghiệp vụ: 422 OCR RESULT INVALID · 422 EVIDENCE REQUIRED · 403 FORBIDDEN.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "requestBody": {
           "required": true,
           "content": {
@@ -15398,7 +15398,7 @@
           }
         ],
         "summary": "List my invoices",
-        "description": "tenant. Hóa đơn của tôi. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 VALIDATION FAILED.",
+        "description": "tenant. Hóa đơn của tôi. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 VALIDATION FAILED.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "parameters": [
           {
             "name": "filter",
@@ -15626,7 +15626,7 @@
           }
         ],
         "summary": "List invoices",
-        "description": "landlord. Theo dõi hóa đơn và công nợ. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 VALIDATION FAILED.",
+        "description": "landlord. Theo dõi hóa đơn và công nợ. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 VALIDATION FAILED.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "parameters": [
           {
             "name": "filter",
@@ -15861,7 +15861,7 @@
           }
         ],
         "summary": "Create checkout settlement invoice",
-        "description": "Landlord tạo hóa đơn quyết toán trả phòng cho hợp đồng của mình. Server tính rentAmount và breakdown từ chỉ số cùng chính sách giá; client chỉ gửi các khoản phí khác và ghi chú. Tổng âm bị từ chối.",
+        "description": "Landlord tạo hóa đơn quyết toán trả phòng cho hợp đồng của mình. Server tính rentAmount và breakdown từ chỉ số cùng chính sách giá; client chỉ gửi các khoản phí khác và ghi chú. Tổng âm bị từ chối.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "requestBody": {
           "required": true,
           "content": {
@@ -16096,7 +16096,7 @@
           }
         ],
         "summary": "List overdue debts",
-        "description": "landlord. Danh sách các phòng nợ tiền quá hạn, mức độ quá hạn và lịch sử đôn đốc nợ. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 VALIDATION FAILED.",
+        "description": "landlord. Danh sách các phòng nợ tiền quá hạn, mức độ quá hạn và lịch sử đôn đốc nợ. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 VALIDATION FAILED.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "parameters": [
           {
             "name": "buildingId",
@@ -16234,7 +16234,7 @@
           }
         ],
         "summary": "Get invoice details",
-        "description": "landlord, tenant. Đọc hóa đơn kèm tổng hợp thanh toán. Lỗi nghiệp vụ: 403 FORBIDDEN · 404 NOT FOUND.",
+        "description": "landlord, tenant. Đọc hóa đơn kèm tổng hợp thanh toán. Lỗi nghiệp vụ: 403 FORBIDDEN · 404 NOT FOUND.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "parameters": [
           {
             "name": "invoiceId",
@@ -16344,7 +16344,7 @@
           }
         ],
         "summary": "Update pending invoice",
-        "description": "landlord. Sửa hóa đơn đang chờ. Lỗi nghiệp vụ: 409 INVOICE ALREADY ISSUED · 422 TOTAL AMOUNT INVALID · 403 FORBIDDEN.",
+        "description": "landlord. Sửa hóa đơn đang chờ. Lỗi nghiệp vụ: 409 INVOICE ALREADY ISSUED · 422 TOTAL AMOUNT INVALID · 403 FORBIDDEN.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "parameters": [
           {
             "name": "invoiceId",
@@ -16549,7 +16549,7 @@
           }
         ],
         "summary": "Batch issue invoices",
-        "description": "landlord. Phát hành nhiều hóa đơn theo lô. Lỗi nghiệp vụ: 422 INVOICE IDS REQUIRED · 422 INVOICE IDS TOO LARGE · 409 IDEMPOTENCY KEY REUSED · 403 FORBIDDEN.",
+        "description": "landlord. Phát hành nhiều hóa đơn theo lô. Lỗi nghiệp vụ: 422 INVOICE IDS REQUIRED · 422 INVOICE IDS TOO LARGE · 409 IDEMPOTENCY KEY REUSED · 403 FORBIDDEN.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "parameters": [
           {
             "name": "Idempotency-Key",
@@ -16765,7 +16765,7 @@
           }
         ],
         "summary": "Cancel invoice",
-        "description": "landlord. Huỷ một hóa đơn sai. Lỗi nghiệp vụ: 409 INVOICE ALREADY PAID · 409 CAN'T DELETE · 403 FORBIDDEN.",
+        "description": "landlord. Huỷ một hóa đơn sai. Lỗi nghiệp vụ: 409 INVOICE ALREADY PAID · 409 CAN'T DELETE · 403 FORBIDDEN.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "parameters": [
           {
             "name": "invoiceId",
@@ -16922,7 +16922,7 @@
           }
         ],
         "summary": "Batch send invoice reminders",
-        "description": "landlord. Nhắc ngày thu dự kiến theo lô. Lỗi nghiệp vụ: 422 INVOICE IDS REQUIRED · 422 INVOICE IDS TOO LARGE · 409 IDEMPOTENCY KEY REUSED · 403 FORBIDDEN.",
+        "description": "landlord. Nhắc ngày thu dự kiến theo lô. Lỗi nghiệp vụ: 422 INVOICE IDS REQUIRED · 422 INVOICE IDS TOO LARGE · 409 IDEMPOTENCY KEY REUSED · 403 FORBIDDEN.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "parameters": [
           {
             "name": "Idempotency-Key",
@@ -17136,7 +17136,7 @@
           }
         ],
         "summary": "List my payment history",
-        "description": "tenant. Lịch sử thanh toán của tôi. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 VALIDATION FAILED.",
+        "description": "tenant. Lịch sử thanh toán của tôi. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 VALIDATION FAILED.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "parameters": [
           {
             "name": "filter",
@@ -17358,7 +17358,7 @@
           }
         ],
         "summary": "List payment transactions",
-        "description": "landlord. Đối soát dòng tiền. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 VALIDATION FAILED.",
+        "description": "landlord. Đối soát dòng tiền. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 VALIDATION FAILED.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "parameters": [
           {
             "name": "filter",
@@ -17584,7 +17584,7 @@
           }
         ],
         "summary": "Create payment intent",
-        "description": "tenant. Tạo ý định thanh toán. Lỗi nghiệp vụ: 409 IDEMPOTENCY KEY REUSED · 409 INVOICE NOT PAYABLE · 403 FORBIDDEN.",
+        "description": "tenant. Tạo ý định thanh toán. Lỗi nghiệp vụ: 409 IDEMPOTENCY KEY REUSED · 409 INVOICE NOT PAYABLE · 403 FORBIDDEN.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "parameters": [
           {
             "name": "Idempotency-Key",
@@ -17756,7 +17756,7 @@
           }
         ],
         "summary": "Record cash payment",
-        "description": "landlord. Ghi nhận thanh toán tiền mặt. Lỗi nghiệp vụ: 409 IDEMPOTENCY KEY REUSED · 409 INVOICE NOT PAYABLE · 422 AMOUNT INVALID · 403 FORBIDDEN.",
+        "description": "landlord. Ghi nhận thanh toán tiền mặt. Lỗi nghiệp vụ: 409 IDEMPOTENCY KEY REUSED · 409 INVOICE NOT PAYABLE · 422 AMOUNT INVALID · 403 FORBIDDEN.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "parameters": [
           {
             "name": "Idempotency-Key",
@@ -18149,7 +18149,7 @@
           }
         ],
         "summary": "List my issues",
-        "description": "tenant. Sự cố của tôi. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 VALIDATION FAILED.",
+        "description": "tenant. Sự cố của tôi. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 VALIDATION FAILED.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "parameters": [
           {
             "name": "filter",
@@ -18392,7 +18392,7 @@
           }
         ],
         "summary": "List issues",
-        "description": "landlord. Hàng đợi sự cố bảo trì. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 VALIDATION FAILED.",
+        "description": "landlord. Hàng đợi sự cố bảo trì. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 VALIDATION FAILED.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "parameters": [
           {
             "name": "filter",
@@ -18639,7 +18639,7 @@
           }
         ],
         "summary": "Report issue",
-        "description": "tenant, landlord. Báo cáo sự cố. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 ISSUE PHOTO INVALID · 404 ROOM NOT FOUND.",
+        "description": "tenant, landlord. Báo cáo sự cố. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 ISSUE PHOTO INVALID · 404 ROOM NOT FOUND.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "requestBody": {
           "required": true,
           "content": {
@@ -18835,7 +18835,7 @@
           }
         ],
         "summary": "Get issue details",
-        "description": "landlord, tenant. Đọc chi tiết sự cố. Lỗi nghiệp vụ: 403 FORBIDDEN · 404 NOT FOUND.",
+        "description": "landlord, tenant. Đọc chi tiết sự cố. Lỗi nghiệp vụ: 403 FORBIDDEN · 404 NOT FOUND.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "parameters": [
           {
             "name": "issueId",
@@ -18940,7 +18940,7 @@
           }
         ],
         "summary": "Update issue status",
-        "description": "landlord. Cập nhật tiến trình sự cố. Lỗi nghiệp vụ: 404 NOT FOUND · 403 FORBIDDEN · 409 INVALID ISSUE TRANSITION.",
+        "description": "landlord. Cập nhật tiến trình sự cố. Lỗi nghiệp vụ: 404 NOT FOUND · 403 FORBIDDEN · 409 INVALID ISSUE TRANSITION.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "parameters": [
           {
             "name": "issueId",
@@ -19090,7 +19090,7 @@
           }
         ],
         "summary": "Cancel issue report",
-        "description": "tenant. Huỷ báo cáo sự cố. Lỗi nghiệp vụ: 404 NOT FOUND · 403 FORBIDDEN · 422 CANNOT CANCEL RESOLVED ISSUE.",
+        "description": "tenant. Huỷ báo cáo sự cố. Lỗi nghiệp vụ: 404 NOT FOUND · 403 FORBIDDEN · 422 CANNOT CANCEL RESOLVED ISSUE.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "parameters": [
           {
             "name": "issueId",
@@ -19230,7 +19230,7 @@
           }
         ],
         "summary": "List conversations",
-        "description": "tenant, landlord. Liệt kê các hội thoại của người gọi. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 VALIDATION FAILED.",
+        "description": "tenant, landlord. Liệt kê các hội thoại của người gọi. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 VALIDATION FAILED.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "parameters": [
           {
             "name": "filter",
@@ -19410,7 +19410,7 @@
           }
         ],
         "summary": "Get conversation details",
-        "description": "tenant, landlord. Đọc chi tiết hội thoại. Lỗi nghiệp vụ: 403 FORBIDDEN · 404 NOT FOUND.",
+        "description": "tenant, landlord. Đọc chi tiết hội thoại. Lỗi nghiệp vụ: 403 FORBIDDEN · 404 NOT FOUND.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "parameters": [
           {
             "name": "conversationId",
@@ -19506,7 +19506,7 @@
           }
         ],
         "summary": "Resolve conversation",
-        "description": "tenant, landlord. Lấy hội thoại của phòng hoặc tòa nhà. Lỗi nghiệp vụ: 422 EXACTLY ONE CONTEXT REQUIRED · 403 FORBIDDEN · 404 CONTEXT NOT FOUND.",
+        "description": "tenant, landlord. Lấy hội thoại của phòng hoặc tòa nhà. Lỗi nghiệp vụ: 422 EXACTLY ONE CONTEXT REQUIRED · 403 FORBIDDEN · 404 CONTEXT NOT FOUND.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "requestBody": {
           "required": true,
           "content": {
@@ -19686,7 +19686,7 @@
           }
         ],
         "summary": "List messages",
-        "description": "tenant, landlord. Liệt kê tin nhắn trong một hội thoại. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 INVALID CURSOR · 404 CONVERSATION NOT FOUND.",
+        "description": "tenant, landlord. Liệt kê tin nhắn trong một hội thoại. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 INVALID CURSOR · 404 CONVERSATION NOT FOUND.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "parameters": [
           {
             "name": "filter",
@@ -19934,7 +19934,7 @@
           }
         ],
         "summary": "Send message",
-        "description": "tenant, landlord. Gửi tin nhắn. Lỗi nghiệp vụ: 403 FORBIDDEN · 409 CONVERSATION ARCHIVED · 422 MESSAGE CONTENT INVALID.",
+        "description": "tenant, landlord. Gửi tin nhắn. Lỗi nghiệp vụ: 403 FORBIDDEN · 409 CONVERSATION ARCHIVED · 422 MESSAGE CONTENT INVALID.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "requestBody": {
           "required": true,
           "content": {
@@ -20128,7 +20128,7 @@
           }
         ],
         "summary": "Mark messages as read",
-        "description": "tenant, landlord. Đánh dấu đã đọc một hội thoại. Lỗi nghiệp vụ: 403 FORBIDDEN · 404 MESSAGE NOT FOUND · 422 READ CURSOR INVALID · điều kiện migration cho con trỏ.",
+        "description": "tenant, landlord. Đánh dấu đã đọc một hội thoại. Lỗi nghiệp vụ: 403 FORBIDDEN · 404 MESSAGE NOT FOUND · 422 READ CURSOR INVALID · điều kiện migration cho con trỏ.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "requestBody": {
           "required": true,
           "content": {
@@ -20308,7 +20308,7 @@
           }
         ],
         "summary": "List notifications",
-        "description": "tenant, landlord, admin. Liệt kê thông báo. Lỗi nghiệp vụ: 401 INVALID TOKEN · 422 VALIDATION FAILED.",
+        "description": "tenant, landlord, admin. Liệt kê thông báo. Lỗi nghiệp vụ: 401 INVALID TOKEN · 422 VALIDATION FAILED.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "parameters": [
           {
             "name": "filter",
@@ -20469,7 +20469,7 @@
           }
         ],
         "summary": "Mark notification as read",
-        "description": "tenant, landlord, admin. Đánh dấu đã đọc một thông báo. Lỗi nghiệp vụ: 403 FORBIDDEN · 404 NOT FOUND.",
+        "description": "tenant, landlord, admin. Đánh dấu đã đọc một thông báo. Lỗi nghiệp vụ: 403 FORBIDDEN · 404 NOT FOUND.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "parameters": [
           {
             "name": "notificationId",
@@ -20561,7 +20561,7 @@
           }
         ],
         "summary": "Mark all notifications as read",
-        "description": "tenant, landlord, admin. Đánh dấu đã đọc toàn bộ thông báo chưa đọc. Lỗi nghiệp vụ: 401 INVALID TOKEN.",
+        "description": "tenant, landlord, admin. Đánh dấu đã đọc toàn bộ thông báo chưa đọc. Lỗi nghiệp vụ: 401 INVALID TOKEN.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "responses": {
           "200": {
             "description": "Thành công: Đánh dấu đã đọc toàn bộ thông báo chưa đọc.",
@@ -20635,7 +20635,7 @@
           }
         ],
         "summary": "Get notification preferences",
-        "description": "tenant, landlord, admin. Đọc tuỳ biến thông báo. Lỗi nghiệp vụ: 401 INVALID TOKEN.",
+        "description": "tenant, landlord, admin. Đọc tuỳ biến thông báo. Lỗi nghiệp vụ: 401 INVALID TOKEN.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "responses": {
           "200": {
             "description": "Thành công: Đọc tuỳ biến thông báo.",
@@ -20729,7 +20729,7 @@
           }
         ],
         "summary": "Update notification preferences",
-        "description": "tenant, landlord, admin. Thay toàn bộ tuỳ biến thông báo. Lỗi nghiệp vụ: 422 INVALID NOTIFICATION TYPE · 422 VALIDATION FAILED.",
+        "description": "tenant, landlord, admin. Thay toàn bộ tuỳ biến thông báo. Lỗi nghiệp vụ: 422 INVALID NOTIFICATION TYPE · 422 VALIDATION FAILED.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "requestBody": {
           "required": true,
           "content": {
@@ -20873,7 +20873,7 @@
           }
         ],
         "summary": "Search audit logs",
-        "description": "admin. Tìm kiếm nhật ký chỉ ghi thêm. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 VALIDATION FAILED.",
+        "description": "admin. Tìm kiếm nhật ký chỉ ghi thêm. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 VALIDATION FAILED.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "parameters": [
           {
             "name": "filter",
@@ -21108,7 +21108,7 @@
           }
         ],
         "summary": "Get audit log details",
-        "description": "admin. Đọc hoặc xuất một bản ghi kiểm toán. Lỗi nghiệp vụ: 403 FORBIDDEN · 404 NOT FOUND.",
+        "description": "admin. Đọc hoặc xuất một bản ghi kiểm toán. Lỗi nghiệp vụ: 403 FORBIDDEN · 404 NOT FOUND.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "parameters": [
           {
             "name": "auditLogId",
@@ -21208,7 +21208,7 @@
           }
         ],
         "summary": "Get system dashboard metrics",
-        "description": "admin. Đọc số liệu tổng hợp hệ thống. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 INVALID DATE RANGE.",
+        "description": "admin. Đọc số liệu tổng hợp hệ thống. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 INVALID DATE RANGE.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "parameters": [
           {
             "name": "from",
