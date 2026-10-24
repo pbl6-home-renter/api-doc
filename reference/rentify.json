@@ -1650,6 +1650,9 @@
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
+          },
+          "503": {
+            "$ref": "#/components/responses/AuthUnavailableError"
           }
         },
         "servers": [
@@ -1949,6 +1952,9 @@
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
+          },
+          "503": {
+            "$ref": "#/components/responses/AuthUnavailableError"
           }
         },
         "servers": [
@@ -2461,6 +2467,9 @@
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
+          },
+          "503": {
+            "$ref": "#/components/responses/AuthUnavailableError"
           }
         },
         "servers": [
@@ -2825,6 +2834,9 @@
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
+          },
+          "503": {
+            "$ref": "#/components/responses/AuthUnavailableError"
           }
         },
         "servers": [
@@ -3114,42 +3126,7 @@
             }
           },
           "403": {
-            "description": "Không có quyền truy cập.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "additionalProperties": false,
-                  "required": [
-                    "statusCode",
-                    "code"
-                  ],
-                  "properties": {
-                    "statusCode": {
-                      "type": "integer",
-                      "enum": [
-                        403
-                      ]
-                    },
-                    "code": {
-                      "type": "string",
-                      "enum": [
-                        "FORBIDDEN"
-                      ]
-                    }
-                  }
-                },
-                "examples": {
-                  "error_1": {
-                    "summary": "FORBIDDEN",
-                    "value": {
-                      "statusCode": 403,
-                      "code": "FORBIDDEN"
-                    }
-                  }
-                }
-              }
-            }
+            "$ref": "#/components/responses/ForbiddenError"
           },
           "422": {
             "description": "Vi phạm ràng buộc dữ liệu; trả mã của lỗi đầu tiên.",
@@ -3287,6 +3264,9 @@
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
+          },
+          "503": {
+            "$ref": "#/components/responses/AuthUnavailableError"
           }
         },
         "servers": [
@@ -3452,42 +3432,7 @@
             }
           },
           "403": {
-            "description": "Không có quyền truy cập.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "additionalProperties": false,
-                  "required": [
-                    "statusCode",
-                    "code"
-                  ],
-                  "properties": {
-                    "statusCode": {
-                      "type": "integer",
-                      "enum": [
-                        403
-                      ]
-                    },
-                    "code": {
-                      "type": "string",
-                      "enum": [
-                        "FORBIDDEN"
-                      ]
-                    }
-                  }
-                },
-                "examples": {
-                  "error_1": {
-                    "summary": "FORBIDDEN",
-                    "value": {
-                      "statusCode": 403,
-                      "code": "FORBIDDEN"
-                    }
-                  }
-                }
-              }
-            }
+            "$ref": "#/components/responses/ForbiddenError"
           },
           "404": {
             "description": "Không tìm thấy người dùng.",
@@ -3529,6 +3474,9 @@
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
+          },
+          "503": {
+            "$ref": "#/components/responses/AuthUnavailableError"
           }
         },
         "servers": [
@@ -3716,42 +3664,7 @@
             }
           },
           "403": {
-            "description": "Không có quyền truy cập.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "additionalProperties": false,
-                  "required": [
-                    "statusCode",
-                    "code"
-                  ],
-                  "properties": {
-                    "statusCode": {
-                      "type": "integer",
-                      "enum": [
-                        403
-                      ]
-                    },
-                    "code": {
-                      "type": "string",
-                      "enum": [
-                        "FORBIDDEN"
-                      ]
-                    }
-                  }
-                },
-                "examples": {
-                  "error_1": {
-                    "summary": "FORBIDDEN",
-                    "value": {
-                      "statusCode": 403,
-                      "code": "FORBIDDEN"
-                    }
-                  }
-                }
-              }
-            }
+            "$ref": "#/components/responses/ForbiddenError"
           },
           "404": {
             "description": "Không tìm thấy người dùng.",
@@ -3941,6 +3854,9 @@
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
+          },
+          "503": {
+            "$ref": "#/components/responses/AuthUnavailableError"
           }
         },
         "servers": [
@@ -4065,42 +3981,7 @@
             }
           },
           "403": {
-            "description": "Không có quyền truy cập.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "additionalProperties": false,
-                  "required": [
-                    "statusCode",
-                    "code"
-                  ],
-                  "properties": {
-                    "statusCode": {
-                      "type": "integer",
-                      "enum": [
-                        403
-                      ]
-                    },
-                    "code": {
-                      "type": "string",
-                      "enum": [
-                        "FORBIDDEN"
-                      ]
-                    }
-                  }
-                },
-                "examples": {
-                  "error_1": {
-                    "summary": "FORBIDDEN",
-                    "value": {
-                      "statusCode": 403,
-                      "code": "FORBIDDEN"
-                    }
-                  }
-                }
-              }
-            }
+            "$ref": "#/components/responses/ForbiddenError"
           },
           "404": {
             "description": "Không tìm thấy người dùng.",
@@ -4180,6 +4061,9 @@
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
+          },
+          "503": {
+            "$ref": "#/components/responses/AuthUnavailableError"
           }
         },
         "servers": [
@@ -4375,42 +4259,7 @@
             }
           },
           "403": {
-            "description": "Không có quyền truy cập.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "additionalProperties": false,
-                  "required": [
-                    "statusCode",
-                    "code"
-                  ],
-                  "properties": {
-                    "statusCode": {
-                      "type": "integer",
-                      "enum": [
-                        403
-                      ]
-                    },
-                    "code": {
-                      "type": "string",
-                      "enum": [
-                        "FORBIDDEN"
-                      ]
-                    }
-                  }
-                },
-                "examples": {
-                  "error_1": {
-                    "summary": "FORBIDDEN",
-                    "value": {
-                      "statusCode": 403,
-                      "code": "FORBIDDEN"
-                    }
-                  }
-                }
-              }
-            }
+            "$ref": "#/components/responses/ForbiddenError"
           },
           "404": {
             "description": "Không tìm thấy người dùng.",
@@ -4560,6 +4409,9 @@
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
+          },
+          "503": {
+            "$ref": "#/components/responses/AuthUnavailableError"
           }
         },
         "servers": [
@@ -4717,42 +4569,7 @@
             }
           },
           "403": {
-            "description": "Không có quyền truy cập.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "additionalProperties": false,
-                  "required": [
-                    "statusCode",
-                    "code"
-                  ],
-                  "properties": {
-                    "statusCode": {
-                      "type": "integer",
-                      "enum": [
-                        403
-                      ]
-                    },
-                    "code": {
-                      "type": "string",
-                      "enum": [
-                        "FORBIDDEN"
-                      ]
-                    }
-                  }
-                },
-                "examples": {
-                  "error_1": {
-                    "summary": "FORBIDDEN",
-                    "value": {
-                      "statusCode": 403,
-                      "code": "FORBIDDEN"
-                    }
-                  }
-                }
-              }
-            }
+            "$ref": "#/components/responses/ForbiddenError"
           },
           "404": {
             "description": "Không tìm thấy người dùng.",
@@ -4832,6 +4649,9 @@
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
+          },
+          "503": {
+            "$ref": "#/components/responses/AuthUnavailableError"
           }
         },
         "servers": [
@@ -4976,6 +4796,9 @@
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
+          },
+          "503": {
+            "$ref": "#/components/responses/AuthUnavailableError"
           }
         }
       }
@@ -5024,6 +4847,9 @@
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
+          },
+          "503": {
+            "$ref": "#/components/responses/AuthUnavailableError"
           }
         }
       }
@@ -5189,6 +5015,9 @@
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
+          },
+          "503": {
+            "$ref": "#/components/responses/AuthUnavailableError"
           }
         }
       }
@@ -5361,6 +5190,9 @@
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
+          },
+          "503": {
+            "$ref": "#/components/responses/AuthUnavailableError"
           }
         }
       }
@@ -5420,6 +5252,9 @@
           "400": {
             "$ref": "#/components/responses/BadRequestPathError"
           },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
           "403": {
             "$ref": "#/components/responses/ForbiddenError"
           },
@@ -5470,6 +5305,9 @@
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
+          },
+          "503": {
+            "$ref": "#/components/responses/AuthUnavailableError"
           }
         }
       },
@@ -5559,6 +5397,9 @@
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
+          },
+          "503": {
+            "$ref": "#/components/responses/AuthUnavailableError"
           }
         }
       }
@@ -5895,6 +5736,9 @@
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
+          },
+          "503": {
+            "$ref": "#/components/responses/AuthUnavailableError"
           }
         }
       }
@@ -6128,6 +5972,9 @@
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
+          },
+          "503": {
+            "$ref": "#/components/responses/AuthUnavailableError"
           }
         }
       }
@@ -6377,6 +6224,9 @@
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
+          },
+          "503": {
+            "$ref": "#/components/responses/AuthUnavailableError"
           }
         }
       }
@@ -6453,7 +6303,7 @@
             "$ref": "#/components/responses/BadRequestPathError"
           },
           "403": {
-            "$ref": "#/components/responses/ForbiddenError"
+            "$ref": "#/components/responses/ForbiddenOnlyError"
           },
           "404": {
             "$ref": "#/components/responses/NotFoundError"
@@ -6609,6 +6459,9 @@
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
+          },
+          "503": {
+            "$ref": "#/components/responses/AuthUnavailableError"
           }
         }
       },
@@ -6698,6 +6551,9 @@
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
+          },
+          "503": {
+            "$ref": "#/components/responses/AuthUnavailableError"
           }
         }
       }
@@ -6897,6 +6753,9 @@
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
+          },
+          "503": {
+            "$ref": "#/components/responses/AuthUnavailableError"
           }
         }
       }
@@ -7111,6 +6970,9 @@
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
+          },
+          "503": {
+            "$ref": "#/components/responses/AuthUnavailableError"
           }
         }
       }
@@ -7210,6 +7072,9 @@
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
+          },
+          "503": {
+            "$ref": "#/components/responses/AuthUnavailableError"
           }
         }
       }
@@ -7356,6 +7221,9 @@
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
+          },
+          "503": {
+            "$ref": "#/components/responses/AuthUnavailableError"
           }
         }
       }
@@ -7548,6 +7416,9 @@
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
+          },
+          "503": {
+            "$ref": "#/components/responses/AuthUnavailableError"
           }
         }
       }
@@ -7653,6 +7524,9 @@
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
+          },
+          "503": {
+            "$ref": "#/components/responses/AuthUnavailableError"
           }
         }
       }
@@ -8095,6 +7969,9 @@
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
+          },
+          "503": {
+            "$ref": "#/components/responses/AuthUnavailableError"
           }
         }
       }
@@ -8332,6 +8209,9 @@
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
+          },
+          "503": {
+            "$ref": "#/components/responses/AuthUnavailableError"
           }
         }
       }
@@ -8433,6 +8313,9 @@
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
+          },
+          "503": {
+            "$ref": "#/components/responses/AuthUnavailableError"
           }
         }
       }
@@ -8521,7 +8404,7 @@
             "$ref": "#/components/responses/BadRequestPathError"
           },
           "403": {
-            "$ref": "#/components/responses/ForbiddenError"
+            "$ref": "#/components/responses/ForbiddenOnlyError"
           },
           "404": {
             "$ref": "#/components/responses/NotFoundError"
@@ -8638,6 +8521,9 @@
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
+          },
+          "503": {
+            "$ref": "#/components/responses/AuthUnavailableError"
           }
         }
       },
@@ -8727,6 +8613,9 @@
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
+          },
+          "503": {
+            "$ref": "#/components/responses/AuthUnavailableError"
           }
         }
       }
@@ -8856,6 +8745,9 @@
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
+          },
+          "503": {
+            "$ref": "#/components/responses/AuthUnavailableError"
           }
         }
       }
@@ -9045,6 +8937,9 @@
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
+          },
+          "503": {
+            "$ref": "#/components/responses/AuthUnavailableError"
           }
         }
       },
@@ -9186,6 +9081,9 @@
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
+          },
+          "503": {
+            "$ref": "#/components/responses/AuthUnavailableError"
           }
         }
       }
@@ -9237,6 +9135,9 @@
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
+          },
+          "503": {
+            "$ref": "#/components/responses/AuthUnavailableError"
           }
         }
       }
@@ -9418,6 +9319,9 @@
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
+          },
+          "503": {
+            "$ref": "#/components/responses/AuthUnavailableError"
           }
         }
       }
@@ -9526,6 +9430,7 @@
                       "type": "string",
                       "enum": [
                         "FORBIDDEN",
+                        "ACCOUNT_LOCKED",
                         "PROFILE_NOT_VISIBLE"
                       ]
                     }
@@ -9537,6 +9442,13 @@
                     "value": {
                       "statusCode": 403,
                       "code": "FORBIDDEN"
+                    }
+                  },
+                  "account_locked": {
+                    "summary": "ACCOUNT_LOCKED — Tài khoản đã bị khóa.",
+                    "value": {
+                      "statusCode": 403,
+                      "code": "ACCOUNT_LOCKED"
                     }
                   },
                   "profile_not_visible": {
@@ -9558,6 +9470,9 @@
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
+          },
+          "503": {
+            "$ref": "#/components/responses/AuthUnavailableError"
           }
         }
       }
@@ -9642,6 +9557,9 @@
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
+          },
+          "503": {
+            "$ref": "#/components/responses/AuthUnavailableError"
           }
         }
       },
@@ -9787,6 +9705,9 @@
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
+          },
+          "503": {
+            "$ref": "#/components/responses/AuthUnavailableError"
           }
         }
       }
@@ -9982,6 +9903,9 @@
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
+          },
+          "503": {
+            "$ref": "#/components/responses/AuthUnavailableError"
           }
         }
       },
@@ -10169,6 +10093,9 @@
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
+          },
+          "503": {
+            "$ref": "#/components/responses/AuthUnavailableError"
           }
         }
       }
@@ -10299,6 +10226,9 @@
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
+          },
+          "503": {
+            "$ref": "#/components/responses/AuthUnavailableError"
           }
         }
       }
@@ -10428,6 +10358,9 @@
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
+          },
+          "503": {
+            "$ref": "#/components/responses/AuthUnavailableError"
           }
         }
       }
@@ -10566,6 +10499,9 @@
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
+          },
+          "503": {
+            "$ref": "#/components/responses/AuthUnavailableError"
           }
         }
       }
@@ -10753,6 +10689,9 @@
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
+          },
+          "503": {
+            "$ref": "#/components/responses/AuthUnavailableError"
           }
         }
       },
@@ -10950,6 +10889,9 @@
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
+          },
+          "503": {
+            "$ref": "#/components/responses/AuthUnavailableError"
           }
         }
       }
@@ -11095,6 +11037,9 @@
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
+          },
+          "503": {
+            "$ref": "#/components/responses/AuthUnavailableError"
           }
         }
       }
@@ -11224,6 +11169,9 @@
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
+          },
+          "503": {
+            "$ref": "#/components/responses/AuthUnavailableError"
           }
         }
       }
@@ -11408,6 +11356,9 @@
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
+          },
+          "503": {
+            "$ref": "#/components/responses/AuthUnavailableError"
           }
         }
       },
@@ -11605,6 +11556,9 @@
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
+          },
+          "503": {
+            "$ref": "#/components/responses/AuthUnavailableError"
           }
         }
       }
@@ -11759,6 +11713,9 @@
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
+          },
+          "503": {
+            "$ref": "#/components/responses/AuthUnavailableError"
           }
         }
       }
@@ -11915,6 +11872,9 @@
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
+          },
+          "503": {
+            "$ref": "#/components/responses/AuthUnavailableError"
           }
         }
       }
@@ -12009,6 +11969,9 @@
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
+          },
+          "503": {
+            "$ref": "#/components/responses/AuthUnavailableError"
           }
         }
       }
@@ -12229,6 +12192,9 @@
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
+          },
+          "503": {
+            "$ref": "#/components/responses/AuthUnavailableError"
           }
         }
       }
@@ -12458,6 +12424,9 @@
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
+          },
+          "503": {
+            "$ref": "#/components/responses/AuthUnavailableError"
           }
         }
       },
@@ -12653,6 +12622,9 @@
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
+          },
+          "503": {
+            "$ref": "#/components/responses/AuthUnavailableError"
           }
         }
       }
@@ -12751,6 +12723,9 @@
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
+          },
+          "503": {
+            "$ref": "#/components/responses/AuthUnavailableError"
           }
         }
       },
@@ -12895,6 +12870,9 @@
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
+          },
+          "503": {
+            "$ref": "#/components/responses/AuthUnavailableError"
           }
         }
       }
@@ -13086,6 +13064,9 @@
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
+          },
+          "503": {
+            "$ref": "#/components/responses/AuthUnavailableError"
           }
         }
       }
@@ -13286,6 +13267,9 @@
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
+          },
+          "503": {
+            "$ref": "#/components/responses/AuthUnavailableError"
           }
         }
       }
@@ -13440,6 +13424,9 @@
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
+          },
+          "503": {
+            "$ref": "#/components/responses/AuthUnavailableError"
           }
         }
       }
@@ -13631,6 +13618,9 @@
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
+          },
+          "503": {
+            "$ref": "#/components/responses/AuthUnavailableError"
           }
         }
       }
@@ -13848,6 +13838,9 @@
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
+          },
+          "503": {
+            "$ref": "#/components/responses/AuthUnavailableError"
           }
         }
       }
@@ -14040,6 +14033,9 @@
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
+          },
+          "503": {
+            "$ref": "#/components/responses/AuthUnavailableError"
           }
         }
       },
@@ -14303,6 +14299,9 @@
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
+          },
+          "503": {
+            "$ref": "#/components/responses/AuthUnavailableError"
           }
         }
       }
@@ -14448,6 +14447,9 @@
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
+          },
+          "503": {
+            "$ref": "#/components/responses/AuthUnavailableError"
           }
         }
       }
@@ -14638,6 +14640,9 @@
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
+          },
+          "503": {
+            "$ref": "#/components/responses/AuthUnavailableError"
           }
         }
       }
@@ -14827,6 +14832,9 @@
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
+          },
+          "503": {
+            "$ref": "#/components/responses/AuthUnavailableError"
           }
         }
       },
@@ -15028,6 +15036,9 @@
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
+          },
+          "503": {
+            "$ref": "#/components/responses/AuthUnavailableError"
           }
         }
       }
@@ -15215,6 +15226,9 @@
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
+          },
+          "503": {
+            "$ref": "#/components/responses/AuthUnavailableError"
           }
         }
       }
@@ -15363,6 +15377,9 @@
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
+          },
+          "503": {
+            "$ref": "#/components/responses/AuthUnavailableError"
           }
         }
       }
@@ -15588,6 +15605,9 @@
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
+          },
+          "503": {
+            "$ref": "#/components/responses/AuthUnavailableError"
           }
         }
       }
@@ -15822,6 +15842,9 @@
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
+          },
+          "503": {
+            "$ref": "#/components/responses/AuthUnavailableError"
           }
         }
       },
@@ -16052,6 +16075,9 @@
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
+          },
+          "503": {
+            "$ref": "#/components/responses/AuthUnavailableError"
           }
         }
       }
@@ -16187,6 +16213,9 @@
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
+          },
+          "503": {
+            "$ref": "#/components/responses/AuthUnavailableError"
           }
         }
       }
@@ -16296,6 +16325,9 @@
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
+          },
+          "503": {
+            "$ref": "#/components/responses/AuthUnavailableError"
           }
         }
       },
@@ -16496,6 +16528,9 @@
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
+          },
+          "503": {
+            "$ref": "#/components/responses/AuthUnavailableError"
           }
         }
       }
@@ -16709,6 +16744,9 @@
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
+          },
+          "503": {
+            "$ref": "#/components/responses/AuthUnavailableError"
           }
         }
       }
@@ -16863,6 +16901,9 @@
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
+          },
+          "503": {
+            "$ref": "#/components/responses/AuthUnavailableError"
           }
         }
       }
@@ -17074,6 +17115,9 @@
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
+          },
+          "503": {
+            "$ref": "#/components/responses/AuthUnavailableError"
           }
         }
       }
@@ -17293,6 +17337,9 @@
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
+          },
+          "503": {
+            "$ref": "#/components/responses/AuthUnavailableError"
           }
         }
       }
@@ -17516,6 +17563,9 @@
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
+          },
+          "503": {
+            "$ref": "#/components/responses/AuthUnavailableError"
           }
         }
       }
@@ -17685,6 +17735,9 @@
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
+          },
+          "503": {
+            "$ref": "#/components/responses/AuthUnavailableError"
           }
         }
       }
@@ -17901,6 +17954,9 @@
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
+          },
+          "503": {
+            "$ref": "#/components/responses/AuthUnavailableError"
           }
         }
       }
@@ -18315,6 +18371,9 @@
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
+          },
+          "503": {
+            "$ref": "#/components/responses/AuthUnavailableError"
           }
         }
       }
@@ -18561,6 +18620,9 @@
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
+          },
+          "503": {
+            "$ref": "#/components/responses/AuthUnavailableError"
           }
         }
       },
@@ -18752,6 +18814,9 @@
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
+          },
+          "503": {
+            "$ref": "#/components/responses/AuthUnavailableError"
           }
         }
       }
@@ -18856,6 +18921,9 @@
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
+          },
+          "503": {
+            "$ref": "#/components/responses/AuthUnavailableError"
           }
         }
       },
@@ -19001,6 +19069,9 @@
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
+          },
+          "503": {
+            "$ref": "#/components/responses/AuthUnavailableError"
           }
         }
       }
@@ -19138,6 +19209,9 @@
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
+          },
+          "503": {
+            "$ref": "#/components/responses/AuthUnavailableError"
           }
         }
       }
@@ -19315,6 +19389,9 @@
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
+          },
+          "503": {
+            "$ref": "#/components/responses/AuthUnavailableError"
           }
         }
       }
@@ -19408,6 +19485,9 @@
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
+          },
+          "503": {
+            "$ref": "#/components/responses/AuthUnavailableError"
           }
         }
       }
@@ -19585,6 +19665,9 @@
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
+          },
+          "503": {
+            "$ref": "#/components/responses/AuthUnavailableError"
           }
         }
       }
@@ -19832,6 +19915,9 @@
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
+          },
+          "503": {
+            "$ref": "#/components/responses/AuthUnavailableError"
           }
         }
       },
@@ -20021,6 +20107,9 @@
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
+          },
+          "503": {
+            "$ref": "#/components/responses/AuthUnavailableError"
           }
         }
       }
@@ -20198,6 +20287,9 @@
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
+          },
+          "503": {
+            "$ref": "#/components/responses/AuthUnavailableError"
           }
         }
       }
@@ -20356,6 +20448,9 @@
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
+          },
+          "503": {
+            "$ref": "#/components/responses/AuthUnavailableError"
           }
         }
       }
@@ -20445,6 +20540,9 @@
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
+          },
+          "503": {
+            "$ref": "#/components/responses/AuthUnavailableError"
           }
         }
       }
@@ -20516,6 +20614,9 @@
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
+          },
+          "503": {
+            "$ref": "#/components/responses/AuthUnavailableError"
           }
         }
       }
@@ -20609,6 +20710,9 @@
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
+          },
+          "503": {
+            "$ref": "#/components/responses/AuthUnavailableError"
           }
         }
       },
@@ -20748,6 +20852,9 @@
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
+          },
+          "503": {
+            "$ref": "#/components/responses/AuthUnavailableError"
           }
         }
       }
@@ -20980,6 +21087,9 @@
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
+          },
+          "503": {
+            "$ref": "#/components/responses/AuthUnavailableError"
           }
         }
       }
@@ -21077,6 +21187,9 @@
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
+          },
+          "503": {
+            "$ref": "#/components/responses/AuthUnavailableError"
           }
         }
       }
@@ -21224,6 +21337,9 @@
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
+          },
+          "503": {
+            "$ref": "#/components/responses/AuthUnavailableError"
           }
         }
       }
@@ -32548,6 +32664,53 @@
       },
       "ForbiddenError": {
         "x-apidog-name": "Forbidden",
+        "description": "Không có quyền thực hiện yêu cầu hoặc tài khoản đã bị khóa",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "statusCode",
+                "code"
+              ],
+              "properties": {
+                "statusCode": {
+                  "type": "integer",
+                  "enum": [
+                    403
+                  ]
+                },
+                "code": {
+                  "type": "string",
+                  "enum": [
+                    "FORBIDDEN",
+                    "ACCOUNT_LOCKED"
+                  ]
+                }
+              }
+            },
+            "examples": {
+              "forbidden": {
+                "summary": "Không có quyền thực hiện yêu cầu",
+                "value": {
+                  "statusCode": 403,
+                  "code": "FORBIDDEN"
+                }
+              },
+              "account_locked": {
+                "summary": "Tài khoản đã bị khóa",
+                "value": {
+                  "statusCode": 403,
+                  "code": "ACCOUNT_LOCKED"
+                }
+              }
+            }
+          }
+        }
+      },
+      "ForbiddenOnlyError": {
+        "x-apidog-name": "Forbidden",
         "description": "Không có quyền thực hiện yêu cầu",
         "content": {
           "application/json": {
@@ -32576,6 +32739,40 @@
             "example": {
               "statusCode": 403,
               "code": "FORBIDDEN"
+            }
+          }
+        }
+      },
+      "AuthUnavailableError": {
+        "x-apidog-name": "Authentication Unavailable",
+        "description": "Hạ tầng xác thực tạm thời không khả dụng",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "statusCode",
+                "code"
+              ],
+              "properties": {
+                "statusCode": {
+                  "type": "integer",
+                  "enum": [
+                    503
+                  ]
+                },
+                "code": {
+                  "type": "string",
+                  "enum": [
+                    "AUTH_UNAVAILABLE"
+                  ]
+                }
+              }
+            },
+            "example": {
+              "statusCode": 503,
+              "code": "AUTH_UNAVAILABLE"
             }
           }
         }

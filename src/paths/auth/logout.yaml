@@ -101,6 +101,8 @@ post:
               value:
                 statusCode: 401
                 code: UNAUTHORIZED
+    '503':
+      $ref: ../../openapi.yaml#/components/responses/AuthUnavailableError
     '403':
       description: Không có quyền truy cập.
       content:

@@ -51,6 +51,8 @@ get:
       $ref: ../../openapi.yaml#/components/responses/BadRequestError
     '401':
       $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
+    '503':
+      $ref: ../../openapi.yaml#/components/responses/AuthUnavailableError
     '429':
       $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
     '500':
@@ -110,6 +112,8 @@ put:
       $ref: ../../openapi.yaml#/components/responses/BadRequestBodyError
     '401':
       $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
+    '503':
+      $ref: ../../openapi.yaml#/components/responses/AuthUnavailableError
     '422':
       x-apidog-name: Unprocessable Entity
       description: Dữ liệu hợp lệ về cấu trúc nhưng vi phạm ràng buộc trường hoặc quy tắc nghiệp vụ.

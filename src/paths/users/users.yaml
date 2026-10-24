@@ -204,31 +204,10 @@ get:
               value:
                 statusCode: 401
                 code: UNAUTHORIZED
+    '503':
+      $ref: ../../openapi.yaml#/components/responses/AuthUnavailableError
     '403':
-      description: Không có quyền truy cập.
-      content:
-        application/json:
-          schema:
-            type: object
-            additionalProperties: false
-            required:
-            - statusCode
-            - code
-            properties:
-              statusCode:
-                type: integer
-                enum:
-                - 403
-              code:
-                type: string
-                enum:
-                - FORBIDDEN
-          examples:
-            error_1:
-              summary: FORBIDDEN
-              value:
-                statusCode: 403
-                code: FORBIDDEN
+      $ref: ../../openapi.yaml#/components/responses/ForbiddenError
     '422':
       description: Vi phạm ràng buộc dữ liệu; trả mã của lỗi đầu tiên.
       content:

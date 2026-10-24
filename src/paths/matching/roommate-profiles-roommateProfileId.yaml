@@ -55,6 +55,8 @@ get:
       $ref: ../../openapi.yaml#/components/responses/BadRequestPathError
     '401':
       $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
+    '503':
+      $ref: ../../openapi.yaml#/components/responses/AuthUnavailableError
     '403':
       x-apidog-name: Forbidden
       description: Người gọi sai vai trò hoặc hồ sơ không công khai cho người gọi.
@@ -72,6 +74,7 @@ get:
                 type: string
                 enum:
                   - FORBIDDEN
+                  - ACCOUNT_LOCKED
                   - PROFILE_NOT_VISIBLE
           examples:
             forbidden:
@@ -79,6 +82,11 @@ get:
               value:
                 statusCode: 403
                 code: FORBIDDEN
+            account_locked:
+              summary: ACCOUNT_LOCKED — Tài khoản đã bị khóa.
+              value:
+                statusCode: 403
+                code: ACCOUNT_LOCKED
             profile_not_visible:
               summary: PROFILE_NOT_VISIBLE — Hồ sơ không được phép hiển thị cho người gọi.
               value:
