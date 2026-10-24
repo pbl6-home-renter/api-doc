@@ -37,6 +37,8 @@ Gắn [`apidog/scripts/protected-pre-request.js`](apidog/scripts/protected-pre-r
 - Lưu cả access token và refresh token mới sau rotation.
 - Xóa session local và yêu cầu login lại nếu refresh thất bại.
 
+Trong Apidog, nếu Credentials đang hiển thị `{{bearerToken}}`, chọn **Set Manually** và đổi thành `{{accessToken}}`. `Bearer` vẫn là scheme của HTTP Authorization header; chỉ tên biến cần dùng là `accessToken`.
+
 Không gắn script này cho `/auth/login`, `/auth/register` hoặc `/auth/refresh`. Public endpoints không cần Bearer token. Script refresh là proactive trước request; Apidog không tự retry lại request đã nhận `401`. Nếu cần chạy flow nhiều bước, dùng Test Scenario thay vì `pm.nextRequest()`.
 
 ---
