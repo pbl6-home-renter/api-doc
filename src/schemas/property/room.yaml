@@ -43,11 +43,31 @@ allOf:
         example: 18.5
       amenities:
         type: object
+        additionalProperties: false
         description: Các tiện ích đi kèm (điều hòa, tủ lạnh, wc khép kín...)
+        properties:
+          aircon:
+            type: boolean
+          fridge:
+            type: boolean
+          wcInside:
+            type: boolean
+          waterHeater:
+            type: boolean
+          mezzanine:
+            type: boolean
+          table:
+            type: boolean
+          chair:
+            type: boolean
         example:
           aircon: true
           fridge: false
           wcInside: true
+          waterHeater: true
+          mezzanine: false
+          table: true
+          chair: true
       maxOccupancy:
         type: integer
         minimum: 1

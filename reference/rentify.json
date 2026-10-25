@@ -22762,11 +22762,39 @@
               },
               "amenities": {
                 "type": "object",
+                "additionalProperties": false,
                 "description": "Các tiện ích đi kèm (điều hòa, tủ lạnh, wc khép kín...)",
+                "properties": {
+                  "aircon": {
+                    "type": "boolean"
+                  },
+                  "fridge": {
+                    "type": "boolean"
+                  },
+                  "wcInside": {
+                    "type": "boolean"
+                  },
+                  "waterHeater": {
+                    "type": "boolean"
+                  },
+                  "mezzanine": {
+                    "type": "boolean"
+                  },
+                  "table": {
+                    "type": "boolean"
+                  },
+                  "chair": {
+                    "type": "boolean"
+                  }
+                },
                 "example": {
                   "aircon": true,
                   "fridge": false,
-                  "wcInside": true
+                  "wcInside": true,
+                  "waterHeater": true,
+                  "mezzanine": false,
+                  "table": true,
+                  "chair": true
                 }
               },
               "maxOccupancy": {
@@ -24006,13 +24034,39 @@
           },
           "amenities": {
             "type": "object",
-            "nullable": true,
             "description": "Tiện ích và nội thất có sẵn trong phòng.",
+            "additionalProperties": false,
+            "properties": {
+              "aircon": {
+                "type": "boolean"
+              },
+              "fridge": {
+                "type": "boolean"
+              },
+              "wcInside": {
+                "type": "boolean"
+              },
+              "waterHeater": {
+                "type": "boolean"
+              },
+              "mezzanine": {
+                "type": "boolean"
+              },
+              "table": {
+                "type": "boolean"
+              },
+              "chair": {
+                "type": "boolean"
+              }
+            },
             "example": {
               "aircon": true,
+              "fridge": false,
+              "wcInside": true,
               "waterHeater": true,
-              "mezzanine": true,
-              "refrigerator": true
+              "mezzanine": false,
+              "table": true,
+              "chair": true
             }
           },
           "photoMediaIds": {
@@ -24351,8 +24405,31 @@
           },
           "amenities": {
             "type": "object",
-            "nullable": true,
-            "description": "Danh mục tiện ích trong phòng."
+            "additionalProperties": false,
+            "description": "Danh mục tiện ích trong phòng.",
+            "properties": {
+              "aircon": {
+                "type": "boolean"
+              },
+              "fridge": {
+                "type": "boolean"
+              },
+              "wcInside": {
+                "type": "boolean"
+              },
+              "waterHeater": {
+                "type": "boolean"
+              },
+              "mezzanine": {
+                "type": "boolean"
+              },
+              "table": {
+                "type": "boolean"
+              },
+              "chair": {
+                "type": "boolean"
+              }
+            }
           },
           "photoUrls": {
             "type": "array",
