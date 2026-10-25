@@ -7319,6 +7319,278 @@
           }
         }
       }
+    },
+    {
+      "id": "38b63d563f48380021e50e3c7c33b981e82d252867e984bb5910a736faca4853",
+      "label": "Thay đổi contract từ Git",
+      "classification": "BREAKING",
+      "contractId": "rentify-public",
+      "repository": "https://github.com/pbl6-home-renter/api-doc",
+      "baseHash": "d6f1f00b6e6221fdfa4c6637c518a6f433e84b4715b232fea384d66d9a861f34",
+      "headHash": "002639cef5a1a6b347f3457a768c1bbe5db2935f6e41e634fdbbf7bfdf977635",
+      "baseSource": "src/openapi.yaml",
+      "headSource": "src/openapi.yaml",
+      "detectedAt": "2026-10-25T14:16:35.532Z",
+      "committedAt": "2026-10-25T21:16:25+07:00",
+      "baseCommit": "d64ff06ab32a7c2c6de44a2d0135127b838db098",
+      "headCommit": "9142c3dad2750aa2b5aed502e5f64beb8725f315",
+      "prUrl": "https://github.com/pbl6-home-renter/api-doc/pull/16",
+      "commitUrl": "https://github.com/pbl6-home-renter/api-doc/commit/9142c3dad2750aa2b5aed502e5f64beb8725f315",
+      "metadataKind": "Git revision thực tế",
+      "reason": "Identity-Service đã publish event qua transactional outbox theo sequence diagram. JWKS bỏ envelope để `jose` (`createRemoteJWKSet`) đọc được `keys` ở cấp ngoài cùng; API Gateway đọc được cả hai dạng nên không bị ảnh hưởng.",
+      "tools": {
+        "redocly": "2.64.1",
+        "oasdiff": "1.34.1"
+      },
+      "changes": [
+        {
+          "id": "response-required-property-removed",
+          "text": "removed the required property `code` from the response with the `200` status",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getJwks",
+          "path": "/.well-known/jwks.json",
+          "section": "paths",
+          "fingerprint": "3b1e4777c25f",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "response-required-property-removed",
+          "text": "removed the required property `data` from the response with the `200` status",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getJwks",
+          "path": "/.well-known/jwks.json",
+          "section": "paths",
+          "fingerprint": "7b9d06caac59",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "response-required-property-removed",
+          "text": "removed the required property `statusCode` from the response with the `200` status",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getJwks",
+          "path": "/.well-known/jwks.json",
+          "section": "paths",
+          "fingerprint": "b52ff0a15db7",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "api-version-not-bumped",
+          "text": "a breaking change was detected but the version is still `1.0.0`",
+          "level": 1,
+          "section": "info",
+          "fingerprint": "d3f96cd643c1",
+          "classification": "NON_BREAKING",
+          "clientImpact": "BE: xem lại quy ước version trước khi chấp nhận breaking change. FE/Mobile: theo kế hoạch chuyển đổi của entry này; version trong OpenAPI chưa chứng minh backend đã triển khai."
+        },
+        {
+          "id": "response-required-property-added",
+          "text": "added the required property `keys` to the response with the `200` status",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getJwks",
+          "path": "/.well-known/jwks.json",
+          "section": "paths",
+          "fingerprint": "d53df51efb5a",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới keys; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        }
+      ],
+      "locations": [
+        {
+          "pointer": "/paths/~1.well-known~1jwks.json/get/description",
+          "before": "Public. Trả public key RS256 để API Gateway và các service verify access token.\n\n**Lưu ý**\n\n- Response hiện đang bị bọc `{statusCode, code, data}` bởi `ResponseTransformInterceptor`. Chuẩn JWKS (RFC 7517) và thư viện `jose` mà API Gateway dùng (`createRemoteJWKSet`) cần `keys` ở cấp ngoài cùng, nên API Gateway không đọc được key và không verify được JWT. Cần sửa Identity-Service để endpoint này trả `{keys}` không bọc.\n- API Gateway cache key; khi xoay key, giữ key cũ trong JWKS tới khi mọi access token ký bằng key cũ hết hạn.\n\n```mermaid\nsequenceDiagram\n    autonumber\n    participant GW as API Gateway\n    participant ID as Identity\n\n    Note over GW: Lúc khởi động, khi cache hết hạn<br/>hoặc gặp kid lạ\n    GW->>ID: GET /.well-known/jwks.json\n    ID-->>GW: 200 {keys: [{kty, n, e, use: sig, alg: RS256, kid}]}\n    GW->>GW: Cache public key để verify JWT\n```",
+          "after": "Public. Trả public key RS256 để API Gateway và các service verify access token.\n\n**Lưu ý**\n\n- Response là JWK Set chuẩn RFC 7517, **không** bọc `{statusCode, code, data}`, để `jose` (`createRemoteJWKSet`) đọc được `keys` ở cấp ngoài cùng.\n- API Gateway cache key; khi xoay key, giữ key cũ trong JWKS tới khi mọi access token ký bằng key cũ hết hạn.\n\n```mermaid\nsequenceDiagram\n    autonumber\n    participant GW as API Gateway\n    participant ID as Identity\n\n    Note over GW: Lúc khởi động, khi cache hết hạn<br/>hoặc gặp kid lạ\n    GW->>ID: GET /.well-known/jwks.json\n    ID-->>GW: 200 {keys: [{kty, n, e, use: sig, alg: RS256, kid}]}\n    GW->>GW: Cache public key để verify JWT\n```"
+        },
+        {
+          "pointer": "/paths/~1.well-known~1jwks.json/get/responses/200/content/application~1json/example/code",
+          "before": "SUCCESS",
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1.well-known~1jwks.json/get/responses/200/content/application~1json/example/data",
+          "before": {
+            "keys": [
+              {
+                "kty": "RSA",
+                "n": "np-J6FU-Jan_SEoockjWWE8WG9AIqdV-5JAsEOY3w84f0Cp8z3h72vhUAj7BqnHpeMDVZFjIGzhtcMBKBaUvAP-SEP7kakhY9ohz8TQau8lg4Ee5QKwdOuogqk6x6P6KHkc_sZFjCRYDxYpy7cqk3c2kqd6x1kNqbevZAowLsq8UnHsOgb59UYHJUe0BkrRe7yZaHK2laTzslQOMQ-JhXZd848ZKxwrGSDM645zxdvyeK_fPakgS76tzesi9qQ5j7CMbukvsLUV6gjmj7onVrQk8qN61ulOHpTqqbTZQIUbThtAE8lygqK_RO5nvoz80QDxBzXwRBQEq5CuHtSsK6w",
+                "e": "AQAB",
+                "use": "sig",
+                "alg": "RS256",
+                "kid": "rentify-identity"
+              }
+            ]
+          },
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1.well-known~1jwks.json/get/responses/200/content/application~1json/example/keys",
+          "before": null,
+          "after": [
+            {
+              "kty": "RSA",
+              "n": "np-J6FU-Jan_SEoockjWWE8WG9AIqdV-5JAsEOY3w84f0Cp8z3h72vhUAj7BqnHpeMDVZFjIGzhtcMBKBaUvAP-SEP7kakhY9ohz8TQau8lg4Ee5QKwdOuogqk6x6P6KHkc_sZFjCRYDxYpy7cqk3c2kqd6x1kNqbevZAowLsq8UnHsOgb59UYHJUe0BkrRe7yZaHK2laTzslQOMQ-JhXZd848ZKxwrGSDM645zxdvyeK_fPakgS76tzesi9qQ5j7CMbukvsLUV6gjmj7onVrQk8qN61ulOHpTqqbTZQIUbThtAE8lygqK_RO5nvoz80QDxBzXwRBQEq5CuHtSsK6w",
+              "e": "AQAB",
+              "use": "sig",
+              "alg": "RS256",
+              "kid": "rentify-identity"
+            }
+          ]
+        },
+        {
+          "pointer": "/paths/~1.well-known~1jwks.json/get/responses/200/content/application~1json/example/statusCode",
+          "before": 200,
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1.well-known~1jwks.json/get/responses/200/content/application~1json/schema/$ref",
+          "before": null,
+          "after": "#/components/schemas/AuthJwksResponseDto"
+        },
+        {
+          "pointer": "/paths/~1.well-known~1jwks.json/get/responses/200/content/application~1json/schema/additionalProperties",
+          "before": false,
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1.well-known~1jwks.json/get/responses/200/content/application~1json/schema/properties",
+          "before": {
+            "statusCode": {
+              "type": "integer",
+              "enum": [
+                200
+              ]
+            },
+            "code": {
+              "type": "string",
+              "enum": [
+                "SUCCESS"
+              ]
+            },
+            "data": {
+              "$ref": "#/components/schemas/AuthJwksResponseDto"
+            }
+          },
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1.well-known~1jwks.json/get/responses/200/content/application~1json/schema/required",
+          "before": [
+            "statusCode",
+            "code",
+            "data"
+          ],
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1.well-known~1jwks.json/get/responses/200/content/application~1json/schema/type",
+          "before": "object",
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1auth~1login/post/description",
+          "before": "Public. Đăng nhập bằng email hoặc số điện thoại. Trả accessToken, refreshToken và user trong JSON; không đặt cookie. rememberMe=true: refresh token 7 ngày; false: 1 ngày.\n\n**Lưu ý**\n\n- User bị khóa **vẫn đăng nhập được**; access token mang claim `status` để Tenancy/Community chặn chức năng. Chưa triển khai claim `status`.\n- User đã xóa mềm được coi như không tồn tại, trả `401`.\n- Đang cân nhắc: refresh token hiện trả trong JSON, `api-conventions.md` §4 muốn dùng HttpOnly cookie.\n\n```mermaid\nsequenceDiagram\n    autonumber\n    participant GW as API Gateway\n    participant ID as Identity\n    participant DB as Identity DB\n\n    GW->>ID: POST /auth/login {identifier, password, rememberMe}\n    ID->>DB: Tìm user chưa bị xóa theo email hoặc phone\n    ID->>ID: bcrypt compare password\n    alt Không tìm thấy hoặc sai mật khẩu\n        ID-->>GW: 401 AUTH_LOGIN_INVALID_CREDENTIALS\n    end\n    Note over ID: status=locked vẫn được cấp token\n    ID->>DB: Insert refresh_tokens (tokenHash, expiresAt 7 ngày nếu rememberMe, ngược lại 1 ngày)\n    ID->>ID: Ký access token RS256 {sub, role, status} (15 phút)\n    ID-->>GW: 200 SESSION_STARTED {accessToken, refreshToken, user}\n```",
+          "after": "Public. Đăng nhập bằng email hoặc số điện thoại. Trả accessToken, refreshToken và user trong JSON; không đặt cookie. rememberMe=true: refresh token 7 ngày; false: 1 ngày.\n\n**Lưu ý**\n\n- User bị khóa **vẫn đăng nhập được**; access token mang claim `status` để Tenancy/Community chặn chức năng.\n- User đã xóa mềm được coi như không tồn tại, trả `401`.\n- Đang cân nhắc: refresh token hiện trả trong JSON, `api-conventions.md` §4 muốn dùng HttpOnly cookie.\n\n```mermaid\nsequenceDiagram\n    autonumber\n    participant GW as API Gateway\n    participant ID as Identity\n    participant DB as Identity DB\n\n    GW->>ID: POST /auth/login {identifier, password, rememberMe}\n    ID->>DB: Tìm user chưa bị xóa theo email hoặc phone\n    ID->>ID: bcrypt compare password\n    alt Không tìm thấy hoặc sai mật khẩu\n        ID-->>GW: 401 AUTH_LOGIN_INVALID_CREDENTIALS\n    end\n    Note over ID: status=locked vẫn được cấp token\n    ID->>DB: Insert refresh_tokens (tokenHash, expiresAt 7 ngày nếu rememberMe, ngược lại 1 ngày)\n    ID->>ID: Ký access token RS256 {sub, role, status} (15 phút)\n    ID-->>GW: 200 SESSION_STARTED {accessToken, refreshToken, user}\n```"
+        },
+        {
+          "pointer": "/paths/~1auth~1password-reset-requests/post/description",
+          "before": "Public. Tiếp nhận yêu cầu đặt lại mật khẩu; luôn trả accepted=true kể cả email không tồn tại hoặc tài khoản bị khóa.\n\n**Lưu ý**\n\n- Luôn trả `202` giống nhau để không lộ email có tồn tại hay không.\n- Email do Community gửi khi nhận `user.password_reset_requested`. Payload chứa token thô: không log payload, dọn outbox sau khi relay, DLQ không giữ lâu.\n- Chưa triển khai: code chưa gửi email (TODO) và đang chặn user bị khóa; thiết kế cho phép user bị khóa reset.\n\n```mermaid\nsequenceDiagram\n    autonumber\n    participant GW as API Gateway\n    participant ID as Identity\n    participant DB as Identity DB\n    participant MQ as RabbitMQ\n    participant COM as Community\n\n    GW->>ID: POST /auth/password-reset-requests {email}\n    ID->>DB: Tìm user chưa bị xóa theo email\n    opt User tồn tại\n        ID->>ID: Sinh token ngẫu nhiên + tokenHash (SHA-256), expiresAt = +15 phút\n        ID->>DB: [Transaction] Insert password_reset_tokens (tokenHash, expiresAt)<br/>+ outbox user.password_reset_requested\n    end\n    ID-->>GW: 202 PASSWORD_RESET_REQUESTED {accepted: true}\n    Note over ID: Luôn trả 202 giống nhau, không lộ email có tồn tại hay không\n    ID-)MQ: user.password_reset_requested {userId, email, name, token, expiresAt}\n    MQ-)COM: Gửi email chứa link đặt lại mật khẩu\n```",
+          "after": "Public. Tiếp nhận yêu cầu đặt lại mật khẩu; luôn trả accepted=true kể cả email không tồn tại hoặc tài khoản bị khóa.\n\n**Lưu ý**\n\n- Luôn trả `202` giống nhau để không lộ email có tồn tại hay không.\n- Email do Community gửi khi nhận `user.password_reset_requested`. Payload chứa token thô: không log payload, dọn outbox sau khi relay, DLQ không giữ lâu.\n- User bị khóa vẫn được yêu cầu reset (vì vẫn đăng nhập được).\n\n```mermaid\nsequenceDiagram\n    autonumber\n    participant GW as API Gateway\n    participant ID as Identity\n    participant DB as Identity DB\n    participant MQ as RabbitMQ\n    participant COM as Community\n\n    GW->>ID: POST /auth/password-reset-requests {email}\n    ID->>DB: Tìm user chưa bị xóa theo email\n    opt User tồn tại\n        ID->>ID: Sinh token ngẫu nhiên + tokenHash (SHA-256), expiresAt = +15 phút\n        ID->>DB: [Transaction] Insert password_reset_tokens (tokenHash, expiresAt)<br/>+ outbox user.password_reset_requested\n    end\n    ID-->>GW: 202 PASSWORD_RESET_REQUESTED {accepted: true}\n    Note over ID: Luôn trả 202 giống nhau, không lộ email có tồn tại hay không\n    ID-)MQ: user.password_reset_requested {userId, email, name, token, expiresAt}\n    MQ-)COM: Gửi email chứa link đặt lại mật khẩu\n```"
+        },
+        {
+          "pointer": "/paths/~1auth~1password-resets/post/description",
+          "before": "Public. Đặt lại mật khẩu bằng token một lần. Token không tồn tại hoặc đã dùng trả TOKEN_USED; hết hạn trả TOKEN_EXPIRED.\n\n**Lưu ý**\n\n- Token sống 15 phút, chỉ dùng 1 lần.\n- Reset thành công thì revoke toàn bộ refresh token; access token đang có vẫn dùng được tới khi hết hạn (tối đa 15 phút).\n\n```mermaid\nsequenceDiagram\n    autonumber\n    participant GW as API Gateway\n    participant ID as Identity\n    participant DB as Identity DB\n\n    GW->>ID: POST /auth/password-resets {token, newPassword}\n    ID->>ID: Hash token (SHA-256)\n    ID->>DB: Tìm password_reset_tokens theo tokenHash\n    alt Token không tồn tại\n        ID-->>GW: 422 INVALID_TOKEN\n    else Token đã dùng / hết hạn\n        ID-->>GW: 409 TOKEN_USED / TOKEN_EXPIRED\n    end\n    ID->>DB: [Transaction] Update users.password (bcrypt)<br/>+ đánh dấu token đã dùng<br/>+ revoke toàn bộ refresh_tokens của user\n    ID-->>GW: 204\n```",
+          "after": "Public. Đặt lại mật khẩu bằng token một lần. Token không tồn tại trả 422 INVALID_TOKEN; đã dùng trả 409 TOKEN_USED; hết hạn trả 409 TOKEN_EXPIRED.\n\n**Lưu ý**\n\n- Token sống 15 phút, chỉ dùng 1 lần.\n- Reset thành công thì revoke toàn bộ refresh token; access token đang có vẫn dùng được tới khi hết hạn (tối đa 15 phút).\n\n```mermaid\nsequenceDiagram\n    autonumber\n    participant GW as API Gateway\n    participant ID as Identity\n    participant DB as Identity DB\n\n    GW->>ID: POST /auth/password-resets {token, newPassword}\n    ID->>ID: Hash token (SHA-256)\n    ID->>DB: Tìm password_reset_tokens theo tokenHash\n    alt Token không tồn tại\n        ID-->>GW: 422 INVALID_TOKEN\n    else Token đã dùng / hết hạn\n        ID-->>GW: 409 TOKEN_USED / TOKEN_EXPIRED\n    end\n    ID->>DB: [Transaction] Update users.password (bcrypt)<br/>+ đánh dấu token đã dùng<br/>+ revoke toàn bộ refresh_tokens của user\n    ID-->>GW: 204\n```"
+        },
+        {
+          "pointer": "/paths/~1auth~1register/post/description",
+          "before": "Public. Tạo tài khoản tenant hoặc landlord và phiên đăng nhập. Trả accessToken, refreshToken và user trong JSON; không đặt cookie. Location: /api/v1/me.\n\n**Lưu ý**\n\n- Chỉ `tenant`/`landlord` được tự đăng ký; admin được seed sẵn. Role không đổi được sau khi đăng ký.\n- Chưa triển khai: publish `user.registered`.\n\n```mermaid\nsequenceDiagram\n    autonumber\n    participant GW as API Gateway\n    participant ID as Identity\n    participant DB as Identity DB\n    participant MQ as RabbitMQ\n    participant TEN as Tenancy\n    participant COM as Community\n\n    GW->>ID: POST /auth/register {email, phone, password, name, role}\n    ID->>DB: Kiểm tra email/phone đã được user chưa bị xóa sử dụng\n    alt Trùng email hoặc phone\n        ID-->>GW: 409 DUPLICATE_EMAIL / DUPLICATE_PHONE\n    end\n    ID->>DB: [Transaction] Insert users (password bcrypt, status=active)<br/>+ insert refresh_tokens (tokenHash)<br/>+ outbox user.registered\n    ID->>ID: Ký access token RS256 {sub, role, status}\n    ID-->>GW: 201 USER_REGISTERED {accessToken, refreshToken, user}\n    ID-)MQ: user.registered {userId, name, email, phone, role, status}\n    MQ-)TEN: Upsert user snapshot\n    MQ-)COM: Tạo profile chat/notification\n```",
+          "after": "Public. Tạo tài khoản tenant hoặc landlord và phiên đăng nhập. Trả accessToken, refreshToken và user trong JSON; không đặt cookie. Location: /api/v1/me.\n\n**Lưu ý**\n\n- Chỉ `tenant`/`landlord` được tự đăng ký; admin được seed sẵn. Role không đổi được sau khi đăng ký.\n- `user.registered` được ghi outbox cùng transaction tạo user; relay publish sau khi commit.\n\n```mermaid\nsequenceDiagram\n    autonumber\n    participant GW as API Gateway\n    participant ID as Identity\n    participant DB as Identity DB\n    participant MQ as RabbitMQ\n    participant TEN as Tenancy\n    participant COM as Community\n\n    GW->>ID: POST /auth/register {email, phone, password, name, role}\n    ID->>DB: Kiểm tra email/phone đã được user chưa bị xóa sử dụng\n    alt Trùng email hoặc phone\n        ID-->>GW: 409 DUPLICATE_EMAIL / DUPLICATE_PHONE\n    end\n    ID->>DB: [Transaction] Insert users (password bcrypt, status=active)<br/>+ insert refresh_tokens (tokenHash)<br/>+ outbox user.registered\n    ID->>ID: Ký access token RS256 {sub, role, status}\n    ID-->>GW: 201 USER_REGISTERED {accessToken, refreshToken, user}\n    ID-)MQ: user.registered {userId, name, email, phone, role, status}\n    MQ-)TEN: Upsert user snapshot\n    MQ-)COM: Tạo profile chat/notification\n```"
+        },
+        {
+          "pointer": "/paths/~1me/patch/description",
+          "before": "Cập nhật hồ sơ hiện tại. Bắt buộc name, phone, payoutAccount (có thể null). Chỉ landlord được gửi object payoutAccount. Số tài khoản trả về được mask; phone đổi từ +84 sang 0.\n\n**Lưu ý**\n\n- Ngữ nghĩa thay toàn bộ: bắt buộc gửi `name`, `phone`, `payoutAccount`; gửi `payoutAccount: null` để xóa.\n- Chỉ landlord được có `payoutAccount`.\n- Chưa triển khai: publish `user.updated`, `landlord.payout_account_updated`. Event payout là tùy chọn, có thể bỏ nếu chấp nhận cache của Payment cũ tối đa 5 phút.\n\n```mermaid\nsequenceDiagram\n    autonumber\n    participant GW as API Gateway\n    participant ID as Identity\n    participant DB as Identity DB\n    participant MQ as RabbitMQ\n    participant TEN as Tenancy\n    participant COM as Community\n    participant PAY as Payment\n\n    GW->>ID: PATCH /me {name, phone, payoutAccount} + Authorization\n    alt payoutAccount khác null nhưng role không phải landlord\n        ID-->>GW: 422 USER_UPDATE_PAYOUT_NOT_ALLOWED\n    end\n    ID->>DB: Kiểm tra phone trùng với user khác\n    alt Trùng phone\n        ID-->>GW: 409 DUPLICATE_PHONE\n    end\n    ID->>DB: [Transaction] Update users (name, phone)<br/>+ upsert landlord_profiles (bankCode, accountNumber, accountName)<br/>+ outbox user.updated (nếu name/phone đổi)<br/>+ outbox landlord.payout_account_updated (nếu payoutAccount đổi)\n    ID-->>GW: 200 CURRENT_USER_PROFILE_UPDATED {id, name, phone, payoutAccount}\n    opt name/phone đổi\n        ID-)MQ: user.updated {userId, name, phone}\n        MQ-)TEN: Cập nhật user snapshot\n        MQ-)COM: Cập nhật user snapshot\n    end\n    opt payoutAccount đổi\n        ID-)MQ: landlord.payout_account_updated {userId}\n        MQ-)PAY: Xóa cache payout của landlord\n    end\n```",
+          "after": "Cập nhật hồ sơ hiện tại. Bắt buộc name, phone, payoutAccount (có thể null). Chỉ landlord được gửi object payoutAccount. Số tài khoản trả về được mask; phone đổi từ +84 sang 0.\n\n**Lưu ý**\n\n- Ngữ nghĩa thay toàn bộ: bắt buộc gửi `name`, `phone`, `payoutAccount`; gửi `payoutAccount: null` để xóa.\n- Chỉ landlord được có `payoutAccount`.\n- `landlord.payout_account_updated` chỉ mang `userId` (không gửi số tài khoản).\n\n```mermaid\nsequenceDiagram\n    autonumber\n    participant GW as API Gateway\n    participant ID as Identity\n    participant DB as Identity DB\n    participant MQ as RabbitMQ\n    participant TEN as Tenancy\n    participant COM as Community\n    participant PAY as Payment\n\n    GW->>ID: PATCH /me {name, phone, payoutAccount} + Authorization\n    alt payoutAccount khác null nhưng role không phải landlord\n        ID-->>GW: 422 USER_UPDATE_PAYOUT_NOT_ALLOWED\n    end\n    ID->>DB: Kiểm tra phone trùng với user khác\n    alt Trùng phone\n        ID-->>GW: 409 DUPLICATE_PHONE\n    end\n    ID->>DB: [Transaction] Update users (name, phone)<br/>+ upsert landlord_profiles (bankCode, accountNumber, accountName)<br/>+ outbox user.updated (nếu name/phone đổi)<br/>+ outbox landlord.payout_account_updated (nếu payoutAccount đổi)\n    ID-->>GW: 200 CURRENT_USER_PROFILE_UPDATED {id, name, phone, payoutAccount}\n    opt name/phone đổi\n        ID-)MQ: user.updated {userId, name, phone}\n        MQ-)TEN: Cập nhật user snapshot\n        MQ-)COM: Cập nhật user snapshot\n    end\n    opt payoutAccount đổi\n        ID-)MQ: landlord.payout_account_updated {userId}\n        MQ-)PAY: Xóa cache payout của landlord\n    end\n```"
+        },
+        {
+          "pointer": "/paths/~1users~1{userId}/delete/description",
+          "before": "Chỉ admin. Xóa mềm tài khoản; không thể tự xóa. Thành công trả 204, không có body.\n\n**Lưu ý**\n\n- Xóa mềm (`is_deleted = true`); user đã xóa không đăng nhập được.\n- Không xóa được user còn HĐ hiệu lực. Không hỏi được Tenancy thì từ chối xóa (`503`, fail-closed).\n- Chưa triển khai: kiểm tra qua Tenancy, mã `409 USER_DELETE_HAS_ACTIVE_CONTRACT`, `503 SERVICE_UNAVAILABLE` và publish `user.deleted`.\n\n```mermaid\nsequenceDiagram\n    autonumber\n    participant GW as API Gateway\n    participant ID as Identity\n    participant DB as Identity DB\n    participant MQ as RabbitMQ\n    participant TEN as Tenancy\n    participant COM as Community\n\n    GW->>ID: DELETE /users/{userId} + Authorization (admin)\n    alt Admin tự xóa chính mình\n        ID-->>GW: 400 USER_DELETE_CANNOT_SELF\n    end\n    ID->>DB: Đọc user\n    alt Không tìm thấy\n        ID-->>GW: 404 USER_NOT_FOUND\n    else Đã bị xóa\n        ID-->>GW: 409 USER_DELETE_ALREADY_DELETED\n    end\n    ID->>TEN: GET /internal/users/{userId}/stats (service token, timeout 3s)\n    alt Tenancy lỗi / timeout (fail-closed)\n        ID-->>GW: 503 SERVICE_UNAVAILABLE\n    end\n    TEN-->>ID: 200 {buildingCount, activeContractCount}\n    alt activeContractCount > 0\n        ID-->>GW: 409 USER_DELETE_HAS_ACTIVE_CONTRACT\n    end\n    ID->>DB: [Transaction] Soft delete users (is_deleted=true) + landlord_profiles<br/>+ revoke toàn bộ refresh_tokens<br/>+ outbox user.deleted\n    ID-->>GW: 204\n    ID-)MQ: user.deleted {userId, role}\n    MQ-)TEN: Ẩn user, không cho gán vào HĐ mới\n    MQ-)COM: Ngắt socket, xóa push devices\n```",
+          "after": "Chỉ admin. Xóa mềm tài khoản; không thể tự xóa. Thành công trả 204, không có body.\n\n**Lưu ý**\n\n- Xóa mềm (`is_deleted = true`); user đã xóa không đăng nhập được.\n- Không xóa được user còn HĐ hiệu lực. Không hỏi được Tenancy thì từ chối xóa (`503`, fail-closed).\n- Chưa triển khai: kiểm tra qua Tenancy, mã `409 USER_DELETE_HAS_ACTIVE_CONTRACT`, `503 SERVICE_UNAVAILABLE`.\n\n```mermaid\nsequenceDiagram\n    autonumber\n    participant GW as API Gateway\n    participant ID as Identity\n    participant DB as Identity DB\n    participant MQ as RabbitMQ\n    participant TEN as Tenancy\n    participant COM as Community\n\n    GW->>ID: DELETE /users/{userId} + Authorization (admin)\n    alt Admin tự xóa chính mình\n        ID-->>GW: 400 USER_DELETE_CANNOT_SELF\n    end\n    ID->>DB: Đọc user\n    alt Không tìm thấy\n        ID-->>GW: 404 USER_NOT_FOUND\n    else Đã bị xóa\n        ID-->>GW: 409 USER_DELETE_ALREADY_DELETED\n    end\n    ID->>TEN: GET /internal/users/{userId}/stats (service token, timeout 3s)\n    alt Tenancy lỗi / timeout (fail-closed)\n        ID-->>GW: 503 SERVICE_UNAVAILABLE\n    end\n    TEN-->>ID: 200 {buildingCount, activeContractCount}\n    alt activeContractCount > 0\n        ID-->>GW: 409 USER_DELETE_HAS_ACTIVE_CONTRACT\n    end\n    ID->>DB: [Transaction] Soft delete users (is_deleted=true) + landlord_profiles<br/>+ revoke toàn bộ refresh_tokens<br/>+ outbox user.deleted\n    ID-->>GW: 204\n    ID-)MQ: user.deleted {userId, role}\n    MQ-)TEN: Ẩn user, không cho gán vào HĐ mới\n    MQ-)COM: Ngắt socket, xóa push devices\n```"
+        },
+        {
+          "pointer": "/paths/~1users~1{userId}/patch/description",
+          "before": "Chỉ admin. Cập nhật ít nhất một trong name hoặc phone; null được bỏ qua.\n\n**Lưu ý**\n\n- Không đổi được `email`, `role`, `status` qua API này; khóa/mở khóa dùng API lock/unlock.\n- Chưa triển khai: publish `user.updated`.\n\n```mermaid\nsequenceDiagram\n    autonumber\n    participant GW as API Gateway\n    participant ID as Identity\n    participant DB as Identity DB\n    participant MQ as RabbitMQ\n    participant TEN as Tenancy\n    participant COM as Community\n\n    GW->>ID: PATCH /users/{userId} {name?, phone?}\n    ID->>DB: Đọc user, kiểm tra phone trùng\n    alt Không tìm thấy\n        ID-->>GW: 404 USER_NOT_FOUND\n    else Trùng phone\n        ID-->>GW: 409 DUPLICATE_PHONE\n    end\n    ID->>DB: [Transaction] Update users (name, phone)<br/>+ outbox user.updated\n    ID-->>GW: 200 USER_UPDATED {userId, name, phone, email, status}\n    ID-)MQ: user.updated {userId, name, phone}\n    MQ-)TEN: Cập nhật user snapshot\n    MQ-)COM: Cập nhật user snapshot\n```",
+          "after": "Chỉ admin. Cập nhật ít nhất một trong name hoặc phone; null được bỏ qua.\n\n**Lưu ý**\n\n- Không đổi được `email`, `role`, `status` qua API này; khóa/mở khóa dùng API lock/unlock.\n\n```mermaid\nsequenceDiagram\n    autonumber\n    participant GW as API Gateway\n    participant ID as Identity\n    participant DB as Identity DB\n    participant MQ as RabbitMQ\n    participant TEN as Tenancy\n    participant COM as Community\n\n    GW->>ID: PATCH /users/{userId} {name?, phone?}\n    ID->>DB: Đọc user, kiểm tra phone trùng\n    alt Không tìm thấy\n        ID-->>GW: 404 USER_NOT_FOUND\n    else Trùng phone\n        ID-->>GW: 409 DUPLICATE_PHONE\n    end\n    ID->>DB: [Transaction] Update users (name, phone)<br/>+ outbox user.updated\n    ID-->>GW: 200 USER_UPDATED {userId, name, phone, email, status}\n    ID-)MQ: user.updated {userId, name, phone}\n    MQ-)TEN: Cập nhật user snapshot\n    MQ-)COM: Cập nhật user snapshot\n```"
+        },
+        {
+          "pointer": "/paths/~1users~1{userId}~1lock/post/description",
+          "before": "Chỉ admin. Khóa tài khoản; không thể tự khóa. User bị khóa vẫn đăng nhập được nhưng bị chặn một số chức năng.\n\n**Lưu ý**\n\n- User bị khóa **vẫn đăng nhập được**. Các service chặn chức năng dựa vào claim `status` trong access token (tự verify); token cấp trước khi khóa còn mang `status=active` tối đa 15 phút.\n- Event `user.locked` chỉ để Tenancy đổi dữ liệu của mình (ẩn BĐS, tạm ngưng HĐ của landlord).\n- Đang cân nhắc (thuộc Tenancy): landlord bị khóa quá grace period thì hủy HĐ và hoàn cọc.\n- Chưa triển khai: publish `user.locked`; code hiện vẫn revoke refresh token khi khóa, cần bỏ.\n\n```mermaid\nsequenceDiagram\n    autonumber\n    participant GW as API Gateway\n    participant ID as Identity\n    participant DB as Identity DB\n    participant MQ as RabbitMQ\n    participant TEN as Tenancy\n    participant COM as Community\n\n    GW->>ID: POST /users/{userId}/lock {lockReason} + Authorization (admin)\n    alt Admin tự khóa chính mình\n        ID-->>GW: 400 USER_LOCK_CANNOT_SELF\n    end\n    ID->>DB: Đọc user\n    alt Không tìm thấy\n        ID-->>GW: 404 USER_NOT_FOUND\n    else Đã bị khóa\n        ID-->>GW: 409 USER_LOCK_ALREADY_LOCKED\n    end\n    ID->>DB: [Transaction] Update users (status=locked, lockReason, lockedAt)<br/>+ outbox user.locked\n    Note over ID: Không revoke refresh token:<br/>user bị khóa vẫn đăng nhập được\n    ID-->>GW: 200 USER_ACCOUNT_LOCKED {userId, status, lockReason, lockedAt}\n    ID-)MQ: user.locked {userId, role, status, lockReason, lockedAt}\n    MQ-)TEN: Nếu role=landlord: ẩn BĐS khỏi tìm kiếm, tạm ngưng HĐ\n    MQ-)COM: Xử lý dữ liệu liên quan (nếu có)\n    Note over TEN,COM: Chặn thao tác của user bị khóa dựa vào claim status trong JWT,<br/>không dựa vào event này\n```",
+          "after": "Chỉ admin. Khóa tài khoản; không thể tự khóa. User bị khóa vẫn đăng nhập được nhưng bị chặn một số chức năng.\n\n**Lưu ý**\n\n- User bị khóa **vẫn đăng nhập được**. Các service chặn chức năng dựa vào claim `status` trong access token (tự verify); token cấp trước khi khóa còn mang `status=active` tối đa 15 phút.\n- Event `user.locked` chỉ để Tenancy đổi dữ liệu của mình (ẩn BĐS, tạm ngưng HĐ của landlord).\n- Đang cân nhắc (thuộc Tenancy): landlord bị khóa quá grace period thì hủy HĐ và hoàn cọc.\n- Khóa không revoke refresh token.\n\n```mermaid\nsequenceDiagram\n    autonumber\n    participant GW as API Gateway\n    participant ID as Identity\n    participant DB as Identity DB\n    participant MQ as RabbitMQ\n    participant TEN as Tenancy\n    participant COM as Community\n\n    GW->>ID: POST /users/{userId}/lock {lockReason} + Authorization (admin)\n    alt Admin tự khóa chính mình\n        ID-->>GW: 400 USER_LOCK_CANNOT_SELF\n    end\n    ID->>DB: Đọc user\n    alt Không tìm thấy\n        ID-->>GW: 404 USER_NOT_FOUND\n    else Đã bị khóa\n        ID-->>GW: 409 USER_LOCK_ALREADY_LOCKED\n    end\n    ID->>DB: [Transaction] Update users (status=locked, lockReason, lockedAt)<br/>+ outbox user.locked\n    Note over ID: Không revoke refresh token:<br/>user bị khóa vẫn đăng nhập được\n    ID-->>GW: 200 USER_ACCOUNT_LOCKED {userId, status, lockReason, lockedAt}\n    ID-)MQ: user.locked {userId, role, status, lockReason, lockedAt}\n    MQ-)TEN: Nếu role=landlord: ẩn BĐS khỏi tìm kiếm, tạm ngưng HĐ\n    MQ-)COM: Xử lý dữ liệu liên quan (nếu có)\n    Note over TEN,COM: Chặn thao tác của user bị khóa dựa vào claim status trong JWT,<br/>không dựa vào event này\n```"
+        },
+        {
+          "pointer": "/paths/~1users~1{userId}~1unlock/post/description",
+          "before": "Chỉ admin. Chuyển locked sang active, trả lockedAt: null.\n\n**Lưu ý**\n\n- Token cấp trước khi mở khóa còn mang `status=locked` tối đa 15 phút.\n- Chưa triển khai: publish `user.unlocked`.\n\n```mermaid\nsequenceDiagram\n    autonumber\n    participant GW as API Gateway\n    participant ID as Identity\n    participant DB as Identity DB\n    participant MQ as RabbitMQ\n    participant TEN as Tenancy\n    participant COM as Community\n\n    GW->>ID: POST /users/{userId}/unlock\n    ID->>DB: Đọc user\n    alt Không tìm thấy\n        ID-->>GW: 404 USER_NOT_FOUND\n    else Chưa bị khóa\n        ID-->>GW: 409 USER_UNLOCK_NOT_LOCKED\n    end\n    ID->>DB: [Transaction] Update users (status=active, lockReason=null, lockedAt=null)<br/>+ outbox user.unlocked\n    ID-->>GW: 200 USER_ACCOUNT_UNLOCKED {userId, status, lockedAt: null}\n    ID-)MQ: user.unlocked {userId, status}\n    MQ-)TEN: Nếu role=landlord: hiện lại BĐS, khôi phục HĐ đang tạm ngưng\n    MQ-)COM: Xử lý dữ liệu liên quan (nếu có)\n```",
+          "after": "Chỉ admin. Chuyển locked sang active, trả lockedAt: null.\n\n**Lưu ý**\n\n- Token cấp trước khi mở khóa còn mang `status=locked` tối đa 15 phút.\n\n```mermaid\nsequenceDiagram\n    autonumber\n    participant GW as API Gateway\n    participant ID as Identity\n    participant DB as Identity DB\n    participant MQ as RabbitMQ\n    participant TEN as Tenancy\n    participant COM as Community\n\n    GW->>ID: POST /users/{userId}/unlock\n    ID->>DB: Đọc user\n    alt Không tìm thấy\n        ID-->>GW: 404 USER_NOT_FOUND\n    else Chưa bị khóa\n        ID-->>GW: 409 USER_UNLOCK_NOT_LOCKED\n    end\n    ID->>DB: [Transaction] Update users (status=active, lockReason=null, lockedAt=null)<br/>+ outbox user.unlocked\n    ID-->>GW: 200 USER_ACCOUNT_UNLOCKED {userId, status, lockedAt: null}\n    ID-)MQ: user.unlocked {userId, status}\n    MQ-)TEN: Nếu role=landlord: hiện lại BĐS, khôi phục HĐ đang tạm ngưng\n    MQ-)COM: Xử lý dữ liệu liên quan (nếu có)\n```"
+        }
+      ],
+      "semanticDiff": {
+        "paths": {
+          "modified": {
+            "/.well-known/jwks.json": {
+              "operations": {
+                "modified": {
+                  "GET": {
+                    "responses": {
+                      "modified": {
+                        "200": {
+                          "content": {
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "extensions": {
+                                    "added": [
+                                      "x-apidog-folder"
+                                    ]
+                                  },
+                                  "required": {
+                                    "added": [
+                                      "keys"
+                                    ],
+                                    "deleted": [
+                                      "statusCode",
+                                      "code",
+                                      "data"
+                                    ]
+                                  },
+                                  "properties": {
+                                    "added": [
+                                      "keys"
+                                    ],
+                                    "deleted": [
+                                      "data",
+                                      "statusCode",
+                                      "code"
+                                    ]
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   ]
 }
