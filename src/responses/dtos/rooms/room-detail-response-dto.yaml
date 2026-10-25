@@ -21,7 +21,18 @@ properties:
     example: "available"
   maxOccupancy: { type: integer, nullable: true, description: "Số người ở tối đa (null nếu không giới hạn)." }
   genderPolicy: { type: string, enum: [any, male, female], description: "Quy định giới tính cư trú." }
-  amenities: { type: object, nullable: true, description: "Danh mục tiện ích trong phòng." }
+  amenities:
+    type: object
+    additionalProperties: false
+    description: Danh mục tiện ích trong phòng.
+    properties:
+      aircon: { type: boolean }
+      fridge: { type: boolean }
+      wcInside: { type: boolean }
+      waterHeater: { type: boolean }
+      mezzanine: { type: boolean }
+      table: { type: boolean }
+      chair: { type: boolean }
   photoUrls:
     type: array
     description: Danh sách đường dẫn ảnh thực tế của căn phòng

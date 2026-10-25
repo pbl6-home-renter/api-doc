@@ -54,13 +54,31 @@ properties:
     example: "any"
   amenities:
     type: object
-    nullable: true
     description: Tiện ích và nội thất có sẵn trong phòng.
+    additionalProperties: false
+    properties:
+      aircon:
+        type: boolean
+      fridge:
+        type: boolean
+      wcInside:
+        type: boolean
+      waterHeater:
+        type: boolean
+      mezzanine:
+        type: boolean
+      table:
+        type: boolean
+      chair:
+        type: boolean
     example:
       aircon: true
+      fridge: false
+      wcInside: true
       waterHeater: true
-      mezzanine: true
-      refrigerator: true
+      mezzanine: false
+      table: true
+      chair: true
   photoMediaIds:
     type: array
     description: Danh sách ID các tệp ảnh thực tế của căn phòng.
