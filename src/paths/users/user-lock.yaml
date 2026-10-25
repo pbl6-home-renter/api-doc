@@ -15,7 +15,7 @@ post:
     - User bị khóa **vẫn đăng nhập được**. Các service chặn chức năng dựa vào claim `status` trong access token (tự verify); token cấp trước khi khóa còn mang `status=active` tối đa 15 phút.
     - Event `user.locked` chỉ để Tenancy đổi dữ liệu của mình (ẩn BĐS, tạm ngưng HĐ của landlord).
     - Đang cân nhắc (thuộc Tenancy): landlord bị khóa quá grace period thì hủy HĐ và hoàn cọc.
-    - Chưa triển khai: publish `user.locked`; code hiện vẫn revoke refresh token khi khóa, cần bỏ.
+    - Khóa không revoke refresh token.
 
     ```mermaid
     sequenceDiagram

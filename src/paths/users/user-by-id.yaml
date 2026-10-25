@@ -181,7 +181,6 @@ patch:
     **Lưu ý**
 
     - Không đổi được `email`, `role`, `status` qua API này; khóa/mở khóa dùng API lock/unlock.
-    - Chưa triển khai: publish `user.updated`.
 
     ```mermaid
     sequenceDiagram
@@ -471,7 +470,7 @@ delete:
 
     - Xóa mềm (`is_deleted = true`); user đã xóa không đăng nhập được.
     - Không xóa được user còn HĐ hiệu lực. Không hỏi được Tenancy thì từ chối xóa (`503`, fail-closed).
-    - Chưa triển khai: kiểm tra qua Tenancy, mã `409 USER_DELETE_HAS_ACTIVE_CONTRACT`, `503 SERVICE_UNAVAILABLE` và publish `user.deleted`.
+    - Chưa triển khai: kiểm tra qua Tenancy, mã `409 USER_DELETE_HAS_ACTIVE_CONTRACT`, `503 SERVICE_UNAVAILABLE`.
 
     ```mermaid
     sequenceDiagram

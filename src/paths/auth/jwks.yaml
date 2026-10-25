@@ -11,7 +11,7 @@ get:
 
     **Lưu ý**
 
-    - Response hiện đang bị bọc `{statusCode, code, data}` bởi `ResponseTransformInterceptor`. Chuẩn JWKS (RFC 7517) và thư viện `jose` mà API Gateway dùng (`createRemoteJWKSet`) cần `keys` ở cấp ngoài cùng, nên API Gateway không đọc được key và không verify được JWT. Cần sửa Identity-Service để endpoint này trả `{keys}` không bọc.
+    - Response là JWK Set chuẩn RFC 7517, **không** bọc `{statusCode, code, data}`, để `jose` (`createRemoteJWKSet`) đọc được `keys` ở cấp ngoài cùng.
     - API Gateway cache key; khi xoay key, giữ key cũ trong JWKS tới khi mọi access token ký bằng key cũ hết hạn.
 
     ```mermaid
@@ -31,34 +31,15 @@ get:
       content:
         application/json:
           schema:
-            type: object
-            additionalProperties: false
-            required:
-            - statusCode
-            - code
-            - data
-            properties:
-              statusCode:
-                type: integer
-                enum:
-                - 200
-              code:
-                type: string
-                enum:
-                - SUCCESS
-              data:
-                $ref: ../../openapi.yaml#/components/schemas/AuthJwksResponseDto
+            $ref: ../../openapi.yaml#/components/schemas/AuthJwksResponseDto
           example:
-            statusCode: 200
-            code: SUCCESS
-            data:
-              keys:
-              - kty: RSA
-                n: np-J6FU-Jan_SEoockjWWE8WG9AIqdV-5JAsEOY3w84f0Cp8z3h72vhUAj7BqnHpeMDVZFjIGzhtcMBKBaUvAP-SEP7kakhY9ohz8TQau8lg4Ee5QKwdOuogqk6x6P6KHkc_sZFjCRYDxYpy7cqk3c2kqd6x1kNqbevZAowLsq8UnHsOgb59UYHJUe0BkrRe7yZaHK2laTzslQOMQ-JhXZd848ZKxwrGSDM645zxdvyeK_fPakgS76tzesi9qQ5j7CMbukvsLUV6gjmj7onVrQk8qN61ulOHpTqqbTZQIUbThtAE8lygqK_RO5nvoz80QDxBzXwRBQEq5CuHtSsK6w
-                e: AQAB
-                use: sig
-                alg: RS256
-                kid: rentify-identity
+            keys:
+            - kty: RSA
+              n: np-J6FU-Jan_SEoockjWWE8WG9AIqdV-5JAsEOY3w84f0Cp8z3h72vhUAj7BqnHpeMDVZFjIGzhtcMBKBaUvAP-SEP7kakhY9ohz8TQau8lg4Ee5QKwdOuogqk6x6P6KHkc_sZFjCRYDxYpy7cqk3c2kqd6x1kNqbevZAowLsq8UnHsOgb59UYHJUe0BkrRe7yZaHK2laTzslQOMQ-JhXZd848ZKxwrGSDM645zxdvyeK_fPakgS76tzesi9qQ5j7CMbukvsLUV6gjmj7onVrQk8qN61ulOHpTqqbTZQIUbThtAE8lygqK_RO5nvoz80QDxBzXwRBQEq5CuHtSsK6w
+              e: AQAB
+              use: sig
+              alg: RS256
+              kid: rentify-identity
     '500':
       $ref: ../../openapi.yaml#/components/responses/InternalServerError
   servers:

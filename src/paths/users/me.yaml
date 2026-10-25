@@ -183,7 +183,7 @@ patch:
 
     - Ngữ nghĩa thay toàn bộ: bắt buộc gửi `name`, `phone`, `payoutAccount`; gửi `payoutAccount: null` để xóa.
     - Chỉ landlord được có `payoutAccount`.
-    - Chưa triển khai: publish `user.updated`, `landlord.payout_account_updated`. Event payout là tùy chọn, có thể bỏ nếu chấp nhận cache của Payment cũ tối đa 5 phút.
+    - `landlord.payout_account_updated` chỉ mang `userId` (không gửi số tài khoản).
 
     ```mermaid
     sequenceDiagram
