@@ -7591,6 +7591,758 @@
           }
         }
       }
+    },
+    {
+      "id": "9732d4b4cb83797b517f4f9a7d80cd0528618f459ebe04fbe6eedd121c0e34db",
+      "label": "Thay đổi contract từ Git",
+      "classification": "BREAKING",
+      "contractId": "rentify-public",
+      "repository": "https://github.com/pbl6-home-renter/api-doc",
+      "baseHash": "002639cef5a1a6b347f3457a768c1bbe5db2935f6e41e634fdbbf7bfdf977635",
+      "headHash": "c7f5d38c5746f56e437e088d1af94f4be76946cdd74a1c0cba3b8a71ac9d96aa",
+      "baseSource": "src/openapi.yaml",
+      "headSource": "src/openapi.yaml",
+      "detectedAt": "2026-10-25T14:54:17.473Z",
+      "committedAt": "2026-10-25T21:54:06+07:00",
+      "baseCommit": "5b7aaec20e40e4b05b764a400c498e600a25a9ed",
+      "headCommit": "41bcd40e307d8549d5b55ac583b6dfab880019cf",
+      "prUrl": "https://github.com/pbl6-home-renter/api-doc/pull/17",
+      "commitUrl": "https://github.com/pbl6-home-renter/api-doc/commit/41bcd40e307d8549d5b55ac583b6dfab880019cf",
+      "metadataKind": "Git revision thực tế",
+      "reason": "CHƯA CUNG CẤP — tác giả PR phải bổ sung lý do nghiệp vụ; không thể suy ra từ OpenAPI diff.",
+      "tools": {
+        "redocly": "2.64.1",
+        "oasdiff": "1.34.1"
+      },
+      "changes": [
+        {
+          "id": "request-property-became-not-nullable",
+          "text": "the request property `amenities` became not nullable",
+          "level": 3,
+          "operation": "POST",
+          "operationId": "postRooms",
+          "path": "/rooms",
+          "section": "paths",
+          "fingerprint": "8c42966f102f",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu vị trí và thay đổi trước/sau trong entry này với API adapter, DTO, parser và validation; cùng BE xác nhận phương án tương thích trước merge/phát hành."
+        },
+        {
+          "id": "api-version-not-bumped",
+          "text": "a breaking change was detected but the version is still `1.0.0`",
+          "level": 1,
+          "section": "info",
+          "fingerprint": "d3f96cd643c1",
+          "classification": "NON_BREAKING",
+          "clientImpact": "BE: xem lại quy ước version trước khi chấp nhận breaking change. FE/Mobile: theo kế hoạch chuyển đổi của entry này; version trong OpenAPI chưa chứng minh backend đã triển khai."
+        },
+        {
+          "id": "new-optional-request-property",
+          "text": "added the new optional request property `amenities/aircon`",
+          "level": 1,
+          "operation": "POST",
+          "operationId": "postRooms",
+          "path": "/rooms",
+          "section": "paths",
+          "fingerprint": "edfa49103818",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        },
+        {
+          "id": "new-optional-request-property",
+          "text": "added the new optional request property `amenities/chair`",
+          "level": 1,
+          "operation": "POST",
+          "operationId": "postRooms",
+          "path": "/rooms",
+          "section": "paths",
+          "fingerprint": "a3cc55b4db09",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        },
+        {
+          "id": "new-optional-request-property",
+          "text": "added the new optional request property `amenities/fridge`",
+          "level": 1,
+          "operation": "POST",
+          "operationId": "postRooms",
+          "path": "/rooms",
+          "section": "paths",
+          "fingerprint": "981ac82caee9",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        },
+        {
+          "id": "new-optional-request-property",
+          "text": "added the new optional request property `amenities/mezzanine`",
+          "level": 1,
+          "operation": "POST",
+          "operationId": "postRooms",
+          "path": "/rooms",
+          "section": "paths",
+          "fingerprint": "8fb10f08a7db",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        },
+        {
+          "id": "new-optional-request-property",
+          "text": "added the new optional request property `amenities/table`",
+          "level": 1,
+          "operation": "POST",
+          "operationId": "postRooms",
+          "path": "/rooms",
+          "section": "paths",
+          "fingerprint": "cd6a1c9ba6fa",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        },
+        {
+          "id": "new-optional-request-property",
+          "text": "added the new optional request property `amenities/waterHeater`",
+          "level": 1,
+          "operation": "POST",
+          "operationId": "postRooms",
+          "path": "/rooms",
+          "section": "paths",
+          "fingerprint": "50979fe67ace",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        },
+        {
+          "id": "new-optional-request-property",
+          "text": "added the new optional request property `amenities/wcInside`",
+          "level": 1,
+          "operation": "POST",
+          "operationId": "postRooms",
+          "path": "/rooms",
+          "section": "paths",
+          "fingerprint": "f2f33efc5532",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        },
+        {
+          "id": "response-optional-property-added",
+          "text": "added the optional property `data/amenities/aircon` to the response with the `200` status",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getRoomsRoomid",
+          "path": "/rooms/{roomId}",
+          "section": "paths",
+          "fingerprint": "abbbb7686801",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/amenities/aircon; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-optional-property-added",
+          "text": "added the optional property `data/amenities/chair` to the response with the `200` status",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getRoomsRoomid",
+          "path": "/rooms/{roomId}",
+          "section": "paths",
+          "fingerprint": "f743d4d6648a",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/amenities/chair; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-optional-property-added",
+          "text": "added the optional property `data/amenities/fridge` to the response with the `200` status",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getRoomsRoomid",
+          "path": "/rooms/{roomId}",
+          "section": "paths",
+          "fingerprint": "952961545491",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/amenities/fridge; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-optional-property-added",
+          "text": "added the optional property `data/amenities/mezzanine` to the response with the `200` status",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getRoomsRoomid",
+          "path": "/rooms/{roomId}",
+          "section": "paths",
+          "fingerprint": "8776c26b761e",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/amenities/mezzanine; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-optional-property-added",
+          "text": "added the optional property `data/amenities/table` to the response with the `200` status",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getRoomsRoomid",
+          "path": "/rooms/{roomId}",
+          "section": "paths",
+          "fingerprint": "2c5c1435c589",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/amenities/table; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-optional-property-added",
+          "text": "added the optional property `data/amenities/waterHeater` to the response with the `200` status",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getRoomsRoomid",
+          "path": "/rooms/{roomId}",
+          "section": "paths",
+          "fingerprint": "186d8dfdc109",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/amenities/waterHeater; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-optional-property-added",
+          "text": "added the optional property `data/amenities/wcInside` to the response with the `200` status",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getRoomsRoomid",
+          "path": "/rooms/{roomId}",
+          "section": "paths",
+          "fingerprint": "8345acb51838",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/amenities/wcInside; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-property-became-not-nullable",
+          "text": "the response property `data/amenities` became not nullable for the status `200`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getRoomsRoomid",
+          "path": "/rooms/{roomId}",
+          "section": "paths",
+          "fingerprint": "d8f865605e12",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        }
+      ],
+      "locations": [
+        {
+          "pointer": "/components/schemas/Room/allOf",
+          "before": [
+            {
+              "$ref": "#/components/schemas/BaseEntity"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "landlordId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "description": "ID chủ nhà sở hữu phòng (bắt buộc, 1 chủ/phòng)",
+                  "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                },
+                "buildingId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "description": "ID tòa nhà chứa phòng",
+                  "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                },
+                "floorNumber": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "nullable": true,
+                  "description": "Tầng (bắt đầu từ tầng 1)",
+                  "example": 2
+                },
+                "name": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 254,
+                  "description": "Tên / Mã số phòng",
+                  "example": "P.201"
+                },
+                "description": {
+                  "type": "string",
+                  "nullable": true,
+                  "minLength": 1,
+                  "maxLength": 500,
+                  "description": "Mô tả chi tiết phòng trọ",
+                  "example": "Phòng trọ hiện đại, tiện nghi đầy đủ"
+                },
+                "area": {
+                  "type": "number",
+                  "minimum": 0.1,
+                  "nullable": true,
+                  "description": "Diện tích phòng tính theo m²",
+                  "example": 18.5
+                },
+                "amenities": {
+                  "type": "object",
+                  "description": "Các tiện ích đi kèm (điều hòa, tủ lạnh, wc khép kín...)",
+                  "example": {
+                    "aircon": true,
+                    "fridge": false,
+                    "wcInside": true
+                  }
+                },
+                "maxOccupancy": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "nullable": true,
+                  "description": "Số lượng người ở tối đa",
+                  "example": 3
+                },
+                "genderPolicy": {
+                  "type": "string",
+                  "enum": [
+                    "any",
+                    "male",
+                    "female"
+                  ],
+                  "default": "any",
+                  "description": "Giới hạn giới tính người thuê",
+                  "example": "any"
+                },
+                "rentPrice": {
+                  "type": "number",
+                  "minimum": 0,
+                  "description": "Giá thuê phòng hàng tháng (VND)",
+                  "example": 3500000
+                },
+                "status": {
+                  "type": "string",
+                  "enum": [
+                    "available",
+                    "occupied",
+                    "maintenance"
+                  ],
+                  "description": "Trạng thái phòng (trống, đã có người ở, đang bảo trì)",
+                  "example": "occupied"
+                }
+              },
+              "required": [
+                "landlordId",
+                "buildingId",
+                "name",
+                "amenities",
+                "rentPrice",
+                "status"
+              ]
+            }
+          ],
+          "after": [
+            {
+              "$ref": "#/components/schemas/BaseEntity"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "landlordId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "description": "ID chủ nhà sở hữu phòng (bắt buộc, 1 chủ/phòng)",
+                  "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                },
+                "buildingId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "description": "ID tòa nhà chứa phòng",
+                  "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                },
+                "floorNumber": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "nullable": true,
+                  "description": "Tầng (bắt đầu từ tầng 1)",
+                  "example": 2
+                },
+                "name": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 254,
+                  "description": "Tên / Mã số phòng",
+                  "example": "P.201"
+                },
+                "description": {
+                  "type": "string",
+                  "nullable": true,
+                  "minLength": 1,
+                  "maxLength": 500,
+                  "description": "Mô tả chi tiết phòng trọ",
+                  "example": "Phòng trọ hiện đại, tiện nghi đầy đủ"
+                },
+                "area": {
+                  "type": "number",
+                  "minimum": 0.1,
+                  "nullable": true,
+                  "description": "Diện tích phòng tính theo m²",
+                  "example": 18.5
+                },
+                "amenities": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "description": "Các tiện ích đi kèm (điều hòa, tủ lạnh, wc khép kín...)",
+                  "properties": {
+                    "aircon": {
+                      "type": "boolean"
+                    },
+                    "fridge": {
+                      "type": "boolean"
+                    },
+                    "wcInside": {
+                      "type": "boolean"
+                    },
+                    "waterHeater": {
+                      "type": "boolean"
+                    },
+                    "mezzanine": {
+                      "type": "boolean"
+                    },
+                    "table": {
+                      "type": "boolean"
+                    },
+                    "chair": {
+                      "type": "boolean"
+                    }
+                  },
+                  "example": {
+                    "aircon": true,
+                    "fridge": false,
+                    "wcInside": true,
+                    "waterHeater": true,
+                    "mezzanine": false,
+                    "table": true,
+                    "chair": true
+                  }
+                },
+                "maxOccupancy": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "nullable": true,
+                  "description": "Số lượng người ở tối đa",
+                  "example": 3
+                },
+                "genderPolicy": {
+                  "type": "string",
+                  "enum": [
+                    "any",
+                    "male",
+                    "female"
+                  ],
+                  "default": "any",
+                  "description": "Giới hạn giới tính người thuê",
+                  "example": "any"
+                },
+                "rentPrice": {
+                  "type": "number",
+                  "minimum": 0,
+                  "description": "Giá thuê phòng hàng tháng (VND)",
+                  "example": 3500000
+                },
+                "status": {
+                  "type": "string",
+                  "enum": [
+                    "available",
+                    "occupied",
+                    "maintenance"
+                  ],
+                  "description": "Trạng thái phòng (trống, đã có người ở, đang bảo trì)",
+                  "example": "occupied"
+                }
+              },
+              "required": [
+                "landlordId",
+                "buildingId",
+                "name",
+                "amenities",
+                "rentPrice",
+                "status"
+              ]
+            }
+          ]
+        },
+        {
+          "pointer": "/components/schemas/RoomCreateRequestDto/properties/amenities/additionalProperties",
+          "before": null,
+          "after": false
+        },
+        {
+          "pointer": "/components/schemas/RoomCreateRequestDto/properties/amenities/example/chair",
+          "before": null,
+          "after": true
+        },
+        {
+          "pointer": "/components/schemas/RoomCreateRequestDto/properties/amenities/example/fridge",
+          "before": null,
+          "after": false
+        },
+        {
+          "pointer": "/components/schemas/RoomCreateRequestDto/properties/amenities/example/mezzanine",
+          "before": true,
+          "after": false
+        },
+        {
+          "pointer": "/components/schemas/RoomCreateRequestDto/properties/amenities/example/refrigerator",
+          "before": true,
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/RoomCreateRequestDto/properties/amenities/example/table",
+          "before": null,
+          "after": true
+        },
+        {
+          "pointer": "/components/schemas/RoomCreateRequestDto/properties/amenities/example/wcInside",
+          "before": null,
+          "after": true
+        },
+        {
+          "pointer": "/components/schemas/RoomCreateRequestDto/properties/amenities/nullable",
+          "before": true,
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/RoomCreateRequestDto/properties/amenities/properties",
+          "before": null,
+          "after": {
+            "aircon": {
+              "type": "boolean"
+            },
+            "fridge": {
+              "type": "boolean"
+            },
+            "wcInside": {
+              "type": "boolean"
+            },
+            "waterHeater": {
+              "type": "boolean"
+            },
+            "mezzanine": {
+              "type": "boolean"
+            },
+            "table": {
+              "type": "boolean"
+            },
+            "chair": {
+              "type": "boolean"
+            }
+          }
+        },
+        {
+          "pointer": "/components/schemas/RoomDetailResponseDto/properties/amenities/additionalProperties",
+          "before": null,
+          "after": false
+        },
+        {
+          "pointer": "/components/schemas/RoomDetailResponseDto/properties/amenities/nullable",
+          "before": true,
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/RoomDetailResponseDto/properties/amenities/properties",
+          "before": null,
+          "after": {
+            "aircon": {
+              "type": "boolean"
+            },
+            "fridge": {
+              "type": "boolean"
+            },
+            "wcInside": {
+              "type": "boolean"
+            },
+            "waterHeater": {
+              "type": "boolean"
+            },
+            "mezzanine": {
+              "type": "boolean"
+            },
+            "table": {
+              "type": "boolean"
+            },
+            "chair": {
+              "type": "boolean"
+            }
+          }
+        }
+      ],
+      "semanticDiff": {
+        "paths": {
+          "modified": {
+            "/rooms": {
+              "operations": {
+                "modified": {
+                  "POST": {
+                    "requestBody": {
+                      "content": {
+                        "modified": {
+                          "application/json": {
+                            "schema": {
+                              "properties": {
+                                "modified": {
+                                  "amenities": {
+                                    "additionalPropertiesAllowed": {
+                                      "from": null,
+                                      "to": false
+                                    },
+                                    "nullable": {
+                                      "from": true,
+                                      "to": false
+                                    },
+                                    "properties": {
+                                      "added": [
+                                        "table",
+                                        "chair",
+                                        "aircon",
+                                        "fridge",
+                                        "wcInside",
+                                        "waterHeater",
+                                        "mezzanine"
+                                      ]
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "/rooms/{roomId}": {
+              "operations": {
+                "modified": {
+                  "GET": {
+                    "responses": {
+                      "modified": {
+                        "200": {
+                          "content": {
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "properties": {
+                                    "modified": {
+                                      "data": {
+                                        "properties": {
+                                          "modified": {
+                                            "amenities": {
+                                              "additionalPropertiesAllowed": {
+                                                "from": null,
+                                                "to": false
+                                              },
+                                              "nullable": {
+                                                "from": true,
+                                                "to": false
+                                              },
+                                              "properties": {
+                                                "added": [
+                                                  "aircon",
+                                                  "fridge",
+                                                  "wcInside",
+                                                  "waterHeater",
+                                                  "mezzanine",
+                                                  "table",
+                                                  "chair"
+                                                ]
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "components": {
+          "schemas": {
+            "modified": {
+              "Room": {
+                "properties": {
+                  "modified": {
+                    "amenities": {
+                      "additionalPropertiesAllowed": {
+                        "from": null,
+                        "to": false
+                      },
+                      "properties": {
+                        "added": [
+                          "mezzanine",
+                          "table",
+                          "chair",
+                          "aircon",
+                          "fridge",
+                          "wcInside",
+                          "waterHeater"
+                        ]
+                      }
+                    }
+                  }
+                }
+              },
+              "RoomCreateRequestDto": {
+                "properties": {
+                  "modified": {
+                    "amenities": {
+                      "additionalPropertiesAllowed": {
+                        "from": null,
+                        "to": false
+                      },
+                      "nullable": {
+                        "from": true,
+                        "to": false
+                      },
+                      "properties": {
+                        "added": [
+                          "table",
+                          "chair",
+                          "aircon",
+                          "fridge",
+                          "wcInside",
+                          "waterHeater",
+                          "mezzanine"
+                        ]
+                      }
+                    }
+                  }
+                }
+              },
+              "RoomDetailResponseDto": {
+                "properties": {
+                  "modified": {
+                    "amenities": {
+                      "additionalPropertiesAllowed": {
+                        "from": null,
+                        "to": false
+                      },
+                      "nullable": {
+                        "from": true,
+                        "to": false
+                      },
+                      "properties": {
+                        "added": [
+                          "aircon",
+                          "fridge",
+                          "wcInside",
+                          "waterHeater",
+                          "mezzanine",
+                          "table",
+                          "chair"
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   ]
 }

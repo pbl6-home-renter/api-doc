@@ -5,11 +5,63 @@
 
 Báo cáo lưu lịch sử các entry đã phát hiện, mới nhất ở trên. `NO_CHANGE` không xóa entry cũ; exit code chỉ phản ánh lần chạy hiện tại.
 
-Công cụ: Redocly 2.64.1; oasdiff 1.34.1. Số entry: **3**.
+Công cụ: Redocly 2.64.1; oasdiff 1.34.1. Số entry: **4**.
 
 Phân loại: **BREAKING** = client cũ có thể hỏng; **NON_BREAKING** = tương thích theo contract; **NEEDS_REVIEW** = chưa đủ bằng chứng.
 
 Các vị trí dùng JSON Pointer trên bundle tạm (`~1` là `/`). JSON đi kèm giữ toàn bộ semantic diff, fingerprint và hash phục vụ truy vết.
+
+## Thay đổi contract từ Git — BREAKING
+
+- ID: `9732d4b4cb83797b517f4f9a7d80cd0528618f459ebe04fbe6eedd121c0e34db`
+- Contract: rentify-public; repository: https://github.com/pbl6-home-renter/api-doc
+- Nguồn: `src/openapi.yaml` → `src/openapi.yaml`
+- Phát hiện (UTC): 2026-10-25T14:54:17.473Z; commit time: 2026-10-25T21:54:06+07:00
+- Commit nền: 5b7aaec20e40e4b05b764a400c498e600a25a9ed
+- Commit đích/bối cảnh: [41bcd40e307d8549d5b55ac583b6dfab880019cf](https://github.com/pbl6-home-renter/api-doc/commit/41bcd40e307d8549d5b55ac583b6dfab880019cf)
+- PR: [https://github.com/pbl6-home-renter/api-doc/pull/17](https://github.com/pbl6-home-renter/api-doc/pull/17)
+- Loại metadata: Git revision thực tế
+- Lý do: CHƯA CUNG CẤP — tác giả PR phải bổ sung lý do nghiệp vụ; không thể suy ra từ OpenAPI diff.
+
+| Mức ảnh hưởng | Endpoint / vùng | Thay đổi | Hành động FE / Mobile |
+|---|---|---|---|
+| BREAKING | POST /rooms | the request property `amenities` became not nullable (`request-property-became-not-nullable`) | FE và Mobile: đối chiếu vị trí và thay đổi trước/sau trong entry này với API adapter, DTO, parser và validation; cùng BE xác nhận phương án tương thích trước merge/phát hành. |
+| NON_BREAKING | info | Đã phát hiện breaking change nhưng info.version vẫn là `1.0.0`. (`api-version-not-bumped`) | BE: xem lại quy ước version trước khi chấp nhận breaking change. FE/Mobile: theo kế hoạch chuyển đổi của entry này; version trong OpenAPI chưa chứng minh backend đã triển khai. |
+| NON_BREAKING | POST /rooms | added the new optional request property `amenities/aircon` (`new-optional-request-property`) | FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI. |
+| NON_BREAKING | POST /rooms | added the new optional request property `amenities/chair` (`new-optional-request-property`) | FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI. |
+| NON_BREAKING | POST /rooms | added the new optional request property `amenities/fridge` (`new-optional-request-property`) | FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI. |
+| NON_BREAKING | POST /rooms | added the new optional request property `amenities/mezzanine` (`new-optional-request-property`) | FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI. |
+| NON_BREAKING | POST /rooms | added the new optional request property `amenities/table` (`new-optional-request-property`) | FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI. |
+| NON_BREAKING | POST /rooms | added the new optional request property `amenities/waterHeater` (`new-optional-request-property`) | FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI. |
+| NON_BREAKING | POST /rooms | added the new optional request property `amenities/wcInside` (`new-optional-request-property`) | FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI. |
+| NON_BREAKING | GET /rooms/{roomId} | Thêm field response tùy chọn `data/amenities/aircon` ở HTTP 200. (`response-optional-property-added`) | FE: có thể bỏ qua field mới data/amenities/aircon; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại. |
+| NON_BREAKING | GET /rooms/{roomId} | Thêm field response tùy chọn `data/amenities/chair` ở HTTP 200. (`response-optional-property-added`) | FE: có thể bỏ qua field mới data/amenities/chair; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại. |
+| NON_BREAKING | GET /rooms/{roomId} | Thêm field response tùy chọn `data/amenities/fridge` ở HTTP 200. (`response-optional-property-added`) | FE: có thể bỏ qua field mới data/amenities/fridge; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại. |
+| NON_BREAKING | GET /rooms/{roomId} | Thêm field response tùy chọn `data/amenities/mezzanine` ở HTTP 200. (`response-optional-property-added`) | FE: có thể bỏ qua field mới data/amenities/mezzanine; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại. |
+| NON_BREAKING | GET /rooms/{roomId} | Thêm field response tùy chọn `data/amenities/table` ở HTTP 200. (`response-optional-property-added`) | FE: có thể bỏ qua field mới data/amenities/table; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại. |
+| NON_BREAKING | GET /rooms/{roomId} | Thêm field response tùy chọn `data/amenities/waterHeater` ở HTTP 200. (`response-optional-property-added`) | FE: có thể bỏ qua field mới data/amenities/waterHeater; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại. |
+| NON_BREAKING | GET /rooms/{roomId} | Thêm field response tùy chọn `data/amenities/wcInside` ở HTTP 200. (`response-optional-property-added`) | FE: có thể bỏ qua field mới data/amenities/wcInside; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại. |
+| NON_BREAKING | GET /rooms/{roomId} | the response property `data/amenities` became not nullable for the status `200` (`response-property-became-not-nullable`) | FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI. |
+
+### Vị trí và giá trị trước/sau
+
+| Path / schema / field (JSON Pointer) | Trước | Sau |
+|---|---|---|
+| `/components/schemas/Room/allOf` | [{"$ref":"#/components/schemas/BaseEntity"},{"type":"object","properties":{"landlordId":{"type":"string","format":"uuid","description":"ID chủ nhà sở hữu phòng (bắt buộc, 1 chủ/phòng)","example":"3fa85f64-5717-4562-b3fc-2c963f66afa6"},"buildingId":{"type":"string","format":"uuid","description":"ID tòa nhà chứa phòng","example":"3fa85f64-5717-4562-b3fc-2c963f66afa6"},"floorNumber":{"type":"integer","minimum":1,"nullable":true,"description":"Tầng (bắt đầu từ tầng 1)","example":2},"name":{"type":"string","minLength":1,"maxLength":254,"description":"Tên / Mã số phòng","example":"P.201"},"description":{"type":"string","nullable":true,"minLength":1,"maxLength":500,"description":"Mô tả chi tiết phòng trọ","example":"Phòng trọ hiện đại, tiện nghi đầy đủ"},"area":{"type":"number","minimum":0.1,"nullable":true,"description":"Diện tích phòng tính theo m²","example":18.5},"amenities":{"type":"object","description":"Các tiện ích đi kèm (điều hòa, tủ lạnh, wc khép kín...)","example":{"aircon":true,"fridge":false,"wcInside":true}},"maxOccupancy":{"type":"integer","minimum":1,"nullable":true,"description":"Số lượng người ở tối đa","example":3},"genderPolicy":{"type":"string","enum":["any","male","female"],"default":"any","description":"Giới hạn giới tính người thuê","example":"any"},"rentPrice":{"type":"number","minimum":0,"description":"Giá thuê phòng hàng tháng (VND)","example":3500000},"status":{"type":"string","enum":["available","occupied","maintenance"],"description":"Trạng thái phòng (trống, đã có người ở, đang bảo trì)","example":"occupied"}},"required":["landlordId","buildingId","name","amenities","rentPrice","status"]}] | [{"$ref":"#/components/schemas/BaseEntity"},{"type":"object","properties":{"landlordId":{"type":"string","format":"uuid","description":"ID chủ nhà sở hữu phòng (bắt buộc, 1 chủ/phòng)","example":"3fa85f64-5717-4562-b3fc-2c963f66afa6"},"buildingId":{"type":"string","format":"uuid","description":"ID tòa nhà chứa phòng","example":"3fa85f64-5717-4562-b3fc-2c963f66afa6"},"floorNumber":{"type":"integer","minimum":1,"nullable":true,"description":"Tầng (bắt đầu từ tầng 1)","example":2},"name":{"type":"string","minLength":1,"maxLength":254,"description":"Tên / Mã số phòng","example":"P.201"},"description":{"type":"string","nullable":true,"minLength":1,"maxLength":500,"description":"Mô tả chi tiết phòng trọ","example":"Phòng trọ hiện đại, tiện nghi đầy đủ"},"area":{"type":"number","minimum":0.1,"nullable":true,"description":"Diện tích phòng tính theo m²","example":18.5},"amenities":{"type":"object","additionalProperties":false,"description":"Các tiện ích đi kèm (điều hòa, tủ lạnh, wc khép kín...)","properties":{"aircon":{"type":"boolean"},"fridge":{"type":"boolean"},"wcInside":{"type":"boolean"},"waterHeater":{"type":"boolean"},"mezzanine":{"type":"boolean"},"table":{"type":"boolean"},"chair":{"type":"boolean"}},"example":{"aircon":true,"fridge":false,"wcInside":true,"waterHeater":true,"mezzanine":false,"table":true,"chair":true}},"maxOccupancy":{"type":"integer","minimum":1,"nullable":true,"description":"Số lượng người ở tối đa","example":3},"genderPolicy":{"type":"string","enum":["any","male","female"],"default":"any","description":"Giới hạn giới tính người thuê","example":"any"},"rentPrice":{"type":"number","minimum":0,"description":"Giá thuê phòng hàng tháng (VND)","example":3500000},"status":{"type":"string","enum":["available","occupied","maintenance"],"description":"Trạng thái phòng (trống, đã có người ở, đang bảo trì)","example":"occupied"}},"required":["landlordId","buildingId","name","amenities","rentPrice","status"]}] |
+| `/components/schemas/RoomCreateRequestDto/properties/amenities/additionalProperties` | null | false |
+| `/components/schemas/RoomCreateRequestDto/properties/amenities/example/chair` | null | true |
+| `/components/schemas/RoomCreateRequestDto/properties/amenities/example/fridge` | null | false |
+| `/components/schemas/RoomCreateRequestDto/properties/amenities/example/mezzanine` | true | false |
+| `/components/schemas/RoomCreateRequestDto/properties/amenities/example/refrigerator` | true | null |
+| `/components/schemas/RoomCreateRequestDto/properties/amenities/example/table` | null | true |
+| `/components/schemas/RoomCreateRequestDto/properties/amenities/example/wcInside` | null | true |
+| `/components/schemas/RoomCreateRequestDto/properties/amenities/nullable` | true | null |
+| `/components/schemas/RoomCreateRequestDto/properties/amenities/properties` | null | {"aircon":{"type":"boolean"},"fridge":{"type":"boolean"},"wcInside":{"type":"boolean"},"waterHeater":{"type":"boolean"},"mezzanine":{"type":"boolean"},"table":{"type":"boolean"},"chair":{"type":"boolean"}} |
+| `/components/schemas/RoomDetailResponseDto/properties/amenities/additionalProperties` | null | false |
+| `/components/schemas/RoomDetailResponseDto/properties/amenities/nullable` | true | null |
+| `/components/schemas/RoomDetailResponseDto/properties/amenities/properties` | null | {"aircon":{"type":"boolean"},"fridge":{"type":"boolean"},"wcInside":{"type":"boolean"},"waterHeater":{"type":"boolean"},"mezzanine":{"type":"boolean"},"table":{"type":"boolean"},"chair":{"type":"boolean"}} |
+
+**Kiểm tra thủ công:** BE xác nhận lý do, endpoint dùng schema chung, thay đổi role/ownership mô tả bằng văn bản và thời điểm triển khai. FE/Mobile xác nhận tác động với parser và phiên bản client đang hỗ trợ.
 
 ## Thay đổi contract từ Git — BREAKING
 
