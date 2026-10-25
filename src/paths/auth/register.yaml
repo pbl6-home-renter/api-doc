@@ -11,7 +11,7 @@ post:
     **Lưu ý**
 
     - Chỉ `tenant`/`landlord` được tự đăng ký; admin được seed sẵn. Role không đổi được sau khi đăng ký.
-    - Chưa triển khai: publish `user.registered`.
+    - `user.registered` được ghi outbox cùng transaction tạo user; relay publish sau khi commit.
 
     ```mermaid
     sequenceDiagram
