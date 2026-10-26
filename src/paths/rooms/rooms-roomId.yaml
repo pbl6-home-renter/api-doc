@@ -98,7 +98,7 @@ patch:
             TEN->>TEN: room.update(updates)
             TEN->>DB: [Transaction] UPDATE rooms
             TEN->>OB: [Transaction] INSERT room.updated
-            TEN-->>GW: 200 ROOM_UPDATED {id, name, rentPrice, area}
+            TEN-->>GW: 200 ROOM_UPDATED {id, editable Room fields}
         end
     ```
 
@@ -119,7 +119,11 @@ patch:
         example:
           name: P.201
           rentPrice: 3600000
-          area: '19.0'
+          area: 19.0
+          description: Phòng trọ hiện đại, tiện nghi đầy đủ
+          amenities:
+            aircon: true
+            fridge: false
   responses:
     '200':
       description: 'Thành công: Cập nhật thông tin phòng.'
@@ -150,7 +154,14 @@ patch:
               id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
               name: P.201
               rentPrice: 3600000
-              area: '19.0'
+              floorNumber: 2
+              description: Phòng trọ hiện đại, tiện nghi đầy đủ
+              area: 19.0
+              amenities:
+                aircon: true
+                fridge: false
+              maxOccupancy: 3
+              genderPolicy: any
     '400':
       $ref: ../../openapi.yaml#/components/responses/BadRequestBodyPathError
     '401':

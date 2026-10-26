@@ -147,20 +147,21 @@ Kết luận: các GET list/detail không có Request Body DTO nhưng có Respon
 
 Kết luận: tạo `CreateRoomRequest`, `UpdateRoomRequest`, `PublicRoomListResponse`, `MyRoomListResponse`, `CreateRoomResponse`, `RoomDetailResponse`, `UpdateRoomResponse` và `MarkRoomReadyResponse`. Không tạo Request DTO cho GET, mark-ready hoặc DELETE; không tạo Response DTO cho DELETE vì success là `204 No Content`.
 
-Project clarification mới nhất: PATCH là partial update, không cần gửi tất cả editable fields. Clarification này override cách hiểu cũ tại `api-conventions.md §10`; không sửa các DTO domain cũ trong task Room.
+Project clarification: PATCH là partial update, không cần gửi tất cả editable fields. Chỉ các field được gửi mới được cập nhật.
 
 ### 2. Giải thích các điểm khó hiểu
 
 - `UpdateRoomRequest` dùng partial update: field bị omit thì không cập nhật, `minProperties: 1` ngăn body `{}` rỗng, còn `additionalProperties: false` từ chối field ngoài contract.
-- `area` dùng JSON string như `"18.5"` để giữ chính xác số đo thập phân theo API contract/convention, dù entity schema hiện dùng number.
-- `rentPrice` dùng JSON integer vì là tiền VND, không dùng float/double hoặc chuỗi tiền.
+- `area` và `rentPrice` dùng JSON number theo Room domain.
+- PATCH cho phép sửa các field Room domain có thể thay đổi: `name`, `floorNumber`, `description`, `area`, `amenities`, `maxOccupancy`, `genderPolicy` và `rentPrice`. Không cho sửa `landlordId`, `buildingId` hoặc `status`.
 - Public room list không trả `status` vì contract public chỉ trả các phòng đang available.
 - Mark-ready không có Request DTO vì `roomId` nằm trên path và endpoint không có JSON body.
 
-### 3. Quyết định và lưu ý cần xác nhận với leader
-- `area` là string trong API contract nhưng number trong entity schema. DTO hiện ưu tiên API contract; cần xác nhận có đồng bộ entity schema hay giữ khác biệt có chủ ý.
-- `rentPrice` là integer trong API contract/convention nhưng number trong entity schema. DTO hiện dùng integer; cần xác nhận có đồng bộ domain schema hay không.
-- PATCH hiện chỉ công bố `name`, `rentPrice`, `area`; DTO không tự mở rộng thêm `description`, `floorNumber`, `amenities`, `maxOccupancy` hoặc `genderPolicy`. Cần xác nhận đây là tập editable đầy đủ hay chỉ là phần contract hiện tại.
+### 3. Quyết định đã chốt
+- `area` và `rentPrice` dùng kiểu JSON number theo domain Room.
+- PATCH hỗ trợ tất cả field mutable của Room, ngoại trừ `landlordId`, `buildingId` và `status`.
+- Theo enum database, `mark-ready` chỉ chuyển `maintenance` → `available`; không thêm `cleaning` hoặc `pending_cleanup`.
+- Export `xlsx`, `csv` và `pdf` của `GET /me/rooms` được hoãn; endpoint hiện luôn trả JSON, kể cả khi client gửi `format` export.
 
 ## FavoriteRoom
 

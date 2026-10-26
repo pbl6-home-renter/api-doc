@@ -6,11 +6,31 @@ description: Phản hồi khi cập nhật phòng thành công
 properties:
   id: { type: string, format: uuid , description: "Định danh duy nhất của tài nguyên." }
   name: { type: string , description: "Thông tin name của tài nguyên trong ngữ cảnh DTO." }
-  rentPrice: { type: integer, minimum: 0 , description: "Thông tin rent price của tài nguyên trong ngữ cảnh DTO." }
-  area: { type: string, nullable: true, example: '19.0' , description: "Thông tin area của tài nguyên trong ngữ cảnh DTO." }
+  floorNumber: { type: integer, nullable: true }
+  description: { type: string, nullable: true }
+  area: { type: number, nullable: true }
+  amenities:
+    type: object
+    additionalProperties: false
+    properties:
+      aircon: { type: boolean }
+      fridge: { type: boolean }
+      wcInside: { type: boolean }
+      waterHeater: { type: boolean }
+      mezzanine: { type: boolean }
+      table: { type: boolean }
+      chair: { type: boolean }
+  maxOccupancy: { type: integer, nullable: true }
+  genderPolicy: { type: string, enum: [any, male, female] }
+  rentPrice: { type: number, minimum: 0 }
 
 required:
   - id
   - name
-  - rentPrice
+  - floorNumber
+  - description
   - area
+  - amenities
+  - maxOccupancy
+  - genderPolicy
+  - rentPrice
