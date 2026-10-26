@@ -5668,7 +5668,7 @@
           }
         ],
         "summary": "Create building for approval",
-        "description": "landlord. Gửi tòa nhà để duyệt. Lỗi nghiệp vụ: 422 VALIDATION FAILED · 403 FORBIDDEN.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
+        "description": "landlord. Gửi tòa nhà để duyệt. Client không gửi latitude/longitude; backend tự geocode từ address + ward + province qua TrackAsia (trước transaction), không ghi đè address. Geocode lỗi thì không tạo Building. Lỗi nghiệp vụ: 422 VALIDATION FAILED · 422 GEOCODING FAILED · 503 GEOCODING UNAVAILABLE · 403 FORBIDDEN.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "requestBody": {
           "required": true,
           "content": {
@@ -5753,7 +5753,52 @@
             "$ref": "#/components/responses/ForbiddenError"
           },
           "422": {
-            "$ref": "#/components/responses/ValidationError"
+            "x-apidog-name": "Unprocessable Entity",
+            "description": "Dữ liệu hợp lệ về cấu trúc nhưng vi phạm ràng buộc trường hoặc quy tắc nghiệp vụ.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        422
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "GEOCODING_FAILED",
+                        "VALIDATION_FAILED"
+                      ],
+                      "description": "- GEOCODING_FAILED: Không xác định được tọa độ từ địa chỉ (address, ward, province); người dùng cần sửa địa chỉ.\n- VALIDATION_FAILED: Dữ liệu vi phạm ràng buộc schema hoặc quy tắc nghiệp vụ khác chưa có mã riêng."
+                    }
+                  }
+                },
+                "examples": {
+                  "geocoding_failed": {
+                    "summary": "GEOCODING_FAILED — Không xác định được tọa độ từ địa chỉ.",
+                    "value": {
+                      "statusCode": 422,
+                      "code": "GEOCODING_FAILED"
+                    }
+                  },
+                  "validation_failed": {
+                    "summary": "VALIDATION_FAILED — Dữ liệu vi phạm ràng buộc schema hoặc quy tắc nghiệp vụ khác chưa có mã riêng.",
+                    "value": {
+                      "statusCode": 422,
+                      "code": "VALIDATION_FAILED"
+                    }
+                  }
+                }
+              }
+            }
           },
           "429": {
             "$ref": "#/components/responses/TooManyRequestsError"
@@ -5762,7 +5807,52 @@
             "$ref": "#/components/responses/InternalServerError"
           },
           "503": {
-            "$ref": "#/components/responses/AuthUnavailableError"
+            "x-apidog-name": "Service Unavailable",
+            "description": "Dịch vụ phụ thuộc (xác thực hoặc geocoding) tạm thời không khả dụng.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        503
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "AUTH_UNAVAILABLE",
+                        "GEOCODING_UNAVAILABLE"
+                      ],
+                      "description": "- AUTH_UNAVAILABLE: Hạ tầng xác thực tạm thời không khả dụng.\n- GEOCODING_UNAVAILABLE: Dịch vụ geocoding (TrackAsia) timeout hoặc lỗi; chưa tạo/cập nhật dữ liệu, client có thể thử lại."
+                    }
+                  }
+                },
+                "examples": {
+                  "auth_unavailable": {
+                    "summary": "AUTH_UNAVAILABLE — Hạ tầng xác thực tạm thời không khả dụng.",
+                    "value": {
+                      "statusCode": 503,
+                      "code": "AUTH_UNAVAILABLE"
+                    }
+                  },
+                  "geocoding_unavailable": {
+                    "summary": "GEOCODING_UNAVAILABLE — Dịch vụ geocoding tạm thời không khả dụng.",
+                    "value": {
+                      "statusCode": 503,
+                      "code": "GEOCODING_UNAVAILABLE"
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -6353,7 +6443,7 @@
           }
         ],
         "summary": "Update building",
-        "description": "landlord. Cập nhật thông tin tòa nhà. Lỗi nghiệp vụ: 404 NOT FOUND · 403 FORBIDDEN · 409 APPROVED BUILDING LOCKED · 422 VALIDATION FAILED.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
+        "description": "landlord. Cập nhật thông tin tòa nhà. Khi đổi address, backend geocode lại latitude/longitude từ address mới + ward + province hiện tại qua TrackAsia; geocode lỗi thì không cập nhật. Lỗi nghiệp vụ: 404 NOT FOUND · 403 FORBIDDEN · 409 APPROVED BUILDING LOCKED · 422 VALIDATION FAILED · 422 GEOCODING FAILED · 503 GEOCODING UNAVAILABLE.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "parameters": [
           {
             "name": "buildingId",
@@ -6476,7 +6566,52 @@
             }
           },
           "422": {
-            "$ref": "#/components/responses/ValidationError"
+            "x-apidog-name": "Unprocessable Entity",
+            "description": "Dữ liệu hợp lệ về cấu trúc nhưng vi phạm ràng buộc trường hoặc quy tắc nghiệp vụ.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        422
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "GEOCODING_FAILED",
+                        "VALIDATION_FAILED"
+                      ],
+                      "description": "- GEOCODING_FAILED: Không xác định được tọa độ từ địa chỉ (address, ward, province); người dùng cần sửa địa chỉ.\n- VALIDATION_FAILED: Dữ liệu vi phạm ràng buộc schema hoặc quy tắc nghiệp vụ khác chưa có mã riêng."
+                    }
+                  }
+                },
+                "examples": {
+                  "geocoding_failed": {
+                    "summary": "GEOCODING_FAILED — Không xác định được tọa độ từ địa chỉ.",
+                    "value": {
+                      "statusCode": 422,
+                      "code": "GEOCODING_FAILED"
+                    }
+                  },
+                  "validation_failed": {
+                    "summary": "VALIDATION_FAILED — Dữ liệu vi phạm ràng buộc schema hoặc quy tắc nghiệp vụ khác chưa có mã riêng.",
+                    "value": {
+                      "statusCode": 422,
+                      "code": "VALIDATION_FAILED"
+                    }
+                  }
+                }
+              }
+            }
           },
           "429": {
             "$ref": "#/components/responses/TooManyRequestsError"
@@ -6485,7 +6620,52 @@
             "$ref": "#/components/responses/InternalServerError"
           },
           "503": {
-            "$ref": "#/components/responses/AuthUnavailableError"
+            "x-apidog-name": "Service Unavailable",
+            "description": "Dịch vụ phụ thuộc (xác thực hoặc geocoding) tạm thời không khả dụng.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        503
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "AUTH_UNAVAILABLE",
+                        "GEOCODING_UNAVAILABLE"
+                      ],
+                      "description": "- AUTH_UNAVAILABLE: Hạ tầng xác thực tạm thời không khả dụng.\n- GEOCODING_UNAVAILABLE: Dịch vụ geocoding (TrackAsia) timeout hoặc lỗi; chưa tạo/cập nhật dữ liệu, client có thể thử lại."
+                    }
+                  }
+                },
+                "examples": {
+                  "auth_unavailable": {
+                    "summary": "AUTH_UNAVAILABLE — Hạ tầng xác thực tạm thời không khả dụng.",
+                    "value": {
+                      "statusCode": 503,
+                      "code": "AUTH_UNAVAILABLE"
+                    }
+                  },
+                  "geocoding_unavailable": {
+                    "summary": "GEOCODING_UNAVAILABLE — Dịch vụ geocoding tạm thời không khả dụng.",
+                    "value": {
+                      "statusCode": 503,
+                      "code": "GEOCODING_UNAVAILABLE"
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       },
@@ -23449,13 +23629,11 @@
           },
           "latitude": {
             "type": "string",
-            "nullable": true,
             "example": "20.995100",
             "description": "Tọa độ vĩ độ được geocode từ địa chỉ."
           },
           "longitude": {
             "type": "string",
-            "nullable": true,
             "example": "105.816649",
             "description": "Tọa độ kinh độ được geocode từ địa chỉ."
           },
@@ -23476,6 +23654,8 @@
         "required": [
           "id",
           "status",
+          "latitude",
+          "longitude",
           "createdAt"
         ]
       },
