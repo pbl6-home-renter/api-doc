@@ -1,3 +1,9 @@
+## Administrative units
+
+- `GET /administrative-units/provinces` and `GET /administrative-units/provinces/{provinceCode}/wards` are public reference endpoints owned by Tenancy-Service.
+- Tenancy-Service serves a committed local snapshot generated from `https://provinces.open-api.vn/api/v2`; there is no runtime provider, database table, or cache.
+- This catalog is administrative geography only. Address geocoding remains separate and is not part of these endpoints.
+
 ## Auth
 
 ### 1. Cơ sở Request / Response

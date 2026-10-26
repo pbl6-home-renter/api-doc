@@ -76,12 +76,14 @@ properties:
   buildingCount:
     type: integer
     minimum: 0
-    description: Số lượng tòa nhà thuộc sở hữu (nếu là landlord).
+    nullable: true
+    description: Số lượng tòa nhà thuộc sở hữu (nếu là landlord). `null` khi không lấy được từ Tenancy.
     example: 2
   activeContractCount:
     type: integer
     minimum: 0
-    description: Số lượng hợp đồng đang có hiệu lực.
+    nullable: true
+    description: Số lượng hợp đồng đang có hiệu lực. `null` khi không lấy được từ Tenancy.
     example: 1
 required:
 - id

@@ -7591,6 +7591,2116 @@
           }
         }
       }
+    },
+    {
+      "id": "9732d4b4cb83797b517f4f9a7d80cd0528618f459ebe04fbe6eedd121c0e34db",
+      "label": "Thay đổi contract từ Git",
+      "classification": "BREAKING",
+      "contractId": "rentify-public",
+      "repository": "https://github.com/pbl6-home-renter/api-doc",
+      "baseHash": "002639cef5a1a6b347f3457a768c1bbe5db2935f6e41e634fdbbf7bfdf977635",
+      "headHash": "c7f5d38c5746f56e437e088d1af94f4be76946cdd74a1c0cba3b8a71ac9d96aa",
+      "baseSource": "src/openapi.yaml",
+      "headSource": "src/openapi.yaml",
+      "detectedAt": "2026-10-25T14:54:17.473Z",
+      "committedAt": "2026-10-25T21:54:06+07:00",
+      "baseCommit": "5b7aaec20e40e4b05b764a400c498e600a25a9ed",
+      "headCommit": "41bcd40e307d8549d5b55ac583b6dfab880019cf",
+      "prUrl": "https://github.com/pbl6-home-renter/api-doc/pull/17",
+      "commitUrl": "https://github.com/pbl6-home-renter/api-doc/commit/41bcd40e307d8549d5b55ac583b6dfab880019cf",
+      "metadataKind": "Git revision thực tế",
+      "reason": "CHƯA CUNG CẤP — tác giả PR phải bổ sung lý do nghiệp vụ; không thể suy ra từ OpenAPI diff.",
+      "tools": {
+        "redocly": "2.64.1",
+        "oasdiff": "1.34.1"
+      },
+      "changes": [
+        {
+          "id": "request-property-became-not-nullable",
+          "text": "the request property `amenities` became not nullable",
+          "level": 3,
+          "operation": "POST",
+          "operationId": "postRooms",
+          "path": "/rooms",
+          "section": "paths",
+          "fingerprint": "8c42966f102f",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu vị trí và thay đổi trước/sau trong entry này với API adapter, DTO, parser và validation; cùng BE xác nhận phương án tương thích trước merge/phát hành."
+        },
+        {
+          "id": "api-version-not-bumped",
+          "text": "a breaking change was detected but the version is still `1.0.0`",
+          "level": 1,
+          "section": "info",
+          "fingerprint": "d3f96cd643c1",
+          "classification": "NON_BREAKING",
+          "clientImpact": "BE: xem lại quy ước version trước khi chấp nhận breaking change. FE/Mobile: theo kế hoạch chuyển đổi của entry này; version trong OpenAPI chưa chứng minh backend đã triển khai."
+        },
+        {
+          "id": "new-optional-request-property",
+          "text": "added the new optional request property `amenities/aircon`",
+          "level": 1,
+          "operation": "POST",
+          "operationId": "postRooms",
+          "path": "/rooms",
+          "section": "paths",
+          "fingerprint": "edfa49103818",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        },
+        {
+          "id": "new-optional-request-property",
+          "text": "added the new optional request property `amenities/chair`",
+          "level": 1,
+          "operation": "POST",
+          "operationId": "postRooms",
+          "path": "/rooms",
+          "section": "paths",
+          "fingerprint": "a3cc55b4db09",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        },
+        {
+          "id": "new-optional-request-property",
+          "text": "added the new optional request property `amenities/fridge`",
+          "level": 1,
+          "operation": "POST",
+          "operationId": "postRooms",
+          "path": "/rooms",
+          "section": "paths",
+          "fingerprint": "981ac82caee9",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        },
+        {
+          "id": "new-optional-request-property",
+          "text": "added the new optional request property `amenities/mezzanine`",
+          "level": 1,
+          "operation": "POST",
+          "operationId": "postRooms",
+          "path": "/rooms",
+          "section": "paths",
+          "fingerprint": "8fb10f08a7db",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        },
+        {
+          "id": "new-optional-request-property",
+          "text": "added the new optional request property `amenities/table`",
+          "level": 1,
+          "operation": "POST",
+          "operationId": "postRooms",
+          "path": "/rooms",
+          "section": "paths",
+          "fingerprint": "cd6a1c9ba6fa",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        },
+        {
+          "id": "new-optional-request-property",
+          "text": "added the new optional request property `amenities/waterHeater`",
+          "level": 1,
+          "operation": "POST",
+          "operationId": "postRooms",
+          "path": "/rooms",
+          "section": "paths",
+          "fingerprint": "50979fe67ace",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        },
+        {
+          "id": "new-optional-request-property",
+          "text": "added the new optional request property `amenities/wcInside`",
+          "level": 1,
+          "operation": "POST",
+          "operationId": "postRooms",
+          "path": "/rooms",
+          "section": "paths",
+          "fingerprint": "f2f33efc5532",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        },
+        {
+          "id": "response-optional-property-added",
+          "text": "added the optional property `data/amenities/aircon` to the response with the `200` status",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getRoomsRoomid",
+          "path": "/rooms/{roomId}",
+          "section": "paths",
+          "fingerprint": "abbbb7686801",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/amenities/aircon; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-optional-property-added",
+          "text": "added the optional property `data/amenities/chair` to the response with the `200` status",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getRoomsRoomid",
+          "path": "/rooms/{roomId}",
+          "section": "paths",
+          "fingerprint": "f743d4d6648a",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/amenities/chair; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-optional-property-added",
+          "text": "added the optional property `data/amenities/fridge` to the response with the `200` status",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getRoomsRoomid",
+          "path": "/rooms/{roomId}",
+          "section": "paths",
+          "fingerprint": "952961545491",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/amenities/fridge; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-optional-property-added",
+          "text": "added the optional property `data/amenities/mezzanine` to the response with the `200` status",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getRoomsRoomid",
+          "path": "/rooms/{roomId}",
+          "section": "paths",
+          "fingerprint": "8776c26b761e",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/amenities/mezzanine; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-optional-property-added",
+          "text": "added the optional property `data/amenities/table` to the response with the `200` status",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getRoomsRoomid",
+          "path": "/rooms/{roomId}",
+          "section": "paths",
+          "fingerprint": "2c5c1435c589",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/amenities/table; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-optional-property-added",
+          "text": "added the optional property `data/amenities/waterHeater` to the response with the `200` status",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getRoomsRoomid",
+          "path": "/rooms/{roomId}",
+          "section": "paths",
+          "fingerprint": "186d8dfdc109",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/amenities/waterHeater; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-optional-property-added",
+          "text": "added the optional property `data/amenities/wcInside` to the response with the `200` status",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getRoomsRoomid",
+          "path": "/rooms/{roomId}",
+          "section": "paths",
+          "fingerprint": "8345acb51838",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/amenities/wcInside; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-property-became-not-nullable",
+          "text": "the response property `data/amenities` became not nullable for the status `200`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getRoomsRoomid",
+          "path": "/rooms/{roomId}",
+          "section": "paths",
+          "fingerprint": "d8f865605e12",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        }
+      ],
+      "locations": [
+        {
+          "pointer": "/components/schemas/Room/allOf",
+          "before": [
+            {
+              "$ref": "#/components/schemas/BaseEntity"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "landlordId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "description": "ID chủ nhà sở hữu phòng (bắt buộc, 1 chủ/phòng)",
+                  "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                },
+                "buildingId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "description": "ID tòa nhà chứa phòng",
+                  "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                },
+                "floorNumber": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "nullable": true,
+                  "description": "Tầng (bắt đầu từ tầng 1)",
+                  "example": 2
+                },
+                "name": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 254,
+                  "description": "Tên / Mã số phòng",
+                  "example": "P.201"
+                },
+                "description": {
+                  "type": "string",
+                  "nullable": true,
+                  "minLength": 1,
+                  "maxLength": 500,
+                  "description": "Mô tả chi tiết phòng trọ",
+                  "example": "Phòng trọ hiện đại, tiện nghi đầy đủ"
+                },
+                "area": {
+                  "type": "number",
+                  "minimum": 0.1,
+                  "nullable": true,
+                  "description": "Diện tích phòng tính theo m²",
+                  "example": 18.5
+                },
+                "amenities": {
+                  "type": "object",
+                  "description": "Các tiện ích đi kèm (điều hòa, tủ lạnh, wc khép kín...)",
+                  "example": {
+                    "aircon": true,
+                    "fridge": false,
+                    "wcInside": true
+                  }
+                },
+                "maxOccupancy": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "nullable": true,
+                  "description": "Số lượng người ở tối đa",
+                  "example": 3
+                },
+                "genderPolicy": {
+                  "type": "string",
+                  "enum": [
+                    "any",
+                    "male",
+                    "female"
+                  ],
+                  "default": "any",
+                  "description": "Giới hạn giới tính người thuê",
+                  "example": "any"
+                },
+                "rentPrice": {
+                  "type": "number",
+                  "minimum": 0,
+                  "description": "Giá thuê phòng hàng tháng (VND)",
+                  "example": 3500000
+                },
+                "status": {
+                  "type": "string",
+                  "enum": [
+                    "available",
+                    "occupied",
+                    "maintenance"
+                  ],
+                  "description": "Trạng thái phòng (trống, đã có người ở, đang bảo trì)",
+                  "example": "occupied"
+                }
+              },
+              "required": [
+                "landlordId",
+                "buildingId",
+                "name",
+                "amenities",
+                "rentPrice",
+                "status"
+              ]
+            }
+          ],
+          "after": [
+            {
+              "$ref": "#/components/schemas/BaseEntity"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "landlordId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "description": "ID chủ nhà sở hữu phòng (bắt buộc, 1 chủ/phòng)",
+                  "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                },
+                "buildingId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "description": "ID tòa nhà chứa phòng",
+                  "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                },
+                "floorNumber": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "nullable": true,
+                  "description": "Tầng (bắt đầu từ tầng 1)",
+                  "example": 2
+                },
+                "name": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 254,
+                  "description": "Tên / Mã số phòng",
+                  "example": "P.201"
+                },
+                "description": {
+                  "type": "string",
+                  "nullable": true,
+                  "minLength": 1,
+                  "maxLength": 500,
+                  "description": "Mô tả chi tiết phòng trọ",
+                  "example": "Phòng trọ hiện đại, tiện nghi đầy đủ"
+                },
+                "area": {
+                  "type": "number",
+                  "minimum": 0.1,
+                  "nullable": true,
+                  "description": "Diện tích phòng tính theo m²",
+                  "example": 18.5
+                },
+                "amenities": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "description": "Các tiện ích đi kèm (điều hòa, tủ lạnh, wc khép kín...)",
+                  "properties": {
+                    "aircon": {
+                      "type": "boolean"
+                    },
+                    "fridge": {
+                      "type": "boolean"
+                    },
+                    "wcInside": {
+                      "type": "boolean"
+                    },
+                    "waterHeater": {
+                      "type": "boolean"
+                    },
+                    "mezzanine": {
+                      "type": "boolean"
+                    },
+                    "table": {
+                      "type": "boolean"
+                    },
+                    "chair": {
+                      "type": "boolean"
+                    }
+                  },
+                  "example": {
+                    "aircon": true,
+                    "fridge": false,
+                    "wcInside": true,
+                    "waterHeater": true,
+                    "mezzanine": false,
+                    "table": true,
+                    "chair": true
+                  }
+                },
+                "maxOccupancy": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "nullable": true,
+                  "description": "Số lượng người ở tối đa",
+                  "example": 3
+                },
+                "genderPolicy": {
+                  "type": "string",
+                  "enum": [
+                    "any",
+                    "male",
+                    "female"
+                  ],
+                  "default": "any",
+                  "description": "Giới hạn giới tính người thuê",
+                  "example": "any"
+                },
+                "rentPrice": {
+                  "type": "number",
+                  "minimum": 0,
+                  "description": "Giá thuê phòng hàng tháng (VND)",
+                  "example": 3500000
+                },
+                "status": {
+                  "type": "string",
+                  "enum": [
+                    "available",
+                    "occupied",
+                    "maintenance"
+                  ],
+                  "description": "Trạng thái phòng (trống, đã có người ở, đang bảo trì)",
+                  "example": "occupied"
+                }
+              },
+              "required": [
+                "landlordId",
+                "buildingId",
+                "name",
+                "amenities",
+                "rentPrice",
+                "status"
+              ]
+            }
+          ]
+        },
+        {
+          "pointer": "/components/schemas/RoomCreateRequestDto/properties/amenities/additionalProperties",
+          "before": null,
+          "after": false
+        },
+        {
+          "pointer": "/components/schemas/RoomCreateRequestDto/properties/amenities/example/chair",
+          "before": null,
+          "after": true
+        },
+        {
+          "pointer": "/components/schemas/RoomCreateRequestDto/properties/amenities/example/fridge",
+          "before": null,
+          "after": false
+        },
+        {
+          "pointer": "/components/schemas/RoomCreateRequestDto/properties/amenities/example/mezzanine",
+          "before": true,
+          "after": false
+        },
+        {
+          "pointer": "/components/schemas/RoomCreateRequestDto/properties/amenities/example/refrigerator",
+          "before": true,
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/RoomCreateRequestDto/properties/amenities/example/table",
+          "before": null,
+          "after": true
+        },
+        {
+          "pointer": "/components/schemas/RoomCreateRequestDto/properties/amenities/example/wcInside",
+          "before": null,
+          "after": true
+        },
+        {
+          "pointer": "/components/schemas/RoomCreateRequestDto/properties/amenities/nullable",
+          "before": true,
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/RoomCreateRequestDto/properties/amenities/properties",
+          "before": null,
+          "after": {
+            "aircon": {
+              "type": "boolean"
+            },
+            "fridge": {
+              "type": "boolean"
+            },
+            "wcInside": {
+              "type": "boolean"
+            },
+            "waterHeater": {
+              "type": "boolean"
+            },
+            "mezzanine": {
+              "type": "boolean"
+            },
+            "table": {
+              "type": "boolean"
+            },
+            "chair": {
+              "type": "boolean"
+            }
+          }
+        },
+        {
+          "pointer": "/components/schemas/RoomDetailResponseDto/properties/amenities/additionalProperties",
+          "before": null,
+          "after": false
+        },
+        {
+          "pointer": "/components/schemas/RoomDetailResponseDto/properties/amenities/nullable",
+          "before": true,
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/RoomDetailResponseDto/properties/amenities/properties",
+          "before": null,
+          "after": {
+            "aircon": {
+              "type": "boolean"
+            },
+            "fridge": {
+              "type": "boolean"
+            },
+            "wcInside": {
+              "type": "boolean"
+            },
+            "waterHeater": {
+              "type": "boolean"
+            },
+            "mezzanine": {
+              "type": "boolean"
+            },
+            "table": {
+              "type": "boolean"
+            },
+            "chair": {
+              "type": "boolean"
+            }
+          }
+        }
+      ],
+      "semanticDiff": {
+        "paths": {
+          "modified": {
+            "/rooms": {
+              "operations": {
+                "modified": {
+                  "POST": {
+                    "requestBody": {
+                      "content": {
+                        "modified": {
+                          "application/json": {
+                            "schema": {
+                              "properties": {
+                                "modified": {
+                                  "amenities": {
+                                    "additionalPropertiesAllowed": {
+                                      "from": null,
+                                      "to": false
+                                    },
+                                    "nullable": {
+                                      "from": true,
+                                      "to": false
+                                    },
+                                    "properties": {
+                                      "added": [
+                                        "table",
+                                        "chair",
+                                        "aircon",
+                                        "fridge",
+                                        "wcInside",
+                                        "waterHeater",
+                                        "mezzanine"
+                                      ]
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "/rooms/{roomId}": {
+              "operations": {
+                "modified": {
+                  "GET": {
+                    "responses": {
+                      "modified": {
+                        "200": {
+                          "content": {
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "properties": {
+                                    "modified": {
+                                      "data": {
+                                        "properties": {
+                                          "modified": {
+                                            "amenities": {
+                                              "additionalPropertiesAllowed": {
+                                                "from": null,
+                                                "to": false
+                                              },
+                                              "nullable": {
+                                                "from": true,
+                                                "to": false
+                                              },
+                                              "properties": {
+                                                "added": [
+                                                  "aircon",
+                                                  "fridge",
+                                                  "wcInside",
+                                                  "waterHeater",
+                                                  "mezzanine",
+                                                  "table",
+                                                  "chair"
+                                                ]
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "components": {
+          "schemas": {
+            "modified": {
+              "Room": {
+                "properties": {
+                  "modified": {
+                    "amenities": {
+                      "additionalPropertiesAllowed": {
+                        "from": null,
+                        "to": false
+                      },
+                      "properties": {
+                        "added": [
+                          "mezzanine",
+                          "table",
+                          "chair",
+                          "aircon",
+                          "fridge",
+                          "wcInside",
+                          "waterHeater"
+                        ]
+                      }
+                    }
+                  }
+                }
+              },
+              "RoomCreateRequestDto": {
+                "properties": {
+                  "modified": {
+                    "amenities": {
+                      "additionalPropertiesAllowed": {
+                        "from": null,
+                        "to": false
+                      },
+                      "nullable": {
+                        "from": true,
+                        "to": false
+                      },
+                      "properties": {
+                        "added": [
+                          "table",
+                          "chair",
+                          "aircon",
+                          "fridge",
+                          "wcInside",
+                          "waterHeater",
+                          "mezzanine"
+                        ]
+                      }
+                    }
+                  }
+                }
+              },
+              "RoomDetailResponseDto": {
+                "properties": {
+                  "modified": {
+                    "amenities": {
+                      "additionalPropertiesAllowed": {
+                        "from": null,
+                        "to": false
+                      },
+                      "nullable": {
+                        "from": true,
+                        "to": false
+                      },
+                      "properties": {
+                        "added": [
+                          "aircon",
+                          "fridge",
+                          "wcInside",
+                          "waterHeater",
+                          "mezzanine",
+                          "table",
+                          "chair"
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "e683161551b967bf9d9c586449e50497b7865282520f564aa37b3884eb4568dc",
+      "label": "Thay đổi contract từ Git",
+      "classification": "BREAKING",
+      "contractId": "rentify-public",
+      "repository": "https://github.com/pbl6-home-renter/api-doc",
+      "baseHash": "c7f5d38c5746f56e437e088d1af94f4be76946cdd74a1c0cba3b8a71ac9d96aa",
+      "headHash": "4645e21bce738aa314bc2de8789693fbb6f783ca265737e0251de331c81f32c2",
+      "baseSource": "src/openapi.yaml",
+      "headSource": "src/openapi.yaml",
+      "detectedAt": "2026-10-26T06:58:49.156Z",
+      "committedAt": "2026-10-26T13:58:39+07:00",
+      "baseCommit": "b23b3fb19fccf8dbc0bad12b7713ec9796ccafd9",
+      "headCommit": "461484262d760c1d2190bf7f4b3587de4bf16a85",
+      "prUrl": "https://github.com/pbl6-home-renter/api-doc/pull/18",
+      "commitUrl": "https://github.com/pbl6-home-renter/api-doc/commit/461484262d760c1d2190bf7f4b3587de4bf16a85",
+      "metadataKind": "Git revision thực tế",
+      "reason": "CHƯA CUNG CẤP — tác giả PR phải bổ sung lý do nghiệp vụ; không thể suy ra từ OpenAPI diff.",
+      "tools": {
+        "redocly": "2.64.1",
+        "oasdiff": "1.34.1"
+      },
+      "changes": [
+        {
+          "id": "response-property-enum-value-added",
+          "text": "added the new `SERVICE_UNAVAILABLE` enum value to the `code` response property for the response status `503`",
+          "comment": "The server may now return a value the previous contract excluded, so a client written against it may not handle the response. If the value set is meant to grow, declare it with x-extensible-enum.",
+          "level": 3,
+          "operation": "DELETE",
+          "operationId": "deleteUserById",
+          "path": "/users/{userId}",
+          "section": "paths",
+          "fingerprint": "5ce63021c713",
+          "classification": "BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới SERVICE_UNAVAILABLE; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-property-enum-value-added",
+          "text": "added the new `USER_DELETE_HAS_ACTIVE_CONTRACT` enum value to the `code` response property for the response status `409`",
+          "comment": "The server may now return a value the previous contract excluded, so a client written against it may not handle the response. If the value set is meant to grow, declare it with x-extensible-enum.",
+          "level": 3,
+          "operation": "DELETE",
+          "operationId": "deleteUserById",
+          "path": "/users/{userId}",
+          "section": "paths",
+          "fingerprint": "18875c158696",
+          "classification": "BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới USER_DELETE_HAS_ACTIVE_CONTRACT; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-property-became-nullable",
+          "text": "the response property `data/activeContractCount` became nullable for the status `200`",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getUserById",
+          "path": "/users/{userId}",
+          "section": "paths",
+          "fingerprint": "e6035f560fe2",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu vị trí và thay đổi trước/sau trong entry này với API adapter, DTO, parser và validation; cùng BE xác nhận phương án tương thích trước merge/phát hành."
+        },
+        {
+          "id": "response-property-became-nullable",
+          "text": "the response property `data/buildingCount` became nullable for the status `200`",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getUserById",
+          "path": "/users/{userId}",
+          "section": "paths",
+          "fingerprint": "c6140ce130e7",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu vị trí và thay đổi trước/sau trong entry này với API adapter, DTO, parser và validation; cùng BE xác nhận phương án tương thích trước merge/phát hành."
+        },
+        {
+          "id": "api-version-not-bumped",
+          "text": "a breaking change was detected but the version is still `1.0.0`",
+          "level": 1,
+          "section": "info",
+          "fingerprint": "d3f96cd643c1",
+          "classification": "NON_BREAKING",
+          "clientImpact": "BE: xem lại quy ước version trước khi chấp nhận breaking change. FE/Mobile: theo kế hoạch chuyển đổi của entry này; version trong OpenAPI chưa chứng minh backend đã triển khai."
+        }
+      ],
+      "locations": [
+        {
+          "pointer": "/components/schemas/UserDetailResponseDto/properties/activeContractCount/description",
+          "before": "Số lượng hợp đồng đang có hiệu lực.",
+          "after": "Số lượng hợp đồng đang có hiệu lực. `null` khi không lấy được từ Tenancy."
+        },
+        {
+          "pointer": "/components/schemas/UserDetailResponseDto/properties/activeContractCount/nullable",
+          "before": null,
+          "after": true
+        },
+        {
+          "pointer": "/components/schemas/UserDetailResponseDto/properties/buildingCount/description",
+          "before": "Số lượng tòa nhà thuộc sở hữu (nếu là landlord).",
+          "after": "Số lượng tòa nhà thuộc sở hữu (nếu là landlord). `null` khi không lấy được từ Tenancy."
+        },
+        {
+          "pointer": "/components/schemas/UserDetailResponseDto/properties/buildingCount/nullable",
+          "before": null,
+          "after": true
+        },
+        {
+          "pointer": "/paths/~1users~1{userId}/delete/description",
+          "before": "Chỉ admin. Xóa mềm tài khoản; không thể tự xóa. Thành công trả 204, không có body.\n\n**Lưu ý**\n\n- Xóa mềm (`is_deleted = true`); user đã xóa không đăng nhập được.\n- Không xóa được user còn HĐ hiệu lực. Không hỏi được Tenancy thì từ chối xóa (`503`, fail-closed).\n- Chưa triển khai: kiểm tra qua Tenancy, mã `409 USER_DELETE_HAS_ACTIVE_CONTRACT`, `503 SERVICE_UNAVAILABLE`.\n\n```mermaid\nsequenceDiagram\n    autonumber\n    participant GW as API Gateway\n    participant ID as Identity\n    participant DB as Identity DB\n    participant MQ as RabbitMQ\n    participant TEN as Tenancy\n    participant COM as Community\n\n    GW->>ID: DELETE /users/{userId} + Authorization (admin)\n    alt Admin tự xóa chính mình\n        ID-->>GW: 400 USER_DELETE_CANNOT_SELF\n    end\n    ID->>DB: Đọc user\n    alt Không tìm thấy\n        ID-->>GW: 404 USER_NOT_FOUND\n    else Đã bị xóa\n        ID-->>GW: 409 USER_DELETE_ALREADY_DELETED\n    end\n    ID->>TEN: GET /internal/users/{userId}/stats (service token, timeout 3s)\n    alt Tenancy lỗi / timeout (fail-closed)\n        ID-->>GW: 503 SERVICE_UNAVAILABLE\n    end\n    TEN-->>ID: 200 {buildingCount, activeContractCount}\n    alt activeContractCount > 0\n        ID-->>GW: 409 USER_DELETE_HAS_ACTIVE_CONTRACT\n    end\n    ID->>DB: [Transaction] Soft delete users (is_deleted=true) + landlord_profiles<br/>+ revoke toàn bộ refresh_tokens<br/>+ outbox user.deleted\n    ID-->>GW: 204\n    ID-)MQ: user.deleted {userId, role}\n    MQ-)TEN: Ẩn user, không cho gán vào HĐ mới\n    MQ-)COM: Ngắt socket, xóa push devices\n```",
+          "after": "Chỉ admin. Xóa mềm tài khoản; không thể tự xóa. Thành công trả 204, không có body.\n\n**Lưu ý**\n\n- Xóa mềm (`is_deleted = true`); user đã xóa không đăng nhập được.\n- Không xóa được user còn HĐ hiệu lực. Không hỏi được Tenancy thì từ chối xóa (`503`, fail-closed).\n- Tenancy chưa build `GET /internal/users/{userId}/stats` nên hiện mọi lệnh xóa trả `503 SERVICE_UNAVAILABLE`.\n\n```mermaid\nsequenceDiagram\n    autonumber\n    participant GW as API Gateway\n    participant ID as Identity\n    participant DB as Identity DB\n    participant MQ as RabbitMQ\n    participant TEN as Tenancy\n    participant COM as Community\n\n    GW->>ID: DELETE /users/{userId} + Authorization (admin)\n    alt Admin tự xóa chính mình\n        ID-->>GW: 400 USER_DELETE_CANNOT_SELF\n    end\n    ID->>DB: Đọc user\n    alt Không tìm thấy\n        ID-->>GW: 404 USER_NOT_FOUND\n    else Đã bị xóa\n        ID-->>GW: 409 USER_DELETE_ALREADY_DELETED\n    end\n    ID->>TEN: GET /internal/users/{userId}/stats (service token, timeout 3s)\n    alt Tenancy lỗi / timeout (fail-closed)\n        ID-->>GW: 503 SERVICE_UNAVAILABLE\n    end\n    TEN-->>ID: 200 {buildingCount, activeContractCount}\n    alt activeContractCount > 0\n        ID-->>GW: 409 USER_DELETE_HAS_ACTIVE_CONTRACT\n    end\n    ID->>DB: [Transaction] Soft delete users (is_deleted=true) + landlord_profiles<br/>+ revoke toàn bộ refresh_tokens<br/>+ outbox user.deleted\n    ID-->>GW: 204\n    ID-)MQ: user.deleted {userId, role}\n    MQ-)TEN: Ẩn user, không cho gán vào HĐ mới\n    MQ-)COM: Ngắt socket, xóa push devices\n```"
+        },
+        {
+          "pointer": "/paths/~1users~1{userId}/delete/responses/409/content/application~1json/examples/error_2",
+          "before": null,
+          "after": {
+            "summary": "USER_DELETE_HAS_ACTIVE_CONTRACT",
+            "value": {
+              "statusCode": 409,
+              "code": "USER_DELETE_HAS_ACTIVE_CONTRACT"
+            }
+          }
+        },
+        {
+          "pointer": "/paths/~1users~1{userId}/delete/responses/409/content/application~1json/schema/properties/code/enum",
+          "before": [
+            "USER_DELETE_ALREADY_DELETED"
+          ],
+          "after": [
+            "USER_DELETE_ALREADY_DELETED",
+            "USER_DELETE_HAS_ACTIVE_CONTRACT"
+          ]
+        },
+        {
+          "pointer": "/paths/~1users~1{userId}/delete/responses/503/$ref",
+          "before": "#/components/responses/AuthUnavailableError",
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1users~1{userId}/delete/responses/503/content",
+          "before": null,
+          "after": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "statusCode",
+                  "code"
+                ],
+                "properties": {
+                  "statusCode": {
+                    "type": "integer",
+                    "enum": [
+                      503
+                    ]
+                  },
+                  "code": {
+                    "type": "string",
+                    "enum": [
+                      "AUTH_UNAVAILABLE",
+                      "SERVICE_UNAVAILABLE"
+                    ]
+                  }
+                }
+              },
+              "examples": {
+                "error_1": {
+                  "summary": "AUTH_UNAVAILABLE",
+                  "value": {
+                    "statusCode": 503,
+                    "code": "AUTH_UNAVAILABLE"
+                  }
+                },
+                "error_2": {
+                  "summary": "SERVICE_UNAVAILABLE",
+                  "value": {
+                    "statusCode": 503,
+                    "code": "SERVICE_UNAVAILABLE"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "pointer": "/paths/~1users~1{userId}/delete/responses/503/description",
+          "before": null,
+          "after": "Hạ tầng xác thực hoặc Tenancy tạm thời không khả dụng (xóa bị từ chối, fail-closed)."
+        },
+        {
+          "pointer": "/paths/~1users~1{userId}/get/description",
+          "before": "Chỉ admin. Lấy chi tiết tài khoản, thông tin khóa, payoutAccount đã mask và số lượng tòa nhà/hợp đồng.\n\n**Lưu ý**\n\n- `buildingCount`, `activeContractCount` lấy từ Tenancy qua HTTP nội bộ; Tenancy lỗi hoặc timeout thì trả `null`.\n- Chưa triển khai: code đang trả cố định `0`; Tenancy cần build `GET /internal/users/{userId}/stats`.\n\n```mermaid\nsequenceDiagram\n    autonumber\n    participant GW as API Gateway\n    participant ID as Identity\n    participant DB as Identity DB\n    participant TEN as Tenancy\n\n    GW->>ID: GET /users/{userId}\n    ID->>DB: Đọc users + landlord_profiles theo userId\n    alt Không tìm thấy\n        ID-->>GW: 404 USER_NOT_FOUND\n    end\n    ID->>TEN: GET /internal/users/{userId}/stats (service token, timeout 3s)\n    alt Tenancy trả kết quả\n        TEN-->>ID: 200 {buildingCount, activeContractCount}\n    else Tenancy lỗi / timeout\n        ID->>ID: buildingCount = null, activeContractCount = null\n    end\n    ID-->>GW: 200 USER_DETAIL_FETCHED {..., lockReason, lockedAt, payoutAccount, buildingCount, activeContractCount}\n```",
+          "after": "Chỉ admin. Lấy chi tiết tài khoản, thông tin khóa, payoutAccount đã mask và số lượng tòa nhà/hợp đồng.\n\n**Lưu ý**\n\n- `buildingCount`, `activeContractCount` lấy từ Tenancy qua HTTP nội bộ; Tenancy lỗi hoặc timeout thì trả `null`.\n- Identity đã gọi Tenancy; Tenancy chưa build `GET /internal/users/{userId}/stats` nên hiện 2 field luôn là `null`.\n\n```mermaid\nsequenceDiagram\n    autonumber\n    participant GW as API Gateway\n    participant ID as Identity\n    participant DB as Identity DB\n    participant TEN as Tenancy\n\n    GW->>ID: GET /users/{userId}\n    ID->>DB: Đọc users + landlord_profiles theo userId\n    alt Không tìm thấy\n        ID-->>GW: 404 USER_NOT_FOUND\n    end\n    ID->>TEN: GET /internal/users/{userId}/stats (service token, timeout 3s)\n    alt Tenancy trả kết quả\n        TEN-->>ID: 200 {buildingCount, activeContractCount}\n    else Tenancy lỗi / timeout\n        ID->>ID: buildingCount = null, activeContractCount = null\n    end\n    ID-->>GW: 200 USER_DETAIL_FETCHED {..., lockReason, lockedAt, payoutAccount, buildingCount, activeContractCount}\n```"
+        }
+      ],
+      "semanticDiff": {
+        "paths": {
+          "modified": {
+            "/users/{userId}": {
+              "operations": {
+                "modified": {
+                  "DELETE": {
+                    "responses": {
+                      "modified": {
+                        "409": {
+                          "content": {
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "properties": {
+                                    "modified": {
+                                      "code": {
+                                        "enum": {
+                                          "added": [
+                                            "USER_DELETE_HAS_ACTIVE_CONTRACT"
+                                          ]
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "503": {
+                          "extensions": {
+                            "deleted": [
+                              "x-apidog-name"
+                            ]
+                          },
+                          "content": {
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "properties": {
+                                    "modified": {
+                                      "code": {
+                                        "enum": {
+                                          "added": [
+                                            "SERVICE_UNAVAILABLE"
+                                          ]
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "GET": {
+                    "responses": {
+                      "modified": {
+                        "200": {
+                          "content": {
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "properties": {
+                                    "modified": {
+                                      "data": {
+                                        "properties": {
+                                          "modified": {
+                                            "activeContractCount": {
+                                              "nullable": {
+                                                "from": false,
+                                                "to": true
+                                              }
+                                            },
+                                            "buildingCount": {
+                                              "nullable": {
+                                                "from": false,
+                                                "to": true
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "components": {
+          "schemas": {
+            "modified": {
+              "UserDetailResponseDto": {
+                "properties": {
+                  "modified": {
+                    "activeContractCount": {
+                      "nullable": {
+                        "from": false,
+                        "to": true
+                      }
+                    },
+                    "buildingCount": {
+                      "nullable": {
+                        "from": false,
+                        "to": true
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "b09cdc1d4e290b0bd2204e68c9ca2ffc6c3487d8929177c1cea5e96919c5447f",
+      "label": "Thay đổi contract từ Git",
+      "classification": "BREAKING",
+      "contractId": "rentify-public",
+      "repository": "https://github.com/pbl6-home-renter/api-doc",
+      "baseHash": "4645e21bce738aa314bc2de8789693fbb6f783ca265737e0251de331c81f32c2",
+      "headHash": "2db413ff6152f63e9d5e117b11deb16b1f70b078f75fda8a28c851fd69769fce",
+      "baseSource": "src/openapi.yaml",
+      "headSource": "src/openapi.yaml",
+      "detectedAt": "2026-10-26T09:42:31.816Z",
+      "committedAt": "2026-10-26T16:42:20+07:00",
+      "baseCommit": "38a69935694460dfe3efdcd7b6005441662629f3",
+      "headCommit": "bef12b999599581459b4b98a903f9313a1b88566",
+      "prUrl": "https://github.com/pbl6-home-renter/api-doc/pull/19",
+      "commitUrl": "https://github.com/pbl6-home-renter/api-doc/commit/bef12b999599581459b4b98a903f9313a1b88566",
+      "metadataKind": "Git revision thực tế",
+      "reason": "CHƯA CUNG CẤP — tác giả PR phải bổ sung lý do nghiệp vụ; không thể suy ra từ OpenAPI diff.",
+      "tools": {
+        "redocly": "2.64.1",
+        "oasdiff": "1.34.1"
+      },
+      "changes": [
+        {
+          "id": "response-property-enum-value-added",
+          "text": "added the new `GEOCODING_FAILED` enum value to the `code` response property for the response status `422`",
+          "comment": "The server may now return a value the previous contract excluded, so a client written against it may not handle the response. If the value set is meant to grow, declare it with x-extensible-enum.",
+          "level": 3,
+          "operation": "POST",
+          "operationId": "postBuildings",
+          "path": "/buildings",
+          "section": "paths",
+          "fingerprint": "17ed77cda181",
+          "classification": "BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới GEOCODING_FAILED; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-property-enum-value-added",
+          "text": "added the new `GEOCODING_UNAVAILABLE` enum value to the `code` response property for the response status `503`",
+          "comment": "The server may now return a value the previous contract excluded, so a client written against it may not handle the response. If the value set is meant to grow, declare it with x-extensible-enum.",
+          "level": 3,
+          "operation": "POST",
+          "operationId": "postBuildings",
+          "path": "/buildings",
+          "section": "paths",
+          "fingerprint": "947533efa81b",
+          "classification": "BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới GEOCODING_UNAVAILABLE; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-property-enum-value-added",
+          "text": "added the new `GEOCODING_FAILED` enum value to the `code` response property for the response status `422`",
+          "comment": "The server may now return a value the previous contract excluded, so a client written against it may not handle the response. If the value set is meant to grow, declare it with x-extensible-enum.",
+          "level": 3,
+          "operation": "PATCH",
+          "operationId": "patchBuildingsBuildingid",
+          "path": "/buildings/{buildingId}",
+          "section": "paths",
+          "fingerprint": "916fa41cb854",
+          "classification": "BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới GEOCODING_FAILED; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-property-enum-value-added",
+          "text": "added the new `GEOCODING_UNAVAILABLE` enum value to the `code` response property for the response status `503`",
+          "comment": "The server may now return a value the previous contract excluded, so a client written against it may not handle the response. If the value set is meant to grow, declare it with x-extensible-enum.",
+          "level": 3,
+          "operation": "PATCH",
+          "operationId": "patchBuildingsBuildingid",
+          "path": "/buildings/{buildingId}",
+          "section": "paths",
+          "fingerprint": "f6af2d0a3680",
+          "classification": "BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới GEOCODING_UNAVAILABLE; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "api-version-not-bumped",
+          "text": "a breaking change was detected but the version is still `1.0.0`",
+          "level": 1,
+          "section": "info",
+          "fingerprint": "d3f96cd643c1",
+          "classification": "NON_BREAKING",
+          "clientImpact": "BE: xem lại quy ước version trước khi chấp nhận breaking change. FE/Mobile: theo kế hoạch chuyển đổi của entry này; version trong OpenAPI chưa chứng minh backend đã triển khai."
+        },
+        {
+          "id": "response-property-became-not-nullable",
+          "text": "the response property `data/latitude` became not nullable for the status `201`",
+          "level": 1,
+          "operation": "POST",
+          "operationId": "postBuildings",
+          "path": "/buildings",
+          "section": "paths",
+          "fingerprint": "5856ca184081",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        },
+        {
+          "id": "response-property-became-not-nullable",
+          "text": "the response property `data/longitude` became not nullable for the status `201`",
+          "level": 1,
+          "operation": "POST",
+          "operationId": "postBuildings",
+          "path": "/buildings",
+          "section": "paths",
+          "fingerprint": "a48a8e8a92e0",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        },
+        {
+          "id": "response-property-became-required",
+          "text": "the response property `data/latitude` became required for the status `201`",
+          "level": 1,
+          "operation": "POST",
+          "operationId": "postBuildings",
+          "path": "/buildings",
+          "section": "paths",
+          "fingerprint": "48f22a7d5950",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        },
+        {
+          "id": "response-property-became-required",
+          "text": "the response property `data/longitude` became required for the status `201`",
+          "level": 1,
+          "operation": "POST",
+          "operationId": "postBuildings",
+          "path": "/buildings",
+          "section": "paths",
+          "fingerprint": "beefb1d7d5dd",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        }
+      ],
+      "locations": [
+        {
+          "pointer": "/components/schemas/BuildingCreateResponseDto/properties/latitude/nullable",
+          "before": true,
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/BuildingCreateResponseDto/properties/longitude/nullable",
+          "before": true,
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/BuildingCreateResponseDto/required",
+          "before": [
+            "id",
+            "status",
+            "createdAt"
+          ],
+          "after": [
+            "id",
+            "status",
+            "latitude",
+            "longitude",
+            "createdAt"
+          ]
+        },
+        {
+          "pointer": "/paths/~1buildings/post/description",
+          "before": "landlord. Gửi tòa nhà để duyệt. Lỗi nghiệp vụ: 422 VALIDATION FAILED · 403 FORBIDDEN.",
+          "after": "landlord. Gửi tòa nhà để duyệt. Client không gửi latitude/longitude; backend tự geocode từ address + ward + province qua TrackAsia (trước transaction), không ghi đè address. Geocode lỗi thì không tạo Building. Lỗi nghiệp vụ: 422 VALIDATION FAILED · 422 GEOCODING FAILED · 503 GEOCODING UNAVAILABLE · 403 FORBIDDEN."
+        },
+        {
+          "pointer": "/paths/~1buildings/post/responses/422/$ref",
+          "before": "#/components/responses/ValidationError",
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1buildings/post/responses/422/content",
+          "before": null,
+          "after": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "statusCode",
+                  "code"
+                ],
+                "properties": {
+                  "statusCode": {
+                    "type": "integer",
+                    "enum": [
+                      422
+                    ]
+                  },
+                  "code": {
+                    "type": "string",
+                    "enum": [
+                      "GEOCODING_FAILED",
+                      "VALIDATION_FAILED"
+                    ],
+                    "description": "- GEOCODING_FAILED: Không xác định được tọa độ từ địa chỉ (address, ward, province); người dùng cần sửa địa chỉ.\n- VALIDATION_FAILED: Dữ liệu vi phạm ràng buộc schema hoặc quy tắc nghiệp vụ khác chưa có mã riêng."
+                  }
+                }
+              },
+              "examples": {
+                "geocoding_failed": {
+                  "summary": "GEOCODING_FAILED — Không xác định được tọa độ từ địa chỉ.",
+                  "value": {
+                    "statusCode": 422,
+                    "code": "GEOCODING_FAILED"
+                  }
+                },
+                "validation_failed": {
+                  "summary": "VALIDATION_FAILED — Dữ liệu vi phạm ràng buộc schema hoặc quy tắc nghiệp vụ khác chưa có mã riêng.",
+                  "value": {
+                    "statusCode": 422,
+                    "code": "VALIDATION_FAILED"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "pointer": "/paths/~1buildings/post/responses/422/description",
+          "before": null,
+          "after": "Dữ liệu hợp lệ về cấu trúc nhưng vi phạm ràng buộc trường hoặc quy tắc nghiệp vụ."
+        },
+        {
+          "pointer": "/paths/~1buildings/post/responses/422/x-apidog-name",
+          "before": null,
+          "after": "Unprocessable Entity"
+        },
+        {
+          "pointer": "/paths/~1buildings/post/responses/503/$ref",
+          "before": "#/components/responses/AuthUnavailableError",
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1buildings/post/responses/503/content",
+          "before": null,
+          "after": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "statusCode",
+                  "code"
+                ],
+                "properties": {
+                  "statusCode": {
+                    "type": "integer",
+                    "enum": [
+                      503
+                    ]
+                  },
+                  "code": {
+                    "type": "string",
+                    "enum": [
+                      "AUTH_UNAVAILABLE",
+                      "GEOCODING_UNAVAILABLE"
+                    ],
+                    "description": "- AUTH_UNAVAILABLE: Hạ tầng xác thực tạm thời không khả dụng.\n- GEOCODING_UNAVAILABLE: Dịch vụ geocoding (TrackAsia) timeout hoặc lỗi; chưa tạo/cập nhật dữ liệu, client có thể thử lại."
+                  }
+                }
+              },
+              "examples": {
+                "auth_unavailable": {
+                  "summary": "AUTH_UNAVAILABLE — Hạ tầng xác thực tạm thời không khả dụng.",
+                  "value": {
+                    "statusCode": 503,
+                    "code": "AUTH_UNAVAILABLE"
+                  }
+                },
+                "geocoding_unavailable": {
+                  "summary": "GEOCODING_UNAVAILABLE — Dịch vụ geocoding tạm thời không khả dụng.",
+                  "value": {
+                    "statusCode": 503,
+                    "code": "GEOCODING_UNAVAILABLE"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "pointer": "/paths/~1buildings/post/responses/503/description",
+          "before": null,
+          "after": "Dịch vụ phụ thuộc (xác thực hoặc geocoding) tạm thời không khả dụng."
+        },
+        {
+          "pointer": "/paths/~1buildings/post/responses/503/x-apidog-name",
+          "before": null,
+          "after": "Service Unavailable"
+        },
+        {
+          "pointer": "/paths/~1buildings~1{buildingId}/patch/description",
+          "before": "landlord. Cập nhật thông tin tòa nhà. Lỗi nghiệp vụ: 404 NOT FOUND · 403 FORBIDDEN · 409 APPROVED BUILDING LOCKED · 422 VALIDATION FAILED.",
+          "after": "landlord. Cập nhật thông tin tòa nhà. Khi đổi address, backend geocode lại latitude/longitude từ address mới + ward + province hiện tại qua TrackAsia; geocode lỗi thì không cập nhật. Lỗi nghiệp vụ: 404 NOT FOUND · 403 FORBIDDEN · 409 APPROVED BUILDING LOCKED · 422 VALIDATION FAILED · 422 GEOCODING FAILED · 503 GEOCODING UNAVAILABLE."
+        },
+        {
+          "pointer": "/paths/~1buildings~1{buildingId}/patch/responses/422/$ref",
+          "before": "#/components/responses/ValidationError",
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1buildings~1{buildingId}/patch/responses/422/content",
+          "before": null,
+          "after": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "statusCode",
+                  "code"
+                ],
+                "properties": {
+                  "statusCode": {
+                    "type": "integer",
+                    "enum": [
+                      422
+                    ]
+                  },
+                  "code": {
+                    "type": "string",
+                    "enum": [
+                      "GEOCODING_FAILED",
+                      "VALIDATION_FAILED"
+                    ],
+                    "description": "- GEOCODING_FAILED: Không xác định được tọa độ từ địa chỉ (address, ward, province); người dùng cần sửa địa chỉ.\n- VALIDATION_FAILED: Dữ liệu vi phạm ràng buộc schema hoặc quy tắc nghiệp vụ khác chưa có mã riêng."
+                  }
+                }
+              },
+              "examples": {
+                "geocoding_failed": {
+                  "summary": "GEOCODING_FAILED — Không xác định được tọa độ từ địa chỉ.",
+                  "value": {
+                    "statusCode": 422,
+                    "code": "GEOCODING_FAILED"
+                  }
+                },
+                "validation_failed": {
+                  "summary": "VALIDATION_FAILED — Dữ liệu vi phạm ràng buộc schema hoặc quy tắc nghiệp vụ khác chưa có mã riêng.",
+                  "value": {
+                    "statusCode": 422,
+                    "code": "VALIDATION_FAILED"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "pointer": "/paths/~1buildings~1{buildingId}/patch/responses/422/description",
+          "before": null,
+          "after": "Dữ liệu hợp lệ về cấu trúc nhưng vi phạm ràng buộc trường hoặc quy tắc nghiệp vụ."
+        },
+        {
+          "pointer": "/paths/~1buildings~1{buildingId}/patch/responses/422/x-apidog-name",
+          "before": null,
+          "after": "Unprocessable Entity"
+        },
+        {
+          "pointer": "/paths/~1buildings~1{buildingId}/patch/responses/503/$ref",
+          "before": "#/components/responses/AuthUnavailableError",
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1buildings~1{buildingId}/patch/responses/503/content",
+          "before": null,
+          "after": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "statusCode",
+                  "code"
+                ],
+                "properties": {
+                  "statusCode": {
+                    "type": "integer",
+                    "enum": [
+                      503
+                    ]
+                  },
+                  "code": {
+                    "type": "string",
+                    "enum": [
+                      "AUTH_UNAVAILABLE",
+                      "GEOCODING_UNAVAILABLE"
+                    ],
+                    "description": "- AUTH_UNAVAILABLE: Hạ tầng xác thực tạm thời không khả dụng.\n- GEOCODING_UNAVAILABLE: Dịch vụ geocoding (TrackAsia) timeout hoặc lỗi; chưa tạo/cập nhật dữ liệu, client có thể thử lại."
+                  }
+                }
+              },
+              "examples": {
+                "auth_unavailable": {
+                  "summary": "AUTH_UNAVAILABLE — Hạ tầng xác thực tạm thời không khả dụng.",
+                  "value": {
+                    "statusCode": 503,
+                    "code": "AUTH_UNAVAILABLE"
+                  }
+                },
+                "geocoding_unavailable": {
+                  "summary": "GEOCODING_UNAVAILABLE — Dịch vụ geocoding tạm thời không khả dụng.",
+                  "value": {
+                    "statusCode": 503,
+                    "code": "GEOCODING_UNAVAILABLE"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "pointer": "/paths/~1buildings~1{buildingId}/patch/responses/503/description",
+          "before": null,
+          "after": "Dịch vụ phụ thuộc (xác thực hoặc geocoding) tạm thời không khả dụng."
+        },
+        {
+          "pointer": "/paths/~1buildings~1{buildingId}/patch/responses/503/x-apidog-name",
+          "before": null,
+          "after": "Service Unavailable"
+        }
+      ],
+      "semanticDiff": {
+        "paths": {
+          "modified": {
+            "/buildings": {
+              "operations": {
+                "modified": {
+                  "POST": {
+                    "responses": {
+                      "modified": {
+                        "201": {
+                          "content": {
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "properties": {
+                                    "modified": {
+                                      "data": {
+                                        "required": {
+                                          "added": [
+                                            "latitude",
+                                            "longitude"
+                                          ]
+                                        },
+                                        "properties": {
+                                          "modified": {
+                                            "latitude": {
+                                              "nullable": {
+                                                "from": true,
+                                                "to": false
+                                              }
+                                            },
+                                            "longitude": {
+                                              "nullable": {
+                                                "from": true,
+                                                "to": false
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "422": {
+                          "content": {
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "properties": {
+                                    "modified": {
+                                      "code": {
+                                        "enum": {
+                                          "added": [
+                                            "GEOCODING_FAILED"
+                                          ]
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "503": {
+                          "extensions": {
+                            "modified": {
+                              "x-apidog-name": [
+                                {
+                                  "oldValue": "Authentication Unavailable",
+                                  "value": "Service Unavailable",
+                                  "op": "replace",
+                                  "from": "",
+                                  "path": ""
+                                }
+                              ]
+                            }
+                          },
+                          "content": {
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "properties": {
+                                    "modified": {
+                                      "code": {
+                                        "enum": {
+                                          "added": [
+                                            "GEOCODING_UNAVAILABLE"
+                                          ]
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "/buildings/{buildingId}": {
+              "operations": {
+                "modified": {
+                  "PATCH": {
+                    "responses": {
+                      "modified": {
+                        "422": {
+                          "content": {
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "properties": {
+                                    "modified": {
+                                      "code": {
+                                        "enum": {
+                                          "added": [
+                                            "GEOCODING_FAILED"
+                                          ]
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "503": {
+                          "extensions": {
+                            "modified": {
+                              "x-apidog-name": [
+                                {
+                                  "oldValue": "Authentication Unavailable",
+                                  "value": "Service Unavailable",
+                                  "op": "replace",
+                                  "from": "",
+                                  "path": ""
+                                }
+                              ]
+                            }
+                          },
+                          "content": {
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "properties": {
+                                    "modified": {
+                                      "code": {
+                                        "enum": {
+                                          "added": [
+                                            "GEOCODING_UNAVAILABLE"
+                                          ]
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "components": {
+          "schemas": {
+            "modified": {
+              "BuildingCreateResponseDto": {
+                "required": {
+                  "added": [
+                    "longitude",
+                    "latitude"
+                  ]
+                },
+                "properties": {
+                  "modified": {
+                    "latitude": {
+                      "nullable": {
+                        "from": true,
+                        "to": false
+                      }
+                    },
+                    "longitude": {
+                      "nullable": {
+                        "from": true,
+                        "to": false
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "375e62dd3891ae973a42840b5af8f867a181560183190fdf5d486a17e1ef1058",
+      "label": "Thay đổi contract từ Git",
+      "classification": "NON_BREAKING",
+      "contractId": "rentify-public",
+      "repository": "https://github.com/pbl6-home-renter/api-doc",
+      "baseHash": "2db413ff6152f63e9d5e117b11deb16b1f70b078f75fda8a28c851fd69769fce",
+      "headHash": "1e2e5105e636dff9e696f127d7d6aa156642c171b8409da37a456608fc61f40a",
+      "baseSource": "src/openapi.yaml",
+      "headSource": "src/openapi.yaml",
+      "detectedAt": "2026-10-26T10:27:34.661Z",
+      "committedAt": "2026-10-26T17:27:24+07:00",
+      "baseCommit": "74dda64a04ac646e79120680a099aa309c9ef36d",
+      "headCommit": "cdf877a2384c32eae1b4c12e9c4c2619abc5fd58",
+      "prUrl": "https://github.com/pbl6-home-renter/api-doc/pull/20",
+      "commitUrl": "https://github.com/pbl6-home-renter/api-doc/commit/cdf877a2384c32eae1b4c12e9c4c2619abc5fd58",
+      "metadataKind": "Git revision thực tế",
+      "reason": "CHƯA CUNG CẤP — tác giả PR phải bổ sung lý do nghiệp vụ; không thể suy ra từ OpenAPI diff.",
+      "tools": {
+        "redocly": "2.64.1",
+        "oasdiff": "1.34.1"
+      },
+      "changes": [
+        {
+          "id": "endpoint-added",
+          "text": "endpoint added",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getAdministrativeProvinces",
+          "path": "/administrative-units/provinces",
+          "section": "paths",
+          "revisionSource": {
+            "file": "/tmp/rentify-contract-ZMgIsi/head-0.json"
+          },
+          "fingerprint": "37de13da95fa",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        },
+        {
+          "id": "endpoint-added",
+          "text": "endpoint added",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getAdministrativeWards",
+          "path": "/administrative-units/provinces/{provinceCode}/wards",
+          "section": "paths",
+          "revisionSource": {
+            "file": "/tmp/rentify-contract-ZMgIsi/head-0.json"
+          },
+          "fingerprint": "714eb573650f",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        }
+      ],
+      "locations": [
+        {
+          "pointer": "/components/schemas/AdministrativeProvinceDto",
+          "before": null,
+          "after": {
+            "type": "object",
+            "additionalProperties": false,
+            "title": "AdministrativeProvinceDto",
+            "required": [
+              "code",
+              "name",
+              "divisionType"
+            ],
+            "properties": {
+              "code": {
+                "type": "string",
+                "pattern": "^\\d{2}$",
+                "example": "01"
+              },
+              "name": {
+                "type": "string",
+                "example": "Thành phố Hà Nội"
+              },
+              "divisionType": {
+                "type": "string",
+                "example": "thành phố trung ương"
+              }
+            }
+          }
+        },
+        {
+          "pointer": "/components/schemas/AdministrativeWardDto",
+          "before": null,
+          "after": {
+            "type": "object",
+            "additionalProperties": false,
+            "title": "AdministrativeWardDto",
+            "required": [
+              "code",
+              "provinceCode",
+              "name",
+              "divisionType"
+            ],
+            "properties": {
+              "code": {
+                "type": "string",
+                "pattern": "^\\d{5}$",
+                "example": "00004"
+              },
+              "provinceCode": {
+                "type": "string",
+                "pattern": "^\\d{2}$",
+                "example": "01"
+              },
+              "name": {
+                "type": "string",
+                "example": "Phường Ba Đình"
+              },
+              "divisionType": {
+                "type": "string",
+                "example": "phường"
+              }
+            }
+          }
+        },
+        {
+          "pointer": "/paths/~1administrative-units~1provinces",
+          "before": null,
+          "after": {
+            "get": {
+              "tags": [
+                "Administrative Units"
+              ],
+              "x-apidog-folder": "Administrative Units",
+              "x-apidog-status": "designing",
+              "operationId": "getAdministrativeProvinces",
+              "summary": "List Vietnamese provinces",
+              "description": "Public local reference map served by Tenancy-Service. It does not geocode addresses or query a runtime provider.",
+              "security": [],
+              "responses": {
+                "200": {
+                  "description": "Provinces returned successfully.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "required": [
+                          "statusCode",
+                          "code",
+                          "data"
+                        ],
+                        "properties": {
+                          "statusCode": {
+                            "type": "integer",
+                            "enum": [
+                              200
+                            ]
+                          },
+                          "code": {
+                            "type": "string",
+                            "enum": [
+                              "ADMINISTRATIVE_PROVINCES_FETCHED"
+                            ]
+                          },
+                          "data": {
+                            "type": "array",
+                            "items": {
+                              "$ref": "#/components/schemas/AdministrativeProvinceDto"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "pointer": "/paths/~1administrative-units~1provinces~1{provinceCode}~1wards",
+          "before": null,
+          "after": {
+            "get": {
+              "tags": [
+                "Administrative Units"
+              ],
+              "x-apidog-folder": "Administrative Units",
+              "x-apidog-status": "designing",
+              "operationId": "getAdministrativeWards",
+              "summary": "List wards by province",
+              "description": "Public local reference map. Province code accepts one or two digits and is normalized to a two-digit code.",
+              "security": [],
+              "parameters": [
+                {
+                  "name": "provinceCode",
+                  "in": "path",
+                  "required": true,
+                  "description": "One- or two-digit province code.",
+                  "schema": {
+                    "type": "string",
+                    "pattern": "^\\d{1,2}$"
+                  },
+                  "example": "01"
+                }
+              ],
+              "responses": {
+                "200": {
+                  "description": "Wards returned successfully.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "required": [
+                          "statusCode",
+                          "code",
+                          "data"
+                        ],
+                        "properties": {
+                          "statusCode": {
+                            "type": "integer",
+                            "enum": [
+                              200
+                            ]
+                          },
+                          "code": {
+                            "type": "string",
+                            "enum": [
+                              "ADMINISTRATIVE_WARDS_FETCHED"
+                            ]
+                          },
+                          "data": {
+                            "type": "array",
+                            "items": {
+                              "$ref": "#/components/schemas/AdministrativeWardDto"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "404": {
+                  "description": "Province code does not exist.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "required": [
+                          "statusCode",
+                          "code"
+                        ],
+                        "properties": {
+                          "statusCode": {
+                            "type": "integer",
+                            "enum": [
+                              404
+                            ]
+                          },
+                          "code": {
+                            "type": "string",
+                            "enum": [
+                              "PROVINCE_NOT_FOUND"
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "422": {
+                  "description": "Province code is invalid.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "required": [
+                          "statusCode",
+                          "code"
+                        ],
+                        "properties": {
+                          "statusCode": {
+                            "type": "integer",
+                            "enum": [
+                              422
+                            ]
+                          },
+                          "code": {
+                            "type": "string",
+                            "enum": [
+                              "INVALID_PROVINCE_CODE"
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "pointer": "/tags",
+          "before": [
+            {
+              "name": "Auth",
+              "description": "Quản lý xác thực và phiên làm việc"
+            },
+            {
+              "name": "User",
+              "description": "Hồ sơ người dùng, phân quyền và quản trị"
+            },
+            {
+              "name": "Property",
+              "description": "Tòa nhà, phòng trọ và phòng yêu thích"
+            },
+            {
+              "name": "Contract",
+              "description": "Hợp đồng thuê phòng và thành viên ở cùng"
+            },
+            {
+              "name": "Billing",
+              "description": "Chính sách giá, chỉ số công tơ, hóa đơn và thanh toán"
+            },
+            {
+              "name": "Operation",
+              "description": "Báo cáo sự cố, tệp tin phương tiện và nhật ký kiểm toán"
+            },
+            {
+              "name": "Chat",
+              "description": "Hội thoại trao đổi theo phòng, tòa nhà và tin nhắn"
+            },
+            {
+              "name": "Matching",
+              "description": "Hồ sơ roommate và yêu cầu kết nối ở ghép"
+            },
+            {
+              "name": "Notification",
+              "description": "Thông báo người dùng và thiết bị push FCM"
+            }
+          ],
+          "after": [
+            {
+              "name": "Auth",
+              "description": "Quản lý xác thực và phiên làm việc"
+            },
+            {
+              "name": "User",
+              "description": "Hồ sơ người dùng, phân quyền và quản trị"
+            },
+            {
+              "name": "Property",
+              "description": "Tòa nhà, phòng trọ và phòng yêu thích"
+            },
+            {
+              "name": "Contract",
+              "description": "Hợp đồng thuê phòng và thành viên ở cùng"
+            },
+            {
+              "name": "Billing",
+              "description": "Chính sách giá, chỉ số công tơ, hóa đơn và thanh toán"
+            },
+            {
+              "name": "Operation",
+              "description": "Báo cáo sự cố, tệp tin phương tiện và nhật ký kiểm toán"
+            },
+            {
+              "name": "Chat",
+              "description": "Hội thoại trao đổi theo phòng, tòa nhà và tin nhắn"
+            },
+            {
+              "name": "Matching",
+              "description": "Hồ sơ roommate và yêu cầu kết nối ở ghép"
+            },
+            {
+              "name": "Notification",
+              "description": "Thông báo người dùng và thiết bị push FCM"
+            },
+            {
+              "name": "Administrative Units",
+              "description": "Vietnamese administrative geography reference data"
+            }
+          ]
+        }
+      ],
+      "semanticDiff": {
+        "paths": {
+          "added": [
+            "/administrative-units/provinces",
+            "/administrative-units/provinces/{provinceCode}/wards"
+          ]
+        },
+        "tags": {
+          "added": [
+            "Administrative Units"
+          ]
+        },
+        "components": {
+          "schemas": {
+            "added": [
+              "AdministrativeWardDto",
+              "AdministrativeProvinceDto"
+            ]
+          }
+        }
+      }
     }
   ]
 }

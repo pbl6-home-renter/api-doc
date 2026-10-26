@@ -1,0 +1,29 @@
+get:
+  tags:
+    - Administrative Units
+  x-apidog-folder: Administrative Units
+  x-apidog-status: designing
+  operationId: getAdministrativeProvinces
+  summary: List Vietnamese provinces
+  description: Public local reference map served by Tenancy-Service. It does not geocode addresses or query a runtime provider.
+  security: []
+  responses:
+    '200':
+      description: Provinces returned successfully.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code, data]
+            properties:
+              statusCode:
+                type: integer
+                enum: [200]
+              code:
+                type: string
+                enum: [ADMINISTRATIVE_PROVINCES_FETCHED]
+              data:
+                type: array
+                items:
+                  $ref: ../../openapi.yaml#/components/schemas/AdministrativeProvinceDto

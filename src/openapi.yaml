@@ -33,6 +33,9 @@ tags:
   - name: Notification
     description: Thông báo người dùng và thiết bị push FCM
 
+  - name: Administrative Units
+    description: Vietnamese administrative geography reference data
+
 paths:
   /auth/register:
     $ref: './paths/auth/register.yaml'
@@ -217,10 +220,21 @@ paths:
     $ref: './paths/operations/audit-logs-auditLogId.yaml'
   /dashboard:
     $ref: './paths/operations/dashboard.yaml'
+  /administrative-units/provinces:
+    $ref: './paths/administrative-units/provinces.yaml'
+  /administrative-units/provinces/{provinceCode}/wards:
+    $ref: './paths/administrative-units/provinceCode-wards.yaml'
 
 
 components:
   schemas:
+
+    # Administrative geography reference data
+    AdministrativeProvinceDto:
+      $ref: './schemas/administrative-units/province.yaml'
+
+    AdministrativeWardDto:
+      $ref: './schemas/administrative-units/ward.yaml'
 
     # Auth Request / Response DTOs
     AuthRegisterRequestDto:
