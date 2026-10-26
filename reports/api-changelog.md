@@ -5,11 +5,63 @@
 
 Báo cáo lưu lịch sử các entry đã phát hiện, mới nhất ở trên. `NO_CHANGE` không xóa entry cũ; exit code chỉ phản ánh lần chạy hiện tại.
 
-Công cụ: Redocly 2.64.1; oasdiff 1.34.1. Số entry: **5**.
+Công cụ: Redocly 2.64.1; oasdiff 1.34.1. Số entry: **6**.
 
 Phân loại: **BREAKING** = client cũ có thể hỏng; **NON_BREAKING** = tương thích theo contract; **NEEDS_REVIEW** = chưa đủ bằng chứng.
 
 Các vị trí dùng JSON Pointer trên bundle tạm (`~1` là `/`). JSON đi kèm giữ toàn bộ semantic diff, fingerprint và hash phục vụ truy vết.
+
+## Thay đổi contract từ Git — BREAKING
+
+- ID: `b09cdc1d4e290b0bd2204e68c9ca2ffc6c3487d8929177c1cea5e96919c5447f`
+- Contract: rentify-public; repository: https://github.com/pbl6-home-renter/api-doc
+- Nguồn: `src/openapi.yaml` → `src/openapi.yaml`
+- Phát hiện (UTC): 2026-10-26T09:42:31.816Z; commit time: 2026-10-26T16:42:20+07:00
+- Commit nền: 38a69935694460dfe3efdcd7b6005441662629f3
+- Commit đích/bối cảnh: [bef12b999599581459b4b98a903f9313a1b88566](https://github.com/pbl6-home-renter/api-doc/commit/bef12b999599581459b4b98a903f9313a1b88566)
+- PR: [https://github.com/pbl6-home-renter/api-doc/pull/19](https://github.com/pbl6-home-renter/api-doc/pull/19)
+- Loại metadata: Git revision thực tế
+- Lý do: CHƯA CUNG CẤP — tác giả PR phải bổ sung lý do nghiệp vụ; không thể suy ra từ OpenAPI diff.
+
+| Mức ảnh hưởng | Endpoint / vùng | Thay đổi | Hành động FE / Mobile |
+|---|---|---|---|
+| BREAKING | POST /buildings | added the new `GEOCODING_FAILED` enum value to the `code` response property for the response status `422` (`response-property-enum-value-added`) | FE: có thể bỏ qua field mới GEOCODING_FAILED; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại. |
+| BREAKING | POST /buildings | added the new `GEOCODING_UNAVAILABLE` enum value to the `code` response property for the response status `503` (`response-property-enum-value-added`) | FE: có thể bỏ qua field mới GEOCODING_UNAVAILABLE; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại. |
+| BREAKING | PATCH /buildings/{buildingId} | added the new `GEOCODING_FAILED` enum value to the `code` response property for the response status `422` (`response-property-enum-value-added`) | FE: có thể bỏ qua field mới GEOCODING_FAILED; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại. |
+| BREAKING | PATCH /buildings/{buildingId} | added the new `GEOCODING_UNAVAILABLE` enum value to the `code` response property for the response status `503` (`response-property-enum-value-added`) | FE: có thể bỏ qua field mới GEOCODING_UNAVAILABLE; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại. |
+| NON_BREAKING | info | Đã phát hiện breaking change nhưng info.version vẫn là `1.0.0`. (`api-version-not-bumped`) | BE: xem lại quy ước version trước khi chấp nhận breaking change. FE/Mobile: theo kế hoạch chuyển đổi của entry này; version trong OpenAPI chưa chứng minh backend đã triển khai. |
+| NON_BREAKING | POST /buildings | the response property `data/latitude` became not nullable for the status `201` (`response-property-became-not-nullable`) | FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI. |
+| NON_BREAKING | POST /buildings | the response property `data/longitude` became not nullable for the status `201` (`response-property-became-not-nullable`) | FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI. |
+| NON_BREAKING | POST /buildings | the response property `data/latitude` became required for the status `201` (`response-property-became-required`) | FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI. |
+| NON_BREAKING | POST /buildings | the response property `data/longitude` became required for the status `201` (`response-property-became-required`) | FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI. |
+
+### Vị trí và giá trị trước/sau
+
+| Path / schema / field (JSON Pointer) | Trước | Sau |
+|---|---|---|
+| `/components/schemas/BuildingCreateResponseDto/properties/latitude/nullable` | true | null |
+| `/components/schemas/BuildingCreateResponseDto/properties/longitude/nullable` | true | null |
+| `/components/schemas/BuildingCreateResponseDto/required` | ["id","status","createdAt"] | ["id","status","latitude","longitude","createdAt"] |
+| `/paths/~1buildings/post/description` | "landlord. Gửi tòa nhà để duyệt. Lỗi nghiệp vụ: 422 VALIDATION FAILED · 403 FORBIDDEN." | "landlord. Gửi tòa nhà để duyệt. Client không gửi latitude/longitude; backend tự geocode từ address + ward + province qua TrackAsia (trước transaction), không ghi đè address. Geocode lỗi thì không tạo Building. Lỗi nghiệp vụ: 422 VALIDATION FAILED · 422 GEOCODING FAILED · 503 GEOCODING UNAVAILABLE · 403 FORBIDDEN." |
+| `/paths/~1buildings/post/responses/422/$ref` | "#/components/responses/ValidationError" | null |
+| `/paths/~1buildings/post/responses/422/content` | null | {"application/json":{"schema":{"type":"object","additionalProperties":false,"required":["statusCode","code"],"properties":{"statusCode":{"type":"integer","enum":[422]},"code":{"type":"string","enum":["GEOCODING_FAILED","VALIDATION_FAILED"],"description":"- GEOCODING_FAILED: Không xác định được tọa độ từ địa chỉ (address, ward, province); người dùng cần sửa địa chỉ.\n- VALIDATION_FAILED: Dữ liệu vi phạm ràng buộc schema hoặc quy tắc nghiệp vụ khác chưa có mã riêng."}}},"examples":{"geocoding_failed":{"summary":"GEOCODING_FAILED — Không xác định được tọa độ từ địa chỉ.","value":{"statusCode":422,"code":"GEOCODING_FAILED"}},"validation_failed":{"summary":"VALIDATION_FAILED — Dữ liệu vi phạm ràng buộc schema hoặc quy tắc nghiệp vụ khác chưa có mã riêng.","value":{"statusCode":422,"code":"VALIDATION_FAILED"}}}}} |
+| `/paths/~1buildings/post/responses/422/description` | null | "Dữ liệu hợp lệ về cấu trúc nhưng vi phạm ràng buộc trường hoặc quy tắc nghiệp vụ." |
+| `/paths/~1buildings/post/responses/422/x-apidog-name` | null | "Unprocessable Entity" |
+| `/paths/~1buildings/post/responses/503/$ref` | "#/components/responses/AuthUnavailableError" | null |
+| `/paths/~1buildings/post/responses/503/content` | null | {"application/json":{"schema":{"type":"object","additionalProperties":false,"required":["statusCode","code"],"properties":{"statusCode":{"type":"integer","enum":[503]},"code":{"type":"string","enum":["AUTH_UNAVAILABLE","GEOCODING_UNAVAILABLE"],"description":"- AUTH_UNAVAILABLE: Hạ tầng xác thực tạm thời không khả dụng.\n- GEOCODING_UNAVAILABLE: Dịch vụ geocoding (TrackAsia) timeout hoặc lỗi; chưa tạo/cập nhật dữ liệu, client có thể thử lại."}}},"examples":{"auth_unavailable":{"summary":"AUTH_UNAVAILABLE — Hạ tầng xác thực tạm thời không khả dụng.","value":{"statusCode":503,"code":"AUTH_UNAVAILABLE"}},"geocoding_unavailable":{"summary":"GEOCODING_UNAVAILABLE — Dịch vụ geocoding tạm thời không khả dụng.","value":{"statusCode":503,"code":"GEOCODING_UNAVAILABLE"}}}}} |
+| `/paths/~1buildings/post/responses/503/description` | null | "Dịch vụ phụ thuộc (xác thực hoặc geocoding) tạm thời không khả dụng." |
+| `/paths/~1buildings/post/responses/503/x-apidog-name` | null | "Service Unavailable" |
+| `/paths/~1buildings~1{buildingId}/patch/description` | "landlord. Cập nhật thông tin tòa nhà. Lỗi nghiệp vụ: 404 NOT FOUND · 403 FORBIDDEN · 409 APPROVED BUILDING LOCKED · 422 VALIDATION FAILED." | "landlord. Cập nhật thông tin tòa nhà. Khi đổi address, backend geocode lại latitude/longitude từ address mới + ward + province hiện tại qua TrackAsia; geocode lỗi thì không cập nhật. Lỗi nghiệp vụ: 404 NOT FOUND · 403 FORBIDDEN · 409 APPROVED BUILDING LOCKED · 422 VALIDATION FAILED · 422 GEOCODING FAILED · 503 GEOCODING UNAVAILABLE." |
+| `/paths/~1buildings~1{buildingId}/patch/responses/422/$ref` | "#/components/responses/ValidationError" | null |
+| `/paths/~1buildings~1{buildingId}/patch/responses/422/content` | null | {"application/json":{"schema":{"type":"object","additionalProperties":false,"required":["statusCode","code"],"properties":{"statusCode":{"type":"integer","enum":[422]},"code":{"type":"string","enum":["GEOCODING_FAILED","VALIDATION_FAILED"],"description":"- GEOCODING_FAILED: Không xác định được tọa độ từ địa chỉ (address, ward, province); người dùng cần sửa địa chỉ.\n- VALIDATION_FAILED: Dữ liệu vi phạm ràng buộc schema hoặc quy tắc nghiệp vụ khác chưa có mã riêng."}}},"examples":{"geocoding_failed":{"summary":"GEOCODING_FAILED — Không xác định được tọa độ từ địa chỉ.","value":{"statusCode":422,"code":"GEOCODING_FAILED"}},"validation_failed":{"summary":"VALIDATION_FAILED — Dữ liệu vi phạm ràng buộc schema hoặc quy tắc nghiệp vụ khác chưa có mã riêng.","value":{"statusCode":422,"code":"VALIDATION_FAILED"}}}}} |
+| `/paths/~1buildings~1{buildingId}/patch/responses/422/description` | null | "Dữ liệu hợp lệ về cấu trúc nhưng vi phạm ràng buộc trường hoặc quy tắc nghiệp vụ." |
+| `/paths/~1buildings~1{buildingId}/patch/responses/422/x-apidog-name` | null | "Unprocessable Entity" |
+| `/paths/~1buildings~1{buildingId}/patch/responses/503/$ref` | "#/components/responses/AuthUnavailableError" | null |
+| `/paths/~1buildings~1{buildingId}/patch/responses/503/content` | null | {"application/json":{"schema":{"type":"object","additionalProperties":false,"required":["statusCode","code"],"properties":{"statusCode":{"type":"integer","enum":[503]},"code":{"type":"string","enum":["AUTH_UNAVAILABLE","GEOCODING_UNAVAILABLE"],"description":"- AUTH_UNAVAILABLE: Hạ tầng xác thực tạm thời không khả dụng.\n- GEOCODING_UNAVAILABLE: Dịch vụ geocoding (TrackAsia) timeout hoặc lỗi; chưa tạo/cập nhật dữ liệu, client có thể thử lại."}}},"examples":{"auth_unavailable":{"summary":"AUTH_UNAVAILABLE — Hạ tầng xác thực tạm thời không khả dụng.","value":{"statusCode":503,"code":"AUTH_UNAVAILABLE"}},"geocoding_unavailable":{"summary":"GEOCODING_UNAVAILABLE — Dịch vụ geocoding tạm thời không khả dụng.","value":{"statusCode":503,"code":"GEOCODING_UNAVAILABLE"}}}}} |
+| `/paths/~1buildings~1{buildingId}/patch/responses/503/description` | null | "Dịch vụ phụ thuộc (xác thực hoặc geocoding) tạm thời không khả dụng." |
+| `/paths/~1buildings~1{buildingId}/patch/responses/503/x-apidog-name` | null | "Service Unavailable" |
+
+**Kiểm tra thủ công:** BE xác nhận lý do, endpoint dùng schema chung, thay đổi role/ownership mô tả bằng văn bản và thời điểm triển khai. FE/Mobile xác nhận tác động với parser và phiên bản client đang hỗ trợ.
 
 ## Thay đổi contract từ Git — BREAKING
 
