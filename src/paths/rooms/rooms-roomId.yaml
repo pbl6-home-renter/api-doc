@@ -76,8 +76,33 @@ patch:
   security:
     - BearerAuth: []
   summary: Update room
-  description: 'landlord. Cập nhật thông tin phòng. Lỗi nghiệp vụ: 404 NOT FOUND · 403 FORBIDDEN · 422 VALIDATION
-    FAILED.'
+  description: |-
+    landlord. Cập nhật một phần thông tin phòng.
+
+    ```mermaid
+    sequenceDiagram
+        autonumber
+        participant GW as API Gateway
+        participant TEN as Tenancy
+        participant DB as Tenancy DB
+        participant OB as Outbox
+
+        GW->>TEN: PATCH /rooms/{roomId} (access token, updates)
+        TEN->>TEN: Xác thực role landlord
+        TEN->>DB: [Transaction] SELECT room FOR UPDATE
+        alt Không tìm thấy hoặc đã xóa
+            TEN-->>GW: 404 RESOURCE_NOT_FOUND
+        else Room thuộc landlord khác
+            TEN-->>GW: 403 FORBIDDEN
+        else Room thuộc landlord hiện tại
+            TEN->>TEN: room.update(updates)
+            TEN->>DB: [Transaction] UPDATE rooms
+            TEN->>OB: [Transaction] INSERT room.updated
+            TEN-->>GW: 200 ROOM_UPDATED {id, name, rentPrice, area}
+        end
+    ```
+
+    Lỗi nghiệp vụ: 404 NOT FOUND · 403 FORBIDDEN · 422 VALIDATION FAILED.
   parameters:
   - name: roomId
     in: path
@@ -151,7 +176,33 @@ delete:
   security:
     - BearerAuth: []
   summary: Delete room
-  description: 'landlord. Xóa mềm phòng. Lỗi nghiệp vụ: 404 NOT FOUND · 409 ROOM HAS ACTIVE CONTRACT · 403 FORBIDDEN.'
+  description: |-
+    landlord. Xóa mềm phòng. Kiểm tra hợp đồng đang hiệu lực chưa được thực hiện vì domain Contract chưa tồn tại.
+
+    ```mermaid
+    sequenceDiagram
+        autonumber
+        participant GW as API Gateway
+        participant TEN as Tenancy
+        participant DB as Tenancy DB
+        participant OB as Outbox
+
+        GW->>TEN: DELETE /rooms/{roomId} (access token)
+        TEN->>TEN: Xác thực role landlord
+        TEN->>DB: [Transaction] SELECT room FOR UPDATE
+        alt Không tìm thấy hoặc đã xóa
+            TEN-->>GW: 404 RESOURCE_NOT_FOUND
+        else Room thuộc landlord khác
+            TEN-->>GW: 403 FORBIDDEN
+        else Room thuộc landlord hiện tại
+            TEN->>TEN: room.delete()
+            TEN->>DB: [Transaction] UPDATE rooms SET is_deleted = true
+            TEN->>OB: [Transaction] INSERT room.deleted
+            TEN-->>GW: 204 No Content
+        end
+    ```
+
+    Lỗi nghiệp vụ: 404 NOT FOUND · 403 FORBIDDEN.
   parameters:
   - name: roomId
     in: path
@@ -172,31 +223,6 @@ delete:
       $ref: ../../openapi.yaml#/components/responses/ForbiddenError
     '404':
       $ref: ../../openapi.yaml#/components/responses/NotFoundError
-    '409':
-      x-apidog-name: Conflict
-      description: Yêu cầu xung đột với trạng thái hiện tại hoặc dữ liệu đã tồn tại.
-      content:
-        application/json:
-          schema:
-            type: object
-            additionalProperties: false
-            required: [statusCode, code]
-            properties:
-              statusCode:
-                type: integer
-                enum: [409]
-              code:
-                type: string
-                enum:
-                  - ROOM_HAS_ACTIVE_CONTRACT
-                description: |-
-                  - ROOM_HAS_ACTIVE_CONTRACT: Phòng còn hợp đồng đang hiệu lực.
-          examples:
-            room_has_active_contract:
-              summary: ROOM_HAS_ACTIVE_CONTRACT — Phòng còn hợp đồng đang hiệu lực.
-              value:
-                statusCode: 409
-                code: ROOM_HAS_ACTIVE_CONTRACT
     '429':
       $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
     '500':

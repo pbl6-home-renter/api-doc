@@ -157,9 +157,7 @@ Project clarification mới nhất: PATCH là partial update, không cần gửi
 - Public room list không trả `status` vì contract public chỉ trả các phòng đang available.
 - Mark-ready không có Request DTO vì `roomId` nằm trên path và endpoint không có JSON body.
 
-### 3. Lưu ý cần xác nhận với leader
-
-- Room status có conflict: API spec dùng `cleaning` cho MyRoomList và mark-ready, trong khi database/entity schema chỉ có `available|occupied|maintenance`. DTO biến thiên hiện dùng `type: string` và không khóa enum; cần xác nhận lifecycle chính thức và có bổ sung `cleaning` vào domain hay đổi API spec không.
+### 3. Quyết định và lưu ý cần xác nhận với leader
 - `area` là string trong API contract nhưng number trong entity schema. DTO hiện ưu tiên API contract; cần xác nhận có đồng bộ entity schema hay giữ khác biệt có chủ ý.
 - `rentPrice` là integer trong API contract/convention nhưng number trong entity schema. DTO hiện dùng integer; cần xác nhận có đồng bộ domain schema hay không.
 - PATCH hiện chỉ công bố `name`, `rentPrice`, `area`; DTO không tự mở rộng thêm `description`, `floorNumber`, `amenities`, `maxOccupancy` hoặc `genderPolicy`. Cần xác nhận đây là tập editable đầy đủ hay chỉ là phần contract hiện tại.
