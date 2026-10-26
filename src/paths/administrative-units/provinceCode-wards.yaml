@@ -1,0 +1,68 @@
+get:
+  tags:
+    - Administrative Units
+  x-apidog-folder: Administrative Units
+  x-apidog-status: designing
+  operationId: getAdministrativeWards
+  summary: List wards by province
+  description: Public local reference map. Province code accepts one or two digits and is normalized to a two-digit code.
+  security: []
+  parameters:
+    - name: provinceCode
+      in: path
+      required: true
+      description: One- or two-digit province code.
+      schema:
+        type: string
+        pattern: '^\d{1,2}$'
+      example: '01'
+  responses:
+    '200':
+      description: Wards returned successfully.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code, data]
+            properties:
+              statusCode:
+                type: integer
+                enum: [200]
+              code:
+                type: string
+                enum: [ADMINISTRATIVE_WARDS_FETCHED]
+              data:
+                type: array
+                items:
+                  $ref: ../../openapi.yaml#/components/schemas/AdministrativeWardDto
+    '404':
+      description: Province code does not exist.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code]
+            properties:
+              statusCode:
+                type: integer
+                enum: [404]
+              code:
+                type: string
+                enum: [PROVINCE_NOT_FOUND]
+    '422':
+      description: Province code is invalid.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code]
+            properties:
+              statusCode:
+                type: integer
+                enum: [422]
+              code:
+                type: string
+                enum: [INVALID_PROVINCE_CODE]
