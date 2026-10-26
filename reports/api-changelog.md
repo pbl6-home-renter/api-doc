@@ -5,11 +5,40 @@
 
 Báo cáo lưu lịch sử các entry đã phát hiện, mới nhất ở trên. `NO_CHANGE` không xóa entry cũ; exit code chỉ phản ánh lần chạy hiện tại.
 
-Công cụ: Redocly 2.64.1; oasdiff 1.34.1. Số entry: **6**.
+Công cụ: Redocly 2.64.1; oasdiff 1.34.1. Số entry: **7**.
 
 Phân loại: **BREAKING** = client cũ có thể hỏng; **NON_BREAKING** = tương thích theo contract; **NEEDS_REVIEW** = chưa đủ bằng chứng.
 
 Các vị trí dùng JSON Pointer trên bundle tạm (`~1` là `/`). JSON đi kèm giữ toàn bộ semantic diff, fingerprint và hash phục vụ truy vết.
+
+## Thay đổi contract từ Git — NON_BREAKING
+
+- ID: `375e62dd3891ae973a42840b5af8f867a181560183190fdf5d486a17e1ef1058`
+- Contract: rentify-public; repository: https://github.com/pbl6-home-renter/api-doc
+- Nguồn: `src/openapi.yaml` → `src/openapi.yaml`
+- Phát hiện (UTC): 2026-10-26T10:27:34.661Z; commit time: 2026-10-26T17:27:24+07:00
+- Commit nền: 74dda64a04ac646e79120680a099aa309c9ef36d
+- Commit đích/bối cảnh: [cdf877a2384c32eae1b4c12e9c4c2619abc5fd58](https://github.com/pbl6-home-renter/api-doc/commit/cdf877a2384c32eae1b4c12e9c4c2619abc5fd58)
+- PR: [https://github.com/pbl6-home-renter/api-doc/pull/20](https://github.com/pbl6-home-renter/api-doc/pull/20)
+- Loại metadata: Git revision thực tế
+- Lý do: CHƯA CUNG CẤP — tác giả PR phải bổ sung lý do nghiệp vụ; không thể suy ra từ OpenAPI diff.
+
+| Mức ảnh hưởng | Endpoint / vùng | Thay đổi | Hành động FE / Mobile |
+|---|---|---|---|
+| NON_BREAKING | GET /administrative-units/provinces | Thêm endpoint mới. (`endpoint-added`) | FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI. |
+| NON_BREAKING | GET /administrative-units/provinces/{provinceCode}/wards | Thêm endpoint mới. (`endpoint-added`) | FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI. |
+
+### Vị trí và giá trị trước/sau
+
+| Path / schema / field (JSON Pointer) | Trước | Sau |
+|---|---|---|
+| `/components/schemas/AdministrativeProvinceDto` | null | {"type":"object","additionalProperties":false,"title":"AdministrativeProvinceDto","required":["code","name","divisionType"],"properties":{"code":{"type":"string","pattern":"^\\d{2}$","example":"01"},"name":{"type":"string","example":"Thành phố Hà Nội"},"divisionType":{"type":"string","example":"thành phố trung ương"}}} |
+| `/components/schemas/AdministrativeWardDto` | null | {"type":"object","additionalProperties":false,"title":"AdministrativeWardDto","required":["code","provinceCode","name","divisionType"],"properties":{"code":{"type":"string","pattern":"^\\d{5}$","example":"00004"},"provinceCode":{"type":"string","pattern":"^\\d{2}$","example":"01"},"name":{"type":"string","example":"Phường Ba Đình"},"divisionType":{"type":"string","example":"phường"}}} |
+| `/paths/~1administrative-units~1provinces` | null | {"get":{"tags":["Administrative Units"],"x-apidog-folder":"Administrative Units","x-apidog-status":"designing","operationId":"getAdministrativeProvinces","summary":"List Vietnamese provinces","description":"Public local reference map served by Tenancy-Service. It does not geocode addresses or query a runtime provider.","security":[],"responses":{"200":{"description":"Provinces returned successfully.","content":{"application/json":{"schema":{"type":"object","additionalProperties":false,"required":["statusCode","code","data"],"properties":{"statusCode":{"type":"integer","enum":[200]},"code":{"type":"string","enum":["ADMINISTRATIVE_PROVINCES_FETCHED"]},"data":{"type":"array","items":{"$ref":"#/components/schemas/AdministrativeProvinceDto"}}}}}}}}}} |
+| `/paths/~1administrative-units~1provinces~1{provinceCode}~1wards` | null | {"get":{"tags":["Administrative Units"],"x-apidog-folder":"Administrative Units","x-apidog-status":"designing","operationId":"getAdministrativeWards","summary":"List wards by province","description":"Public local reference map. Province code accepts one or two digits and is normalized to a two-digit code.","security":[],"parameters":[{"name":"provinceCode","in":"path","required":true,"description":"One- or two-digit province code.","schema":{"type":"string","pattern":"^\\d{1,2}$"},"example":"01"}],"responses":{"200":{"description":"Wards returned successfully.","content":{"application/json":{"schema":{"type":"object","additionalProperties":false,"required":["statusCode","code","data"],"properties":{"statusCode":{"type":"integer","enum":[200]},"code":{"type":"string","enum":["ADMINISTRATIVE_WARDS_FETCHED"]},"data":{"type":"array","items":{"$ref":"#/components/schemas/AdministrativeWardDto"}}}}}}},"404":{"description":"Province code does not exist.","content":{"application/json":{"schema":{"type":"object","additionalProperties":false,"required":["statusCode","code"],"properties":{"statusCode":{"type":"integer","enum":[404]},"code":{"type":"string","enum":["PROVINCE_NOT_FOUND"]}}}}}},"422":{"description":"Province code is invalid.","content":{"application/json":{"schema":{"type":"object","additionalProperties":false,"required":["statusCode","code"],"properties":{"statusCode":{"type":"integer","enum":[422]},"code":{"type":"string","enum":["INVALID_PROVINCE_CODE"]}}}}}}}}} |
+| `/tags` | [{"name":"Auth","description":"Quản lý xác thực và phiên làm việc"},{"name":"User","description":"Hồ sơ người dùng, phân quyền và quản trị"},{"name":"Property","description":"Tòa nhà, phòng trọ và phòng yêu thích"},{"name":"Contract","description":"Hợp đồng thuê phòng và thành viên ở cùng"},{"name":"Billing","description":"Chính sách giá, chỉ số công tơ, hóa đơn và thanh toán"},{"name":"Operation","description":"Báo cáo sự cố, tệp tin phương tiện và nhật ký kiểm toán"},{"name":"Chat","description":"Hội thoại trao đổi theo phòng, tòa nhà và tin nhắn"},{"name":"Matching","description":"Hồ sơ roommate và yêu cầu kết nối ở ghép"},{"name":"Notification","description":"Thông báo người dùng và thiết bị push FCM"}] | [{"name":"Auth","description":"Quản lý xác thực và phiên làm việc"},{"name":"User","description":"Hồ sơ người dùng, phân quyền và quản trị"},{"name":"Property","description":"Tòa nhà, phòng trọ và phòng yêu thích"},{"name":"Contract","description":"Hợp đồng thuê phòng và thành viên ở cùng"},{"name":"Billing","description":"Chính sách giá, chỉ số công tơ, hóa đơn và thanh toán"},{"name":"Operation","description":"Báo cáo sự cố, tệp tin phương tiện và nhật ký kiểm toán"},{"name":"Chat","description":"Hội thoại trao đổi theo phòng, tòa nhà và tin nhắn"},{"name":"Matching","description":"Hồ sơ roommate và yêu cầu kết nối ở ghép"},{"name":"Notification","description":"Thông báo người dùng và thiết bị push FCM"},{"name":"Administrative Units","description":"Vietnamese administrative geography reference data"}] |
+
+**Kiểm tra thủ công:** BE xác nhận lý do, endpoint dùng schema chung, thay đổi role/ownership mô tả bằng văn bản và thời điểm triển khai. FE/Mobile xác nhận tác động với parser và phiên bản client đang hỗ trợ.
 
 ## Thay đổi contract từ Git — BREAKING
 

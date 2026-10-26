@@ -52,6 +52,10 @@
     {
       "name": "Notification",
       "description": "Thông báo người dùng và thiết bị push FCM"
+    },
+    {
+      "name": "Administrative Units",
+      "description": "Vietnamese administrative geography reference data"
     }
   ],
   "paths": {
@@ -21547,10 +21551,239 @@
           }
         }
       }
+    },
+    "/administrative-units/provinces": {
+      "get": {
+        "tags": [
+          "Administrative Units"
+        ],
+        "x-apidog-folder": "Administrative Units",
+        "x-apidog-status": "designing",
+        "operationId": "getAdministrativeProvinces",
+        "summary": "List Vietnamese provinces",
+        "description": "Public local reference map served by Tenancy-Service. It does not geocode addresses or query a runtime provider.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-26 | 🟢 NON_BREAKING | Thêm endpoint mới. | [#20](https://github.com/pbl6-home-renter/api-doc/pull/20) |\n",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "Provinces returned successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code",
+                    "data"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        200
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "ADMINISTRATIVE_PROVINCES_FETCHED"
+                      ]
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/AdministrativeProvinceDto"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/administrative-units/provinces/{provinceCode}/wards": {
+      "get": {
+        "tags": [
+          "Administrative Units"
+        ],
+        "x-apidog-folder": "Administrative Units",
+        "x-apidog-status": "designing",
+        "operationId": "getAdministrativeWards",
+        "summary": "List wards by province",
+        "description": "Public local reference map. Province code accepts one or two digits and is normalized to a two-digit code.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-26 | 🟢 NON_BREAKING | Thêm endpoint mới. | [#20](https://github.com/pbl6-home-renter/api-doc/pull/20) |\n",
+        "security": [],
+        "parameters": [
+          {
+            "name": "provinceCode",
+            "in": "path",
+            "required": true,
+            "description": "One- or two-digit province code.",
+            "schema": {
+              "type": "string",
+              "pattern": "^\\d{1,2}$"
+            },
+            "example": "01"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Wards returned successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code",
+                    "data"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        200
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "ADMINISTRATIVE_WARDS_FETCHED"
+                      ]
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/AdministrativeWardDto"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Province code does not exist.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        404
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "PROVINCE_NOT_FOUND"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Province code is invalid.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        422
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "INVALID_PROVINCE_CODE"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
     "schemas": {
+      "AdministrativeProvinceDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "title": "AdministrativeProvinceDto",
+        "required": [
+          "code",
+          "name",
+          "divisionType"
+        ],
+        "properties": {
+          "code": {
+            "type": "string",
+            "pattern": "^\\d{2}$",
+            "example": "01"
+          },
+          "name": {
+            "type": "string",
+            "example": "Thành phố Hà Nội"
+          },
+          "divisionType": {
+            "type": "string",
+            "example": "thành phố trung ương"
+          }
+        }
+      },
+      "AdministrativeWardDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "title": "AdministrativeWardDto",
+        "required": [
+          "code",
+          "provinceCode",
+          "name",
+          "divisionType"
+        ],
+        "properties": {
+          "code": {
+            "type": "string",
+            "pattern": "^\\d{5}$",
+            "example": "00004"
+          },
+          "provinceCode": {
+            "type": "string",
+            "pattern": "^\\d{2}$",
+            "example": "01"
+          },
+          "name": {
+            "type": "string",
+            "example": "Phường Ba Đình"
+          },
+          "divisionType": {
+            "type": "string",
+            "example": "phường"
+          }
+        }
+      },
       "AuthRegisterRequestDto": {
         "type": "object",
         "x-apidog-folder": "Auth/Request",
