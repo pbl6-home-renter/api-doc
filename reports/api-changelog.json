@@ -8343,6 +8343,327 @@
           }
         }
       }
+    },
+    {
+      "id": "e683161551b967bf9d9c586449e50497b7865282520f564aa37b3884eb4568dc",
+      "label": "Thay đổi contract từ Git",
+      "classification": "BREAKING",
+      "contractId": "rentify-public",
+      "repository": "https://github.com/pbl6-home-renter/api-doc",
+      "baseHash": "c7f5d38c5746f56e437e088d1af94f4be76946cdd74a1c0cba3b8a71ac9d96aa",
+      "headHash": "4645e21bce738aa314bc2de8789693fbb6f783ca265737e0251de331c81f32c2",
+      "baseSource": "src/openapi.yaml",
+      "headSource": "src/openapi.yaml",
+      "detectedAt": "2026-10-26T06:58:49.156Z",
+      "committedAt": "2026-10-26T13:58:39+07:00",
+      "baseCommit": "b23b3fb19fccf8dbc0bad12b7713ec9796ccafd9",
+      "headCommit": "461484262d760c1d2190bf7f4b3587de4bf16a85",
+      "prUrl": "https://github.com/pbl6-home-renter/api-doc/pull/18",
+      "commitUrl": "https://github.com/pbl6-home-renter/api-doc/commit/461484262d760c1d2190bf7f4b3587de4bf16a85",
+      "metadataKind": "Git revision thực tế",
+      "reason": "CHƯA CUNG CẤP — tác giả PR phải bổ sung lý do nghiệp vụ; không thể suy ra từ OpenAPI diff.",
+      "tools": {
+        "redocly": "2.64.1",
+        "oasdiff": "1.34.1"
+      },
+      "changes": [
+        {
+          "id": "response-property-enum-value-added",
+          "text": "added the new `SERVICE_UNAVAILABLE` enum value to the `code` response property for the response status `503`",
+          "comment": "The server may now return a value the previous contract excluded, so a client written against it may not handle the response. If the value set is meant to grow, declare it with x-extensible-enum.",
+          "level": 3,
+          "operation": "DELETE",
+          "operationId": "deleteUserById",
+          "path": "/users/{userId}",
+          "section": "paths",
+          "fingerprint": "5ce63021c713",
+          "classification": "BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới SERVICE_UNAVAILABLE; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-property-enum-value-added",
+          "text": "added the new `USER_DELETE_HAS_ACTIVE_CONTRACT` enum value to the `code` response property for the response status `409`",
+          "comment": "The server may now return a value the previous contract excluded, so a client written against it may not handle the response. If the value set is meant to grow, declare it with x-extensible-enum.",
+          "level": 3,
+          "operation": "DELETE",
+          "operationId": "deleteUserById",
+          "path": "/users/{userId}",
+          "section": "paths",
+          "fingerprint": "18875c158696",
+          "classification": "BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới USER_DELETE_HAS_ACTIVE_CONTRACT; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-property-became-nullable",
+          "text": "the response property `data/activeContractCount` became nullable for the status `200`",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getUserById",
+          "path": "/users/{userId}",
+          "section": "paths",
+          "fingerprint": "e6035f560fe2",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu vị trí và thay đổi trước/sau trong entry này với API adapter, DTO, parser và validation; cùng BE xác nhận phương án tương thích trước merge/phát hành."
+        },
+        {
+          "id": "response-property-became-nullable",
+          "text": "the response property `data/buildingCount` became nullable for the status `200`",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getUserById",
+          "path": "/users/{userId}",
+          "section": "paths",
+          "fingerprint": "c6140ce130e7",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu vị trí và thay đổi trước/sau trong entry này với API adapter, DTO, parser và validation; cùng BE xác nhận phương án tương thích trước merge/phát hành."
+        },
+        {
+          "id": "api-version-not-bumped",
+          "text": "a breaking change was detected but the version is still `1.0.0`",
+          "level": 1,
+          "section": "info",
+          "fingerprint": "d3f96cd643c1",
+          "classification": "NON_BREAKING",
+          "clientImpact": "BE: xem lại quy ước version trước khi chấp nhận breaking change. FE/Mobile: theo kế hoạch chuyển đổi của entry này; version trong OpenAPI chưa chứng minh backend đã triển khai."
+        }
+      ],
+      "locations": [
+        {
+          "pointer": "/components/schemas/UserDetailResponseDto/properties/activeContractCount/description",
+          "before": "Số lượng hợp đồng đang có hiệu lực.",
+          "after": "Số lượng hợp đồng đang có hiệu lực. `null` khi không lấy được từ Tenancy."
+        },
+        {
+          "pointer": "/components/schemas/UserDetailResponseDto/properties/activeContractCount/nullable",
+          "before": null,
+          "after": true
+        },
+        {
+          "pointer": "/components/schemas/UserDetailResponseDto/properties/buildingCount/description",
+          "before": "Số lượng tòa nhà thuộc sở hữu (nếu là landlord).",
+          "after": "Số lượng tòa nhà thuộc sở hữu (nếu là landlord). `null` khi không lấy được từ Tenancy."
+        },
+        {
+          "pointer": "/components/schemas/UserDetailResponseDto/properties/buildingCount/nullable",
+          "before": null,
+          "after": true
+        },
+        {
+          "pointer": "/paths/~1users~1{userId}/delete/description",
+          "before": "Chỉ admin. Xóa mềm tài khoản; không thể tự xóa. Thành công trả 204, không có body.\n\n**Lưu ý**\n\n- Xóa mềm (`is_deleted = true`); user đã xóa không đăng nhập được.\n- Không xóa được user còn HĐ hiệu lực. Không hỏi được Tenancy thì từ chối xóa (`503`, fail-closed).\n- Chưa triển khai: kiểm tra qua Tenancy, mã `409 USER_DELETE_HAS_ACTIVE_CONTRACT`, `503 SERVICE_UNAVAILABLE`.\n\n```mermaid\nsequenceDiagram\n    autonumber\n    participant GW as API Gateway\n    participant ID as Identity\n    participant DB as Identity DB\n    participant MQ as RabbitMQ\n    participant TEN as Tenancy\n    participant COM as Community\n\n    GW->>ID: DELETE /users/{userId} + Authorization (admin)\n    alt Admin tự xóa chính mình\n        ID-->>GW: 400 USER_DELETE_CANNOT_SELF\n    end\n    ID->>DB: Đọc user\n    alt Không tìm thấy\n        ID-->>GW: 404 USER_NOT_FOUND\n    else Đã bị xóa\n        ID-->>GW: 409 USER_DELETE_ALREADY_DELETED\n    end\n    ID->>TEN: GET /internal/users/{userId}/stats (service token, timeout 3s)\n    alt Tenancy lỗi / timeout (fail-closed)\n        ID-->>GW: 503 SERVICE_UNAVAILABLE\n    end\n    TEN-->>ID: 200 {buildingCount, activeContractCount}\n    alt activeContractCount > 0\n        ID-->>GW: 409 USER_DELETE_HAS_ACTIVE_CONTRACT\n    end\n    ID->>DB: [Transaction] Soft delete users (is_deleted=true) + landlord_profiles<br/>+ revoke toàn bộ refresh_tokens<br/>+ outbox user.deleted\n    ID-->>GW: 204\n    ID-)MQ: user.deleted {userId, role}\n    MQ-)TEN: Ẩn user, không cho gán vào HĐ mới\n    MQ-)COM: Ngắt socket, xóa push devices\n```",
+          "after": "Chỉ admin. Xóa mềm tài khoản; không thể tự xóa. Thành công trả 204, không có body.\n\n**Lưu ý**\n\n- Xóa mềm (`is_deleted = true`); user đã xóa không đăng nhập được.\n- Không xóa được user còn HĐ hiệu lực. Không hỏi được Tenancy thì từ chối xóa (`503`, fail-closed).\n- Tenancy chưa build `GET /internal/users/{userId}/stats` nên hiện mọi lệnh xóa trả `503 SERVICE_UNAVAILABLE`.\n\n```mermaid\nsequenceDiagram\n    autonumber\n    participant GW as API Gateway\n    participant ID as Identity\n    participant DB as Identity DB\n    participant MQ as RabbitMQ\n    participant TEN as Tenancy\n    participant COM as Community\n\n    GW->>ID: DELETE /users/{userId} + Authorization (admin)\n    alt Admin tự xóa chính mình\n        ID-->>GW: 400 USER_DELETE_CANNOT_SELF\n    end\n    ID->>DB: Đọc user\n    alt Không tìm thấy\n        ID-->>GW: 404 USER_NOT_FOUND\n    else Đã bị xóa\n        ID-->>GW: 409 USER_DELETE_ALREADY_DELETED\n    end\n    ID->>TEN: GET /internal/users/{userId}/stats (service token, timeout 3s)\n    alt Tenancy lỗi / timeout (fail-closed)\n        ID-->>GW: 503 SERVICE_UNAVAILABLE\n    end\n    TEN-->>ID: 200 {buildingCount, activeContractCount}\n    alt activeContractCount > 0\n        ID-->>GW: 409 USER_DELETE_HAS_ACTIVE_CONTRACT\n    end\n    ID->>DB: [Transaction] Soft delete users (is_deleted=true) + landlord_profiles<br/>+ revoke toàn bộ refresh_tokens<br/>+ outbox user.deleted\n    ID-->>GW: 204\n    ID-)MQ: user.deleted {userId, role}\n    MQ-)TEN: Ẩn user, không cho gán vào HĐ mới\n    MQ-)COM: Ngắt socket, xóa push devices\n```"
+        },
+        {
+          "pointer": "/paths/~1users~1{userId}/delete/responses/409/content/application~1json/examples/error_2",
+          "before": null,
+          "after": {
+            "summary": "USER_DELETE_HAS_ACTIVE_CONTRACT",
+            "value": {
+              "statusCode": 409,
+              "code": "USER_DELETE_HAS_ACTIVE_CONTRACT"
+            }
+          }
+        },
+        {
+          "pointer": "/paths/~1users~1{userId}/delete/responses/409/content/application~1json/schema/properties/code/enum",
+          "before": [
+            "USER_DELETE_ALREADY_DELETED"
+          ],
+          "after": [
+            "USER_DELETE_ALREADY_DELETED",
+            "USER_DELETE_HAS_ACTIVE_CONTRACT"
+          ]
+        },
+        {
+          "pointer": "/paths/~1users~1{userId}/delete/responses/503/$ref",
+          "before": "#/components/responses/AuthUnavailableError",
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1users~1{userId}/delete/responses/503/content",
+          "before": null,
+          "after": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "statusCode",
+                  "code"
+                ],
+                "properties": {
+                  "statusCode": {
+                    "type": "integer",
+                    "enum": [
+                      503
+                    ]
+                  },
+                  "code": {
+                    "type": "string",
+                    "enum": [
+                      "AUTH_UNAVAILABLE",
+                      "SERVICE_UNAVAILABLE"
+                    ]
+                  }
+                }
+              },
+              "examples": {
+                "error_1": {
+                  "summary": "AUTH_UNAVAILABLE",
+                  "value": {
+                    "statusCode": 503,
+                    "code": "AUTH_UNAVAILABLE"
+                  }
+                },
+                "error_2": {
+                  "summary": "SERVICE_UNAVAILABLE",
+                  "value": {
+                    "statusCode": 503,
+                    "code": "SERVICE_UNAVAILABLE"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "pointer": "/paths/~1users~1{userId}/delete/responses/503/description",
+          "before": null,
+          "after": "Hạ tầng xác thực hoặc Tenancy tạm thời không khả dụng (xóa bị từ chối, fail-closed)."
+        },
+        {
+          "pointer": "/paths/~1users~1{userId}/get/description",
+          "before": "Chỉ admin. Lấy chi tiết tài khoản, thông tin khóa, payoutAccount đã mask và số lượng tòa nhà/hợp đồng.\n\n**Lưu ý**\n\n- `buildingCount`, `activeContractCount` lấy từ Tenancy qua HTTP nội bộ; Tenancy lỗi hoặc timeout thì trả `null`.\n- Chưa triển khai: code đang trả cố định `0`; Tenancy cần build `GET /internal/users/{userId}/stats`.\n\n```mermaid\nsequenceDiagram\n    autonumber\n    participant GW as API Gateway\n    participant ID as Identity\n    participant DB as Identity DB\n    participant TEN as Tenancy\n\n    GW->>ID: GET /users/{userId}\n    ID->>DB: Đọc users + landlord_profiles theo userId\n    alt Không tìm thấy\n        ID-->>GW: 404 USER_NOT_FOUND\n    end\n    ID->>TEN: GET /internal/users/{userId}/stats (service token, timeout 3s)\n    alt Tenancy trả kết quả\n        TEN-->>ID: 200 {buildingCount, activeContractCount}\n    else Tenancy lỗi / timeout\n        ID->>ID: buildingCount = null, activeContractCount = null\n    end\n    ID-->>GW: 200 USER_DETAIL_FETCHED {..., lockReason, lockedAt, payoutAccount, buildingCount, activeContractCount}\n```",
+          "after": "Chỉ admin. Lấy chi tiết tài khoản, thông tin khóa, payoutAccount đã mask và số lượng tòa nhà/hợp đồng.\n\n**Lưu ý**\n\n- `buildingCount`, `activeContractCount` lấy từ Tenancy qua HTTP nội bộ; Tenancy lỗi hoặc timeout thì trả `null`.\n- Identity đã gọi Tenancy; Tenancy chưa build `GET /internal/users/{userId}/stats` nên hiện 2 field luôn là `null`.\n\n```mermaid\nsequenceDiagram\n    autonumber\n    participant GW as API Gateway\n    participant ID as Identity\n    participant DB as Identity DB\n    participant TEN as Tenancy\n\n    GW->>ID: GET /users/{userId}\n    ID->>DB: Đọc users + landlord_profiles theo userId\n    alt Không tìm thấy\n        ID-->>GW: 404 USER_NOT_FOUND\n    end\n    ID->>TEN: GET /internal/users/{userId}/stats (service token, timeout 3s)\n    alt Tenancy trả kết quả\n        TEN-->>ID: 200 {buildingCount, activeContractCount}\n    else Tenancy lỗi / timeout\n        ID->>ID: buildingCount = null, activeContractCount = null\n    end\n    ID-->>GW: 200 USER_DETAIL_FETCHED {..., lockReason, lockedAt, payoutAccount, buildingCount, activeContractCount}\n```"
+        }
+      ],
+      "semanticDiff": {
+        "paths": {
+          "modified": {
+            "/users/{userId}": {
+              "operations": {
+                "modified": {
+                  "DELETE": {
+                    "responses": {
+                      "modified": {
+                        "409": {
+                          "content": {
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "properties": {
+                                    "modified": {
+                                      "code": {
+                                        "enum": {
+                                          "added": [
+                                            "USER_DELETE_HAS_ACTIVE_CONTRACT"
+                                          ]
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "503": {
+                          "extensions": {
+                            "deleted": [
+                              "x-apidog-name"
+                            ]
+                          },
+                          "content": {
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "properties": {
+                                    "modified": {
+                                      "code": {
+                                        "enum": {
+                                          "added": [
+                                            "SERVICE_UNAVAILABLE"
+                                          ]
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "GET": {
+                    "responses": {
+                      "modified": {
+                        "200": {
+                          "content": {
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "properties": {
+                                    "modified": {
+                                      "data": {
+                                        "properties": {
+                                          "modified": {
+                                            "activeContractCount": {
+                                              "nullable": {
+                                                "from": false,
+                                                "to": true
+                                              }
+                                            },
+                                            "buildingCount": {
+                                              "nullable": {
+                                                "from": false,
+                                                "to": true
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "components": {
+          "schemas": {
+            "modified": {
+              "UserDetailResponseDto": {
+                "properties": {
+                  "modified": {
+                    "activeContractCount": {
+                      "nullable": {
+                        "from": false,
+                        "to": true
+                      }
+                    },
+                    "buildingCount": {
+                      "nullable": {
+                        "from": false,
+                        "to": true
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   ]
 }

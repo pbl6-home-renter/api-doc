@@ -3264,7 +3264,7 @@
           }
         ],
         "summary": "Get user",
-        "description": "Chỉ admin. Lấy chi tiết tài khoản, thông tin khóa, payoutAccount đã mask và số lượng tòa nhà/hợp đồng.\n\n**Lưu ý**\n\n- `buildingCount`, `activeContractCount` lấy từ Tenancy qua HTTP nội bộ; Tenancy lỗi hoặc timeout thì trả `null`.\n- Chưa triển khai: code đang trả cố định `0`; Tenancy cần build `GET /internal/users/{userId}/stats`.\n\n```mermaid\nsequenceDiagram\n    autonumber\n    participant GW as API Gateway\n    participant ID as Identity\n    participant DB as Identity DB\n    participant TEN as Tenancy\n\n    GW->>ID: GET /users/{userId}\n    ID->>DB: Đọc users + landlord_profiles theo userId\n    alt Không tìm thấy\n        ID-->>GW: 404 USER_NOT_FOUND\n    end\n    ID->>TEN: GET /internal/users/{userId}/stats (service token, timeout 3s)\n    alt Tenancy trả kết quả\n        TEN-->>ID: 200 {buildingCount, activeContractCount}\n    else Tenancy lỗi / timeout\n        ID->>ID: buildingCount = null, activeContractCount = null\n    end\n    ID-->>GW: 200 USER_DETAIL_FETCHED {..., lockReason, lockedAt, payoutAccount, buildingCount, activeContractCount}\n```\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
+        "description": "Chỉ admin. Lấy chi tiết tài khoản, thông tin khóa, payoutAccount đã mask và số lượng tòa nhà/hợp đồng.\n\n**Lưu ý**\n\n- `buildingCount`, `activeContractCount` lấy từ Tenancy qua HTTP nội bộ; Tenancy lỗi hoặc timeout thì trả `null`.\n- Identity đã gọi Tenancy; Tenancy chưa build `GET /internal/users/{userId}/stats` nên hiện 2 field luôn là `null`.\n\n```mermaid\nsequenceDiagram\n    autonumber\n    participant GW as API Gateway\n    participant ID as Identity\n    participant DB as Identity DB\n    participant TEN as Tenancy\n\n    GW->>ID: GET /users/{userId}\n    ID->>DB: Đọc users + landlord_profiles theo userId\n    alt Không tìm thấy\n        ID-->>GW: 404 USER_NOT_FOUND\n    end\n    ID->>TEN: GET /internal/users/{userId}/stats (service token, timeout 3s)\n    alt Tenancy trả kết quả\n        TEN-->>ID: 200 {buildingCount, activeContractCount}\n    else Tenancy lỗi / timeout\n        ID->>ID: buildingCount = null, activeContractCount = null\n    end\n    ID-->>GW: 200 USER_DETAIL_FETCHED {..., lockReason, lockedAt, payoutAccount, buildingCount, activeContractCount}\n```\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-26 | 🔴 BREAKING | the response property `data/activeContractCount` became nullable for the status `200` | [#18](https://github.com/pbl6-home-renter/api-doc/pull/18) |\n| 2026-10-26 | 🔴 BREAKING | the response property `data/buildingCount` became nullable for the status `200` | [#18](https://github.com/pbl6-home-renter/api-doc/pull/18) |\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "parameters": [
           {
             "name": "userId",
@@ -3852,7 +3852,7 @@
           }
         ],
         "summary": "Delete user",
-        "description": "Chỉ admin. Xóa mềm tài khoản; không thể tự xóa. Thành công trả 204, không có body.\n\n**Lưu ý**\n\n- Xóa mềm (`is_deleted = true`); user đã xóa không đăng nhập được.\n- Không xóa được user còn HĐ hiệu lực. Không hỏi được Tenancy thì từ chối xóa (`503`, fail-closed).\n- Chưa triển khai: kiểm tra qua Tenancy, mã `409 USER_DELETE_HAS_ACTIVE_CONTRACT`, `503 SERVICE_UNAVAILABLE`.\n\n```mermaid\nsequenceDiagram\n    autonumber\n    participant GW as API Gateway\n    participant ID as Identity\n    participant DB as Identity DB\n    participant MQ as RabbitMQ\n    participant TEN as Tenancy\n    participant COM as Community\n\n    GW->>ID: DELETE /users/{userId} + Authorization (admin)\n    alt Admin tự xóa chính mình\n        ID-->>GW: 400 USER_DELETE_CANNOT_SELF\n    end\n    ID->>DB: Đọc user\n    alt Không tìm thấy\n        ID-->>GW: 404 USER_NOT_FOUND\n    else Đã bị xóa\n        ID-->>GW: 409 USER_DELETE_ALREADY_DELETED\n    end\n    ID->>TEN: GET /internal/users/{userId}/stats (service token, timeout 3s)\n    alt Tenancy lỗi / timeout (fail-closed)\n        ID-->>GW: 503 SERVICE_UNAVAILABLE\n    end\n    TEN-->>ID: 200 {buildingCount, activeContractCount}\n    alt activeContractCount > 0\n        ID-->>GW: 409 USER_DELETE_HAS_ACTIVE_CONTRACT\n    end\n    ID->>DB: [Transaction] Soft delete users (is_deleted=true) + landlord_profiles<br/>+ revoke toàn bộ refresh_tokens<br/>+ outbox user.deleted\n    ID-->>GW: 204\n    ID-)MQ: user.deleted {userId, role}\n    MQ-)TEN: Ẩn user, không cho gán vào HĐ mới\n    MQ-)COM: Ngắt socket, xóa push devices\n```\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
+        "description": "Chỉ admin. Xóa mềm tài khoản; không thể tự xóa. Thành công trả 204, không có body.\n\n**Lưu ý**\n\n- Xóa mềm (`is_deleted = true`); user đã xóa không đăng nhập được.\n- Không xóa được user còn HĐ hiệu lực. Không hỏi được Tenancy thì từ chối xóa (`503`, fail-closed).\n- Tenancy chưa build `GET /internal/users/{userId}/stats` nên hiện mọi lệnh xóa trả `503 SERVICE_UNAVAILABLE`.\n\n```mermaid\nsequenceDiagram\n    autonumber\n    participant GW as API Gateway\n    participant ID as Identity\n    participant DB as Identity DB\n    participant MQ as RabbitMQ\n    participant TEN as Tenancy\n    participant COM as Community\n\n    GW->>ID: DELETE /users/{userId} + Authorization (admin)\n    alt Admin tự xóa chính mình\n        ID-->>GW: 400 USER_DELETE_CANNOT_SELF\n    end\n    ID->>DB: Đọc user\n    alt Không tìm thấy\n        ID-->>GW: 404 USER_NOT_FOUND\n    else Đã bị xóa\n        ID-->>GW: 409 USER_DELETE_ALREADY_DELETED\n    end\n    ID->>TEN: GET /internal/users/{userId}/stats (service token, timeout 3s)\n    alt Tenancy lỗi / timeout (fail-closed)\n        ID-->>GW: 503 SERVICE_UNAVAILABLE\n    end\n    TEN-->>ID: 200 {buildingCount, activeContractCount}\n    alt activeContractCount > 0\n        ID-->>GW: 409 USER_DELETE_HAS_ACTIVE_CONTRACT\n    end\n    ID->>DB: [Transaction] Soft delete users (is_deleted=true) + landlord_profiles<br/>+ revoke toàn bộ refresh_tokens<br/>+ outbox user.deleted\n    ID-->>GW: 204\n    ID-)MQ: user.deleted {userId, role}\n    MQ-)TEN: Ẩn user, không cho gán vào HĐ mới\n    MQ-)COM: Ngắt socket, xóa push devices\n```\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-26 | 🔴 BREAKING | added the new `SERVICE_UNAVAILABLE` enum value to the `code` response property for the response status `503` | [#18](https://github.com/pbl6-home-renter/api-doc/pull/18) |\n| 2026-10-26 | 🔴 BREAKING | added the new `USER_DELETE_HAS_ACTIVE_CONTRACT` enum value to the `code` response property for the response status `409` | [#18](https://github.com/pbl6-home-renter/api-doc/pull/18) |\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "parameters": [
           {
             "name": "userId",
@@ -4015,7 +4015,8 @@
                     "code": {
                       "type": "string",
                       "enum": [
-                        "USER_DELETE_ALREADY_DELETED"
+                        "USER_DELETE_ALREADY_DELETED",
+                        "USER_DELETE_HAS_ACTIVE_CONTRACT"
                       ]
                     }
                   }
@@ -4027,6 +4028,13 @@
                       "statusCode": 409,
                       "code": "USER_DELETE_ALREADY_DELETED"
                     }
+                  },
+                  "error_2": {
+                    "summary": "USER_DELETE_HAS_ACTIVE_CONTRACT",
+                    "value": {
+                      "statusCode": 409,
+                      "code": "USER_DELETE_HAS_ACTIVE_CONTRACT"
+                    }
                   }
                 }
               }
@@ -4036,7 +4044,50 @@
             "$ref": "#/components/responses/InternalServerError"
           },
           "503": {
-            "$ref": "#/components/responses/AuthUnavailableError"
+            "description": "Hạ tầng xác thực hoặc Tenancy tạm thời không khả dụng (xóa bị từ chối, fail-closed).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        503
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "AUTH_UNAVAILABLE",
+                        "SERVICE_UNAVAILABLE"
+                      ]
+                    }
+                  }
+                },
+                "examples": {
+                  "error_1": {
+                    "summary": "AUTH_UNAVAILABLE",
+                    "value": {
+                      "statusCode": 503,
+                      "code": "AUTH_UNAVAILABLE"
+                    }
+                  },
+                  "error_2": {
+                    "summary": "SERVICE_UNAVAILABLE",
+                    "value": {
+                      "statusCode": 503,
+                      "code": "SERVICE_UNAVAILABLE"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "servers": [
@@ -22184,13 +22235,15 @@
           "buildingCount": {
             "type": "integer",
             "minimum": 0,
-            "description": "Số lượng tòa nhà thuộc sở hữu (nếu là landlord).",
+            "nullable": true,
+            "description": "Số lượng tòa nhà thuộc sở hữu (nếu là landlord). `null` khi không lấy được từ Tenancy.",
             "example": 2
           },
           "activeContractCount": {
             "type": "integer",
             "minimum": 0,
-            "description": "Số lượng hợp đồng đang có hiệu lực.",
+            "nullable": true,
+            "description": "Số lượng hợp đồng đang có hiệu lực. `null` khi không lấy được từ Tenancy.",
             "example": 1
           }
         },
