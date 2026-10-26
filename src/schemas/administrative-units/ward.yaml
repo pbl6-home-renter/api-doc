@@ -1,0 +1,23 @@
+type: object
+additionalProperties: false
+title: AdministrativeWardDto
+required:
+  - code
+  - provinceCode
+  - name
+  - divisionType
+properties:
+  code:
+    type: string
+    pattern: '^\d{5}$'
+    example: '00004'
+  provinceCode:
+    type: string
+    pattern: '^\d{2}$'
+    example: '01'
+  name:
+    type: string
+    example: Phường Ba Đình
+  divisionType:
+    type: string
+    example: phường

@@ -1,0 +1,18 @@
+type: object
+additionalProperties: false
+title: AdministrativeProvinceDto
+required:
+  - code
+  - name
+  - divisionType
+properties:
+  code:
+    type: string
+    pattern: '^\d{2}$'
+    example: '01'
+  name:
+    type: string
+    example: Thành phố Hà Nội
+  divisionType:
+    type: string
+    example: thành phố trung ương
