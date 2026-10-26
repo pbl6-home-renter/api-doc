@@ -167,7 +167,9 @@ post:
   security:
     - BearerAuth: []
   summary: Create building for approval
-  description: 'landlord. Gửi tòa nhà để duyệt. Lỗi nghiệp vụ: 422 VALIDATION FAILED · 403 FORBIDDEN.'
+  description: 'landlord. Gửi tòa nhà để duyệt. Client không gửi latitude/longitude; backend tự geocode
+    từ address + ward + province qua TrackAsia (trước transaction), không ghi đè address. Geocode lỗi thì không
+    tạo Building. Lỗi nghiệp vụ: 422 VALIDATION FAILED · 422 GEOCODING FAILED · 503 GEOCODING UNAVAILABLE · 403 FORBIDDEN.'
   requestBody:
     required: true
     content:
@@ -225,11 +227,71 @@ post:
     '401':
       $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
     '503':
-      $ref: ../../openapi.yaml#/components/responses/AuthUnavailableError
+      x-apidog-name: Service Unavailable
+      description: Dịch vụ phụ thuộc (xác thực hoặc geocoding) tạm thời không khả dụng.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code]
+            properties:
+              statusCode:
+                type: integer
+                enum: [503]
+              code:
+                type: string
+                enum:
+                  - AUTH_UNAVAILABLE
+                  - GEOCODING_UNAVAILABLE
+                description: |-
+                  - AUTH_UNAVAILABLE: Hạ tầng xác thực tạm thời không khả dụng.
+                  - GEOCODING_UNAVAILABLE: Dịch vụ geocoding (TrackAsia) timeout hoặc lỗi; chưa tạo/cập nhật dữ liệu, client có thể thử lại.
+          examples:
+            auth_unavailable:
+              summary: AUTH_UNAVAILABLE — Hạ tầng xác thực tạm thời không khả dụng.
+              value:
+                statusCode: 503
+                code: AUTH_UNAVAILABLE
+            geocoding_unavailable:
+              summary: GEOCODING_UNAVAILABLE — Dịch vụ geocoding tạm thời không khả dụng.
+              value:
+                statusCode: 503
+                code: GEOCODING_UNAVAILABLE
     '403':
       $ref: ../../openapi.yaml#/components/responses/ForbiddenError
     '422':
-      $ref: ../../openapi.yaml#/components/responses/ValidationError
+      x-apidog-name: Unprocessable Entity
+      description: Dữ liệu hợp lệ về cấu trúc nhưng vi phạm ràng buộc trường hoặc quy tắc nghiệp vụ.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code]
+            properties:
+              statusCode:
+                type: integer
+                enum: [422]
+              code:
+                type: string
+                enum:
+                  - GEOCODING_FAILED
+                  - VALIDATION_FAILED
+                description: |-
+                  - GEOCODING_FAILED: Không xác định được tọa độ từ địa chỉ (address, ward, province); người dùng cần sửa địa chỉ.
+                  - VALIDATION_FAILED: Dữ liệu vi phạm ràng buộc schema hoặc quy tắc nghiệp vụ khác chưa có mã riêng.
+          examples:
+            geocoding_failed:
+              summary: GEOCODING_FAILED — Không xác định được tọa độ từ địa chỉ.
+              value:
+                statusCode: 422
+                code: GEOCODING_FAILED
+            validation_failed:
+              summary: VALIDATION_FAILED — Dữ liệu vi phạm ràng buộc schema hoặc quy tắc nghiệp vụ khác chưa có mã riêng.
+              value:
+                statusCode: 422
+                code: VALIDATION_FAILED
     '429':
       $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
     '500':

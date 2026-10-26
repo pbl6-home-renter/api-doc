@@ -6,8 +6,8 @@ description: Phản hồi khi tạo tòa nhà thành công (chờ admin kiểm d
 properties:
   id: { type: string, format: uuid, description: "Định danh duy nhất của tòa nhà vừa tạo." }
   status: { type: string, enum: [pending, approved, rejected], example: "pending", description: "Trạng thái kiểm duyệt của tòa nhà (mặc định là pending chờ duyệt sổ đỏ)." }
-  latitude: { type: string, nullable: true, example: '20.995100', description: "Tọa độ vĩ độ được geocode từ địa chỉ." }
-  longitude: { type: string, nullable: true, example: '105.816649', description: "Tọa độ kinh độ được geocode từ địa chỉ." }
+  latitude: { type: string, example: '20.995100', description: "Tọa độ vĩ độ được geocode từ địa chỉ." }
+  longitude: { type: string, example: '105.816649', description: "Tọa độ kinh độ được geocode từ địa chỉ." }
   ownershipCertificateMediaIds:
     type: array
     description: Danh sách ID các tài liệu chứng minh sở hữu đã ghi nhận
@@ -19,4 +19,6 @@ properties:
 required:
   - id
   - status
+  - latitude
+  - longitude
   - createdAt
