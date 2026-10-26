@@ -13,7 +13,7 @@ get:
     **Lưu ý**
 
     - `buildingCount`, `activeContractCount` lấy từ Tenancy qua HTTP nội bộ; Tenancy lỗi hoặc timeout thì trả `null`.
-    - Chưa triển khai: code đang trả cố định `0`; Tenancy cần build `GET /internal/users/{userId}/stats`.
+    - Identity đã gọi Tenancy; Tenancy chưa build `GET /internal/users/{userId}/stats` nên hiện 2 field luôn là `null`.
 
     ```mermaid
     sequenceDiagram
@@ -470,7 +470,7 @@ delete:
 
     - Xóa mềm (`is_deleted = true`); user đã xóa không đăng nhập được.
     - Không xóa được user còn HĐ hiệu lực. Không hỏi được Tenancy thì từ chối xóa (`503`, fail-closed).
-    - Chưa triển khai: kiểm tra qua Tenancy, mã `409 USER_DELETE_HAS_ACTIVE_CONTRACT`, `503 SERVICE_UNAVAILABLE`.
+    - Tenancy chưa build `GET /internal/users/{userId}/stats` nên hiện mọi lệnh xóa trả `503 SERVICE_UNAVAILABLE`.
 
     ```mermaid
     sequenceDiagram
@@ -574,7 +574,36 @@ delete:
                 statusCode: 401
                 code: UNAUTHORIZED
     '503':
-      $ref: ../../openapi.yaml#/components/responses/AuthUnavailableError
+      description: Hạ tầng xác thực hoặc Tenancy tạm thời không khả dụng (xóa bị từ chối, fail-closed).
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required:
+            - statusCode
+            - code
+            properties:
+              statusCode:
+                type: integer
+                enum:
+                - 503
+              code:
+                type: string
+                enum:
+                - AUTH_UNAVAILABLE
+                - SERVICE_UNAVAILABLE
+          examples:
+            error_1:
+              summary: AUTH_UNAVAILABLE
+              value:
+                statusCode: 503
+                code: AUTH_UNAVAILABLE
+            error_2:
+              summary: SERVICE_UNAVAILABLE
+              value:
+                statusCode: 503
+                code: SERVICE_UNAVAILABLE
     '403':
       $ref: ../../openapi.yaml#/components/responses/ForbiddenError
     '404':
@@ -621,12 +650,18 @@ delete:
                 type: string
                 enum:
                 - USER_DELETE_ALREADY_DELETED
+                - USER_DELETE_HAS_ACTIVE_CONTRACT
           examples:
             error_1:
               summary: USER_DELETE_ALREADY_DELETED
               value:
                 statusCode: 409
                 code: USER_DELETE_ALREADY_DELETED
+            error_2:
+              summary: USER_DELETE_HAS_ACTIVE_CONTRACT
+              value:
+                statusCode: 409
+                code: USER_DELETE_HAS_ACTIVE_CONTRACT
     '500':
       $ref: ../../openapi.yaml#/components/responses/InternalServerError
   servers:
