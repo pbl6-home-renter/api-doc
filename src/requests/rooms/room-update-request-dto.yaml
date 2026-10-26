@@ -1,7 +1,7 @@
 type: object
 x-apidog-folder: "Room/Request"
 title: RoomUpdateRequestDto
-description: Dữ liệu cập nhật một phần thông tin phòng
+description: Dữ liệu cập nhật một phần thông tin phòng; field bị bỏ qua sẽ được giữ nguyên
 additionalProperties: false
 minProperties: 1
 
@@ -12,13 +12,49 @@ properties:
     minLength: 1
     maxLength: 254
     example: P.201
-  rentPrice:
+  floorNumber:
     type: integer
-    description: Thông tin rent price của tài nguyên trong ngữ cảnh DTO.
+    nullable: true
+    minimum: 1
+    example: 2
+  description:
+    type: string
+    nullable: true
+    minLength: 1
+    maxLength: 500
+    example: Phòng trọ hiện đại, tiện nghi đầy đủ
+  area:
+    type: number
+    nullable: true
+    minimum: 0
+    exclusiveMinimum: true
+    example: 19.0
+  amenities:
+    type: object
+    additionalProperties: false
+    properties:
+      aircon: { type: boolean }
+      fridge: { type: boolean }
+      wcInside: { type: boolean }
+      waterHeater: { type: boolean }
+      mezzanine: { type: boolean }
+      table: { type: boolean }
+      chair: { type: boolean }
+    example:
+      aircon: true
+      fridge: false
+      wcInside: true
+  maxOccupancy:
+    type: integer
+    nullable: true
+    minimum: 1
+    example: 3
+  genderPolicy:
+    type: string
+    enum: [any, male, female]
+    example: any
+  rentPrice:
+    type: number
+    description: Giá thuê theo tháng; validation theo domain Room.
     minimum: 0
     example: 3600000
-  area:
-    type: string
-    description: Thông tin area của tài nguyên trong ngữ cảnh DTO.
-    nullable: true
-    example: '19.0'
