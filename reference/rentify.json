@@ -8198,7 +8198,7 @@
           }
         ],
         "summary": "List my rooms",
-        "description": "landlord. Liệt kê phòng của tôi. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 VALIDATION FAILED.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
+        "description": "landlord. Liệt kê phòng của tôi bằng offset pagination, filter theo `buildingId` / `status` và sort theo một field được hỗ trợ.\n\n```mermaid\nsequenceDiagram\n    autonumber\n    participant GW as API Gateway\n    participant TEN as Tenancy\n    participant DB as Tenancy DB\n\n    GW->>TEN: GET /me/rooms (access token, filter, sort, page)\n    TEN->>TEN: Xác thực role landlord\n    TEN->>DB: SELECT rooms WHERE landlord_id = currentUser.id AND is_deleted = false<br/>+ filters + offset pagination\n    DB-->>TEN: Danh sách phòng và total count\n    TEN-->>GW: 200 ROOMS_MY_FETCHED {data, pagination}\n```\n\nLỗi nghiệp vụ: 403 FORBIDDEN · 422 VALIDATION FAILED.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-26 | 🟢 NON_BREAKING | added the enum value `available` to the property `status` of the `query` request parameter `filter` | [#21](https://github.com/pbl6-home-renter/api-doc/pull/21) |\n| 2026-10-26 | 🟢 NON_BREAKING | added the enum value `maintenance` to the property `status` of the `query` request parameter `filter` | [#21](https://github.com/pbl6-home-renter/api-doc/pull/21) |\n| 2026-10-26 | 🟢 NON_BREAKING | added the enum value `occupied` to the property `status` of the `query` request parameter `filter` | [#21](https://github.com/pbl6-home-renter/api-doc/pull/21) |\n| 2026-10-26 | 🟢 NON_BREAKING | removed the `cleaning` enum value from the `data/items/status` response property for the response status `200` | [#21](https://github.com/pbl6-home-renter/api-doc/pull/21) |\n| 2026-10-26 | 🟢 NON_BREAKING | removed the `pending_cleanup` enum value from the `data/items/status` response property for the response status `200` | [#21](https://github.com/pbl6-home-renter/api-doc/pull/21) |\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "parameters": [
           {
             "name": "filter",
@@ -8216,7 +8216,12 @@
                   "format": "uuid"
                 },
                 "status": {
-                  "type": "string"
+                  "type": "string",
+                  "enum": [
+                    "available",
+                    "occupied",
+                    "maintenance"
+                  ]
                 }
               }
             }
@@ -8365,7 +8370,7 @@
                       "buildingId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
                       "name": "P.201",
                       "rentPrice": 3500000,
-                      "status": "cleaning",
+                      "status": "available",
                       "activeIssuesCount": 0
                     }
                   ],
@@ -8638,7 +8643,7 @@
           }
         ],
         "summary": "Update room",
-        "description": "landlord. Cập nhật thông tin phòng. Lỗi nghiệp vụ: 404 NOT FOUND · 403 FORBIDDEN · 422 VALIDATION FAILED.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
+        "description": "landlord. Cập nhật một phần thông tin phòng.\n\n```mermaid\nsequenceDiagram\n    autonumber\n    participant GW as API Gateway\n    participant TEN as Tenancy\n    participant DB as Tenancy DB\n    participant OB as Outbox\n\n    GW->>TEN: PATCH /rooms/{roomId} (access token, updates)\n    TEN->>TEN: Xác thực role landlord\n    TEN->>DB: [Transaction] SELECT room FOR UPDATE\n    alt Không tìm thấy hoặc đã xóa\n        TEN-->>GW: 404 RESOURCE_NOT_FOUND\n    else Room thuộc landlord khác\n        TEN-->>GW: 403 FORBIDDEN\n    else Room thuộc landlord hiện tại\n        TEN->>TEN: room.update(updates)\n        TEN->>DB: [Transaction] UPDATE rooms\n        TEN->>OB: [Transaction] INSERT room.updated\n        TEN-->>GW: 200 ROOM_UPDATED {id, editable Room fields}\n    end\n```\n\nLỗi nghiệp vụ: 404 NOT FOUND · 403 FORBIDDEN · 422 VALIDATION FAILED.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-26 | 🔴 BREAKING | the `area` request property's exclusiveMinimum was set to `true` | [#21](https://github.com/pbl6-home-renter/api-doc/pull/21) |\n| 2026-10-26 | 🔴 BREAKING | the `area` request property's min was set to `0.00` | [#21](https://github.com/pbl6-home-renter/api-doc/pull/21) |\n| 2026-10-26 | 🔴 BREAKING | the `area` request property `type` changed from `string` to `number` | [#21](https://github.com/pbl6-home-renter/api-doc/pull/21) |\n| 2026-10-26 | 🔴 BREAKING | the `data/area` response's property `type` changed from `string` to `number` for status `200` | [#21](https://github.com/pbl6-home-renter/api-doc/pull/21) |\n| 2026-10-26 | 🔴 BREAKING | the `data/rentPrice` response's property `type` was widened from `integer` to `number` for status `200` | [#21](https://github.com/pbl6-home-renter/api-doc/pull/21) |\n| 2026-10-26 | 🟢 NON_BREAKING | added the new optional request property `amenities` | [#21](https://github.com/pbl6-home-renter/api-doc/pull/21) |\n| 2026-10-26 | 🟢 NON_BREAKING | added the new optional request property `description` | [#21](https://github.com/pbl6-home-renter/api-doc/pull/21) |\n| 2026-10-26 | 🟢 NON_BREAKING | added the new optional request property `floorNumber` | [#21](https://github.com/pbl6-home-renter/api-doc/pull/21) |\n| 2026-10-26 | 🟢 NON_BREAKING | added the new optional request property `genderPolicy` | [#21](https://github.com/pbl6-home-renter/api-doc/pull/21) |\n| 2026-10-26 | 🟢 NON_BREAKING | added the new optional request property `maxOccupancy` | [#21](https://github.com/pbl6-home-renter/api-doc/pull/21) |\n| 2026-10-26 | 🟢 NON_BREAKING | the `rentPrice` request property `type` was widened from `integer` to `number` | [#21](https://github.com/pbl6-home-renter/api-doc/pull/21) |\n| 2026-10-26 | 🟢 NON_BREAKING | added the required property `data/amenities` to the response with the `200` status | [#21](https://github.com/pbl6-home-renter/api-doc/pull/21) |\n| 2026-10-26 | 🟢 NON_BREAKING | added the required property `data/description` to the response with the `200` status | [#21](https://github.com/pbl6-home-renter/api-doc/pull/21) |\n| 2026-10-26 | 🟢 NON_BREAKING | added the required property `data/floorNumber` to the response with the `200` status | [#21](https://github.com/pbl6-home-renter/api-doc/pull/21) |\n| 2026-10-26 | 🟢 NON_BREAKING | added the required property `data/genderPolicy` to the response with the `200` status | [#21](https://github.com/pbl6-home-renter/api-doc/pull/21) |\n| 2026-10-26 | 🟢 NON_BREAKING | added the required property `data/maxOccupancy` to the response with the `200` status | [#21](https://github.com/pbl6-home-renter/api-doc/pull/21) |\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "parameters": [
           {
             "name": "roomId",
@@ -8660,7 +8665,12 @@
               "example": {
                 "name": "P.201",
                 "rentPrice": 3600000,
-                "area": "19.0"
+                "area": 19,
+                "description": "Phòng trọ hiện đại, tiện nghi đầy đủ",
+                "amenities": {
+                  "aircon": true,
+                  "fridge": false
+                }
               }
             }
           }
@@ -8703,7 +8713,15 @@
                     "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
                     "name": "P.201",
                     "rentPrice": 3600000,
-                    "area": "19.0"
+                    "floorNumber": 2,
+                    "description": "Phòng trọ hiện đại, tiện nghi đầy đủ",
+                    "area": 19,
+                    "amenities": {
+                      "aircon": true,
+                      "fridge": false
+                    },
+                    "maxOccupancy": 3,
+                    "genderPolicy": "any"
                   }
                 }
               }
@@ -8748,7 +8766,7 @@
           }
         ],
         "summary": "Delete room",
-        "description": "landlord. Xóa mềm phòng. Lỗi nghiệp vụ: 404 NOT FOUND · 409 ROOM HAS ACTIVE CONTRACT · 403 FORBIDDEN.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
+        "description": "landlord. Xóa mềm phòng. Kiểm tra hợp đồng đang hiệu lực chưa được thực hiện vì domain Contract chưa tồn tại.\n\n```mermaid\nsequenceDiagram\n    autonumber\n    participant GW as API Gateway\n    participant TEN as Tenancy\n    participant DB as Tenancy DB\n    participant OB as Outbox\n\n    GW->>TEN: DELETE /rooms/{roomId} (access token)\n    TEN->>TEN: Xác thực role landlord\n    TEN->>DB: [Transaction] SELECT room FOR UPDATE\n    alt Không tìm thấy hoặc đã xóa\n        TEN-->>GW: 404 RESOURCE_NOT_FOUND\n    else Room thuộc landlord khác\n        TEN-->>GW: 403 FORBIDDEN\n    else Room thuộc landlord hiện tại\n        TEN->>TEN: room.delete()\n        TEN->>DB: [Transaction] UPDATE rooms SET is_deleted = true\n        TEN->>OB: [Transaction] INSERT room.deleted\n        TEN-->>GW: 204 No Content\n    end\n```\n\nLỗi nghiệp vụ: 404 NOT FOUND · 403 FORBIDDEN.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-26 | 🟢 NON_BREAKING | Bỏ response lỗi HTTP 409. | [#21](https://github.com/pbl6-home-renter/api-doc/pull/21) |\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "parameters": [
           {
             "name": "roomId",
@@ -8776,46 +8794,6 @@
           "404": {
             "$ref": "#/components/responses/NotFoundError"
           },
-          "409": {
-            "x-apidog-name": "Conflict",
-            "description": "Yêu cầu xung đột với trạng thái hiện tại hoặc dữ liệu đã tồn tại.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "additionalProperties": false,
-                  "required": [
-                    "statusCode",
-                    "code"
-                  ],
-                  "properties": {
-                    "statusCode": {
-                      "type": "integer",
-                      "enum": [
-                        409
-                      ]
-                    },
-                    "code": {
-                      "type": "string",
-                      "enum": [
-                        "ROOM_HAS_ACTIVE_CONTRACT"
-                      ],
-                      "description": "- ROOM_HAS_ACTIVE_CONTRACT: Phòng còn hợp đồng đang hiệu lực."
-                    }
-                  }
-                },
-                "examples": {
-                  "room_has_active_contract": {
-                    "summary": "ROOM_HAS_ACTIVE_CONTRACT — Phòng còn hợp đồng đang hiệu lực.",
-                    "value": {
-                      "statusCode": 409,
-                      "code": "ROOM_HAS_ACTIVE_CONTRACT"
-                    }
-                  }
-                }
-              }
-            }
-          },
           "429": {
             "$ref": "#/components/responses/TooManyRequestsError"
           },
@@ -8842,7 +8820,7 @@
           }
         ],
         "summary": "Mark room ready for rent",
-        "description": "landlord. Đánh dấu phòng sẵn sàng cho thuê. Lỗi nghiệp vụ: 404 NOT FOUND · 403 FORBIDDEN · 409 INVALID ROOM TRANSITION.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
+        "description": "landlord. Đánh dấu phòng sẵn sàng cho thuê; chỉ chuyển `maintenance` → `available` theo enum của database.\n\n```mermaid\nsequenceDiagram\n    autonumber\n    participant GW as API Gateway\n    participant TEN as Tenancy\n    participant DB as Tenancy DB\n    participant OB as Outbox\n\n    GW->>TEN: POST /rooms/{roomId}/mark-ready (access token)\n    TEN->>TEN: Xác thực role landlord\n    TEN->>DB: [Transaction] SELECT room FOR UPDATE\n    alt Không tìm thấy hoặc đã xóa\n        TEN-->>GW: 404 RESOURCE_NOT_FOUND\n    else Room thuộc landlord khác\n        TEN-->>GW: 403 FORBIDDEN\n    else Status khác maintenance\n        TEN-->>GW: 409 INVALID_ROOM_TRANSITION\n    else Status maintenance\n        TEN->>TEN: room.markReady()\n        TEN->>DB: [Transaction] UPDATE rooms SET status = available\n        TEN->>OB: [Transaction] INSERT room.status_changed\n        TEN-->>GW: 200 ROOM_MARKED_READY {id, status: available}\n    end\n```\n\nLỗi nghiệp vụ: 404 NOT FOUND · 403 FORBIDDEN · 409 INVALID ROOM TRANSITION.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "parameters": [
           {
             "name": "roomId",
@@ -24561,7 +24539,7 @@
         "type": "object",
         "x-apidog-folder": "Room/Request",
         "title": "RoomUpdateRequestDto",
-        "description": "Dữ liệu cập nhật một phần thông tin phòng",
+        "description": "Dữ liệu cập nhật một phần thông tin phòng; field bị bỏ qua sẽ được giữ nguyên",
         "additionalProperties": false,
         "minProperties": 1,
         "properties": {
@@ -24572,17 +24550,78 @@
             "maxLength": 254,
             "example": "P.201"
           },
-          "rentPrice": {
+          "floorNumber": {
             "type": "integer",
-            "description": "Thông tin rent price của tài nguyên trong ngữ cảnh DTO.",
-            "minimum": 0,
-            "example": 3600000
+            "nullable": true,
+            "minimum": 1,
+            "example": 2
+          },
+          "description": {
+            "type": "string",
+            "nullable": true,
+            "minLength": 1,
+            "maxLength": 500,
+            "example": "Phòng trọ hiện đại, tiện nghi đầy đủ"
           },
           "area": {
-            "type": "string",
-            "description": "Thông tin area của tài nguyên trong ngữ cảnh DTO.",
+            "type": "number",
             "nullable": true,
-            "example": "19.0"
+            "minimum": 0,
+            "exclusiveMinimum": true,
+            "example": 19
+          },
+          "amenities": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "aircon": {
+                "type": "boolean"
+              },
+              "fridge": {
+                "type": "boolean"
+              },
+              "wcInside": {
+                "type": "boolean"
+              },
+              "waterHeater": {
+                "type": "boolean"
+              },
+              "mezzanine": {
+                "type": "boolean"
+              },
+              "table": {
+                "type": "boolean"
+              },
+              "chair": {
+                "type": "boolean"
+              }
+            },
+            "example": {
+              "aircon": true,
+              "fridge": false,
+              "wcInside": true
+            }
+          },
+          "maxOccupancy": {
+            "type": "integer",
+            "nullable": true,
+            "minimum": 1,
+            "example": 3
+          },
+          "genderPolicy": {
+            "type": "string",
+            "enum": [
+              "any",
+              "male",
+              "female"
+            ],
+            "example": "any"
+          },
+          "rentPrice": {
+            "type": "number",
+            "description": "Giá thuê theo tháng; validation theo domain Room.",
+            "minimum": 0,
+            "example": 3600000
           }
         }
       },
@@ -24708,11 +24747,9 @@
             "enum": [
               "available",
               "occupied",
-              "maintenance",
-              "cleaning",
-              "pending_cleanup"
+              "maintenance"
             ],
-            "description": "Trạng thái phòng: available (trống), occupied (đã thuê), maintenance (bảo trì), cleaning / pending_cleanup (chờ dọn dẹp sau checkout).",
+            "description": "Trạng thái phòng theo database: available (trống), occupied (đã thuê), maintenance (bảo trì).",
             "example": "available"
           },
           "floorNumber": {
@@ -25041,23 +25078,72 @@
             "type": "string",
             "description": "Thông tin name của tài nguyên trong ngữ cảnh DTO."
           },
-          "rentPrice": {
+          "floorNumber": {
             "type": "integer",
-            "minimum": 0,
-            "description": "Thông tin rent price của tài nguyên trong ngữ cảnh DTO."
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
           },
           "area": {
+            "type": "number",
+            "nullable": true
+          },
+          "amenities": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "aircon": {
+                "type": "boolean"
+              },
+              "fridge": {
+                "type": "boolean"
+              },
+              "wcInside": {
+                "type": "boolean"
+              },
+              "waterHeater": {
+                "type": "boolean"
+              },
+              "mezzanine": {
+                "type": "boolean"
+              },
+              "table": {
+                "type": "boolean"
+              },
+              "chair": {
+                "type": "boolean"
+              }
+            }
+          },
+          "maxOccupancy": {
+            "type": "integer",
+            "nullable": true
+          },
+          "genderPolicy": {
             "type": "string",
-            "nullable": true,
-            "example": "19.0",
-            "description": "Thông tin area của tài nguyên trong ngữ cảnh DTO."
+            "enum": [
+              "any",
+              "male",
+              "female"
+            ]
+          },
+          "rentPrice": {
+            "type": "number",
+            "minimum": 0
           }
         },
         "required": [
           "id",
           "name",
-          "rentPrice",
-          "area"
+          "floorNumber",
+          "description",
+          "area",
+          "amenities",
+          "maxOccupancy",
+          "genderPolicy",
+          "rentPrice"
         ]
       },
       "RoomMarkReadyResponseDto": {

@@ -9701,6 +9701,1161 @@
           }
         }
       }
+    },
+    {
+      "id": "48b8811c395dad4041d0b262b4edb135d0b94d4e28b136a11d7a717ded885f25",
+      "label": "Thay đổi contract từ Git",
+      "classification": "BREAKING",
+      "contractId": "rentify-public",
+      "repository": "https://github.com/pbl6-home-renter/api-doc",
+      "baseHash": "1e2e5105e636dff9e696f127d7d6aa156642c171b8409da37a456608fc61f40a",
+      "headHash": "46d320b4334f42892e9db18e0c32fd3320852e7412af474090d0698731b9d015",
+      "baseSource": "src/openapi.yaml",
+      "headSource": "src/openapi.yaml",
+      "detectedAt": "2026-10-26T14:54:42.944Z",
+      "committedAt": "2026-10-26T21:54:31+07:00",
+      "baseCommit": "8612e0eda55eaa717816d20a03ce65bf0a684450",
+      "headCommit": "a9e585a53a942883143d7647a56e4fff36e3c392",
+      "prUrl": "https://github.com/pbl6-home-renter/api-doc/pull/21",
+      "commitUrl": "https://github.com/pbl6-home-renter/api-doc/commit/a9e585a53a942883143d7647a56e4fff36e3c392",
+      "metadataKind": "Git revision thực tế",
+      "reason": "CHƯA CUNG CẤP — tác giả PR phải bổ sung lý do nghiệp vụ; không thể suy ra từ OpenAPI diff.",
+      "tools": {
+        "redocly": "2.64.1",
+        "oasdiff": "1.34.1"
+      },
+      "changes": [
+        {
+          "id": "request-property-exclusive-min-set",
+          "text": "the `area` request property's exclusiveMinimum was set to `true`",
+          "comment": "Setting a bound rejects values the previous contract accepted. If your clients are known to stay within the new limit, lower this check with --severity-levels.",
+          "level": 3,
+          "operation": "PATCH",
+          "operationId": "patchRoomsRoomid",
+          "path": "/rooms/{roomId}",
+          "section": "paths",
+          "fingerprint": "34ad8227cb09",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu vị trí và thay đổi trước/sau trong entry này với API adapter, DTO, parser và validation; cùng BE xác nhận phương án tương thích trước merge/phát hành."
+        },
+        {
+          "id": "request-property-min-set",
+          "text": "the `area` request property's min was set to `0.00`",
+          "comment": "Setting a bound rejects values the previous contract accepted. If your clients are known to stay within the new limit, lower this check with --severity-levels.",
+          "level": 3,
+          "operation": "PATCH",
+          "operationId": "patchRoomsRoomid",
+          "path": "/rooms/{roomId}",
+          "section": "paths",
+          "fingerprint": "39a19977e9a5",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu vị trí và thay đổi trước/sau trong entry này với API adapter, DTO, parser và validation; cùng BE xác nhận phương án tương thích trước merge/phát hành."
+        },
+        {
+          "id": "request-property-type-changed",
+          "text": "the `area` request property `type` changed from `string` to `number`",
+          "level": 3,
+          "operation": "PATCH",
+          "operationId": "patchRoomsRoomid",
+          "path": "/rooms/{roomId}",
+          "section": "paths",
+          "fingerprint": "a0ce49a36102",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu vị trí và thay đổi trước/sau trong entry này với API adapter, DTO, parser và validation; cùng BE xác nhận phương án tương thích trước merge/phát hành."
+        },
+        {
+          "id": "response-property-type-changed",
+          "text": "the `data/area` response's property `type` changed from `string` to `number` for status `200`",
+          "level": 3,
+          "operation": "PATCH",
+          "operationId": "patchRoomsRoomid",
+          "path": "/rooms/{roomId}",
+          "section": "paths",
+          "fingerprint": "1c3f5c1b9c1e",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu vị trí và thay đổi trước/sau trong entry này với API adapter, DTO, parser và validation; cùng BE xác nhận phương án tương thích trước merge/phát hành."
+        },
+        {
+          "id": "response-property-type-generalized",
+          "text": "the `data/rentPrice` response's property `type` was widened from `integer` to `number` for status `200`",
+          "level": 3,
+          "operation": "PATCH",
+          "operationId": "patchRoomsRoomid",
+          "path": "/rooms/{roomId}",
+          "section": "paths",
+          "fingerprint": "f6fbffefaa2d",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu vị trí và thay đổi trước/sau trong entry này với API adapter, DTO, parser và validation; cùng BE xác nhận phương án tương thích trước merge/phát hành."
+        },
+        {
+          "id": "api-version-not-bumped",
+          "text": "a breaking change was detected but the version is still `1.0.0`",
+          "level": 1,
+          "section": "info",
+          "fingerprint": "d3f96cd643c1",
+          "classification": "NON_BREAKING",
+          "clientImpact": "BE: xem lại quy ước version trước khi chấp nhận breaking change. FE/Mobile: theo kế hoạch chuyển đổi của entry này; version trong OpenAPI chưa chứng minh backend đã triển khai."
+        },
+        {
+          "id": "request-parameter-property-enum-value-added",
+          "text": "added the enum value `available` to the property `status` of the `query` request parameter `filter`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getMeRooms",
+          "path": "/me/rooms",
+          "section": "paths",
+          "fingerprint": "8101eab9ec15",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu enum trong DTO/validation và nhánh switch/when; xử lý giá trị chưa biết, kiểm thử dữ liệu cũ và mới; phối hợp BE trước khi phát hành."
+        },
+        {
+          "id": "request-parameter-property-enum-value-added",
+          "text": "added the enum value `maintenance` to the property `status` of the `query` request parameter `filter`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getMeRooms",
+          "path": "/me/rooms",
+          "section": "paths",
+          "fingerprint": "ae6bacaf07fd",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu enum trong DTO/validation và nhánh switch/when; xử lý giá trị chưa biết, kiểm thử dữ liệu cũ và mới; phối hợp BE trước khi phát hành."
+        },
+        {
+          "id": "request-parameter-property-enum-value-added",
+          "text": "added the enum value `occupied` to the property `status` of the `query` request parameter `filter`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getMeRooms",
+          "path": "/me/rooms",
+          "section": "paths",
+          "fingerprint": "e58cc20bdb77",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu enum trong DTO/validation và nhánh switch/when; xử lý giá trị chưa biết, kiểm thử dữ liệu cũ và mới; phối hợp BE trước khi phát hành."
+        },
+        {
+          "id": "response-property-enum-value-removed",
+          "text": "removed the `cleaning` enum value from the `data/items/status` response property for the response status `200`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getMeRooms",
+          "path": "/me/rooms",
+          "section": "paths",
+          "fingerprint": "0eb5fec85cfc",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu enum trong DTO/validation và nhánh switch/when; xử lý giá trị chưa biết, kiểm thử dữ liệu cũ và mới; phối hợp BE trước khi phát hành."
+        },
+        {
+          "id": "response-property-enum-value-removed",
+          "text": "removed the `pending_cleanup` enum value from the `data/items/status` response property for the response status `200`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getMeRooms",
+          "path": "/me/rooms",
+          "section": "paths",
+          "fingerprint": "64b3df08b808",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu enum trong DTO/validation và nhánh switch/when; xử lý giá trị chưa biết, kiểm thử dữ liệu cũ và mới; phối hợp BE trước khi phát hành."
+        },
+        {
+          "id": "response-non-success-status-removed",
+          "text": "removed the non-success response with the status `409`",
+          "level": 1,
+          "operation": "DELETE",
+          "operationId": "deleteRoomsRoomid",
+          "path": "/rooms/{roomId}",
+          "section": "paths",
+          "fingerprint": "0eb3b3bbcbaf",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "new-optional-request-property",
+          "text": "added the new optional request property `amenities`",
+          "level": 1,
+          "operation": "PATCH",
+          "operationId": "patchRoomsRoomid",
+          "path": "/rooms/{roomId}",
+          "section": "paths",
+          "fingerprint": "49d5c083f2fd",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        },
+        {
+          "id": "new-optional-request-property",
+          "text": "added the new optional request property `description`",
+          "level": 1,
+          "operation": "PATCH",
+          "operationId": "patchRoomsRoomid",
+          "path": "/rooms/{roomId}",
+          "section": "paths",
+          "fingerprint": "627a3dee3761",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        },
+        {
+          "id": "new-optional-request-property",
+          "text": "added the new optional request property `floorNumber`",
+          "level": 1,
+          "operation": "PATCH",
+          "operationId": "patchRoomsRoomid",
+          "path": "/rooms/{roomId}",
+          "section": "paths",
+          "fingerprint": "14716052f458",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        },
+        {
+          "id": "new-optional-request-property",
+          "text": "added the new optional request property `genderPolicy`",
+          "level": 1,
+          "operation": "PATCH",
+          "operationId": "patchRoomsRoomid",
+          "path": "/rooms/{roomId}",
+          "section": "paths",
+          "fingerprint": "921982cbeefb",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        },
+        {
+          "id": "new-optional-request-property",
+          "text": "added the new optional request property `maxOccupancy`",
+          "level": 1,
+          "operation": "PATCH",
+          "operationId": "patchRoomsRoomid",
+          "path": "/rooms/{roomId}",
+          "section": "paths",
+          "fingerprint": "baa321978291",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        },
+        {
+          "id": "request-property-type-generalized",
+          "text": "the `rentPrice` request property `type` was widened from `integer` to `number`",
+          "level": 1,
+          "operation": "PATCH",
+          "operationId": "patchRoomsRoomid",
+          "path": "/rooms/{roomId}",
+          "section": "paths",
+          "fingerprint": "88b59d2685b4",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        },
+        {
+          "id": "response-required-property-added",
+          "text": "added the required property `data/amenities` to the response with the `200` status",
+          "level": 1,
+          "operation": "PATCH",
+          "operationId": "patchRoomsRoomid",
+          "path": "/rooms/{roomId}",
+          "section": "paths",
+          "fingerprint": "3a6518460106",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/amenities; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-required-property-added",
+          "text": "added the required property `data/description` to the response with the `200` status",
+          "level": 1,
+          "operation": "PATCH",
+          "operationId": "patchRoomsRoomid",
+          "path": "/rooms/{roomId}",
+          "section": "paths",
+          "fingerprint": "c052593b71f5",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/description; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-required-property-added",
+          "text": "added the required property `data/floorNumber` to the response with the `200` status",
+          "level": 1,
+          "operation": "PATCH",
+          "operationId": "patchRoomsRoomid",
+          "path": "/rooms/{roomId}",
+          "section": "paths",
+          "fingerprint": "4ef986b4be3f",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/floorNumber; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-required-property-added",
+          "text": "added the required property `data/genderPolicy` to the response with the `200` status",
+          "level": 1,
+          "operation": "PATCH",
+          "operationId": "patchRoomsRoomid",
+          "path": "/rooms/{roomId}",
+          "section": "paths",
+          "fingerprint": "694dd82137e3",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/genderPolicy; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-required-property-added",
+          "text": "added the required property `data/maxOccupancy` to the response with the `200` status",
+          "level": 1,
+          "operation": "PATCH",
+          "operationId": "patchRoomsRoomid",
+          "path": "/rooms/{roomId}",
+          "section": "paths",
+          "fingerprint": "711e4060c5ec",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/maxOccupancy; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        }
+      ],
+      "locations": [
+        {
+          "pointer": "/components/schemas/RoomMyListResponseDto/properties/status/description",
+          "before": "Trạng thái phòng: available (trống), occupied (đã thuê), maintenance (bảo trì), cleaning / pending_cleanup (chờ dọn dẹp sau checkout).",
+          "after": "Trạng thái phòng theo database: available (trống), occupied (đã thuê), maintenance (bảo trì)."
+        },
+        {
+          "pointer": "/components/schemas/RoomMyListResponseDto/properties/status/enum",
+          "before": [
+            "available",
+            "occupied",
+            "maintenance",
+            "cleaning",
+            "pending_cleanup"
+          ],
+          "after": [
+            "available",
+            "occupied",
+            "maintenance"
+          ]
+        },
+        {
+          "pointer": "/components/schemas/RoomUpdateRequestDto/description",
+          "before": "Dữ liệu cập nhật một phần thông tin phòng",
+          "after": "Dữ liệu cập nhật một phần thông tin phòng; field bị bỏ qua sẽ được giữ nguyên"
+        },
+        {
+          "pointer": "/components/schemas/RoomUpdateRequestDto/properties/amenities",
+          "before": null,
+          "after": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "aircon": {
+                "type": "boolean"
+              },
+              "fridge": {
+                "type": "boolean"
+              },
+              "wcInside": {
+                "type": "boolean"
+              },
+              "waterHeater": {
+                "type": "boolean"
+              },
+              "mezzanine": {
+                "type": "boolean"
+              },
+              "table": {
+                "type": "boolean"
+              },
+              "chair": {
+                "type": "boolean"
+              }
+            },
+            "example": {
+              "aircon": true,
+              "fridge": false,
+              "wcInside": true
+            }
+          }
+        },
+        {
+          "pointer": "/components/schemas/RoomUpdateRequestDto/properties/area/description",
+          "before": "Thông tin area của tài nguyên trong ngữ cảnh DTO.",
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/RoomUpdateRequestDto/properties/area/example",
+          "before": "19.0",
+          "after": 19
+        },
+        {
+          "pointer": "/components/schemas/RoomUpdateRequestDto/properties/area/exclusiveMinimum",
+          "before": null,
+          "after": true
+        },
+        {
+          "pointer": "/components/schemas/RoomUpdateRequestDto/properties/area/minimum",
+          "before": null,
+          "after": 0
+        },
+        {
+          "pointer": "/components/schemas/RoomUpdateRequestDto/properties/area/type",
+          "before": "string",
+          "after": "number"
+        },
+        {
+          "pointer": "/components/schemas/RoomUpdateRequestDto/properties/description",
+          "before": null,
+          "after": {
+            "type": "string",
+            "nullable": true,
+            "minLength": 1,
+            "maxLength": 500,
+            "example": "Phòng trọ hiện đại, tiện nghi đầy đủ"
+          }
+        },
+        {
+          "pointer": "/components/schemas/RoomUpdateRequestDto/properties/floorNumber",
+          "before": null,
+          "after": {
+            "type": "integer",
+            "nullable": true,
+            "minimum": 1,
+            "example": 2
+          }
+        },
+        {
+          "pointer": "/components/schemas/RoomUpdateRequestDto/properties/genderPolicy",
+          "before": null,
+          "after": {
+            "type": "string",
+            "enum": [
+              "any",
+              "male",
+              "female"
+            ],
+            "example": "any"
+          }
+        },
+        {
+          "pointer": "/components/schemas/RoomUpdateRequestDto/properties/maxOccupancy",
+          "before": null,
+          "after": {
+            "type": "integer",
+            "nullable": true,
+            "minimum": 1,
+            "example": 3
+          }
+        },
+        {
+          "pointer": "/components/schemas/RoomUpdateRequestDto/properties/rentPrice/description",
+          "before": "Thông tin rent price của tài nguyên trong ngữ cảnh DTO.",
+          "after": "Giá thuê theo tháng; validation theo domain Room."
+        },
+        {
+          "pointer": "/components/schemas/RoomUpdateRequestDto/properties/rentPrice/type",
+          "before": "integer",
+          "after": "number"
+        },
+        {
+          "pointer": "/components/schemas/RoomUpdateResponseDto/properties/amenities",
+          "before": null,
+          "after": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "aircon": {
+                "type": "boolean"
+              },
+              "fridge": {
+                "type": "boolean"
+              },
+              "wcInside": {
+                "type": "boolean"
+              },
+              "waterHeater": {
+                "type": "boolean"
+              },
+              "mezzanine": {
+                "type": "boolean"
+              },
+              "table": {
+                "type": "boolean"
+              },
+              "chair": {
+                "type": "boolean"
+              }
+            }
+          }
+        },
+        {
+          "pointer": "/components/schemas/RoomUpdateResponseDto/properties/area/description",
+          "before": "Thông tin area của tài nguyên trong ngữ cảnh DTO.",
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/RoomUpdateResponseDto/properties/area/example",
+          "before": "19.0",
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/RoomUpdateResponseDto/properties/area/type",
+          "before": "string",
+          "after": "number"
+        },
+        {
+          "pointer": "/components/schemas/RoomUpdateResponseDto/properties/description",
+          "before": null,
+          "after": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        {
+          "pointer": "/components/schemas/RoomUpdateResponseDto/properties/floorNumber",
+          "before": null,
+          "after": {
+            "type": "integer",
+            "nullable": true
+          }
+        },
+        {
+          "pointer": "/components/schemas/RoomUpdateResponseDto/properties/genderPolicy",
+          "before": null,
+          "after": {
+            "type": "string",
+            "enum": [
+              "any",
+              "male",
+              "female"
+            ]
+          }
+        },
+        {
+          "pointer": "/components/schemas/RoomUpdateResponseDto/properties/maxOccupancy",
+          "before": null,
+          "after": {
+            "type": "integer",
+            "nullable": true
+          }
+        },
+        {
+          "pointer": "/components/schemas/RoomUpdateResponseDto/properties/rentPrice/description",
+          "before": "Thông tin rent price của tài nguyên trong ngữ cảnh DTO.",
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/RoomUpdateResponseDto/properties/rentPrice/type",
+          "before": "integer",
+          "after": "number"
+        },
+        {
+          "pointer": "/components/schemas/RoomUpdateResponseDto/required",
+          "before": [
+            "id",
+            "name",
+            "rentPrice",
+            "area"
+          ],
+          "after": [
+            "id",
+            "name",
+            "floorNumber",
+            "description",
+            "area",
+            "amenities",
+            "maxOccupancy",
+            "genderPolicy",
+            "rentPrice"
+          ]
+        },
+        {
+          "pointer": "/paths/~1me~1rooms/get/description",
+          "before": "landlord. Liệt kê phòng của tôi. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 VALIDATION FAILED.",
+          "after": "landlord. Liệt kê phòng của tôi bằng offset pagination, filter theo `buildingId` / `status` và sort theo một field được hỗ trợ.\n\n```mermaid\nsequenceDiagram\n    autonumber\n    participant GW as API Gateway\n    participant TEN as Tenancy\n    participant DB as Tenancy DB\n\n    GW->>TEN: GET /me/rooms (access token, filter, sort, page)\n    TEN->>TEN: Xác thực role landlord\n    TEN->>DB: SELECT rooms WHERE landlord_id = currentUser.id AND is_deleted = false<br/>+ filters + offset pagination\n    DB-->>TEN: Danh sách phòng và total count\n    TEN-->>GW: 200 ROOMS_MY_FETCHED {data, pagination}\n```\n\nLỗi nghiệp vụ: 403 FORBIDDEN · 422 VALIDATION FAILED."
+        },
+        {
+          "pointer": "/paths/~1me~1rooms/get/parameters",
+          "before": [
+            {
+              "name": "filter",
+              "in": "query",
+              "required": false,
+              "style": "deepObject",
+              "explode": true,
+              "description": "Bộ lọc được endpoint hỗ trợ.",
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "buildingId": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "status": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            {
+              "name": "sort",
+              "in": "query",
+              "description": "Một trường sắp xếp được endpoint hỗ trợ.",
+              "schema": {
+                "type": "string",
+                "default": "rentPrice"
+              }
+            },
+            {
+              "name": "order",
+              "in": "query",
+              "schema": {
+                "type": "string",
+                "enum": [
+                  "asc",
+                  "desc"
+                ],
+                "default": "asc"
+              }
+            },
+            {
+              "name": "pageSize",
+              "in": "query",
+              "schema": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 100,
+                "default": 20
+              }
+            },
+            {
+              "name": "pageNo",
+              "in": "query",
+              "schema": {
+                "type": "integer",
+                "minimum": 1,
+                "default": 1
+              }
+            },
+            {
+              "name": "format",
+              "in": "query",
+              "description": "json trả envelope; định dạng khác trả file stream.",
+              "schema": {
+                "type": "string",
+                "enum": [
+                  "json",
+                  "xlsx",
+                  "csv",
+                  "pdf"
+                ],
+                "default": "json"
+              }
+            }
+          ],
+          "after": [
+            {
+              "name": "filter",
+              "in": "query",
+              "required": false,
+              "style": "deepObject",
+              "explode": true,
+              "description": "Bộ lọc được endpoint hỗ trợ.",
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "buildingId": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "status": {
+                    "type": "string",
+                    "enum": [
+                      "available",
+                      "occupied",
+                      "maintenance"
+                    ]
+                  }
+                }
+              }
+            },
+            {
+              "name": "sort",
+              "in": "query",
+              "description": "Một trường sắp xếp được endpoint hỗ trợ.",
+              "schema": {
+                "type": "string",
+                "default": "rentPrice"
+              }
+            },
+            {
+              "name": "order",
+              "in": "query",
+              "schema": {
+                "type": "string",
+                "enum": [
+                  "asc",
+                  "desc"
+                ],
+                "default": "asc"
+              }
+            },
+            {
+              "name": "pageSize",
+              "in": "query",
+              "schema": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 100,
+                "default": 20
+              }
+            },
+            {
+              "name": "pageNo",
+              "in": "query",
+              "schema": {
+                "type": "integer",
+                "minimum": 1,
+                "default": 1
+              }
+            },
+            {
+              "name": "format",
+              "in": "query",
+              "description": "json trả envelope; định dạng khác trả file stream.",
+              "schema": {
+                "type": "string",
+                "enum": [
+                  "json",
+                  "xlsx",
+                  "csv",
+                  "pdf"
+                ],
+                "default": "json"
+              }
+            }
+          ]
+        },
+        {
+          "pointer": "/paths/~1me~1rooms/get/responses/200/content/application~1json/example/data",
+          "before": [
+            {
+              "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+              "buildingId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+              "name": "P.201",
+              "rentPrice": 3500000,
+              "status": "cleaning",
+              "activeIssuesCount": 0
+            }
+          ],
+          "after": [
+            {
+              "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+              "buildingId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+              "name": "P.201",
+              "rentPrice": 3500000,
+              "status": "available",
+              "activeIssuesCount": 0
+            }
+          ]
+        },
+        {
+          "pointer": "/paths/~1rooms~1{roomId}/delete/description",
+          "before": "landlord. Xóa mềm phòng. Lỗi nghiệp vụ: 404 NOT FOUND · 409 ROOM HAS ACTIVE CONTRACT · 403 FORBIDDEN.",
+          "after": "landlord. Xóa mềm phòng. Kiểm tra hợp đồng đang hiệu lực chưa được thực hiện vì domain Contract chưa tồn tại.\n\n```mermaid\nsequenceDiagram\n    autonumber\n    participant GW as API Gateway\n    participant TEN as Tenancy\n    participant DB as Tenancy DB\n    participant OB as Outbox\n\n    GW->>TEN: DELETE /rooms/{roomId} (access token)\n    TEN->>TEN: Xác thực role landlord\n    TEN->>DB: [Transaction] SELECT room FOR UPDATE\n    alt Không tìm thấy hoặc đã xóa\n        TEN-->>GW: 404 RESOURCE_NOT_FOUND\n    else Room thuộc landlord khác\n        TEN-->>GW: 403 FORBIDDEN\n    else Room thuộc landlord hiện tại\n        TEN->>TEN: room.delete()\n        TEN->>DB: [Transaction] UPDATE rooms SET is_deleted = true\n        TEN->>OB: [Transaction] INSERT room.deleted\n        TEN-->>GW: 204 No Content\n    end\n```\n\nLỗi nghiệp vụ: 404 NOT FOUND · 403 FORBIDDEN."
+        },
+        {
+          "pointer": "/paths/~1rooms~1{roomId}/delete/responses/409",
+          "before": {
+            "x-apidog-name": "Conflict",
+            "description": "Yêu cầu xung đột với trạng thái hiện tại hoặc dữ liệu đã tồn tại.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        409
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "ROOM_HAS_ACTIVE_CONTRACT"
+                      ],
+                      "description": "- ROOM_HAS_ACTIVE_CONTRACT: Phòng còn hợp đồng đang hiệu lực."
+                    }
+                  }
+                },
+                "examples": {
+                  "room_has_active_contract": {
+                    "summary": "ROOM_HAS_ACTIVE_CONTRACT — Phòng còn hợp đồng đang hiệu lực.",
+                    "value": {
+                      "statusCode": 409,
+                      "code": "ROOM_HAS_ACTIVE_CONTRACT"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1rooms~1{roomId}/patch/description",
+          "before": "landlord. Cập nhật thông tin phòng. Lỗi nghiệp vụ: 404 NOT FOUND · 403 FORBIDDEN · 422 VALIDATION FAILED.",
+          "after": "landlord. Cập nhật một phần thông tin phòng.\n\n```mermaid\nsequenceDiagram\n    autonumber\n    participant GW as API Gateway\n    participant TEN as Tenancy\n    participant DB as Tenancy DB\n    participant OB as Outbox\n\n    GW->>TEN: PATCH /rooms/{roomId} (access token, updates)\n    TEN->>TEN: Xác thực role landlord\n    TEN->>DB: [Transaction] SELECT room FOR UPDATE\n    alt Không tìm thấy hoặc đã xóa\n        TEN-->>GW: 404 RESOURCE_NOT_FOUND\n    else Room thuộc landlord khác\n        TEN-->>GW: 403 FORBIDDEN\n    else Room thuộc landlord hiện tại\n        TEN->>TEN: room.update(updates)\n        TEN->>DB: [Transaction] UPDATE rooms\n        TEN->>OB: [Transaction] INSERT room.updated\n        TEN-->>GW: 200 ROOM_UPDATED {id, editable Room fields}\n    end\n```\n\nLỗi nghiệp vụ: 404 NOT FOUND · 403 FORBIDDEN · 422 VALIDATION FAILED."
+        },
+        {
+          "pointer": "/paths/~1rooms~1{roomId}/patch/requestBody/content/application~1json/example/amenities",
+          "before": null,
+          "after": {
+            "aircon": true,
+            "fridge": false
+          }
+        },
+        {
+          "pointer": "/paths/~1rooms~1{roomId}/patch/requestBody/content/application~1json/example/area",
+          "before": "19.0",
+          "after": 19
+        },
+        {
+          "pointer": "/paths/~1rooms~1{roomId}/patch/requestBody/content/application~1json/example/description",
+          "before": null,
+          "after": "Phòng trọ hiện đại, tiện nghi đầy đủ"
+        },
+        {
+          "pointer": "/paths/~1rooms~1{roomId}/patch/responses/200/content/application~1json/example/data/amenities",
+          "before": null,
+          "after": {
+            "aircon": true,
+            "fridge": false
+          }
+        },
+        {
+          "pointer": "/paths/~1rooms~1{roomId}/patch/responses/200/content/application~1json/example/data/area",
+          "before": "19.0",
+          "after": 19
+        },
+        {
+          "pointer": "/paths/~1rooms~1{roomId}/patch/responses/200/content/application~1json/example/data/description",
+          "before": null,
+          "after": "Phòng trọ hiện đại, tiện nghi đầy đủ"
+        },
+        {
+          "pointer": "/paths/~1rooms~1{roomId}/patch/responses/200/content/application~1json/example/data/floorNumber",
+          "before": null,
+          "after": 2
+        },
+        {
+          "pointer": "/paths/~1rooms~1{roomId}/patch/responses/200/content/application~1json/example/data/genderPolicy",
+          "before": null,
+          "after": "any"
+        },
+        {
+          "pointer": "/paths/~1rooms~1{roomId}/patch/responses/200/content/application~1json/example/data/maxOccupancy",
+          "before": null,
+          "after": 3
+        },
+        {
+          "pointer": "/paths/~1rooms~1{roomId}~1mark-ready/post/description",
+          "before": "landlord. Đánh dấu phòng sẵn sàng cho thuê. Lỗi nghiệp vụ: 404 NOT FOUND · 403 FORBIDDEN · 409 INVALID ROOM TRANSITION.",
+          "after": "landlord. Đánh dấu phòng sẵn sàng cho thuê; chỉ chuyển `maintenance` → `available` theo enum của database.\n\n```mermaid\nsequenceDiagram\n    autonumber\n    participant GW as API Gateway\n    participant TEN as Tenancy\n    participant DB as Tenancy DB\n    participant OB as Outbox\n\n    GW->>TEN: POST /rooms/{roomId}/mark-ready (access token)\n    TEN->>TEN: Xác thực role landlord\n    TEN->>DB: [Transaction] SELECT room FOR UPDATE\n    alt Không tìm thấy hoặc đã xóa\n        TEN-->>GW: 404 RESOURCE_NOT_FOUND\n    else Room thuộc landlord khác\n        TEN-->>GW: 403 FORBIDDEN\n    else Status khác maintenance\n        TEN-->>GW: 409 INVALID_ROOM_TRANSITION\n    else Status maintenance\n        TEN->>TEN: room.markReady()\n        TEN->>DB: [Transaction] UPDATE rooms SET status = available\n        TEN->>OB: [Transaction] INSERT room.status_changed\n        TEN-->>GW: 200 ROOM_MARKED_READY {id, status: available}\n    end\n```\n\nLỗi nghiệp vụ: 404 NOT FOUND · 403 FORBIDDEN · 409 INVALID ROOM TRANSITION."
+        }
+      ],
+      "semanticDiff": {
+        "paths": {
+          "modified": {
+            "/me/rooms": {
+              "operations": {
+                "modified": {
+                  "GET": {
+                    "parameters": {
+                      "modified": {
+                        "query": {
+                          "filter": {
+                            "schema": {
+                              "properties": {
+                                "modified": {
+                                  "status": {
+                                    "enum": {
+                                      "enumAdded": true,
+                                      "added": [
+                                        "available",
+                                        "occupied",
+                                        "maintenance"
+                                      ]
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "responses": {
+                      "modified": {
+                        "200": {
+                          "content": {
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "properties": {
+                                    "modified": {
+                                      "data": {
+                                        "items": {
+                                          "properties": {
+                                            "modified": {
+                                              "status": {
+                                                "enum": {
+                                                  "deleted": [
+                                                    "cleaning",
+                                                    "pending_cleanup"
+                                                  ]
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "/rooms/{roomId}": {
+              "operations": {
+                "modified": {
+                  "DELETE": {
+                    "responses": {
+                      "deleted": [
+                        "409"
+                      ]
+                    }
+                  },
+                  "PATCH": {
+                    "requestBody": {
+                      "content": {
+                        "modified": {
+                          "application/json": {
+                            "schema": {
+                              "properties": {
+                                "added": [
+                                  "floorNumber",
+                                  "description",
+                                  "amenities",
+                                  "maxOccupancy",
+                                  "genderPolicy"
+                                ],
+                                "modified": {
+                                  "area": {
+                                    "type": {
+                                      "added": [
+                                        "number"
+                                      ],
+                                      "deleted": [
+                                        "string"
+                                      ]
+                                    },
+                                    "exclusiveMin": {
+                                      "from": null,
+                                      "to": true
+                                    },
+                                    "min": {
+                                      "from": null,
+                                      "to": 0
+                                    }
+                                  },
+                                  "rentPrice": {
+                                    "type": {
+                                      "added": [
+                                        "number"
+                                      ],
+                                      "deleted": [
+                                        "integer"
+                                      ]
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "responses": {
+                      "modified": {
+                        "200": {
+                          "content": {
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "properties": {
+                                    "modified": {
+                                      "data": {
+                                        "required": {
+                                          "added": [
+                                            "description",
+                                            "amenities",
+                                            "maxOccupancy",
+                                            "genderPolicy",
+                                            "floorNumber"
+                                          ]
+                                        },
+                                        "properties": {
+                                          "added": [
+                                            "floorNumber",
+                                            "description",
+                                            "maxOccupancy",
+                                            "genderPolicy",
+                                            "amenities"
+                                          ],
+                                          "modified": {
+                                            "area": {
+                                              "type": {
+                                                "added": [
+                                                  "number"
+                                                ],
+                                                "deleted": [
+                                                  "string"
+                                                ]
+                                              }
+                                            },
+                                            "rentPrice": {
+                                              "type": {
+                                                "added": [
+                                                  "number"
+                                                ],
+                                                "deleted": [
+                                                  "integer"
+                                                ]
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "components": {
+          "schemas": {
+            "modified": {
+              "RoomMyListResponseDto": {
+                "properties": {
+                  "modified": {
+                    "status": {
+                      "enum": {
+                        "deleted": [
+                          "cleaning",
+                          "pending_cleanup"
+                        ]
+                      }
+                    }
+                  }
+                }
+              },
+              "RoomUpdateRequestDto": {
+                "properties": {
+                  "added": [
+                    "floorNumber",
+                    "description",
+                    "amenities",
+                    "maxOccupancy",
+                    "genderPolicy"
+                  ],
+                  "modified": {
+                    "area": {
+                      "type": {
+                        "added": [
+                          "number"
+                        ],
+                        "deleted": [
+                          "string"
+                        ]
+                      },
+                      "exclusiveMin": {
+                        "from": null,
+                        "to": true
+                      },
+                      "min": {
+                        "from": null,
+                        "to": 0
+                      }
+                    },
+                    "rentPrice": {
+                      "type": {
+                        "added": [
+                          "number"
+                        ],
+                        "deleted": [
+                          "integer"
+                        ]
+                      }
+                    }
+                  }
+                }
+              },
+              "RoomUpdateResponseDto": {
+                "required": {
+                  "added": [
+                    "maxOccupancy",
+                    "description",
+                    "genderPolicy",
+                    "floorNumber",
+                    "amenities"
+                  ]
+                },
+                "properties": {
+                  "added": [
+                    "floorNumber",
+                    "description",
+                    "maxOccupancy",
+                    "genderPolicy",
+                    "amenities"
+                  ],
+                  "modified": {
+                    "area": {
+                      "type": {
+                        "added": [
+                          "number"
+                        ],
+                        "deleted": [
+                          "string"
+                        ]
+                      }
+                    },
+                    "rentPrice": {
+                      "type": {
+                        "added": [
+                          "number"
+                        ],
+                        "deleted": [
+                          "integer"
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   ]
 }
