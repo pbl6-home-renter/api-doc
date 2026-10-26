@@ -12,8 +12,8 @@ properties:
   rentPrice: { type: integer, minimum: 0, description: "Giá thuê niêm yết theo tháng." }
   status:
     type: string
-    enum: [available, occupied, maintenance, cleaning, pending_cleanup]
-    description: "Trạng thái phòng: available (trống), occupied (đã thuê), maintenance (bảo trì), cleaning / pending_cleanup (chờ dọn dẹp sau checkout)."
+    enum: [available, occupied, maintenance]
+    description: "Trạng thái phòng theo database: available (trống), occupied (đã thuê), maintenance (bảo trì)."
     example: "available"
   floorNumber: { type: integer, nullable: true, description: "Số tầng của phòng." }
   currentTenantName: { type: string, nullable: true, description: "Họ tên người thuê đại diện hiện tại (nếu đang occupied)." }

@@ -7,8 +7,35 @@ post:
   security:
     - BearerAuth: []
   summary: Mark room ready for rent
-  description: 'landlord. Đánh dấu phòng sẵn sàng cho thuê. Lỗi nghiệp vụ: 404 NOT FOUND · 403 FORBIDDEN · 409 INVALID
-    ROOM TRANSITION.'
+  description: |-
+    landlord. Đánh dấu phòng sẵn sàng cho thuê; chỉ chuyển `maintenance` → `available` theo enum của database.
+
+    ```mermaid
+    sequenceDiagram
+        autonumber
+        participant GW as API Gateway
+        participant TEN as Tenancy
+        participant DB as Tenancy DB
+        participant OB as Outbox
+
+        GW->>TEN: POST /rooms/{roomId}/mark-ready (access token)
+        TEN->>TEN: Xác thực role landlord
+        TEN->>DB: [Transaction] SELECT room FOR UPDATE
+        alt Không tìm thấy hoặc đã xóa
+            TEN-->>GW: 404 RESOURCE_NOT_FOUND
+        else Room thuộc landlord khác
+            TEN-->>GW: 403 FORBIDDEN
+        else Status khác maintenance
+            TEN-->>GW: 409 INVALID_ROOM_TRANSITION
+        else Status maintenance
+            TEN->>TEN: room.markReady()
+            TEN->>DB: [Transaction] UPDATE rooms SET status = available
+            TEN->>OB: [Transaction] INSERT room.status_changed
+            TEN-->>GW: 200 ROOM_MARKED_READY {id, status: available}
+        end
+    ```
+
+    Lỗi nghiệp vụ: 404 NOT FOUND · 403 FORBIDDEN · 409 INVALID ROOM TRANSITION.
   parameters:
   - name: roomId
     in: path

@@ -7,7 +7,24 @@ get:
   security:
     - BearerAuth: []
   summary: List my rooms
-  description: 'landlord. Liệt kê phòng của tôi. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 VALIDATION FAILED.'
+  description: |-
+    landlord. Liệt kê phòng của tôi bằng offset pagination, filter theo `buildingId` / `status` và sort theo một field được hỗ trợ.
+
+    ```mermaid
+    sequenceDiagram
+        autonumber
+        participant GW as API Gateway
+        participant TEN as Tenancy
+        participant DB as Tenancy DB
+
+        GW->>TEN: GET /me/rooms (access token, filter, sort, page)
+        TEN->>TEN: Xác thực role landlord
+        TEN->>DB: SELECT rooms WHERE landlord_id = currentUser.id AND is_deleted = false<br/>+ filters + offset pagination
+        DB-->>TEN: Danh sách phòng và total count
+        TEN-->>GW: 200 ROOMS_MY_FETCHED {data, pagination}
+    ```
+
+    Lỗi nghiệp vụ: 403 FORBIDDEN · 422 VALIDATION FAILED.
   parameters:
   - name: filter
     in: query
@@ -24,6 +41,7 @@ get:
           format: uuid
         status:
           type: string
+          enum: [available, occupied, maintenance]
   - name: sort
     in: query
     description: Một trường sắp xếp được endpoint hỗ trợ.
@@ -129,7 +147,7 @@ get:
               buildingId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
               name: P.201
               rentPrice: 3500000
-              status: cleaning
+              status: available
               activeIssuesCount: 0
             pagination:
               type: offset
