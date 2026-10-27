@@ -5664,7 +5664,7 @@
           "Property"
         ],
         "x-apidog-folder": "Building",
-        "x-apidog-status": "designing",
+        "x-apidog-status": "released",
         "operationId": "postBuildings",
         "security": [
           {
@@ -5672,7 +5672,7 @@
           }
         ],
         "summary": "Create building for approval",
-        "description": "landlord. Gửi tòa nhà để duyệt. Client không gửi latitude/longitude; backend tự geocode từ address + ward + province qua TrackAsia (trước transaction), không ghi đè address. Geocode lỗi thì không tạo Building. Lỗi nghiệp vụ: 422 VALIDATION FAILED · 422 GEOCODING FAILED · 503 GEOCODING UNAVAILABLE · 403 FORBIDDEN.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-26 | 🔴 BREAKING | added the new `GEOCODING_FAILED` enum value to the `code` response property for the response status `422` | [#19](https://github.com/pbl6-home-renter/api-doc/pull/19) |\n| 2026-10-26 | 🔴 BREAKING | added the new `GEOCODING_UNAVAILABLE` enum value to the `code` response property for the response status `503` | [#19](https://github.com/pbl6-home-renter/api-doc/pull/19) |\n| 2026-10-26 | 🟢 NON_BREAKING | the response property `data/latitude` became not nullable for the status `201` | [#19](https://github.com/pbl6-home-renter/api-doc/pull/19) |\n| 2026-10-26 | 🟢 NON_BREAKING | the response property `data/longitude` became not nullable for the status `201` | [#19](https://github.com/pbl6-home-renter/api-doc/pull/19) |\n| 2026-10-26 | 🟢 NON_BREAKING | the response property `data/latitude` became required for the status `201` | [#19](https://github.com/pbl6-home-renter/api-doc/pull/19) |\n| 2026-10-26 | 🟢 NON_BREAKING | the response property `data/longitude` became required for the status `201` | [#19](https://github.com/pbl6-home-renter/api-doc/pull/19) |\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
+        "description": "Landlord. Tạo tòa nhà ở trạng thái `pending`; `landlordId` lấy từ JWT đã xác thực.\nClient không gửi `landlordId`, `status`, `district`, `latitude` hoặc `longitude`.\nBackend geocode từ `address` + `ward` + `province` qua TrackAsia trước transaction, không ghi đè địa chỉ.\nGeocode lỗi thì không tạo Building. Building và outbox `building.created` được ghi trong cùng transaction;\nrelay publish sau khi commit. Trả `201 BUILDING_CREATED` và `Location: /api/v1/buildings/{id}`.\n\n`ownershipCertificateMediaIds` hiện chỉ được validate; chưa lưu liên kết media và chưa trả danh sách đã lưu.\nLỗi: `401 UNAUTHORIZED`, `403 FORBIDDEN` / `ACCOUNT_LOCKED`,\n`422 VALIDATION_FAILED` / `UNEXPECTED_FIELD` / `GEOCODING_FAILED`,\n`503 AUTH_UNAVAILABLE` / `GEOCODING_UNAVAILABLE`.\n\n```mermaid\nsequenceDiagram\n    autonumber\n    participant GW as API Gateway\n    participant TEN as Tenancy\n    participant GEO as TrackAsia\n    participant DB as Tenancy DB\n    participant RELAY as Outbox Relay\n    participant MQ as RabbitMQ\n\n    GW->>TEN: POST /api/v1/buildings + Bearer token\n    TEN->>TEN: Verify JWT, landlord role and request\n    TEN->>GEO: Geocode address, ward, province\n    alt Geocoding failed or unavailable\n        GEO-->>TEN: No matching address / provider error\n        TEN-->>GW: 422 GEOCODING_FAILED / 503 GEOCODING_UNAVAILABLE\n    else Coordinates found\n        GEO-->>TEN: Latitude, longitude\n        TEN->>DB: BEGIN\n        TEN->>DB: INSERT buildings (pending, landlord from JWT)\n        TEN->>DB: INSERT outbox_messages (building.created)\n        alt Database operation fails\n            TEN->>DB: ROLLBACK\n            TEN-->>GW: 500 INTERNAL_SERVER_ERROR\n        else Commit succeeds\n            TEN->>DB: COMMIT\n            TEN-->>GW: 201 BUILDING_CREATED + Location\n            RELAY->>DB: Claim committed outbox event\n            RELAY->>MQ: Publish building.created\n            MQ-->>RELAY: Publisher confirm\n            RELAY->>DB: Mark outbox PUBLISHED\n        end\n    end\n```\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-26 | 🔴 BREAKING | added the new `GEOCODING_FAILED` enum value to the `code` response property for the response status `422` | [#19](https://github.com/pbl6-home-renter/api-doc/pull/19) |\n| 2026-10-26 | 🔴 BREAKING | added the new `GEOCODING_UNAVAILABLE` enum value to the `code` response property for the response status `503` | [#19](https://github.com/pbl6-home-renter/api-doc/pull/19) |\n| 2026-10-26 | 🟢 NON_BREAKING | the response property `data/latitude` became not nullable for the status `201` | [#19](https://github.com/pbl6-home-renter/api-doc/pull/19) |\n| 2026-10-26 | 🟢 NON_BREAKING | the response property `data/longitude` became not nullable for the status `201` | [#19](https://github.com/pbl6-home-renter/api-doc/pull/19) |\n| 2026-10-26 | 🟢 NON_BREAKING | the response property `data/latitude` became required for the status `201` | [#19](https://github.com/pbl6-home-renter/api-doc/pull/19) |\n| 2026-10-26 | 🟢 NON_BREAKING | the response property `data/longitude` became required for the status `201` | [#19](https://github.com/pbl6-home-renter/api-doc/pull/19) |\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "requestBody": {
           "required": true,
           "content": {
@@ -5685,7 +5685,6 @@
                 "province": "Thành phố Hồ Chí Minh",
                 "ward": "Phường Bến Nghé",
                 "address": "12 Nguyễn Trãi",
-                "district": "Quận 1",
                 "ownershipCertificateMediaIds": [
                   "3fa85f64-5717-4562-b3fc-2c963f66afa6"
                 ]
@@ -5754,7 +5753,48 @@
             "$ref": "#/components/responses/UnauthorizedError"
           },
           "403": {
-            "$ref": "#/components/responses/ForbiddenError"
+            "description": "Chỉ landlord đang hoạt động được tạo tòa nhà.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        403
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "FORBIDDEN",
+                        "ACCOUNT_LOCKED"
+                      ]
+                    }
+                  }
+                },
+                "examples": {
+                  "forbidden": {
+                    "value": {
+                      "statusCode": 403,
+                      "code": "FORBIDDEN"
+                    }
+                  },
+                  "account_locked": {
+                    "value": {
+                      "statusCode": 403,
+                      "code": "ACCOUNT_LOCKED"
+                    }
+                  }
+                }
+              }
+            }
           },
           "422": {
             "x-apidog-name": "Unprocessable Entity",
@@ -5779,9 +5819,10 @@
                       "type": "string",
                       "enum": [
                         "GEOCODING_FAILED",
-                        "VALIDATION_FAILED"
+                        "VALIDATION_FAILED",
+                        "UNEXPECTED_FIELD"
                       ],
-                      "description": "- GEOCODING_FAILED: Không xác định được tọa độ từ địa chỉ (address, ward, province); người dùng cần sửa địa chỉ.\n- VALIDATION_FAILED: Dữ liệu vi phạm ràng buộc schema hoặc quy tắc nghiệp vụ khác chưa có mã riêng."
+                      "description": "- GEOCODING_FAILED: Không xác định được tọa độ từ địa chỉ (address, ward, province); người dùng cần sửa địa chỉ.\n- VALIDATION_FAILED: Dữ liệu vi phạm ràng buộc schema hoặc quy tắc nghiệp vụ khác chưa có mã riêng.\n- UNEXPECTED_FIELD: Body chứa trường ngoài contract, ví dụ landlordId hoặc district."
                     }
                   }
                 },
@@ -5798,6 +5839,13 @@
                     "value": {
                       "statusCode": 422,
                       "code": "VALIDATION_FAILED"
+                    }
+                  },
+                  "unexpected_field": {
+                    "summary": "UNEXPECTED_FIELD — Body chứa trường ngoài contract.",
+                    "value": {
+                      "statusCode": 422,
+                      "code": "UNEXPECTED_FIELD"
                     }
                   }
                 }
@@ -23340,13 +23388,6 @@
             "maxLength": 100,
             "example": "Thành phố Hồ Chí Minh"
           },
-          "district": {
-            "type": "string",
-            "description": "Quận / Huyện",
-            "minLength": 1,
-            "maxLength": 100,
-            "example": "Quận 1"
-          },
           "ward": {
             "type": "string",
             "description": "Phường / Xã",
@@ -23364,6 +23405,7 @@
           "totalFloors": {
             "type": "integer",
             "minimum": 1,
+            "maximum": 2147483647,
             "nullable": true,
             "description": "Tổng số tầng của tòa nhà",
             "example": 4
@@ -23378,6 +23420,9 @@
           "amenities": {
             "type": "object",
             "nullable": true,
+            "additionalProperties": {
+              "type": "boolean"
+            },
             "description": "Tiện ích chung của tòa nhà (khóa vân tay, thang máy, bảo vệ, nhà để xe...)",
             "example": {
               "fingerprintLock": true,
@@ -23388,7 +23433,7 @@
           },
           "ownershipCertificateMediaIds": {
             "type": "array",
-            "description": "Danh sách ID các tệp media chứng minh quyền sở hữu nhà đất (sổ đỏ/sổ hồng/hợp đồng mua bán) tải lên tại Bước 2 để admin duyệt",
+            "description": "Danh sách ID các tệp media chứng minh quyền sở hữu. Hiện chỉ kiểm tra mảng không rỗng và định dạng UUID; liên kết media sẽ được triển khai trong media flow.",
             "items": {
               "type": "string",
               "format": "uuid"
@@ -23402,7 +23447,6 @@
         "required": [
           "name",
           "province",
-          "district",
           "ward",
           "address",
           "ownershipCertificateMediaIds"
@@ -23850,7 +23894,7 @@
           },
           "ownershipCertificateMediaIds": {
             "type": "array",
-            "description": "Danh sách ID các tài liệu chứng minh sở hữu đã ghi nhận",
+            "description": "Dành cho media flow sau này; hiện chưa lưu liên kết media nên trường này không được trả về.",
             "items": {
               "type": "string",
               "format": "uuid"

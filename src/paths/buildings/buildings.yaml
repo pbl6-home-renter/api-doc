@@ -162,14 +162,57 @@ post:
   tags:
   - Property
   x-apidog-folder: Building
-  x-apidog-status: designing
+  x-apidog-status: released
   operationId: postBuildings
   security:
     - BearerAuth: []
   summary: Create building for approval
-  description: 'landlord. Gửi tòa nhà để duyệt. Client không gửi latitude/longitude; backend tự geocode
-    từ address + ward + province qua TrackAsia (trước transaction), không ghi đè address. Geocode lỗi thì không
-    tạo Building. Lỗi nghiệp vụ: 422 VALIDATION FAILED · 422 GEOCODING FAILED · 503 GEOCODING UNAVAILABLE · 403 FORBIDDEN.'
+  description: |-
+    Landlord. Tạo tòa nhà ở trạng thái `pending`; `landlordId` lấy từ JWT đã xác thực.
+    Client không gửi `landlordId`, `status`, `district`, `latitude` hoặc `longitude`.
+    Backend geocode từ `address` + `ward` + `province` qua TrackAsia trước transaction, không ghi đè địa chỉ.
+    Geocode lỗi thì không tạo Building. Building và outbox `building.created` được ghi trong cùng transaction;
+    relay publish sau khi commit. Trả `201 BUILDING_CREATED` và `Location: /api/v1/buildings/{id}`.
+
+    `ownershipCertificateMediaIds` hiện chỉ được validate; chưa lưu liên kết media và chưa trả danh sách đã lưu.
+    Lỗi: `401 UNAUTHORIZED`, `403 FORBIDDEN` / `ACCOUNT_LOCKED`,
+    `422 VALIDATION_FAILED` / `UNEXPECTED_FIELD` / `GEOCODING_FAILED`,
+    `503 AUTH_UNAVAILABLE` / `GEOCODING_UNAVAILABLE`.
+
+    ```mermaid
+    sequenceDiagram
+        autonumber
+        participant GW as API Gateway
+        participant TEN as Tenancy
+        participant GEO as TrackAsia
+        participant DB as Tenancy DB
+        participant RELAY as Outbox Relay
+        participant MQ as RabbitMQ
+
+        GW->>TEN: POST /api/v1/buildings + Bearer token
+        TEN->>TEN: Verify JWT, landlord role and request
+        TEN->>GEO: Geocode address, ward, province
+        alt Geocoding failed or unavailable
+            GEO-->>TEN: No matching address / provider error
+            TEN-->>GW: 422 GEOCODING_FAILED / 503 GEOCODING_UNAVAILABLE
+        else Coordinates found
+            GEO-->>TEN: Latitude, longitude
+            TEN->>DB: BEGIN
+            TEN->>DB: INSERT buildings (pending, landlord from JWT)
+            TEN->>DB: INSERT outbox_messages (building.created)
+            alt Database operation fails
+                TEN->>DB: ROLLBACK
+                TEN-->>GW: 500 INTERNAL_SERVER_ERROR
+            else Commit succeeds
+                TEN->>DB: COMMIT
+                TEN-->>GW: 201 BUILDING_CREATED + Location
+                RELAY->>DB: Claim committed outbox event
+                RELAY->>MQ: Publish building.created
+                MQ-->>RELAY: Publisher confirm
+                RELAY->>DB: Mark outbox PUBLISHED
+            end
+        end
+    ```
   requestBody:
     required: true
     content:
@@ -181,7 +224,6 @@ post:
           province: Thành phố Hồ Chí Minh
           ward: Phường Bến Nghé
           address: 12 Nguyễn Trãi
-          district: Quận 1
           ownershipCertificateMediaIds:
           - 3fa85f64-5717-4562-b3fc-2c963f66afa6
   responses:
@@ -259,7 +301,25 @@ post:
                 statusCode: 503
                 code: GEOCODING_UNAVAILABLE
     '403':
-      $ref: ../../openapi.yaml#/components/responses/ForbiddenError
+      description: Chỉ landlord đang hoạt động được tạo tòa nhà.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code]
+            properties:
+              statusCode:
+                type: integer
+                enum: [403]
+              code:
+                type: string
+                enum: [FORBIDDEN, ACCOUNT_LOCKED]
+          examples:
+            forbidden:
+              value: {statusCode: 403, code: FORBIDDEN}
+            account_locked:
+              value: {statusCode: 403, code: ACCOUNT_LOCKED}
     '422':
       x-apidog-name: Unprocessable Entity
       description: Dữ liệu hợp lệ về cấu trúc nhưng vi phạm ràng buộc trường hoặc quy tắc nghiệp vụ.
@@ -278,9 +338,11 @@ post:
                 enum:
                   - GEOCODING_FAILED
                   - VALIDATION_FAILED
+                  - UNEXPECTED_FIELD
                 description: |-
                   - GEOCODING_FAILED: Không xác định được tọa độ từ địa chỉ (address, ward, province); người dùng cần sửa địa chỉ.
                   - VALIDATION_FAILED: Dữ liệu vi phạm ràng buộc schema hoặc quy tắc nghiệp vụ khác chưa có mã riêng.
+                  - UNEXPECTED_FIELD: Body chứa trường ngoài contract, ví dụ landlordId hoặc district.
           examples:
             geocoding_failed:
               summary: GEOCODING_FAILED — Không xác định được tọa độ từ địa chỉ.
@@ -292,6 +354,11 @@ post:
               value:
                 statusCode: 422
                 code: VALIDATION_FAILED
+            unexpected_field:
+              summary: UNEXPECTED_FIELD — Body chứa trường ngoài contract.
+              value:
+                statusCode: 422
+                code: UNEXPECTED_FIELD
     '429':
       $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
     '500':
