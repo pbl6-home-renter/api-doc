@@ -1,7 +1,7 @@
 type: object
 x-apidog-folder: "Building/Request"
 title: BuildingCreateRequestDto
-description: Dữ liệu tạo tòa nhà mới (bao gồm giấy tờ chứng minh sở hữu / sổ đỏ tải lên tại Bước 2)
+description: Dữ liệu tạo tòa nhà mới, gồm tên tòa nhà và địa chỉ.
 additionalProperties: false
 
 properties:
@@ -29,43 +29,9 @@ properties:
     minLength: 1
     maxLength: 254
     example: "12 Nguyễn Trãi"
-  totalFloors:
-    type: integer
-    minimum: 1
-    maximum: 2147483647
-    nullable: true
-    description: Tổng số tầng của tòa nhà
-    example: 4
-  description:
-    type: string
-    nullable: true
-    maxLength: 1000
-    description: Giới thiệu chung về tòa nhà, quy định an ninh, giờ giấc
-    example: "Khu trọ yên tĩnh, an ninh, camera 24/7, giờ giấc tự do."
-  amenities:
-    type: object
-    nullable: true
-    additionalProperties:
-      type: boolean
-    description: Tiện ích chung của tòa nhà (khóa vân tay, thang máy, bảo vệ, nhà để xe...)
-    example:
-      fingerprintLock: true
-      elevator: true
-      parking: true
-      securityCamera: true
-  ownershipCertificateMediaIds:
-    type: array
-    description: Danh sách ID các tệp media chứng minh quyền sở hữu. Hiện chỉ kiểm tra mảng không rỗng và định dạng UUID; liên kết media sẽ được triển khai trong media flow.
-    items:
-      type: string
-      format: uuid
-    minItems: 1
-    example:
-      - "3fa85f64-5717-4562-b3fc-2c963f66afa6"
 
 required:
   - name
   - province
   - ward
   - address
-  - ownershipCertificateMediaIds

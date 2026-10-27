@@ -172,9 +172,9 @@ post:
     Client không gửi `landlordId`, `status`, `district`, `latitude` hoặc `longitude`.
     Backend geocode từ `address` + `ward` + `province` qua TrackAsia trước transaction, không ghi đè địa chỉ.
     Geocode lỗi thì không tạo Building. Building và outbox `building.created` được ghi trong cùng transaction;
-    relay publish sau khi commit. Trả `201 BUILDING_CREATED` và `Location: /api/v1/buildings/{id}`.
+    relay publish sau khi commit. Trả `201 BUILDING_CREATED`.
 
-    `ownershipCertificateMediaIds` hiện chỉ được validate; chưa lưu liên kết media và chưa trả danh sách đã lưu.
+    Body chỉ gồm `name`, `province`, `ward`, `address`; trường ngoài contract trả `422 UNEXPECTED_FIELD`.
     Lỗi: `401 UNAUTHORIZED`, `403 FORBIDDEN` / `ACCOUNT_LOCKED`,
     `422 VALIDATION_FAILED` / `UNEXPECTED_FIELD` / `GEOCODING_FAILED`,
     `503 AUTH_UNAVAILABLE` / `GEOCODING_UNAVAILABLE`.
@@ -205,7 +205,7 @@ post:
                 TEN-->>GW: 500 INTERNAL_SERVER_ERROR
             else Commit succeeds
                 TEN->>DB: COMMIT
-                TEN-->>GW: 201 BUILDING_CREATED + Location
+                TEN-->>GW: 201 BUILDING_CREATED
                 RELAY->>DB: Claim committed outbox event
                 RELAY->>MQ: Publish building.created
                 MQ-->>RELAY: Publisher confirm
@@ -224,8 +224,6 @@ post:
           province: Thành phố Hồ Chí Minh
           ward: Phường Bến Nghé
           address: 12 Nguyễn Trãi
-          ownershipCertificateMediaIds:
-          - 3fa85f64-5717-4562-b3fc-2c963f66afa6
   responses:
     '201':
       description: 'Thành công: Gửi tòa nhà để duyệt.'
@@ -258,12 +256,6 @@ post:
               latitude: '20.995100'
               longitude: '105.816649'
               createdAt: '2026-09-23T11:55:00.000Z'
-      headers:
-        Location:
-          description: Đường dẫn tài nguyên được tạo.
-          schema:
-            type: string
-            example: /api/v1/buildings/{buildingId}
     '400':
       $ref: ../../openapi.yaml#/components/responses/BadRequestBodyError
     '401':
