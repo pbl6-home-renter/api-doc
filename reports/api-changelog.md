@@ -5,11 +5,61 @@
 
 Báo cáo lưu lịch sử các entry đã phát hiện, mới nhất ở trên. `NO_CHANGE` không xóa entry cũ; exit code chỉ phản ánh lần chạy hiện tại.
 
-Công cụ: Redocly 2.64.1; oasdiff 1.34.1. Số entry: **8**.
+Công cụ: Redocly 2.64.1; oasdiff 1.34.1. Số entry: **9**.
 
 Phân loại: **BREAKING** = client cũ có thể hỏng; **NON_BREAKING** = tương thích theo contract; **NEEDS_REVIEW** = chưa đủ bằng chứng.
 
 Các vị trí dùng JSON Pointer trên bundle tạm (`~1` là `/`). JSON đi kèm giữ toàn bộ semantic diff, fingerprint và hash phục vụ truy vết.
+
+## Thay đổi contract từ Git — BREAKING
+
+- ID: `63edfada814d5499f8c48d6a73c4d48039306d7c841d5b656ca76688a7391e5e`
+- Contract: rentify-public; repository: https://github.com/pbl6-home-renter/api-doc
+- Nguồn: `src/openapi.yaml` → `src/openapi.yaml`
+- Phát hiện (UTC): 2026-10-27T16:14:03.022Z; commit time: 2026-10-27T23:13:49+07:00
+- Commit nền: a3ba2f5612fa75cfaf3f1d1789ad97026aee5bdf
+- Commit đích/bối cảnh: [61af7c8efa6740269d1534aca3b7fb490d429281](https://github.com/pbl6-home-renter/api-doc/commit/61af7c8efa6740269d1534aca3b7fb490d429281)
+- PR: [https://github.com/pbl6-home-renter/api-doc/pull/22](https://github.com/pbl6-home-renter/api-doc/pull/22)
+- Loại metadata: Git revision thực tế
+- Lý do: CHƯA CUNG CẤP — tác giả PR phải bổ sung lý do nghiệp vụ; không thể suy ra từ OpenAPI diff.
+
+| Mức ảnh hưởng | Endpoint / vùng | Thay đổi | Hành động FE / Mobile |
+|---|---|---|---|
+| BREAKING | POST /buildings | added the new `UNEXPECTED_FIELD` enum value to the `code` response property for the response status `422` (`response-property-enum-value-added`) | FE: có thể bỏ qua field mới UNEXPECTED_FIELD; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại. |
+| NEEDS_REVIEW | POST /buildings | removed the request property `amenities` (`request-property-removed`) | FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ. |
+| NEEDS_REVIEW | POST /buildings | removed the request property `description` (`request-property-removed`) | FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ. |
+| NEEDS_REVIEW | POST /buildings | removed the request property `district` (`request-property-removed`) | FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ. |
+| NEEDS_REVIEW | POST /buildings | removed the request property `ownershipCertificateMediaIds` (`request-property-removed`) | FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ. |
+| NEEDS_REVIEW | POST /buildings | removed the request property `totalFloors` (`request-property-removed`) | FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ. |
+| NON_BREAKING | info | Đã phát hiện breaking change nhưng info.version vẫn là `1.0.0`. (`api-version-not-bumped`) | BE: xem lại quy ước version trước khi chấp nhận breaking change. FE/Mobile: theo kế hoạch chuyển đổi của entry này; version trong OpenAPI chưa chứng minh backend đã triển khai. |
+| NON_BREAKING | POST /buildings | the optional response header `location` removed for the status `201` (`optional-response-header-removed`) | FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ. |
+
+### Vị trí và giá trị trước/sau
+
+| Path / schema / field (JSON Pointer) | Trước | Sau |
+|---|---|---|
+| `/components/schemas/BuildingCreateRequestDto/description` | "Dữ liệu tạo tòa nhà mới (bao gồm giấy tờ chứng minh sở hữu / sổ đỏ tải lên tại Bước 2)" | "Dữ liệu tạo tòa nhà mới, gồm tên tòa nhà và địa chỉ." |
+| `/components/schemas/BuildingCreateRequestDto/properties/amenities` | {"type":"object","nullable":true,"description":"Tiện ích chung của tòa nhà (khóa vân tay, thang máy, bảo vệ, nhà để xe...)","example":{"fingerprintLock":true,"elevator":true,"parking":true,"securityCamera":true}} | null |
+| `/components/schemas/BuildingCreateRequestDto/properties/description` | {"type":"string","nullable":true,"maxLength":1000,"description":"Giới thiệu chung về tòa nhà, quy định an ninh, giờ giấc","example":"Khu trọ yên tĩnh, an ninh, camera 24/7, giờ giấc tự do."} | null |
+| `/components/schemas/BuildingCreateRequestDto/properties/district` | {"type":"string","description":"Quận / Huyện","minLength":1,"maxLength":100,"example":"Quận 1"} | null |
+| `/components/schemas/BuildingCreateRequestDto/properties/ownershipCertificateMediaIds` | {"type":"array","description":"Danh sách ID các tệp media chứng minh quyền sở hữu nhà đất (sổ đỏ/sổ hồng/hợp đồng mua bán) tải lên tại Bước 2 để admin duyệt","items":{"type":"string","format":"uuid"},"minItems":1,"example":["3fa85f64-5717-4562-b3fc-2c963f66afa6"]} | null |
+| `/components/schemas/BuildingCreateRequestDto/properties/totalFloors` | {"type":"integer","minimum":1,"nullable":true,"description":"Tổng số tầng của tòa nhà","example":4} | null |
+| `/components/schemas/BuildingCreateRequestDto/required` | ["name","province","district","ward","address","ownershipCertificateMediaIds"] | ["name","province","ward","address"] |
+| `/components/schemas/BuildingCreateResponseDto/description` | "Phản hồi khi tạo tòa nhà thành công (chờ admin kiểm duyệt hồ sơ sở hữu)" | "Phản hồi khi tạo tòa nhà thành công, chờ admin phê duyệt." |
+| `/components/schemas/BuildingCreateResponseDto/properties/ownershipCertificateMediaIds/description` | "Danh sách ID các tài liệu chứng minh sở hữu đã ghi nhận" | "Dành cho media flow sau này; hiện chưa lưu liên kết media nên trường này không được trả về." |
+| `/paths/~1buildings/post/description` | "landlord. Gửi tòa nhà để duyệt. Client không gửi latitude/longitude; backend tự geocode từ address + ward + province qua TrackAsia (trước transaction), không ghi đè address. Geocode lỗi thì không tạo Building. Lỗi nghiệp vụ: 422 VALIDATION FAILED · 422 GEOCODING FAILED · 503 GEOCODING UNAVAILABLE · 403 FORBIDDEN." | "Landlord. Tạo tòa nhà ở trạng thái `pending`; `landlordId` lấy từ JWT đã xác thực.\nClient không gửi `landlordId`, `status`, `district`, `latitude` hoặc `longitude`.\nBackend geocode từ `address` + `ward` + `province` qua TrackAsia trước transaction, không ghi đè địa chỉ.\nGeocode lỗi thì không tạo Building. Building và outbox `building.created` được ghi trong cùng transaction;\nrelay publish sau khi commit. Trả `201 BUILDING_CREATED`.\n\nBody chỉ gồm `name`, `province`, `ward`, `address`; trường ngoài contract trả `422 UNEXPECTED_FIELD`.\nLỗi: `401 UNAUTHORIZED`, `403 FORBIDDEN` / `ACCOUNT_LOCKED`,\n`422 VALIDATION_FAILED` / `UNEXPECTED_FIELD` / `GEOCODING_FAILED`,\n`503 AUTH_UNAVAILABLE` / `GEOCODING_UNAVAILABLE`.\n\n```mermaid\nsequenceDiagram\n    autonumber\n    participant GW as API Gateway\n    participant TEN as Tenancy\n    participant GEO as TrackAsia\n    participant DB as Tenancy DB\n    participant RELAY as Outbox Relay\n    participant MQ as RabbitMQ\n\n    GW-&gt;&gt;TEN: POST /api/v1/buildings + Bearer token\n    TEN-&gt;&gt;TEN: Verify JWT, landlord role and request\n    TEN-&gt;&gt;GEO: Geocode address, ward, province\n    alt Geocoding failed or unavailable\n        GEO--&gt;&gt;TEN: No matching address / provider error\n        TEN--&gt;&gt;GW: 422 GEOCODING_FAILED / 503 GEOCODING_UNAVAILABLE\n    else Coordinates found\n        GEO--&gt;&gt;TEN: Latitude, longitude\n        TEN-&gt;&gt;DB: BEGIN\n        TEN-&gt;&gt;DB: INSERT buildings (pending, landlord from JWT)\n        TEN-&gt;&gt;DB: INSERT outbox_messages (building.created)\n        alt Database operation fails\n            TEN-&gt;&gt;DB: ROLLBACK\n            TEN--&gt;&gt;GW: 500 INTERNAL_SERVER_ERROR\n        else Commit succeeds\n            TEN-&gt;&gt;DB: COMMIT\n            TEN--&gt;&gt;GW: 201 BUILDING_CREATED\n            RELAY-&gt;&gt;DB: Claim committed outbox event\n            RELAY-&gt;&gt;MQ: Publish building.created\n            MQ--&gt;&gt;RELAY: Publisher confirm\n            RELAY-&gt;&gt;DB: Mark outbox PUBLISHED\n        end\n    end\n```" |
+| `/paths/~1buildings/post/requestBody/content/application~1json/example/district` | "Quận 1" | null |
+| `/paths/~1buildings/post/requestBody/content/application~1json/example/ownershipCertificateMediaIds` | ["3fa85f64-5717-4562-b3fc-2c963f66afa6"] | null |
+| `/paths/~1buildings/post/responses/201/headers` | {"Location":{"description":"Đường dẫn tài nguyên được tạo.","schema":{"type":"string","example":"/api/v1/buildings/{buildingId}"}}} | null |
+| `/paths/~1buildings/post/responses/403/$ref` | "#/components/responses/ForbiddenError" | null |
+| `/paths/~1buildings/post/responses/403/content` | null | {"application/json":{"schema":{"type":"object","additionalProperties":false,"required":["statusCode","code"],"properties":{"statusCode":{"type":"integer","enum":[403]},"code":{"type":"string","enum":["FORBIDDEN","ACCOUNT_LOCKED"]}}},"examples":{"forbidden":{"value":{"statusCode":403,"code":"FORBIDDEN"}},"account_locked":{"value":{"statusCode":403,"code":"ACCOUNT_LOCKED"}}}}} |
+| `/paths/~1buildings/post/responses/403/description` | null | "Chỉ landlord đang hoạt động được tạo tòa nhà." |
+| `/paths/~1buildings/post/responses/422/content/application~1json/examples/unexpected_field` | null | {"summary":"UNEXPECTED_FIELD — Body chứa trường ngoài contract.","value":{"statusCode":422,"code":"UNEXPECTED_FIELD"}} |
+| `/paths/~1buildings/post/responses/422/content/application~1json/schema/properties/code/description` | "- GEOCODING_FAILED: Không xác định được tọa độ từ địa chỉ (address, ward, province); người dùng cần sửa địa chỉ.\n- VALIDATION_FAILED: Dữ liệu vi phạm ràng buộc schema hoặc quy tắc nghiệp vụ khác chưa có mã riêng." | "- GEOCODING_FAILED: Không xác định được tọa độ từ địa chỉ (address, ward, province); người dùng cần sửa địa chỉ.\n- VALIDATION_FAILED: Dữ liệu vi phạm ràng buộc schema hoặc quy tắc nghiệp vụ khác chưa có mã riêng.\n- UNEXPECTED_FIELD: Body chứa trường ngoài contract, ví dụ landlordId hoặc district." |
+| `/paths/~1buildings/post/responses/422/content/application~1json/schema/properties/code/enum` | ["GEOCODING_FAILED","VALIDATION_FAILED"] | ["GEOCODING_FAILED","VALIDATION_FAILED","UNEXPECTED_FIELD"] |
+| `/paths/~1buildings/post/x-apidog-status` | "designing" | "released" |
+
+**Kiểm tra thủ công:** BE xác nhận lý do, endpoint dùng schema chung, thay đổi role/ownership mô tả bằng văn bản và thời điểm triển khai. FE/Mobile xác nhận tác động với parser và phiên bản client đang hỗ trợ.
 
 ## Thay đổi contract từ Git — BREAKING
 

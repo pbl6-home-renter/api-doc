@@ -10856,6 +10856,458 @@
           }
         }
       }
+    },
+    {
+      "id": "63edfada814d5499f8c48d6a73c4d48039306d7c841d5b656ca76688a7391e5e",
+      "label": "Thay đổi contract từ Git",
+      "classification": "BREAKING",
+      "contractId": "rentify-public",
+      "repository": "https://github.com/pbl6-home-renter/api-doc",
+      "baseHash": "46d320b4334f42892e9db18e0c32fd3320852e7412af474090d0698731b9d015",
+      "headHash": "28d4438b934dee991868b1d3754710f860e6ef41165ab9487c2d6b3ebb76ed8f",
+      "baseSource": "src/openapi.yaml",
+      "headSource": "src/openapi.yaml",
+      "detectedAt": "2026-10-27T16:14:03.022Z",
+      "committedAt": "2026-10-27T23:13:49+07:00",
+      "baseCommit": "a3ba2f5612fa75cfaf3f1d1789ad97026aee5bdf",
+      "headCommit": "61af7c8efa6740269d1534aca3b7fb490d429281",
+      "prUrl": "https://github.com/pbl6-home-renter/api-doc/pull/22",
+      "commitUrl": "https://github.com/pbl6-home-renter/api-doc/commit/61af7c8efa6740269d1534aca3b7fb490d429281",
+      "metadataKind": "Git revision thực tế",
+      "reason": "CHƯA CUNG CẤP — tác giả PR phải bổ sung lý do nghiệp vụ; không thể suy ra từ OpenAPI diff.",
+      "tools": {
+        "redocly": "2.64.1",
+        "oasdiff": "1.34.1"
+      },
+      "changes": [
+        {
+          "id": "response-property-enum-value-added",
+          "text": "added the new `UNEXPECTED_FIELD` enum value to the `code` response property for the response status `422`",
+          "comment": "The server may now return a value the previous contract excluded, so a client written against it may not handle the response. If the value set is meant to grow, declare it with x-extensible-enum.",
+          "level": 3,
+          "operation": "POST",
+          "operationId": "postBuildings",
+          "path": "/buildings",
+          "section": "paths",
+          "fingerprint": "69232126d519",
+          "classification": "BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới UNEXPECTED_FIELD; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "request-property-removed",
+          "text": "removed the request property `amenities`",
+          "level": 2,
+          "operation": "POST",
+          "operationId": "postBuildings",
+          "path": "/buildings",
+          "section": "paths",
+          "fingerprint": "314f49247f98",
+          "classification": "NEEDS_REVIEW",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "request-property-removed",
+          "text": "removed the request property `description`",
+          "level": 2,
+          "operation": "POST",
+          "operationId": "postBuildings",
+          "path": "/buildings",
+          "section": "paths",
+          "fingerprint": "a19775da6296",
+          "classification": "NEEDS_REVIEW",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "request-property-removed",
+          "text": "removed the request property `district`",
+          "level": 2,
+          "operation": "POST",
+          "operationId": "postBuildings",
+          "path": "/buildings",
+          "section": "paths",
+          "fingerprint": "f7a92be9d414",
+          "classification": "NEEDS_REVIEW",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "request-property-removed",
+          "text": "removed the request property `ownershipCertificateMediaIds`",
+          "level": 2,
+          "operation": "POST",
+          "operationId": "postBuildings",
+          "path": "/buildings",
+          "section": "paths",
+          "fingerprint": "ae6b0a168ac8",
+          "classification": "NEEDS_REVIEW",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "request-property-removed",
+          "text": "removed the request property `totalFloors`",
+          "level": 2,
+          "operation": "POST",
+          "operationId": "postBuildings",
+          "path": "/buildings",
+          "section": "paths",
+          "fingerprint": "4f6e8cdf45dc",
+          "classification": "NEEDS_REVIEW",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "api-version-not-bumped",
+          "text": "a breaking change was detected but the version is still `1.0.0`",
+          "level": 1,
+          "section": "info",
+          "fingerprint": "d3f96cd643c1",
+          "classification": "NON_BREAKING",
+          "clientImpact": "BE: xem lại quy ước version trước khi chấp nhận breaking change. FE/Mobile: theo kế hoạch chuyển đổi của entry này; version trong OpenAPI chưa chứng minh backend đã triển khai."
+        },
+        {
+          "id": "optional-response-header-removed",
+          "text": "the optional response header `location` removed for the status `201`",
+          "level": 1,
+          "operation": "POST",
+          "operationId": "postBuildings",
+          "path": "/buildings",
+          "section": "paths",
+          "baseSource": {
+            "file": "/tmp/rentify-contract-kT8pwA/base-0.json"
+          },
+          "fingerprint": "414e6bad00d5",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        }
+      ],
+      "locations": [
+        {
+          "pointer": "/components/schemas/BuildingCreateRequestDto/description",
+          "before": "Dữ liệu tạo tòa nhà mới (bao gồm giấy tờ chứng minh sở hữu / sổ đỏ tải lên tại Bước 2)",
+          "after": "Dữ liệu tạo tòa nhà mới, gồm tên tòa nhà và địa chỉ."
+        },
+        {
+          "pointer": "/components/schemas/BuildingCreateRequestDto/properties/amenities",
+          "before": {
+            "type": "object",
+            "nullable": true,
+            "description": "Tiện ích chung của tòa nhà (khóa vân tay, thang máy, bảo vệ, nhà để xe...)",
+            "example": {
+              "fingerprintLock": true,
+              "elevator": true,
+              "parking": true,
+              "securityCamera": true
+            }
+          },
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/BuildingCreateRequestDto/properties/description",
+          "before": {
+            "type": "string",
+            "nullable": true,
+            "maxLength": 1000,
+            "description": "Giới thiệu chung về tòa nhà, quy định an ninh, giờ giấc",
+            "example": "Khu trọ yên tĩnh, an ninh, camera 24/7, giờ giấc tự do."
+          },
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/BuildingCreateRequestDto/properties/district",
+          "before": {
+            "type": "string",
+            "description": "Quận / Huyện",
+            "minLength": 1,
+            "maxLength": 100,
+            "example": "Quận 1"
+          },
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/BuildingCreateRequestDto/properties/ownershipCertificateMediaIds",
+          "before": {
+            "type": "array",
+            "description": "Danh sách ID các tệp media chứng minh quyền sở hữu nhà đất (sổ đỏ/sổ hồng/hợp đồng mua bán) tải lên tại Bước 2 để admin duyệt",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "minItems": 1,
+            "example": [
+              "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+            ]
+          },
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/BuildingCreateRequestDto/properties/totalFloors",
+          "before": {
+            "type": "integer",
+            "minimum": 1,
+            "nullable": true,
+            "description": "Tổng số tầng của tòa nhà",
+            "example": 4
+          },
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/BuildingCreateRequestDto/required",
+          "before": [
+            "name",
+            "province",
+            "district",
+            "ward",
+            "address",
+            "ownershipCertificateMediaIds"
+          ],
+          "after": [
+            "name",
+            "province",
+            "ward",
+            "address"
+          ]
+        },
+        {
+          "pointer": "/components/schemas/BuildingCreateResponseDto/description",
+          "before": "Phản hồi khi tạo tòa nhà thành công (chờ admin kiểm duyệt hồ sơ sở hữu)",
+          "after": "Phản hồi khi tạo tòa nhà thành công, chờ admin phê duyệt."
+        },
+        {
+          "pointer": "/components/schemas/BuildingCreateResponseDto/properties/ownershipCertificateMediaIds/description",
+          "before": "Danh sách ID các tài liệu chứng minh sở hữu đã ghi nhận",
+          "after": "Dành cho media flow sau này; hiện chưa lưu liên kết media nên trường này không được trả về."
+        },
+        {
+          "pointer": "/paths/~1buildings/post/description",
+          "before": "landlord. Gửi tòa nhà để duyệt. Client không gửi latitude/longitude; backend tự geocode từ address + ward + province qua TrackAsia (trước transaction), không ghi đè address. Geocode lỗi thì không tạo Building. Lỗi nghiệp vụ: 422 VALIDATION FAILED · 422 GEOCODING FAILED · 503 GEOCODING UNAVAILABLE · 403 FORBIDDEN.",
+          "after": "Landlord. Tạo tòa nhà ở trạng thái `pending`; `landlordId` lấy từ JWT đã xác thực.\nClient không gửi `landlordId`, `status`, `district`, `latitude` hoặc `longitude`.\nBackend geocode từ `address` + `ward` + `province` qua TrackAsia trước transaction, không ghi đè địa chỉ.\nGeocode lỗi thì không tạo Building. Building và outbox `building.created` được ghi trong cùng transaction;\nrelay publish sau khi commit. Trả `201 BUILDING_CREATED`.\n\nBody chỉ gồm `name`, `province`, `ward`, `address`; trường ngoài contract trả `422 UNEXPECTED_FIELD`.\nLỗi: `401 UNAUTHORIZED`, `403 FORBIDDEN` / `ACCOUNT_LOCKED`,\n`422 VALIDATION_FAILED` / `UNEXPECTED_FIELD` / `GEOCODING_FAILED`,\n`503 AUTH_UNAVAILABLE` / `GEOCODING_UNAVAILABLE`.\n\n```mermaid\nsequenceDiagram\n    autonumber\n    participant GW as API Gateway\n    participant TEN as Tenancy\n    participant GEO as TrackAsia\n    participant DB as Tenancy DB\n    participant RELAY as Outbox Relay\n    participant MQ as RabbitMQ\n\n    GW->>TEN: POST /api/v1/buildings + Bearer token\n    TEN->>TEN: Verify JWT, landlord role and request\n    TEN->>GEO: Geocode address, ward, province\n    alt Geocoding failed or unavailable\n        GEO-->>TEN: No matching address / provider error\n        TEN-->>GW: 422 GEOCODING_FAILED / 503 GEOCODING_UNAVAILABLE\n    else Coordinates found\n        GEO-->>TEN: Latitude, longitude\n        TEN->>DB: BEGIN\n        TEN->>DB: INSERT buildings (pending, landlord from JWT)\n        TEN->>DB: INSERT outbox_messages (building.created)\n        alt Database operation fails\n            TEN->>DB: ROLLBACK\n            TEN-->>GW: 500 INTERNAL_SERVER_ERROR\n        else Commit succeeds\n            TEN->>DB: COMMIT\n            TEN-->>GW: 201 BUILDING_CREATED\n            RELAY->>DB: Claim committed outbox event\n            RELAY->>MQ: Publish building.created\n            MQ-->>RELAY: Publisher confirm\n            RELAY->>DB: Mark outbox PUBLISHED\n        end\n    end\n```"
+        },
+        {
+          "pointer": "/paths/~1buildings/post/requestBody/content/application~1json/example/district",
+          "before": "Quận 1",
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1buildings/post/requestBody/content/application~1json/example/ownershipCertificateMediaIds",
+          "before": [
+            "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+          ],
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1buildings/post/responses/201/headers",
+          "before": {
+            "Location": {
+              "description": "Đường dẫn tài nguyên được tạo.",
+              "schema": {
+                "type": "string",
+                "example": "/api/v1/buildings/{buildingId}"
+              }
+            }
+          },
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1buildings/post/responses/403/$ref",
+          "before": "#/components/responses/ForbiddenError",
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1buildings/post/responses/403/content",
+          "before": null,
+          "after": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "statusCode",
+                  "code"
+                ],
+                "properties": {
+                  "statusCode": {
+                    "type": "integer",
+                    "enum": [
+                      403
+                    ]
+                  },
+                  "code": {
+                    "type": "string",
+                    "enum": [
+                      "FORBIDDEN",
+                      "ACCOUNT_LOCKED"
+                    ]
+                  }
+                }
+              },
+              "examples": {
+                "forbidden": {
+                  "value": {
+                    "statusCode": 403,
+                    "code": "FORBIDDEN"
+                  }
+                },
+                "account_locked": {
+                  "value": {
+                    "statusCode": 403,
+                    "code": "ACCOUNT_LOCKED"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "pointer": "/paths/~1buildings/post/responses/403/description",
+          "before": null,
+          "after": "Chỉ landlord đang hoạt động được tạo tòa nhà."
+        },
+        {
+          "pointer": "/paths/~1buildings/post/responses/422/content/application~1json/examples/unexpected_field",
+          "before": null,
+          "after": {
+            "summary": "UNEXPECTED_FIELD — Body chứa trường ngoài contract.",
+            "value": {
+              "statusCode": 422,
+              "code": "UNEXPECTED_FIELD"
+            }
+          }
+        },
+        {
+          "pointer": "/paths/~1buildings/post/responses/422/content/application~1json/schema/properties/code/description",
+          "before": "- GEOCODING_FAILED: Không xác định được tọa độ từ địa chỉ (address, ward, province); người dùng cần sửa địa chỉ.\n- VALIDATION_FAILED: Dữ liệu vi phạm ràng buộc schema hoặc quy tắc nghiệp vụ khác chưa có mã riêng.",
+          "after": "- GEOCODING_FAILED: Không xác định được tọa độ từ địa chỉ (address, ward, province); người dùng cần sửa địa chỉ.\n- VALIDATION_FAILED: Dữ liệu vi phạm ràng buộc schema hoặc quy tắc nghiệp vụ khác chưa có mã riêng.\n- UNEXPECTED_FIELD: Body chứa trường ngoài contract, ví dụ landlordId hoặc district."
+        },
+        {
+          "pointer": "/paths/~1buildings/post/responses/422/content/application~1json/schema/properties/code/enum",
+          "before": [
+            "GEOCODING_FAILED",
+            "VALIDATION_FAILED"
+          ],
+          "after": [
+            "GEOCODING_FAILED",
+            "VALIDATION_FAILED",
+            "UNEXPECTED_FIELD"
+          ]
+        },
+        {
+          "pointer": "/paths/~1buildings/post/x-apidog-status",
+          "before": "designing",
+          "after": "released"
+        }
+      ],
+      "semanticDiff": {
+        "paths": {
+          "modified": {
+            "/buildings": {
+              "operations": {
+                "modified": {
+                  "POST": {
+                    "extensions": {
+                      "modified": {
+                        "x-apidog-status": [
+                          {
+                            "oldValue": "designing",
+                            "value": "released",
+                            "op": "replace",
+                            "from": "",
+                            "path": ""
+                          }
+                        ]
+                      }
+                    },
+                    "requestBody": {
+                      "content": {
+                        "modified": {
+                          "application/json": {
+                            "schema": {
+                              "required": {
+                                "deleted": [
+                                  "ownershipCertificateMediaIds",
+                                  "district"
+                                ]
+                              },
+                              "properties": {
+                                "deleted": [
+                                  "amenities",
+                                  "ownershipCertificateMediaIds",
+                                  "description",
+                                  "district",
+                                  "totalFloors"
+                                ]
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "responses": {
+                      "modified": {
+                        "201": {
+                          "headers": {
+                            "deleted": [
+                              "location"
+                            ]
+                          }
+                        },
+                        "403": {
+                          "extensions": {
+                            "deleted": [
+                              "x-apidog-name"
+                            ]
+                          }
+                        },
+                        "422": {
+                          "content": {
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "properties": {
+                                    "modified": {
+                                      "code": {
+                                        "enum": {
+                                          "added": [
+                                            "UNEXPECTED_FIELD"
+                                          ]
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "components": {
+          "schemas": {
+            "modified": {
+              "BuildingCreateRequestDto": {
+                "required": {
+                  "deleted": [
+                    "ownershipCertificateMediaIds",
+                    "district"
+                  ]
+                },
+                "properties": {
+                  "deleted": [
+                    "amenities",
+                    "ownershipCertificateMediaIds",
+                    "description",
+                    "district",
+                    "totalFloors"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
     }
   ]
 }
