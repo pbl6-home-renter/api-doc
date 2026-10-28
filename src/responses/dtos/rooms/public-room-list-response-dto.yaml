@@ -7,7 +7,6 @@ properties:
   id: { type: string, format: uuid, description: "Định danh duy nhất của phòng." }
   buildingId: { type: string, format: uuid, description: "Định danh duy nhất của tòa nhà liên quan." }
   name: { type: string, minLength: 1, maxLength: 254, description: "Tên phòng trọ." }
-  roomType: { type: string, nullable: true, description: "Loại hình phòng (Gác lửng, Studio, Căn hộ...)." }
   thumbnailUrl: { type: string, nullable: true, format: uri, description: "URL ảnh đại diện chính của căn phòng." }
   area: { type: string, example: '25.0', description: "Diện tích phòng (m2)." }
   rentPrice: { type: integer, minimum: 0, description: "Giá thuê theo tháng (VNĐ)." }
