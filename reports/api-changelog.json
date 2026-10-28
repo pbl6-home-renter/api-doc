@@ -12347,6 +12347,352 @@
           }
         }
       }
+    },
+    {
+      "id": "0d54a03bde44f75382c2d5ffa2b31a1f39c551d64fc86ef3859a5a6cbbcc4f46",
+      "label": "Thay đổi contract từ Git",
+      "classification": "NEEDS_REVIEW",
+      "contractId": "rentify-public",
+      "repository": "https://github.com/pbl6-home-renter/api-doc",
+      "baseHash": "06ac04e8d58229d98529b9f775bdcfcada2fa1095ff0deb99981f9e2e6ea0d25",
+      "headHash": "8aff748fab0f42439dd379f4bd8c19431594a21d8c6cf4501b6a8b88c03ec5fe",
+      "baseSource": "src/openapi.yaml",
+      "headSource": "src/openapi.yaml",
+      "detectedAt": "2026-10-28T09:49:46.639Z",
+      "committedAt": "2026-10-28T16:49:35+07:00",
+      "baseCommit": "657cf73f3c4c78daa6abb04066d70d8c4470776b",
+      "headCommit": "09558567f429c4b0ce80c29206fa0aefadf61685",
+      "prUrl": "https://github.com/pbl6-home-renter/api-doc/pull/24",
+      "commitUrl": "https://github.com/pbl6-home-renter/api-doc/commit/09558567f429c4b0ce80c29206fa0aefadf61685",
+      "metadataKind": "Git revision thực tế",
+      "reason": "CHƯA CUNG CẤP — tác giả PR phải bổ sung lý do nghiệp vụ; không thể suy ra từ OpenAPI diff.",
+      "tools": {
+        "redocly": "2.64.1",
+        "oasdiff": "1.34.1"
+      },
+      "changes": [
+        {
+          "id": "request-property-removed",
+          "text": "removed the request property `roomType`",
+          "level": 2,
+          "operation": "POST",
+          "operationId": "postRooms",
+          "path": "/rooms",
+          "section": "paths",
+          "fingerprint": "3f9446daf32f",
+          "classification": "NEEDS_REVIEW",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "response-optional-property-removed",
+          "text": "removed the optional property `data/room/roomType` from the response with the `200` status",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getMeRoomHub",
+          "path": "/me/room-hub",
+          "section": "paths",
+          "fingerprint": "c6263aa2012f",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "response-optional-property-removed",
+          "text": "removed the optional property `data/items/roomType` from the response with the `200` status",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getMeRooms",
+          "path": "/me/rooms",
+          "section": "paths",
+          "fingerprint": "4ab4ac432bd1",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "response-optional-property-removed",
+          "text": "removed the optional property `data/items/roomType` from the response with the `200` status",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getRooms",
+          "path": "/rooms",
+          "section": "paths",
+          "fingerprint": "00d900013362",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "response-optional-property-removed",
+          "text": "removed the optional property `data/roomType` from the response with the `200` status",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getRoomsRoomid",
+          "path": "/rooms/{roomId}",
+          "section": "paths",
+          "fingerprint": "8844587bb966",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        }
+      ],
+      "locations": [
+        {
+          "pointer": "/components/schemas/MyRoomHubResponseDto/properties/room/properties/roomType",
+          "before": {
+            "type": "string",
+            "nullable": true,
+            "example": "Gác lửng"
+          },
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/RoomCreateRequestDto/properties/roomType",
+          "before": {
+            "type": "string",
+            "description": "Loại hình phòng trọ (Gác lửng, Studio, Phòng đơn, Căn hộ mini).",
+            "minLength": 1,
+            "maxLength": 100,
+            "example": "Gác lửng"
+          },
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/RoomDetailResponseDto/properties/roomType",
+          "before": {
+            "type": "string",
+            "nullable": true,
+            "description": "Loại phòng (VD: Gác lửng, Studio)."
+          },
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/RoomMyListResponseDto/properties/roomType",
+          "before": {
+            "type": "string",
+            "nullable": true,
+            "description": "Loại hình phòng (VD: Gác lửng, Studio)."
+          },
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/RoomPublicListResponseDto/properties/roomType",
+          "before": {
+            "type": "string",
+            "nullable": true,
+            "description": "Loại hình phòng (Gác lửng, Studio, Căn hộ...)."
+          },
+          "after": null
+        }
+      ],
+      "semanticDiff": {
+        "paths": {
+          "modified": {
+            "/me/room-hub": {
+              "operations": {
+                "modified": {
+                  "GET": {
+                    "responses": {
+                      "modified": {
+                        "200": {
+                          "content": {
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "properties": {
+                                    "modified": {
+                                      "data": {
+                                        "properties": {
+                                          "modified": {
+                                            "room": {
+                                              "properties": {
+                                                "deleted": [
+                                                  "roomType"
+                                                ]
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "/me/rooms": {
+              "operations": {
+                "modified": {
+                  "GET": {
+                    "responses": {
+                      "modified": {
+                        "200": {
+                          "content": {
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "properties": {
+                                    "modified": {
+                                      "data": {
+                                        "items": {
+                                          "properties": {
+                                            "deleted": [
+                                              "roomType"
+                                            ]
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "/rooms": {
+              "operations": {
+                "modified": {
+                  "GET": {
+                    "responses": {
+                      "modified": {
+                        "200": {
+                          "content": {
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "properties": {
+                                    "modified": {
+                                      "data": {
+                                        "items": {
+                                          "properties": {
+                                            "deleted": [
+                                              "roomType"
+                                            ]
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "POST": {
+                    "requestBody": {
+                      "content": {
+                        "modified": {
+                          "application/json": {
+                            "schema": {
+                              "properties": {
+                                "deleted": [
+                                  "roomType"
+                                ]
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "/rooms/{roomId}": {
+              "operations": {
+                "modified": {
+                  "GET": {
+                    "responses": {
+                      "modified": {
+                        "200": {
+                          "content": {
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "properties": {
+                                    "modified": {
+                                      "data": {
+                                        "properties": {
+                                          "deleted": [
+                                            "roomType"
+                                          ]
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "components": {
+          "schemas": {
+            "modified": {
+              "MyRoomHubResponseDto": {
+                "properties": {
+                  "modified": {
+                    "room": {
+                      "properties": {
+                        "deleted": [
+                          "roomType"
+                        ]
+                      }
+                    }
+                  }
+                }
+              },
+              "RoomCreateRequestDto": {
+                "properties": {
+                  "deleted": [
+                    "roomType"
+                  ]
+                }
+              },
+              "RoomDetailResponseDto": {
+                "properties": {
+                  "deleted": [
+                    "roomType"
+                  ]
+                }
+              },
+              "RoomMyListResponseDto": {
+                "properties": {
+                  "deleted": [
+                    "roomType"
+                  ]
+                }
+              },
+              "RoomPublicListResponseDto": {
+                "properties": {
+                  "deleted": [
+                    "roomType"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
     }
   ]
 }

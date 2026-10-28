@@ -5,11 +5,43 @@
 
 Báo cáo lưu lịch sử các entry đã phát hiện, mới nhất ở trên. `NO_CHANGE` không xóa entry cũ; exit code chỉ phản ánh lần chạy hiện tại.
 
-Công cụ: Redocly 2.64.1; oasdiff 1.34.1. Số entry: **10**.
+Công cụ: Redocly 2.64.1; oasdiff 1.34.1. Số entry: **11**.
 
 Phân loại: **BREAKING** = client cũ có thể hỏng; **NON_BREAKING** = tương thích theo contract; **NEEDS_REVIEW** = chưa đủ bằng chứng.
 
 Các vị trí dùng JSON Pointer trên bundle tạm (`~1` là `/`). JSON đi kèm giữ toàn bộ semantic diff, fingerprint và hash phục vụ truy vết.
+
+## Thay đổi contract từ Git — NEEDS_REVIEW
+
+- ID: `0d54a03bde44f75382c2d5ffa2b31a1f39c551d64fc86ef3859a5a6cbbcc4f46`
+- Contract: rentify-public; repository: https://github.com/pbl6-home-renter/api-doc
+- Nguồn: `src/openapi.yaml` → `src/openapi.yaml`
+- Phát hiện (UTC): 2026-10-28T09:49:46.639Z; commit time: 2026-10-28T16:49:35+07:00
+- Commit nền: 657cf73f3c4c78daa6abb04066d70d8c4470776b
+- Commit đích/bối cảnh: [09558567f429c4b0ce80c29206fa0aefadf61685](https://github.com/pbl6-home-renter/api-doc/commit/09558567f429c4b0ce80c29206fa0aefadf61685)
+- PR: [https://github.com/pbl6-home-renter/api-doc/pull/24](https://github.com/pbl6-home-renter/api-doc/pull/24)
+- Loại metadata: Git revision thực tế
+- Lý do: CHƯA CUNG CẤP — tác giả PR phải bổ sung lý do nghiệp vụ; không thể suy ra từ OpenAPI diff.
+
+| Mức ảnh hưởng | Endpoint / vùng | Thay đổi | Hành động FE / Mobile |
+|---|---|---|---|
+| NEEDS_REVIEW | POST /rooms | removed the request property `roomType` (`request-property-removed`) | FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ. |
+| NON_BREAKING | GET /me/room-hub | removed the optional property `data/room/roomType` from the response with the `200` status (`response-optional-property-removed`) | FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ. |
+| NON_BREAKING | GET /me/rooms | removed the optional property `data/items/roomType` from the response with the `200` status (`response-optional-property-removed`) | FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ. |
+| NON_BREAKING | GET /rooms | removed the optional property `data/items/roomType` from the response with the `200` status (`response-optional-property-removed`) | FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ. |
+| NON_BREAKING | GET /rooms/{roomId} | removed the optional property `data/roomType` from the response with the `200` status (`response-optional-property-removed`) | FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ. |
+
+### Vị trí và giá trị trước/sau
+
+| Path / schema / field (JSON Pointer) | Trước | Sau |
+|---|---|---|
+| `/components/schemas/MyRoomHubResponseDto/properties/room/properties/roomType` | {"type":"string","nullable":true,"example":"Gác lửng"} | null |
+| `/components/schemas/RoomCreateRequestDto/properties/roomType` | {"type":"string","description":"Loại hình phòng trọ (Gác lửng, Studio, Phòng đơn, Căn hộ mini).","minLength":1,"maxLength":100,"example":"Gác lửng"} | null |
+| `/components/schemas/RoomDetailResponseDto/properties/roomType` | {"type":"string","nullable":true,"description":"Loại phòng (VD: Gác lửng, Studio)."} | null |
+| `/components/schemas/RoomMyListResponseDto/properties/roomType` | {"type":"string","nullable":true,"description":"Loại hình phòng (VD: Gác lửng, Studio)."} | null |
+| `/components/schemas/RoomPublicListResponseDto/properties/roomType` | {"type":"string","nullable":true,"description":"Loại hình phòng (Gác lửng, Studio, Căn hộ...)."} | null |
+
+**Kiểm tra thủ công:** BE xác nhận lý do, endpoint dùng schema chung, thay đổi role/ownership mô tả bằng văn bản và thời điểm triển khai. FE/Mobile xác nhận tác động với parser và phiên bản client đang hỗ trợ.
 
 ## Thay đổi contract từ Git — BREAKING
 
