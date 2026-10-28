@@ -61,15 +61,70 @@ patch:
   tags:
   - Property
   x-apidog-folder: Building
-  x-apidog-status: designing
+  x-apidog-status: released
   operationId: patchBuildingsBuildingid
   security:
     - BearerAuth: []
   summary: Update building
-  description: 'landlord. Cập nhật thông tin tòa nhà. Khi đổi address, backend geocode lại latitude/longitude
-    từ address mới + ward + province hiện tại qua TrackAsia; geocode lỗi thì không cập nhật. Lỗi nghiệp vụ:
-    404 NOT FOUND · 403 FORBIDDEN · 409 APPROVED BUILDING LOCKED · 422 VALIDATION FAILED · 422 GEOCODING FAILED
-    · 503 GEOCODING UNAVAILABLE.'
+  description: |-
+    landlord. Cập nhật name/address của Building chưa được duyệt.
+    Building không tồn tại hoặc đã xóa trả 404 RESOURCE_NOT_FOUND.
+    Building thuộc landlord khác trả 403 FORBIDDEN.
+    Building approved trả 409 APPROVED_BUILDING_LOCKED.
+    Khi có address, backend geocode lại latitude/longitude từ address mới + ward + province hiện tại
+    qua TrackAsia trong transaction, sau khi đọc Building bằng FOR UPDATE và kiểm tra
+    tồn tại/ownership/trạng thái một lần trong handler. Transaction giữ row lock trong lúc
+    chờ geocoding. Geocode lỗi trả 422 GEOCODING_FAILED hoặc 503 GEOCODING_UNAVAILABLE,
+    rollback transaction và không ghi Building/outbox.
+    Body rỗng {} được chấp nhận: Building chưa duyệt thuộc người gọi vẫn phát BuildingUpdated
+    và trả 200. Trường ngoài name/address trả 422 UNEXPECTED_FIELD.
+
+    ```mermaid
+    sequenceDiagram
+        autonumber
+        participant GW as API Gateway
+        participant TEN as Tenancy
+        participant GEO as TrackAsia
+        participant DB as Tenancy DB
+        participant RELAY as Outbox Relay
+        participant MQ as RabbitMQ
+
+        GW->>TEN: PATCH /buildings/{buildingId} {name?, address?}
+        TEN->>TEN: Verify JWT, role landlord và validate request
+        TEN->>DB: UoW BEGIN; SELECT building FOR UPDATE
+        DB-->>TEN: Building hiện tại hoặc null
+        alt Không tồn tại hoặc đã xóa
+            TEN->>DB: ROLLBACK
+            TEN-->>GW: 404 RESOURCE_NOT_FOUND
+        else Building thuộc landlord khác
+            TEN->>DB: ROLLBACK
+            TEN-->>GW: 403 FORBIDDEN
+        else Building đã approved
+            TEN->>DB: ROLLBACK
+            TEN-->>GW: 409 APPROVED_BUILDING_LOCKED
+        else Building có thể sửa
+            opt Có address trong request
+                Note over TEN,DB: Giữ row lock trong lúc gọi geocoding
+                TEN->>GEO: Geocode address mới + ward + province hiện tại
+                GEO-->>TEN: latitude/longitude hoặc lỗi
+                break Geocoding thất bại hoặc tạm thời không khả dụng
+                    TEN->>DB: ROLLBACK
+                    TEN-->>GW: 422 GEOCODING_FAILED / 503 GEOCODING_UNAVAILABLE
+                end
+            end
+            TEN->>TEN: building.update(name, address, latitude, longitude)
+            TEN->>DB: [Cùng transaction] UPDATE buildings<br/>+ INSERT outbox_messages (building.updated)
+            DB-->>TEN: COMMIT
+            TEN-->>GW: 200 BUILDING_UPDATED {id, name, address, status}
+            RELAY->>DB: Claim outbox đã commit
+            DB-->>RELAY: building.updated
+            RELAY-)MQ: Publish building.updated
+            MQ-->>RELAY: Publisher confirm
+            RELAY->>DB: Đánh dấu outbox PUBLISHED
+        end
+        Note over TEN,DB: Lỗi ghi Building hoặc outbox rollback cả transaction
+        Note over RELAY,MQ: Publish bất đồng bộ sau commit, delivery at-least-once
+    ```
   parameters:
   - name: buildingId
     in: path
@@ -116,7 +171,7 @@ patch:
               id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
               name: Tòa nhà Rentify Central Park
               address: 123 Nguyễn Thị Minh Khai
-              status: approved
+              status: pending
     '400':
       $ref: ../../openapi.yaml#/components/responses/BadRequestBodyPathError
     '401':
@@ -200,9 +255,11 @@ patch:
                 enum:
                   - GEOCODING_FAILED
                   - VALIDATION_FAILED
+                  - UNEXPECTED_FIELD
                 description: |-
                   - GEOCODING_FAILED: Không xác định được tọa độ từ địa chỉ (address, ward, province); người dùng cần sửa địa chỉ.
                   - VALIDATION_FAILED: Dữ liệu vi phạm ràng buộc schema hoặc quy tắc nghiệp vụ khác chưa có mã riêng.
+                  - UNEXPECTED_FIELD: Request chứa trường ngoài name/address.
           examples:
             geocoding_failed:
               summary: GEOCODING_FAILED — Không xác định được tọa độ từ địa chỉ.
@@ -214,6 +271,11 @@ patch:
               value:
                 statusCode: 422
                 code: VALIDATION_FAILED
+            unexpected_field:
+              summary: UNEXPECTED_FIELD — Request chứa trường ngoài name/address.
+              value:
+                statusCode: 422
+                code: UNEXPECTED_FIELD
     '429':
       $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
     '500':
@@ -222,12 +284,51 @@ delete:
   tags:
   - Property
   x-apidog-folder: Building
-  x-apidog-status: designing
+  x-apidog-status: released
   operationId: deleteBuildingsBuildingid
   security:
     - BearerAuth: []
   summary: Delete building
-  description: 'landlord. Xóa mềm tòa nhà. Lỗi nghiệp vụ: 404 NOT FOUND · 409 BUILDING HAS ACTIVE CONTRACT.'
+  description: |-
+    landlord. Xóa mềm tòa nhà. Building không tồn tại hoặc đã xóa trả 404 RESOURCE_NOT_FOUND.
+    Building thuộc landlord khác trả 403 FORBIDDEN. Xóa thành công trả 204, không có response body.
+    BUILDING_HAS_ACTIVE_CONTRACT là mã lỗi dành cho bước tích hợp Contract; hiện chưa kiểm tra
+    hợp đồng hiệu lực khi module Contract chưa có.
+
+    ```mermaid
+    sequenceDiagram
+        autonumber
+        participant GW as API Gateway
+        participant TEN as Tenancy
+        participant DB as Tenancy DB
+        participant RELAY as Outbox Relay
+        participant MQ as RabbitMQ
+
+        GW->>TEN: DELETE /buildings/{buildingId}
+        TEN->>TEN: Verify JWT, role landlord và validate buildingId
+        TEN->>DB: UoW BEGIN; SELECT building FOR UPDATE<br/>WHERE id=buildingId AND is_deleted=false
+        DB-->>TEN: Building hiện tại hoặc null
+        alt Không tồn tại hoặc đã xóa
+            TEN->>DB: ROLLBACK
+            TEN-->>GW: 404 RESOURCE_NOT_FOUND
+        else Building thuộc landlord khác
+            TEN->>DB: ROLLBACK
+            TEN-->>GW: 403 FORBIDDEN
+        else Building thuộc người gọi
+            Note over TEN: TODO(contract) kiểm tra hợp đồng hiệu lực khi có module Contract
+            TEN->>TEN: building.delete() phát BuildingDeleted
+            TEN->>DB: [Cùng transaction] UPDATE buildings SET is_deleted=true<br/>+ INSERT outbox_messages (building.deleted)
+            DB-->>TEN: COMMIT
+            TEN-->>GW: 204 No Content
+            RELAY->>DB: Claim outbox đã commit
+            DB-->>RELAY: building.deleted
+            RELAY-)MQ: Publish building.deleted
+            MQ-->>RELAY: Publisher confirm
+            RELAY->>DB: Đánh dấu outbox PUBLISHED
+        end
+        Note over TEN,DB: Lỗi ghi Building hoặc outbox rollback cả transaction; xóa lần hai trả 404
+        Note over RELAY,MQ: Publish bất đồng bộ sau commit, delivery at-least-once
+    ```
   parameters:
   - name: buildingId
     in: path
