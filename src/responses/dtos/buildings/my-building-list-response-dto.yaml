@@ -11,9 +11,8 @@ properties:
     type: string
     description: Trạng thái kiểm duyệt của tòa nhà (pending, approved, rejected).
     enum: [pending, approved, rejected]
-  totalRooms: { type: integer, minimum: 0, description: "Tổng số phòng của tòa nhà." }
-  occupiedRooms: { type: integer, minimum: 0, description: "Số lượng phòng đang có khách thuê." }
-  occupancyRate: { type: string, description: "Tỷ lệ lấp đầy (VD: '85%')." }
+  occupiedRooms: { type: integer, minimum: 0, description: "Số lượng phòng đang có khách thuê; hiện tạm trả 0 khi chưa tích hợp thống kê occupancy." }
+  occupancyRate: { type: string, example: "0%", description: "Tỷ lệ lấp đầy; hiện tạm trả '0%' khi chưa tích hợp thống kê occupancy." }
   rejectionReason: { type: string, nullable: true, description: "Lý do bị admin từ chối duyệt (nếu status = rejected)." }
   createdAt: { type: string, format: date-time, description: "Thời điểm tạo tòa nhà." }
 
@@ -21,6 +20,5 @@ required:
   - id
   - name
   - status
-  - totalRooms
   - occupiedRooms
   - occupancyRate

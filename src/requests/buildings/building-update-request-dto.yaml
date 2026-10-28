@@ -1,9 +1,10 @@
 type: object
 x-apidog-folder: "Building/Request"
 title: BuildingUpdateRequestDto
-description: Dữ liệu cập nhật một phần thông tin tòa nhà
+description: >-
+  Dữ liệu cập nhật một phần name/address của tòa nhà. Body rỗng {} được chấp nhận;
+  với Building chưa duyệt thuộc người gọi, service vẫn trả 200 và phát BuildingUpdated.
 additionalProperties: false
-minProperties: 1
 
 properties:
   name:

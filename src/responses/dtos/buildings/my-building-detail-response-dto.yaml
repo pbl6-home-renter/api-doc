@@ -7,28 +7,26 @@ properties:
   id: { type: string, format: uuid, description: "Định danh duy nhất của tòa nhà." }
   name: { type: string, description: "Tên tòa nhà." }
   province: { type: string, description: "Tỉnh / Thành phố." }
-  district: { type: string, description: "Quận / Huyện." }
   ward: { type: string, description: "Phường / Xã." }
   address: { type: string, description: "Địa chỉ chi tiết." }
-  totalFloors: { type: integer, minimum: 1, description: "Số tầng của tòa nhà." }
-  totalRooms: { type: integer, minimum: 0, description: "Tổng số phòng của tòa nhà." }
-  occupiedRooms: { type: integer, minimum: 0, description: "Số phòng đang có khách thuê." }
-  occupancyRate: { type: string, description: "Tỷ lệ lấp đầy." }
+  totalFloors: { type: integer, minimum: 1, description: "Trường dự phòng; hiện service chưa lưu và không trả số tầng." }
+  occupiedRooms: { type: integer, minimum: 0, description: "Số phòng đang có khách thuê; hiện tạm trả 0 khi chưa tích hợp thống kê occupancy." }
+  occupancyRate: { type: string, example: "0%", description: "Tỷ lệ lấp đầy; hiện tạm trả '0%' khi chưa tích hợp thống kê occupancy." }
   status: { type: string, enum: [pending, approved, rejected], description: "Trạng thái kiểm duyệt tài sản." }
   reviewNote: { type: string, nullable: true, minLength: 1, maxLength: 500, description: "Ghi chú phê duyệt hoặc lý do từ chối từ admin." }
-  amenities: { type: object, nullable: true, description: "Tiện ích chung của tòa nhà." }
+  amenities: { type: object, nullable: true, description: "Tiện ích chung của tòa nhà; hiện tạm trả null." }
   ownershipCertificateUrls:
     type: array
-    description: Danh sách đường dẫn ảnh/tài liệu sổ đỏ đã tải lên
+    description: Danh sách đường dẫn ảnh/tài liệu sổ đỏ; hiện tạm trả [] khi chưa tích hợp media.
     items:
       type: string
       format: uri
   vietQrConfigured:
     type: boolean
-    description: Tòa nhà đã được cấu hình tài khoản nhận tiền VietQR riêng hay chưa
+    description: Tòa nhà đã cấu hình VietQR riêng hay chưa; hiện tạm trả false khi chưa tích hợp billing.
   ratePolicies:
     type: array
-    description: Danh sách biểu giá dịch vụ đang áp dụng cho tòa nhà
+    description: Danh sách biểu giá dịch vụ; hiện tạm trả [] khi chưa tích hợp billing.
     items:
       type: object
       properties:
@@ -44,11 +42,9 @@ required:
   - id
   - name
   - province
-  - district
   - ward
   - address
   - status
-  - totalRooms
   - occupiedRooms
   - occupancyRate
   - vietQrConfigured

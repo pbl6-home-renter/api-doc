@@ -2,12 +2,35 @@ get:
   tags:
   - Property
   x-apidog-folder: Building
-  x-apidog-status: designing
+  x-apidog-status: released
   operationId: getMeBuildings
   security:
     - BearerAuth: []
   summary: List my buildings
-  description: 'landlord. Liệt kê tòa nhà của tôi. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 VALIDATION FAILED.'
+  description: |-
+    landlord. Liệt kê tòa nhà của tôi. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 VALIDATION FAILED.
+    Repository chỉ đọc Building có landlordId của người gọi và isDeleted=false.
+    Mặc định sort=createdAt, order=desc; pageNo bắt đầu từ 1, pageSize từ 1 đến 100.
+    Chỉ hỗ trợ format=json (hoặc bỏ format); xlsx/csv/pdf trả 422 VALIDATION_FAILED.
+    Query hoặc filter chứa trường không được hỗ trợ trả 422 UNEXPECTED_FIELD.
+
+    ```mermaid
+    sequenceDiagram
+        autonumber
+        participant GW as API Gateway
+        participant TEN as Tenancy
+        participant DB as Tenancy DB
+
+        GW->>TEN: GET /me/buildings?filter[status]&sort&order&pageNo&pageSize
+        TEN->>TEN: Verify JWT, role landlord và validate query
+        TEN->>DB: SELECT buildings WHERE landlord_id=user.id AND is_deleted=false<br/>+ filter status + sort whitelist + LIMIT/OFFSET
+        DB-->>TEN: Buildings thuộc landlord hiện tại
+        TEN->>DB: COUNT buildings với cùng điều kiện lọc
+        DB-->>TEN: totalItems
+        TEN->>TEN: Map response DTO và tính pagination
+        TEN-->>GW: 200 BUILDINGS_MY_FETCHED {data, pagination}
+        Note over TEN,DB: Query chỉ đọc, không ghi outbox hoặc phát event
+    ```
   parameters:
   - name: filter
     in: query
@@ -21,11 +44,13 @@ get:
       properties:
         status:
           type: string
+          enum: [pending, approved, rejected]
   - name: sort
     in: query
-    description: Một trường sắp xếp được endpoint hỗ trợ.
+    description: Chỉ nhận một trong các trường createdAt, name hoặc status.
     schema:
       type: string
+      enum: [createdAt, name, status]
       default: createdAt
   - name: order
     in: query
@@ -50,14 +75,11 @@ get:
       default: 1
   - name: format
     in: query
-    description: json trả envelope; định dạng khác trả file stream.
+    description: Chỉ hỗ trợ JSON envelope; chưa hỗ trợ xuất file.
     schema:
       type: string
       enum:
       - json
-      - xlsx
-      - csv
-      - pdf
       default: json
   responses:
     '200':
@@ -125,8 +147,7 @@ get:
             - id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
               name: Tòa nhà Rentify Central Park
               status: approved
-              totalRooms: 12
-              occupancyRate: '75.0'
+              occupancyRate: '0%'
               occupiedRooms: 0
             pagination:
               type: offset
@@ -136,18 +157,6 @@ get:
               totalPages: 1
               hasNextPage: false
               hasPreviousPage: false
-        text/csv:
-          schema:
-            type: string
-            format: binary
-        application/pdf:
-          schema:
-            type: string
-            format: binary
-        application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
-          schema:
-            type: string
-            format: binary
     '400':
       $ref: ../../openapi.yaml#/components/responses/BadRequestQueryError
     '401':
@@ -157,7 +166,32 @@ get:
     '403':
       $ref: ../../openapi.yaml#/components/responses/ForbiddenError
     '422':
-      $ref: ../../openapi.yaml#/components/responses/ValidationError
+      x-apidog-name: Unprocessable Entity
+      description: Query vi phạm ràng buộc hoặc chứa trường không được hỗ trợ.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code]
+            properties:
+              statusCode:
+                type: integer
+                enum: [422]
+              code:
+                type: string
+                enum: [VALIDATION_FAILED, UNEXPECTED_FIELD]
+          examples:
+            validation_failed:
+              summary: Filter, sort, order, pagination hoặc format không hợp lệ.
+              value:
+                statusCode: 422
+                code: VALIDATION_FAILED
+            unexpected_field:
+              summary: Query hoặc filter chứa trường không được hỗ trợ.
+              value:
+                statusCode: 422
+                code: UNEXPECTED_FIELD
     '429':
       $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
     '500':

@@ -2,12 +2,34 @@ get:
   tags:
   - Property
   x-apidog-folder: Building
-  x-apidog-status: designing
+  x-apidog-status: released
   operationId: getMeBuildingsBuildingid
   security:
     - BearerAuth: []
   summary: Get my building details
-  description: 'landlord. Đọc tòa nhà của tôi (chế độ quản trị). Lỗi nghiệp vụ: 404 NOT FOUND · 403 FORBIDDEN.'
+  description: |-
+    landlord. Đọc tòa nhà của tôi (chế độ quản trị). Lỗi nghiệp vụ: 404 NOT FOUND · 403 FORBIDDEN.
+    Building không tồn tại, đã xóa hoặc thuộc landlord khác đều trả 404 RESOURCE_NOT_FOUND.
+
+    ```mermaid
+    sequenceDiagram
+        autonumber
+        participant GW as API Gateway
+        participant TEN as Tenancy
+        participant DB as Tenancy DB
+
+        GW->>TEN: GET /me/buildings/{buildingId}
+        TEN->>TEN: Verify JWT, role landlord và validate buildingId
+        TEN->>DB: SELECT building WHERE id=buildingId<br/>AND landlord_id=user.id AND is_deleted=false
+        DB-->>TEN: Building hoặc null
+        alt Không có Building thuộc người gọi
+            TEN-->>GW: 404 RESOURCE_NOT_FOUND
+        else Tìm thấy Building
+            TEN->>TEN: Map detail DTO, note thành reviewNote
+            TEN-->>GW: 200 BUILDING_MY_FETCHED {data}
+        end
+        Note over TEN,DB: Ownership được lọc ngay trong query; không lộ Building của landlord khác
+    ```
   parameters:
   - name: buildingId
     in: path
@@ -45,15 +67,16 @@ get:
               id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
               name: Tòa nhà Rentify Central Park
               status: pending
-              totalRooms: 12
-              occupancyRate: '75.0'
+              occupancyRate: '0%'
               reviewNote: null
               province: Thành phố Hồ Chí Minh
-              district: Quận 1
               ward: Phường Bến Nghé
               address: 12 Nguyễn Trãi
               occupiedRooms: 0
+              amenities: null
+              ownershipCertificateUrls: []
               vietQrConfigured: false
+              ratePolicies: []
     '400':
       $ref: ../../openapi.yaml#/components/responses/BadRequestPathError
     '401':
