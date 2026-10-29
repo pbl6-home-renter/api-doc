@@ -555,3 +555,16 @@ Kết luận: tạo `CreateBillingSettingRequest`, `UpdateBillingSettingRequest`
 ### 4. Câu hỏi cần xác nhận với leader
 
 - Các cảnh báo lint về license, localhost server và các `components.responses` chưa được sử dụng có cần xử lý trong một task riêng không. Không tự sửa trong task refactor DTO vì không thuộc public DTO contract.
+
+
+## P5-08d — Building admin approval
+
+- Đã mô tả 4 endpoint admin, bỏ district, thêm enum filter.status và sequence diagram cho batch Identity lookup / transaction + outbox; trạng thái đặc tả là released.
+- TODO(api-owner): `/internal/users` chưa trả CCCD; tạm trả `landlord.cccdNumber=null`. Cần quyết định bỏ field hoặc mở rộng internal lookup.
+- TODO(media): Chưa có liên kết media cho Building; `ownershipDocuments=[]`, `documentsCount=0`.
+- TODO(room): `occupancyRate="0%"` cho đến khi tích hợp thống kê phòng. Đã bỏ `totalRooms` khỏi response admin theo yêu cầu, đồng bộ với response Building cũ.
+- `submittedAt=createdAt` cho đến khi có luồng nộp lại hồ sơ; đã bỏ các khai báo dự phòng `totalFloors`, `description`, `amenities` khỏi DTO/schema admin vì domain chưa lưu các trường này. Các response landlord hiện có được giữ nguyên.
+- Blocker(api-owner): Export xlsx/csv/pdf chưa triển khai. Admin list chỉ nhận `format=json` (hoặc bỏ format); định dạng khác trả 422 VALIDATION_FAILED. Cần thống nhất export ở task riêng như P5-08c.
+- Blocker(integration): Checkout Identity-Service hiện tại dùng cấu trúc `use-case/infra` và chưa có route `GET /internal/users` được task tham chiếu. Adapter Tenancy đã theo contract batch lookup; cần phiên bản Identity có route này để kiểm tra tích hợp thật. Lỗi unavailable (503/network/service auth) dùng fallback; lỗi peer 4xx khác vẫn được truyền lên theo internal HTTP port.
+- Chưa gửi notification; chỉ ghi event `building.approved` / `building.rejected` vào outbox.
+- Bàn giao: bundle `reference/rentify.json`, tạo PR api-doc và gắn vào issue P5-08d, sau đó đồng bộ nhánh trong Apidog. Chưa có issue URL hoặc kết nối Apidog trong phiên làm việc này.

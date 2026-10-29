@@ -2,12 +2,40 @@ get:
   tags:
   - Property
   x-apidog-folder: Building
-  x-apidog-status: designing
+  x-apidog-status: released
   operationId: getAdminBuildingsBuildingid
   security:
     - BearerAuth: []
   summary: Get building details for approval
-  description: 'admin. Chi tiết tòa nhà trong hàng đợi duyệt. Lỗi nghiệp vụ: 404 NOT FOUND · 403 FORBIDDEN.'
+  description: |-
+    admin. Xem chi tiết Building chưa bị xóa ở mọi trạng thái, kèm thông tin chủ nhà từ Identity.
+    Không tồn tại hoặc đã bị xóa trả 404 RESOURCE_NOT_FOUND. Nếu Identity unavailable, name/phone là chuỗi rỗng, email và cccdNumber là null.
+    Tạm thời ownershipDocuments=[], occupancyRate="0%", submittedAt=createdAt; CCCD chưa có trong internal lookup.
+
+    ```mermaid
+    sequenceDiagram
+        autonumber
+        participant GW as API Gateway
+        participant TEN as Tenancy
+        participant DB as Tenancy DB
+        participant ID as Identity
+
+        GW->>TEN: GET /admin/buildings/{buildingId}
+        TEN->>TEN: Verify JWT, role admin và validate UUID
+        TEN->>DB: SELECT building WHERE id=buildingId AND is_deleted=false
+        alt Không tìm thấy
+            TEN-->>GW: 404 RESOURCE_NOT_FOUND
+        else Tìm thấy
+            DB-->>TEN: Building
+            TEN->>ID: GET /internal/users?ids=landlordId (X-Service-Token)
+            alt Identity trả lời
+                ID-->>TEN: data [{id, name, phone, email, ...}]
+            else Identity unavailable
+                TEN->>TEN: Log warn, dùng thông tin liên hệ rỗng
+            end
+            TEN-->>GW: 200 BUILDING_ADMIN_FETCHED {building, landlord, ownershipDocuments}
+        end
+    ```
   parameters:
   - name: buildingId
     in: path
@@ -47,17 +75,18 @@ get:
               address: 123 Nguyễn Thị Minh Khai
               landlordId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
               status: pending
-              totalRooms: 12
-              occupancyRate: '75.0'
+              occupancyRate: '0%'
               reviewNote: null
               createdAt: '2026-09-20T08:00:00.000Z'
               province: Thành phố Hồ Chí Minh
-              district: Quận 1
               ward: Phường Bến Nghé
               landlord:
                 id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
                 name: Ví dụ
                 phone: '0901234567'
+                email: landlord@example.com
+                cccdNumber: null
+              submittedAt: '2026-09-20T08:00:00.000Z'
               ownershipDocuments: []
     '400':
       $ref: ../../openapi.yaml#/components/responses/BadRequestPathError

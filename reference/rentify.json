@@ -5441,7 +5441,7 @@
         "x-apidog-status": "designing",
         "operationId": "getBuildings",
         "summary": "Search public buildings",
-        "description": "public. Tìm tòa nhà trên sàn công khai. Lỗi nghiệp vụ: 422 VALIDATION FAILED · 429 RATE LIMIT EXCEEDED.",
+        "description": "Chưa triển khai trong Tenancy-Service hiện tại; endpoint được giữ trong tài liệu thiết kế.\npublic. Tìm tòa nhà trên sàn công khai. Lỗi nghiệp vụ: 422 VALIDATION FAILED · 429 RATE LIMIT EXCEEDED.",
         "security": [],
         "parameters": [
           {
@@ -6079,9 +6079,11 @@
                     {
                       "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
                       "name": "Tòa nhà Rentify Central Park",
+                      "address": "12 Nguyễn Trãi",
                       "status": "approved",
                       "occupancyRate": "0%",
-                      "occupiedRooms": 0
+                      "occupiedRooms": 0,
+                      "createdAt": "2026-09-20T08:00:00.000Z"
                     }
                   ],
                   "pagination": {
@@ -6171,7 +6173,7 @@
           "Property"
         ],
         "x-apidog-folder": "Building",
-        "x-apidog-status": "designing",
+        "x-apidog-status": "released",
         "operationId": "getAdminBuildings",
         "security": [
           {
@@ -6179,7 +6181,7 @@
           }
         ],
         "summary": "List buildings for admin approval",
-        "description": "admin. Hàng đợi duyệt và quản lý toàn bộ tòa nhà. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 VALIDATION FAILED.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
+        "description": "admin. Hàng đợi duyệt và quản lý Building chưa bị xóa, lọc theo status, landlordId, province, ward và q.\nq tìm không phân biệt hoa/thường trong name hoặc address. Mặc định sort=createdAt, order=asc (cũ nhất trước).\nChỉ hỗ trợ format=json; xlsx/csv/pdf trả 422 VALIDATION_FAILED. Trường query/filter không hỗ trợ trả 422 UNEXPECTED_FIELD.\nLấy thông tin chủ nhà bằng một batch /internal/users; nếu Identity unavailable thì landlordName/landlordPhone là chuỗi rỗng và ghi log warn.\n\n```mermaid\nsequenceDiagram\n    autonumber\n    participant GW as API Gateway\n    participant TEN as Tenancy\n    participant DB as Tenancy DB\n    participant ID as Identity\n\n    GW->>TEN: GET /admin/buildings?filter[status|landlordId|province|ward|q]&sort&order&pageNo&pageSize\n    TEN->>TEN: Verify JWT, role admin và validate query\n    TEN->>DB: SELECT + COUNT buildings WHERE is_deleted=false<br/>+ filters + sort whitelist + LIMIT/OFFSET\n    DB-->>TEN: Buildings và totalItems\n    TEN->>TEN: Gom landlordId duy nhất trong page\n    opt Có landlordId\n        TEN->>ID: GET /internal/users?ids=uuid,uuid (X-Service-Token)\n        alt Identity trả lời\n            ID-->>TEN: data [{id, name, phone, email, ...}]\n        else Identity unavailable\n            TEN->>TEN: Log warn, dùng thông tin liên hệ rỗng\n        end\n    end\n    TEN-->>GW: 200 BUILDINGS_ADMIN_FETCHED {data, pagination}\n```\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "parameters": [
           {
             "name": "filter",
@@ -6193,7 +6195,12 @@
               "additionalProperties": false,
               "properties": {
                 "status": {
-                  "type": "string"
+                  "type": "string",
+                  "enum": [
+                    "pending",
+                    "approved",
+                    "rejected"
+                  ]
                 },
                 "landlordId": {
                   "type": "string",
@@ -6214,9 +6221,14 @@
           {
             "name": "sort",
             "in": "query",
-            "description": "Một trường sắp xếp được endpoint hỗ trợ.",
+            "description": "Một trong các trường createdAt, name hoặc status.",
             "schema": {
               "type": "string",
+              "enum": [
+                "createdAt",
+                "name",
+                "status"
+              ],
               "default": "createdAt"
             }
           },
@@ -6254,14 +6266,11 @@
           {
             "name": "format",
             "in": "query",
-            "description": "json trả envelope; định dạng khác trả file stream.",
+            "description": "Chỉ hỗ trợ JSON envelope; giá trị khác json trả 422 VALIDATION_FAILED.",
             "schema": {
               "type": "string",
               "enum": [
-                "json",
-                "xlsx",
-                "csv",
-                "pdf"
+                "json"
               ],
               "default": "json"
             }
@@ -6358,7 +6367,6 @@
                       "createdAt": "2026-09-20T08:00:00.000Z",
                       "landlordName": "Ví dụ",
                       "landlordPhone": "0901234567",
-                      "totalRooms": 0,
                       "documentsCount": 0
                     }
                   ],
@@ -6371,24 +6379,6 @@
                     "hasNextPage": false,
                     "hasPreviousPage": false
                   }
-                }
-              },
-              "text/csv": {
-                "schema": {
-                  "type": "string",
-                  "format": "binary"
-                }
-              },
-              "application/pdf": {
-                "schema": {
-                  "type": "string",
-                  "format": "binary"
-                }
-              },
-              "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": {
-                "schema": {
-                  "type": "string",
-                  "format": "binary"
                 }
               }
             }
@@ -6403,7 +6393,34 @@
             "$ref": "#/components/responses/ForbiddenError"
           },
           "422": {
-            "$ref": "#/components/responses/ValidationError"
+            "description": "Filter, sort, order, pagination hoặc format không hợp lệ.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        422
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "VALIDATION_FAILED",
+                        "UNEXPECTED_FIELD"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "429": {
             "$ref": "#/components/responses/TooManyRequestsError"
@@ -6426,7 +6443,7 @@
         "x-apidog-status": "designing",
         "operationId": "getBuildingsBuildingid",
         "summary": "Get public building details",
-        "description": "public. Đọc tòa nhà (chế độ công khai). Lỗi nghiệp vụ: 404 NOT FOUND.",
+        "description": "Chưa triển khai trong Tenancy-Service hiện tại; endpoint được giữ trong tài liệu thiết kế.\npublic. Đọc tòa nhà (chế độ công khai). Lỗi nghiệp vụ: 404 NOT FOUND.",
         "security": [],
         "parameters": [
           {
@@ -6856,7 +6873,7 @@
           }
         ],
         "summary": "Configure building VietQR payment",
-        "description": "landlord. Cấu hình tài khoản ngân hàng nhận tiền chuyển khoản và sinh mã VietQR động cho tòa nhà. Lỗi nghiệp vụ: 404 BUILDING NOT FOUND · 403 FORBIDDEN · 422 INVALID BANK ACCOUNT.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
+        "description": "Chưa triển khai trong Tenancy-Service hiện tại; endpoint được giữ trong tài liệu thiết kế.\nlandlord. Cấu hình tài khoản ngân hàng nhận tiền chuyển khoản và sinh mã VietQR động cho tòa nhà. Lỗi nghiệp vụ: 404 BUILDING NOT FOUND · 403 FORBIDDEN · 422 INVALID BANK ACCOUNT.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "parameters": [
           {
             "name": "buildingId",
@@ -7058,7 +7075,7 @@
           }
         ],
         "summary": "Batch create rate policies for building",
-        "description": "landlord. Thiết lập hàng loạt các chính sách đơn giá tiện ích và phí dịch vụ cho tòa nhà (bước 3/3 wizard tạo tài sản). Lỗi nghiệp vụ: 404 BUILDING NOT FOUND · 403 FORBIDDEN · 422 VALIDATION FAILED.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
+        "description": "Chưa triển khai trong Tenancy-Service hiện tại; endpoint được giữ trong tài liệu thiết kế.\nlandlord. Thiết lập hàng loạt các chính sách đơn giá tiện ích và phí dịch vụ cho tòa nhà (bước 3/3 wizard tạo tài sản). Lỗi nghiệp vụ: 404 BUILDING NOT FOUND · 403 FORBIDDEN · 422 VALIDATION FAILED.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "parameters": [
           {
             "name": "buildingId",
@@ -7334,7 +7351,8 @@
                     "amenities": null,
                     "ownershipCertificateUrls": [],
                     "vietQrConfigured": false,
-                    "ratePolicies": []
+                    "ratePolicies": [],
+                    "createdAt": "2026-09-20T08:00:00.000Z"
                   }
                 }
               }
@@ -7370,7 +7388,7 @@
           "Property"
         ],
         "x-apidog-folder": "Building",
-        "x-apidog-status": "designing",
+        "x-apidog-status": "released",
         "operationId": "postBuildingsBuildingidApprove",
         "security": [
           {
@@ -7378,7 +7396,7 @@
           }
         ],
         "summary": "Approve building",
-        "description": "admin. Duyệt tòa nhà. Lỗi nghiệp vụ: 404 NOT FOUND · 409 BUILDING NOT PENDING.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-23 | 🟢 NON_BREAKING | the `note` request property's maxLength was increased from `200` to `500` | [abe5f9d](https://github.com/pbl6-home-renter/api-doc/commit/abe5f9d947c9bbe3751418e23252401fbaa9329f) |\n",
+        "description": "admin. Approve Building pending; note bắt buộc, tối đa 500 ký tự. Thiếu note hoặc sai kiểu trả 422 VALIDATION_FAILED.\nNote rỗng hoặc chỉ có khoảng trắng trả 422 VALIDATION_FAILED; domain approve vẫn cho phép bỏ note khi gọi nội bộ.\nBuilding không tồn tại/đã xóa trả 404 RESOURCE_NOT_FOUND; không còn pending trả 409 BUILDING_NOT_PENDING.\nCập nhật Building và ghi outbox building.approved trong cùng transaction; relay publish sau commit, chưa gửi notification cho landlord.\n\n```mermaid\nsequenceDiagram\n    autonumber\n    participant GW as API Gateway\n    participant TEN as Tenancy\n    participant DB as Tenancy DB\n    participant MQ as RabbitMQ\n\n    GW->>TEN: POST /buildings/{buildingId}/approve {note}\n    TEN->>TEN: Verify JWT, role admin và validate request\n    TEN->>DB: BEGIN; SELECT building WHERE id=buildingId AND is_deleted=false FOR UPDATE\n    alt Không tìm thấy\n        TEN->>DB: ROLLBACK\n        TEN-->>GW: 404 RESOURCE_NOT_FOUND\n    else Không pending\n        TEN->>DB: ROLLBACK\n        TEN-->>GW: 409 BUILDING_NOT_PENDING\n    else Note không hợp lệ\n        TEN->>DB: ROLLBACK\n        TEN-->>GW: 422 VALIDATION_FAILED\n    else Hợp lệ\n        TEN->>TEN: building.approve(adminId, note)\n        TEN->>DB: UPDATE status=approved, reviewed_by, reviewed_at, note<br/>+ INSERT outbox building.approved; COMMIT\n        Note over TEN,DB: Lỗi lưu Building/outbox sẽ rollback toàn bộ transaction\n        TEN-->>GW: 200 BUILDING_APPROVED\n        TEN-)MQ: Outbox relay publish building.approved sau commit\n    end\n```\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-23 | 🟢 NON_BREAKING | the `note` request property's maxLength was increased from `200` to `500` | [abe5f9d](https://github.com/pbl6-home-renter/api-doc/commit/abe5f9d947c9bbe3751418e23252401fbaa9329f) |\n",
         "parameters": [
           {
             "name": "buildingId",
@@ -7519,7 +7537,7 @@
           "Property"
         ],
         "x-apidog-folder": "Building",
-        "x-apidog-status": "designing",
+        "x-apidog-status": "released",
         "operationId": "postBuildingsBuildingidReject",
         "security": [
           {
@@ -7527,7 +7545,7 @@
           }
         ],
         "summary": "Reject building",
-        "description": "admin. Từ chối tòa nhà. Lỗi nghiệp vụ: 404 NOT FOUND · 409 BUILDING NOT PENDING · 422 NOTE REQUIRED.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
+        "description": "admin. Reject Building pending; note bắt buộc, tối đa 500 ký tự. Thiếu note hoặc sai kiểu trả 422 VALIDATION_FAILED.\nNote rỗng hoặc chỉ có khoảng trắng trả 422 NOTE_REQUIRED (domain validation).\nBuilding không tồn tại/đã xóa trả 404 RESOURCE_NOT_FOUND; không còn pending trả 409 BUILDING_NOT_PENDING.\nCập nhật Building và ghi outbox building.rejected trong cùng transaction; relay publish sau commit, chưa gửi notification cho landlord.\n\n```mermaid\nsequenceDiagram\n    autonumber\n    participant GW as API Gateway\n    participant TEN as Tenancy\n    participant DB as Tenancy DB\n    participant MQ as RabbitMQ\n\n    GW->>TEN: POST /buildings/{buildingId}/reject {note}\n    TEN->>TEN: Verify JWT, role admin và validate request\n    TEN->>DB: BEGIN; SELECT building WHERE id=buildingId AND is_deleted=false FOR UPDATE\n    alt Không tìm thấy\n        TEN->>DB: ROLLBACK\n        TEN-->>GW: 404 RESOURCE_NOT_FOUND\n    else Không pending\n        TEN->>DB: ROLLBACK\n        TEN-->>GW: 409 BUILDING_NOT_PENDING\n    else Note không hợp lệ\n        TEN->>DB: ROLLBACK\n        TEN-->>GW: 422 NOTE_REQUIRED / VALIDATION_FAILED\n    else Hợp lệ\n        TEN->>TEN: building.reject(adminId, note)\n        TEN->>DB: UPDATE status=rejected, reviewed_by, reviewed_at, note<br/>+ INSERT outbox building.rejected; COMMIT\n        Note over TEN,DB: Lỗi lưu Building/outbox sẽ rollback toàn bộ transaction\n        TEN-->>GW: 200 BUILDING_REJECTED\n        TEN-)MQ: Outbox relay publish building.rejected sau commit\n    end\n```\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "parameters": [
           {
             "name": "buildingId",
@@ -7714,7 +7732,7 @@
           "Property"
         ],
         "x-apidog-folder": "Building",
-        "x-apidog-status": "designing",
+        "x-apidog-status": "released",
         "operationId": "getAdminBuildingsBuildingid",
         "security": [
           {
@@ -7722,7 +7740,7 @@
           }
         ],
         "summary": "Get building details for approval",
-        "description": "admin. Chi tiết tòa nhà trong hàng đợi duyệt. Lỗi nghiệp vụ: 404 NOT FOUND · 403 FORBIDDEN.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
+        "description": "admin. Xem chi tiết Building chưa bị xóa ở mọi trạng thái, kèm thông tin chủ nhà từ Identity.\nKhông tồn tại hoặc đã bị xóa trả 404 RESOURCE_NOT_FOUND. Nếu Identity unavailable, name/phone là chuỗi rỗng, email và cccdNumber là null.\nTạm thời ownershipDocuments=[], occupancyRate=\"0%\", submittedAt=createdAt; CCCD chưa có trong internal lookup.\n\n```mermaid\nsequenceDiagram\n    autonumber\n    participant GW as API Gateway\n    participant TEN as Tenancy\n    participant DB as Tenancy DB\n    participant ID as Identity\n\n    GW->>TEN: GET /admin/buildings/{buildingId}\n    TEN->>TEN: Verify JWT, role admin và validate UUID\n    TEN->>DB: SELECT building WHERE id=buildingId AND is_deleted=false\n    alt Không tìm thấy\n        TEN-->>GW: 404 RESOURCE_NOT_FOUND\n    else Tìm thấy\n        DB-->>TEN: Building\n        TEN->>ID: GET /internal/users?ids=landlordId (X-Service-Token)\n        alt Identity trả lời\n            ID-->>TEN: data [{id, name, phone, email, ...}]\n        else Identity unavailable\n            TEN->>TEN: Log warn, dùng thông tin liên hệ rỗng\n        end\n        TEN-->>GW: 200 BUILDING_ADMIN_FETCHED {building, landlord, ownershipDocuments}\n    end\n```\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "parameters": [
           {
             "name": "buildingId",
@@ -7774,18 +7792,19 @@
                     "address": "123 Nguyễn Thị Minh Khai",
                     "landlordId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
                     "status": "pending",
-                    "totalRooms": 12,
-                    "occupancyRate": "75.0",
+                    "occupancyRate": "0%",
                     "reviewNote": null,
                     "createdAt": "2026-09-20T08:00:00.000Z",
                     "province": "Thành phố Hồ Chí Minh",
-                    "district": "Quận 1",
                     "ward": "Phường Bến Nghé",
                     "landlord": {
                       "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
                       "name": "Ví dụ",
-                      "phone": "0901234567"
+                      "phone": "0901234567",
+                      "email": "landlord@example.com",
+                      "cccdNumber": null
                     },
+                    "submittedAt": "2026-09-20T08:00:00.000Z",
                     "ownershipDocuments": []
                   }
                 }
@@ -23761,7 +23780,9 @@
           "rejectionReason": {
             "type": "string",
             "nullable": true,
-            "description": "Lý do bị admin từ chối duyệt (nếu status = rejected)."
+            "minLength": 1,
+            "maxLength": 500,
+            "description": "Lý do từ chối; chỉ xuất hiện khi status = rejected, các trạng thái khác không trả field này."
           },
           "createdAt": {
             "type": "string",
@@ -23774,7 +23795,9 @@
           "name",
           "status",
           "occupiedRooms",
-          "occupancyRate"
+          "occupancyRate",
+          "address",
+          "createdAt"
         ]
       },
       "BuildingAdminListResponseDto": {
@@ -23799,11 +23822,11 @@
           },
           "landlordName": {
             "type": "string",
-            "description": "Tên chủ nhà."
+            "description": "Tên chủ nhà; chuỗi rỗng khi Identity unavailable hoặc không tìm thấy user."
           },
           "landlordPhone": {
             "type": "string",
-            "description": "Số điện thoại của chủ nhà."
+            "description": "Số điện thoại của chủ nhà; chuỗi rỗng khi Identity unavailable hoặc không tìm thấy user."
           },
           "status": {
             "type": "string",
@@ -23814,15 +23837,10 @@
             ],
             "description": "Trạng thái kiểm duyệt tòa nhà."
           },
-          "totalRooms": {
-            "type": "integer",
-            "minimum": 0,
-            "description": "Tổng số phòng trong tòa nhà."
-          },
           "documentsCount": {
             "type": "integer",
             "minimum": 0,
-            "description": "Số lượng tài liệu/giấy tờ sở hữu đã tải lên."
+            "description": "Số lượng tài liệu/giấy tờ sở hữu; hiện tạm trả 0 khi chưa tích hợp media."
           },
           "createdAt": {
             "type": "string",
@@ -23837,7 +23855,6 @@
           "landlordName",
           "landlordPhone",
           "status",
-          "totalRooms",
           "documentsCount",
           "createdAt"
         ]
@@ -24141,7 +24158,12 @@
           "status",
           "occupiedRooms",
           "occupancyRate",
-          "vietQrConfigured"
+          "vietQrConfigured",
+          "reviewNote",
+          "amenities",
+          "ownershipCertificateUrls",
+          "ratePolicies",
+          "createdAt"
         ]
       },
       "BuildingUpdateResponseDto": {
@@ -24272,10 +24294,6 @@
             "type": "string",
             "description": "Tỉnh / Thành phố."
           },
-          "district": {
-            "type": "string",
-            "description": "Quận / Huyện."
-          },
           "ward": {
             "type": "string",
             "description": "Phường / Xã."
@@ -24286,30 +24304,10 @@
             "maxLength": 254,
             "description": "Địa chỉ chi tiết số nhà, tên đường."
           },
-          "totalFloors": {
-            "type": "integer",
-            "minimum": 1,
-            "description": "Số tầng của tòa nhà."
-          },
-          "totalRooms": {
-            "type": "integer",
-            "minimum": 0,
-            "description": "Tổng số phòng trong tòa nhà."
-          },
           "occupancyRate": {
             "type": "string",
-            "description": "Tỷ lệ lấp đầy phòng."
-          },
-          "description": {
-            "type": "string",
-            "nullable": true,
-            "maxLength": 1000,
-            "description": "Mô tả chi tiết về tòa nhà."
-          },
-          "amenities": {
-            "type": "object",
-            "nullable": true,
-            "description": "Các tiện ích chung của tòa nhà (thang máy, khóa vân tay, camera an ninh...)."
+            "example": "0%",
+            "description": "Tỷ lệ lấp đầy phòng; hiện tạm trả '0%'."
           },
           "landlordId": {
             "type": "string",
@@ -24326,33 +24324,35 @@
               },
               "name": {
                 "type": "string",
-                "description": "Họ và tên chủ nhà."
+                "description": "Họ và tên chủ nhà; chuỗi rỗng khi Identity unavailable hoặc không tìm thấy user."
               },
               "phone": {
                 "type": "string",
-                "description": "Số điện thoại liên hệ."
+                "description": "Số điện thoại liên hệ; chuỗi rỗng khi Identity unavailable hoặc không tìm thấy user."
               },
               "email": {
                 "type": "string",
                 "format": "email",
                 "nullable": true,
-                "description": "Email của chủ nhà."
+                "description": "Email của chủ nhà; null khi không có thông tin."
               },
               "cccdNumber": {
                 "type": "string",
                 "nullable": true,
-                "description": "Số CCCD/CMND để đối chiếu với sổ đỏ."
+                "description": "Hiện trả null; internal user lookup chưa cung cấp số CCCD/CMND."
               }
             },
             "required": [
               "id",
               "name",
-              "phone"
+              "phone",
+              "email",
+              "cccdNumber"
             ]
           },
           "ownershipDocuments": {
             "type": "array",
-            "description": "Danh sách giấy tờ đất, sổ đỏ hoặc chứng từ sở hữu bất động sản tải lên để admin duyệt tay",
+            "description": "Danh sách tài liệu chứng minh sở hữu; hiện tạm trả [] khi chưa tích hợp media.",
             "items": {
               "type": "object",
               "properties": {
@@ -24401,7 +24401,7 @@
           "submittedAt": {
             "type": "string",
             "format": "date-time",
-            "description": "Thời điểm chủ nhà nộp hồ sơ kiểm duyệt."
+            "description": "Hiện lấy bằng createdAt; chưa có luồng nộp lại hồ sơ kiểm duyệt."
           },
           "createdAt": {
             "type": "string",
@@ -24413,15 +24413,16 @@
           "id",
           "name",
           "province",
-          "district",
           "ward",
           "address",
-          "totalRooms",
           "landlordId",
           "landlord",
           "ownershipDocuments",
           "status",
-          "createdAt"
+          "createdAt",
+          "occupancyRate",
+          "reviewNote",
+          "submittedAt"
         ]
       },
       "RoomCreateRequestDto": {

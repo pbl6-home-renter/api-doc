@@ -13,7 +13,7 @@ properties:
     enum: [pending, approved, rejected]
   occupiedRooms: { type: integer, minimum: 0, description: "Số lượng phòng đang có khách thuê; hiện tạm trả 0 khi chưa tích hợp thống kê occupancy." }
   occupancyRate: { type: string, example: "0%", description: "Tỷ lệ lấp đầy; hiện tạm trả '0%' khi chưa tích hợp thống kê occupancy." }
-  rejectionReason: { type: string, nullable: true, description: "Lý do bị admin từ chối duyệt (nếu status = rejected)." }
+  rejectionReason: { type: string, nullable: true, minLength: 1, maxLength: 500, description: "Lý do từ chối; chỉ xuất hiện khi status = rejected, các trạng thái khác không trả field này." }
   createdAt: { type: string, format: date-time, description: "Thời điểm tạo tòa nhà." }
 
 required:
@@ -22,3 +22,5 @@ required:
   - status
   - occupiedRooms
   - occupancyRate
+  - address
+  - createdAt
