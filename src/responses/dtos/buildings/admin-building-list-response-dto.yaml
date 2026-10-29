@@ -7,11 +7,10 @@ properties:
   id: { type: string, format: uuid, description: "Định danh duy nhất của tòa nhà." }
   name: { type: string, description: "Tên tòa nhà." }
   landlordId: { type: string, format: uuid, description: "Định danh chủ nhà." }
-  landlordName: { type: string, description: "Tên chủ nhà." }
-  landlordPhone: { type: string, description: "Số điện thoại của chủ nhà." }
+  landlordName: { type: string, description: "Tên chủ nhà; chuỗi rỗng khi Identity unavailable hoặc không tìm thấy user." }
+  landlordPhone: { type: string, description: "Số điện thoại của chủ nhà; chuỗi rỗng khi Identity unavailable hoặc không tìm thấy user." }
   status: { type: string, enum: [pending, approved, rejected], description: "Trạng thái kiểm duyệt tòa nhà." }
-  totalRooms: { type: integer, minimum: 0, description: "Tổng số phòng trong tòa nhà." }
-  documentsCount: { type: integer, minimum: 0, description: "Số lượng tài liệu/giấy tờ sở hữu đã tải lên." }
+  documentsCount: { type: integer, minimum: 0, description: "Số lượng tài liệu/giấy tờ sở hữu; hiện tạm trả 0 khi chưa tích hợp media." }
   createdAt: { type: string, format: date-time, description: "Thời điểm bản ghi được tạo theo ISO 8601." }
 
 required:
@@ -21,6 +20,5 @@ required:
   - landlordName
   - landlordPhone
   - status
-  - totalRooms
   - documentsCount
   - createdAt

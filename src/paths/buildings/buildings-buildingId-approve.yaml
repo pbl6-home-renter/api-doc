@@ -2,12 +2,45 @@ post:
   tags:
   - Property
   x-apidog-folder: Building
-  x-apidog-status: designing
+  x-apidog-status: released
   operationId: postBuildingsBuildingidApprove
   security:
     - BearerAuth: []
   summary: Approve building
-  description: 'admin. Duyệt tòa nhà. Lỗi nghiệp vụ: 404 NOT FOUND · 409 BUILDING NOT PENDING.'
+  description: |-
+    admin. Approve Building pending; note bắt buộc, tối đa 500 ký tự. Thiếu note hoặc sai kiểu trả 422 VALIDATION_FAILED.
+    Note rỗng hoặc chỉ có khoảng trắng trả 422 VALIDATION_FAILED; domain approve vẫn cho phép bỏ note khi gọi nội bộ.
+    Building không tồn tại/đã xóa trả 404 RESOURCE_NOT_FOUND; không còn pending trả 409 BUILDING_NOT_PENDING.
+    Cập nhật Building và ghi outbox building.approved trong cùng transaction; relay publish sau commit, chưa gửi notification cho landlord.
+
+    ```mermaid
+    sequenceDiagram
+        autonumber
+        participant GW as API Gateway
+        participant TEN as Tenancy
+        participant DB as Tenancy DB
+        participant MQ as RabbitMQ
+
+        GW->>TEN: POST /buildings/{buildingId}/approve {note}
+        TEN->>TEN: Verify JWT, role admin và validate request
+        TEN->>DB: BEGIN; SELECT building WHERE id=buildingId AND is_deleted=false FOR UPDATE
+        alt Không tìm thấy
+            TEN->>DB: ROLLBACK
+            TEN-->>GW: 404 RESOURCE_NOT_FOUND
+        else Không pending
+            TEN->>DB: ROLLBACK
+            TEN-->>GW: 409 BUILDING_NOT_PENDING
+        else Note không hợp lệ
+            TEN->>DB: ROLLBACK
+            TEN-->>GW: 422 VALIDATION_FAILED
+        else Hợp lệ
+            TEN->>TEN: building.approve(adminId, note)
+            TEN->>DB: UPDATE status=approved, reviewed_by, reviewed_at, note<br/>+ INSERT outbox building.approved; COMMIT
+            Note over TEN,DB: Lỗi lưu Building/outbox sẽ rollback toàn bộ transaction
+            TEN-->>GW: 200 BUILDING_APPROVED
+            TEN-)MQ: Outbox relay publish building.approved sau commit
+        end
+    ```
   parameters:
   - name: buildingId
     in: path

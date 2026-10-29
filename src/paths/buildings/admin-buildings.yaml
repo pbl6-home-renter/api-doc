@@ -2,13 +2,40 @@ get:
   tags:
   - Property
   x-apidog-folder: Building
-  x-apidog-status: designing
+  x-apidog-status: released
   operationId: getAdminBuildings
   security:
     - BearerAuth: []
   summary: List buildings for admin approval
-  description: 'admin. Hàng đợi duyệt và quản lý toàn bộ tòa nhà. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 VALIDATION
-    FAILED.'
+  description: |-
+    admin. Hàng đợi duyệt và quản lý Building chưa bị xóa, lọc theo status, landlordId, province, ward và q.
+    q tìm không phân biệt hoa/thường trong name hoặc address. Mặc định sort=createdAt, order=asc (cũ nhất trước).
+    Chỉ hỗ trợ format=json; xlsx/csv/pdf trả 422 VALIDATION_FAILED. Trường query/filter không hỗ trợ trả 422 UNEXPECTED_FIELD.
+    Lấy thông tin chủ nhà bằng một batch /internal/users; nếu Identity unavailable thì landlordName/landlordPhone là chuỗi rỗng và ghi log warn.
+
+    ```mermaid
+    sequenceDiagram
+        autonumber
+        participant GW as API Gateway
+        participant TEN as Tenancy
+        participant DB as Tenancy DB
+        participant ID as Identity
+
+        GW->>TEN: GET /admin/buildings?filter[status|landlordId|province|ward|q]&sort&order&pageNo&pageSize
+        TEN->>TEN: Verify JWT, role admin và validate query
+        TEN->>DB: SELECT + COUNT buildings WHERE is_deleted=false<br/>+ filters + sort whitelist + LIMIT/OFFSET
+        DB-->>TEN: Buildings và totalItems
+        TEN->>TEN: Gom landlordId duy nhất trong page
+        opt Có landlordId
+            TEN->>ID: GET /internal/users?ids=uuid,uuid (X-Service-Token)
+            alt Identity trả lời
+                ID-->>TEN: data [{id, name, phone, email, ...}]
+            else Identity unavailable
+                TEN->>TEN: Log warn, dùng thông tin liên hệ rỗng
+            end
+        end
+        TEN-->>GW: 200 BUILDINGS_ADMIN_FETCHED {data, pagination}
+    ```
   parameters:
   - name: filter
     in: query
@@ -22,6 +49,7 @@ get:
       properties:
         status:
           type: string
+          enum: [pending, approved, rejected]
         landlordId:
           type: string
           format: uuid
@@ -33,9 +61,10 @@ get:
           type: string
   - name: sort
     in: query
-    description: Một trường sắp xếp được endpoint hỗ trợ.
+    description: Một trong các trường createdAt, name hoặc status.
     schema:
       type: string
+      enum: [createdAt, name, status]
       default: createdAt
   - name: order
     in: query
@@ -60,14 +89,11 @@ get:
       default: 1
   - name: format
     in: query
-    description: json trả envelope; định dạng khác trả file stream.
+    description: Chỉ hỗ trợ JSON envelope; giá trị khác json trả 422 VALIDATION_FAILED.
     schema:
       type: string
       enum:
       - json
-      - xlsx
-      - csv
-      - pdf
       default: json
   responses:
     '200':
@@ -139,7 +165,6 @@ get:
               createdAt: '2026-09-20T08:00:00.000Z'
               landlordName: Ví dụ
               landlordPhone: '0901234567'
-              totalRooms: 0
               documentsCount: 0
             pagination:
               type: offset
@@ -149,18 +174,6 @@ get:
               totalPages: 1
               hasNextPage: false
               hasPreviousPage: false
-        text/csv:
-          schema:
-            type: string
-            format: binary
-        application/pdf:
-          schema:
-            type: string
-            format: binary
-        application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
-          schema:
-            type: string
-            format: binary
     '400':
       $ref: ../../openapi.yaml#/components/responses/BadRequestQueryError
     '401':
@@ -170,7 +183,16 @@ get:
     '403':
       $ref: ../../openapi.yaml#/components/responses/ForbiddenError
     '422':
-      $ref: ../../openapi.yaml#/components/responses/ValidationError
+      description: Filter, sort, order, pagination hoặc format không hợp lệ.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code]
+            properties:
+              statusCode: { type: integer, enum: [422] }
+              code: { type: string, enum: [VALIDATION_FAILED, UNEXPECTED_FIELD] }
     '429':
       $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
     '500':
