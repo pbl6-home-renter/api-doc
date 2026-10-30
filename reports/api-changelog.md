@@ -5,11 +5,45 @@
 
 Báo cáo lưu lịch sử các entry đã phát hiện, mới nhất ở trên. `NO_CHANGE` không xóa entry cũ; exit code chỉ phản ánh lần chạy hiện tại.
 
-Công cụ: Redocly 2.64.1; oasdiff 1.34.1. Số entry: **16**.
+Công cụ: Redocly 2.64.1; oasdiff 1.34.1. Số entry: **17**.
 
 Phân loại: **BREAKING** = client cũ có thể hỏng; **NON_BREAKING** = tương thích theo contract; **NEEDS_REVIEW** = chưa đủ bằng chứng.
 
 Các vị trí dùng JSON Pointer trên bundle tạm (`~1` là `/`). JSON đi kèm giữ toàn bộ semantic diff, fingerprint và hash phục vụ truy vết.
+
+## Thay đổi contract từ Git — NON_BREAKING
+
+- ID: `2985ce898a03595a2c3e39206272129c0c850d8f62013e42765a6bea22725423`
+- Contract: rentify-public; repository: https://github.com/pbl6-home-renter/api-doc
+- Nguồn: `src/openapi.yaml` → `src/openapi.yaml`
+- Phát hiện (UTC): 2026-10-30T13:05:35.681Z; commit time: 2026-10-30T20:05:22+07:00
+- Commit nền: d2d5901c35fcebaa2c54d60f7cfbc86af278edfe
+- Commit đích/bối cảnh: [7477c2af097f8a6be3f439bb3c8b9feefe95f5df](https://github.com/pbl6-home-renter/api-doc/commit/7477c2af097f8a6be3f439bb3c8b9feefe95f5df)
+- PR: [https://github.com/pbl6-home-renter/api-doc/pull/30](https://github.com/pbl6-home-renter/api-doc/pull/30)
+- Loại metadata: Git revision thực tế
+- Lý do: CHƯA CUNG CẤP — tác giả PR phải bổ sung lý do nghiệp vụ; không thể suy ra từ OpenAPI diff.
+
+| Mức ảnh hưởng | Endpoint / vùng | Thay đổi | Hành động FE / Mobile |
+|---|---|---|---|
+| NON_BREAKING | GET /rate-policies | added the new optional `query` request parameter `order` (`new-optional-request-parameter`) | FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI. |
+| NON_BREAKING | GET /rate-policies | added the new optional `query` request parameter `sort` (`new-optional-request-parameter`) | FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI. |
+| NON_BREAKING | GET /rate-policies | added the enum value `building` to the property `scope` of the `query` request parameter `filter` (`request-parameter-property-enum-value-added`) | FE và Mobile: đối chiếu enum trong DTO/validation và nhánh switch/when; xử lý giá trị chưa biết, kiểm thử dữ liệu cũ và mới; phối hợp BE trước khi phát hành. |
+| NON_BREAKING | GET /rate-policies | added the enum value `cleaning` to the property `type` of the `query` request parameter `filter` (`request-parameter-property-enum-value-added`) | FE và Mobile: đối chiếu enum trong DTO/validation và nhánh switch/when; xử lý giá trị chưa biết, kiểm thử dữ liệu cũ và mới; phối hợp BE trước khi phát hành. |
+| NON_BREAKING | GET /rate-policies | added the enum value `electricity` to the property `type` of the `query` request parameter `filter` (`request-parameter-property-enum-value-added`) | FE và Mobile: đối chiếu enum trong DTO/validation và nhánh switch/when; xử lý giá trị chưa biết, kiểm thử dữ liệu cũ và mới; phối hợp BE trước khi phát hành. |
+| NON_BREAKING | GET /rate-policies | added the enum value `maintenance` to the property `type` of the `query` request parameter `filter` (`request-parameter-property-enum-value-added`) | FE và Mobile: đối chiếu enum trong DTO/validation và nhánh switch/when; xử lý giá trị chưa biết, kiểm thử dữ liệu cũ và mới; phối hợp BE trước khi phát hành. |
+| NON_BREAKING | GET /rate-policies | added the enum value `other` to the property `type` of the `query` request parameter `filter` (`request-parameter-property-enum-value-added`) | FE và Mobile: đối chiếu enum trong DTO/validation và nhánh switch/when; xử lý giá trị chưa biết, kiểm thử dữ liệu cũ và mới; phối hợp BE trước khi phát hành. |
+| NON_BREAKING | GET /rate-policies | added the enum value `parking` to the property `type` of the `query` request parameter `filter` (`request-parameter-property-enum-value-added`) | FE và Mobile: đối chiếu enum trong DTO/validation và nhánh switch/when; xử lý giá trị chưa biết, kiểm thử dữ liệu cũ và mới; phối hợp BE trước khi phát hành. |
+| NON_BREAKING | GET /rate-policies | added the enum value `room` to the property `scope` of the `query` request parameter `filter` (`request-parameter-property-enum-value-added`) | FE và Mobile: đối chiếu enum trong DTO/validation và nhánh switch/when; xử lý giá trị chưa biết, kiểm thử dữ liệu cũ và mới; phối hợp BE trước khi phát hành. |
+| NON_BREAKING | GET /rate-policies | added the enum value `water` to the property `type` of the `query` request parameter `filter` (`request-parameter-property-enum-value-added`) | FE và Mobile: đối chiếu enum trong DTO/validation và nhánh switch/when; xử lý giá trị chưa biết, kiểm thử dữ liệu cũ và mới; phối hợp BE trước khi phát hành. |
+| NON_BREAKING | GET /rate-policies | added the enum value `wifi` to the property `type` of the `query` request parameter `filter` (`request-parameter-property-enum-value-added`) | FE và Mobile: đối chiếu enum trong DTO/validation và nhánh switch/when; xử lý giá trị chưa biết, kiểm thử dữ liệu cũ và mới; phối hợp BE trước khi phát hành. |
+
+### Vị trí và giá trị trước/sau
+
+| Path / schema / field (JSON Pointer) | Trước | Sau |
+|---|---|---|
+| `/paths/~1rate-policies/get/parameters` | [{"name":"filter","in":"query","required":false,"style":"deepObject","explode":true,"description":"Bộ lọc được endpoint hỗ trợ.","schema":{"type":"object","additionalProperties":false,"properties":{"scope":{"type":"string"},"buildingId":{"type":"string","format":"uuid"},"roomId":{"type":"string","format":"uuid"},"type":{"type":"string"}}}},{"name":"pageSize","in":"query","schema":{"type":"integer","minimum":1,"maximum":100,"default":20}},{"name":"pageNo","in":"query","schema":{"type":"integer","minimum":1,"default":1}}] | [{"name":"filter","in":"query","required":false,"style":"deepObject","explode":true,"description":"Bộ lọc được endpoint hỗ trợ; filter[type] chọn bộ có mục giá thuộc loại đó.","schema":{"type":"object","additionalProperties":false,"properties":{"scope":{"type":"string","enum":["building","room"]},"buildingId":{"type":"string","format":"uuid"},"roomId":{"type":"string","format":"uuid"},"type":{"type":"string","enum":["electricity","water","wifi","cleaning","parking","maintenance","other"]}}}},{"name":"sort","in":"query","description":"Trường sắp xếp được hỗ trợ; mặc định createdAt.","schema":{"type":"string","enum":["createdAt"],"default":"createdAt"}},{"name":"order","in":"query","description":"Chiều sắp xếp; mặc định desc.","schema":{"type":"string","enum":["asc","desc"],"default":"desc"}},{"name":"pageSize","in":"query","schema":{"type":"integer","minimum":1,"maximum":100,"default":20}},{"name":"pageNo","in":"query","schema":{"type":"integer","minimum":1,"default":1}}] |
+
+**Kiểm tra thủ công:** BE xác nhận lý do, endpoint dùng schema chung, thay đổi role/ownership mô tả bằng văn bản và thời điểm triển khai. FE/Mobile xác nhận tác động với parser và phiên bản client đang hỗ trợ.
 
 ## Thay đổi contract từ Git — BREAKING
 

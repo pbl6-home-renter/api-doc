@@ -22812,6 +22812,361 @@
           }
         }
       }
+    },
+    {
+      "id": "2985ce898a03595a2c3e39206272129c0c850d8f62013e42765a6bea22725423",
+      "label": "Thay đổi contract từ Git",
+      "classification": "NON_BREAKING",
+      "contractId": "rentify-public",
+      "repository": "https://github.com/pbl6-home-renter/api-doc",
+      "baseHash": "1571f6dae39ef856cdc3a8fdcf85f7fb1e3879fa9b8cb6ebd7fd302b3f436ed3",
+      "headHash": "118b614d2aacefcc2624f96f9fb131a375f9d081fe90e985c2c75d43e1492bc8",
+      "baseSource": "src/openapi.yaml",
+      "headSource": "src/openapi.yaml",
+      "detectedAt": "2026-10-30T13:05:35.681Z",
+      "committedAt": "2026-10-30T20:05:22+07:00",
+      "baseCommit": "d2d5901c35fcebaa2c54d60f7cfbc86af278edfe",
+      "headCommit": "7477c2af097f8a6be3f439bb3c8b9feefe95f5df",
+      "prUrl": "https://github.com/pbl6-home-renter/api-doc/pull/30",
+      "commitUrl": "https://github.com/pbl6-home-renter/api-doc/commit/7477c2af097f8a6be3f439bb3c8b9feefe95f5df",
+      "metadataKind": "Git revision thực tế",
+      "reason": "CHƯA CUNG CẤP — tác giả PR phải bổ sung lý do nghiệp vụ; không thể suy ra từ OpenAPI diff.",
+      "tools": {
+        "redocly": "2.64.1",
+        "oasdiff": "1.34.1"
+      },
+      "changes": [
+        {
+          "id": "new-optional-request-parameter",
+          "text": "added the new optional `query` request parameter `order`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getRatePolicies",
+          "path": "/rate-policies",
+          "section": "paths",
+          "fingerprint": "cebcb500fa0e",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        },
+        {
+          "id": "new-optional-request-parameter",
+          "text": "added the new optional `query` request parameter `sort`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getRatePolicies",
+          "path": "/rate-policies",
+          "section": "paths",
+          "fingerprint": "b58c9d5630e6",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        },
+        {
+          "id": "request-parameter-property-enum-value-added",
+          "text": "added the enum value `building` to the property `scope` of the `query` request parameter `filter`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getRatePolicies",
+          "path": "/rate-policies",
+          "section": "paths",
+          "fingerprint": "ddc5b1f98ccb",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu enum trong DTO/validation và nhánh switch/when; xử lý giá trị chưa biết, kiểm thử dữ liệu cũ và mới; phối hợp BE trước khi phát hành."
+        },
+        {
+          "id": "request-parameter-property-enum-value-added",
+          "text": "added the enum value `cleaning` to the property `type` of the `query` request parameter `filter`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getRatePolicies",
+          "path": "/rate-policies",
+          "section": "paths",
+          "fingerprint": "6a3b9a3afa9c",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu enum trong DTO/validation và nhánh switch/when; xử lý giá trị chưa biết, kiểm thử dữ liệu cũ và mới; phối hợp BE trước khi phát hành."
+        },
+        {
+          "id": "request-parameter-property-enum-value-added",
+          "text": "added the enum value `electricity` to the property `type` of the `query` request parameter `filter`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getRatePolicies",
+          "path": "/rate-policies",
+          "section": "paths",
+          "fingerprint": "028d16bdbeda",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu enum trong DTO/validation và nhánh switch/when; xử lý giá trị chưa biết, kiểm thử dữ liệu cũ và mới; phối hợp BE trước khi phát hành."
+        },
+        {
+          "id": "request-parameter-property-enum-value-added",
+          "text": "added the enum value `maintenance` to the property `type` of the `query` request parameter `filter`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getRatePolicies",
+          "path": "/rate-policies",
+          "section": "paths",
+          "fingerprint": "e293701b88bb",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu enum trong DTO/validation và nhánh switch/when; xử lý giá trị chưa biết, kiểm thử dữ liệu cũ và mới; phối hợp BE trước khi phát hành."
+        },
+        {
+          "id": "request-parameter-property-enum-value-added",
+          "text": "added the enum value `other` to the property `type` of the `query` request parameter `filter`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getRatePolicies",
+          "path": "/rate-policies",
+          "section": "paths",
+          "fingerprint": "8b00862ff5f2",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu enum trong DTO/validation và nhánh switch/when; xử lý giá trị chưa biết, kiểm thử dữ liệu cũ và mới; phối hợp BE trước khi phát hành."
+        },
+        {
+          "id": "request-parameter-property-enum-value-added",
+          "text": "added the enum value `parking` to the property `type` of the `query` request parameter `filter`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getRatePolicies",
+          "path": "/rate-policies",
+          "section": "paths",
+          "fingerprint": "7572a2214726",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu enum trong DTO/validation và nhánh switch/when; xử lý giá trị chưa biết, kiểm thử dữ liệu cũ và mới; phối hợp BE trước khi phát hành."
+        },
+        {
+          "id": "request-parameter-property-enum-value-added",
+          "text": "added the enum value `room` to the property `scope` of the `query` request parameter `filter`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getRatePolicies",
+          "path": "/rate-policies",
+          "section": "paths",
+          "fingerprint": "cd15346582c4",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu enum trong DTO/validation và nhánh switch/when; xử lý giá trị chưa biết, kiểm thử dữ liệu cũ và mới; phối hợp BE trước khi phát hành."
+        },
+        {
+          "id": "request-parameter-property-enum-value-added",
+          "text": "added the enum value `water` to the property `type` of the `query` request parameter `filter`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getRatePolicies",
+          "path": "/rate-policies",
+          "section": "paths",
+          "fingerprint": "a69272b66d6f",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu enum trong DTO/validation và nhánh switch/when; xử lý giá trị chưa biết, kiểm thử dữ liệu cũ và mới; phối hợp BE trước khi phát hành."
+        },
+        {
+          "id": "request-parameter-property-enum-value-added",
+          "text": "added the enum value `wifi` to the property `type` of the `query` request parameter `filter`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getRatePolicies",
+          "path": "/rate-policies",
+          "section": "paths",
+          "fingerprint": "8f5272a588ce",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu enum trong DTO/validation và nhánh switch/when; xử lý giá trị chưa biết, kiểm thử dữ liệu cũ và mới; phối hợp BE trước khi phát hành."
+        }
+      ],
+      "locations": [
+        {
+          "pointer": "/paths/~1rate-policies/get/parameters",
+          "before": [
+            {
+              "name": "filter",
+              "in": "query",
+              "required": false,
+              "style": "deepObject",
+              "explode": true,
+              "description": "Bộ lọc được endpoint hỗ trợ.",
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "scope": {
+                    "type": "string"
+                  },
+                  "buildingId": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "roomId": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "type": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            {
+              "name": "pageSize",
+              "in": "query",
+              "schema": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 100,
+                "default": 20
+              }
+            },
+            {
+              "name": "pageNo",
+              "in": "query",
+              "schema": {
+                "type": "integer",
+                "minimum": 1,
+                "default": 1
+              }
+            }
+          ],
+          "after": [
+            {
+              "name": "filter",
+              "in": "query",
+              "required": false,
+              "style": "deepObject",
+              "explode": true,
+              "description": "Bộ lọc được endpoint hỗ trợ; filter[type] chọn bộ có mục giá thuộc loại đó.",
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "scope": {
+                    "type": "string",
+                    "enum": [
+                      "building",
+                      "room"
+                    ]
+                  },
+                  "buildingId": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "roomId": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "electricity",
+                      "water",
+                      "wifi",
+                      "cleaning",
+                      "parking",
+                      "maintenance",
+                      "other"
+                    ]
+                  }
+                }
+              }
+            },
+            {
+              "name": "sort",
+              "in": "query",
+              "description": "Trường sắp xếp được hỗ trợ; mặc định createdAt.",
+              "schema": {
+                "type": "string",
+                "enum": [
+                  "createdAt"
+                ],
+                "default": "createdAt"
+              }
+            },
+            {
+              "name": "order",
+              "in": "query",
+              "description": "Chiều sắp xếp; mặc định desc.",
+              "schema": {
+                "type": "string",
+                "enum": [
+                  "asc",
+                  "desc"
+                ],
+                "default": "desc"
+              }
+            },
+            {
+              "name": "pageSize",
+              "in": "query",
+              "schema": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 100,
+                "default": 20
+              }
+            },
+            {
+              "name": "pageNo",
+              "in": "query",
+              "schema": {
+                "type": "integer",
+                "minimum": 1,
+                "default": 1
+              }
+            }
+          ]
+        }
+      ],
+      "semanticDiff": {
+        "paths": {
+          "modified": {
+            "/rate-policies": {
+              "operations": {
+                "modified": {
+                  "GET": {
+                    "parameters": {
+                      "added": {
+                        "query": [
+                          "sort",
+                          "order"
+                        ]
+                      },
+                      "modified": {
+                        "query": {
+                          "filter": {
+                            "schema": {
+                              "properties": {
+                                "modified": {
+                                  "scope": {
+                                    "enum": {
+                                      "enumAdded": true,
+                                      "added": [
+                                        "building",
+                                        "room"
+                                      ]
+                                    }
+                                  },
+                                  "type": {
+                                    "enum": {
+                                      "enumAdded": true,
+                                      "added": [
+                                        "electricity",
+                                        "water",
+                                        "wifi",
+                                        "cleaning",
+                                        "parking",
+                                        "maintenance",
+                                        "other"
+                                      ]
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   ]
 }

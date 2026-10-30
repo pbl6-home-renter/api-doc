@@ -11142,7 +11142,7 @@
           }
         ],
         "summary": "List rate policies",
-        "description": "landlord. Liệt kê chính sách đơn giá và phí định kỳ. Lỗi nghiệp vụ: 422 VALIDATION FAILED · 403 FORBIDDEN.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-30 | 🔴 BREAKING | removed the required property `data/items/rateKind` from the response with the `200` status | [#29](https://github.com/pbl6-home-renter/api-doc/pull/29) |\n| 2026-10-30 | 🔴 BREAKING | removed the required property `data/items/type` from the response with the `200` status | [#29](https://github.com/pbl6-home-renter/api-doc/pull/29) |\n| 2026-10-30 | 🟢 NON_BREAKING | added the required property `data/items/buildingId` to the response with the `200` status | [#29](https://github.com/pbl6-home-renter/api-doc/pull/29) |\n| 2026-10-30 | 🟢 NON_BREAKING | added the required property `data/items/createdAt` to the response with the `200` status | [#29](https://github.com/pbl6-home-renter/api-doc/pull/29) |\n| 2026-10-30 | 🟢 NON_BREAKING | added the required property `data/items/rates` to the response with the `200` status | [#29](https://github.com/pbl6-home-renter/api-doc/pull/29) |\n| 2026-10-30 | 🟢 NON_BREAKING | added the required property `data/items/updatedAt` to the response with the `200` status | [#29](https://github.com/pbl6-home-renter/api-doc/pull/29) |\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
+        "description": "landlord. Liệt kê chính sách đơn giá và phí định kỳ. Lỗi nghiệp vụ: 422 VALIDATION FAILED · 403 FORBIDDEN.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-30 | 🟢 NON_BREAKING | added the new optional `query` request parameter `order` | [#30](https://github.com/pbl6-home-renter/api-doc/pull/30) |\n| 2026-10-30 | 🟢 NON_BREAKING | added the new optional `query` request parameter `sort` | [#30](https://github.com/pbl6-home-renter/api-doc/pull/30) |\n| 2026-10-30 | 🟢 NON_BREAKING | added the enum value `building` to the property `scope` of the `query` request parameter `filter` | [#30](https://github.com/pbl6-home-renter/api-doc/pull/30) |\n| 2026-10-30 | 🟢 NON_BREAKING | added the enum value `cleaning` to the property `type` of the `query` request parameter `filter` | [#30](https://github.com/pbl6-home-renter/api-doc/pull/30) |\n| 2026-10-30 | 🟢 NON_BREAKING | added the enum value `electricity` to the property `type` of the `query` request parameter `filter` | [#30](https://github.com/pbl6-home-renter/api-doc/pull/30) |\n| 2026-10-30 | 🟢 NON_BREAKING | added the enum value `maintenance` to the property `type` of the `query` request parameter `filter` | [#30](https://github.com/pbl6-home-renter/api-doc/pull/30) |\n| 2026-10-30 | 🟢 NON_BREAKING | added the enum value `other` to the property `type` of the `query` request parameter `filter` | [#30](https://github.com/pbl6-home-renter/api-doc/pull/30) |\n| 2026-10-30 | 🟢 NON_BREAKING | added the enum value `parking` to the property `type` of the `query` request parameter `filter` | [#30](https://github.com/pbl6-home-renter/api-doc/pull/30) |\n| 2026-10-30 | 🟢 NON_BREAKING | added the enum value `room` to the property `scope` of the `query` request parameter `filter` | [#30](https://github.com/pbl6-home-renter/api-doc/pull/30) |\n| 2026-10-30 | 🟢 NON_BREAKING | added the enum value `water` to the property `type` of the `query` request parameter `filter` | [#30](https://github.com/pbl6-home-renter/api-doc/pull/30) |\n| 2026-10-30 | 🟢 NON_BREAKING | added the enum value `wifi` to the property `type` of the `query` request parameter `filter` | [#30](https://github.com/pbl6-home-renter/api-doc/pull/30) |\n| 2026-10-30 | 🔴 BREAKING | removed the required property `data/items/rateKind` from the response with the `200` status | [#29](https://github.com/pbl6-home-renter/api-doc/pull/29) |\n| 2026-10-30 | 🔴 BREAKING | removed the required property `data/items/type` from the response with the `200` status | [#29](https://github.com/pbl6-home-renter/api-doc/pull/29) |\n| 2026-10-30 | 🟢 NON_BREAKING | added the required property `data/items/buildingId` to the response with the `200` status | [#29](https://github.com/pbl6-home-renter/api-doc/pull/29) |\n| 2026-10-30 | 🟢 NON_BREAKING | added the required property `data/items/createdAt` to the response with the `200` status | [#29](https://github.com/pbl6-home-renter/api-doc/pull/29) |\n| 2026-10-30 | 🟢 NON_BREAKING | added the required property `data/items/rates` to the response with the `200` status | [#29](https://github.com/pbl6-home-renter/api-doc/pull/29) |\n| 2026-10-30 | 🟢 NON_BREAKING | added the required property `data/items/updatedAt` to the response with the `200` status | [#29](https://github.com/pbl6-home-renter/api-doc/pull/29) |\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "parameters": [
           {
             "name": "filter",
@@ -11150,13 +11150,17 @@
             "required": false,
             "style": "deepObject",
             "explode": true,
-            "description": "Bộ lọc được endpoint hỗ trợ.",
+            "description": "Bộ lọc được endpoint hỗ trợ; filter[type] chọn bộ có mục giá thuộc loại đó.",
             "schema": {
               "type": "object",
               "additionalProperties": false,
               "properties": {
                 "scope": {
-                  "type": "string"
+                  "type": "string",
+                  "enum": [
+                    "building",
+                    "room"
+                  ]
                 },
                 "buildingId": {
                   "type": "string",
@@ -11167,9 +11171,43 @@
                   "format": "uuid"
                 },
                 "type": {
-                  "type": "string"
+                  "type": "string",
+                  "enum": [
+                    "electricity",
+                    "water",
+                    "wifi",
+                    "cleaning",
+                    "parking",
+                    "maintenance",
+                    "other"
+                  ]
                 }
               }
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "description": "Trường sắp xếp được hỗ trợ; mặc định createdAt.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "createdAt"
+              ],
+              "default": "createdAt"
+            }
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "description": "Chiều sắp xếp; mặc định desc.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ],
+              "default": "desc"
             }
           },
           {
