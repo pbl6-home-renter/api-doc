@@ -14878,6 +14878,1314 @@
           }
         }
       }
+    },
+    {
+      "id": "681669dbf460532f341b535bf2c8ecd9c45cd6cac3e3415c88b1c48467c6a473",
+      "label": "Thay đổi contract từ Git",
+      "classification": "BREAKING",
+      "contractId": "rentify-public",
+      "repository": "https://github.com/pbl6-home-renter/api-doc",
+      "baseHash": "f73e1bb763c92453a9584e74ebc2547eb78d709fb95549eb7a9d361dd8662977",
+      "headHash": "ee68a4dbbcfbf11604ff58a74c5862fc913c8d71c8ec7a7e918ed8c0d69eaf9b",
+      "baseSource": "src/openapi.yaml",
+      "headSource": "src/openapi.yaml",
+      "detectedAt": "2026-10-30T04:38:25.406Z",
+      "committedAt": "2026-10-30T11:38:11+07:00",
+      "baseCommit": "12de9a13b5c47685ea5f7c72565f3dfa36b45bd9",
+      "headCommit": "dcce9afe682e3e5819c7aff0c62a92fdb104c339",
+      "prUrl": "https://github.com/pbl6-home-renter/api-doc/pull/27",
+      "commitUrl": "https://github.com/pbl6-home-renter/api-doc/commit/dcce9afe682e3e5819c7aff0c62a92fdb104c339",
+      "metadataKind": "Git revision thực tế",
+      "reason": "Identity-Service đã triển khai xong media storage (P6-04). Spec cũ còn ở trạng thái `designing` và lệch với code: thiếu ràng buộc field, thiếu mã lỗi thực tế (410/422/503), `expiresIn` bị khóa cứng 900. Thay đổi chỉ làm contract khớp hành vi đã có, không đổi hành vi backend.",
+      "tools": {
+        "redocly": "2.64.1",
+        "oasdiff": "1.34.1"
+      },
+      "changes": [
+        {
+          "id": "request-property-max-length-set",
+          "text": "the `fileName` request property's maxLength was set to `255`",
+          "comment": "Setting a bound rejects values the previous contract accepted. If your clients are known to stay within the new limit, lower this check with --severity-levels.",
+          "level": 3,
+          "operation": "POST",
+          "operationId": "postMediaPresignUpload",
+          "path": "/media/presign-upload",
+          "section": "paths",
+          "fingerprint": "158c2d2cc182",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu vị trí và thay đổi trước/sau trong entry này với API adapter, DTO, parser và validation; cùng BE xác nhận phương án tương thích trước merge/phát hành."
+        },
+        {
+          "id": "request-property-max-set",
+          "text": "the `size` request property's max was set to `10485760.00`",
+          "comment": "Setting a bound rejects values the previous contract accepted. If your clients are known to stay within the new limit, lower this check with --severity-levels.",
+          "level": 3,
+          "operation": "POST",
+          "operationId": "postMediaPresignUpload",
+          "path": "/media/presign-upload",
+          "section": "paths",
+          "fingerprint": "6310f2f6da53",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu vị trí và thay đổi trước/sau trong entry này với API adapter, DTO, parser và validation; cùng BE xác nhận phương án tương thích trước merge/phát hành."
+        },
+        {
+          "id": "request-property-min-length-set",
+          "text": "the `fileName` request property's minLength was set to `1`",
+          "comment": "Setting a bound rejects values the previous contract accepted. If your clients are known to stay within the new limit, lower this check with --severity-levels.",
+          "level": 3,
+          "operation": "POST",
+          "operationId": "postMediaPresignUpload",
+          "path": "/media/presign-upload",
+          "section": "paths",
+          "fingerprint": "3306ebf38fed",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu vị trí và thay đổi trước/sau trong entry này với API adapter, DTO, parser và validation; cùng BE xác nhận phương án tương thích trước merge/phát hành."
+        },
+        {
+          "id": "request-property-min-set",
+          "text": "the `size` request property's min was set to `1.00`",
+          "comment": "Setting a bound rejects values the previous contract accepted. If your clients are known to stay within the new limit, lower this check with --severity-levels.",
+          "level": 3,
+          "operation": "POST",
+          "operationId": "postMediaPresignUpload",
+          "path": "/media/presign-upload",
+          "section": "paths",
+          "fingerprint": "97667f1e2cb3",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu vị trí và thay đổi trước/sau trong entry này với API adapter, DTO, parser và validation; cùng BE xác nhận phương án tương thích trước merge/phát hành."
+        },
+        {
+          "id": "response-property-became-not-enum",
+          "text": "removed the enum constraint from the `data/expiresIn` response property for the response status `201`",
+          "comment": "The server may now return any value of the property's type, including values the previous enum excluded, so a client written against it may not handle the response.",
+          "level": 3,
+          "operation": "POST",
+          "operationId": "postMediaPresignUpload",
+          "path": "/media/presign-upload",
+          "section": "paths",
+          "fingerprint": "2ed46b9f75a3",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu enum trong DTO/validation và nhánh switch/when; xử lý giá trị chưa biết, kiểm thử dữ liệu cũ và mới; phối hợp BE trước khi phát hành."
+        },
+        {
+          "id": "response-property-enum-value-added",
+          "text": "added the new `SERVICE_UNAVAILABLE` enum value to the `code` response property for the response status `503`",
+          "comment": "The server may now return a value the previous contract excluded, so a client written against it may not handle the response. If the value set is meant to grow, declare it with x-extensible-enum.",
+          "level": 3,
+          "operation": "POST",
+          "operationId": "postMediaPresignUpload",
+          "path": "/media/presign-upload",
+          "section": "paths",
+          "fingerprint": "e62fd630d0ec",
+          "classification": "BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới SERVICE_UNAVAILABLE; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-property-enum-value-added",
+          "text": "added the new `UNEXPECTED_FIELD` enum value to the `code` response property for the response status `422`",
+          "comment": "The server may now return a value the previous contract excluded, so a client written against it may not handle the response. If the value set is meant to grow, declare it with x-extensible-enum.",
+          "level": 3,
+          "operation": "POST",
+          "operationId": "postMediaPresignUpload",
+          "path": "/media/presign-upload",
+          "section": "paths",
+          "fingerprint": "51b95a0bdb41",
+          "classification": "BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới UNEXPECTED_FIELD; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-property-enum-value-added",
+          "text": "added the new `SERVICE_UNAVAILABLE` enum value to the `code` response property for the response status `503`",
+          "comment": "The server may now return a value the previous contract excluded, so a client written against it may not handle the response. If the value set is meant to grow, declare it with x-extensible-enum.",
+          "level": 3,
+          "operation": "DELETE",
+          "operationId": "deleteMediaMediaid",
+          "path": "/media/{mediaId}",
+          "section": "paths",
+          "fingerprint": "eeac5e453c06",
+          "classification": "BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới SERVICE_UNAVAILABLE; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-property-enum-value-added",
+          "text": "added the new `SERVICE_UNAVAILABLE` enum value to the `code` response property for the response status `503`",
+          "comment": "The server may now return a value the previous contract excluded, so a client written against it may not handle the response. If the value set is meant to grow, declare it with x-extensible-enum.",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getMediaMediaid",
+          "path": "/media/{mediaId}",
+          "section": "paths",
+          "fingerprint": "de745821d458",
+          "classification": "BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới SERVICE_UNAVAILABLE; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-property-enum-value-added",
+          "text": "added the new `MEDIA_DELETED` enum value to the `code` response property for the response status `410`",
+          "comment": "The server may now return a value the previous contract excluded, so a client written against it may not handle the response. If the value set is meant to grow, declare it with x-extensible-enum.",
+          "level": 3,
+          "operation": "POST",
+          "operationId": "postMediaMediaidCompleteUpload",
+          "path": "/media/{mediaId}/complete-upload",
+          "section": "paths",
+          "fingerprint": "a94ba898fd02",
+          "classification": "BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới MEDIA_DELETED; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-property-enum-value-added",
+          "text": "added the new `SERVICE_UNAVAILABLE` enum value to the `code` response property for the response status `503`",
+          "comment": "The server may now return a value the previous contract excluded, so a client written against it may not handle the response. If the value set is meant to grow, declare it with x-extensible-enum.",
+          "level": 3,
+          "operation": "POST",
+          "operationId": "postMediaMediaidCompleteUpload",
+          "path": "/media/{mediaId}/complete-upload",
+          "section": "paths",
+          "fingerprint": "04b1bb070371",
+          "classification": "BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới SERVICE_UNAVAILABLE; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "api-version-not-bumped",
+          "text": "a breaking change was detected but the version is still `1.0.0`",
+          "level": 1,
+          "section": "info",
+          "fingerprint": "d3f96cd643c1",
+          "classification": "NON_BREAKING",
+          "clientImpact": "BE: xem lại quy ước version trước khi chấp nhận breaking change. FE/Mobile: theo kế hoạch chuyển đổi của entry này; version trong OpenAPI chưa chứng minh backend đã triển khai."
+        },
+        {
+          "id": "response-property-min-set",
+          "text": "the `data/expiresIn` response property's min was set to `1.00` for the response status `201`",
+          "level": 1,
+          "operation": "POST",
+          "operationId": "postMediaPresignUpload",
+          "path": "/media/presign-upload",
+          "section": "paths",
+          "fingerprint": "be64e58e61c0",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        },
+        {
+          "id": "response-property-type-specialized",
+          "text": "the `data/uploadUrl` response's property `format` was narrowed from `none` to `uri` for status `201`",
+          "level": 1,
+          "operation": "POST",
+          "operationId": "postMediaPresignUpload",
+          "path": "/media/presign-upload",
+          "section": "paths",
+          "fingerprint": "82d584903c97",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        },
+        {
+          "id": "response-non-success-status-added",
+          "text": "added the non-success response with the status `410`",
+          "level": 1,
+          "operation": "DELETE",
+          "operationId": "deleteMediaMediaid",
+          "path": "/media/{mediaId}",
+          "section": "paths",
+          "fingerprint": "ced3748cb587",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        },
+        {
+          "id": "response-header-added",
+          "text": "the response header `content-length` was added for the status `200`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getMediaMediaid",
+          "path": "/media/{mediaId}",
+          "section": "paths",
+          "revisionSource": {
+            "file": "/tmp/rentify-contract-UJIDNQ/head-0.json"
+          },
+          "fingerprint": "07ac327e7777",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        },
+        {
+          "id": "response-non-success-status-added",
+          "text": "added the non-success response with the status `422`",
+          "level": 1,
+          "operation": "POST",
+          "operationId": "postMediaMediaidCompleteUpload",
+          "path": "/media/{mediaId}/complete-upload",
+          "section": "paths",
+          "fingerprint": "877a1d56afba",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        },
+        {
+          "id": "response-property-min-length-set",
+          "text": "the `data/url` response property's minLength was set to `1` for the response status `200`",
+          "level": 1,
+          "operation": "POST",
+          "operationId": "postMediaMediaidCompleteUpload",
+          "path": "/media/{mediaId}/complete-upload",
+          "section": "paths",
+          "fingerprint": "acf788a4973a",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        }
+      ],
+      "locations": [
+        {
+          "pointer": "/components/schemas/MediaCompleteUploadResponseDto/properties/url/description",
+          "before": "URL truy cập hoặc signed URL do hệ thống trả",
+          "after": "URL đọc file. Purpose public (`avatar`, `cover_photo`, `gallery_photo`): URL tuyệt đối cố định trên R2 public bucket, dùng trực tiếp trong `<img src>`. Purpose private (còn lại): đường dẫn API tương đối `/api/v1/media/{mediaId}`, phải gọi `GET` kèm Bearer token."
+        },
+        {
+          "pointer": "/components/schemas/MediaCompleteUploadResponseDto/properties/url/example",
+          "before": "https://cdn.pbl6.dev/room/3fa85f64/cover.webp",
+          "after": "https://pub-xxxx.r2.dev/room/3fa85f64-5717-4562-b3fc-2c963f66afa6/3fa85f64-5717-4562-b3fc-2c963f66afa6.webp"
+        },
+        {
+          "pointer": "/components/schemas/MediaCompleteUploadResponseDto/properties/url/minLength",
+          "before": null,
+          "after": 1
+        },
+        {
+          "pointer": "/components/schemas/MediaPresignUploadRequestDto/properties/captureSource/description",
+          "before": "Nguồn tải tệp. Đối với ảnh công tơ điện nước (purpose: meter_reading_evidence), người thuê (tenant) bắt buộc phải chụp trực tiếp từ camera (camera_direct), chỉ chủ trọ (landlord) mới được tải tệp từ thiết bị (device_storage).",
+          "after": "Nguồn tải tệp. Đối với ảnh công tơ điện nước (purpose: meter_reading_evidence), người thuê (tenant) bắt buộc phải chụp trực tiếp từ camera (camera_direct), chỉ chủ trọ (landlord) mới được tải tệp từ thiết bị (device_storage); tenant gửi thiếu hoặc khác `camera_direct` bị `403 FORBIDDEN`. Các purpose khác bỏ qua field này."
+        },
+        {
+          "pointer": "/components/schemas/MediaPresignUploadRequestDto/properties/contentType/description",
+          "before": "MIME type của file",
+          "after": "MIME type của file; phải nằm trong danh sách MIME cho phép của `purpose` (xem mô tả endpoint), nếu không trả `422 MEDIA_TYPE_NOT_ALLOWED`. Đây cũng là giá trị header `Content-Type` client phải gửi khi PUT lên storage."
+        },
+        {
+          "pointer": "/components/schemas/MediaPresignUploadRequestDto/properties/fileName/description",
+          "before": "Tên file do client cung cấp",
+          "after": "Tên file do client cung cấp. Đuôi file (không phân biệt hoa thường) phải khớp `contentType`: `image/jpeg` → `.jpg`/`.jpeg`, `image/png` → `.png`, `image/webp` → `.webp`, `application/pdf` → `.pdf`; sai thì trả `422 MEDIA_TYPE_NOT_ALLOWED`."
+        },
+        {
+          "pointer": "/components/schemas/MediaPresignUploadRequestDto/properties/fileName/maxLength",
+          "before": null,
+          "after": 255
+        },
+        {
+          "pointer": "/components/schemas/MediaPresignUploadRequestDto/properties/fileName/minLength",
+          "before": null,
+          "after": 1
+        },
+        {
+          "pointer": "/components/schemas/MediaPresignUploadRequestDto/properties/size/description",
+          "before": "Kích thước file tính bằng byte",
+          "after": "Kích thước file tính bằng byte. Tối đa 10 MiB (cấu hình `MEDIA_MAX_SIZE_BYTES` của Identity-Service, mặc định 10485760). Phải bằng đúng kích thước file PUT lên storage, nếu lệch thì complete-upload trả `422 MEDIA_TYPE_NOT_ALLOWED`."
+        },
+        {
+          "pointer": "/components/schemas/MediaPresignUploadRequestDto/properties/size/maximum",
+          "before": null,
+          "after": 10485760
+        },
+        {
+          "pointer": "/components/schemas/MediaPresignUploadRequestDto/properties/size/minimum",
+          "before": null,
+          "after": 1
+        },
+        {
+          "pointer": "/components/schemas/MediaPresignUploadResponseDto/properties/expiresIn/description",
+          "before": "Thời gian upload ticket có hiệu lực tính bằng giây",
+          "after": "Thời gian `uploadUrl` và upload ticket có hiệu lực, tính bằng giây (cấu hình `MEDIA_UPLOAD_TTL_SECONDS`, mặc định 900). Quá hạn thì complete-upload trả `410 TICKET_EXPIRED`, phải presign lại."
+        },
+        {
+          "pointer": "/components/schemas/MediaPresignUploadResponseDto/properties/expiresIn/enum",
+          "before": [
+            900
+          ],
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/MediaPresignUploadResponseDto/properties/expiresIn/minimum",
+          "before": null,
+          "after": 1
+        },
+        {
+          "pointer": "/components/schemas/MediaPresignUploadResponseDto/properties/requiredHeaders/description",
+          "before": null,
+          "after": "Header bắt buộc khi PUT lên `uploadUrl`. `Content-Type` được ký vào URL nên phải gửi đúng giá trị này, sai thì storage trả 403."
+        },
+        {
+          "pointer": "/components/schemas/MediaPresignUploadResponseDto/properties/uploadUrl/description",
+          "before": "Signed URL để client upload trực tiếp lên storage",
+          "after": "Presigned URL (Cloudflare R2, S3 API) để client `PUT` thân file (raw binary, không multipart) trực tiếp lên storage. Chỉ gửi đúng các header trong `requiredHeaders`, không gửi `Authorization`. Hết hạn sau `expiresIn` giây."
+        },
+        {
+          "pointer": "/components/schemas/MediaPresignUploadResponseDto/properties/uploadUrl/example",
+          "before": "https://storage.example.com/upload-ticket",
+          "after": "https://account-id.r2.cloudflarestorage.com/rentify-media-public/room/3fa85f64-5717-4562-b3fc-2c963f66afa6/3fa85f64-5717-4562-b3fc-2c963f66afa6.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Expires=900&X-Amz-SignedHeaders=content-type%3Bhost&X-Amz-Signature=abc123"
+        },
+        {
+          "pointer": "/components/schemas/MediaPresignUploadResponseDto/properties/uploadUrl/format",
+          "before": null,
+          "after": "uri"
+        },
+        {
+          "pointer": "/paths/~1media~1presign-upload/post/description",
+          "before": "tenant, landlord, admin. Xin URL upload đã ký để đẩy file trực tiếp lên Storage. Nghiệp vụ: Với ảnh công tơ điện nước, tenant chỉ được dùng camera trực tiếp (camera_direct), landlord được upload từ bộ nhớ máy (device_storage). Lỗi nghiệp vụ: 403 FORBIDDEN · 422 VALIDATION FAILED.",
+          "after": "tenant, landlord, admin. Bước 1/3 của luồng upload: xin upload ticket + presigned URL để client PUT file trực tiếp lên storage (Cloudflare R2). Server không nhận bytes file.\n\n**Luồng upload**\n\n1. `POST /media/presign-upload` → nhận `id`, `uploadUrl`, `requiredHeaders`, `expiresIn`.\n2. `PUT {uploadUrl}` với body là file (binary) và đúng `requiredHeaders` (không gửi `Authorization`).\n3. `POST /media/{id}/complete-upload` → server kiểm tra object trên storage và trả `url` để đọc.\n\nLiên kết file với thực thể cha được xác định ngay lúc presign qua `ownerType` + `ownerId` + `purpose`; không có bước \"gắn\" riêng. Các API nghiệp vụ khác (ví dụ `photoMediaIds` khi tạo phòng) nhận `id` của Media đã complete.\n\n**Quy tắc theo `purpose`** (admin luôn được upload; người upload luôn đọc được file của mình)\n\n| purpose | ownerType hợp lệ | MIME cho phép | Hiển thị | Ai được upload | Ghi chú |\n|---|---|---|---|---|---|\n| `avatar` | `user` | jpeg, png, webp | public | chính user đó | 1 file/owner, file mới thay file cũ |\n| `cover_photo` | `building`, `room` | jpeg, png, webp | public | landlord sở hữu | 1 file/owner, file mới thay file cũ |\n| `gallery_photo` | `building`, `room` | jpeg, png, webp | public | landlord sở hữu | |\n| `ownership_proof` | `building` | jpeg, png, webp, pdf | private | landlord sở hữu | không xóa được khi building `approved` |\n| `cccd_front`, `cccd_back` | `user`, `contract_member` | jpeg, png, webp | private | chính user, thành viên HĐ, landlord sở hữu | |\n| `contract_template` | `contract` | pdf | private | landlord sở hữu | |\n| `contract_signed` | `contract` | jpeg, png, webp, pdf | private | landlord sở hữu | không xóa được khi HĐ `signed/active/suspended/expired/terminated` |\n| `meter_reading_evidence` | `meter_reading` | jpeg, png, webp | private | landlord sở hữu; tenant của HĐ chỉ với `captureSource = camera_direct` | |\n| `issue_photo` | `issue_report` | jpeg, png, webp | private | người trong HĐ, landlord sở hữu | chưa hỗ trợ (503) |\n| `chat_attachment` | `message` | jpeg, png, webp, pdf | private | người trong hội thoại | chưa hỗ trợ (503) |\n\nKích thước tối đa 10 MiB cho mọi purpose. Không hỗ trợ SVG/HTML/video.\n\nLỗi nghiệp vụ: 403 FORBIDDEN (không có quyền với thực thể cha, hoặc thực thể cha không tồn tại) · 422 INVALID_PURPOSE (`purpose` không hợp lệ với `ownerType`) · 422 MEDIA_TYPE_NOT_ALLOWED (MIME, đuôi file hoặc kích thước không hợp lệ) · 503 SERVICE_UNAVAILABLE.\n\n```mermaid\nsequenceDiagram\n    autonumber\n    participant C as Client\n    participant GW as API Gateway\n    participant ID as Identity\n    participant TN as Tenancy\n    participant R2 as Cloudflare R2\n\n    C->>GW: POST /media/presign-upload {ownerType, ownerId, purpose, fileName, contentType, size}\n    GW->>ID: forward + Authorization\n    ID->>ID: Kiểm tra purpose ↔ ownerType, MIME, đuôi file, size\n    ID->>TN: GET /internal/ownership/{ownerType}/{ownerId} (trừ ownerType = user)\n    ID->>ID: Lưu Media pending_upload, ký PUT URL (Content-Type)\n    ID-->>C: 201 MEDIA_UPLOAD_TICKET_ISSUED {id, uploadUrl, requiredHeaders, expiresIn}\n    C->>R2: PUT uploadUrl + Content-Type (binary)\n    R2-->>C: 200\n    C->>GW: POST /media/{id}/complete-upload\n    GW->>ID: forward\n    ID->>R2: HEAD object (so khớp size + Content-Type)\n    ID-->>C: 200 MEDIA_UPLOAD_COMPLETED {id, fileType, url}\n```"
+        },
+        {
+          "pointer": "/paths/~1media~1presign-upload/post/responses/201/content/application~1json/example/data/uploadUrl",
+          "before": "https://example.com/upload",
+          "after": "https://account-id.r2.cloudflarestorage.com/rentify-media-public/room/3fa85f64-5717-4562-b3fc-2c963f66afa6/3fa85f64-5717-4562-b3fc-2c963f66afa6.jpg?X-Amz-Signature=abc123"
+        },
+        {
+          "pointer": "/paths/~1media~1presign-upload/post/responses/422/content/application~1json/examples/unexpected_field",
+          "before": null,
+          "after": {
+            "summary": "UNEXPECTED_FIELD — Body có field ngoài contract.",
+            "value": {
+              "statusCode": 422,
+              "code": "UNEXPECTED_FIELD"
+            }
+          }
+        },
+        {
+          "pointer": "/paths/~1media~1presign-upload/post/responses/422/content/application~1json/examples/validation_failed/summary",
+          "before": "VALIDATION_FAILED — Lỗi validation khác chưa có mã cụ thể.",
+          "after": "VALIDATION_FAILED — Thiếu field, sai kiểu hoặc sai enum."
+        },
+        {
+          "pointer": "/paths/~1media~1presign-upload/post/responses/422/content/application~1json/schema/properties/code/description",
+          "before": "- MEDIA_TYPE_NOT_ALLOWED: Loại MIME hoặc kích thước tệp không được phép.\n- INVALID_PURPOSE: Mục đích upload không phù hợp với tài nguyên cha.\n- VALIDATION_FAILED: Lỗi validation khác chưa có mã cụ thể.",
+          "after": "- MEDIA_TYPE_NOT_ALLOWED: MIME không thuộc danh sách của purpose, đuôi `fileName` không khớp `contentType`, hoặc `size` vượt giới hạn.\n- INVALID_PURPOSE: Mục đích upload không phù hợp với `ownerType`.\n- VALIDATION_FAILED: Thiếu field, sai kiểu hoặc sai enum.\n- UNEXPECTED_FIELD: Body có field ngoài contract."
+        },
+        {
+          "pointer": "/paths/~1media~1presign-upload/post/responses/422/content/application~1json/schema/properties/code/enum",
+          "before": [
+            "MEDIA_TYPE_NOT_ALLOWED",
+            "INVALID_PURPOSE",
+            "VALIDATION_FAILED"
+          ],
+          "after": [
+            "MEDIA_TYPE_NOT_ALLOWED",
+            "INVALID_PURPOSE",
+            "VALIDATION_FAILED",
+            "UNEXPECTED_FIELD"
+          ]
+        },
+        {
+          "pointer": "/paths/~1media~1presign-upload/post/responses/503/$ref",
+          "before": "#/components/responses/AuthUnavailableError",
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1media~1presign-upload/post/responses/503/content",
+          "before": null,
+          "after": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "statusCode",
+                  "code"
+                ],
+                "properties": {
+                  "statusCode": {
+                    "type": "integer",
+                    "enum": [
+                      503
+                    ]
+                  },
+                  "code": {
+                    "type": "string",
+                    "enum": [
+                      "AUTH_UNAVAILABLE",
+                      "SERVICE_UNAVAILABLE"
+                    ],
+                    "description": "- AUTH_UNAVAILABLE: Hạ tầng xác thực tạm thời không khả dụng.\n- SERVICE_UNAVAILABLE: Storage (R2) chưa được cấu hình, hoặc service sở hữu thực thể cha chưa sẵn sàng (hiện tại `issue_report`, `message`)."
+                  }
+                }
+              },
+              "examples": {
+                "auth_unavailable": {
+                  "summary": "AUTH_UNAVAILABLE — Hạ tầng xác thực tạm thời không khả dụng.",
+                  "value": {
+                    "statusCode": 503,
+                    "code": "AUTH_UNAVAILABLE"
+                  }
+                },
+                "service_unavailable": {
+                  "summary": "SERVICE_UNAVAILABLE — Storage hoặc service sở hữu chưa sẵn sàng.",
+                  "value": {
+                    "statusCode": 503,
+                    "code": "SERVICE_UNAVAILABLE"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "pointer": "/paths/~1media~1presign-upload/post/responses/503/description",
+          "before": null,
+          "after": "Hạ tầng xác thực, storage hoặc service sở hữu thực thể cha tạm thời không khả dụng."
+        },
+        {
+          "pointer": "/paths/~1media~1presign-upload/post/responses/503/x-apidog-name",
+          "before": null,
+          "after": "Service Unavailable"
+        },
+        {
+          "pointer": "/paths/~1media~1presign-upload/post/x-apidog-status",
+          "before": "designing",
+          "after": "released"
+        },
+        {
+          "pointer": "/paths/~1media~1{mediaId}/delete/description",
+          "before": "tenant, landlord, admin. Xóa mềm tệp. Lỗi nghiệp vụ: 403 FORBIDDEN · 409 CAN'T DELETE.",
+          "after": "tenant, landlord, admin. Xóa mềm Media và xóa object trên storage. Chỉ người upload hoặc admin được xóa.\n\n- `ownership_proof` của building đã `approved` và `contract_signed` của HĐ đã có hiệu lực là bằng chứng, không xóa được (`409 CANNOT_DELETE`).\n- Với `avatar`/`cover_photo` không cần xóa file cũ trước khi upload file mới: complete file mới tự thay file cũ.\n\nLỗi nghiệp vụ: 403 FORBIDDEN · 404 RESOURCE_NOT_FOUND · 409 CANNOT_DELETE · 410 MEDIA_DELETED (đã xóa trước đó)."
+        },
+        {
+          "pointer": "/paths/~1media~1{mediaId}/delete/responses/409/content/application~1json/examples/cannot_delete/summary",
+          "before": "CANNOT_DELETE — Tài nguyên chưa đủ điều kiện để xóa.",
+          "after": "CANNOT_DELETE — File đang là bằng chứng, không được xóa."
+        },
+        {
+          "pointer": "/paths/~1media~1{mediaId}/delete/responses/409/content/application~1json/schema/properties/code/description",
+          "before": "- CANNOT_DELETE: Tài nguyên chưa đủ điều kiện để xóa.",
+          "after": "- CANNOT_DELETE: File đang là bằng chứng (building đã duyệt / HĐ đã có hiệu lực), không được xóa."
+        },
+        {
+          "pointer": "/paths/~1media~1{mediaId}/delete/responses/410",
+          "before": null,
+          "after": {
+            "x-apidog-name": "Gone",
+            "description": "Media đã bị xóa trước đó.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        410
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "MEDIA_DELETED"
+                      ]
+                    }
+                  }
+                },
+                "examples": {
+                  "media_deleted": {
+                    "summary": "MEDIA_DELETED — Media đã bị xóa.",
+                    "value": {
+                      "statusCode": 410,
+                      "code": "MEDIA_DELETED"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "pointer": "/paths/~1media~1{mediaId}/delete/responses/503/$ref",
+          "before": "#/components/responses/AuthUnavailableError",
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1media~1{mediaId}/delete/responses/503/content",
+          "before": null,
+          "after": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "statusCode",
+                  "code"
+                ],
+                "properties": {
+                  "statusCode": {
+                    "type": "integer",
+                    "enum": [
+                      503
+                    ]
+                  },
+                  "code": {
+                    "type": "string",
+                    "enum": [
+                      "AUTH_UNAVAILABLE",
+                      "SERVICE_UNAVAILABLE"
+                    ],
+                    "description": "- AUTH_UNAVAILABLE: Hạ tầng xác thực tạm thời không khả dụng.\n- SERVICE_UNAVAILABLE: Storage (R2) chưa được cấu hình, hoặc service sở hữu thực thể cha chưa sẵn sàng (hiện tại `issue_report`, `message`)."
+                  }
+                }
+              },
+              "examples": {
+                "auth_unavailable": {
+                  "summary": "AUTH_UNAVAILABLE — Hạ tầng xác thực tạm thời không khả dụng.",
+                  "value": {
+                    "statusCode": 503,
+                    "code": "AUTH_UNAVAILABLE"
+                  }
+                },
+                "service_unavailable": {
+                  "summary": "SERVICE_UNAVAILABLE — Storage hoặc service sở hữu chưa sẵn sàng.",
+                  "value": {
+                    "statusCode": 503,
+                    "code": "SERVICE_UNAVAILABLE"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "pointer": "/paths/~1media~1{mediaId}/delete/responses/503/description",
+          "before": null,
+          "after": "Hạ tầng xác thực, storage hoặc service sở hữu thực thể cha tạm thời không khả dụng."
+        },
+        {
+          "pointer": "/paths/~1media~1{mediaId}/delete/responses/503/x-apidog-name",
+          "before": null,
+          "after": "Service Unavailable"
+        },
+        {
+          "pointer": "/paths/~1media~1{mediaId}/delete/x-apidog-status",
+          "before": "designing",
+          "after": "released"
+        },
+        {
+          "pointer": "/paths/~1media~1{mediaId}/get/description",
+          "before": "Quyền kế thừa từ tài nguyên cha. Đọc hoặc stream một tệp. Lỗi nghiệp vụ: 404 NOT FOUND · 403 FORBIDDEN · 410 MEDIA DELETED.",
+          "after": "Stream nội dung một Media đã complete (không bọc JSON envelope). Dùng cho file **private**: `url` trả về từ complete-upload có dạng `/api/v1/media/{mediaId}`.\n\n- File public (`avatar`, `cover_photo`, `gallery_photo`) đã có URL R2 public, client nên dùng URL đó thay vì gọi endpoint này.\n- Cần Bearer token (gateway không mở public route này), nên trình duyệt không thể dùng trực tiếp trong `<img src>`; web phải tải về dạng blob rồi tạo object URL.\n- Quyền đọc: admin, người upload, và các vai trò theo `purpose` (xem bảng ở `POST /media/presign-upload`).\n- `Content-Disposition: inline; filename*=UTF-8''<fileName>`.\n\nLỗi nghiệp vụ: 401 UNAUTHORIZED · 403 FORBIDDEN · 404 RESOURCE_NOT_FOUND (không tồn tại hoặc chưa complete) · 410 MEDIA_DELETED."
+        },
+        {
+          "pointer": "/paths/~1media~1{mediaId}/get/responses/200/headers/Content-Length",
+          "before": null,
+          "after": {
+            "description": "Kích thước tệp tính bằng byte.",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        },
+        {
+          "pointer": "/paths/~1media~1{mediaId}/get/responses/200/headers/Content-Type/schema/enum",
+          "before": null,
+          "after": [
+            "image/jpeg",
+            "image/png",
+            "image/webp",
+            "application/pdf"
+          ]
+        },
+        {
+          "pointer": "/paths/~1media~1{mediaId}/get/responses/503/$ref",
+          "before": "#/components/responses/AuthUnavailableError",
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1media~1{mediaId}/get/responses/503/content",
+          "before": null,
+          "after": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "statusCode",
+                  "code"
+                ],
+                "properties": {
+                  "statusCode": {
+                    "type": "integer",
+                    "enum": [
+                      503
+                    ]
+                  },
+                  "code": {
+                    "type": "string",
+                    "enum": [
+                      "AUTH_UNAVAILABLE",
+                      "SERVICE_UNAVAILABLE"
+                    ],
+                    "description": "- AUTH_UNAVAILABLE: Hạ tầng xác thực tạm thời không khả dụng.\n- SERVICE_UNAVAILABLE: Storage (R2) chưa được cấu hình, hoặc service sở hữu thực thể cha chưa sẵn sàng (hiện tại `issue_report`, `message`)."
+                  }
+                }
+              },
+              "examples": {
+                "auth_unavailable": {
+                  "summary": "AUTH_UNAVAILABLE — Hạ tầng xác thực tạm thời không khả dụng.",
+                  "value": {
+                    "statusCode": 503,
+                    "code": "AUTH_UNAVAILABLE"
+                  }
+                },
+                "service_unavailable": {
+                  "summary": "SERVICE_UNAVAILABLE — Storage hoặc service sở hữu chưa sẵn sàng.",
+                  "value": {
+                    "statusCode": 503,
+                    "code": "SERVICE_UNAVAILABLE"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "pointer": "/paths/~1media~1{mediaId}/get/responses/503/description",
+          "before": null,
+          "after": "Hạ tầng xác thực, storage hoặc service sở hữu thực thể cha tạm thời không khả dụng."
+        },
+        {
+          "pointer": "/paths/~1media~1{mediaId}/get/responses/503/x-apidog-name",
+          "before": null,
+          "after": "Service Unavailable"
+        },
+        {
+          "pointer": "/paths/~1media~1{mediaId}/get/x-apidog-status",
+          "before": "designing",
+          "after": "released"
+        },
+        {
+          "pointer": "/paths/~1media~1{mediaId}~1complete-upload/post/description",
+          "before": "tenant, landlord, admin. Chốt upload. Lỗi nghiệp vụ: 404 NOT FOUND · 403 FORBIDDEN · 409 UPLOAD NOT COMPLETED · 410 TICKET EXPIRED.",
+          "after": "tenant, landlord, admin. Bước 3/3 của luồng upload: gọi sau khi PUT file lên `uploadUrl` thành công. Không có body.\n\n- Chỉ người đã presign mới được complete.\n- Server `HEAD` object trên storage; kích thước và `Content-Type` thật phải khớp đúng `size`/`contentType` lúc presign, nếu lệch thì object bị xóa và trả `422 MEDIA_TYPE_NOT_ALLOWED` (phải presign lại).\n- Idempotent: gọi lại trên Media đã complete trả lại cùng kết quả `200`.\n- Với `avatar`/`cover_photo` (1 file/owner), file cũ cùng owner + purpose bị xóa mềm khi file mới complete.\n- `url`: purpose public trả URL tuyệt đối trên R2; purpose private trả `/api/v1/media/{mediaId}`.\n\nLỗi nghiệp vụ: 403 FORBIDDEN (không phải người upload) · 404 RESOURCE_NOT_FOUND · 409 UPLOAD_NOT_COMPLETED (chưa thấy file trên storage) · 410 TICKET_EXPIRED · 410 MEDIA_DELETED · 422 MEDIA_TYPE_NOT_ALLOWED."
+        },
+        {
+          "pointer": "/paths/~1media~1{mediaId}~1complete-upload/post/responses/200/content/application~1json/example/data/url",
+          "before": "https://example.com/upload",
+          "after": "https://pub-xxxx.r2.dev/room/3fa85f64-5717-4562-b3fc-2c963f66afa6/3fa85f64-5717-4562-b3fc-2c963f66afa6.jpg"
+        },
+        {
+          "pointer": "/paths/~1media~1{mediaId}~1complete-upload/post/responses/409/content/application~1json/schema/properties/code/description",
+          "before": "- UPLOAD_NOT_COMPLETED: Tệp chưa được tải lên hoàn tất.",
+          "after": "- UPLOAD_NOT_COMPLETED: Chưa thấy object trên storage (chưa PUT hoặc PUT thất bại). Client PUT lại rồi gọi complete lần nữa khi ticket còn hạn."
+        },
+        {
+          "pointer": "/paths/~1media~1{mediaId}~1complete-upload/post/responses/410/content/application~1json/examples/media_deleted",
+          "before": null,
+          "after": {
+            "summary": "MEDIA_DELETED — Media đã bị xóa.",
+            "value": {
+              "statusCode": 410,
+              "code": "MEDIA_DELETED"
+            }
+          }
+        },
+        {
+          "pointer": "/paths/~1media~1{mediaId}~1complete-upload/post/responses/410/content/application~1json/schema/properties/code/description",
+          "before": null,
+          "after": "- TICKET_EXPIRED: Quá `expiresIn` mà chưa complete; phải presign lại.\n- MEDIA_DELETED: Media đã bị xóa mềm."
+        },
+        {
+          "pointer": "/paths/~1media~1{mediaId}~1complete-upload/post/responses/410/content/application~1json/schema/properties/code/enum",
+          "before": [
+            "TICKET_EXPIRED"
+          ],
+          "after": [
+            "TICKET_EXPIRED",
+            "MEDIA_DELETED"
+          ]
+        },
+        {
+          "pointer": "/paths/~1media~1{mediaId}~1complete-upload/post/responses/410/description",
+          "before": "Phiếu tải lên đã hết hạn.",
+          "after": "Phiếu tải lên đã hết hạn hoặc Media đã bị xóa."
+        },
+        {
+          "pointer": "/paths/~1media~1{mediaId}~1complete-upload/post/responses/422",
+          "before": null,
+          "after": {
+            "x-apidog-name": "Unprocessable Entity",
+            "description": "File trên storage không khớp upload ticket.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        422
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "MEDIA_TYPE_NOT_ALLOWED"
+                      ],
+                      "description": "- MEDIA_TYPE_NOT_ALLOWED: Kích thước hoặc `Content-Type` của object khác lúc presign; object đã bị xóa, phải presign lại."
+                    }
+                  }
+                },
+                "examples": {
+                  "media_type_not_allowed": {
+                    "summary": "MEDIA_TYPE_NOT_ALLOWED — File trên storage không khớp upload ticket.",
+                    "value": {
+                      "statusCode": 422,
+                      "code": "MEDIA_TYPE_NOT_ALLOWED"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "pointer": "/paths/~1media~1{mediaId}~1complete-upload/post/responses/503/$ref",
+          "before": "#/components/responses/AuthUnavailableError",
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1media~1{mediaId}~1complete-upload/post/responses/503/content",
+          "before": null,
+          "after": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "statusCode",
+                  "code"
+                ],
+                "properties": {
+                  "statusCode": {
+                    "type": "integer",
+                    "enum": [
+                      503
+                    ]
+                  },
+                  "code": {
+                    "type": "string",
+                    "enum": [
+                      "AUTH_UNAVAILABLE",
+                      "SERVICE_UNAVAILABLE"
+                    ],
+                    "description": "- AUTH_UNAVAILABLE: Hạ tầng xác thực tạm thời không khả dụng.\n- SERVICE_UNAVAILABLE: Storage (R2) chưa được cấu hình, hoặc service sở hữu thực thể cha chưa sẵn sàng (hiện tại `issue_report`, `message`)."
+                  }
+                }
+              },
+              "examples": {
+                "auth_unavailable": {
+                  "summary": "AUTH_UNAVAILABLE — Hạ tầng xác thực tạm thời không khả dụng.",
+                  "value": {
+                    "statusCode": 503,
+                    "code": "AUTH_UNAVAILABLE"
+                  }
+                },
+                "service_unavailable": {
+                  "summary": "SERVICE_UNAVAILABLE — Storage hoặc service sở hữu chưa sẵn sàng.",
+                  "value": {
+                    "statusCode": 503,
+                    "code": "SERVICE_UNAVAILABLE"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "pointer": "/paths/~1media~1{mediaId}~1complete-upload/post/responses/503/description",
+          "before": null,
+          "after": "Hạ tầng xác thực hoặc storage tạm thời không khả dụng."
+        },
+        {
+          "pointer": "/paths/~1media~1{mediaId}~1complete-upload/post/responses/503/x-apidog-name",
+          "before": null,
+          "after": "Service Unavailable"
+        },
+        {
+          "pointer": "/paths/~1media~1{mediaId}~1complete-upload/post/x-apidog-status",
+          "before": "designing",
+          "after": "released"
+        }
+      ],
+      "semanticDiff": {
+        "paths": {
+          "modified": {
+            "/media/presign-upload": {
+              "operations": {
+                "modified": {
+                  "POST": {
+                    "extensions": {
+                      "modified": {
+                        "x-apidog-status": [
+                          {
+                            "oldValue": "designing",
+                            "value": "released",
+                            "op": "replace",
+                            "from": "",
+                            "path": ""
+                          }
+                        ]
+                      }
+                    },
+                    "requestBody": {
+                      "content": {
+                        "modified": {
+                          "application/json": {
+                            "schema": {
+                              "properties": {
+                                "modified": {
+                                  "fileName": {
+                                    "minLength": {
+                                      "from": 0,
+                                      "to": 1
+                                    },
+                                    "maxLength": {
+                                      "from": null,
+                                      "to": 255
+                                    }
+                                  },
+                                  "size": {
+                                    "min": {
+                                      "from": null,
+                                      "to": 1
+                                    },
+                                    "max": {
+                                      "from": null,
+                                      "to": 10485760
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "responses": {
+                      "modified": {
+                        "201": {
+                          "content": {
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "properties": {
+                                    "modified": {
+                                      "data": {
+                                        "properties": {
+                                          "modified": {
+                                            "expiresIn": {
+                                              "enum": {
+                                                "enumDeleted": true,
+                                                "deleted": [
+                                                  900
+                                                ]
+                                              },
+                                              "min": {
+                                                "from": null,
+                                                "to": 1
+                                              }
+                                            },
+                                            "uploadUrl": {
+                                              "format": {
+                                                "from": "",
+                                                "to": "uri"
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "422": {
+                          "content": {
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "properties": {
+                                    "modified": {
+                                      "code": {
+                                        "enum": {
+                                          "added": [
+                                            "UNEXPECTED_FIELD"
+                                          ]
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "503": {
+                          "extensions": {
+                            "modified": {
+                              "x-apidog-name": [
+                                {
+                                  "oldValue": "Authentication Unavailable",
+                                  "value": "Service Unavailable",
+                                  "op": "replace",
+                                  "from": "",
+                                  "path": ""
+                                }
+                              ]
+                            }
+                          },
+                          "content": {
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "properties": {
+                                    "modified": {
+                                      "code": {
+                                        "enum": {
+                                          "added": [
+                                            "SERVICE_UNAVAILABLE"
+                                          ]
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "/media/{mediaId}": {
+              "operations": {
+                "modified": {
+                  "DELETE": {
+                    "extensions": {
+                      "modified": {
+                        "x-apidog-status": [
+                          {
+                            "oldValue": "designing",
+                            "value": "released",
+                            "op": "replace",
+                            "from": "",
+                            "path": ""
+                          }
+                        ]
+                      }
+                    },
+                    "responses": {
+                      "added": [
+                        "410"
+                      ],
+                      "modified": {
+                        "503": {
+                          "extensions": {
+                            "modified": {
+                              "x-apidog-name": [
+                                {
+                                  "oldValue": "Authentication Unavailable",
+                                  "value": "Service Unavailable",
+                                  "op": "replace",
+                                  "from": "",
+                                  "path": ""
+                                }
+                              ]
+                            }
+                          },
+                          "content": {
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "properties": {
+                                    "modified": {
+                                      "code": {
+                                        "enum": {
+                                          "added": [
+                                            "SERVICE_UNAVAILABLE"
+                                          ]
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "GET": {
+                    "extensions": {
+                      "modified": {
+                        "x-apidog-status": [
+                          {
+                            "oldValue": "designing",
+                            "value": "released",
+                            "op": "replace",
+                            "from": "",
+                            "path": ""
+                          }
+                        ]
+                      }
+                    },
+                    "responses": {
+                      "modified": {
+                        "200": {
+                          "headers": {
+                            "added": [
+                              "content-length"
+                            ],
+                            "modified": {
+                              "content-type": {
+                                "schema": {
+                                  "enum": {
+                                    "enumAdded": true,
+                                    "added": [
+                                      "image/jpeg",
+                                      "image/png",
+                                      "image/webp",
+                                      "application/pdf"
+                                    ]
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "503": {
+                          "extensions": {
+                            "modified": {
+                              "x-apidog-name": [
+                                {
+                                  "oldValue": "Authentication Unavailable",
+                                  "value": "Service Unavailable",
+                                  "op": "replace",
+                                  "from": "",
+                                  "path": ""
+                                }
+                              ]
+                            }
+                          },
+                          "content": {
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "properties": {
+                                    "modified": {
+                                      "code": {
+                                        "enum": {
+                                          "added": [
+                                            "SERVICE_UNAVAILABLE"
+                                          ]
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "/media/{mediaId}/complete-upload": {
+              "operations": {
+                "modified": {
+                  "POST": {
+                    "extensions": {
+                      "modified": {
+                        "x-apidog-status": [
+                          {
+                            "oldValue": "designing",
+                            "value": "released",
+                            "op": "replace",
+                            "from": "",
+                            "path": ""
+                          }
+                        ]
+                      }
+                    },
+                    "responses": {
+                      "added": [
+                        "422"
+                      ],
+                      "modified": {
+                        "200": {
+                          "content": {
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "properties": {
+                                    "modified": {
+                                      "data": {
+                                        "properties": {
+                                          "modified": {
+                                            "url": {
+                                              "minLength": {
+                                                "from": 0,
+                                                "to": 1
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "410": {
+                          "content": {
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "properties": {
+                                    "modified": {
+                                      "code": {
+                                        "enum": {
+                                          "added": [
+                                            "MEDIA_DELETED"
+                                          ]
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "503": {
+                          "extensions": {
+                            "modified": {
+                              "x-apidog-name": [
+                                {
+                                  "oldValue": "Authentication Unavailable",
+                                  "value": "Service Unavailable",
+                                  "op": "replace",
+                                  "from": "",
+                                  "path": ""
+                                }
+                              ]
+                            }
+                          },
+                          "content": {
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "properties": {
+                                    "modified": {
+                                      "code": {
+                                        "enum": {
+                                          "added": [
+                                            "SERVICE_UNAVAILABLE"
+                                          ]
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "components": {
+          "schemas": {
+            "modified": {
+              "MediaCompleteUploadResponseDto": {
+                "properties": {
+                  "modified": {
+                    "url": {
+                      "minLength": {
+                        "from": 0,
+                        "to": 1
+                      }
+                    }
+                  }
+                }
+              },
+              "MediaPresignUploadRequestDto": {
+                "properties": {
+                  "modified": {
+                    "fileName": {
+                      "minLength": {
+                        "from": 0,
+                        "to": 1
+                      },
+                      "maxLength": {
+                        "from": null,
+                        "to": 255
+                      }
+                    },
+                    "size": {
+                      "min": {
+                        "from": null,
+                        "to": 1
+                      },
+                      "max": {
+                        "from": null,
+                        "to": 10485760
+                      }
+                    }
+                  }
+                }
+              },
+              "MediaPresignUploadResponseDto": {
+                "properties": {
+                  "modified": {
+                    "expiresIn": {
+                      "enum": {
+                        "enumDeleted": true,
+                        "deleted": [
+                          900
+                        ]
+                      },
+                      "min": {
+                        "from": null,
+                        "to": 1
+                      }
+                    },
+                    "uploadUrl": {
+                      "format": {
+                        "from": "",
+                        "to": "uri"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   ]
 }
