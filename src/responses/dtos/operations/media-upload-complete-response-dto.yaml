@@ -59,8 +59,9 @@ properties:
 
   url:
     type: string
-    description: URL truy cập hoặc signed URL do hệ thống trả
-    example: https://cdn.pbl6.dev/room/3fa85f64/cover.webp
+    minLength: 1
+    description: "URL đọc file. Purpose public (`avatar`, `cover_photo`, `gallery_photo`): URL tuyệt đối cố định trên R2 public bucket, dùng trực tiếp trong `<img src>`. Purpose private (còn lại): đường dẫn API tương đối `/api/v1/media/{mediaId}`, phải gọi `GET` kèm Bearer token."
+    example: https://pub-xxxx.r2.dev/room/3fa85f64-5717-4562-b3fc-2c963f66afa6/3fa85f64-5717-4562-b3fc-2c963f66afa6.webp
 
 
 required:

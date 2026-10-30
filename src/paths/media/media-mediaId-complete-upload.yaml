@@ -2,13 +2,21 @@ post:
   tags:
   - Operation
   x-apidog-folder: Media
-  x-apidog-status: designing
+  x-apidog-status: released
   operationId: postMediaMediaidCompleteUpload
   security:
     - BearerAuth: []
   summary: Complete media upload
-  description: 'tenant, landlord, admin. Chốt upload. Lỗi nghiệp vụ: 404 NOT FOUND · 403 FORBIDDEN · 409 UPLOAD
-    NOT COMPLETED · 410 TICKET EXPIRED.'
+  description: |-
+    tenant, landlord, admin. Bước 3/3 của luồng upload: gọi sau khi PUT file lên `uploadUrl` thành công. Không có body.
+
+    - Chỉ người đã presign mới được complete.
+    - Server `HEAD` object trên storage; kích thước và `Content-Type` thật phải khớp đúng `size`/`contentType` lúc presign, nếu lệch thì object bị xóa và trả `422 MEDIA_TYPE_NOT_ALLOWED` (phải presign lại).
+    - Idempotent: gọi lại trên Media đã complete trả lại cùng kết quả `200`.
+    - Với `avatar`/`cover_photo` (1 file/owner), file cũ cùng owner + purpose bị xóa mềm khi file mới complete.
+    - `url`: purpose public trả URL tuyệt đối trên R2; purpose private trả `/api/v1/media/{mediaId}`.
+
+    Lỗi nghiệp vụ: 403 FORBIDDEN (không phải người upload) · 404 RESOURCE_NOT_FOUND · 409 UPLOAD_NOT_COMPLETED (chưa thấy file trên storage) · 410 TICKET_EXPIRED · 410 MEDIA_DELETED · 422 MEDIA_TYPE_NOT_ALLOWED.
   parameters:
   - name: mediaId
     in: path
@@ -48,13 +56,43 @@ post:
               ownerId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
               purpose: cover_photo
               fileType: image
-              url: https://example.com/upload
+              url: https://pub-xxxx.r2.dev/room/3fa85f64-5717-4562-b3fc-2c963f66afa6/3fa85f64-5717-4562-b3fc-2c963f66afa6.jpg
     '400':
       $ref: ../../openapi.yaml#/components/responses/BadRequestPathError
     '401':
       $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
     '503':
-      $ref: ../../openapi.yaml#/components/responses/AuthUnavailableError
+      x-apidog-name: Service Unavailable
+      description: Hạ tầng xác thực hoặc storage tạm thời không khả dụng.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code]
+            properties:
+              statusCode:
+                type: integer
+                enum: [503]
+              code:
+                type: string
+                enum:
+                  - AUTH_UNAVAILABLE
+                  - SERVICE_UNAVAILABLE
+                description: |-
+                  - AUTH_UNAVAILABLE: Hạ tầng xác thực tạm thời không khả dụng.
+                  - SERVICE_UNAVAILABLE: Storage (R2) chưa được cấu hình, hoặc service sở hữu thực thể cha chưa sẵn sàng (hiện tại `issue_report`, `message`).
+          examples:
+            auth_unavailable:
+              summary: AUTH_UNAVAILABLE — Hạ tầng xác thực tạm thời không khả dụng.
+              value:
+                statusCode: 503
+                code: AUTH_UNAVAILABLE
+            service_unavailable:
+              summary: SERVICE_UNAVAILABLE — Storage hoặc service sở hữu chưa sẵn sàng.
+              value:
+                statusCode: 503
+                code: SERVICE_UNAVAILABLE
     '403':
       $ref: ../../openapi.yaml#/components/responses/ForbiddenError
     '404':
@@ -77,7 +115,7 @@ post:
                 enum:
                   - UPLOAD_NOT_COMPLETED
                 description: |-
-                  - UPLOAD_NOT_COMPLETED: Tệp chưa được tải lên hoàn tất.
+                  - UPLOAD_NOT_COMPLETED: Chưa thấy object trên storage (chưa PUT hoặc PUT thất bại). Client PUT lại rồi gọi complete lần nữa khi ticket còn hạn.
           examples:
             upload_not_completed:
               summary: UPLOAD_NOT_COMPLETED — Tệp chưa được tải lên hoàn tất.
@@ -90,7 +128,7 @@ post:
       $ref: ../../openapi.yaml#/components/responses/InternalServerError
     '410':
       x-apidog-name: Gone
-      description: Phiếu tải lên đã hết hạn.
+      description: Phiếu tải lên đã hết hạn hoặc Media đã bị xóa.
       content:
         application/json:
           schema:
@@ -105,9 +143,43 @@ post:
                 type: string
                 enum:
                   - TICKET_EXPIRED
+                  - MEDIA_DELETED
+                description: |-
+                  - TICKET_EXPIRED: Quá `expiresIn` mà chưa complete; phải presign lại.
+                  - MEDIA_DELETED: Media đã bị xóa mềm.
           examples:
             ticket_expired:
               summary: TICKET_EXPIRED — Phiếu tải lên đã hết hạn.
               value:
                 statusCode: 410
                 code: TICKET_EXPIRED
+            media_deleted:
+              summary: MEDIA_DELETED — Media đã bị xóa.
+              value:
+                statusCode: 410
+                code: MEDIA_DELETED
+    '422':
+      x-apidog-name: Unprocessable Entity
+      description: File trên storage không khớp upload ticket.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code]
+            properties:
+              statusCode:
+                type: integer
+                enum: [422]
+              code:
+                type: string
+                enum:
+                  - MEDIA_TYPE_NOT_ALLOWED
+                description: |-
+                  - MEDIA_TYPE_NOT_ALLOWED: Kích thước hoặc `Content-Type` của object khác lúc presign; object đã bị xóa, phải presign lại.
+          examples:
+            media_type_not_allowed:
+              summary: MEDIA_TYPE_NOT_ALLOWED — File trên storage không khớp upload ticket.
+              value:
+                statusCode: 422
+                code: MEDIA_TYPE_NOT_ALLOWED

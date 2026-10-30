@@ -107,8 +107,8 @@ Kết luận:
 
 ### 3. Lưu ý cần xác nhận với leader
 
-- Media design yêu cầu `purpose` hợp lệ theo từng `ownerType`, nhưng hiện mới có enum tổng và chưa có bảng mapping cross-field đầy đủ. DTO giữ enum tổng, không tự phát minh `oneOf` mapping. Cần xác nhận: team đã có bảng mapping chính thức chưa, hay validation `ownerType`–`purpose` sẽ được chốt ở service/backend sau?
-- Convention yêu cầu endpoint upload khai báo giới hạn kích thước file, nhưng contract hiện chỉ có `size: 248120` và chưa có max cụ thể. DTO không đặt `maximum`; cần xác nhận giới hạn file cho image và PDF trước khi freeze spec.
+- ~~Bảng mapping `ownerType`–`purpose`~~ — Đã chốt theo Identity-Service (`media-purpose.policies.ts`): DTO vẫn giữ enum tổng, bảng mapping + MIME + quyền upload ghi trong description của `POST /media/presign-upload`; backend trả `422 INVALID_PURPOSE` khi sai cặp.
+- ~~Giới hạn kích thước file~~ — Đã chốt 10 MiB cho mọi purpose (`MEDIA_MAX_SIZE_BYTES`, mặc định 10485760): `size` có `minimum: 1`, `maximum: 10485760`.
 
 ## Building
 
