@@ -33141,18 +33141,59 @@
         "type": "object",
         "x-apidog-folder": "Common",
         "title": "PagingMeta",
+        "description": "Metadata phân trang offset (khớp `OffsetPaginationDto` của backend).",
+        "additionalProperties": false,
+        "required": [
+          "type",
+          "pageNo",
+          "pageSize",
+          "totalItems",
+          "totalPages",
+          "hasNextPage",
+          "hasPreviousPage"
+        ],
         "properties": {
-          "total": {
-            "type": "integer"
+          "type": {
+            "type": "string",
+            "enum": [
+              "offset"
+            ],
+            "description": "Discriminator phân loại kiểu phân trang"
           },
-          "page": {
-            "type": "integer"
+          "pageNo": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Số thứ tự trang hiện tại, bắt đầu từ 1",
+            "example": 1
           },
           "pageSize": {
-            "type": "integer"
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100,
+            "description": "Số lượng bản ghi trên một trang",
+            "example": 20
+          },
+          "totalItems": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Tổng số lượng bản ghi",
+            "example": 2
           },
           "totalPages": {
-            "type": "integer"
+            "type": "integer",
+            "minimum": 0,
+            "description": "Tổng số trang",
+            "example": 1
+          },
+          "hasNextPage": {
+            "type": "boolean",
+            "description": "Có trang kế tiếp hay không",
+            "example": false
+          },
+          "hasPreviousPage": {
+            "type": "boolean",
+            "description": "Có trang trước đó hay không",
+            "example": false
           }
         }
       },
