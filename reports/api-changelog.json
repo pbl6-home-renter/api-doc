@@ -14167,6 +14167,717 @@
           }
         }
       }
+    },
+    {
+      "id": "76bf0b98bd2dbb3f904518f6f15fca149941198bdf877813f8f434bae868b42f",
+      "label": "Thay đổi contract từ Git",
+      "classification": "BREAKING",
+      "contractId": "rentify-public",
+      "repository": "https://github.com/pbl6-home-renter/api-doc",
+      "baseHash": "11858ec826629b8973e6ed65c500f26c6b610741983cfe8b4606eb2bf2f4a81b",
+      "headHash": "f73e1bb763c92453a9584e74ebc2547eb78d709fb95549eb7a9d361dd8662977",
+      "baseSource": "src/openapi.yaml",
+      "headSource": "src/openapi.yaml",
+      "detectedAt": "2026-10-30T03:12:45.278Z",
+      "committedAt": "2026-10-30T10:12:33+07:00",
+      "baseCommit": "68035c4ea73726cbbbfdc9086b8de085da1b489b",
+      "headCommit": "b0a0ce6be91b2b39882617f0eb32eef012ab4c7e",
+      "prUrl": "https://github.com/pbl6-home-renter/api-doc/pull/26",
+      "commitUrl": "https://github.com/pbl6-home-renter/api-doc/commit/b0a0ce6be91b2b39882617f0eb32eef012ab4c7e",
+      "metadataKind": "Git revision thực tế",
+      "reason": "CHƯA CUNG CẤP — tác giả PR phải bổ sung lý do nghiệp vụ; không thể suy ra từ OpenAPI diff.",
+      "tools": {
+        "redocly": "2.64.1",
+        "oasdiff": "1.34.1"
+      },
+      "changes": [
+        {
+          "id": "request-parameter-became-enum",
+          "text": "the `query` request parameter `sort` was restricted to a list of enum values",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getBuildings",
+          "path": "/buildings",
+          "section": "paths",
+          "fingerprint": "01c7771ce34d",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu enum trong DTO/validation và nhánh switch/when; xử lý giá trị chưa biết, kiểm thử dữ liệu cũ và mới; phối hợp BE trước khi phát hành."
+        },
+        {
+          "id": "request-parameter-enum-value-removed",
+          "text": "removed the enum value `csv` from the `query` request parameter `format`",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getBuildings",
+          "path": "/buildings",
+          "section": "paths",
+          "fingerprint": "e9b6f63c7081",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu enum trong DTO/validation và nhánh switch/when; xử lý giá trị chưa biết, kiểm thử dữ liệu cũ và mới; phối hợp BE trước khi phát hành."
+        },
+        {
+          "id": "request-parameter-enum-value-removed",
+          "text": "removed the enum value `pdf` from the `query` request parameter `format`",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getBuildings",
+          "path": "/buildings",
+          "section": "paths",
+          "fingerprint": "539e61100fcb",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu enum trong DTO/validation và nhánh switch/when; xử lý giá trị chưa biết, kiểm thử dữ liệu cũ và mới; phối hợp BE trước khi phát hành."
+        },
+        {
+          "id": "request-parameter-enum-value-removed",
+          "text": "removed the enum value `xlsx` from the `query` request parameter `format`",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getBuildings",
+          "path": "/buildings",
+          "section": "paths",
+          "fingerprint": "cebcd3c02ec6",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu enum trong DTO/validation và nhánh switch/when; xử lý giá trị chưa biết, kiểm thử dữ liệu cũ và mới; phối hợp BE trước khi phát hành."
+        },
+        {
+          "id": "response-media-type-removed",
+          "text": "removed the media type `application/pdf` for the response with the status `200`",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getBuildings",
+          "path": "/buildings",
+          "section": "paths",
+          "fingerprint": "43e7e864a40c",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "response-media-type-removed",
+          "text": "removed the media type `application/vnd.openxmlformats-officedocument.spreadsheetml.sheet` for the response with the status `200`",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getBuildings",
+          "path": "/buildings",
+          "section": "paths",
+          "fingerprint": "b79064e8847c",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "response-media-type-removed",
+          "text": "removed the media type `text/csv` for the response with the status `200`",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getBuildings",
+          "path": "/buildings",
+          "section": "paths",
+          "fingerprint": "b5a6f1b209d8",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "response-property-enum-value-added",
+          "text": "added the new `UNEXPECTED_FIELD` enum value to the `code` response property for the response status `422`",
+          "comment": "The server may now return a value the previous contract excluded, so a client written against it may not handle the response. If the value set is meant to grow, declare it with x-extensible-enum.",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getBuildings",
+          "path": "/buildings",
+          "section": "paths",
+          "fingerprint": "d10a40776208",
+          "classification": "BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới UNEXPECTED_FIELD; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "api-version-not-bumped",
+          "text": "a breaking change was detected but the version is still `1.0.0`",
+          "level": 1,
+          "section": "info",
+          "fingerprint": "d3f96cd643c1",
+          "classification": "NON_BREAKING",
+          "clientImpact": "BE: xem lại quy ước version trước khi chấp nhận breaking change. FE/Mobile: theo kế hoạch chuyển đổi của entry này; version trong OpenAPI chưa chứng minh backend đã triển khai."
+        },
+        {
+          "id": "response-non-success-status-removed",
+          "text": "removed the non-success response with the status `400`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getBuildings",
+          "path": "/buildings",
+          "section": "paths",
+          "fingerprint": "7a6967c2b824",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "response-non-success-status-removed",
+          "text": "removed the non-success response with the status `429`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getBuildings",
+          "path": "/buildings",
+          "section": "paths",
+          "fingerprint": "3d53ba520af6",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "response-non-success-status-removed",
+          "text": "removed the non-success response with the status `403`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getBuildingsBuildingid",
+          "path": "/buildings/{buildingId}",
+          "section": "paths",
+          "fingerprint": "fe80be863121",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "response-non-success-status-removed",
+          "text": "removed the non-success response with the status `429`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getBuildingsBuildingid",
+          "path": "/buildings/{buildingId}",
+          "section": "paths",
+          "fingerprint": "a8a2ee9bd95d",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "response-property-enum-value-removed",
+          "text": "removed the `INVALID_HEADER` enum value from the `code` response property for the response status `400`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getBuildingsBuildingid",
+          "path": "/buildings/{buildingId}",
+          "section": "paths",
+          "fingerprint": "a51c3232cd28",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu enum trong DTO/validation và nhánh switch/when; xử lý giá trị chưa biết, kiểm thử dữ liệu cũ và mới; phối hợp BE trước khi phát hành."
+        },
+        {
+          "id": "response-property-enum-value-removed",
+          "text": "removed the `INVALID_PATH_PARAMETER` enum value from the `code` response property for the response status `400`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getBuildingsBuildingid",
+          "path": "/buildings/{buildingId}",
+          "section": "paths",
+          "fingerprint": "ef8096da8c95",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu enum trong DTO/validation và nhánh switch/when; xử lý giá trị chưa biết, kiểm thử dữ liệu cũ và mới; phối hợp BE trước khi phát hành."
+        }
+      ],
+      "locations": [
+        {
+          "pointer": "/paths/~1buildings/get/description",
+          "before": "Chưa triển khai trong Tenancy-Service hiện tại; endpoint được giữ trong tài liệu thiết kế.\npublic. Tìm tòa nhà trên sàn công khai. Lỗi nghiệp vụ: 422 VALIDATION FAILED · 429 RATE LIMIT EXCEEDED.",
+          "after": "Public; không cần token. Chỉ trả Building `approved` và chưa xóa, kể cả khi người gọi là landlord/admin.\n`filter[province]` và `filter[ward]` so khớp chính xác; `filter[q]` tìm không phân biệt hoa/thường\ntrong name hoặc address. Mỗi filter dài tối đa 100 ký tự. Điều kiện visibility nằm trong SQL trước\nkhi đếm và phân trang. Sort chỉ nhận `createdAt` hoặc `name`, mặc định `createdAt desc`.\nChỉ hỗ trợ `format=json`; xlsx/csv/pdf chưa triển khai. Rate limiting thuộc phạm vi gateway.\nQuery không hợp lệ trả `422 VALIDATION_FAILED`; field ngoài contract trả `422 UNEXPECTED_FIELD`\ntheo validation chung của service.\n\n```mermaid\nsequenceDiagram\n    autonumber\n    participant GW as API Gateway\n    participant TEN as Tenancy\n    participant DB as Tenancy DB\n\n    GW->>TEN: GET /api/v1/buildings (filter, sort, order, pageNo, pageSize; no token required)\n    TEN->>TEN: Validate query; public access without authentication\n    alt Invalid query\n        TEN-->>GW: 422 VALIDATION_FAILED / UNEXPECTED_FIELD\n    else Valid query\n        TEN->>DB: SELECT buildings WHERE is_deleted = false AND status = approved<br/>AND province/ward filters AND (LOWER(name) LIKE q OR LOWER(address) LIKE q)<br/>ORDER BY whitelisted field; OFFSET / LIMIT\n        DB-->>TEN: Public buildings\n        TEN->>DB: COUNT with the same visibility and filter conditions (when needed by paginator)\n        DB-->>TEN: totalItems\n        TEN->>TEN: Map only id, name, province, ward, address\n        TEN-->>GW: 200 BUILDINGS_FETCHED + pagination\n    end\n```"
+        },
+        {
+          "pointer": "/paths/~1buildings/get/parameters",
+          "before": [
+            {
+              "name": "filter",
+              "in": "query",
+              "required": false,
+              "style": "deepObject",
+              "explode": true,
+              "description": "Bộ lọc được endpoint hỗ trợ.",
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "province": {
+                    "type": "string"
+                  },
+                  "ward": {
+                    "type": "string"
+                  },
+                  "q": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            {
+              "name": "sort",
+              "in": "query",
+              "description": "Một trường sắp xếp được endpoint hỗ trợ.",
+              "schema": {
+                "type": "string",
+                "default": "createdAt"
+              }
+            },
+            {
+              "name": "order",
+              "in": "query",
+              "schema": {
+                "type": "string",
+                "enum": [
+                  "asc",
+                  "desc"
+                ],
+                "default": "desc"
+              }
+            },
+            {
+              "name": "pageSize",
+              "in": "query",
+              "schema": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 100,
+                "default": 20
+              }
+            },
+            {
+              "name": "pageNo",
+              "in": "query",
+              "schema": {
+                "type": "integer",
+                "minimum": 1,
+                "default": 1
+              }
+            },
+            {
+              "name": "format",
+              "in": "query",
+              "description": "json trả envelope; định dạng khác trả file stream.",
+              "schema": {
+                "type": "string",
+                "enum": [
+                  "json",
+                  "xlsx",
+                  "csv",
+                  "pdf"
+                ],
+                "default": "json"
+              }
+            }
+          ],
+          "after": [
+            {
+              "name": "filter",
+              "in": "query",
+              "required": false,
+              "style": "deepObject",
+              "explode": true,
+              "description": "Bộ lọc được endpoint hỗ trợ.",
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "province": {
+                    "type": "string",
+                    "maxLength": 100
+                  },
+                  "ward": {
+                    "type": "string",
+                    "maxLength": 100
+                  },
+                  "q": {
+                    "type": "string",
+                    "maxLength": 100
+                  }
+                }
+              }
+            },
+            {
+              "name": "sort",
+              "in": "query",
+              "description": "Một trường sắp xếp được endpoint hỗ trợ.",
+              "schema": {
+                "type": "string",
+                "enum": [
+                  "createdAt",
+                  "name"
+                ],
+                "default": "createdAt"
+              }
+            },
+            {
+              "name": "order",
+              "in": "query",
+              "schema": {
+                "type": "string",
+                "enum": [
+                  "asc",
+                  "desc"
+                ],
+                "default": "desc"
+              }
+            },
+            {
+              "name": "pageSize",
+              "in": "query",
+              "schema": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 100,
+                "default": 20
+              }
+            },
+            {
+              "name": "pageNo",
+              "in": "query",
+              "schema": {
+                "type": "integer",
+                "minimum": 1,
+                "default": 1
+              }
+            },
+            {
+              "name": "format",
+              "in": "query",
+              "description": "Chỉ hỗ trợ JSON; export xlsx/csv/pdf chưa triển khai.",
+              "schema": {
+                "type": "string",
+                "enum": [
+                  "json"
+                ],
+                "default": "json"
+              }
+            }
+          ]
+        },
+        {
+          "pointer": "/paths/~1buildings/get/responses/200/content/application~1pdf",
+          "before": {
+            "schema": {
+              "type": "string",
+              "format": "binary"
+            }
+          },
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1buildings/get/responses/200/content/application~1vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+          "before": {
+            "schema": {
+              "type": "string",
+              "format": "binary"
+            }
+          },
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1buildings/get/responses/200/content/text~1csv",
+          "before": {
+            "schema": {
+              "type": "string",
+              "format": "binary"
+            }
+          },
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1buildings/get/responses/400",
+          "before": {
+            "$ref": "#/components/responses/BadRequestQueryError"
+          },
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1buildings/get/responses/422/$ref",
+          "before": "#/components/responses/ValidationError",
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1buildings/get/responses/422/content",
+          "before": null,
+          "after": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "statusCode",
+                  "code"
+                ],
+                "properties": {
+                  "statusCode": {
+                    "type": "integer",
+                    "enum": [
+                      422
+                    ]
+                  },
+                  "code": {
+                    "type": "string",
+                    "enum": [
+                      "VALIDATION_FAILED",
+                      "UNEXPECTED_FIELD"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "pointer": "/paths/~1buildings/get/responses/422/description",
+          "before": null,
+          "after": "Query không hợp lệ hoặc chứa field ngoài contract."
+        },
+        {
+          "pointer": "/paths/~1buildings/get/responses/429",
+          "before": {
+            "$ref": "#/components/responses/TooManyRequestsError"
+          },
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1buildings/get/x-apidog-status",
+          "before": "designing",
+          "after": "released"
+        },
+        {
+          "pointer": "/paths/~1buildings~1{buildingId}/get/description",
+          "before": "Chưa triển khai trong Tenancy-Service hiện tại; endpoint được giữ trong tài liệu thiết kế.\npublic. Đọc tòa nhà (chế độ công khai). Lỗi nghiệp vụ: 404 NOT FOUND.",
+          "after": "Public; không cần token. Chỉ trả Building `approved` và chưa xóa, kể cả khi người gọi là landlord/admin.\nKhông tồn tại, pending, rejected hoặc đã xóa đều trả `404 RESOURCE_NOT_FOUND`.\nResponse chỉ gồm id, name, province, ward, address và status (`approved`).\nbuildingId không phải UUID trả `400 BAD_REQUEST` theo ParseUUIDPipe hiện có.\n\n```mermaid\nsequenceDiagram\n    autonumber\n    participant GW as API Gateway\n    participant TEN as Tenancy\n    participant DB as Tenancy DB\n\n    GW->>TEN: GET /api/v1/buildings/{buildingId} (no token required)\n    TEN->>TEN: Validate UUID; public access without authentication\n    alt Invalid UUID\n        TEN-->>GW: 400 BAD_REQUEST\n    else Valid UUID\n        TEN->>DB: SELECT building WHERE id = buildingId AND status = approved AND is_deleted = false\n        DB-->>TEN: Approved building or null\n        alt No public building\n            TEN-->>GW: 404 RESOURCE_NOT_FOUND\n        else Found\n            TEN->>TEN: Map only id, name, province, ward, address, status\n            TEN-->>GW: 200 BUILDING_FETCHED\n        end\n    end\n```"
+        },
+        {
+          "pointer": "/paths/~1buildings~1{buildingId}/get/responses/400/$ref",
+          "before": "#/components/responses/BadRequestPathError",
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1buildings~1{buildingId}/get/responses/400/content",
+          "before": null,
+          "after": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "statusCode",
+                  "code"
+                ],
+                "properties": {
+                  "statusCode": {
+                    "type": "integer",
+                    "enum": [
+                      400
+                    ]
+                  },
+                  "code": {
+                    "type": "string",
+                    "enum": [
+                      "BAD_REQUEST"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "pointer": "/paths/~1buildings~1{buildingId}/get/responses/400/description",
+          "before": null,
+          "after": "buildingId không phải UUID."
+        },
+        {
+          "pointer": "/paths/~1buildings~1{buildingId}/get/responses/403",
+          "before": {
+            "$ref": "#/components/responses/ForbiddenOnlyError"
+          },
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1buildings~1{buildingId}/get/responses/429",
+          "before": {
+            "$ref": "#/components/responses/TooManyRequestsError"
+          },
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1buildings~1{buildingId}/get/x-apidog-status",
+          "before": "designing",
+          "after": "released"
+        }
+      ],
+      "semanticDiff": {
+        "paths": {
+          "modified": {
+            "/buildings": {
+              "operations": {
+                "modified": {
+                  "GET": {
+                    "extensions": {
+                      "modified": {
+                        "x-apidog-status": [
+                          {
+                            "oldValue": "designing",
+                            "value": "released",
+                            "op": "replace",
+                            "from": "",
+                            "path": ""
+                          }
+                        ]
+                      }
+                    },
+                    "parameters": {
+                      "modified": {
+                        "query": {
+                          "filter": {
+                            "schema": {
+                              "properties": {
+                                "modified": {
+                                  "province": {
+                                    "maxLength": {
+                                      "from": null,
+                                      "to": 100
+                                    }
+                                  },
+                                  "q": {
+                                    "maxLength": {
+                                      "from": null,
+                                      "to": 100
+                                    }
+                                  },
+                                  "ward": {
+                                    "maxLength": {
+                                      "from": null,
+                                      "to": 100
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          },
+                          "format": {
+                            "schema": {
+                              "enum": {
+                                "deleted": [
+                                  "xlsx",
+                                  "csv",
+                                  "pdf"
+                                ]
+                              }
+                            }
+                          },
+                          "sort": {
+                            "schema": {
+                              "enum": {
+                                "enumAdded": true,
+                                "added": [
+                                  "createdAt",
+                                  "name"
+                                ]
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "responses": {
+                      "deleted": [
+                        "429",
+                        "400"
+                      ],
+                      "modified": {
+                        "200": {
+                          "content": {
+                            "deleted": [
+                              "application/pdf",
+                              "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                              "text/csv"
+                            ]
+                          }
+                        },
+                        "422": {
+                          "extensions": {
+                            "deleted": [
+                              "x-apidog-name"
+                            ]
+                          },
+                          "content": {
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "properties": {
+                                    "modified": {
+                                      "code": {
+                                        "enum": {
+                                          "added": [
+                                            "UNEXPECTED_FIELD"
+                                          ]
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "/buildings/{buildingId}": {
+              "operations": {
+                "modified": {
+                  "GET": {
+                    "extensions": {
+                      "modified": {
+                        "x-apidog-status": [
+                          {
+                            "oldValue": "designing",
+                            "value": "released",
+                            "op": "replace",
+                            "from": "",
+                            "path": ""
+                          }
+                        ]
+                      }
+                    },
+                    "responses": {
+                      "deleted": [
+                        "429",
+                        "403"
+                      ],
+                      "modified": {
+                        "400": {
+                          "extensions": {
+                            "deleted": [
+                              "x-apidog-name"
+                            ]
+                          },
+                          "content": {
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "properties": {
+                                    "modified": {
+                                      "code": {
+                                        "enum": {
+                                          "deleted": [
+                                            "INVALID_PATH_PARAMETER",
+                                            "INVALID_HEADER"
+                                          ]
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   ]
 }
