@@ -12693,6 +12693,1480 @@
           }
         }
       }
+    },
+    {
+      "id": "1f72bdae6b363772a68df3a542451747dfcb06804d027de0a59d396768c66efa",
+      "label": "Thay đổi contract từ Git",
+      "classification": "BREAKING",
+      "contractId": "rentify-public",
+      "repository": "https://github.com/pbl6-home-renter/api-doc",
+      "baseHash": "8aff748fab0f42439dd379f4bd8c19431594a21d8c6cf4501b6a8b88c03ec5fe",
+      "headHash": "11858ec826629b8973e6ed65c500f26c6b610741983cfe8b4606eb2bf2f4a81b",
+      "baseSource": "src/openapi.yaml",
+      "headSource": "src/openapi.yaml",
+      "detectedAt": "2026-10-30T01:12:01.762Z",
+      "committedAt": "2026-10-30T08:11:49+07:00",
+      "baseCommit": "8d327af10a4791d5d030bf900ee86f86c51ae72d",
+      "headCommit": "ab443ab7e8f5c9336fac4efa0d34f118089c6a40",
+      "prUrl": "https://github.com/pbl6-home-renter/api-doc/pull/25",
+      "commitUrl": "https://github.com/pbl6-home-renter/api-doc/commit/ab443ab7e8f5c9336fac4efa0d34f118089c6a40",
+      "metadataKind": "Git revision thực tế",
+      "reason": "CHƯA CUNG CẤP — tác giả PR phải bổ sung lý do nghiệp vụ; không thể suy ra từ OpenAPI diff.",
+      "tools": {
+        "redocly": "2.64.1",
+        "oasdiff": "1.34.1"
+      },
+      "changes": [
+        {
+          "id": "request-parameter-became-enum",
+          "text": "the `query` request parameter `sort` was restricted to a list of enum values",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getAdminBuildings",
+          "path": "/admin/buildings",
+          "section": "paths",
+          "fingerprint": "2dd66770533b",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu enum trong DTO/validation và nhánh switch/when; xử lý giá trị chưa biết, kiểm thử dữ liệu cũ và mới; phối hợp BE trước khi phát hành."
+        },
+        {
+          "id": "request-parameter-enum-value-removed",
+          "text": "removed the enum value `csv` from the `query` request parameter `format`",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getAdminBuildings",
+          "path": "/admin/buildings",
+          "section": "paths",
+          "fingerprint": "21e4faf2cc63",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu enum trong DTO/validation và nhánh switch/when; xử lý giá trị chưa biết, kiểm thử dữ liệu cũ và mới; phối hợp BE trước khi phát hành."
+        },
+        {
+          "id": "request-parameter-enum-value-removed",
+          "text": "removed the enum value `pdf` from the `query` request parameter `format`",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getAdminBuildings",
+          "path": "/admin/buildings",
+          "section": "paths",
+          "fingerprint": "d18301cb4915",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu enum trong DTO/validation và nhánh switch/when; xử lý giá trị chưa biết, kiểm thử dữ liệu cũ và mới; phối hợp BE trước khi phát hành."
+        },
+        {
+          "id": "request-parameter-enum-value-removed",
+          "text": "removed the enum value `xlsx` from the `query` request parameter `format`",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getAdminBuildings",
+          "path": "/admin/buildings",
+          "section": "paths",
+          "fingerprint": "850890e1cb13",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu enum trong DTO/validation và nhánh switch/when; xử lý giá trị chưa biết, kiểm thử dữ liệu cũ và mới; phối hợp BE trước khi phát hành."
+        },
+        {
+          "id": "response-media-type-removed",
+          "text": "removed the media type `application/pdf` for the response with the status `200`",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getAdminBuildings",
+          "path": "/admin/buildings",
+          "section": "paths",
+          "fingerprint": "ca41a45e32a6",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "response-media-type-removed",
+          "text": "removed the media type `application/vnd.openxmlformats-officedocument.spreadsheetml.sheet` for the response with the status `200`",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getAdminBuildings",
+          "path": "/admin/buildings",
+          "section": "paths",
+          "fingerprint": "70aa6ce24463",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "response-media-type-removed",
+          "text": "removed the media type `text/csv` for the response with the status `200`",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getAdminBuildings",
+          "path": "/admin/buildings",
+          "section": "paths",
+          "fingerprint": "410fe1b2fa74",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "response-property-enum-value-added",
+          "text": "added the new `UNEXPECTED_FIELD` enum value to the `code` response property for the response status `422`",
+          "comment": "The server may now return a value the previous contract excluded, so a client written against it may not handle the response. If the value set is meant to grow, declare it with x-extensible-enum.",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getAdminBuildings",
+          "path": "/admin/buildings",
+          "section": "paths",
+          "fingerprint": "9e8d254ec75b",
+          "classification": "BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới UNEXPECTED_FIELD; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-required-property-removed",
+          "text": "removed the required property `data/items/totalRooms` from the response with the `200` status",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getAdminBuildings",
+          "path": "/admin/buildings",
+          "section": "paths",
+          "fingerprint": "5be44205d4c8",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "response-required-property-removed",
+          "text": "removed the required property `data/district` from the response with the `200` status",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getAdminBuildingsBuildingid",
+          "path": "/admin/buildings/{buildingId}",
+          "section": "paths",
+          "fingerprint": "80454470919b",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "response-required-property-removed",
+          "text": "removed the required property `data/totalRooms` from the response with the `200` status",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getAdminBuildingsBuildingid",
+          "path": "/admin/buildings/{buildingId}",
+          "section": "paths",
+          "fingerprint": "8b7536bce9f7",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "api-version-not-bumped",
+          "text": "a breaking change was detected but the version is still `1.0.0`",
+          "level": 1,
+          "section": "info",
+          "fingerprint": "d3f96cd643c1",
+          "classification": "NON_BREAKING",
+          "clientImpact": "BE: xem lại quy ước version trước khi chấp nhận breaking change. FE/Mobile: theo kế hoạch chuyển đổi của entry này; version trong OpenAPI chưa chứng minh backend đã triển khai."
+        },
+        {
+          "id": "request-parameter-property-enum-value-added",
+          "text": "added the enum value `approved` to the property `status` of the `query` request parameter `filter`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getAdminBuildings",
+          "path": "/admin/buildings",
+          "section": "paths",
+          "fingerprint": "9c22b033726e",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu enum trong DTO/validation và nhánh switch/when; xử lý giá trị chưa biết, kiểm thử dữ liệu cũ và mới; phối hợp BE trước khi phát hành."
+        },
+        {
+          "id": "request-parameter-property-enum-value-added",
+          "text": "added the enum value `pending` to the property `status` of the `query` request parameter `filter`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getAdminBuildings",
+          "path": "/admin/buildings",
+          "section": "paths",
+          "fingerprint": "0fef5b1e8a18",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu enum trong DTO/validation và nhánh switch/when; xử lý giá trị chưa biết, kiểm thử dữ liệu cũ và mới; phối hợp BE trước khi phát hành."
+        },
+        {
+          "id": "request-parameter-property-enum-value-added",
+          "text": "added the enum value `rejected` to the property `status` of the `query` request parameter `filter`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getAdminBuildings",
+          "path": "/admin/buildings",
+          "section": "paths",
+          "fingerprint": "9999888d2d19",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu enum trong DTO/validation và nhánh switch/when; xử lý giá trị chưa biết, kiểm thử dữ liệu cũ và mới; phối hợp BE trước khi phát hành."
+        },
+        {
+          "id": "response-optional-property-removed",
+          "text": "removed the optional property `data/amenities` from the response with the `200` status",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getAdminBuildingsBuildingid",
+          "path": "/admin/buildings/{buildingId}",
+          "section": "paths",
+          "fingerprint": "4a7c7a9cd019",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "response-optional-property-removed",
+          "text": "removed the optional property `data/description` from the response with the `200` status",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getAdminBuildingsBuildingid",
+          "path": "/admin/buildings/{buildingId}",
+          "section": "paths",
+          "fingerprint": "31544fb5a768",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "response-optional-property-removed",
+          "text": "removed the optional property `data/totalFloors` from the response with the `200` status",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getAdminBuildingsBuildingid",
+          "path": "/admin/buildings/{buildingId}",
+          "section": "paths",
+          "fingerprint": "4ba5c7b7b48c",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "response-property-became-required",
+          "text": "the response property `data/landlord/cccdNumber` became required for the status `200`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getAdminBuildingsBuildingid",
+          "path": "/admin/buildings/{buildingId}",
+          "section": "paths",
+          "fingerprint": "4bb2054f69f8",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        },
+        {
+          "id": "response-property-became-required",
+          "text": "the response property `data/landlord/email` became required for the status `200`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getAdminBuildingsBuildingid",
+          "path": "/admin/buildings/{buildingId}",
+          "section": "paths",
+          "fingerprint": "23fe49d7744f",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        },
+        {
+          "id": "response-property-became-required",
+          "text": "the response property `data/occupancyRate` became required for the status `200`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getAdminBuildingsBuildingid",
+          "path": "/admin/buildings/{buildingId}",
+          "section": "paths",
+          "fingerprint": "156ec3081b5d",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        },
+        {
+          "id": "response-property-became-required",
+          "text": "the response property `data/reviewNote` became required for the status `200`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getAdminBuildingsBuildingid",
+          "path": "/admin/buildings/{buildingId}",
+          "section": "paths",
+          "fingerprint": "9d3e4aeb37bd",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        },
+        {
+          "id": "response-property-became-required",
+          "text": "the response property `data/submittedAt` became required for the status `200`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getAdminBuildingsBuildingid",
+          "path": "/admin/buildings/{buildingId}",
+          "section": "paths",
+          "fingerprint": "b83dadf17afd",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        },
+        {
+          "id": "response-property-became-required",
+          "text": "the response property `data/items/address` became required for the status `200`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getMeBuildings",
+          "path": "/me/buildings",
+          "section": "paths",
+          "fingerprint": "4fce9ca32889",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        },
+        {
+          "id": "response-property-became-required",
+          "text": "the response property `data/items/createdAt` became required for the status `200`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getMeBuildings",
+          "path": "/me/buildings",
+          "section": "paths",
+          "fingerprint": "54d49ecafd64",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        },
+        {
+          "id": "response-property-max-length-set",
+          "text": "the `data/items/rejectionReason` response property's maxLength was set to `500` for the response status `200`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getMeBuildings",
+          "path": "/me/buildings",
+          "section": "paths",
+          "fingerprint": "275180e236a7",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        },
+        {
+          "id": "response-property-min-length-set",
+          "text": "the `data/items/rejectionReason` response property's minLength was set to `1` for the response status `200`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getMeBuildings",
+          "path": "/me/buildings",
+          "section": "paths",
+          "fingerprint": "5d84e1b03a99",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        },
+        {
+          "id": "response-property-became-required",
+          "text": "the response property `data/amenities` became required for the status `200`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getMeBuildingsBuildingid",
+          "path": "/me/buildings/{buildingId}",
+          "section": "paths",
+          "fingerprint": "fdb9ab98a0ee",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        },
+        {
+          "id": "response-property-became-required",
+          "text": "the response property `data/createdAt` became required for the status `200`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getMeBuildingsBuildingid",
+          "path": "/me/buildings/{buildingId}",
+          "section": "paths",
+          "fingerprint": "0af9e43dec40",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        },
+        {
+          "id": "response-property-became-required",
+          "text": "the response property `data/ownershipCertificateUrls` became required for the status `200`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getMeBuildingsBuildingid",
+          "path": "/me/buildings/{buildingId}",
+          "section": "paths",
+          "fingerprint": "945eac12811b",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        },
+        {
+          "id": "response-property-became-required",
+          "text": "the response property `data/ratePolicies` became required for the status `200`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getMeBuildingsBuildingid",
+          "path": "/me/buildings/{buildingId}",
+          "section": "paths",
+          "fingerprint": "514fbac8c890",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        },
+        {
+          "id": "response-property-became-required",
+          "text": "the response property `data/reviewNote` became required for the status `200`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getMeBuildingsBuildingid",
+          "path": "/me/buildings/{buildingId}",
+          "section": "paths",
+          "fingerprint": "39c8bc8ed462",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        }
+      ],
+      "locations": [
+        {
+          "pointer": "/components/schemas/BuildingAdminDetailResponseDto/properties/amenities",
+          "before": {
+            "type": "object",
+            "nullable": true,
+            "description": "Các tiện ích chung của tòa nhà (thang máy, khóa vân tay, camera an ninh...)."
+          },
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/BuildingAdminDetailResponseDto/properties/description",
+          "before": {
+            "type": "string",
+            "nullable": true,
+            "maxLength": 1000,
+            "description": "Mô tả chi tiết về tòa nhà."
+          },
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/BuildingAdminDetailResponseDto/properties/district",
+          "before": {
+            "type": "string",
+            "description": "Quận / Huyện."
+          },
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/BuildingAdminDetailResponseDto/properties/landlord/properties/cccdNumber/description",
+          "before": "Số CCCD/CMND để đối chiếu với sổ đỏ.",
+          "after": "Hiện trả null; internal user lookup chưa cung cấp số CCCD/CMND."
+        },
+        {
+          "pointer": "/components/schemas/BuildingAdminDetailResponseDto/properties/landlord/properties/email/description",
+          "before": "Email của chủ nhà.",
+          "after": "Email của chủ nhà; null khi không có thông tin."
+        },
+        {
+          "pointer": "/components/schemas/BuildingAdminDetailResponseDto/properties/landlord/properties/name/description",
+          "before": "Họ và tên chủ nhà.",
+          "after": "Họ và tên chủ nhà; chuỗi rỗng khi Identity unavailable hoặc không tìm thấy user."
+        },
+        {
+          "pointer": "/components/schemas/BuildingAdminDetailResponseDto/properties/landlord/properties/phone/description",
+          "before": "Số điện thoại liên hệ.",
+          "after": "Số điện thoại liên hệ; chuỗi rỗng khi Identity unavailable hoặc không tìm thấy user."
+        },
+        {
+          "pointer": "/components/schemas/BuildingAdminDetailResponseDto/properties/landlord/required",
+          "before": [
+            "id",
+            "name",
+            "phone"
+          ],
+          "after": [
+            "id",
+            "name",
+            "phone",
+            "email",
+            "cccdNumber"
+          ]
+        },
+        {
+          "pointer": "/components/schemas/BuildingAdminDetailResponseDto/properties/occupancyRate/description",
+          "before": "Tỷ lệ lấp đầy phòng.",
+          "after": "Tỷ lệ lấp đầy phòng; hiện tạm trả '0%'."
+        },
+        {
+          "pointer": "/components/schemas/BuildingAdminDetailResponseDto/properties/occupancyRate/example",
+          "before": null,
+          "after": "0%"
+        },
+        {
+          "pointer": "/components/schemas/BuildingAdminDetailResponseDto/properties/ownershipDocuments/description",
+          "before": "Danh sách giấy tờ đất, sổ đỏ hoặc chứng từ sở hữu bất động sản tải lên để admin duyệt tay",
+          "after": "Danh sách tài liệu chứng minh sở hữu; hiện tạm trả [] khi chưa tích hợp media."
+        },
+        {
+          "pointer": "/components/schemas/BuildingAdminDetailResponseDto/properties/submittedAt/description",
+          "before": "Thời điểm chủ nhà nộp hồ sơ kiểm duyệt.",
+          "after": "Hiện lấy bằng createdAt; chưa có luồng nộp lại hồ sơ kiểm duyệt."
+        },
+        {
+          "pointer": "/components/schemas/BuildingAdminDetailResponseDto/properties/totalFloors",
+          "before": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Số tầng của tòa nhà."
+          },
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/BuildingAdminDetailResponseDto/properties/totalRooms",
+          "before": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Tổng số phòng trong tòa nhà."
+          },
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/BuildingAdminDetailResponseDto/required",
+          "before": [
+            "id",
+            "name",
+            "province",
+            "district",
+            "ward",
+            "address",
+            "totalRooms",
+            "landlordId",
+            "landlord",
+            "ownershipDocuments",
+            "status",
+            "createdAt"
+          ],
+          "after": [
+            "id",
+            "name",
+            "province",
+            "ward",
+            "address",
+            "landlordId",
+            "landlord",
+            "ownershipDocuments",
+            "status",
+            "createdAt",
+            "occupancyRate",
+            "reviewNote",
+            "submittedAt"
+          ]
+        },
+        {
+          "pointer": "/components/schemas/BuildingAdminListResponseDto/properties/documentsCount/description",
+          "before": "Số lượng tài liệu/giấy tờ sở hữu đã tải lên.",
+          "after": "Số lượng tài liệu/giấy tờ sở hữu; hiện tạm trả 0 khi chưa tích hợp media."
+        },
+        {
+          "pointer": "/components/schemas/BuildingAdminListResponseDto/properties/landlordName/description",
+          "before": "Tên chủ nhà.",
+          "after": "Tên chủ nhà; chuỗi rỗng khi Identity unavailable hoặc không tìm thấy user."
+        },
+        {
+          "pointer": "/components/schemas/BuildingAdminListResponseDto/properties/landlordPhone/description",
+          "before": "Số điện thoại của chủ nhà.",
+          "after": "Số điện thoại của chủ nhà; chuỗi rỗng khi Identity unavailable hoặc không tìm thấy user."
+        },
+        {
+          "pointer": "/components/schemas/BuildingAdminListResponseDto/properties/totalRooms",
+          "before": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Tổng số phòng trong tòa nhà."
+          },
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/BuildingAdminListResponseDto/required",
+          "before": [
+            "id",
+            "name",
+            "landlordId",
+            "landlordName",
+            "landlordPhone",
+            "status",
+            "totalRooms",
+            "documentsCount",
+            "createdAt"
+          ],
+          "after": [
+            "id",
+            "name",
+            "landlordId",
+            "landlordName",
+            "landlordPhone",
+            "status",
+            "documentsCount",
+            "createdAt"
+          ]
+        },
+        {
+          "pointer": "/components/schemas/BuildingMyDetailResponseDto/required",
+          "before": [
+            "id",
+            "name",
+            "province",
+            "ward",
+            "address",
+            "status",
+            "occupiedRooms",
+            "occupancyRate",
+            "vietQrConfigured"
+          ],
+          "after": [
+            "id",
+            "name",
+            "province",
+            "ward",
+            "address",
+            "status",
+            "occupiedRooms",
+            "occupancyRate",
+            "vietQrConfigured",
+            "reviewNote",
+            "amenities",
+            "ownershipCertificateUrls",
+            "ratePolicies",
+            "createdAt"
+          ]
+        },
+        {
+          "pointer": "/components/schemas/BuildingMyListResponseDto/properties/rejectionReason/description",
+          "before": "Lý do bị admin từ chối duyệt (nếu status = rejected).",
+          "after": "Lý do từ chối; chỉ xuất hiện khi status = rejected, các trạng thái khác không trả field này."
+        },
+        {
+          "pointer": "/components/schemas/BuildingMyListResponseDto/properties/rejectionReason/maxLength",
+          "before": null,
+          "after": 500
+        },
+        {
+          "pointer": "/components/schemas/BuildingMyListResponseDto/properties/rejectionReason/minLength",
+          "before": null,
+          "after": 1
+        },
+        {
+          "pointer": "/components/schemas/BuildingMyListResponseDto/required",
+          "before": [
+            "id",
+            "name",
+            "status",
+            "occupiedRooms",
+            "occupancyRate"
+          ],
+          "after": [
+            "id",
+            "name",
+            "status",
+            "occupiedRooms",
+            "occupancyRate",
+            "address",
+            "createdAt"
+          ]
+        },
+        {
+          "pointer": "/paths/~1admin~1buildings/get/description",
+          "before": "admin. Hàng đợi duyệt và quản lý toàn bộ tòa nhà. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 VALIDATION FAILED.",
+          "after": "admin. Hàng đợi duyệt và quản lý Building chưa bị xóa, lọc theo status, landlordId, province, ward và q.\nq tìm không phân biệt hoa/thường trong name hoặc address. Mặc định sort=createdAt, order=asc (cũ nhất trước).\nChỉ hỗ trợ format=json; xlsx/csv/pdf trả 422 VALIDATION_FAILED. Trường query/filter không hỗ trợ trả 422 UNEXPECTED_FIELD.\nLấy thông tin chủ nhà bằng một batch /internal/users; nếu Identity unavailable thì landlordName/landlordPhone là chuỗi rỗng và ghi log warn.\n\n```mermaid\nsequenceDiagram\n    autonumber\n    participant GW as API Gateway\n    participant TEN as Tenancy\n    participant DB as Tenancy DB\n    participant ID as Identity\n\n    GW->>TEN: GET /admin/buildings?filter[status|landlordId|province|ward|q]&sort&order&pageNo&pageSize\n    TEN->>TEN: Verify JWT, role admin và validate query\n    TEN->>DB: SELECT + COUNT buildings WHERE is_deleted=false<br/>+ filters + sort whitelist + LIMIT/OFFSET\n    DB-->>TEN: Buildings và totalItems\n    TEN->>TEN: Gom landlordId duy nhất trong page\n    opt Có landlordId\n        TEN->>ID: GET /internal/users?ids=uuid,uuid (X-Service-Token)\n        alt Identity trả lời\n            ID-->>TEN: data [{id, name, phone, email, ...}]\n        else Identity unavailable\n            TEN->>TEN: Log warn, dùng thông tin liên hệ rỗng\n        end\n    end\n    TEN-->>GW: 200 BUILDINGS_ADMIN_FETCHED {data, pagination}\n```"
+        },
+        {
+          "pointer": "/paths/~1admin~1buildings/get/parameters",
+          "before": [
+            {
+              "name": "filter",
+              "in": "query",
+              "required": false,
+              "style": "deepObject",
+              "explode": true,
+              "description": "Bộ lọc được endpoint hỗ trợ.",
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "status": {
+                    "type": "string"
+                  },
+                  "landlordId": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "province": {
+                    "type": "string"
+                  },
+                  "ward": {
+                    "type": "string"
+                  },
+                  "q": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            {
+              "name": "sort",
+              "in": "query",
+              "description": "Một trường sắp xếp được endpoint hỗ trợ.",
+              "schema": {
+                "type": "string",
+                "default": "createdAt"
+              }
+            },
+            {
+              "name": "order",
+              "in": "query",
+              "schema": {
+                "type": "string",
+                "enum": [
+                  "asc",
+                  "desc"
+                ],
+                "default": "asc"
+              }
+            },
+            {
+              "name": "pageSize",
+              "in": "query",
+              "schema": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 100,
+                "default": 20
+              }
+            },
+            {
+              "name": "pageNo",
+              "in": "query",
+              "schema": {
+                "type": "integer",
+                "minimum": 1,
+                "default": 1
+              }
+            },
+            {
+              "name": "format",
+              "in": "query",
+              "description": "json trả envelope; định dạng khác trả file stream.",
+              "schema": {
+                "type": "string",
+                "enum": [
+                  "json",
+                  "xlsx",
+                  "csv",
+                  "pdf"
+                ],
+                "default": "json"
+              }
+            }
+          ],
+          "after": [
+            {
+              "name": "filter",
+              "in": "query",
+              "required": false,
+              "style": "deepObject",
+              "explode": true,
+              "description": "Bộ lọc được endpoint hỗ trợ.",
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "status": {
+                    "type": "string",
+                    "enum": [
+                      "pending",
+                      "approved",
+                      "rejected"
+                    ]
+                  },
+                  "landlordId": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "province": {
+                    "type": "string"
+                  },
+                  "ward": {
+                    "type": "string"
+                  },
+                  "q": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            {
+              "name": "sort",
+              "in": "query",
+              "description": "Một trong các trường createdAt, name hoặc status.",
+              "schema": {
+                "type": "string",
+                "enum": [
+                  "createdAt",
+                  "name",
+                  "status"
+                ],
+                "default": "createdAt"
+              }
+            },
+            {
+              "name": "order",
+              "in": "query",
+              "schema": {
+                "type": "string",
+                "enum": [
+                  "asc",
+                  "desc"
+                ],
+                "default": "asc"
+              }
+            },
+            {
+              "name": "pageSize",
+              "in": "query",
+              "schema": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 100,
+                "default": 20
+              }
+            },
+            {
+              "name": "pageNo",
+              "in": "query",
+              "schema": {
+                "type": "integer",
+                "minimum": 1,
+                "default": 1
+              }
+            },
+            {
+              "name": "format",
+              "in": "query",
+              "description": "Chỉ hỗ trợ JSON envelope; giá trị khác json trả 422 VALIDATION_FAILED.",
+              "schema": {
+                "type": "string",
+                "enum": [
+                  "json"
+                ],
+                "default": "json"
+              }
+            }
+          ]
+        },
+        {
+          "pointer": "/paths/~1admin~1buildings/get/responses/200/content/application~1json/example/data",
+          "before": [
+            {
+              "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+              "name": "Tòa nhà Rentify Central Park",
+              "landlordId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+              "status": "pending",
+              "createdAt": "2026-09-20T08:00:00.000Z",
+              "landlordName": "Ví dụ",
+              "landlordPhone": "0901234567",
+              "totalRooms": 0,
+              "documentsCount": 0
+            }
+          ],
+          "after": [
+            {
+              "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+              "name": "Tòa nhà Rentify Central Park",
+              "landlordId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+              "status": "pending",
+              "createdAt": "2026-09-20T08:00:00.000Z",
+              "landlordName": "Ví dụ",
+              "landlordPhone": "0901234567",
+              "documentsCount": 0
+            }
+          ]
+        },
+        {
+          "pointer": "/paths/~1admin~1buildings/get/responses/200/content/application~1pdf",
+          "before": {
+            "schema": {
+              "type": "string",
+              "format": "binary"
+            }
+          },
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1admin~1buildings/get/responses/200/content/application~1vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+          "before": {
+            "schema": {
+              "type": "string",
+              "format": "binary"
+            }
+          },
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1admin~1buildings/get/responses/200/content/text~1csv",
+          "before": {
+            "schema": {
+              "type": "string",
+              "format": "binary"
+            }
+          },
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1admin~1buildings/get/responses/422/$ref",
+          "before": "#/components/responses/ValidationError",
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1admin~1buildings/get/responses/422/content",
+          "before": null,
+          "after": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "statusCode",
+                  "code"
+                ],
+                "properties": {
+                  "statusCode": {
+                    "type": "integer",
+                    "enum": [
+                      422
+                    ]
+                  },
+                  "code": {
+                    "type": "string",
+                    "enum": [
+                      "VALIDATION_FAILED",
+                      "UNEXPECTED_FIELD"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "pointer": "/paths/~1admin~1buildings/get/responses/422/description",
+          "before": null,
+          "after": "Filter, sort, order, pagination hoặc format không hợp lệ."
+        },
+        {
+          "pointer": "/paths/~1admin~1buildings/get/x-apidog-status",
+          "before": "designing",
+          "after": "released"
+        },
+        {
+          "pointer": "/paths/~1admin~1buildings~1{buildingId}/get/description",
+          "before": "admin. Chi tiết tòa nhà trong hàng đợi duyệt. Lỗi nghiệp vụ: 404 NOT FOUND · 403 FORBIDDEN.",
+          "after": "admin. Xem chi tiết Building chưa bị xóa ở mọi trạng thái, kèm thông tin chủ nhà từ Identity.\nKhông tồn tại hoặc đã bị xóa trả 404 RESOURCE_NOT_FOUND. Nếu Identity unavailable, name/phone là chuỗi rỗng, email và cccdNumber là null.\nTạm thời ownershipDocuments=[], occupancyRate=\"0%\", submittedAt=createdAt; CCCD chưa có trong internal lookup.\n\n```mermaid\nsequenceDiagram\n    autonumber\n    participant GW as API Gateway\n    participant TEN as Tenancy\n    participant DB as Tenancy DB\n    participant ID as Identity\n\n    GW->>TEN: GET /admin/buildings/{buildingId}\n    TEN->>TEN: Verify JWT, role admin và validate UUID\n    TEN->>DB: SELECT building WHERE id=buildingId AND is_deleted=false\n    alt Không tìm thấy\n        TEN-->>GW: 404 RESOURCE_NOT_FOUND\n    else Tìm thấy\n        DB-->>TEN: Building\n        TEN->>ID: GET /internal/users?ids=landlordId (X-Service-Token)\n        alt Identity trả lời\n            ID-->>TEN: data [{id, name, phone, email, ...}]\n        else Identity unavailable\n            TEN->>TEN: Log warn, dùng thông tin liên hệ rỗng\n        end\n        TEN-->>GW: 200 BUILDING_ADMIN_FETCHED {building, landlord, ownershipDocuments}\n    end\n```"
+        },
+        {
+          "pointer": "/paths/~1admin~1buildings~1{buildingId}/get/responses/200/content/application~1json/example/data/district",
+          "before": "Quận 1",
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1admin~1buildings~1{buildingId}/get/responses/200/content/application~1json/example/data/landlord/cccdNumber",
+          "before": null,
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1admin~1buildings~1{buildingId}/get/responses/200/content/application~1json/example/data/landlord/email",
+          "before": null,
+          "after": "landlord@example.com"
+        },
+        {
+          "pointer": "/paths/~1admin~1buildings~1{buildingId}/get/responses/200/content/application~1json/example/data/occupancyRate",
+          "before": "75.0",
+          "after": "0%"
+        },
+        {
+          "pointer": "/paths/~1admin~1buildings~1{buildingId}/get/responses/200/content/application~1json/example/data/submittedAt",
+          "before": null,
+          "after": "2026-09-20T08:00:00.000Z"
+        },
+        {
+          "pointer": "/paths/~1admin~1buildings~1{buildingId}/get/responses/200/content/application~1json/example/data/totalRooms",
+          "before": 12,
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1admin~1buildings~1{buildingId}/get/x-apidog-status",
+          "before": "designing",
+          "after": "released"
+        },
+        {
+          "pointer": "/paths/~1buildings/get/description",
+          "before": "public. Tìm tòa nhà trên sàn công khai. Lỗi nghiệp vụ: 422 VALIDATION FAILED · 429 RATE LIMIT EXCEEDED.",
+          "after": "Chưa triển khai trong Tenancy-Service hiện tại; endpoint được giữ trong tài liệu thiết kế.\npublic. Tìm tòa nhà trên sàn công khai. Lỗi nghiệp vụ: 422 VALIDATION FAILED · 429 RATE LIMIT EXCEEDED."
+        },
+        {
+          "pointer": "/paths/~1buildings~1{buildingId}/get/description",
+          "before": "public. Đọc tòa nhà (chế độ công khai). Lỗi nghiệp vụ: 404 NOT FOUND.",
+          "after": "Chưa triển khai trong Tenancy-Service hiện tại; endpoint được giữ trong tài liệu thiết kế.\npublic. Đọc tòa nhà (chế độ công khai). Lỗi nghiệp vụ: 404 NOT FOUND."
+        },
+        {
+          "pointer": "/paths/~1buildings~1{buildingId}~1approve/post/description",
+          "before": "admin. Duyệt tòa nhà. Lỗi nghiệp vụ: 404 NOT FOUND · 409 BUILDING NOT PENDING.",
+          "after": "admin. Approve Building pending; note bắt buộc, tối đa 500 ký tự. Thiếu note hoặc sai kiểu trả 422 VALIDATION_FAILED.\nNote rỗng hoặc chỉ có khoảng trắng trả 422 VALIDATION_FAILED; domain approve vẫn cho phép bỏ note khi gọi nội bộ.\nBuilding không tồn tại/đã xóa trả 404 RESOURCE_NOT_FOUND; không còn pending trả 409 BUILDING_NOT_PENDING.\nCập nhật Building và ghi outbox building.approved trong cùng transaction; relay publish sau commit, chưa gửi notification cho landlord.\n\n```mermaid\nsequenceDiagram\n    autonumber\n    participant GW as API Gateway\n    participant TEN as Tenancy\n    participant DB as Tenancy DB\n    participant MQ as RabbitMQ\n\n    GW->>TEN: POST /buildings/{buildingId}/approve {note}\n    TEN->>TEN: Verify JWT, role admin và validate request\n    TEN->>DB: BEGIN; SELECT building WHERE id=buildingId AND is_deleted=false FOR UPDATE\n    alt Không tìm thấy\n        TEN->>DB: ROLLBACK\n        TEN-->>GW: 404 RESOURCE_NOT_FOUND\n    else Không pending\n        TEN->>DB: ROLLBACK\n        TEN-->>GW: 409 BUILDING_NOT_PENDING\n    else Note không hợp lệ\n        TEN->>DB: ROLLBACK\n        TEN-->>GW: 422 VALIDATION_FAILED\n    else Hợp lệ\n        TEN->>TEN: building.approve(adminId, note)\n        TEN->>DB: UPDATE status=approved, reviewed_by, reviewed_at, note<br/>+ INSERT outbox building.approved; COMMIT\n        Note over TEN,DB: Lỗi lưu Building/outbox sẽ rollback toàn bộ transaction\n        TEN-->>GW: 200 BUILDING_APPROVED\n        TEN-)MQ: Outbox relay publish building.approved sau commit\n    end\n```"
+        },
+        {
+          "pointer": "/paths/~1buildings~1{buildingId}~1approve/post/x-apidog-status",
+          "before": "designing",
+          "after": "released"
+        },
+        {
+          "pointer": "/paths/~1buildings~1{buildingId}~1rate-policies~1batch/post/description",
+          "before": "landlord. Thiết lập hàng loạt các chính sách đơn giá tiện ích và phí dịch vụ cho tòa nhà (bước 3/3 wizard tạo tài sản). Lỗi nghiệp vụ: 404 BUILDING NOT FOUND · 403 FORBIDDEN · 422 VALIDATION FAILED.",
+          "after": "Chưa triển khai trong Tenancy-Service hiện tại; endpoint được giữ trong tài liệu thiết kế.\nlandlord. Thiết lập hàng loạt các chính sách đơn giá tiện ích và phí dịch vụ cho tòa nhà (bước 3/3 wizard tạo tài sản). Lỗi nghiệp vụ: 404 BUILDING NOT FOUND · 403 FORBIDDEN · 422 VALIDATION FAILED."
+        },
+        {
+          "pointer": "/paths/~1buildings~1{buildingId}~1reject/post/description",
+          "before": "admin. Từ chối tòa nhà. Lỗi nghiệp vụ: 404 NOT FOUND · 409 BUILDING NOT PENDING · 422 NOTE REQUIRED.",
+          "after": "admin. Reject Building pending; note bắt buộc, tối đa 500 ký tự. Thiếu note hoặc sai kiểu trả 422 VALIDATION_FAILED.\nNote rỗng hoặc chỉ có khoảng trắng trả 422 NOTE_REQUIRED (domain validation).\nBuilding không tồn tại/đã xóa trả 404 RESOURCE_NOT_FOUND; không còn pending trả 409 BUILDING_NOT_PENDING.\nCập nhật Building và ghi outbox building.rejected trong cùng transaction; relay publish sau commit, chưa gửi notification cho landlord.\n\n```mermaid\nsequenceDiagram\n    autonumber\n    participant GW as API Gateway\n    participant TEN as Tenancy\n    participant DB as Tenancy DB\n    participant MQ as RabbitMQ\n\n    GW->>TEN: POST /buildings/{buildingId}/reject {note}\n    TEN->>TEN: Verify JWT, role admin và validate request\n    TEN->>DB: BEGIN; SELECT building WHERE id=buildingId AND is_deleted=false FOR UPDATE\n    alt Không tìm thấy\n        TEN->>DB: ROLLBACK\n        TEN-->>GW: 404 RESOURCE_NOT_FOUND\n    else Không pending\n        TEN->>DB: ROLLBACK\n        TEN-->>GW: 409 BUILDING_NOT_PENDING\n    else Note không hợp lệ\n        TEN->>DB: ROLLBACK\n        TEN-->>GW: 422 NOTE_REQUIRED / VALIDATION_FAILED\n    else Hợp lệ\n        TEN->>TEN: building.reject(adminId, note)\n        TEN->>DB: UPDATE status=rejected, reviewed_by, reviewed_at, note<br/>+ INSERT outbox building.rejected; COMMIT\n        Note over TEN,DB: Lỗi lưu Building/outbox sẽ rollback toàn bộ transaction\n        TEN-->>GW: 200 BUILDING_REJECTED\n        TEN-)MQ: Outbox relay publish building.rejected sau commit\n    end\n```"
+        },
+        {
+          "pointer": "/paths/~1buildings~1{buildingId}~1reject/post/x-apidog-status",
+          "before": "designing",
+          "after": "released"
+        },
+        {
+          "pointer": "/paths/~1buildings~1{buildingId}~1vietqr-config/put/description",
+          "before": "landlord. Cấu hình tài khoản ngân hàng nhận tiền chuyển khoản và sinh mã VietQR động cho tòa nhà. Lỗi nghiệp vụ: 404 BUILDING NOT FOUND · 403 FORBIDDEN · 422 INVALID BANK ACCOUNT.",
+          "after": "Chưa triển khai trong Tenancy-Service hiện tại; endpoint được giữ trong tài liệu thiết kế.\nlandlord. Cấu hình tài khoản ngân hàng nhận tiền chuyển khoản và sinh mã VietQR động cho tòa nhà. Lỗi nghiệp vụ: 404 BUILDING NOT FOUND · 403 FORBIDDEN · 422 INVALID BANK ACCOUNT."
+        },
+        {
+          "pointer": "/paths/~1me~1buildings/get/responses/200/content/application~1json/example/data",
+          "before": [
+            {
+              "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+              "name": "Tòa nhà Rentify Central Park",
+              "status": "approved",
+              "occupancyRate": "0%",
+              "occupiedRooms": 0
+            }
+          ],
+          "after": [
+            {
+              "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+              "name": "Tòa nhà Rentify Central Park",
+              "address": "12 Nguyễn Trãi",
+              "status": "approved",
+              "occupancyRate": "0%",
+              "occupiedRooms": 0,
+              "createdAt": "2026-09-20T08:00:00.000Z"
+            }
+          ]
+        },
+        {
+          "pointer": "/paths/~1me~1buildings~1{buildingId}/get/responses/200/content/application~1json/example/data/createdAt",
+          "before": null,
+          "after": "2026-09-20T08:00:00.000Z"
+        }
+      ],
+      "semanticDiff": {
+        "paths": {
+          "modified": {
+            "/admin/buildings": {
+              "operations": {
+                "modified": {
+                  "GET": {
+                    "extensions": {
+                      "modified": {
+                        "x-apidog-status": [
+                          {
+                            "oldValue": "designing",
+                            "value": "released",
+                            "op": "replace",
+                            "from": "",
+                            "path": ""
+                          }
+                        ]
+                      }
+                    },
+                    "parameters": {
+                      "modified": {
+                        "query": {
+                          "filter": {
+                            "schema": {
+                              "properties": {
+                                "modified": {
+                                  "status": {
+                                    "enum": {
+                                      "enumAdded": true,
+                                      "added": [
+                                        "pending",
+                                        "approved",
+                                        "rejected"
+                                      ]
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          },
+                          "format": {
+                            "schema": {
+                              "enum": {
+                                "deleted": [
+                                  "xlsx",
+                                  "csv",
+                                  "pdf"
+                                ]
+                              }
+                            }
+                          },
+                          "sort": {
+                            "schema": {
+                              "enum": {
+                                "enumAdded": true,
+                                "added": [
+                                  "createdAt",
+                                  "name",
+                                  "status"
+                                ]
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "responses": {
+                      "modified": {
+                        "200": {
+                          "content": {
+                            "deleted": [
+                              "application/pdf",
+                              "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                              "text/csv"
+                            ],
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "properties": {
+                                    "modified": {
+                                      "data": {
+                                        "items": {
+                                          "required": {
+                                            "deleted": [
+                                              "totalRooms"
+                                            ]
+                                          },
+                                          "properties": {
+                                            "deleted": [
+                                              "totalRooms"
+                                            ]
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "422": {
+                          "extensions": {
+                            "deleted": [
+                              "x-apidog-name"
+                            ]
+                          },
+                          "content": {
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "properties": {
+                                    "modified": {
+                                      "code": {
+                                        "enum": {
+                                          "added": [
+                                            "UNEXPECTED_FIELD"
+                                          ]
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "/admin/buildings/{buildingId}": {
+              "operations": {
+                "modified": {
+                  "GET": {
+                    "extensions": {
+                      "modified": {
+                        "x-apidog-status": [
+                          {
+                            "oldValue": "designing",
+                            "value": "released",
+                            "op": "replace",
+                            "from": "",
+                            "path": ""
+                          }
+                        ]
+                      }
+                    },
+                    "responses": {
+                      "modified": {
+                        "200": {
+                          "content": {
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "properties": {
+                                    "modified": {
+                                      "data": {
+                                        "required": {
+                                          "added": [
+                                            "occupancyRate",
+                                            "reviewNote",
+                                            "submittedAt"
+                                          ],
+                                          "deleted": [
+                                            "district",
+                                            "totalRooms"
+                                          ]
+                                        },
+                                        "properties": {
+                                          "deleted": [
+                                            "description",
+                                            "district",
+                                            "amenities",
+                                            "totalRooms",
+                                            "totalFloors"
+                                          ],
+                                          "modified": {
+                                            "landlord": {
+                                              "required": {
+                                                "added": [
+                                                  "cccdNumber",
+                                                  "email"
+                                                ]
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "/buildings/{buildingId}/approve": {
+              "operations": {
+                "modified": {
+                  "POST": {
+                    "extensions": {
+                      "modified": {
+                        "x-apidog-status": [
+                          {
+                            "oldValue": "designing",
+                            "value": "released",
+                            "op": "replace",
+                            "from": "",
+                            "path": ""
+                          }
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "/buildings/{buildingId}/reject": {
+              "operations": {
+                "modified": {
+                  "POST": {
+                    "extensions": {
+                      "modified": {
+                        "x-apidog-status": [
+                          {
+                            "oldValue": "designing",
+                            "value": "released",
+                            "op": "replace",
+                            "from": "",
+                            "path": ""
+                          }
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "/me/buildings": {
+              "operations": {
+                "modified": {
+                  "GET": {
+                    "responses": {
+                      "modified": {
+                        "200": {
+                          "content": {
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "properties": {
+                                    "modified": {
+                                      "data": {
+                                        "items": {
+                                          "required": {
+                                            "added": [
+                                              "createdAt",
+                                              "address"
+                                            ]
+                                          },
+                                          "properties": {
+                                            "modified": {
+                                              "rejectionReason": {
+                                                "minLength": {
+                                                  "from": 0,
+                                                  "to": 1
+                                                },
+                                                "maxLength": {
+                                                  "from": null,
+                                                  "to": 500
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "/me/buildings/{buildingId}": {
+              "operations": {
+                "modified": {
+                  "GET": {
+                    "responses": {
+                      "modified": {
+                        "200": {
+                          "content": {
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "properties": {
+                                    "modified": {
+                                      "data": {
+                                        "required": {
+                                          "added": [
+                                            "reviewNote",
+                                            "amenities",
+                                            "ownershipCertificateUrls",
+                                            "ratePolicies",
+                                            "createdAt"
+                                          ]
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "components": {
+          "schemas": {
+            "modified": {
+              "BuildingAdminDetailResponseDto": {
+                "required": {
+                  "added": [
+                    "occupancyRate",
+                    "reviewNote",
+                    "submittedAt"
+                  ],
+                  "deleted": [
+                    "district",
+                    "totalRooms"
+                  ]
+                },
+                "properties": {
+                  "deleted": [
+                    "totalRooms",
+                    "totalFloors",
+                    "description",
+                    "district",
+                    "amenities"
+                  ],
+                  "modified": {
+                    "landlord": {
+                      "required": {
+                        "added": [
+                          "cccdNumber",
+                          "email"
+                        ]
+                      }
+                    }
+                  }
+                }
+              },
+              "BuildingAdminListResponseDto": {
+                "required": {
+                  "deleted": [
+                    "totalRooms"
+                  ]
+                },
+                "properties": {
+                  "deleted": [
+                    "totalRooms"
+                  ]
+                }
+              },
+              "BuildingMyDetailResponseDto": {
+                "required": {
+                  "added": [
+                    "ownershipCertificateUrls",
+                    "reviewNote",
+                    "amenities",
+                    "ratePolicies",
+                    "createdAt"
+                  ]
+                }
+              },
+              "BuildingMyListResponseDto": {
+                "required": {
+                  "added": [
+                    "address",
+                    "createdAt"
+                  ]
+                },
+                "properties": {
+                  "modified": {
+                    "rejectionReason": {
+                      "minLength": {
+                        "from": 0,
+                        "to": 1
+                      },
+                      "maxLength": {
+                        "from": null,
+                        "to": 500
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   ]
 }
