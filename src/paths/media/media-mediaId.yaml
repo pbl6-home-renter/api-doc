@@ -2,13 +2,20 @@ get:
   tags:
   - Operation
   x-apidog-folder: Media
-  x-apidog-status: designing
+  x-apidog-status: released
   operationId: getMediaMediaid
   security:
     - BearerAuth: []
   summary: Get or stream media
-  description: 'Quyền kế thừa từ tài nguyên cha. Đọc hoặc stream một tệp. Lỗi nghiệp vụ: 404 NOT FOUND · 403 FORBIDDEN
-    · 410 MEDIA DELETED.'
+  description: |-
+    Stream nội dung một Media đã complete (không bọc JSON envelope). Dùng cho file **private**: `url` trả về từ complete-upload có dạng `/api/v1/media/{mediaId}`.
+
+    - File public (`avatar`, `cover_photo`, `gallery_photo`) đã có URL R2 public, client nên dùng URL đó thay vì gọi endpoint này.
+    - Cần Bearer token (gateway không mở public route này), nên trình duyệt không thể dùng trực tiếp trong `<img src>`; web phải tải về dạng blob rồi tạo object URL.
+    - Quyền đọc: admin, người upload, và các vai trò theo `purpose` (xem bảng ở `POST /media/presign-upload`).
+    - `Content-Disposition: inline; filename*=UTF-8''<fileName>`.
+
+    Lỗi nghiệp vụ: 401 UNAUTHORIZED · 403 FORBIDDEN · 404 RESOURCE_NOT_FOUND (không tồn tại hoặc chưa complete) · 410 MEDIA_DELETED.
   parameters:
   - name: mediaId
     in: path
@@ -28,6 +35,15 @@ get:
           description: MIME type của tệp.
           schema:
             type: string
+            enum:
+              - image/jpeg
+              - image/png
+              - image/webp
+              - application/pdf
+        Content-Length:
+          description: Kích thước tệp tính bằng byte.
+          schema:
+            type: integer
       content:
         application/octet-stream:
           schema:
@@ -38,7 +54,37 @@ get:
     '401':
       $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
     '503':
-      $ref: ../../openapi.yaml#/components/responses/AuthUnavailableError
+      x-apidog-name: Service Unavailable
+      description: Hạ tầng xác thực, storage hoặc service sở hữu thực thể cha tạm thời không khả dụng.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code]
+            properties:
+              statusCode:
+                type: integer
+                enum: [503]
+              code:
+                type: string
+                enum:
+                  - AUTH_UNAVAILABLE
+                  - SERVICE_UNAVAILABLE
+                description: |-
+                  - AUTH_UNAVAILABLE: Hạ tầng xác thực tạm thời không khả dụng.
+                  - SERVICE_UNAVAILABLE: Storage (R2) chưa được cấu hình, hoặc service sở hữu thực thể cha chưa sẵn sàng (hiện tại `issue_report`, `message`).
+          examples:
+            auth_unavailable:
+              summary: AUTH_UNAVAILABLE — Hạ tầng xác thực tạm thời không khả dụng.
+              value:
+                statusCode: 503
+                code: AUTH_UNAVAILABLE
+            service_unavailable:
+              summary: SERVICE_UNAVAILABLE — Storage hoặc service sở hữu chưa sẵn sàng.
+              value:
+                statusCode: 503
+                code: SERVICE_UNAVAILABLE
     '403':
       $ref: ../../openapi.yaml#/components/responses/ForbiddenError
     '404':
@@ -74,12 +120,18 @@ delete:
   tags:
   - Operation
   x-apidog-folder: Media
-  x-apidog-status: designing
+  x-apidog-status: released
   operationId: deleteMediaMediaid
   security:
     - BearerAuth: []
   summary: Delete media
-  description: 'tenant, landlord, admin. Xóa mềm tệp. Lỗi nghiệp vụ: 403 FORBIDDEN · 409 CAN''T DELETE.'
+  description: |-
+    tenant, landlord, admin. Xóa mềm Media và xóa object trên storage. Chỉ người upload hoặc admin được xóa.
+
+    - `ownership_proof` của building đã `approved` và `contract_signed` của HĐ đã có hiệu lực là bằng chứng, không xóa được (`409 CANNOT_DELETE`).
+    - Với `avatar`/`cover_photo` không cần xóa file cũ trước khi upload file mới: complete file mới tự thay file cũ.
+
+    Lỗi nghiệp vụ: 403 FORBIDDEN · 404 RESOURCE_NOT_FOUND · 409 CANNOT_DELETE · 410 MEDIA_DELETED (đã xóa trước đó).
   parameters:
   - name: mediaId
     in: path
@@ -95,7 +147,37 @@ delete:
     '401':
       $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
     '503':
-      $ref: ../../openapi.yaml#/components/responses/AuthUnavailableError
+      x-apidog-name: Service Unavailable
+      description: Hạ tầng xác thực, storage hoặc service sở hữu thực thể cha tạm thời không khả dụng.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code]
+            properties:
+              statusCode:
+                type: integer
+                enum: [503]
+              code:
+                type: string
+                enum:
+                  - AUTH_UNAVAILABLE
+                  - SERVICE_UNAVAILABLE
+                description: |-
+                  - AUTH_UNAVAILABLE: Hạ tầng xác thực tạm thời không khả dụng.
+                  - SERVICE_UNAVAILABLE: Storage (R2) chưa được cấu hình, hoặc service sở hữu thực thể cha chưa sẵn sàng (hiện tại `issue_report`, `message`).
+          examples:
+            auth_unavailable:
+              summary: AUTH_UNAVAILABLE — Hạ tầng xác thực tạm thời không khả dụng.
+              value:
+                statusCode: 503
+                code: AUTH_UNAVAILABLE
+            service_unavailable:
+              summary: SERVICE_UNAVAILABLE — Storage hoặc service sở hữu chưa sẵn sàng.
+              value:
+                statusCode: 503
+                code: SERVICE_UNAVAILABLE
     '403':
       $ref: ../../openapi.yaml#/components/responses/ForbiddenError
     '404':
@@ -118,13 +200,36 @@ delete:
                 enum:
                   - CANNOT_DELETE
                 description: |-
-                  - CANNOT_DELETE: Tài nguyên chưa đủ điều kiện để xóa.
+                  - CANNOT_DELETE: File đang là bằng chứng (building đã duyệt / HĐ đã có hiệu lực), không được xóa.
           examples:
             cannot_delete:
-              summary: CANNOT_DELETE — Tài nguyên chưa đủ điều kiện để xóa.
+              summary: CANNOT_DELETE — File đang là bằng chứng, không được xóa.
               value:
                 statusCode: 409
                 code: CANNOT_DELETE
+    '410':
+      x-apidog-name: Gone
+      description: Media đã bị xóa trước đó.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code]
+            properties:
+              statusCode:
+                type: integer
+                enum: [410]
+              code:
+                type: string
+                enum:
+                  - MEDIA_DELETED
+          examples:
+            media_deleted:
+              summary: MEDIA_DELETED — Media đã bị xóa.
+              value:
+                statusCode: 410
+                code: MEDIA_DELETED
     '429':
       $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
     '500':

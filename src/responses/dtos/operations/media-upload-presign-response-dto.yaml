@@ -49,11 +49,13 @@ properties:
 
   uploadUrl:
     type: string
-    description: Signed URL để client upload trực tiếp lên storage
-    example: https://storage.example.com/upload-ticket
+    format: uri
+    description: "Presigned URL (Cloudflare R2, S3 API) để client `PUT` thân file (raw binary, không multipart) trực tiếp lên storage. Chỉ gửi đúng các header trong `requiredHeaders`, không gửi `Authorization`. Hết hạn sau `expiresIn` giây."
+    example: https://account-id.r2.cloudflarestorage.com/rentify-media-public/room/3fa85f64-5717-4562-b3fc-2c963f66afa6/3fa85f64-5717-4562-b3fc-2c963f66afa6.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Expires=900&X-Amz-SignedHeaders=content-type%3Bhost&X-Amz-Signature=abc123
 
   requiredHeaders:
     type: object
+    description: "Header bắt buộc khi PUT lên `uploadUrl`. `Content-Type` được ký vào URL nên phải gửi đúng giá trị này, sai thì storage trả 403."
     properties:
       Content-Type:
         type: string
@@ -69,9 +71,8 @@ properties:
 
   expiresIn:
     type: integer
-    enum:
-      - 900
-    description: Thời gian upload ticket có hiệu lực tính bằng giây
+    minimum: 1
+    description: "Thời gian `uploadUrl` và upload ticket có hiệu lực, tính bằng giây (cấu hình `MEDIA_UPLOAD_TTL_SECONDS`, mặc định 900). Quá hạn thì complete-upload trả `410 TICKET_EXPIRED`, phải presign lại."
     example: 900
 
 

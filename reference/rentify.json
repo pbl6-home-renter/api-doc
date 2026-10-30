@@ -4888,7 +4888,7 @@
           "Operation"
         ],
         "x-apidog-folder": "Media",
-        "x-apidog-status": "designing",
+        "x-apidog-status": "released",
         "operationId": "postMediaPresignUpload",
         "security": [
           {
@@ -4896,7 +4896,7 @@
           }
         ],
         "summary": "Request presigned upload URL",
-        "description": "tenant, landlord, admin. Xin URL upload đã ký để đẩy file trực tiếp lên Storage. Nghiệp vụ: Với ảnh công tơ điện nước, tenant chỉ được dùng camera trực tiếp (camera_direct), landlord được upload từ bộ nhớ máy (device_storage). Lỗi nghiệp vụ: 403 FORBIDDEN · 422 VALIDATION FAILED.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
+        "description": "tenant, landlord, admin. Bước 1/3 của luồng upload: xin upload ticket + presigned URL để client PUT file trực tiếp lên storage (Cloudflare R2). Server không nhận bytes file.\n\n**Luồng upload**\n\n1. `POST /media/presign-upload` → nhận `id`, `uploadUrl`, `requiredHeaders`, `expiresIn`.\n2. `PUT {uploadUrl}` với body là file (binary) và đúng `requiredHeaders` (không gửi `Authorization`).\n3. `POST /media/{id}/complete-upload` → server kiểm tra object trên storage và trả `url` để đọc.\n\nLiên kết file với thực thể cha được xác định ngay lúc presign qua `ownerType` + `ownerId` + `purpose`; không có bước \"gắn\" riêng. Các API nghiệp vụ khác (ví dụ `photoMediaIds` khi tạo phòng) nhận `id` của Media đã complete.\n\n**Quy tắc theo `purpose`** (admin luôn được upload; người upload luôn đọc được file của mình)\n\n| purpose | ownerType hợp lệ | MIME cho phép | Hiển thị | Ai được upload | Ghi chú |\n|---|---|---|---|---|---|\n| `avatar` | `user` | jpeg, png, webp | public | chính user đó | 1 file/owner, file mới thay file cũ |\n| `cover_photo` | `building`, `room` | jpeg, png, webp | public | landlord sở hữu | 1 file/owner, file mới thay file cũ |\n| `gallery_photo` | `building`, `room` | jpeg, png, webp | public | landlord sở hữu | |\n| `ownership_proof` | `building` | jpeg, png, webp, pdf | private | landlord sở hữu | không xóa được khi building `approved` |\n| `cccd_front`, `cccd_back` | `user`, `contract_member` | jpeg, png, webp | private | chính user, thành viên HĐ, landlord sở hữu | |\n| `contract_template` | `contract` | pdf | private | landlord sở hữu | |\n| `contract_signed` | `contract` | jpeg, png, webp, pdf | private | landlord sở hữu | không xóa được khi HĐ `signed/active/suspended/expired/terminated` |\n| `meter_reading_evidence` | `meter_reading` | jpeg, png, webp | private | landlord sở hữu; tenant của HĐ chỉ với `captureSource = camera_direct` | |\n| `issue_photo` | `issue_report` | jpeg, png, webp | private | người trong HĐ, landlord sở hữu | chưa hỗ trợ (503) |\n| `chat_attachment` | `message` | jpeg, png, webp, pdf | private | người trong hội thoại | chưa hỗ trợ (503) |\n\nKích thước tối đa 10 MiB cho mọi purpose. Không hỗ trợ SVG/HTML/video.\n\nLỗi nghiệp vụ: 403 FORBIDDEN (không có quyền với thực thể cha, hoặc thực thể cha không tồn tại) · 422 INVALID_PURPOSE (`purpose` không hợp lệ với `ownerType`) · 422 MEDIA_TYPE_NOT_ALLOWED (MIME, đuôi file hoặc kích thước không hợp lệ) · 503 SERVICE_UNAVAILABLE.\n\n```mermaid\nsequenceDiagram\n    autonumber\n    participant C as Client\n    participant GW as API Gateway\n    participant ID as Identity\n    participant TN as Tenancy\n    participant R2 as Cloudflare R2\n\n    C->>GW: POST /media/presign-upload {ownerType, ownerId, purpose, fileName, contentType, size}\n    GW->>ID: forward + Authorization\n    ID->>ID: Kiểm tra purpose ↔ ownerType, MIME, đuôi file, size\n    ID->>TN: GET /internal/ownership/{ownerType}/{ownerId} (trừ ownerType = user)\n    ID->>ID: Lưu Media pending_upload, ký PUT URL (Content-Type)\n    ID-->>C: 201 MEDIA_UPLOAD_TICKET_ISSUED {id, uploadUrl, requiredHeaders, expiresIn}\n    C->>R2: PUT uploadUrl + Content-Type (binary)\n    R2-->>C: 200\n    C->>GW: POST /media/{id}/complete-upload\n    GW->>ID: forward\n    ID->>R2: HEAD object (so khớp size + Content-Type)\n    ID-->>C: 200 MEDIA_UPLOAD_COMPLETED {id, fileType, url}\n```\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "requestBody": {
           "required": true,
           "content": {
@@ -4954,7 +4954,7 @@
                     "ownerType": "room",
                     "ownerId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
                     "purpose": "cover_photo",
-                    "uploadUrl": "https://example.com/upload",
+                    "uploadUrl": "https://account-id.r2.cloudflarestorage.com/rentify-media-public/room/3fa85f64-5717-4562-b3fc-2c963f66afa6/3fa85f64-5717-4562-b3fc-2c963f66afa6.jpg?X-Amz-Signature=abc123",
                     "requiredHeaders": {
                       "Content-Type": "image/jpeg"
                     },
@@ -5006,9 +5006,10 @@
                       "enum": [
                         "MEDIA_TYPE_NOT_ALLOWED",
                         "INVALID_PURPOSE",
-                        "VALIDATION_FAILED"
+                        "VALIDATION_FAILED",
+                        "UNEXPECTED_FIELD"
                       ],
-                      "description": "- MEDIA_TYPE_NOT_ALLOWED: Loại MIME hoặc kích thước tệp không được phép.\n- INVALID_PURPOSE: Mục đích upload không phù hợp với tài nguyên cha.\n- VALIDATION_FAILED: Lỗi validation khác chưa có mã cụ thể."
+                      "description": "- MEDIA_TYPE_NOT_ALLOWED: MIME không thuộc danh sách của purpose, đuôi `fileName` không khớp `contentType`, hoặc `size` vượt giới hạn.\n- INVALID_PURPOSE: Mục đích upload không phù hợp với `ownerType`.\n- VALIDATION_FAILED: Thiếu field, sai kiểu hoặc sai enum.\n- UNEXPECTED_FIELD: Body có field ngoài contract."
                     }
                   }
                 },
@@ -5028,10 +5029,17 @@
                     }
                   },
                   "validation_failed": {
-                    "summary": "VALIDATION_FAILED — Lỗi validation khác chưa có mã cụ thể.",
+                    "summary": "VALIDATION_FAILED — Thiếu field, sai kiểu hoặc sai enum.",
                     "value": {
                       "statusCode": 422,
                       "code": "VALIDATION_FAILED"
+                    }
+                  },
+                  "unexpected_field": {
+                    "summary": "UNEXPECTED_FIELD — Body có field ngoài contract.",
+                    "value": {
+                      "statusCode": 422,
+                      "code": "UNEXPECTED_FIELD"
                     }
                   }
                 }
@@ -5045,7 +5053,52 @@
             "$ref": "#/components/responses/InternalServerError"
           },
           "503": {
-            "$ref": "#/components/responses/AuthUnavailableError"
+            "x-apidog-name": "Service Unavailable",
+            "description": "Hạ tầng xác thực, storage hoặc service sở hữu thực thể cha tạm thời không khả dụng.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        503
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "AUTH_UNAVAILABLE",
+                        "SERVICE_UNAVAILABLE"
+                      ],
+                      "description": "- AUTH_UNAVAILABLE: Hạ tầng xác thực tạm thời không khả dụng.\n- SERVICE_UNAVAILABLE: Storage (R2) chưa được cấu hình, hoặc service sở hữu thực thể cha chưa sẵn sàng (hiện tại `issue_report`, `message`)."
+                    }
+                  }
+                },
+                "examples": {
+                  "auth_unavailable": {
+                    "summary": "AUTH_UNAVAILABLE — Hạ tầng xác thực tạm thời không khả dụng.",
+                    "value": {
+                      "statusCode": 503,
+                      "code": "AUTH_UNAVAILABLE"
+                    }
+                  },
+                  "service_unavailable": {
+                    "summary": "SERVICE_UNAVAILABLE — Storage hoặc service sở hữu chưa sẵn sàng.",
+                    "value": {
+                      "statusCode": 503,
+                      "code": "SERVICE_UNAVAILABLE"
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -5056,7 +5109,7 @@
           "Operation"
         ],
         "x-apidog-folder": "Media",
-        "x-apidog-status": "designing",
+        "x-apidog-status": "released",
         "operationId": "postMediaMediaidCompleteUpload",
         "security": [
           {
@@ -5064,7 +5117,7 @@
           }
         ],
         "summary": "Complete media upload",
-        "description": "tenant, landlord, admin. Chốt upload. Lỗi nghiệp vụ: 404 NOT FOUND · 403 FORBIDDEN · 409 UPLOAD NOT COMPLETED · 410 TICKET EXPIRED.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
+        "description": "tenant, landlord, admin. Bước 3/3 của luồng upload: gọi sau khi PUT file lên `uploadUrl` thành công. Không có body.\n\n- Chỉ người đã presign mới được complete.\n- Server `HEAD` object trên storage; kích thước và `Content-Type` thật phải khớp đúng `size`/`contentType` lúc presign, nếu lệch thì object bị xóa và trả `422 MEDIA_TYPE_NOT_ALLOWED` (phải presign lại).\n- Idempotent: gọi lại trên Media đã complete trả lại cùng kết quả `200`.\n- Với `avatar`/`cover_photo` (1 file/owner), file cũ cùng owner + purpose bị xóa mềm khi file mới complete.\n- `url`: purpose public trả URL tuyệt đối trên R2; purpose private trả `/api/v1/media/{mediaId}`.\n\nLỗi nghiệp vụ: 403 FORBIDDEN (không phải người upload) · 404 RESOURCE_NOT_FOUND · 409 UPLOAD_NOT_COMPLETED (chưa thấy file trên storage) · 410 TICKET_EXPIRED · 410 MEDIA_DELETED · 422 MEDIA_TYPE_NOT_ALLOWED.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "parameters": [
           {
             "name": "mediaId",
@@ -5116,7 +5169,7 @@
                     "ownerId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
                     "purpose": "cover_photo",
                     "fileType": "image",
-                    "url": "https://example.com/upload"
+                    "url": "https://pub-xxxx.r2.dev/room/3fa85f64-5717-4562-b3fc-2c963f66afa6/3fa85f64-5717-4562-b3fc-2c963f66afa6.jpg"
                   }
                 }
               }
@@ -5158,7 +5211,7 @@
                       "enum": [
                         "UPLOAD_NOT_COMPLETED"
                       ],
-                      "description": "- UPLOAD_NOT_COMPLETED: Tệp chưa được tải lên hoàn tất."
+                      "description": "- UPLOAD_NOT_COMPLETED: Chưa thấy object trên storage (chưa PUT hoặc PUT thất bại). Client PUT lại rồi gọi complete lần nữa khi ticket còn hạn."
                     }
                   }
                 },
@@ -5176,7 +5229,7 @@
           },
           "410": {
             "x-apidog-name": "Gone",
-            "description": "Phiếu tải lên đã hết hạn.",
+            "description": "Phiếu tải lên đã hết hạn hoặc Media đã bị xóa.",
             "content": {
               "application/json": {
                 "schema": {
@@ -5196,8 +5249,10 @@
                     "code": {
                       "type": "string",
                       "enum": [
-                        "TICKET_EXPIRED"
-                      ]
+                        "TICKET_EXPIRED",
+                        "MEDIA_DELETED"
+                      ],
+                      "description": "- TICKET_EXPIRED: Quá `expiresIn` mà chưa complete; phải presign lại.\n- MEDIA_DELETED: Media đã bị xóa mềm."
                     }
                   }
                 },
@@ -5207,6 +5262,53 @@
                     "value": {
                       "statusCode": 410,
                       "code": "TICKET_EXPIRED"
+                    }
+                  },
+                  "media_deleted": {
+                    "summary": "MEDIA_DELETED — Media đã bị xóa.",
+                    "value": {
+                      "statusCode": 410,
+                      "code": "MEDIA_DELETED"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "422": {
+            "x-apidog-name": "Unprocessable Entity",
+            "description": "File trên storage không khớp upload ticket.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        422
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "MEDIA_TYPE_NOT_ALLOWED"
+                      ],
+                      "description": "- MEDIA_TYPE_NOT_ALLOWED: Kích thước hoặc `Content-Type` của object khác lúc presign; object đã bị xóa, phải presign lại."
+                    }
+                  }
+                },
+                "examples": {
+                  "media_type_not_allowed": {
+                    "summary": "MEDIA_TYPE_NOT_ALLOWED — File trên storage không khớp upload ticket.",
+                    "value": {
+                      "statusCode": 422,
+                      "code": "MEDIA_TYPE_NOT_ALLOWED"
                     }
                   }
                 }
@@ -5220,7 +5322,52 @@
             "$ref": "#/components/responses/InternalServerError"
           },
           "503": {
-            "$ref": "#/components/responses/AuthUnavailableError"
+            "x-apidog-name": "Service Unavailable",
+            "description": "Hạ tầng xác thực hoặc storage tạm thời không khả dụng.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        503
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "AUTH_UNAVAILABLE",
+                        "SERVICE_UNAVAILABLE"
+                      ],
+                      "description": "- AUTH_UNAVAILABLE: Hạ tầng xác thực tạm thời không khả dụng.\n- SERVICE_UNAVAILABLE: Storage (R2) chưa được cấu hình, hoặc service sở hữu thực thể cha chưa sẵn sàng (hiện tại `issue_report`, `message`)."
+                    }
+                  }
+                },
+                "examples": {
+                  "auth_unavailable": {
+                    "summary": "AUTH_UNAVAILABLE — Hạ tầng xác thực tạm thời không khả dụng.",
+                    "value": {
+                      "statusCode": 503,
+                      "code": "AUTH_UNAVAILABLE"
+                    }
+                  },
+                  "service_unavailable": {
+                    "summary": "SERVICE_UNAVAILABLE — Storage hoặc service sở hữu chưa sẵn sàng.",
+                    "value": {
+                      "statusCode": 503,
+                      "code": "SERVICE_UNAVAILABLE"
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -5231,7 +5378,7 @@
           "Operation"
         ],
         "x-apidog-folder": "Media",
-        "x-apidog-status": "designing",
+        "x-apidog-status": "released",
         "operationId": "getMediaMediaid",
         "security": [
           {
@@ -5239,7 +5386,7 @@
           }
         ],
         "summary": "Get or stream media",
-        "description": "Quyền kế thừa từ tài nguyên cha. Đọc hoặc stream một tệp. Lỗi nghiệp vụ: 404 NOT FOUND · 403 FORBIDDEN · 410 MEDIA DELETED.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `401` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
+        "description": "Stream nội dung một Media đã complete (không bọc JSON envelope). Dùng cho file **private**: `url` trả về từ complete-upload có dạng `/api/v1/media/{mediaId}`.\n\n- File public (`avatar`, `cover_photo`, `gallery_photo`) đã có URL R2 public, client nên dùng URL đó thay vì gọi endpoint này.\n- Cần Bearer token (gateway không mở public route này), nên trình duyệt không thể dùng trực tiếp trong `<img src>`; web phải tải về dạng blob rồi tạo object URL.\n- Quyền đọc: admin, người upload, và các vai trò theo `purpose` (xem bảng ở `POST /media/presign-upload`).\n- `Content-Disposition: inline; filename*=UTF-8''<fileName>`.\n\nLỗi nghiệp vụ: 401 UNAUTHORIZED · 403 FORBIDDEN · 404 RESOURCE_NOT_FOUND (không tồn tại hoặc chưa complete) · 410 MEDIA_DELETED.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `401` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "parameters": [
           {
             "name": "mediaId",
@@ -5264,7 +5411,19 @@
               "Content-Type": {
                 "description": "MIME type của tệp.",
                 "schema": {
-                  "type": "string"
+                  "type": "string",
+                  "enum": [
+                    "image/jpeg",
+                    "image/png",
+                    "image/webp",
+                    "application/pdf"
+                  ]
+                }
+              },
+              "Content-Length": {
+                "description": "Kích thước tệp tính bằng byte.",
+                "schema": {
+                  "type": "integer"
                 }
               }
             },
@@ -5335,7 +5494,52 @@
             "$ref": "#/components/responses/InternalServerError"
           },
           "503": {
-            "$ref": "#/components/responses/AuthUnavailableError"
+            "x-apidog-name": "Service Unavailable",
+            "description": "Hạ tầng xác thực, storage hoặc service sở hữu thực thể cha tạm thời không khả dụng.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        503
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "AUTH_UNAVAILABLE",
+                        "SERVICE_UNAVAILABLE"
+                      ],
+                      "description": "- AUTH_UNAVAILABLE: Hạ tầng xác thực tạm thời không khả dụng.\n- SERVICE_UNAVAILABLE: Storage (R2) chưa được cấu hình, hoặc service sở hữu thực thể cha chưa sẵn sàng (hiện tại `issue_report`, `message`)."
+                    }
+                  }
+                },
+                "examples": {
+                  "auth_unavailable": {
+                    "summary": "AUTH_UNAVAILABLE — Hạ tầng xác thực tạm thời không khả dụng.",
+                    "value": {
+                      "statusCode": 503,
+                      "code": "AUTH_UNAVAILABLE"
+                    }
+                  },
+                  "service_unavailable": {
+                    "summary": "SERVICE_UNAVAILABLE — Storage hoặc service sở hữu chưa sẵn sàng.",
+                    "value": {
+                      "statusCode": 503,
+                      "code": "SERVICE_UNAVAILABLE"
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       },
@@ -5344,7 +5548,7 @@
           "Operation"
         ],
         "x-apidog-folder": "Media",
-        "x-apidog-status": "designing",
+        "x-apidog-status": "released",
         "operationId": "deleteMediaMediaid",
         "security": [
           {
@@ -5352,7 +5556,7 @@
           }
         ],
         "summary": "Delete media",
-        "description": "tenant, landlord, admin. Xóa mềm tệp. Lỗi nghiệp vụ: 403 FORBIDDEN · 409 CAN'T DELETE.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
+        "description": "tenant, landlord, admin. Xóa mềm Media và xóa object trên storage. Chỉ người upload hoặc admin được xóa.\n\n- `ownership_proof` của building đã `approved` và `contract_signed` của HĐ đã có hiệu lực là bằng chứng, không xóa được (`409 CANNOT_DELETE`).\n- Với `avatar`/`cover_photo` không cần xóa file cũ trước khi upload file mới: complete file mới tự thay file cũ.\n\nLỗi nghiệp vụ: 403 FORBIDDEN · 404 RESOURCE_NOT_FOUND · 409 CANNOT_DELETE · 410 MEDIA_DELETED (đã xóa trước đó).\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "parameters": [
           {
             "name": "mediaId",
@@ -5404,16 +5608,55 @@
                       "enum": [
                         "CANNOT_DELETE"
                       ],
-                      "description": "- CANNOT_DELETE: Tài nguyên chưa đủ điều kiện để xóa."
+                      "description": "- CANNOT_DELETE: File đang là bằng chứng (building đã duyệt / HĐ đã có hiệu lực), không được xóa."
                     }
                   }
                 },
                 "examples": {
                   "cannot_delete": {
-                    "summary": "CANNOT_DELETE — Tài nguyên chưa đủ điều kiện để xóa.",
+                    "summary": "CANNOT_DELETE — File đang là bằng chứng, không được xóa.",
                     "value": {
                       "statusCode": 409,
                       "code": "CANNOT_DELETE"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "410": {
+            "x-apidog-name": "Gone",
+            "description": "Media đã bị xóa trước đó.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        410
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "MEDIA_DELETED"
+                      ]
+                    }
+                  }
+                },
+                "examples": {
+                  "media_deleted": {
+                    "summary": "MEDIA_DELETED — Media đã bị xóa.",
+                    "value": {
+                      "statusCode": 410,
+                      "code": "MEDIA_DELETED"
                     }
                   }
                 }
@@ -5427,7 +5670,52 @@
             "$ref": "#/components/responses/InternalServerError"
           },
           "503": {
-            "$ref": "#/components/responses/AuthUnavailableError"
+            "x-apidog-name": "Service Unavailable",
+            "description": "Hạ tầng xác thực, storage hoặc service sở hữu thực thể cha tạm thời không khả dụng.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        503
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "AUTH_UNAVAILABLE",
+                        "SERVICE_UNAVAILABLE"
+                      ],
+                      "description": "- AUTH_UNAVAILABLE: Hạ tầng xác thực tạm thời không khả dụng.\n- SERVICE_UNAVAILABLE: Storage (R2) chưa được cấu hình, hoặc service sở hữu thực thể cha chưa sẵn sàng (hiện tại `issue_report`, `message`)."
+                    }
+                  }
+                },
+                "examples": {
+                  "auth_unavailable": {
+                    "summary": "AUTH_UNAVAILABLE — Hạ tầng xác thực tạm thời không khả dụng.",
+                    "value": {
+                      "statusCode": 503,
+                      "code": "AUTH_UNAVAILABLE"
+                    }
+                  },
+                  "service_unavailable": {
+                    "summary": "SERVICE_UNAVAILABLE — Storage hoặc service sở hữu chưa sẵn sàng.",
+                    "value": {
+                      "statusCode": 503,
+                      "code": "SERVICE_UNAVAILABLE"
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -32175,7 +32463,9 @@
           },
           "fileName": {
             "type": "string",
-            "description": "Tên file do client cung cấp",
+            "minLength": 1,
+            "maxLength": 255,
+            "description": "Tên file do client cung cấp. Đuôi file (không phân biệt hoa thường) phải khớp `contentType`: `image/jpeg` → `.jpg`/`.jpeg`, `image/png` → `.png`, `image/webp` → `.webp`, `application/pdf` → `.pdf`; sai thì trả `422 MEDIA_TYPE_NOT_ALLOWED`.",
             "example": "p201.jpg"
           },
           "contentType": {
@@ -32186,7 +32476,7 @@
               "image/webp",
               "application/pdf"
             ],
-            "description": "MIME type của file",
+            "description": "MIME type của file; phải nằm trong danh sách MIME cho phép của `purpose` (xem mô tả endpoint), nếu không trả `422 MEDIA_TYPE_NOT_ALLOWED`. Đây cũng là giá trị header `Content-Type` client phải gửi khi PUT lên storage.",
             "example": "image/jpeg"
           },
           "captureSource": {
@@ -32196,12 +32486,14 @@
               "device_storage"
             ],
             "nullable": true,
-            "description": "Nguồn tải tệp. Đối với ảnh công tơ điện nước (purpose: meter_reading_evidence), người thuê (tenant) bắt buộc phải chụp trực tiếp từ camera (camera_direct), chỉ chủ trọ (landlord) mới được tải tệp từ thiết bị (device_storage).",
+            "description": "Nguồn tải tệp. Đối với ảnh công tơ điện nước (purpose: meter_reading_evidence), người thuê (tenant) bắt buộc phải chụp trực tiếp từ camera (camera_direct), chỉ chủ trọ (landlord) mới được tải tệp từ thiết bị (device_storage); tenant gửi thiếu hoặc khác `camera_direct` bị `403 FORBIDDEN`. Các purpose khác bỏ qua field này.",
             "example": "camera_direct"
           },
           "size": {
             "type": "integer",
-            "description": "Kích thước file tính bằng byte",
+            "minimum": 1,
+            "maximum": 10485760,
+            "description": "Kích thước file tính bằng byte. Tối đa 10 MiB (cấu hình `MEDIA_MAX_SIZE_BYTES` của Identity-Service, mặc định 10485760). Phải bằng đúng kích thước file PUT lên storage, nếu lệch thì complete-upload trả `422 MEDIA_TYPE_NOT_ALLOWED`.",
             "example": 248120
           }
         },
@@ -32267,11 +32559,13 @@
           },
           "uploadUrl": {
             "type": "string",
-            "description": "Signed URL để client upload trực tiếp lên storage",
-            "example": "https://storage.example.com/upload-ticket"
+            "format": "uri",
+            "description": "Presigned URL (Cloudflare R2, S3 API) để client `PUT` thân file (raw binary, không multipart) trực tiếp lên storage. Chỉ gửi đúng các header trong `requiredHeaders`, không gửi `Authorization`. Hết hạn sau `expiresIn` giây.",
+            "example": "https://account-id.r2.cloudflarestorage.com/rentify-media-public/room/3fa85f64-5717-4562-b3fc-2c963f66afa6/3fa85f64-5717-4562-b3fc-2c963f66afa6.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Expires=900&X-Amz-SignedHeaders=content-type%3Bhost&X-Amz-Signature=abc123"
           },
           "requiredHeaders": {
             "type": "object",
+            "description": "Header bắt buộc khi PUT lên `uploadUrl`. `Content-Type` được ký vào URL nên phải gửi đúng giá trị này, sai thì storage trả 403.",
             "properties": {
               "Content-Type": {
                 "type": "string",
@@ -32291,10 +32585,8 @@
           },
           "expiresIn": {
             "type": "integer",
-            "enum": [
-              900
-            ],
-            "description": "Thời gian upload ticket có hiệu lực tính bằng giây",
+            "minimum": 1,
+            "description": "Thời gian `uploadUrl` và upload ticket có hiệu lực, tính bằng giây (cấu hình `MEDIA_UPLOAD_TTL_SECONDS`, mặc định 900). Quá hạn thì complete-upload trả `410 TICKET_EXPIRED`, phải presign lại.",
             "example": 900
           }
         },
@@ -32372,8 +32664,9 @@
           },
           "url": {
             "type": "string",
-            "description": "URL truy cập hoặc signed URL do hệ thống trả",
-            "example": "https://cdn.pbl6.dev/room/3fa85f64/cover.webp"
+            "minLength": 1,
+            "description": "URL đọc file. Purpose public (`avatar`, `cover_photo`, `gallery_photo`): URL tuyệt đối cố định trên R2 public bucket, dùng trực tiếp trong `<img src>`. Purpose private (còn lại): đường dẫn API tương đối `/api/v1/media/{mediaId}`, phải gọi `GET` kèm Bearer token.",
+            "example": "https://pub-xxxx.r2.dev/room/3fa85f64-5717-4562-b3fc-2c963f66afa6/3fa85f64-5717-4562-b3fc-2c963f66afa6.webp"
           }
         },
         "required": [

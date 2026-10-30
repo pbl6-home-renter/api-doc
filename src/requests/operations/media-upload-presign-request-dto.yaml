@@ -44,7 +44,9 @@ properties:
 
   fileName:
     type: string
-    description: Tên file do client cung cấp
+    minLength: 1
+    maxLength: 255
+    description: "Tên file do client cung cấp. Đuôi file (không phân biệt hoa thường) phải khớp `contentType`: `image/jpeg` → `.jpg`/`.jpeg`, `image/png` → `.png`, `image/webp` → `.webp`, `application/pdf` → `.pdf`; sai thì trả `422 MEDIA_TYPE_NOT_ALLOWED`."
     example: p201.jpg
 
   contentType:
@@ -54,7 +56,7 @@ properties:
       - image/png
       - image/webp
       - application/pdf
-    description: MIME type của file
+    description: "MIME type của file; phải nằm trong danh sách MIME cho phép của `purpose` (xem mô tả endpoint), nếu không trả `422 MEDIA_TYPE_NOT_ALLOWED`. Đây cũng là giá trị header `Content-Type` client phải gửi khi PUT lên storage."
     example: image/jpeg
 
   captureSource:
@@ -63,12 +65,14 @@ properties:
       - camera_direct
       - device_storage
     nullable: true
-    description: "Nguồn tải tệp. Đối với ảnh công tơ điện nước (purpose: meter_reading_evidence), người thuê (tenant) bắt buộc phải chụp trực tiếp từ camera (camera_direct), chỉ chủ trọ (landlord) mới được tải tệp từ thiết bị (device_storage)."
+    description: "Nguồn tải tệp. Đối với ảnh công tơ điện nước (purpose: meter_reading_evidence), người thuê (tenant) bắt buộc phải chụp trực tiếp từ camera (camera_direct), chỉ chủ trọ (landlord) mới được tải tệp từ thiết bị (device_storage); tenant gửi thiếu hoặc khác `camera_direct` bị `403 FORBIDDEN`. Các purpose khác bỏ qua field này."
     example: camera_direct
 
   size:
     type: integer
-    description: Kích thước file tính bằng byte
+    minimum: 1
+    maximum: 10485760
+    description: "Kích thước file tính bằng byte. Tối đa 10 MiB (cấu hình `MEDIA_MAX_SIZE_BYTES` của Identity-Service, mặc định 10485760). Phải bằng đúng kích thước file PUT lên storage, nếu lệch thì complete-upload trả `422 MEDIA_TYPE_NOT_ALLOWED`."
     example: 248120
 
 required:
