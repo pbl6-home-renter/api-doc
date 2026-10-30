@@ -1,49 +1,38 @@
 type: object
 x-apidog-folder: "RatePolicy/Request"
 title: RatePolicyCreateRequestDto
-description: Dữ liệu tạo chính sách đơn giá
+description: Tạo một bộ đơn giá cho một tòa nhà hoặc phòng.
 additionalProperties: false
-
 properties:
   scope:
     type: string
-    description: Thông tin scope của tài nguyên trong ngữ cảnh DTO.
     enum: [building, room]
-    example: room
+  buildingId:
+    type: string
+    format: uuid
+    description: Bắt buộc khi scope là building; không gửi khi scope là room.
   roomId:
     type: string
-    description: Định danh duy nhất của phòng liên quan.
     format: uuid
-    nullable: true
-  name:
-    type: string
-    description: Thông tin name của tài nguyên trong ngữ cảnh DTO.
-    example: Điện EVN
-  type:
-    type: string
-    enum: [electricity, water, wifi, cleaning, parking, maintenance, other]
-    example: electricity
-  rateKind:
-    type: string
-    description: Thông tin rate kind của tài nguyên trong ngữ cảnh DTO.
-    enum: [flat, tiered, fixed_per_period, per_head, per_area_m2, per_vehicle]
-    example: tiered
-  steps:
+    description: Bắt buộc khi scope là room; không gửi khi scope là building.
+  rates:
     type: array
-    description: Thông tin steps của tài nguyên trong ngữ cảnh DTO.
-    nullable: true
+    minItems: 1
     items:
-      type: object
+      $ref: '../../openapi.yaml#/components/schemas/RateItem'
+required: [scope, rates]
+oneOf:
+  - properties:
+      scope: { enum: [building] }
+    required: [buildingId]
+    not:
       properties:
-        from: { type: integer, minimum: 0 , description: "Thông tin from của tài nguyên trong ngữ cảnh DTO." }
-        to: { type: integer, minimum: 0, nullable: true , description: "Thông tin to của tài nguyên trong ngữ cảnh DTO." }
-        price: { type: integer, minimum: 0 , description: "Thông tin price của tài nguyên trong ngữ cảnh DTO." }
-      required: [from, to, price]
-
-required:
-  - scope
-  - roomId
-  - name
-  - type
-  - rateKind
-  - steps
+        roomId: {}
+      required: [roomId]
+  - properties:
+      scope: { enum: [room] }
+    required: [roomId]
+    not:
+      properties:
+        buildingId: {}
+      required: [buildingId]

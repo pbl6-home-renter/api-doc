@@ -1,0 +1,50 @@
+type: object
+title: RateItem
+description: Một đơn giá hoặc phí trong bộ RatePolicy.
+additionalProperties: false
+properties:
+  type:
+    type: string
+    enum: [electricity, water, wifi, cleaning, parking, maintenance, other]
+  name:
+    type: string
+    minLength: 1
+    maxLength: 100
+  rateKind:
+    type: string
+    enum: [flat, tiered, fixed_per_period, per_head, per_area_m2, per_vehicle]
+    description: tiered yêu cầu steps và unitPrice = null; các loại còn lại yêu cầu unitPrice và không gửi steps.
+  unitPrice:
+    type: string
+    nullable: true
+    pattern: '^(0|[1-9][0-9]*)(\.[0-9]+)?$'
+    description: Đơn giá dạng chuỗi thập phân; null khi rateKind là tiered.
+    example: '4000'
+  steps:
+    type: array
+    description: >-
+      Chỉ dùng cho rateKind tiered; bậc cuối có to = null. `to` là ngưỡng tiêu thụ
+      cộng dồn. Phần lẻ vượt ngưỡng của bậc trước thuộc bậc kế tiếp: 50.5 kWh
+      được tính 50 kWh ở bậc 0–50 và 0.5 kWh ở bậc 51–100.
+    items:
+      type: object
+      additionalProperties: false
+      properties:
+        from:
+          type: integer
+          minimum: 0
+          description: Nhãn của kWh nguyên đầu tiên trong bậc; từ bậc hai bằng to của bậc trước cộng 1. Không dùng from để loại trừ phần lẻ ngay sau ngưỡng trước.
+        to:
+          type: integer
+          minimum: 0
+          nullable: true
+          description: Ngưỡng tiêu thụ cộng dồn của bậc; null ở bậc cuối.
+        price:
+          type: string
+          pattern: '^(0|[1-9][0-9]*)(\.[0-9]+)?$'
+          description: Đơn giá của bậc dạng chuỗi thập phân.
+      required: [from, to, price]
+  billingUnit:
+    type: string
+    enum: [kwh, m3, room, person, m2, vehicle, day, occurrence]
+required: [type, name, rateKind, billingUnit]

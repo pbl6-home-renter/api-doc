@@ -142,8 +142,7 @@ post:
   security:
     - BearerAuth: []
   summary: Create meter reading
-  description: 'landlord. Tạo một chỉ số đã xác nhận. Lỗi nghiệp vụ: 409 DUPLICATE METER READING · 422 CURRENT READING
-    INVALID · 422 EVIDENCE REQUIRED · 403 FORBIDDEN.'
+  description: 'landlord. Xác nhận chỉ số có ảnh chứng cứ; server lấy previousReading từ kỳ trước hoặc đặt 0 cho baseline. Baseline phải lấy từ OCR, sửa tay chỉ để hiệu chỉnh kết quả OCR. Lỗi: 409 DUPLICATE_METER_READING · 422 CURRENT_READING_INVALID/EVIDENCE_REQUIRED · 403 FORBIDDEN.'
   requestBody:
     required: true
     content:
@@ -154,7 +153,6 @@ post:
           roomId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
           type: electricity
           period: 2026-09
-          previousReading: '12680.5'
           currentReading: '12850.5'
           readingDate: '2026-09-30'
           isBaseline: false

@@ -22,6 +22,9 @@ get:
       properties:
         scope:
           type: string
+        buildingId:
+          type: string
+          format: uuid
         roomId:
           type: string
           format: uuid
@@ -102,12 +105,16 @@ get:
             code: BILLING_SETTINGS_FETCHED
             data:
             - id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+              landlordId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
               scope: room
+              buildingId: null
               roomId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
-              dueDays: 5
-              remindDays: 3
+              paymentDueDay: 5
+              remindDay: 3
               botEnabled: true
               isActive: true
+              createdAt: '2026-10-30T00:00:00Z'
+              updatedAt: '2026-10-30T00:00:00Z'
             pagination:
               type: offset
               pageNo: 1
@@ -139,8 +146,7 @@ post:
   security:
     - BearerAuth: []
   summary: Create billing setting
-  description: 'landlord. Tạo một cài đặt hóa đơn. Lỗi nghiệp vụ: 409 ACTIVE SETTING EXISTS · 422 DUE DAYS INVALID
-    · 403 FORBIDDEN.'
+  description: 'landlord. Tạo cấu hình ngày thu dự kiến và nhắc nộp; không sinh overdue. Lỗi: 409 ACTIVE_SETTING_EXISTS · 422 VALIDATION_FAILED · 403 FORBIDDEN.'
   requestBody:
     required: true
     content:
@@ -150,16 +156,9 @@ post:
         example:
           scope: room
           roomId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
-          dueDays: 5
-          remindDays: 3
-          botEnabled: true
           paymentDueDay: 5
-          debtScanEnabled: true
-          gracePeriodDays: 3
-          overdueReminderIntervalDays: 3
-          reminderChannels:
-          - APP_PUSH
-          - ZALO
+          remindDay: 3
+          botEnabled: true
   responses:
     '201':
       description: 'Thành công: Tạo một cài đặt hóa đơn.'
@@ -188,9 +187,16 @@ post:
             code: BILLING_SETTING_CREATED
             data:
               id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
-              dueDays: 5
-              remindDays: 3
+              landlordId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+              scope: room
+              buildingId: null
+              roomId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+              paymentDueDay: 5
+              remindDay: 3
               botEnabled: true
+              isActive: true
+              createdAt: '2026-10-30T00:00:00Z'
+              updatedAt: '2026-10-30T00:00:00Z'
       headers:
         Location:
           description: Đường dẫn tài nguyên được tạo.
@@ -223,7 +229,7 @@ post:
                 enum:
                   - ACTIVE_SETTING_EXISTS
                 description: |-
-                  - ACTIVE_SETTING_EXISTS: Đã có cấu hình hóa đơn đang hiệu lực.
+                  - ACTIVE_SETTING_EXISTS: Đã có cấu hình cho cùng scope; dùng PATCH để cập nhật hoặc kích hoạt lại.
           examples:
             active_setting_exists:
               summary: ACTIVE_SETTING_EXISTS — Đã có cấu hình hóa đơn đang hiệu lực.
@@ -246,17 +252,10 @@ post:
               code:
                 type: string
                 enum:
-                  - DUE_DAYS_INVALID
                   - VALIDATION_FAILED
                 description: |-
-                  - DUE_DAYS_INVALID: Số ngày đến hạn không hợp lệ.
                   - VALIDATION_FAILED: Dữ liệu vi phạm ràng buộc schema hoặc quy tắc nghiệp vụ khác chưa có mã riêng.
           examples:
-            due_days_invalid:
-              summary: DUE_DAYS_INVALID — Số ngày đến hạn không hợp lệ.
-              value:
-                statusCode: 422
-                code: DUE_DAYS_INVALID
             validation_failed:
               summary: VALIDATION_FAILED — Dữ liệu vi phạm ràng buộc schema hoặc quy tắc nghiệp vụ khác chưa có mã riêng.
               value:

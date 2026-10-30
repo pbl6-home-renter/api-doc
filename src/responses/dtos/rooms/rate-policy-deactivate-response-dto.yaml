@@ -1,12 +1,36 @@
 type: object
 x-apidog-folder: "RatePolicy/Response"
 title: RatePolicyDeactivateResponseDto
-description: Phản hồi khi vô hiệu hóa chính sách đơn giá
-
+description: Bộ đơn giá theo scope building hoặc room.
+additionalProperties: false
 properties:
-  id: { type: string, format: uuid , description: "Định danh duy nhất của tài nguyên." }
-  isActive: { type: boolean, enum: [false], example: false , description: "Thông tin is active của tài nguyên trong ngữ cảnh DTO." }
-
-required:
-  - id
-  - isActive
+  id:
+    type: string
+    format: uuid
+  landlordId:
+    type: string
+    format: uuid
+  scope:
+    type: string
+    enum: [building, room]
+  buildingId:
+    type: string
+    format: uuid
+    nullable: true
+  roomId:
+    type: string
+    format: uuid
+    nullable: true
+  rates:
+    type: array
+    items:
+      $ref: '../../../openapi.yaml#/components/schemas/RateItem'
+  isActive:
+    type: boolean
+  createdAt:
+    type: string
+    format: date-time
+  updatedAt:
+    type: string
+    format: date-time
+required: [id, landlordId, scope, buildingId, roomId, rates, isActive, createdAt, updatedAt]

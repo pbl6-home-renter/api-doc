@@ -6,10 +6,10 @@ post:
   operationId: postBuildingRatePoliciesBatch
   security:
     - BearerAuth: []
-  summary: Batch create rate policies for building
+  summary: Save building rate set
   description: |-
     Chưa triển khai trong Tenancy-Service hiện tại; endpoint được giữ trong tài liệu thiết kế.
-    landlord. Thiết lập hàng loạt các chính sách đơn giá tiện ích và phí dịch vụ cho tòa nhà (bước 3/3 wizard tạo tài sản). Lỗi nghiệp vụ: 404 BUILDING NOT FOUND · 403 FORBIDDEN · 422 VALIDATION FAILED.
+    landlord. Thiết lập một bộ đơn giá cấp building (bước 3/3 wizard). buildingId chỉ lấy từ path. Lỗi nghiệp vụ: 404 BUILDING_NOT_FOUND · 403 FORBIDDEN · 422 INVALID_RATE_KIND/TIER_CONFIG_INVALID/VALIDATION_FAILED.
   parameters:
   - name: buildingId
     in: path
@@ -25,26 +25,29 @@ post:
         schema:
           $ref: ../../openapi.yaml#/components/schemas/BuildingRatePoliciesBatchCreateRequestDto
         example:
-          buildingId: 9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d
-          ratePolicies:
-          - category: ELECTRICITY
-            name: Tiền điện sinh hoạt
-            rateKind: PROGRESSIVE
-            unit: kWh
+          rates:
+          - type: electricity
+            name: Điện EVN
+            rateKind: tiered
+            unitPrice: null
             steps:
-            - fromStep: 0
-              toStep: 50
-              stepPrice: 1806
-          - category: WATER
-            name: Tiền nước sinh hoạt
-            rateKind: PER_PERSON
-            unit: người/tháng
-            unitPrice: 100000
-          - category: INTERNET
-            name: Internet Wifi tốc độ cao
-            rateKind: PER_ROOM
-            unit: phòng/tháng
-            unitPrice: 100000
+            - { from: 0, to: 50, price: '1893' }
+            - { from: 51, to: 100, price: '1956' }
+            - { from: 101, to: 200, price: '2283' }
+            - { from: 201, to: 300, price: '2833' }
+            - { from: 301, to: 400, price: '2927' }
+            - { from: 401, to: null, price: '3451' }
+            billingUnit: kwh
+          - type: water
+            name: Nước theo người
+            rateKind: per_head
+            unitPrice: '100000'
+            billingUnit: person
+          - type: wifi
+            name: Wifi
+            rateKind: fixed_per_period
+            unitPrice: '100000'
+            billingUnit: room
   responses:
     "201":
       description: "Thành công: Thiết lập hàng loạt đơn giá dịch vụ tòa nhà."
@@ -117,24 +120,24 @@ post:
               code:
                 type: string
                 enum:
-                  - BUILDING_ID_MISMATCH
-                  - RATE_POLICIES_REQUIRED
+                  - INVALID_RATE_KIND
+                  - TIER_CONFIG_INVALID
                   - VALIDATION_FAILED
                 description: |-
-                  - BUILDING_ID_MISMATCH: buildingId trong body khác buildingId trên đường dẫn.
-                  - RATE_POLICIES_REQUIRED: Danh sách ratePolicies rỗng hoặc không có biểu giá hợp lệ.
+                  - INVALID_RATE_KIND: Phương pháp tính giá không hợp lệ cho loại dịch vụ.
+                  - TIER_CONFIG_INVALID: Cấu hình bậc thang không hợp lệ.
                   - VALIDATION_FAILED: Dữ liệu biểu giá vi phạm ràng buộc khác của DTO.
           examples:
-            building_id_mismatch:
-              summary: BUILDING_ID_MISMATCH — buildingId trong body khác buildingId trên đường dẫn.
+            invalid_rate_kind:
+              summary: INVALID_RATE_KIND — Phương pháp tính giá không hợp lệ.
               value:
                 statusCode: 422
-                code: BUILDING_ID_MISMATCH
-            rate_policies_required:
-              summary: RATE_POLICIES_REQUIRED — Danh sách ratePolicies rỗng hoặc không có biểu giá hợp lệ.
+                code: INVALID_RATE_KIND
+            tier_config_invalid:
+              summary: TIER_CONFIG_INVALID — Cấu hình bậc thang không hợp lệ.
               value:
                 statusCode: 422
-                code: RATE_POLICIES_REQUIRED
+                code: TIER_CONFIG_INVALID
             validation_failed:
               summary: VALIDATION_FAILED — Dữ liệu biểu giá vi phạm ràng buộc khác của DTO.
               value:

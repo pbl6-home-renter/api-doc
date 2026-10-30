@@ -7,7 +7,7 @@ patch:
   security:
     - BearerAuth: []
   summary: Update billing setting
-  description: 'landlord. Cập nhật cài đặt hóa đơn. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 DUE DAYS INVALID.'
+  description: 'landlord. Cập nhật ngày thu dự kiến và nhắc nộp; không sinh overdue. Lỗi: 403 FORBIDDEN · 422 VALIDATION_FAILED.'
   parameters:
   - name: billingSettingId
     in: path
@@ -22,8 +22,8 @@ patch:
         schema:
           $ref: ../../openapi.yaml#/components/schemas/BillingSettingUpdateRequestDto
         example:
-          dueDays: 7
-          remindDays: 3
+          paymentDueDay: 7
+          remindDay: 3
           botEnabled: false
   responses:
     '200':
@@ -53,9 +53,16 @@ patch:
             code: BILLING_SETTING_UPDATED
             data:
               id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
-              dueDays: 7
-              remindDays: 3
+              landlordId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+              scope: room
+              buildingId: null
+              roomId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+              paymentDueDay: 7
+              remindDay: 3
               botEnabled: false
+              isActive: true
+              createdAt: '2026-10-30T00:00:00Z'
+              updatedAt: '2026-10-30T00:00:00Z'
     '400':
       $ref: ../../openapi.yaml#/components/responses/BadRequestBodyPathError
     '401':
@@ -82,17 +89,10 @@ patch:
               code:
                 type: string
                 enum:
-                  - DUE_DAYS_INVALID
                   - VALIDATION_FAILED
                 description: |-
-                  - DUE_DAYS_INVALID: Số ngày đến hạn không hợp lệ.
                   - VALIDATION_FAILED: Dữ liệu vi phạm ràng buộc schema hoặc quy tắc nghiệp vụ khác chưa có mã riêng.
           examples:
-            due_days_invalid:
-              summary: DUE_DAYS_INVALID — Số ngày đến hạn không hợp lệ.
-              value:
-                statusCode: 422
-                code: DUE_DAYS_INVALID
             validation_failed:
               summary: VALIDATION_FAILED — Dữ liệu vi phạm ràng buộc schema hoặc quy tắc nghiệp vụ khác chưa có mã riêng.
               value:

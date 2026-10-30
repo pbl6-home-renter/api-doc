@@ -43,7 +43,19 @@ post:
             code: RATE_POLICY_DEACTIVATED
             data:
               id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+              landlordId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+              scope: room
+              buildingId: null
+              roomId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+              rates:
+              - type: electricity
+                name: Điện đồng giá
+                rateKind: flat
+                unitPrice: '4000'
+                billingUnit: kwh
               isActive: false
+              createdAt: '2026-10-30T00:00:00Z'
+              updatedAt: '2026-10-30T00:00:00Z'
     '400':
       $ref: ../../openapi.yaml#/components/responses/BadRequestPathError
     '401':

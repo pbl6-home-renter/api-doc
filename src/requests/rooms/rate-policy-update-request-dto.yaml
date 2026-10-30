@@ -1,12 +1,15 @@
 type: object
 x-apidog-folder: "RatePolicy/Request"
 title: RatePolicyUpdateRequestDto
-description: Dữ liệu cập nhật một phần tên chính sách đơn giá
+description: Cập nhật bộ đơn giá tại chỗ; hóa đơn đã phát hành giữ snapshot cũ.
 additionalProperties: false
 minProperties: 1
-
 properties:
-  name:
-    type: string
-    description: Thông tin name của tài nguyên trong ngữ cảnh DTO.
-    example: Điện EVN 2026
+  rates:
+    type: array
+    minItems: 1
+    items:
+      $ref: '../../openapi.yaml#/components/schemas/RateItem'
+  isActive:
+    type: boolean
+    description: false để kế thừa bộ đơn giá cấp trên; true để kích hoạt lại.
