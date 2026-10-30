@@ -16186,6 +16186,338 @@
           }
         }
       }
+    },
+    {
+      "id": "97c80163554d250a7f7cc4330ad6489f40c292d8bc34512f4d7e59a722727867",
+      "label": "Thay đổi contract từ Git",
+      "classification": "NEEDS_REVIEW",
+      "contractId": "rentify-public",
+      "repository": "https://github.com/pbl6-home-renter/api-doc",
+      "baseHash": "ee68a4dbbcfbf11604ff58a74c5862fc913c8d71c8ec7a7e918ed8c0d69eaf9b",
+      "headHash": "489ff8f353bad7f0aa969c768f34d03df215c39a8334ec62237041d57d3602a5",
+      "baseSource": "src/openapi.yaml",
+      "headSource": "src/openapi.yaml",
+      "detectedAt": "2026-10-30T07:30:52.634Z",
+      "committedAt": "2026-10-30T14:30:39+07:00",
+      "baseCommit": "8cdd6df1b77b5ef18b2bfc61954dff15e5bff5ed",
+      "headCommit": "f568f72777b76905cbae5ee8e49b1c8c7abff095",
+      "prUrl": "https://github.com/pbl6-home-renter/api-doc/pull/28",
+      "commitUrl": "https://github.com/pbl6-home-renter/api-doc/commit/f568f72777b76905cbae5ee8e49b1c8c7abff095",
+      "metadataKind": "Git revision thực tế",
+      "reason": "CHƯA CUNG CẤP — tác giả PR phải bổ sung lý do nghiệp vụ; không thể suy ra từ OpenAPI diff.",
+      "tools": {
+        "redocly": "2.64.1",
+        "oasdiff": "1.34.1"
+      },
+      "changes": [
+        {
+          "id": "unclassified-diff",
+          "level": 2,
+          "section": "specification",
+          "text": "Có khác biệt cấu trúc/metadata nhưng engine không phân loại tác động; xem bảng trước/sau.",
+          "classification": "NEEDS_REVIEW",
+          "clientImpact": "FE và Mobile: đối chiếu vị trí và thay đổi trước/sau trong entry này với API adapter, DTO, parser và validation; cùng BE xác nhận phương án tương thích trước merge/phát hành."
+        }
+      ],
+      "locations": [
+        {
+          "pointer": "/components/schemas/PagingMeta/additionalProperties",
+          "before": null,
+          "after": false
+        },
+        {
+          "pointer": "/components/schemas/PagingMeta/description",
+          "before": null,
+          "after": "Metadata phân trang offset (khớp `OffsetPaginationDto` của backend)."
+        },
+        {
+          "pointer": "/components/schemas/PagingMeta/properties/hasNextPage",
+          "before": null,
+          "after": {
+            "type": "boolean",
+            "description": "Có trang kế tiếp hay không",
+            "example": false
+          }
+        },
+        {
+          "pointer": "/components/schemas/PagingMeta/properties/hasPreviousPage",
+          "before": null,
+          "after": {
+            "type": "boolean",
+            "description": "Có trang trước đó hay không",
+            "example": false
+          }
+        },
+        {
+          "pointer": "/components/schemas/PagingMeta/properties/page",
+          "before": {
+            "type": "integer"
+          },
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/PagingMeta/properties/pageNo",
+          "before": null,
+          "after": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Số thứ tự trang hiện tại, bắt đầu từ 1",
+            "example": 1
+          }
+        },
+        {
+          "pointer": "/components/schemas/PagingMeta/properties/pageSize/description",
+          "before": null,
+          "after": "Số lượng bản ghi trên một trang"
+        },
+        {
+          "pointer": "/components/schemas/PagingMeta/properties/pageSize/example",
+          "before": null,
+          "after": 20
+        },
+        {
+          "pointer": "/components/schemas/PagingMeta/properties/pageSize/maximum",
+          "before": null,
+          "after": 100
+        },
+        {
+          "pointer": "/components/schemas/PagingMeta/properties/pageSize/minimum",
+          "before": null,
+          "after": 1
+        },
+        {
+          "pointer": "/components/schemas/PagingMeta/properties/total",
+          "before": {
+            "type": "integer"
+          },
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/PagingMeta/properties/totalItems",
+          "before": null,
+          "after": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Tổng số lượng bản ghi",
+            "example": 2
+          }
+        },
+        {
+          "pointer": "/components/schemas/PagingMeta/properties/totalPages/description",
+          "before": null,
+          "after": "Tổng số trang"
+        },
+        {
+          "pointer": "/components/schemas/PagingMeta/properties/totalPages/example",
+          "before": null,
+          "after": 1
+        },
+        {
+          "pointer": "/components/schemas/PagingMeta/properties/totalPages/minimum",
+          "before": null,
+          "after": 0
+        },
+        {
+          "pointer": "/components/schemas/PagingMeta/properties/type",
+          "before": null,
+          "after": {
+            "type": "string",
+            "enum": [
+              "offset"
+            ],
+            "description": "Discriminator phân loại kiểu phân trang"
+          }
+        },
+        {
+          "pointer": "/components/schemas/PagingMeta/required",
+          "before": null,
+          "after": [
+            "type",
+            "pageNo",
+            "pageSize",
+            "totalItems",
+            "totalPages",
+            "hasNextPage",
+            "hasPreviousPage"
+          ]
+        }
+      ],
+      "semanticDiff": {
+        "components": {
+          "schemas": {
+            "modified": {
+              "PagingMeta": {
+                "additionalPropertiesAllowed": {
+                  "from": null,
+                  "to": false
+                },
+                "required": {
+                  "added": [
+                    "totalPages",
+                    "hasNextPage",
+                    "hasPreviousPage",
+                    "type",
+                    "pageNo",
+                    "pageSize",
+                    "totalItems"
+                  ]
+                },
+                "properties": {
+                  "added": [
+                    "hasNextPage",
+                    "hasPreviousPage",
+                    "type",
+                    "pageNo",
+                    "totalItems"
+                  ],
+                  "deleted": [
+                    "total",
+                    "page"
+                  ],
+                  "modified": {
+                    "pageSize": {
+                      "min": {
+                        "from": null,
+                        "to": 1
+                      },
+                      "max": {
+                        "from": null,
+                        "to": 100
+                      }
+                    },
+                    "totalPages": {
+                      "min": {
+                        "from": null,
+                        "to": 0
+                      }
+                    }
+                  }
+                }
+              },
+              "SuccessListWrapper": {
+                "properties": {
+                  "modified": {
+                    "pagination": {
+                      "additionalPropertiesAllowed": {
+                        "from": null,
+                        "to": false
+                      },
+                      "required": {
+                        "added": [
+                          "totalPages",
+                          "hasNextPage",
+                          "hasPreviousPage",
+                          "type",
+                          "pageNo",
+                          "pageSize",
+                          "totalItems"
+                        ]
+                      },
+                      "properties": {
+                        "added": [
+                          "hasNextPage",
+                          "hasPreviousPage",
+                          "type",
+                          "pageNo",
+                          "totalItems"
+                        ],
+                        "deleted": [
+                          "total",
+                          "page"
+                        ],
+                        "modified": {
+                          "pageSize": {
+                            "min": {
+                              "from": null,
+                              "to": 1
+                            },
+                            "max": {
+                              "from": null,
+                              "to": 100
+                            }
+                          },
+                          "totalPages": {
+                            "min": {
+                              "from": null,
+                              "to": 0
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "responses": {
+            "modified": {
+              "SuccessListResponse": {
+                "content": {
+                  "modified": {
+                    "application/json": {
+                      "schema": {
+                        "properties": {
+                          "modified": {
+                            "pagination": {
+                              "additionalPropertiesAllowed": {
+                                "from": null,
+                                "to": false
+                              },
+                              "required": {
+                                "added": [
+                                  "totalPages",
+                                  "hasNextPage",
+                                  "hasPreviousPage",
+                                  "type",
+                                  "pageNo",
+                                  "pageSize",
+                                  "totalItems"
+                                ]
+                              },
+                              "properties": {
+                                "added": [
+                                  "hasNextPage",
+                                  "hasPreviousPage",
+                                  "type",
+                                  "pageNo",
+                                  "totalItems"
+                                ],
+                                "deleted": [
+                                  "total",
+                                  "page"
+                                ],
+                                "modified": {
+                                  "pageSize": {
+                                    "min": {
+                                      "from": null,
+                                      "to": 1
+                                    },
+                                    "max": {
+                                      "from": null,
+                                      "to": 100
+                                    }
+                                  },
+                                  "totalPages": {
+                                    "min": {
+                                      "from": null,
+                                      "to": 0
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   ]
 }

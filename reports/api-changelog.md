@@ -5,11 +5,51 @@
 
 Báo cáo lưu lịch sử các entry đã phát hiện, mới nhất ở trên. `NO_CHANGE` không xóa entry cũ; exit code chỉ phản ánh lần chạy hiện tại.
 
-Công cụ: Redocly 2.64.1; oasdiff 1.34.1. Số entry: **14**.
+Công cụ: Redocly 2.64.1; oasdiff 1.34.1. Số entry: **15**.
 
 Phân loại: **BREAKING** = client cũ có thể hỏng; **NON_BREAKING** = tương thích theo contract; **NEEDS_REVIEW** = chưa đủ bằng chứng.
 
 Các vị trí dùng JSON Pointer trên bundle tạm (`~1` là `/`). JSON đi kèm giữ toàn bộ semantic diff, fingerprint và hash phục vụ truy vết.
+
+## Thay đổi contract từ Git — NEEDS_REVIEW
+
+- ID: `97c80163554d250a7f7cc4330ad6489f40c292d8bc34512f4d7e59a722727867`
+- Contract: rentify-public; repository: https://github.com/pbl6-home-renter/api-doc
+- Nguồn: `src/openapi.yaml` → `src/openapi.yaml`
+- Phát hiện (UTC): 2026-10-30T07:30:52.634Z; commit time: 2026-10-30T14:30:39+07:00
+- Commit nền: 8cdd6df1b77b5ef18b2bfc61954dff15e5bff5ed
+- Commit đích/bối cảnh: [f568f72777b76905cbae5ee8e49b1c8c7abff095](https://github.com/pbl6-home-renter/api-doc/commit/f568f72777b76905cbae5ee8e49b1c8c7abff095)
+- PR: [https://github.com/pbl6-home-renter/api-doc/pull/28](https://github.com/pbl6-home-renter/api-doc/pull/28)
+- Loại metadata: Git revision thực tế
+- Lý do: CHƯA CUNG CẤP — tác giả PR phải bổ sung lý do nghiệp vụ; không thể suy ra từ OpenAPI diff.
+
+| Mức ảnh hưởng | Endpoint / vùng | Thay đổi | Hành động FE / Mobile |
+|---|---|---|---|
+| NEEDS_REVIEW | specification | Có khác biệt cấu trúc/metadata nhưng engine không phân loại tác động; xem bảng trước/sau. (`unclassified-diff`) | FE và Mobile: đối chiếu vị trí và thay đổi trước/sau trong entry này với API adapter, DTO, parser và validation; cùng BE xác nhận phương án tương thích trước merge/phát hành. |
+
+### Vị trí và giá trị trước/sau
+
+| Path / schema / field (JSON Pointer) | Trước | Sau |
+|---|---|---|
+| `/components/schemas/PagingMeta/additionalProperties` | null | false |
+| `/components/schemas/PagingMeta/description` | null | "Metadata phân trang offset (khớp `OffsetPaginationDto` của backend)." |
+| `/components/schemas/PagingMeta/properties/hasNextPage` | null | {"type":"boolean","description":"Có trang kế tiếp hay không","example":false} |
+| `/components/schemas/PagingMeta/properties/hasPreviousPage` | null | {"type":"boolean","description":"Có trang trước đó hay không","example":false} |
+| `/components/schemas/PagingMeta/properties/page` | {"type":"integer"} | null |
+| `/components/schemas/PagingMeta/properties/pageNo` | null | {"type":"integer","minimum":1,"description":"Số thứ tự trang hiện tại, bắt đầu từ 1","example":1} |
+| `/components/schemas/PagingMeta/properties/pageSize/description` | null | "Số lượng bản ghi trên một trang" |
+| `/components/schemas/PagingMeta/properties/pageSize/example` | null | 20 |
+| `/components/schemas/PagingMeta/properties/pageSize/maximum` | null | 100 |
+| `/components/schemas/PagingMeta/properties/pageSize/minimum` | null | 1 |
+| `/components/schemas/PagingMeta/properties/total` | {"type":"integer"} | null |
+| `/components/schemas/PagingMeta/properties/totalItems` | null | {"type":"integer","minimum":0,"description":"Tổng số lượng bản ghi","example":2} |
+| `/components/schemas/PagingMeta/properties/totalPages/description` | null | "Tổng số trang" |
+| `/components/schemas/PagingMeta/properties/totalPages/example` | null | 1 |
+| `/components/schemas/PagingMeta/properties/totalPages/minimum` | null | 0 |
+| `/components/schemas/PagingMeta/properties/type` | null | {"type":"string","enum":["offset"],"description":"Discriminator phân loại kiểu phân trang"} |
+| `/components/schemas/PagingMeta/required` | null | ["type","pageNo","pageSize","totalItems","totalPages","hasNextPage","hasPreviousPage"] |
+
+**Kiểm tra thủ công:** BE xác nhận lý do, endpoint dùng schema chung, thay đổi role/ownership mô tả bằng văn bản và thời điểm triển khai. FE/Mobile xác nhận tác động với parser và phiên bản client đang hỗ trợ.
 
 ## Thay đổi contract từ Git — BREAKING
 
