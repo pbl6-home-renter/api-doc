@@ -5438,7 +5438,7 @@
           "Property"
         ],
         "x-apidog-folder": "Building",
-        "x-apidog-status": "designing",
+        "x-apidog-status": "released",
         "operationId": "getBuildings",
         "summary": "Search public buildings",
         "description": "Chưa triển khai trong Tenancy-Service hiện tại; endpoint được giữ trong tài liệu thiết kế.\npublic. Tìm tòa nhà trên sàn công khai. Lỗi nghiệp vụ: 422 VALIDATION FAILED · 429 RATE LIMIT EXCEEDED.",
@@ -5456,13 +5456,16 @@
               "additionalProperties": false,
               "properties": {
                 "province": {
-                  "type": "string"
+                  "type": "string",
+                  "maxLength": 100
                 },
                 "ward": {
-                  "type": "string"
+                  "type": "string",
+                  "maxLength": 100
                 },
                 "q": {
-                  "type": "string"
+                  "type": "string",
+                  "maxLength": 100
                 }
               }
             }
@@ -5473,6 +5476,10 @@
             "description": "Một trường sắp xếp được endpoint hỗ trợ.",
             "schema": {
               "type": "string",
+              "enum": [
+                "createdAt",
+                "name"
+              ],
               "default": "createdAt"
             }
           },
@@ -5510,14 +5517,11 @@
           {
             "name": "format",
             "in": "query",
-            "description": "json trả envelope; định dạng khác trả file stream.",
+            "description": "Chỉ hỗ trợ JSON; export xlsx/csv/pdf chưa triển khai.",
             "schema": {
               "type": "string",
               "enum": [
-                "json",
-                "xlsx",
-                "csv",
-                "pdf"
+                "json"
               ],
               "default": "json"
             }
@@ -5624,35 +5628,38 @@
                     "hasPreviousPage": false
                   }
                 }
-              },
-              "text/csv": {
-                "schema": {
-                  "type": "string",
-                  "format": "binary"
-                }
-              },
-              "application/pdf": {
-                "schema": {
-                  "type": "string",
-                  "format": "binary"
-                }
-              },
-              "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": {
-                "schema": {
-                  "type": "string",
-                  "format": "binary"
-                }
               }
             }
           },
-          "400": {
-            "$ref": "#/components/responses/BadRequestQueryError"
-          },
           "422": {
-            "$ref": "#/components/responses/ValidationError"
-          },
-          "429": {
-            "$ref": "#/components/responses/TooManyRequestsError"
+            "description": "Query không hợp lệ hoặc chứa field ngoài contract.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        422
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "VALIDATION_FAILED",
+                        "UNEXPECTED_FIELD"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
@@ -6440,7 +6447,7 @@
           "Property"
         ],
         "x-apidog-folder": "Building",
-        "x-apidog-status": "designing",
+        "x-apidog-status": "released",
         "operationId": "getBuildingsBuildingid",
         "summary": "Get public building details",
         "description": "Chưa triển khai trong Tenancy-Service hiện tại; endpoint được giữ trong tài liệu thiết kế.\npublic. Đọc tòa nhà (chế độ công khai). Lỗi nghiệp vụ: 404 NOT FOUND.",
@@ -6503,16 +6510,36 @@
             }
           },
           "400": {
-            "$ref": "#/components/responses/BadRequestPathError"
-          },
-          "403": {
-            "$ref": "#/components/responses/ForbiddenOnlyError"
+            "description": "buildingId không phải UUID.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        400
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "BAD_REQUEST"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "404": {
             "$ref": "#/components/responses/NotFoundError"
-          },
-          "429": {
-            "$ref": "#/components/responses/TooManyRequestsError"
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"

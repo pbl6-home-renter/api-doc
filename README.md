@@ -4,8 +4,9 @@ Repository này là trung tâm lưu trữ, định nghĩa và đồng bộ đặ
 
 Các API Auth/User phản ánh hành vi Identity-Service hiện tại. Khi gọi trực tiếp service, dùng prefix `/identity-service/api/v1` (server override trong từng operation); các domain khác giữ server chung. Login/register trả token trong JSON và không đặt cookie. Refresh/logout nhận refresh token trong body JSON và backend thực hiện refresh-token rotation. Mã lỗi validation giữ nguyên giá trị do service trả, kể cả thông báo tiếng Anh của query validator. Sau khi sửa tài liệu, chạy `npm run bundle` và đồng bộ nhánh trong Apidog để nạp thay đổi.
 
-Các API Building phản ánh 9 operation đã triển khai trong Tenancy-Service: tạo, cập nhật, xóa,
-approve/reject, danh sách và chi tiết cho landlord/admin. API GET public, cấu hình VietQR
+Các API Building phản ánh 11 operation đã triển khai trong Tenancy-Service: tạo, cập nhật, xóa,
+approve/reject, danh sách và chi tiết cho landlord/admin, tìm kiếm và chi tiết public (chỉ approved, chưa xóa).
+Public Building chỉ hỗ trợ JSON, chưa có export hoặc rate limiter ở service. Cấu hình VietQR
 và tạo rate policy hàng loạt vẫn được giữ ở trạng thái thiết kế, có ghi chú chưa triển khai.
 Response giữ các giá trị tạm service đang trả về cho occupancy, media và billing;
 các field dự phòng vẫn được giữ kèm mô tả rõ trạng thái hỗ trợ.

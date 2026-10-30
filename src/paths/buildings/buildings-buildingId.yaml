@@ -2,12 +2,37 @@ get:
   tags:
   - Property
   x-apidog-folder: Building
-  x-apidog-status: designing
+  x-apidog-status: released
   operationId: getBuildingsBuildingid
   summary: Get public building details
   description: |-
-    Chưa triển khai trong Tenancy-Service hiện tại; endpoint được giữ trong tài liệu thiết kế.
-    public. Đọc tòa nhà (chế độ công khai). Lỗi nghiệp vụ: 404 NOT FOUND.
+    Public; không cần token. Chỉ trả Building `approved` và chưa xóa, kể cả khi người gọi là landlord/admin.
+    Không tồn tại, pending, rejected hoặc đã xóa đều trả `404 RESOURCE_NOT_FOUND`.
+    Response chỉ gồm id, name, province, ward, address và status (`approved`).
+    buildingId không phải UUID trả `400 BAD_REQUEST` theo ParseUUIDPipe hiện có.
+
+    ```mermaid
+    sequenceDiagram
+        autonumber
+        participant GW as API Gateway
+        participant TEN as Tenancy
+        participant DB as Tenancy DB
+
+        GW->>TEN: GET /api/v1/buildings/{buildingId} (no token required)
+        TEN->>TEN: Validate UUID; public access without authentication
+        alt Invalid UUID
+            TEN-->>GW: 400 BAD_REQUEST
+        else Valid UUID
+            TEN->>DB: SELECT building WHERE id = buildingId AND status = approved AND is_deleted = false
+            DB-->>TEN: Approved building or null
+            alt No public building
+                TEN-->>GW: 404 RESOURCE_NOT_FOUND
+            else Found
+                TEN->>TEN: Map only id, name, province, ward, address, status
+                TEN-->>GW: 200 BUILDING_FETCHED
+            end
+        end
+    ```
   security: []
   parameters:
   - name: buildingId
@@ -50,13 +75,22 @@ get:
               address: 12 Nguyễn Trãi
               status: approved
     '400':
-      $ref: ../../openapi.yaml#/components/responses/BadRequestPathError
-    '403':
-      $ref: ../../openapi.yaml#/components/responses/ForbiddenOnlyError
+      description: buildingId không phải UUID.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code]
+            properties:
+              statusCode:
+                type: integer
+                enum: [400]
+              code:
+                type: string
+                enum: [BAD_REQUEST]
     '404':
       $ref: ../../openapi.yaml#/components/responses/NotFoundError
-    '429':
-      $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
     '500':
       $ref: ../../openapi.yaml#/components/responses/InternalServerError
 patch:
