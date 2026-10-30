@@ -1,14 +1,29 @@
 type: object
 title: PaginationQueryParams
+description: Query phân trang offset chuẩn (khớp `OffsetPaginationQueryRequestDto` của backend).
 properties:
-  page:
+  pageNo:
     type: integer
+    description: Số nguyên dương, bắt đầu từ 1
     default: 1
     minimum: 1
   pageSize:
     type: integer
-    default: 10
+    description: Số nguyên dương, tối đa 100
+    default: 20
+    minimum: 1
     maximum: 100
   sort:
     type: string
-    example: "createdAt:desc"
+    description: Một field từ whitelist của endpoint, không chứa dấu phẩy.
+    example: "createdAt"
+  order:
+    type: string
+    enum:
+      - asc
+      - desc
+    description: Thứ tự sắp xếp; bỏ trống thì dùng thứ tự mặc định của endpoint.
+  filter:
+    type: object
+    description: Field được endpoint cho phép, serialized theo deepObject (vd `filter[status]=available`).
+    additionalProperties: true
