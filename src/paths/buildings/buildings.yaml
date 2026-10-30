@@ -2,12 +2,38 @@ get:
   tags:
   - Property
   x-apidog-folder: Building
-  x-apidog-status: designing
+  x-apidog-status: released
   operationId: getBuildings
   summary: Search public buildings
   description: |-
-    Chưa triển khai trong Tenancy-Service hiện tại; endpoint được giữ trong tài liệu thiết kế.
-    public. Tìm tòa nhà trên sàn công khai. Lỗi nghiệp vụ: 422 VALIDATION FAILED · 429 RATE LIMIT EXCEEDED.
+    Public; không cần token. Chỉ trả Building `approved` và chưa xóa, kể cả khi người gọi là landlord/admin.
+    `filter[province]` và `filter[ward]` so khớp chính xác; `filter[q]` tìm không phân biệt hoa/thường
+    trong name hoặc address. Mỗi filter dài tối đa 100 ký tự. Điều kiện visibility nằm trong SQL trước
+    khi đếm và phân trang. Sort chỉ nhận `createdAt` hoặc `name`, mặc định `createdAt desc`.
+    Chỉ hỗ trợ `format=json`; xlsx/csv/pdf chưa triển khai. Rate limiting thuộc phạm vi gateway.
+    Query không hợp lệ trả `422 VALIDATION_FAILED`; field ngoài contract trả `422 UNEXPECTED_FIELD`
+    theo validation chung của service.
+
+    ```mermaid
+    sequenceDiagram
+        autonumber
+        participant GW as API Gateway
+        participant TEN as Tenancy
+        participant DB as Tenancy DB
+
+        GW->>TEN: GET /api/v1/buildings (filter, sort, order, pageNo, pageSize; no token required)
+        TEN->>TEN: Validate query; public access without authentication
+        alt Invalid query
+            TEN-->>GW: 422 VALIDATION_FAILED / UNEXPECTED_FIELD
+        else Valid query
+            TEN->>DB: SELECT buildings WHERE is_deleted = false AND status = approved<br/>AND province/ward filters AND (LOWER(name) LIKE q OR LOWER(address) LIKE q)<br/>ORDER BY whitelisted field; OFFSET / LIMIT
+            DB-->>TEN: Public buildings
+            TEN->>DB: COUNT with the same visibility and filter conditions (when needed by paginator)
+            DB-->>TEN: totalItems
+            TEN->>TEN: Map only id, name, province, ward, address
+            TEN-->>GW: 200 BUILDINGS_FETCHED + pagination
+        end
+    ```
   security: []
   parameters:
   - name: filter
@@ -22,15 +48,19 @@ get:
       properties:
         province:
           type: string
+          maxLength: 100
         ward:
           type: string
+          maxLength: 100
         q:
           type: string
+          maxLength: 100
   - name: sort
     in: query
     description: Một trường sắp xếp được endpoint hỗ trợ.
     schema:
       type: string
+      enum: [createdAt, name]
       default: createdAt
   - name: order
     in: query
@@ -55,14 +85,11 @@ get:
       default: 1
   - name: format
     in: query
-    description: json trả envelope; định dạng khác trả file stream.
+    description: Chỉ hỗ trợ JSON; export xlsx/csv/pdf chưa triển khai.
     schema:
       type: string
       enum:
       - json
-      - xlsx
-      - csv
-      - pdf
       default: json
   responses:
     '200':
@@ -140,24 +167,21 @@ get:
               totalPages: 1
               hasNextPage: false
               hasPreviousPage: false
-        text/csv:
-          schema:
-            type: string
-            format: binary
-        application/pdf:
-          schema:
-            type: string
-            format: binary
-        application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
-          schema:
-            type: string
-            format: binary
-    '400':
-      $ref: ../../openapi.yaml#/components/responses/BadRequestQueryError
     '422':
-      $ref: ../../openapi.yaml#/components/responses/ValidationError
-    '429':
-      $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
+      description: Query không hợp lệ hoặc chứa field ngoài contract.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code]
+            properties:
+              statusCode:
+                type: integer
+                enum: [422]
+              code:
+                type: string
+                enum: [VALIDATION_FAILED, UNEXPECTED_FIELD]
     '500':
       $ref: ../../openapi.yaml#/components/responses/InternalServerError
 post:

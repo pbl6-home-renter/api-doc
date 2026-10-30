@@ -5438,10 +5438,10 @@
           "Property"
         ],
         "x-apidog-folder": "Building",
-        "x-apidog-status": "designing",
+        "x-apidog-status": "released",
         "operationId": "getBuildings",
         "summary": "Search public buildings",
-        "description": "Chưa triển khai trong Tenancy-Service hiện tại; endpoint được giữ trong tài liệu thiết kế.\npublic. Tìm tòa nhà trên sàn công khai. Lỗi nghiệp vụ: 422 VALIDATION FAILED · 429 RATE LIMIT EXCEEDED.",
+        "description": "Public; không cần token. Chỉ trả Building `approved` và chưa xóa, kể cả khi người gọi là landlord/admin.\n`filter[province]` và `filter[ward]` so khớp chính xác; `filter[q]` tìm không phân biệt hoa/thường\ntrong name hoặc address. Mỗi filter dài tối đa 100 ký tự. Điều kiện visibility nằm trong SQL trước\nkhi đếm và phân trang. Sort chỉ nhận `createdAt` hoặc `name`, mặc định `createdAt desc`.\nChỉ hỗ trợ `format=json`; xlsx/csv/pdf chưa triển khai. Rate limiting thuộc phạm vi gateway.\nQuery không hợp lệ trả `422 VALIDATION_FAILED`; field ngoài contract trả `422 UNEXPECTED_FIELD`\ntheo validation chung của service.\n\n```mermaid\nsequenceDiagram\n    autonumber\n    participant GW as API Gateway\n    participant TEN as Tenancy\n    participant DB as Tenancy DB\n\n    GW->>TEN: GET /api/v1/buildings (filter, sort, order, pageNo, pageSize; no token required)\n    TEN->>TEN: Validate query; public access without authentication\n    alt Invalid query\n        TEN-->>GW: 422 VALIDATION_FAILED / UNEXPECTED_FIELD\n    else Valid query\n        TEN->>DB: SELECT buildings WHERE is_deleted = false AND status = approved<br/>AND province/ward filters AND (LOWER(name) LIKE q OR LOWER(address) LIKE q)<br/>ORDER BY whitelisted field; OFFSET / LIMIT\n        DB-->>TEN: Public buildings\n        TEN->>DB: COUNT with the same visibility and filter conditions (when needed by paginator)\n        DB-->>TEN: totalItems\n        TEN->>TEN: Map only id, name, province, ward, address\n        TEN-->>GW: 200 BUILDINGS_FETCHED + pagination\n    end\n```",
         "security": [],
         "parameters": [
           {
@@ -5456,13 +5456,16 @@
               "additionalProperties": false,
               "properties": {
                 "province": {
-                  "type": "string"
+                  "type": "string",
+                  "maxLength": 100
                 },
                 "ward": {
-                  "type": "string"
+                  "type": "string",
+                  "maxLength": 100
                 },
                 "q": {
-                  "type": "string"
+                  "type": "string",
+                  "maxLength": 100
                 }
               }
             }
@@ -5473,6 +5476,10 @@
             "description": "Một trường sắp xếp được endpoint hỗ trợ.",
             "schema": {
               "type": "string",
+              "enum": [
+                "createdAt",
+                "name"
+              ],
               "default": "createdAt"
             }
           },
@@ -5510,14 +5517,11 @@
           {
             "name": "format",
             "in": "query",
-            "description": "json trả envelope; định dạng khác trả file stream.",
+            "description": "Chỉ hỗ trợ JSON; export xlsx/csv/pdf chưa triển khai.",
             "schema": {
               "type": "string",
               "enum": [
-                "json",
-                "xlsx",
-                "csv",
-                "pdf"
+                "json"
               ],
               "default": "json"
             }
@@ -5624,35 +5628,38 @@
                     "hasPreviousPage": false
                   }
                 }
-              },
-              "text/csv": {
-                "schema": {
-                  "type": "string",
-                  "format": "binary"
-                }
-              },
-              "application/pdf": {
-                "schema": {
-                  "type": "string",
-                  "format": "binary"
-                }
-              },
-              "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": {
-                "schema": {
-                  "type": "string",
-                  "format": "binary"
-                }
               }
             }
           },
-          "400": {
-            "$ref": "#/components/responses/BadRequestQueryError"
-          },
           "422": {
-            "$ref": "#/components/responses/ValidationError"
-          },
-          "429": {
-            "$ref": "#/components/responses/TooManyRequestsError"
+            "description": "Query không hợp lệ hoặc chứa field ngoài contract.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        422
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "VALIDATION_FAILED",
+                        "UNEXPECTED_FIELD"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
@@ -6440,10 +6447,10 @@
           "Property"
         ],
         "x-apidog-folder": "Building",
-        "x-apidog-status": "designing",
+        "x-apidog-status": "released",
         "operationId": "getBuildingsBuildingid",
         "summary": "Get public building details",
-        "description": "Chưa triển khai trong Tenancy-Service hiện tại; endpoint được giữ trong tài liệu thiết kế.\npublic. Đọc tòa nhà (chế độ công khai). Lỗi nghiệp vụ: 404 NOT FOUND.",
+        "description": "Public; không cần token. Chỉ trả Building `approved` và chưa xóa, kể cả khi người gọi là landlord/admin.\nKhông tồn tại, pending, rejected hoặc đã xóa đều trả `404 RESOURCE_NOT_FOUND`.\nResponse chỉ gồm id, name, province, ward, address và status (`approved`).\nbuildingId không phải UUID trả `400 BAD_REQUEST` theo ParseUUIDPipe hiện có.\n\n```mermaid\nsequenceDiagram\n    autonumber\n    participant GW as API Gateway\n    participant TEN as Tenancy\n    participant DB as Tenancy DB\n\n    GW->>TEN: GET /api/v1/buildings/{buildingId} (no token required)\n    TEN->>TEN: Validate UUID; public access without authentication\n    alt Invalid UUID\n        TEN-->>GW: 400 BAD_REQUEST\n    else Valid UUID\n        TEN->>DB: SELECT building WHERE id = buildingId AND status = approved AND is_deleted = false\n        DB-->>TEN: Approved building or null\n        alt No public building\n            TEN-->>GW: 404 RESOURCE_NOT_FOUND\n        else Found\n            TEN->>TEN: Map only id, name, province, ward, address, status\n            TEN-->>GW: 200 BUILDING_FETCHED\n        end\n    end\n```",
         "security": [],
         "parameters": [
           {
@@ -6503,16 +6510,36 @@
             }
           },
           "400": {
-            "$ref": "#/components/responses/BadRequestPathError"
-          },
-          "403": {
-            "$ref": "#/components/responses/ForbiddenOnlyError"
+            "description": "buildingId không phải UUID.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        400
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "BAD_REQUEST"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "404": {
             "$ref": "#/components/responses/NotFoundError"
-          },
-          "429": {
-            "$ref": "#/components/responses/TooManyRequestsError"
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
