@@ -32,51 +32,7 @@ allOf:
         type: array
         description: Danh sách các đơn giá dịch vụ và phí định kỳ
         items:
-          type: object
-          properties:
-            type:
-              type: string
-              enum: [electricity, water, wifi, cleaning, parking, maintenance, other]
-              description: Loại dịch vụ
-              example: "electricity"
-            name:
-              type: string
-              description: Tên hiển thị dịch vụ (copy sang snapshot hóa đơn)
-              example: "Điện EVN"
-            rateKind:
-              type: string
-              enum: [flat, tiered, fixed_per_period, per_head, per_area_m2, per_vehicle]
-              description: Phương pháp tính đơn giá
-              example: "flat"
-            unitPrice:
-              type: number
-              nullable: true
-              description: Đơn giá cố định (không áp dụng cho loại tiered)
-              example: 4000
-            steps:
-              type: array
-              nullable: true
-              description: Bậc thang lũy tiến (chỉ dùng cho loại tiered)
-              items:
-                type: object
-                properties:
-                  from:
-                    type: number
-                  to:
-                    type: number
-                    nullable: true
-                  price:
-                    type: number
-            billingUnit:
-              type: string
-              enum: [kwh, m3, room, person, m2, vehicle, day, occurrence]
-              description: Đơn vị tính để hiển thị
-              example: "kwh"
-          required:
-            - type
-            - name
-            - rateKind
-            - billingUnit
+          $ref: '../../openapi.yaml#/components/schemas/RateItem'
       isActive:
         type: boolean
         default: true

@@ -7389,8 +7389,8 @@
             "BearerAuth": []
           }
         ],
-        "summary": "Batch create rate policies for building",
-        "description": "Chưa triển khai trong Tenancy-Service hiện tại; endpoint được giữ trong tài liệu thiết kế.\nlandlord. Thiết lập hàng loạt các chính sách đơn giá tiện ích và phí dịch vụ cho tòa nhà (bước 3/3 wizard tạo tài sản). Lỗi nghiệp vụ: 404 BUILDING NOT FOUND · 403 FORBIDDEN · 422 VALIDATION FAILED.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
+        "summary": "Save building rate set",
+        "description": "Chưa triển khai trong Tenancy-Service hiện tại; endpoint được giữ trong tài liệu thiết kế.\nlandlord. Thiết lập một bộ đơn giá cấp building (bước 3/3 wizard). buildingId chỉ lấy từ path. Lỗi nghiệp vụ: 404 BUILDING_NOT_FOUND · 403 FORBIDDEN · 422 INVALID_RATE_KIND/TIER_CONFIG_INVALID/VALIDATION_FAILED.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "parameters": [
           {
             "name": "buildingId",
@@ -7411,34 +7411,59 @@
                 "$ref": "#/components/schemas/BuildingRatePoliciesBatchCreateRequestDto"
               },
               "example": {
-                "buildingId": "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d",
-                "ratePolicies": [
+                "rates": [
                   {
-                    "category": "ELECTRICITY",
-                    "name": "Tiền điện sinh hoạt",
-                    "rateKind": "PROGRESSIVE",
-                    "unit": "kWh",
+                    "type": "electricity",
+                    "name": "Điện EVN",
+                    "rateKind": "tiered",
+                    "unitPrice": null,
                     "steps": [
                       {
-                        "fromStep": 0,
-                        "toStep": 50,
-                        "stepPrice": 1806
+                        "from": 0,
+                        "to": 50,
+                        "price": "1893"
+                      },
+                      {
+                        "from": 51,
+                        "to": 100,
+                        "price": "1956"
+                      },
+                      {
+                        "from": 101,
+                        "to": 200,
+                        "price": "2283"
+                      },
+                      {
+                        "from": 201,
+                        "to": 300,
+                        "price": "2833"
+                      },
+                      {
+                        "from": 301,
+                        "to": 400,
+                        "price": "2927"
+                      },
+                      {
+                        "from": 401,
+                        "to": null,
+                        "price": "3451"
                       }
-                    ]
+                    ],
+                    "billingUnit": "kwh"
                   },
                   {
-                    "category": "WATER",
-                    "name": "Tiền nước sinh hoạt",
-                    "rateKind": "PER_PERSON",
-                    "unit": "người/tháng",
-                    "unitPrice": 100000
+                    "type": "water",
+                    "name": "Nước theo người",
+                    "rateKind": "per_head",
+                    "unitPrice": "100000",
+                    "billingUnit": "person"
                   },
                   {
-                    "category": "INTERNET",
-                    "name": "Internet Wifi tốc độ cao",
-                    "rateKind": "PER_ROOM",
-                    "unit": "phòng/tháng",
-                    "unitPrice": 100000
+                    "type": "wifi",
+                    "name": "Wifi",
+                    "rateKind": "fixed_per_period",
+                    "unitPrice": "100000",
+                    "billingUnit": "room"
                   }
                 ]
               }
@@ -7550,27 +7575,27 @@
                     "code": {
                       "type": "string",
                       "enum": [
-                        "BUILDING_ID_MISMATCH",
-                        "RATE_POLICIES_REQUIRED",
+                        "INVALID_RATE_KIND",
+                        "TIER_CONFIG_INVALID",
                         "VALIDATION_FAILED"
                       ],
-                      "description": "- BUILDING_ID_MISMATCH: buildingId trong body khác buildingId trên đường dẫn.\n- RATE_POLICIES_REQUIRED: Danh sách ratePolicies rỗng hoặc không có biểu giá hợp lệ.\n- VALIDATION_FAILED: Dữ liệu biểu giá vi phạm ràng buộc khác của DTO."
+                      "description": "- INVALID_RATE_KIND: Phương pháp tính giá không hợp lệ cho loại dịch vụ.\n- TIER_CONFIG_INVALID: Cấu hình bậc thang không hợp lệ.\n- VALIDATION_FAILED: Dữ liệu biểu giá vi phạm ràng buộc khác của DTO."
                     }
                   }
                 },
                 "examples": {
-                  "building_id_mismatch": {
-                    "summary": "BUILDING_ID_MISMATCH — buildingId trong body khác buildingId trên đường dẫn.",
+                  "invalid_rate_kind": {
+                    "summary": "INVALID_RATE_KIND — Phương pháp tính giá không hợp lệ.",
                     "value": {
                       "statusCode": 422,
-                      "code": "BUILDING_ID_MISMATCH"
+                      "code": "INVALID_RATE_KIND"
                     }
                   },
-                  "rate_policies_required": {
-                    "summary": "RATE_POLICIES_REQUIRED — Danh sách ratePolicies rỗng hoặc không có biểu giá hợp lệ.",
+                  "tier_config_invalid": {
+                    "summary": "TIER_CONFIG_INVALID — Cấu hình bậc thang không hợp lệ.",
                     "value": {
                       "statusCode": 422,
-                      "code": "RATE_POLICIES_REQUIRED"
+                      "code": "TIER_CONFIG_INVALID"
                     }
                   },
                   "validation_failed": {
@@ -11133,6 +11158,10 @@
                 "scope": {
                   "type": "string"
                 },
+                "buildingId": {
+                  "type": "string",
+                  "format": "uuid"
+                },
                 "roomId": {
                   "type": "string",
                   "format": "uuid"
@@ -11251,9 +11280,19 @@
                       "landlordId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
                       "scope": "room",
                       "roomId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-                      "type": "electricity",
-                      "rateKind": "tiered",
-                      "isActive": true
+                      "buildingId": null,
+                      "rates": [
+                        {
+                          "type": "electricity",
+                          "name": "Điện EVN",
+                          "rateKind": "flat",
+                          "unitPrice": "4000",
+                          "billingUnit": "kwh"
+                        }
+                      ],
+                      "isActive": true,
+                      "createdAt": "2026-10-30T00:00:00Z",
+                      "updatedAt": "2026-10-30T00:00:00Z"
                     }
                   ],
                   "pagination": {
@@ -11305,7 +11344,7 @@
           }
         ],
         "summary": "Create rate policy",
-        "description": "landlord. Tạo một chính sách đơn giá hoặc phí. Lỗi nghiệp vụ: 409 ACTIVE POLICY EXISTS · 422 INVALID RATE KIND · 403 FORBIDDEN.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
+        "description": "landlord. Tạo một bộ đơn giá cho building hoặc room. Một scope chỉ có một bộ; nếu đã tồn tại, cập nhật bằng PATCH. Lỗi: 409 ACTIVE_POLICY_EXISTS · 422 INVALID_RATE_KIND/TIER_CONFIG_INVALID/VALIDATION_FAILED · 403 FORBIDDEN.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "requestBody": {
           "required": true,
           "content": {
@@ -11316,14 +11355,45 @@
               "example": {
                 "scope": "room",
                 "roomId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-                "name": "Điện EVN",
-                "type": "electricity",
-                "rateKind": "tiered",
-                "steps": [
+                "rates": [
                   {
-                    "from": 0,
-                    "to": 50,
-                    "price": 1806
+                    "type": "electricity",
+                    "name": "Điện EVN",
+                    "rateKind": "tiered",
+                    "unitPrice": null,
+                    "steps": [
+                      {
+                        "from": 0,
+                        "to": 50,
+                        "price": "1893"
+                      },
+                      {
+                        "from": 51,
+                        "to": 100,
+                        "price": "1956"
+                      },
+                      {
+                        "from": 101,
+                        "to": 200,
+                        "price": "2283"
+                      },
+                      {
+                        "from": 201,
+                        "to": 300,
+                        "price": "2833"
+                      },
+                      {
+                        "from": 301,
+                        "to": 400,
+                        "price": "2927"
+                      },
+                      {
+                        "from": 401,
+                        "to": null,
+                        "price": "3451"
+                      }
+                    ],
+                    "billingUnit": "kwh"
                   }
                 ]
               }
@@ -11366,10 +11436,54 @@
                   "code": "RATE_POLICY_CREATED",
                   "data": {
                     "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                    "landlordId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
                     "scope": "room",
-                    "type": "electricity",
-                    "rateKind": "tiered",
-                    "isActive": true
+                    "buildingId": null,
+                    "roomId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                    "rates": [
+                      {
+                        "type": "electricity",
+                        "name": "Điện EVN",
+                        "rateKind": "tiered",
+                        "unitPrice": null,
+                        "steps": [
+                          {
+                            "from": 0,
+                            "to": 50,
+                            "price": "1893"
+                          },
+                          {
+                            "from": 51,
+                            "to": 100,
+                            "price": "1956"
+                          },
+                          {
+                            "from": 101,
+                            "to": 200,
+                            "price": "2283"
+                          },
+                          {
+                            "from": 201,
+                            "to": 300,
+                            "price": "2833"
+                          },
+                          {
+                            "from": 301,
+                            "to": 400,
+                            "price": "2927"
+                          },
+                          {
+                            "from": 401,
+                            "to": null,
+                            "price": "3451"
+                          }
+                        ],
+                        "billingUnit": "kwh"
+                      }
+                    ],
+                    "isActive": true,
+                    "createdAt": "2026-10-30T00:00:00Z",
+                    "updatedAt": "2026-10-30T00:00:00Z"
                   }
                 }
               }
@@ -11417,7 +11531,7 @@
                       "enum": [
                         "ACTIVE_POLICY_EXISTS"
                       ],
-                      "description": "- ACTIVE_POLICY_EXISTS: Đã có chính sách đang hiệu lực cho cùng phạm vi."
+                      "description": "- ACTIVE_POLICY_EXISTS: Đã có bộ đơn giá cho cùng phạm vi; dùng PATCH để cập nhật hoặc kích hoạt lại."
                     }
                   }
                 },
@@ -11456,9 +11570,10 @@
                       "type": "string",
                       "enum": [
                         "INVALID_RATE_KIND",
+                        "TIER_CONFIG_INVALID",
                         "VALIDATION_FAILED"
                       ],
-                      "description": "- INVALID_RATE_KIND: Loại chính sách giá không hợp lệ.\n- VALIDATION_FAILED: Dữ liệu vi phạm ràng buộc schema hoặc quy tắc nghiệp vụ khác chưa có mã riêng."
+                      "description": "- INVALID_RATE_KIND: Loại chính sách giá không hợp lệ.\n- TIER_CONFIG_INVALID: Cấu hình bậc thang thiếu, không liên tục hoặc bậc cuối không mở.\n- VALIDATION_FAILED: Dữ liệu vi phạm ràng buộc schema hoặc quy tắc nghiệp vụ khác chưa có mã riêng."
                     }
                   }
                 },
@@ -11468,6 +11583,13 @@
                     "value": {
                       "statusCode": 422,
                       "code": "INVALID_RATE_KIND"
+                    }
+                  },
+                  "tier_config_invalid": {
+                    "summary": "TIER_CONFIG_INVALID — Cấu hình bậc thang không hợp lệ.",
+                    "value": {
+                      "statusCode": 422,
+                      "code": "TIER_CONFIG_INVALID"
                     }
                   },
                   "validation_failed": {
@@ -11507,7 +11629,7 @@
           }
         ],
         "summary": "Update rate policy",
-        "description": "landlord. Đổi tên chính sách. Lỗi nghiệp vụ: 403 FORBIDDEN · 409 RATE POLICY LOCKED · 422 VALIDATION FAILED.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
+        "description": "landlord. Cập nhật bộ đơn giá tại chỗ hoặc bật/tắt bộ. Hóa đơn đã phát hành giữ snapshot cũ. Lỗi: 403 FORBIDDEN · 422 INVALID_RATE_KIND/TIER_CONFIG_INVALID/VALIDATION_FAILED.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "parameters": [
           {
             "name": "ratePolicyId",
@@ -11527,14 +11649,23 @@
                 "$ref": "#/components/schemas/RatePolicyUpdateRequestDto"
               },
               "example": {
-                "name": "Điện EVN 2026"
+                "isActive": true,
+                "rates": [
+                  {
+                    "type": "electricity",
+                    "name": "Điện đồng giá",
+                    "rateKind": "flat",
+                    "unitPrice": "4000",
+                    "billingUnit": "kwh"
+                  }
+                ]
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Thành công: Đổi tên chính sách.",
+            "description": "Thành công: Cập nhật bộ đơn giá.",
             "content": {
               "application/json": {
                 "schema": {
@@ -11568,7 +11699,22 @@
                   "code": "RATE_POLICY_UPDATED",
                   "data": {
                     "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-                    "name": "Điện EVN 2026"
+                    "landlordId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                    "scope": "room",
+                    "buildingId": null,
+                    "roomId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                    "rates": [
+                      {
+                        "type": "electricity",
+                        "name": "Điện đồng giá",
+                        "rateKind": "flat",
+                        "unitPrice": "4000",
+                        "billingUnit": "kwh"
+                      }
+                    ],
+                    "isActive": true,
+                    "createdAt": "2026-10-30T00:00:00Z",
+                    "updatedAt": "2026-10-30T00:00:00Z"
                   }
                 }
               }
@@ -11586,9 +11732,9 @@
           "404": {
             "$ref": "#/components/responses/NotFoundError"
           },
-          "409": {
-            "x-apidog-name": "Conflict",
-            "description": "Yêu cầu xung đột với trạng thái hiện tại hoặc dữ liệu đã tồn tại.",
+          "422": {
+            "x-apidog-name": "Unprocessable Entity",
+            "description": "Dữ liệu vi phạm quy tắc của bộ đơn giá.",
             "content": {
               "application/json": {
                 "schema": {
@@ -11602,32 +11748,41 @@
                     "statusCode": {
                       "type": "integer",
                       "enum": [
-                        409
+                        422
                       ]
                     },
                     "code": {
                       "type": "string",
                       "enum": [
-                        "RATE_POLICY_LOCKED"
-                      ],
-                      "description": "- RATE_POLICY_LOCKED: Chính sách giá đã bị khóa."
+                        "INVALID_RATE_KIND",
+                        "TIER_CONFIG_INVALID",
+                        "VALIDATION_FAILED"
+                      ]
                     }
                   }
                 },
                 "examples": {
-                  "rate_policy_locked": {
-                    "summary": "RATE_POLICY_LOCKED — Chính sách giá đã bị khóa.",
+                  "invalid_rate_kind": {
                     "value": {
-                      "statusCode": 409,
-                      "code": "RATE_POLICY_LOCKED"
+                      "statusCode": 422,
+                      "code": "INVALID_RATE_KIND"
+                    }
+                  },
+                  "tier_config_invalid": {
+                    "value": {
+                      "statusCode": 422,
+                      "code": "TIER_CONFIG_INVALID"
+                    }
+                  },
+                  "validation_failed": {
+                    "value": {
+                      "statusCode": 422,
+                      "code": "VALIDATION_FAILED"
                     }
                   }
                 }
               }
             }
-          },
-          "422": {
-            "$ref": "#/components/responses/ValidationError"
           },
           "429": {
             "$ref": "#/components/responses/TooManyRequestsError"
@@ -11703,7 +11858,22 @@
                   "code": "RATE_POLICY_DEACTIVATED",
                   "data": {
                     "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-                    "isActive": false
+                    "landlordId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                    "scope": "room",
+                    "buildingId": null,
+                    "roomId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                    "rates": [
+                      {
+                        "type": "electricity",
+                        "name": "Điện đồng giá",
+                        "rateKind": "flat",
+                        "unitPrice": "4000",
+                        "billingUnit": "kwh"
+                      }
+                    ],
+                    "isActive": false,
+                    "createdAt": "2026-10-30T00:00:00Z",
+                    "updatedAt": "2026-10-30T00:00:00Z"
                   }
                 }
               }
@@ -11802,6 +11972,10 @@
               "properties": {
                 "scope": {
                   "type": "string"
+                },
+                "buildingId": {
+                  "type": "string",
+                  "format": "uuid"
                 },
                 "roomId": {
                   "type": "string",
@@ -11915,12 +12089,16 @@
                   "data": [
                     {
                       "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                      "landlordId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
                       "scope": "room",
+                      "buildingId": null,
                       "roomId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-                      "dueDays": 5,
-                      "remindDays": 3,
+                      "paymentDueDay": 5,
+                      "remindDay": 3,
                       "botEnabled": true,
-                      "isActive": true
+                      "isActive": true,
+                      "createdAt": "2026-10-30T00:00:00Z",
+                      "updatedAt": "2026-10-30T00:00:00Z"
                     }
                   ],
                   "pagination": {
@@ -11972,7 +12150,7 @@
           }
         ],
         "summary": "Create billing setting",
-        "description": "landlord. Tạo một cài đặt hóa đơn. Lỗi nghiệp vụ: 409 ACTIVE SETTING EXISTS · 422 DUE DAYS INVALID · 403 FORBIDDEN.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
+        "description": "landlord. Tạo cấu hình ngày thu dự kiến và nhắc nộp; không sinh overdue. Lỗi: 409 ACTIVE_SETTING_EXISTS · 422 VALIDATION_FAILED · 403 FORBIDDEN.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "requestBody": {
           "required": true,
           "content": {
@@ -11983,17 +12161,9 @@
               "example": {
                 "scope": "room",
                 "roomId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-                "dueDays": 5,
-                "remindDays": 3,
-                "botEnabled": true,
                 "paymentDueDay": 5,
-                "debtScanEnabled": true,
-                "gracePeriodDays": 3,
-                "overdueReminderIntervalDays": 3,
-                "reminderChannels": [
-                  "APP_PUSH",
-                  "ZALO"
-                ]
+                "remindDay": 3,
+                "botEnabled": true
               }
             }
           }
@@ -12034,9 +12204,16 @@
                   "code": "BILLING_SETTING_CREATED",
                   "data": {
                     "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-                    "dueDays": 5,
-                    "remindDays": 3,
-                    "botEnabled": true
+                    "landlordId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                    "scope": "room",
+                    "buildingId": null,
+                    "roomId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                    "paymentDueDay": 5,
+                    "remindDay": 3,
+                    "botEnabled": true,
+                    "isActive": true,
+                    "createdAt": "2026-10-30T00:00:00Z",
+                    "updatedAt": "2026-10-30T00:00:00Z"
                   }
                 }
               }
@@ -12084,7 +12261,7 @@
                       "enum": [
                         "ACTIVE_SETTING_EXISTS"
                       ],
-                      "description": "- ACTIVE_SETTING_EXISTS: Đã có cấu hình hóa đơn đang hiệu lực."
+                      "description": "- ACTIVE_SETTING_EXISTS: Đã có cấu hình cho cùng scope; dùng PATCH để cập nhật hoặc kích hoạt lại."
                     }
                   }
                 },
@@ -12122,21 +12299,13 @@
                     "code": {
                       "type": "string",
                       "enum": [
-                        "DUE_DAYS_INVALID",
                         "VALIDATION_FAILED"
                       ],
-                      "description": "- DUE_DAYS_INVALID: Số ngày đến hạn không hợp lệ.\n- VALIDATION_FAILED: Dữ liệu vi phạm ràng buộc schema hoặc quy tắc nghiệp vụ khác chưa có mã riêng."
+                      "description": "- VALIDATION_FAILED: Dữ liệu vi phạm ràng buộc schema hoặc quy tắc nghiệp vụ khác chưa có mã riêng."
                     }
                   }
                 },
                 "examples": {
-                  "due_days_invalid": {
-                    "summary": "DUE_DAYS_INVALID — Số ngày đến hạn không hợp lệ.",
-                    "value": {
-                      "statusCode": 422,
-                      "code": "DUE_DAYS_INVALID"
-                    }
-                  },
                   "validation_failed": {
                     "summary": "VALIDATION_FAILED — Dữ liệu vi phạm ràng buộc schema hoặc quy tắc nghiệp vụ khác chưa có mã riêng.",
                     "value": {
@@ -12174,7 +12343,7 @@
           }
         ],
         "summary": "Update billing setting",
-        "description": "landlord. Cập nhật cài đặt hóa đơn. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 DUE DAYS INVALID.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
+        "description": "landlord. Cập nhật ngày thu dự kiến và nhắc nộp; không sinh overdue. Lỗi: 403 FORBIDDEN · 422 VALIDATION_FAILED.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "parameters": [
           {
             "name": "billingSettingId",
@@ -12194,8 +12363,8 @@
                 "$ref": "#/components/schemas/BillingSettingUpdateRequestDto"
               },
               "example": {
-                "dueDays": 7,
-                "remindDays": 3,
+                "paymentDueDay": 7,
+                "remindDay": 3,
                 "botEnabled": false
               }
             }
@@ -12237,9 +12406,16 @@
                   "code": "BILLING_SETTING_UPDATED",
                   "data": {
                     "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-                    "dueDays": 7,
-                    "remindDays": 3,
-                    "botEnabled": false
+                    "landlordId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                    "scope": "room",
+                    "buildingId": null,
+                    "roomId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                    "paymentDueDay": 7,
+                    "remindDay": 3,
+                    "botEnabled": false,
+                    "isActive": true,
+                    "createdAt": "2026-10-30T00:00:00Z",
+                    "updatedAt": "2026-10-30T00:00:00Z"
                   }
                 }
               }
@@ -12279,21 +12455,13 @@
                     "code": {
                       "type": "string",
                       "enum": [
-                        "DUE_DAYS_INVALID",
                         "VALIDATION_FAILED"
                       ],
-                      "description": "- DUE_DAYS_INVALID: Số ngày đến hạn không hợp lệ.\n- VALIDATION_FAILED: Dữ liệu vi phạm ràng buộc schema hoặc quy tắc nghiệp vụ khác chưa có mã riêng."
+                      "description": "- VALIDATION_FAILED: Dữ liệu vi phạm ràng buộc schema hoặc quy tắc nghiệp vụ khác chưa có mã riêng."
                     }
                   }
                 },
                 "examples": {
-                  "due_days_invalid": {
-                    "summary": "DUE_DAYS_INVALID — Số ngày đến hạn không hợp lệ.",
-                    "value": {
-                      "statusCode": 422,
-                      "code": "DUE_DAYS_INVALID"
-                    }
-                  },
                   "validation_failed": {
                     "summary": "VALIDATION_FAILED — Dữ liệu vi phạm ràng buộc schema hoặc quy tắc nghiệp vụ khác chưa có mã riêng.",
                     "value": {
@@ -15448,7 +15616,7 @@
           }
         ],
         "summary": "Create meter reading",
-        "description": "landlord. Tạo một chỉ số đã xác nhận. Lỗi nghiệp vụ: 409 DUPLICATE METER READING · 422 CURRENT READING INVALID · 422 EVIDENCE REQUIRED · 403 FORBIDDEN.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
+        "description": "landlord. Xác nhận chỉ số có ảnh chứng cứ; server lấy previousReading từ kỳ trước hoặc đặt 0 cho baseline. Baseline phải lấy từ OCR, sửa tay chỉ để hiệu chỉnh kết quả OCR. Lỗi: 409 DUPLICATE_METER_READING · 422 CURRENT_READING_INVALID/EVIDENCE_REQUIRED · 403 FORBIDDEN.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "requestBody": {
           "required": true,
           "content": {
@@ -15460,7 +15628,6 @@
                 "roomId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
                 "type": "electricity",
                 "period": "2026-09",
-                "previousReading": "12680.5",
                 "currentReading": "12850.5",
                 "readingDate": "2026-09-30",
                 "isBaseline": false,
@@ -23832,121 +23999,19 @@
         "type": "object",
         "x-apidog-folder": "Building/Request",
         "title": "BuildingRatePoliciesBatchCreateRequestDto",
-        "description": "Dữ liệu thiết lập một đợt toàn bộ các biểu giá dịch vụ ban đầu (điện, nước, internet, rác, xe...) cho tòa nhà",
+        "description": "Tạo hoặc cập nhật bộ đơn giá cấp building được xác định bởi buildingId trên path.",
         "additionalProperties": false,
         "properties": {
-          "buildingId": {
-            "type": "string",
-            "format": "uuid",
-            "description": "Định danh duy nhất của tòa nhà áp dụng biểu giá",
-            "example": "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d"
-          },
-          "ratePolicies": {
+          "rates": {
             "type": "array",
-            "description": "Danh sách các chính sách biểu giá dịch vụ cần áp dụng cho tòa nhà",
             "minItems": 1,
             "items": {
-              "type": "object",
-              "description": "Chi tiết biểu giá của một loại dịch vụ",
-              "properties": {
-                "category": {
-                  "type": "string",
-                  "enum": [
-                    "ELECTRICITY",
-                    "WATER",
-                    "INTERNET",
-                    "TRASH",
-                    "PARKING",
-                    "CLEANING",
-                    "OTHER"
-                  ],
-                  "description": "Nhóm dịch vụ sinh hoạt",
-                  "example": "ELECTRICITY"
-                },
-                "name": {
-                  "type": "string",
-                  "minLength": 1,
-                  "maxLength": 100,
-                  "description": "Tên dịch vụ hiển thị trên hóa đơn",
-                  "example": "Tiền điện sinh hoạt"
-                },
-                "rateKind": {
-                  "type": "string",
-                  "enum": [
-                    "FLAT",
-                    "PROGRESSIVE",
-                    "PER_PERSON",
-                    "PER_ROOM"
-                  ],
-                  "description": "Phương thức tính phí (cố định theo số đo, lũy tiến EVN, khoán theo người, khoán theo phòng)",
-                  "example": "PROGRESSIVE"
-                },
-                "unit": {
-                  "type": "string",
-                  "minLength": 1,
-                  "maxLength": 30,
-                  "description": "Đơn vị tính (kWh, m3, người, phòng, tháng)",
-                  "example": "kWh"
-                },
-                "unitPrice": {
-                  "type": "integer",
-                  "minimum": 0,
-                  "nullable": true,
-                  "description": "Đơn giá cố định nếu rateKind là FLAT, PER_PERSON hoặc PER_ROOM",
-                  "example": 3500
-                },
-                "calculationBasis": {
-                  "type": "string",
-                  "nullable": true,
-                  "description": "Căn cứ hoặc ghi chú tính toán",
-                  "example": "Theo đồng hồ riêng từng phòng"
-                },
-                "steps": {
-                  "type": "array",
-                  "nullable": true,
-                  "description": "Các bậc tính giá lũy tiến nếu rateKind là PROGRESSIVE (bậc thang EVN)",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "fromStep": {
-                        "type": "integer",
-                        "minimum": 0,
-                        "description": "Số chỉ số bắt đầu của bậc",
-                        "example": 0
-                      },
-                      "toStep": {
-                        "type": "integer",
-                        "minimum": 1,
-                        "nullable": true,
-                        "description": "Số chỉ số kết thúc của bậc (null nếu là bậc vô hạn cuối cùng)",
-                        "example": 50
-                      },
-                      "stepPrice": {
-                        "type": "integer",
-                        "minimum": 0,
-                        "description": "Đơn giá áp dụng cho bậc này (VNĐ)",
-                        "example": 1806
-                      }
-                    },
-                    "required": [
-                      "fromStep",
-                      "stepPrice"
-                    ]
-                  }
-                }
-              },
-              "required": [
-                "category",
-                "name",
-                "rateKind",
-                "unit"
-              ]
+              "$ref": "#/components/schemas/RateItem"
             }
           }
         },
         "required": [
-          "buildingId",
-          "ratePolicies"
+          "rates"
         ]
       },
       "BuildingUpdateRequestDto": {
@@ -27211,60 +27276,50 @@
         "type": "object",
         "x-apidog-folder": "MeterReading/Request",
         "title": "MeterReadingCreateRequestDto",
-        "description": "Dữ liệu tạo chỉ số công tơ đã xác nhận",
+        "description": "Xác nhận chỉ số công tơ có ảnh chứng cứ. Baseline lấy từ OCR; người dùng chỉ sửa tay để hiệu chỉnh kết quả OCR.",
         "additionalProperties": false,
         "properties": {
           "roomId": {
             "type": "string",
-            "format": "uuid",
-            "description": "Định danh duy nhất của phòng liên quan."
+            "format": "uuid"
           },
           "type": {
             "type": "string",
             "enum": [
               "electricity",
               "water"
-            ],
-            "description": "Thông tin type của tài nguyên trong ngữ cảnh DTO."
+            ]
           },
           "period": {
             "type": "string",
-            "minLength": 7,
-            "maxLength": 7,
-            "pattern": "^[0-9]{4}-(0[1-9]|1[0-2])$",
-            "description": "Kỳ ghi chỉ số theo định dạng YYYY-MM."
-          },
-          "previousReading": {
-            "type": "string",
-            "description": "Thông tin previous reading của tài nguyên trong ngữ cảnh DTO."
+            "pattern": "^[0-9]{4}-(0[1-9]|1[0-2])$"
           },
           "currentReading": {
             "type": "string",
-            "description": "Thông tin current reading của tài nguyên trong ngữ cảnh DTO."
+            "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+            "description": "Giá trị đã xác nhận; baseline phải có nguồn OCR và có thể được hiệu chỉnh tay."
           },
           "readingDate": {
             "type": "string",
             "format": "date",
-            "nullable": true,
-            "description": "Ngày ghi chỉ số (YYYY-MM-DD)."
+            "nullable": true
           },
           "isBaseline": {
             "type": "boolean",
-            "description": "Thông tin is baseline của tài nguyên trong ngữ cảnh DTO."
+            "default": false,
+            "description": "Baseline lúc bàn giao hoặc thay đồng hồ; previousReading được server đặt là 0."
           },
           "evidenceMediaId": {
             "type": "string",
             "format": "uuid",
-            "description": "Thông tin evidence media id của tài nguyên trong ngữ cảnh DTO."
+            "description": "Ảnh công tơ bắt buộc cho cả baseline và kỳ thường."
           }
         },
         "required": [
           "roomId",
           "type",
           "period",
-          "previousReading",
           "currentReading",
-          "readingDate",
           "isBaseline",
           "evidenceMediaId"
         ]
@@ -30860,108 +30915,99 @@
         "type": "object",
         "x-apidog-folder": "RatePolicy/Request",
         "title": "RatePolicyCreateRequestDto",
-        "description": "Dữ liệu tạo chính sách đơn giá",
+        "description": "Tạo một bộ đơn giá cho một tòa nhà hoặc phòng.",
         "additionalProperties": false,
         "properties": {
           "scope": {
             "type": "string",
-            "description": "Thông tin scope của tài nguyên trong ngữ cảnh DTO.",
             "enum": [
               "building",
               "room"
-            ],
-            "example": "room"
+            ]
+          },
+          "buildingId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Bắt buộc khi scope là building; không gửi khi scope là room."
           },
           "roomId": {
             "type": "string",
-            "description": "Định danh duy nhất của phòng liên quan.",
             "format": "uuid",
-            "nullable": true
+            "description": "Bắt buộc khi scope là room; không gửi khi scope là building."
           },
-          "name": {
-            "type": "string",
-            "description": "Thông tin name của tài nguyên trong ngữ cảnh DTO.",
-            "example": "Điện EVN"
-          },
-          "type": {
-            "type": "string",
-            "enum": [
-              "electricity",
-              "water",
-              "wifi",
-              "cleaning",
-              "parking",
-              "maintenance",
-              "other"
-            ],
-            "example": "electricity"
-          },
-          "rateKind": {
-            "type": "string",
-            "description": "Thông tin rate kind của tài nguyên trong ngữ cảnh DTO.",
-            "enum": [
-              "flat",
-              "tiered",
-              "fixed_per_period",
-              "per_head",
-              "per_area_m2",
-              "per_vehicle"
-            ],
-            "example": "tiered"
-          },
-          "steps": {
+          "rates": {
             "type": "array",
-            "description": "Thông tin steps của tài nguyên trong ngữ cảnh DTO.",
-            "nullable": true,
+            "minItems": 1,
             "items": {
-              "type": "object",
-              "properties": {
-                "from": {
-                  "type": "integer",
-                  "minimum": 0,
-                  "description": "Thông tin from của tài nguyên trong ngữ cảnh DTO."
-                },
-                "to": {
-                  "type": "integer",
-                  "minimum": 0,
-                  "nullable": true,
-                  "description": "Thông tin to của tài nguyên trong ngữ cảnh DTO."
-                },
-                "price": {
-                  "type": "integer",
-                  "minimum": 0,
-                  "description": "Thông tin price của tài nguyên trong ngữ cảnh DTO."
-                }
-              },
-              "required": [
-                "from",
-                "to",
-                "price"
-              ]
+              "$ref": "#/components/schemas/RateItem"
             }
           }
         },
         "required": [
           "scope",
-          "roomId",
-          "name",
-          "type",
-          "rateKind",
-          "steps"
+          "rates"
+        ],
+        "oneOf": [
+          {
+            "properties": {
+              "scope": {
+                "enum": [
+                  "building"
+                ]
+              }
+            },
+            "required": [
+              "buildingId"
+            ],
+            "not": {
+              "properties": {
+                "roomId": {}
+              },
+              "required": [
+                "roomId"
+              ]
+            }
+          },
+          {
+            "properties": {
+              "scope": {
+                "enum": [
+                  "room"
+                ]
+              }
+            },
+            "required": [
+              "roomId"
+            ],
+            "not": {
+              "properties": {
+                "buildingId": {}
+              },
+              "required": [
+                "buildingId"
+              ]
+            }
+          }
         ]
       },
       "RatePolicyUpdateRequestDto": {
         "type": "object",
         "x-apidog-folder": "RatePolicy/Request",
         "title": "RatePolicyUpdateRequestDto",
-        "description": "Dữ liệu cập nhật một phần tên chính sách đơn giá",
+        "description": "Cập nhật bộ đơn giá tại chỗ; hóa đơn đã phát hành giữ snapshot cũ.",
         "additionalProperties": false,
         "minProperties": 1,
         "properties": {
-          "name": {
-            "type": "string",
-            "description": "Thông tin name của tài nguyên trong ngữ cảnh DTO.",
-            "example": "Điện EVN 2026"
+          "rates": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "$ref": "#/components/schemas/RateItem"
+            }
+          },
+          "isActive": {
+            "type": "boolean",
+            "description": "false để kế thừa bộ đơn giá cấp trên; true để kích hoạt lại."
           }
         }
       },
@@ -30969,366 +31015,366 @@
         "type": "object",
         "x-apidog-folder": "RatePolicy/Response",
         "title": "RatePolicyListResponseDto",
-        "description": "Danh sách chính sách đơn giá",
+        "description": "Bộ đơn giá theo scope building hoặc room.",
+        "additionalProperties": false,
         "properties": {
           "id": {
             "type": "string",
-            "format": "uuid",
-            "description": "Định danh duy nhất của tài nguyên."
+            "format": "uuid"
           },
           "landlordId": {
             "type": "string",
-            "format": "uuid",
-            "description": "Thông tin landlord id của tài nguyên trong ngữ cảnh DTO."
+            "format": "uuid"
           },
           "scope": {
             "type": "string",
             "enum": [
               "building",
               "room"
-            ],
-            "description": "Thông tin scope của tài nguyên trong ngữ cảnh DTO."
+            ]
+          },
+          "buildingId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
           },
           "roomId": {
             "type": "string",
             "format": "uuid",
-            "nullable": true,
-            "description": "Định danh duy nhất của phòng liên quan."
+            "nullable": true
           },
-          "type": {
-            "type": "string",
-            "enum": [
-              "electricity",
-              "water",
-              "wifi",
-              "cleaning",
-              "parking",
-              "maintenance",
-              "other"
-            ],
-            "description": "Thông tin type của tài nguyên trong ngữ cảnh DTO."
-          },
-          "rateKind": {
-            "type": "string",
-            "enum": [
-              "flat",
-              "tiered",
-              "fixed_per_period",
-              "per_head",
-              "per_area_m2",
-              "per_vehicle"
-            ],
-            "description": "Thông tin rate kind của tài nguyên trong ngữ cảnh DTO."
+          "rates": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RateItem"
+            }
           },
           "isActive": {
-            "type": "boolean",
-            "description": "Thông tin is active của tài nguyên trong ngữ cảnh DTO."
+            "type": "boolean"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
           }
         },
         "required": [
           "id",
           "landlordId",
           "scope",
+          "buildingId",
           "roomId",
-          "type",
-          "rateKind",
-          "isActive"
+          "rates",
+          "isActive",
+          "createdAt",
+          "updatedAt"
         ]
       },
       "RatePolicyCreateResponseDto": {
         "type": "object",
         "x-apidog-folder": "RatePolicy/Response",
         "title": "RatePolicyCreateResponseDto",
-        "description": "Phản hồi khi tạo chính sách đơn giá",
+        "description": "Bộ đơn giá theo scope building hoặc room.",
+        "additionalProperties": false,
         "properties": {
           "id": {
             "type": "string",
-            "format": "uuid",
-            "description": "Định danh duy nhất của tài nguyên."
+            "format": "uuid"
+          },
+          "landlordId": {
+            "type": "string",
+            "format": "uuid"
           },
           "scope": {
             "type": "string",
             "enum": [
               "building",
               "room"
-            ],
-            "description": "Thông tin scope của tài nguyên trong ngữ cảnh DTO."
+            ]
           },
-          "type": {
+          "buildingId": {
             "type": "string",
-            "enum": [
-              "electricity",
-              "water",
-              "wifi",
-              "cleaning",
-              "parking",
-              "maintenance",
-              "other"
-            ],
-            "description": "Thông tin type của tài nguyên trong ngữ cảnh DTO."
+            "format": "uuid",
+            "nullable": true
           },
-          "rateKind": {
+          "roomId": {
             "type": "string",
-            "enum": [
-              "flat",
-              "tiered",
-              "fixed_per_period",
-              "per_head",
-              "per_area_m2",
-              "per_vehicle"
-            ],
-            "description": "Thông tin rate kind của tài nguyên trong ngữ cảnh DTO."
+            "format": "uuid",
+            "nullable": true
+          },
+          "rates": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RateItem"
+            }
           },
           "isActive": {
-            "type": "boolean",
-            "enum": [
-              true
-            ],
-            "example": true,
-            "description": "Thông tin is active của tài nguyên trong ngữ cảnh DTO."
+            "type": "boolean"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
           }
         },
         "required": [
           "id",
+          "landlordId",
           "scope",
-          "type",
-          "rateKind",
-          "isActive"
+          "buildingId",
+          "roomId",
+          "rates",
+          "isActive",
+          "createdAt",
+          "updatedAt"
         ]
       },
       "RatePolicyUpdateResponseDto": {
         "type": "object",
         "x-apidog-folder": "RatePolicy/Response",
         "title": "RatePolicyUpdateResponseDto",
-        "description": "Phản hồi khi cập nhật chính sách đơn giá",
+        "description": "Bộ đơn giá theo scope building hoặc room.",
+        "additionalProperties": false,
         "properties": {
           "id": {
             "type": "string",
-            "format": "uuid",
-            "description": "Định danh duy nhất của tài nguyên."
+            "format": "uuid"
           },
-          "name": {
+          "landlordId": {
             "type": "string",
-            "description": "Thông tin name của tài nguyên trong ngữ cảnh DTO."
+            "format": "uuid"
+          },
+          "scope": {
+            "type": "string",
+            "enum": [
+              "building",
+              "room"
+            ]
+          },
+          "buildingId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "roomId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "rates": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RateItem"
+            }
+          },
+          "isActive": {
+            "type": "boolean"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
           }
         },
         "required": [
           "id",
-          "name"
+          "landlordId",
+          "scope",
+          "buildingId",
+          "roomId",
+          "rates",
+          "isActive",
+          "createdAt",
+          "updatedAt"
         ]
       },
       "RatePolicyDeactivateResponseDto": {
         "type": "object",
         "x-apidog-folder": "RatePolicy/Response",
         "title": "RatePolicyDeactivateResponseDto",
-        "description": "Phản hồi khi vô hiệu hóa chính sách đơn giá",
+        "description": "Bộ đơn giá theo scope building hoặc room.",
+        "additionalProperties": false,
         "properties": {
           "id": {
             "type": "string",
+            "format": "uuid"
+          },
+          "landlordId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "scope": {
+            "type": "string",
+            "enum": [
+              "building",
+              "room"
+            ]
+          },
+          "buildingId": {
+            "type": "string",
             "format": "uuid",
-            "description": "Định danh duy nhất của tài nguyên."
+            "nullable": true
+          },
+          "roomId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "rates": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RateItem"
+            }
           },
           "isActive": {
-            "type": "boolean",
-            "enum": [
-              false
-            ],
-            "example": false,
-            "description": "Thông tin is active của tài nguyên trong ngữ cảnh DTO."
+            "type": "boolean"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
           }
         },
         "required": [
           "id",
-          "isActive"
+          "landlordId",
+          "scope",
+          "buildingId",
+          "roomId",
+          "rates",
+          "isActive",
+          "createdAt",
+          "updatedAt"
         ]
       },
       "BillingSettingCreateRequestDto": {
         "type": "object",
         "x-apidog-folder": "BillingSetting/Request",
         "title": "BillingSettingCreateRequestDto",
-        "description": "Dữ liệu thiết lập chu kỳ chốt tiền, hạn thanh toán và cấu hình quét nợ tự động của chủ nhà",
+        "description": "Cấu hình ngày thu dự kiến và nhắc nộp; không sinh trạng thái quá hạn.",
         "additionalProperties": false,
         "properties": {
           "scope": {
             "type": "string",
-            "description": "Phạm vi áp dụng của cấu hình (building: toàn bộ tòa nhà, room: phòng riêng lẻ).",
             "enum": [
               "building",
               "room"
-            ],
-            "example": "building"
+            ]
           },
           "buildingId": {
             "type": "string",
             "format": "uuid",
-            "nullable": true,
-            "description": "Định danh tòa nhà áp dụng cấu hình chu kỳ và quét nợ",
-            "example": "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d"
+            "description": "Bắt buộc khi scope là building; không gửi khi scope là room."
           },
           "roomId": {
             "type": "string",
             "format": "uuid",
-            "nullable": true,
-            "description": "Định danh phòng áp dụng (nếu scope = room)",
-            "example": null
-          },
-          "meterCutoffDay": {
-            "type": "integer",
-            "minimum": 1,
-            "maximum": 28,
-            "description": "Ngày chốt chỉ số điện nước hàng tháng (1-28)",
-            "example": 25
-          },
-          "invoiceIssuanceDay": {
-            "type": "integer",
-            "minimum": 1,
-            "maximum": 28,
-            "description": "Ngày tự động xuất và gửi hóa đơn cho khách hàng tháng (1-28)",
-            "example": 1
+            "description": "Bắt buộc khi scope là room; không gửi khi scope là building."
           },
           "paymentDueDay": {
             "type": "integer",
             "minimum": 1,
             "maximum": 28,
-            "description": "Ngày hạn chót thanh toán hóa đơn trong tháng (1-28)",
-            "example": 5
+            "default": 5,
+            "description": "Ngày dự kiến thu tiền trong tháng, chỉ để hiển thị."
           },
-          "dueDays": {
+          "remindDay": {
             "type": "integer",
             "minimum": 1,
             "maximum": 28,
             "nullable": true,
-            "description": "Số ngày được phép thanh toán sau khi xuất hóa đơn",
-            "example": 5
-          },
-          "remindDays": {
-            "type": "integer",
-            "minimum": 1,
-            "maximum": 28,
-            "nullable": true,
-            "description": "Số ngày nhắc nợ trước khi đến hạn thanh toán",
-            "example": 2
-          },
-          "debtScanEnabled": {
-            "type": "boolean",
-            "description": "Bật tính năng quét nợ và cảnh báo nợ tự động của chủ nhà",
-            "example": true
-          },
-          "gracePeriodDays": {
-            "type": "integer",
-            "minimum": 0,
-            "description": "Số ngày ân hạn sau ngày hết hạn trước khi chính thức tính là công nợ quá hạn",
-            "example": 3
-          },
-          "overdueReminderIntervalDays": {
-            "type": "integer",
-            "minimum": 1,
-            "description": "Tần suất gửi nhắc nợ khi hóa đơn đã quá hạn (số ngày gửi một lần)",
-            "example": 3
-          },
-          "reminderChannels": {
-            "type": "array",
-            "description": "Các kênh gửi thông báo nhắc nợ",
-            "items": {
-              "type": "string",
-              "enum": [
-                "APP_PUSH",
-                "SMS",
-                "ZALO",
-                "EMAIL"
-              ]
-            },
-            "example": [
-              "APP_PUSH",
-              "ZALO"
-            ]
+            "description": "Ngày nhắc nộp; null là không nhắc."
           },
           "botEnabled": {
             "type": "boolean",
-            "description": "Cho phép bot tự động nhắc tiền trong nhóm chat của phòng",
-            "example": true
+            "default": true
           }
         },
         "required": [
-          "scope",
-          "paymentDueDay",
-          "debtScanEnabled",
-          "gracePeriodDays",
-          "overdueReminderIntervalDays",
-          "reminderChannels",
-          "botEnabled"
+          "scope"
+        ],
+        "oneOf": [
+          {
+            "properties": {
+              "scope": {
+                "enum": [
+                  "building"
+                ]
+              }
+            },
+            "required": [
+              "buildingId"
+            ],
+            "not": {
+              "properties": {
+                "roomId": {}
+              },
+              "required": [
+                "roomId"
+              ]
+            }
+          },
+          {
+            "properties": {
+              "scope": {
+                "enum": [
+                  "room"
+                ]
+              }
+            },
+            "required": [
+              "roomId"
+            ],
+            "not": {
+              "properties": {
+                "buildingId": {}
+              },
+              "required": [
+                "buildingId"
+              ]
+            }
+          }
         ]
       },
       "BillingSettingUpdateRequestDto": {
         "type": "object",
         "x-apidog-folder": "BillingSetting/Request",
         "title": "BillingSettingUpdateRequestDto",
-        "description": "Dữ liệu cập nhật một phần cấu hình chu kỳ thanh toán và quét nợ của chủ nhà",
+        "description": "Cập nhật ngày thu dự kiến và nhắc nộp cho một scope đã có.",
         "additionalProperties": false,
         "minProperties": 1,
         "properties": {
-          "meterCutoffDay": {
-            "type": "integer",
-            "minimum": 1,
-            "maximum": 28,
-            "description": "Ngày chốt chỉ số điện nước hàng tháng (1-28)"
-          },
-          "invoiceIssuanceDay": {
-            "type": "integer",
-            "minimum": 1,
-            "maximum": 28,
-            "description": "Ngày tự động xuất hóa đơn hàng tháng (1-28)"
-          },
           "paymentDueDay": {
             "type": "integer",
             "minimum": 1,
             "maximum": 28,
-            "description": "Hạn thanh toán hóa đơn hàng tháng (1-28)"
+            "description": "Ngày dự kiến thu tiền trong tháng, chỉ để hiển thị."
           },
-          "dueDays": {
+          "remindDay": {
             "type": "integer",
             "minimum": 1,
             "maximum": 28,
             "nullable": true,
-            "description": "Số ngày được phép thanh toán sau khi xuất hóa đơn"
-          },
-          "remindDays": {
-            "type": "integer",
-            "minimum": 1,
-            "maximum": 28,
-            "nullable": true,
-            "description": "Số ngày nhắc nợ trước khi đến hạn thanh toán"
-          },
-          "debtScanEnabled": {
-            "type": "boolean",
-            "description": "Bật tính năng quét nợ và cảnh báo nợ tự động của chủ nhà"
-          },
-          "gracePeriodDays": {
-            "type": "integer",
-            "minimum": 0,
-            "description": "Số ngày ân hạn trước khi tính là nợ quá hạn"
-          },
-          "overdueReminderIntervalDays": {
-            "type": "integer",
-            "minimum": 1,
-            "description": "Tần suất gửi nhắc nợ quá hạn (ngày)"
-          },
-          "reminderChannels": {
-            "type": "array",
-            "items": {
-              "type": "string",
-              "enum": [
-                "APP_PUSH",
-                "SMS",
-                "ZALO",
-                "EMAIL"
-              ]
-            },
-            "description": "Các kênh gửi nhắc nợ"
+            "description": "Ngày nhắc nộp; null là không nhắc."
           },
           "botEnabled": {
+            "type": "boolean"
+          },
+          "isActive": {
             "type": "boolean",
-            "description": "Bật bot tự động nhắc tiền trong nhóm chat"
+            "description": "false để kế thừa cấu hình cấp trên; true để kích hoạt lại."
           }
         }
       },
@@ -31336,129 +31382,216 @@
         "type": "object",
         "x-apidog-folder": "BillingSetting/Response",
         "title": "BillingSettingListResponseDto",
-        "description": "Danh sách cấu hình billing",
+        "description": "Cấu hình ngày thu dự kiến và nhắc nộp theo scope building hoặc room.",
+        "additionalProperties": false,
         "properties": {
           "id": {
             "type": "string",
-            "format": "uuid",
-            "description": "Định danh duy nhất của tài nguyên."
+            "format": "uuid"
+          },
+          "landlordId": {
+            "type": "string",
+            "format": "uuid"
           },
           "scope": {
             "type": "string",
             "enum": [
               "building",
               "room"
-            ],
-            "description": "Thông tin scope của tài nguyên trong ngữ cảnh DTO."
+            ]
+          },
+          "buildingId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
           },
           "roomId": {
             "type": "string",
             "format": "uuid",
-            "nullable": true,
-            "description": "Định danh duy nhất của phòng liên quan."
+            "nullable": true
           },
-          "dueDays": {
+          "paymentDueDay": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 28
+          },
+          "remindDay": {
             "type": "integer",
             "minimum": 1,
             "maximum": 28,
-            "description": "Thông tin due days của tài nguyên trong ngữ cảnh DTO."
-          },
-          "remindDays": {
-            "type": "integer",
-            "minimum": 1,
-            "maximum": 28,
-            "nullable": true,
-            "description": "Thông tin remind days của tài nguyên trong ngữ cảnh DTO."
+            "nullable": true
           },
           "botEnabled": {
-            "type": "boolean",
-            "description": "Thông tin bot enabled của tài nguyên trong ngữ cảnh DTO."
+            "type": "boolean"
           },
           "isActive": {
-            "type": "boolean",
-            "description": "Thông tin is active của tài nguyên trong ngữ cảnh DTO."
+            "type": "boolean"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
           }
         },
         "required": [
           "id",
+          "landlordId",
           "scope",
+          "buildingId",
           "roomId",
-          "dueDays",
-          "remindDays",
+          "paymentDueDay",
+          "remindDay",
           "botEnabled",
-          "isActive"
+          "isActive",
+          "createdAt",
+          "updatedAt"
         ]
       },
       "BillingSettingCreateResponseDto": {
         "type": "object",
         "x-apidog-folder": "BillingSetting/Response",
         "title": "BillingSettingCreateResponseDto",
-        "description": "Phản hồi khi tạo cấu hình billing",
+        "description": "Cấu hình ngày thu dự kiến và nhắc nộp theo scope building hoặc room.",
+        "additionalProperties": false,
         "properties": {
           "id": {
             "type": "string",
+            "format": "uuid"
+          },
+          "landlordId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "scope": {
+            "type": "string",
+            "enum": [
+              "building",
+              "room"
+            ]
+          },
+          "buildingId": {
+            "type": "string",
             "format": "uuid",
-            "description": "Định danh duy nhất của tài nguyên."
+            "nullable": true
           },
-          "dueDays": {
+          "roomId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "paymentDueDay": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 28
+          },
+          "remindDay": {
             "type": "integer",
             "minimum": 1,
             "maximum": 28,
-            "description": "Thông tin due days của tài nguyên trong ngữ cảnh DTO."
-          },
-          "remindDays": {
-            "type": "integer",
-            "minimum": 1,
-            "maximum": 28,
-            "nullable": true,
-            "description": "Thông tin remind days của tài nguyên trong ngữ cảnh DTO."
+            "nullable": true
           },
           "botEnabled": {
-            "type": "boolean",
-            "description": "Thông tin bot enabled của tài nguyên trong ngữ cảnh DTO."
+            "type": "boolean"
+          },
+          "isActive": {
+            "type": "boolean"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
           }
         },
         "required": [
           "id",
-          "dueDays",
-          "remindDays",
-          "botEnabled"
+          "landlordId",
+          "scope",
+          "buildingId",
+          "roomId",
+          "paymentDueDay",
+          "remindDay",
+          "botEnabled",
+          "isActive",
+          "createdAt",
+          "updatedAt"
         ]
       },
       "BillingSettingUpdateResponseDto": {
         "type": "object",
         "x-apidog-folder": "BillingSetting/Response",
         "title": "BillingSettingUpdateResponseDto",
-        "description": "Phản hồi khi cập nhật cấu hình billing",
+        "description": "Cấu hình ngày thu dự kiến và nhắc nộp theo scope building hoặc room.",
+        "additionalProperties": false,
         "properties": {
           "id": {
             "type": "string",
+            "format": "uuid"
+          },
+          "landlordId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "scope": {
+            "type": "string",
+            "enum": [
+              "building",
+              "room"
+            ]
+          },
+          "buildingId": {
+            "type": "string",
             "format": "uuid",
-            "description": "Định danh duy nhất của tài nguyên."
+            "nullable": true
           },
-          "dueDays": {
+          "roomId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "paymentDueDay": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 28
+          },
+          "remindDay": {
             "type": "integer",
             "minimum": 1,
             "maximum": 28,
-            "description": "Thông tin due days của tài nguyên trong ngữ cảnh DTO."
-          },
-          "remindDays": {
-            "type": "integer",
-            "minimum": 1,
-            "maximum": 28,
-            "nullable": true,
-            "description": "Thông tin remind days của tài nguyên trong ngữ cảnh DTO."
+            "nullable": true
           },
           "botEnabled": {
-            "type": "boolean",
-            "description": "Thông tin bot enabled của tài nguyên trong ngữ cảnh DTO."
+            "type": "boolean"
+          },
+          "isActive": {
+            "type": "boolean"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
           }
         },
         "required": [
           "id",
-          "dueDays",
-          "remindDays",
-          "botEnabled"
+          "landlordId",
+          "scope",
+          "buildingId",
+          "roomId",
+          "paymentDueDay",
+          "remindDay",
+          "botEnabled",
+          "isActive",
+          "createdAt",
+          "updatedAt"
         ]
       },
       "Contract": {
@@ -31638,6 +31771,100 @@
           }
         ]
       },
+      "RateItem": {
+        "type": "object",
+        "title": "RateItem",
+        "description": "Một đơn giá hoặc phí trong bộ RatePolicy.",
+        "additionalProperties": false,
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "electricity",
+              "water",
+              "wifi",
+              "cleaning",
+              "parking",
+              "maintenance",
+              "other"
+            ]
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "rateKind": {
+            "type": "string",
+            "enum": [
+              "flat",
+              "tiered",
+              "fixed_per_period",
+              "per_head",
+              "per_area_m2",
+              "per_vehicle"
+            ],
+            "description": "tiered yêu cầu steps và unitPrice = null; các loại còn lại yêu cầu unitPrice và không gửi steps."
+          },
+          "unitPrice": {
+            "type": "string",
+            "nullable": true,
+            "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+            "description": "Đơn giá dạng chuỗi thập phân; null khi rateKind là tiered.",
+            "example": "4000"
+          },
+          "steps": {
+            "type": "array",
+            "description": "Chỉ dùng cho rateKind tiered; bậc cuối có to = null. `to` là ngưỡng tiêu thụ cộng dồn. Phần lẻ vượt ngưỡng của bậc trước thuộc bậc kế tiếp: 50.5 kWh được tính 50 kWh ở bậc 0–50 và 0.5 kWh ở bậc 51–100.",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "from": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "description": "Nhãn của kWh nguyên đầu tiên trong bậc; từ bậc hai bằng to của bậc trước cộng 1. Không dùng from để loại trừ phần lẻ ngay sau ngưỡng trước."
+                },
+                "to": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "nullable": true,
+                  "description": "Ngưỡng tiêu thụ cộng dồn của bậc; null ở bậc cuối."
+                },
+                "price": {
+                  "type": "string",
+                  "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+                  "description": "Đơn giá của bậc dạng chuỗi thập phân."
+                }
+              },
+              "required": [
+                "from",
+                "to",
+                "price"
+              ]
+            }
+          },
+          "billingUnit": {
+            "type": "string",
+            "enum": [
+              "kwh",
+              "m3",
+              "room",
+              "person",
+              "m2",
+              "vehicle",
+              "day",
+              "occurrence"
+            ]
+          }
+        },
+        "required": [
+          "type",
+          "name",
+          "rateKind",
+          "billingUnit"
+        ]
+      },
       "RatePolicy": {
         "type": "object",
         "x-apidog-folder": "RatePolicy",
@@ -31683,88 +31910,7 @@
                 "type": "array",
                 "description": "Danh sách các đơn giá dịch vụ và phí định kỳ",
                 "items": {
-                  "type": "object",
-                  "properties": {
-                    "type": {
-                      "type": "string",
-                      "enum": [
-                        "electricity",
-                        "water",
-                        "wifi",
-                        "cleaning",
-                        "parking",
-                        "maintenance",
-                        "other"
-                      ],
-                      "description": "Loại dịch vụ",
-                      "example": "electricity"
-                    },
-                    "name": {
-                      "type": "string",
-                      "description": "Tên hiển thị dịch vụ (copy sang snapshot hóa đơn)",
-                      "example": "Điện EVN"
-                    },
-                    "rateKind": {
-                      "type": "string",
-                      "enum": [
-                        "flat",
-                        "tiered",
-                        "fixed_per_period",
-                        "per_head",
-                        "per_area_m2",
-                        "per_vehicle"
-                      ],
-                      "description": "Phương pháp tính đơn giá",
-                      "example": "flat"
-                    },
-                    "unitPrice": {
-                      "type": "number",
-                      "nullable": true,
-                      "description": "Đơn giá cố định (không áp dụng cho loại tiered)",
-                      "example": 4000
-                    },
-                    "steps": {
-                      "type": "array",
-                      "nullable": true,
-                      "description": "Bậc thang lũy tiến (chỉ dùng cho loại tiered)",
-                      "items": {
-                        "type": "object",
-                        "properties": {
-                          "from": {
-                            "type": "number"
-                          },
-                          "to": {
-                            "type": "number",
-                            "nullable": true
-                          },
-                          "price": {
-                            "type": "number"
-                          }
-                        }
-                      }
-                    },
-                    "billingUnit": {
-                      "type": "string",
-                      "enum": [
-                        "kwh",
-                        "m3",
-                        "room",
-                        "person",
-                        "m2",
-                        "vehicle",
-                        "day",
-                        "occurrence"
-                      ],
-                      "description": "Đơn vị tính để hiển thị",
-                      "example": "kwh"
-                    }
-                  },
-                  "required": [
-                    "type",
-                    "name",
-                    "rateKind",
-                    "billingUnit"
-                  ]
+                  "$ref": "#/components/schemas/RateItem"
                 }
               },
               "isActive": {
@@ -31899,16 +32045,16 @@
                 "example": "2026-09"
               },
               "previousReading": {
-                "type": "number",
-                "minimum": 0,
-                "description": "Chỉ số kỳ trước (hoặc chỉ số baseline khi bàn giao)",
-                "example": 1200
+                "type": "string",
+                "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+                "description": "Server lấy currentReading kỳ trước; baseline bằng 0.",
+                "example": "1200"
               },
               "currentReading": {
-                "type": "number",
-                "minimum": 0,
-                "description": "Chỉ số chốt kỳ này (phải >= previousReading)",
-                "example": 1380
+                "type": "string",
+                "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+                "description": "Chỉ số chốt kỳ này (phải >= previousReading).",
+                "example": "1380"
               },
               "readingDate": {
                 "type": "string",

@@ -24,15 +24,15 @@ allOf:
         description: Kỳ tính tiền định dạng YYYY-MM
         example: "2026-09"
       previousReading:
-        type: number
-        minimum: 0
-        description: Chỉ số kỳ trước (hoặc chỉ số baseline khi bàn giao)
-        example: 1200
+        type: string
+        pattern: '^(0|[1-9][0-9]*)(\.[0-9]+)?$'
+        description: Server lấy currentReading kỳ trước; baseline bằng 0.
+        example: '1200'
       currentReading:
-        type: number
-        minimum: 0
-        description: Chỉ số chốt kỳ này (phải >= previousReading)
-        example: 1380
+        type: string
+        pattern: '^(0|[1-9][0-9]*)(\.[0-9]+)?$'
+        description: Chỉ số chốt kỳ này (phải >= previousReading).
+        example: '1380'
       readingDate:
         type: string
         format: date

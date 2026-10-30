@@ -1,15 +1,32 @@
 type: object
 x-apidog-folder: "MeterReading/Request"
 title: MeterReadingCreateRequestDto
-description: Dữ liệu tạo chỉ số công tơ đã xác nhận
+description: Xác nhận chỉ số công tơ có ảnh chứng cứ. Baseline lấy từ OCR; người dùng chỉ sửa tay để hiệu chỉnh kết quả OCR.
 additionalProperties: false
 properties:
-  roomId: { type: string, format: uuid , description: "Định danh duy nhất của phòng liên quan." }
-  type: { type: string, enum: [electricity, water] , description: "Thông tin type của tài nguyên trong ngữ cảnh DTO." }
-  period: { type: string, minLength: 7, maxLength: 7, pattern: '^[0-9]{4}-(0[1-9]|1[0-2])$', description: "Kỳ ghi chỉ số theo định dạng YYYY-MM." }
-  previousReading: { type: string , description: "Thông tin previous reading của tài nguyên trong ngữ cảnh DTO." }
-  currentReading: { type: string , description: "Thông tin current reading của tài nguyên trong ngữ cảnh DTO." }
-  readingDate: { type: string, format: date, nullable: true , description: "Ngày ghi chỉ số (YYYY-MM-DD)." }
-  isBaseline: { type: boolean , description: "Thông tin is baseline của tài nguyên trong ngữ cảnh DTO." }
-  evidenceMediaId: { type: string, format: uuid , description: "Thông tin evidence media id của tài nguyên trong ngữ cảnh DTO." }
-required: [roomId, type, period, previousReading, currentReading, readingDate, isBaseline, evidenceMediaId]
+  roomId:
+    type: string
+    format: uuid
+  type:
+    type: string
+    enum: [electricity, water]
+  period:
+    type: string
+    pattern: '^[0-9]{4}-(0[1-9]|1[0-2])$'
+  currentReading:
+    type: string
+    pattern: '^(0|[1-9][0-9]*)(\.[0-9]+)?$'
+    description: Giá trị đã xác nhận; baseline phải có nguồn OCR và có thể được hiệu chỉnh tay.
+  readingDate:
+    type: string
+    format: date
+    nullable: true
+  isBaseline:
+    type: boolean
+    default: false
+    description: Baseline lúc bàn giao hoặc thay đồng hồ; previousReading được server đặt là 0.
+  evidenceMediaId:
+    type: string
+    format: uuid
+    description: Ảnh công tơ bắt buộc cho cả baseline và kỳ thường.
+required: [roomId, type, period, currentReading, isBaseline, evidenceMediaId]

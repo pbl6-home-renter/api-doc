@@ -22,6 +22,9 @@ get:
       properties:
         scope:
           type: string
+        buildingId:
+          type: string
+          format: uuid
         roomId:
           type: string
           format: uuid
@@ -107,9 +110,16 @@ get:
               landlordId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
               scope: room
               roomId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
-              type: electricity
-              rateKind: tiered
+              buildingId: null
+              rates:
+              - type: electricity
+                name: Điện EVN
+                rateKind: flat
+                unitPrice: '4000'
+                billingUnit: kwh
               isActive: true
+              createdAt: '2026-10-30T00:00:00Z'
+              updatedAt: '2026-10-30T00:00:00Z'
             pagination:
               type: offset
               pageNo: 1
@@ -141,8 +151,7 @@ post:
   security:
     - BearerAuth: []
   summary: Create rate policy
-  description: 'landlord. Tạo một chính sách đơn giá hoặc phí. Lỗi nghiệp vụ: 409 ACTIVE POLICY EXISTS · 422 INVALID
-    RATE KIND · 403 FORBIDDEN.'
+  description: 'landlord. Tạo một bộ đơn giá cho building hoặc room. Một scope chỉ có một bộ; nếu đã tồn tại, cập nhật bằng PATCH. Lỗi: 409 ACTIVE_POLICY_EXISTS · 422 INVALID_RATE_KIND/TIER_CONFIG_INVALID/VALIDATION_FAILED · 403 FORBIDDEN.'
   requestBody:
     required: true
     content:
@@ -152,13 +161,19 @@ post:
         example:
           scope: room
           roomId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
-          name: Điện EVN
-          type: electricity
-          rateKind: tiered
-          steps:
-          - from: 0
-            to: 50
-            price: 1806
+          rates:
+            - type: electricity
+              name: Điện EVN
+              rateKind: tiered
+              unitPrice: null
+              steps:
+              - { from: 0, to: 50, price: '1893' }
+              - { from: 51, to: 100, price: '1956' }
+              - { from: 101, to: 200, price: '2283' }
+              - { from: 201, to: 300, price: '2833' }
+              - { from: 301, to: 400, price: '2927' }
+              - { from: 401, to: null, price: '3451' }
+              billingUnit: kwh
   responses:
     '201':
       description: 'Thành công: Tạo một chính sách đơn giá hoặc phí.'
@@ -187,10 +202,26 @@ post:
             code: RATE_POLICY_CREATED
             data:
               id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+              landlordId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
               scope: room
-              type: electricity
-              rateKind: tiered
+              buildingId: null
+              roomId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+              rates:
+              - type: electricity
+                name: Điện EVN
+                rateKind: tiered
+                unitPrice: null
+                steps:
+                - { from: 0, to: 50, price: '1893' }
+                - { from: 51, to: 100, price: '1956' }
+                - { from: 101, to: 200, price: '2283' }
+                - { from: 201, to: 300, price: '2833' }
+                - { from: 301, to: 400, price: '2927' }
+                - { from: 401, to: null, price: '3451' }
+                billingUnit: kwh
               isActive: true
+              createdAt: '2026-10-30T00:00:00Z'
+              updatedAt: '2026-10-30T00:00:00Z'
       headers:
         Location:
           description: Đường dẫn tài nguyên được tạo.
@@ -223,7 +254,7 @@ post:
                 enum:
                   - ACTIVE_POLICY_EXISTS
                 description: |-
-                  - ACTIVE_POLICY_EXISTS: Đã có chính sách đang hiệu lực cho cùng phạm vi.
+                  - ACTIVE_POLICY_EXISTS: Đã có bộ đơn giá cho cùng phạm vi; dùng PATCH để cập nhật hoặc kích hoạt lại.
           examples:
             active_policy_exists:
               summary: ACTIVE_POLICY_EXISTS — Đã có chính sách đang hiệu lực cho cùng phạm vi.
@@ -247,9 +278,11 @@ post:
                 type: string
                 enum:
                   - INVALID_RATE_KIND
+                  - TIER_CONFIG_INVALID
                   - VALIDATION_FAILED
                 description: |-
                   - INVALID_RATE_KIND: Loại chính sách giá không hợp lệ.
+                  - TIER_CONFIG_INVALID: Cấu hình bậc thang thiếu, không liên tục hoặc bậc cuối không mở.
                   - VALIDATION_FAILED: Dữ liệu vi phạm ràng buộc schema hoặc quy tắc nghiệp vụ khác chưa có mã riêng.
           examples:
             invalid_rate_kind:
@@ -257,6 +290,11 @@ post:
               value:
                 statusCode: 422
                 code: INVALID_RATE_KIND
+            tier_config_invalid:
+              summary: TIER_CONFIG_INVALID — Cấu hình bậc thang không hợp lệ.
+              value:
+                statusCode: 422
+                code: TIER_CONFIG_INVALID
             validation_failed:
               summary: VALIDATION_FAILED — Dữ liệu vi phạm ràng buộc schema hoặc quy tắc nghiệp vụ khác chưa có mã riêng.
               value:
