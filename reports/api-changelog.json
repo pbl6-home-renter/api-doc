@@ -23167,6 +23167,568 @@
           }
         }
       }
+    },
+    {
+      "id": "5851a4eebe433e41d5f8ea896a6842f9342b4e5bee774e8c1db6e9cf632b9a63",
+      "label": "Thay đổi contract từ Git",
+      "classification": "NON_BREAKING",
+      "contractId": "rentify-public",
+      "repository": "https://github.com/pbl6-home-renter/api-doc",
+      "baseHash": "118b614d2aacefcc2624f96f9fb131a375f9d081fe90e985c2c75d43e1492bc8",
+      "headHash": "bf03b5c9652aee77af8811e176d6d5b04665ec65593440314b8457b6fb71b0b4",
+      "baseSource": "src/openapi.yaml",
+      "headSource": "src/openapi.yaml",
+      "detectedAt": "2026-10-31T07:56:30.423Z",
+      "committedAt": "2026-10-31T14:56:19+07:00",
+      "baseCommit": "f1cfa7df514a3668a3c7aa449583f8986fb2700a",
+      "headCommit": "30ca40691e0b94cd15680b7f582ac47c7930b0ca",
+      "prUrl": "https://github.com/pbl6-home-renter/api-doc/pull/32",
+      "commitUrl": "https://github.com/pbl6-home-renter/api-doc/commit/30ca40691e0b94cd15680b7f582ac47c7930b0ca",
+      "metadataKind": "Git revision thực tế",
+      "reason": "CHƯA CUNG CẤP — tác giả PR phải bổ sung lý do nghiệp vụ; không thể suy ra từ OpenAPI diff.",
+      "tools": {
+        "redocly": "2.64.1",
+        "oasdiff": "1.34.1"
+      },
+      "changes": [
+        {
+          "id": "response-property-became-not-nullable",
+          "text": "the response property `data/items/buildingId` became not nullable for the status `200`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getBillingSettings",
+          "path": "/billing-settings",
+          "section": "paths",
+          "fingerprint": "47abebeb2555",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        },
+        {
+          "id": "response-property-became-not-nullable",
+          "text": "the response property `data/buildingId` became not nullable for the status `201`",
+          "level": 1,
+          "operation": "POST",
+          "operationId": "postBillingSettings",
+          "path": "/billing-settings",
+          "section": "paths",
+          "fingerprint": "0fa52e2f833a",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        },
+        {
+          "id": "response-property-became-not-nullable",
+          "text": "the response property `data/buildingId` became not nullable for the status `200`",
+          "level": 1,
+          "operation": "PATCH",
+          "operationId": "patchBillingSettingsBillingsettingid",
+          "path": "/billing-settings/{billingSettingId}",
+          "section": "paths",
+          "fingerprint": "56674ae5732f",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        }
+      ],
+      "locations": [
+        {
+          "pointer": "/components/schemas/BillingSetting/allOf",
+          "before": [
+            {
+              "$ref": "#/components/schemas/BaseEntity"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "landlordId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "description": "ID chủ nhà sở hữu cấu hình",
+                  "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                },
+                "scope": {
+                  "type": "string",
+                  "enum": [
+                    "building",
+                    "room"
+                  ],
+                  "description": "Phạm vi cấu hình (building hoặc room)",
+                  "example": "room"
+                },
+                "buildingId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "nullable": true,
+                  "description": "ID tòa nhà (bắt buộc khi scope = building)",
+                  "example": null
+                },
+                "roomId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "nullable": true,
+                  "description": "ID phòng (bắt buộc khi scope = room)",
+                  "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                },
+                "paymentDueDay": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 28,
+                  "default": 5,
+                  "description": "Ngày trong tháng dự kiến thu tiền (1-28, chỉ để hiển thị gợi ý)",
+                  "example": 5
+                },
+                "remindDay": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 28,
+                  "nullable": true,
+                  "description": "Ngày trong tháng gợi ý nhắc nộp tiền (null = không nhắc)",
+                  "example": 3
+                },
+                "botEnabled": {
+                  "type": "boolean",
+                  "default": true,
+                  "description": "Cho phép bot gửi card nhắc nộp vào room chat",
+                  "example": true
+                },
+                "isActive": {
+                  "type": "boolean",
+                  "default": true,
+                  "description": "false = tắt và kế thừa cấp trên",
+                  "example": true
+                }
+              },
+              "required": [
+                "landlordId",
+                "scope",
+                "paymentDueDay",
+                "botEnabled",
+                "isActive"
+              ]
+            }
+          ],
+          "after": [
+            {
+              "$ref": "#/components/schemas/BaseEntity"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "landlordId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "description": "ID chủ nhà sở hữu cấu hình",
+                  "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                },
+                "scope": {
+                  "type": "string",
+                  "enum": [
+                    "building",
+                    "room"
+                  ],
+                  "description": "Phạm vi cấu hình (building hoặc room)",
+                  "example": "room"
+                },
+                "buildingId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "description": "ID tòa nhà; ở scope room, server lấy từ Room và trả cùng roomId",
+                  "example": "52a85f64-5717-4562-b3fc-2c963f66afa6"
+                },
+                "roomId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "nullable": true,
+                  "description": "ID phòng (bắt buộc khi scope = room)",
+                  "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                },
+                "paymentDueDay": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 28,
+                  "default": 5,
+                  "description": "Ngày trong tháng dự kiến thu tiền (1-28, chỉ để hiển thị gợi ý)",
+                  "example": 5
+                },
+                "remindDay": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 28,
+                  "nullable": true,
+                  "description": "Ngày trong tháng gợi ý nhắc nộp tiền, độc lập với paymentDueDay (null = không nhắc)",
+                  "example": 10
+                },
+                "botEnabled": {
+                  "type": "boolean",
+                  "default": true,
+                  "description": "Cho phép bot gửi card nhắc nộp vào room chat",
+                  "example": true
+                },
+                "isActive": {
+                  "type": "boolean",
+                  "default": true,
+                  "description": "false = tắt và kế thừa cấp trên",
+                  "example": true
+                }
+              },
+              "required": [
+                "landlordId",
+                "scope",
+                "buildingId",
+                "paymentDueDay",
+                "botEnabled",
+                "isActive"
+              ]
+            }
+          ]
+        },
+        {
+          "pointer": "/components/schemas/BillingSetting/description",
+          "before": "Cấu hình ngày thu dự kiến và nhắc nộp tiền (D39 - chỉ hiển thị, không sinh overdue tự động)",
+          "after": "Cấu hình ngày thu dự kiến và nhắc nộp tiền (D39 - chỉ hiển thị, không sinh overdue tự động). Mỗi tòa/phòng có một setting chưa xóa mềm, kể cả khi tắt; hai ngày độc lập trong khoảng 1–28."
+        },
+        {
+          "pointer": "/components/schemas/BillingSettingCreateRequestDto/description",
+          "before": "Cấu hình ngày thu dự kiến và nhắc nộp; không sinh trạng thái quá hạn.",
+          "after": "Cấu hình ngày thu dự kiến và nhắc nộp; hai ngày độc lập trong khoảng 1–28, không sinh trạng thái quá hạn. Với scope room, server lấy buildingId từ Room."
+        },
+        {
+          "pointer": "/components/schemas/BillingSettingCreateRequestDto/properties/remindDay/description",
+          "before": "Ngày nhắc nộp; null là không nhắc.",
+          "after": "Ngày nhắc nộp do chủ trọ tự chọn, có thể sau paymentDueDay; null là không nhắc."
+        },
+        {
+          "pointer": "/components/schemas/BillingSettingCreateResponseDto/properties/buildingId/description",
+          "before": null,
+          "after": "ID tòa nhà của setting; với scope room, server lấy từ Room."
+        },
+        {
+          "pointer": "/components/schemas/BillingSettingCreateResponseDto/properties/buildingId/nullable",
+          "before": true,
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/BillingSettingListResponseDto/properties/buildingId/description",
+          "before": null,
+          "after": "ID tòa nhà của setting; với scope room, server lấy từ Room."
+        },
+        {
+          "pointer": "/components/schemas/BillingSettingListResponseDto/properties/buildingId/nullable",
+          "before": true,
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/BillingSettingUpdateRequestDto/description",
+          "before": "Cập nhật ngày thu dự kiến và nhắc nộp cho một scope đã có.",
+          "after": "Cập nhật hoặc bật lại setting đã có; hai ngày được chọn độc lập trong khoảng 1–28. Scope và target không thay đổi."
+        },
+        {
+          "pointer": "/components/schemas/BillingSettingUpdateRequestDto/properties/remindDay/description",
+          "before": "Ngày nhắc nộp; null là không nhắc.",
+          "after": "Ngày nhắc nộp do chủ trọ tự chọn, có thể sau paymentDueDay; null là không nhắc."
+        },
+        {
+          "pointer": "/components/schemas/BillingSettingUpdateResponseDto/properties/buildingId/description",
+          "before": null,
+          "after": "ID tòa nhà của setting; với scope room, server lấy từ Room."
+        },
+        {
+          "pointer": "/components/schemas/BillingSettingUpdateResponseDto/properties/buildingId/nullable",
+          "before": true,
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1billing-settings/get/description",
+          "before": "landlord. Liệt kê cài đặt thanh toán và nhắc hóa đơn. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 VALIDATION FAILED.",
+          "after": "landlord. Liệt kê cài đặt thanh toán và nhắc hóa đơn của chủ trọ; setting cấp phòng trả cả roomId và buildingId của phòng. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 VALIDATION FAILED."
+        },
+        {
+          "pointer": "/paths/~1billing-settings/get/responses/200/content/application~1json/example/data",
+          "before": [
+            {
+              "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+              "landlordId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+              "scope": "room",
+              "buildingId": null,
+              "roomId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+              "paymentDueDay": 5,
+              "remindDay": 3,
+              "botEnabled": true,
+              "isActive": true,
+              "createdAt": "2026-10-30T00:00:00Z",
+              "updatedAt": "2026-10-30T00:00:00Z"
+            }
+          ],
+          "after": [
+            {
+              "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+              "landlordId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+              "scope": "room",
+              "buildingId": "52a85f64-5717-4562-b3fc-2c963f66afa6",
+              "roomId": "61a85f64-5717-4562-b3fc-2c963f66afa6",
+              "paymentDueDay": 5,
+              "remindDay": 10,
+              "botEnabled": true,
+              "isActive": true,
+              "createdAt": "2026-10-30T00:00:00Z",
+              "updatedAt": "2026-10-30T00:00:00Z"
+            }
+          ]
+        },
+        {
+          "pointer": "/paths/~1billing-settings/post/description",
+          "before": "landlord. Tạo cấu hình ngày thu dự kiến và nhắc nộp; không sinh overdue. Lỗi: 409 ACTIVE_SETTING_EXISTS · 422 VALIDATION_FAILED · 403 FORBIDDEN.",
+          "after": "landlord. Tạo cấu hình ngày thu dự kiến và ngày nhắc độc lập trong khoảng 1–28; không sinh overdue. Cấp phòng chỉ gửi roomId, server lấy buildingId từ Room. Mỗi tòa/phòng chỉ có một setting chưa xóa mềm, kể cả khi tắt; dùng PATCH để sửa hoặc bật lại. Lỗi: 409 ACTIVE_SETTING_EXISTS · 422 VALIDATION_FAILED · 403 FORBIDDEN."
+        },
+        {
+          "pointer": "/paths/~1billing-settings/post/requestBody/content/application~1json/example/remindDay",
+          "before": 3,
+          "after": 10
+        },
+        {
+          "pointer": "/paths/~1billing-settings/post/requestBody/content/application~1json/example/roomId",
+          "before": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+          "after": "61a85f64-5717-4562-b3fc-2c963f66afa6"
+        },
+        {
+          "pointer": "/paths/~1billing-settings/post/responses/201/content/application~1json/example/data/buildingId",
+          "before": null,
+          "after": "52a85f64-5717-4562-b3fc-2c963f66afa6"
+        },
+        {
+          "pointer": "/paths/~1billing-settings/post/responses/201/content/application~1json/example/data/remindDay",
+          "before": 3,
+          "after": 10
+        },
+        {
+          "pointer": "/paths/~1billing-settings/post/responses/201/content/application~1json/example/data/roomId",
+          "before": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+          "after": "61a85f64-5717-4562-b3fc-2c963f66afa6"
+        },
+        {
+          "pointer": "/paths/~1billing-settings/post/responses/201/headers/Location/description",
+          "before": "Đường dẫn tài nguyên được tạo.",
+          "after": "Đường dẫn setting vừa tạo, chứa cùng ID với data.id; dùng ID này cho PATCH."
+        },
+        {
+          "pointer": "/paths/~1billing-settings/post/responses/201/headers/Location/schema/example",
+          "before": "/api/v1/billing-settings",
+          "after": "/api/v1/billing-settings/3fa85f64-5717-4562-b3fc-2c963f66afa6"
+        },
+        {
+          "pointer": "/paths/~1billing-settings/post/responses/409/content/application~1json/examples/active_setting_exists/summary",
+          "before": "ACTIVE_SETTING_EXISTS — Đã có cấu hình hóa đơn đang hiệu lực.",
+          "after": "ACTIVE_SETTING_EXISTS — Đã có cấu hình cho cùng tòa/phòng, kể cả khi đang tắt."
+        },
+        {
+          "pointer": "/paths/~1billing-settings/post/responses/409/content/application~1json/schema/properties/code/description",
+          "before": "- ACTIVE_SETTING_EXISTS: Đã có cấu hình cho cùng scope; dùng PATCH để cập nhật hoặc kích hoạt lại.",
+          "after": "- ACTIVE_SETTING_EXISTS: Đã có cấu hình chưa xóa mềm cho cùng tòa/phòng, kể cả khi isActive=false; dùng PATCH để cập nhật hoặc kích hoạt lại."
+        },
+        {
+          "pointer": "/paths/~1billing-settings~1{billingSettingId}/patch/description",
+          "before": "landlord. Cập nhật ngày thu dự kiến và nhắc nộp; không sinh overdue. Lỗi: 403 FORBIDDEN · 422 VALIDATION_FAILED.",
+          "after": "landlord. Cập nhật hoặc bật lại setting đã có theo billingSettingId; không gửi lại scope, buildingId hay roomId. Hai ngày được chọn độc lập trong khoảng 1–28; không sinh overdue. Lỗi: 403 FORBIDDEN · 422 VALIDATION_FAILED."
+        },
+        {
+          "pointer": "/paths/~1billing-settings~1{billingSettingId}/patch/requestBody/content/application~1json/example/isActive",
+          "before": null,
+          "after": true
+        },
+        {
+          "pointer": "/paths/~1billing-settings~1{billingSettingId}/patch/requestBody/content/application~1json/example/remindDay",
+          "before": 3,
+          "after": 10
+        },
+        {
+          "pointer": "/paths/~1billing-settings~1{billingSettingId}/patch/responses/200/content/application~1json/example/data/buildingId",
+          "before": null,
+          "after": "52a85f64-5717-4562-b3fc-2c963f66afa6"
+        },
+        {
+          "pointer": "/paths/~1billing-settings~1{billingSettingId}/patch/responses/200/content/application~1json/example/data/remindDay",
+          "before": 3,
+          "after": 10
+        },
+        {
+          "pointer": "/paths/~1billing-settings~1{billingSettingId}/patch/responses/200/content/application~1json/example/data/roomId",
+          "before": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+          "after": "61a85f64-5717-4562-b3fc-2c963f66afa6"
+        }
+      ],
+      "semanticDiff": {
+        "paths": {
+          "modified": {
+            "/billing-settings": {
+              "operations": {
+                "modified": {
+                  "GET": {
+                    "responses": {
+                      "modified": {
+                        "200": {
+                          "content": {
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "properties": {
+                                    "modified": {
+                                      "data": {
+                                        "items": {
+                                          "properties": {
+                                            "modified": {
+                                              "buildingId": {
+                                                "nullable": {
+                                                  "from": true,
+                                                  "to": false
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "POST": {
+                    "responses": {
+                      "modified": {
+                        "201": {
+                          "content": {
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "properties": {
+                                    "modified": {
+                                      "data": {
+                                        "properties": {
+                                          "modified": {
+                                            "buildingId": {
+                                              "nullable": {
+                                                "from": true,
+                                                "to": false
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "/billing-settings/{billingSettingId}": {
+              "operations": {
+                "modified": {
+                  "PATCH": {
+                    "responses": {
+                      "modified": {
+                        "200": {
+                          "content": {
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "properties": {
+                                    "modified": {
+                                      "data": {
+                                        "properties": {
+                                          "modified": {
+                                            "buildingId": {
+                                              "nullable": {
+                                                "from": true,
+                                                "to": false
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "components": {
+          "schemas": {
+            "modified": {
+              "BillingSetting": {
+                "required": {
+                  "added": [
+                    "buildingId"
+                  ]
+                },
+                "properties": {
+                  "modified": {
+                    "buildingId": {
+                      "nullable": {
+                        "from": true,
+                        "to": false
+                      }
+                    }
+                  }
+                }
+              },
+              "BillingSettingCreateResponseDto": {
+                "properties": {
+                  "modified": {
+                    "buildingId": {
+                      "nullable": {
+                        "from": true,
+                        "to": false
+                      }
+                    }
+                  }
+                }
+              },
+              "BillingSettingListResponseDto": {
+                "properties": {
+                  "modified": {
+                    "buildingId": {
+                      "nullable": {
+                        "from": true,
+                        "to": false
+                      }
+                    }
+                  }
+                }
+              },
+              "BillingSettingUpdateResponseDto": {
+                "properties": {
+                  "modified": {
+                    "buildingId": {
+                      "nullable": {
+                        "from": true,
+                        "to": false
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   ]
 }

@@ -5,11 +5,66 @@
 
 Báo cáo lưu lịch sử các entry đã phát hiện, mới nhất ở trên. `NO_CHANGE` không xóa entry cũ; exit code chỉ phản ánh lần chạy hiện tại.
 
-Công cụ: Redocly 2.64.1; oasdiff 1.34.1. Số entry: **17**.
+Công cụ: Redocly 2.64.1; oasdiff 1.34.1. Số entry: **18**.
 
 Phân loại: **BREAKING** = client cũ có thể hỏng; **NON_BREAKING** = tương thích theo contract; **NEEDS_REVIEW** = chưa đủ bằng chứng.
 
 Các vị trí dùng JSON Pointer trên bundle tạm (`~1` là `/`). JSON đi kèm giữ toàn bộ semantic diff, fingerprint và hash phục vụ truy vết.
+
+## Thay đổi contract từ Git — NON_BREAKING
+
+- ID: `5851a4eebe433e41d5f8ea896a6842f9342b4e5bee774e8c1db6e9cf632b9a63`
+- Contract: rentify-public; repository: https://github.com/pbl6-home-renter/api-doc
+- Nguồn: `src/openapi.yaml` → `src/openapi.yaml`
+- Phát hiện (UTC): 2026-10-31T07:56:30.423Z; commit time: 2026-10-31T14:56:19+07:00
+- Commit nền: f1cfa7df514a3668a3c7aa449583f8986fb2700a
+- Commit đích/bối cảnh: [30ca40691e0b94cd15680b7f582ac47c7930b0ca](https://github.com/pbl6-home-renter/api-doc/commit/30ca40691e0b94cd15680b7f582ac47c7930b0ca)
+- PR: [https://github.com/pbl6-home-renter/api-doc/pull/32](https://github.com/pbl6-home-renter/api-doc/pull/32)
+- Loại metadata: Git revision thực tế
+- Lý do: CHƯA CUNG CẤP — tác giả PR phải bổ sung lý do nghiệp vụ; không thể suy ra từ OpenAPI diff.
+
+| Mức ảnh hưởng | Endpoint / vùng | Thay đổi | Hành động FE / Mobile |
+|---|---|---|---|
+| NON_BREAKING | GET /billing-settings | the response property `data/items/buildingId` became not nullable for the status `200` (`response-property-became-not-nullable`) | FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI. |
+| NON_BREAKING | POST /billing-settings | the response property `data/buildingId` became not nullable for the status `201` (`response-property-became-not-nullable`) | FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI. |
+| NON_BREAKING | PATCH /billing-settings/{billingSettingId} | the response property `data/buildingId` became not nullable for the status `200` (`response-property-became-not-nullable`) | FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI. |
+
+### Vị trí và giá trị trước/sau
+
+| Path / schema / field (JSON Pointer) | Trước | Sau |
+|---|---|---|
+| `/components/schemas/BillingSetting/allOf` | [{"$ref":"#/components/schemas/BaseEntity"},{"type":"object","properties":{"landlordId":{"type":"string","format":"uuid","description":"ID chủ nhà sở hữu cấu hình","example":"3fa85f64-5717-4562-b3fc-2c963f66afa6"},"scope":{"type":"string","enum":["building","room"],"description":"Phạm vi cấu hình (building hoặc room)","example":"room"},"buildingId":{"type":"string","format":"uuid","nullable":true,"description":"ID tòa nhà (bắt buộc khi scope = building)","example":null},"roomId":{"type":"string","format":"uuid","nullable":true,"description":"ID phòng (bắt buộc khi scope = room)","example":"3fa85f64-5717-4562-b3fc-2c963f66afa6"},"paymentDueDay":{"type":"integer","minimum":1,"maximum":28,"default":5,"description":"Ngày trong tháng dự kiến thu tiền (1-28, chỉ để hiển thị gợi ý)","example":5},"remindDay":{"type":"integer","minimum":1,"maximum":28,"nullable":true,"description":"Ngày trong tháng gợi ý nhắc nộp tiền (null = không nhắc)","example":3},"botEnabled":{"type":"boolean","default":true,"description":"Cho phép bot gửi card nhắc nộp vào room chat","example":true},"isActive":{"type":"boolean","default":true,"description":"false = tắt và kế thừa cấp trên","example":true}},"required":["landlordId","scope","paymentDueDay","botEnabled","isActive"]}] | [{"$ref":"#/components/schemas/BaseEntity"},{"type":"object","properties":{"landlordId":{"type":"string","format":"uuid","description":"ID chủ nhà sở hữu cấu hình","example":"3fa85f64-5717-4562-b3fc-2c963f66afa6"},"scope":{"type":"string","enum":["building","room"],"description":"Phạm vi cấu hình (building hoặc room)","example":"room"},"buildingId":{"type":"string","format":"uuid","description":"ID tòa nhà; ở scope room, server lấy từ Room và trả cùng roomId","example":"52a85f64-5717-4562-b3fc-2c963f66afa6"},"roomId":{"type":"string","format":"uuid","nullable":true,"description":"ID phòng (bắt buộc khi scope = room)","example":"3fa85f64-5717-4562-b3fc-2c963f66afa6"},"paymentDueDay":{"type":"integer","minimum":1,"maximum":28,"default":5,"description":"Ngày trong tháng dự kiến thu tiền (1-28, chỉ để hiển thị gợi ý)","example":5},"remindDay":{"type":"integer","minimum":1,"maximum":28,"nullable":true,"description":"Ngày trong tháng gợi ý nhắc nộp tiền, độc lập với paymentDueDay (null = không nhắc)","example":10},"botEnabled":{"type":"boolean","default":true,"description":"Cho phép bot gửi card nhắc nộp vào room chat","example":true},"isActive":{"type":"boolean","default":true,"description":"false = tắt và kế thừa cấp trên","example":true}},"required":["landlordId","scope","buildingId","paymentDueDay","botEnabled","isActive"]}] |
+| `/components/schemas/BillingSetting/description` | "Cấu hình ngày thu dự kiến và nhắc nộp tiền (D39 - chỉ hiển thị, không sinh overdue tự động)" | "Cấu hình ngày thu dự kiến và nhắc nộp tiền (D39 - chỉ hiển thị, không sinh overdue tự động). Mỗi tòa/phòng có một setting chưa xóa mềm, kể cả khi tắt; hai ngày độc lập trong khoảng 1–28." |
+| `/components/schemas/BillingSettingCreateRequestDto/description` | "Cấu hình ngày thu dự kiến và nhắc nộp; không sinh trạng thái quá hạn." | "Cấu hình ngày thu dự kiến và nhắc nộp; hai ngày độc lập trong khoảng 1–28, không sinh trạng thái quá hạn. Với scope room, server lấy buildingId từ Room." |
+| `/components/schemas/BillingSettingCreateRequestDto/properties/remindDay/description` | "Ngày nhắc nộp; null là không nhắc." | "Ngày nhắc nộp do chủ trọ tự chọn, có thể sau paymentDueDay; null là không nhắc." |
+| `/components/schemas/BillingSettingCreateResponseDto/properties/buildingId/description` | null | "ID tòa nhà của setting; với scope room, server lấy từ Room." |
+| `/components/schemas/BillingSettingCreateResponseDto/properties/buildingId/nullable` | true | null |
+| `/components/schemas/BillingSettingListResponseDto/properties/buildingId/description` | null | "ID tòa nhà của setting; với scope room, server lấy từ Room." |
+| `/components/schemas/BillingSettingListResponseDto/properties/buildingId/nullable` | true | null |
+| `/components/schemas/BillingSettingUpdateRequestDto/description` | "Cập nhật ngày thu dự kiến và nhắc nộp cho một scope đã có." | "Cập nhật hoặc bật lại setting đã có; hai ngày được chọn độc lập trong khoảng 1–28. Scope và target không thay đổi." |
+| `/components/schemas/BillingSettingUpdateRequestDto/properties/remindDay/description` | "Ngày nhắc nộp; null là không nhắc." | "Ngày nhắc nộp do chủ trọ tự chọn, có thể sau paymentDueDay; null là không nhắc." |
+| `/components/schemas/BillingSettingUpdateResponseDto/properties/buildingId/description` | null | "ID tòa nhà của setting; với scope room, server lấy từ Room." |
+| `/components/schemas/BillingSettingUpdateResponseDto/properties/buildingId/nullable` | true | null |
+| `/paths/~1billing-settings/get/description` | "landlord. Liệt kê cài đặt thanh toán và nhắc hóa đơn. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 VALIDATION FAILED." | "landlord. Liệt kê cài đặt thanh toán và nhắc hóa đơn của chủ trọ; setting cấp phòng trả cả roomId và buildingId của phòng. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 VALIDATION FAILED." |
+| `/paths/~1billing-settings/get/responses/200/content/application~1json/example/data` | [{"id":"3fa85f64-5717-4562-b3fc-2c963f66afa6","landlordId":"3fa85f64-5717-4562-b3fc-2c963f66afa6","scope":"room","buildingId":null,"roomId":"3fa85f64-5717-4562-b3fc-2c963f66afa6","paymentDueDay":5,"remindDay":3,"botEnabled":true,"isActive":true,"createdAt":"2026-10-30T00:00:00Z","updatedAt":"2026-10-30T00:00:00Z"}] | [{"id":"3fa85f64-5717-4562-b3fc-2c963f66afa6","landlordId":"3fa85f64-5717-4562-b3fc-2c963f66afa6","scope":"room","buildingId":"52a85f64-5717-4562-b3fc-2c963f66afa6","roomId":"61a85f64-5717-4562-b3fc-2c963f66afa6","paymentDueDay":5,"remindDay":10,"botEnabled":true,"isActive":true,"createdAt":"2026-10-30T00:00:00Z","updatedAt":"2026-10-30T00:00:00Z"}] |
+| `/paths/~1billing-settings/post/description` | "landlord. Tạo cấu hình ngày thu dự kiến và nhắc nộp; không sinh overdue. Lỗi: 409 ACTIVE_SETTING_EXISTS · 422 VALIDATION_FAILED · 403 FORBIDDEN." | "landlord. Tạo cấu hình ngày thu dự kiến và ngày nhắc độc lập trong khoảng 1–28; không sinh overdue. Cấp phòng chỉ gửi roomId, server lấy buildingId từ Room. Mỗi tòa/phòng chỉ có một setting chưa xóa mềm, kể cả khi tắt; dùng PATCH để sửa hoặc bật lại. Lỗi: 409 ACTIVE_SETTING_EXISTS · 422 VALIDATION_FAILED · 403 FORBIDDEN." |
+| `/paths/~1billing-settings/post/requestBody/content/application~1json/example/remindDay` | 3 | 10 |
+| `/paths/~1billing-settings/post/requestBody/content/application~1json/example/roomId` | "3fa85f64-5717-4562-b3fc-2c963f66afa6" | "61a85f64-5717-4562-b3fc-2c963f66afa6" |
+| `/paths/~1billing-settings/post/responses/201/content/application~1json/example/data/buildingId` | null | "52a85f64-5717-4562-b3fc-2c963f66afa6" |
+| `/paths/~1billing-settings/post/responses/201/content/application~1json/example/data/remindDay` | 3 | 10 |
+| `/paths/~1billing-settings/post/responses/201/content/application~1json/example/data/roomId` | "3fa85f64-5717-4562-b3fc-2c963f66afa6" | "61a85f64-5717-4562-b3fc-2c963f66afa6" |
+| `/paths/~1billing-settings/post/responses/201/headers/Location/description` | "Đường dẫn tài nguyên được tạo." | "Đường dẫn setting vừa tạo, chứa cùng ID với data.id; dùng ID này cho PATCH." |
+| `/paths/~1billing-settings/post/responses/201/headers/Location/schema/example` | "/api/v1/billing-settings" | "/api/v1/billing-settings/3fa85f64-5717-4562-b3fc-2c963f66afa6" |
+| `/paths/~1billing-settings/post/responses/409/content/application~1json/examples/active_setting_exists/summary` | "ACTIVE_SETTING_EXISTS — Đã có cấu hình hóa đơn đang hiệu lực." | "ACTIVE_SETTING_EXISTS — Đã có cấu hình cho cùng tòa/phòng, kể cả khi đang tắt." |
+| `/paths/~1billing-settings/post/responses/409/content/application~1json/schema/properties/code/description` | "- ACTIVE_SETTING_EXISTS: Đã có cấu hình cho cùng scope; dùng PATCH để cập nhật hoặc kích hoạt lại." | "- ACTIVE_SETTING_EXISTS: Đã có cấu hình chưa xóa mềm cho cùng tòa/phòng, kể cả khi isActive=false; dùng PATCH để cập nhật hoặc kích hoạt lại." |
+| `/paths/~1billing-settings~1{billingSettingId}/patch/description` | "landlord. Cập nhật ngày thu dự kiến và nhắc nộp; không sinh overdue. Lỗi: 403 FORBIDDEN · 422 VALIDATION_FAILED." | "landlord. Cập nhật hoặc bật lại setting đã có theo billingSettingId; không gửi lại scope, buildingId hay roomId. Hai ngày được chọn độc lập trong khoảng 1–28; không sinh overdue. Lỗi: 403 FORBIDDEN · 422 VALIDATION_FAILED." |
+| `/paths/~1billing-settings~1{billingSettingId}/patch/requestBody/content/application~1json/example/isActive` | null | true |
+| `/paths/~1billing-settings~1{billingSettingId}/patch/requestBody/content/application~1json/example/remindDay` | 3 | 10 |
+| `/paths/~1billing-settings~1{billingSettingId}/patch/responses/200/content/application~1json/example/data/buildingId` | null | "52a85f64-5717-4562-b3fc-2c963f66afa6" |
+| `/paths/~1billing-settings~1{billingSettingId}/patch/responses/200/content/application~1json/example/data/remindDay` | 3 | 10 |
+| `/paths/~1billing-settings~1{billingSettingId}/patch/responses/200/content/application~1json/example/data/roomId` | "3fa85f64-5717-4562-b3fc-2c963f66afa6" | "61a85f64-5717-4562-b3fc-2c963f66afa6" |
+
+**Kiểm tra thủ công:** BE xác nhận lý do, endpoint dùng schema chung, thay đổi role/ownership mô tả bằng văn bản và thời điểm triển khai. FE/Mobile xác nhận tác động với parser và phiên bản client đang hỗ trợ.
 
 ## Thay đổi contract từ Git — NON_BREAKING
 
