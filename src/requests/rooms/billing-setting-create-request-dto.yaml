@@ -1,7 +1,7 @@
 type: object
 x-apidog-folder: "BillingSetting/Request"
 title: BillingSettingCreateRequestDto
-description: Cấu hình ngày thu dự kiến và nhắc nộp; không sinh trạng thái quá hạn.
+description: Cấu hình ngày thu dự kiến và nhắc nộp; hai ngày độc lập trong khoảng 1–28, không sinh trạng thái quá hạn. Với scope room, server lấy buildingId từ Room.
 additionalProperties: false
 properties:
   scope:
@@ -26,7 +26,7 @@ properties:
     minimum: 1
     maximum: 28
     nullable: true
-    description: Ngày nhắc nộp; null là không nhắc.
+    description: Ngày nhắc nộp do chủ trọ tự chọn, có thể sau paymentDueDay; null là không nhắc.
   botEnabled:
     type: boolean
     default: true

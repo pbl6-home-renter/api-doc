@@ -7,8 +7,7 @@ get:
   security:
     - BearerAuth: []
   summary: List billing settings
-  description: 'landlord. Liệt kê cài đặt thanh toán và nhắc hóa đơn. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 VALIDATION
-    FAILED.'
+  description: 'landlord. Liệt kê cài đặt thanh toán và nhắc hóa đơn của chủ trọ; setting cấp phòng trả cả roomId và buildingId của phòng. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 VALIDATION FAILED.'
   parameters:
   - name: filter
     in: query
@@ -107,10 +106,10 @@ get:
             - id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
               landlordId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
               scope: room
-              buildingId: null
-              roomId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+              buildingId: 52a85f64-5717-4562-b3fc-2c963f66afa6
+              roomId: 61a85f64-5717-4562-b3fc-2c963f66afa6
               paymentDueDay: 5
-              remindDay: 3
+              remindDay: 10
               botEnabled: true
               isActive: true
               createdAt: '2026-10-30T00:00:00Z'
@@ -146,7 +145,7 @@ post:
   security:
     - BearerAuth: []
   summary: Create billing setting
-  description: 'landlord. Tạo cấu hình ngày thu dự kiến và nhắc nộp; không sinh overdue. Lỗi: 409 ACTIVE_SETTING_EXISTS · 422 VALIDATION_FAILED · 403 FORBIDDEN.'
+  description: 'landlord. Tạo cấu hình ngày thu dự kiến và ngày nhắc độc lập trong khoảng 1–28; không sinh overdue. Cấp phòng chỉ gửi roomId, server lấy buildingId từ Room. Mỗi tòa/phòng chỉ có một setting chưa xóa mềm, kể cả khi tắt; dùng PATCH để sửa hoặc bật lại. Lỗi: 409 ACTIVE_SETTING_EXISTS · 422 VALIDATION_FAILED · 403 FORBIDDEN.'
   requestBody:
     required: true
     content:
@@ -155,9 +154,9 @@ post:
           $ref: ../../openapi.yaml#/components/schemas/BillingSettingCreateRequestDto
         example:
           scope: room
-          roomId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+          roomId: 61a85f64-5717-4562-b3fc-2c963f66afa6
           paymentDueDay: 5
-          remindDay: 3
+          remindDay: 10
           botEnabled: true
   responses:
     '201':
@@ -189,20 +188,20 @@ post:
               id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
               landlordId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
               scope: room
-              buildingId: null
-              roomId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+              buildingId: 52a85f64-5717-4562-b3fc-2c963f66afa6
+              roomId: 61a85f64-5717-4562-b3fc-2c963f66afa6
               paymentDueDay: 5
-              remindDay: 3
+              remindDay: 10
               botEnabled: true
               isActive: true
               createdAt: '2026-10-30T00:00:00Z'
               updatedAt: '2026-10-30T00:00:00Z'
       headers:
         Location:
-          description: Đường dẫn tài nguyên được tạo.
+          description: Đường dẫn setting vừa tạo, chứa cùng ID với data.id; dùng ID này cho PATCH.
           schema:
             type: string
-            example: /api/v1/billing-settings
+            example: /api/v1/billing-settings/3fa85f64-5717-4562-b3fc-2c963f66afa6
     '400':
       $ref: ../../openapi.yaml#/components/responses/BadRequestBodyError
     '401':
@@ -229,10 +228,10 @@ post:
                 enum:
                   - ACTIVE_SETTING_EXISTS
                 description: |-
-                  - ACTIVE_SETTING_EXISTS: Đã có cấu hình cho cùng scope; dùng PATCH để cập nhật hoặc kích hoạt lại.
+                  - ACTIVE_SETTING_EXISTS: Đã có cấu hình chưa xóa mềm cho cùng tòa/phòng, kể cả khi isActive=false; dùng PATCH để cập nhật hoặc kích hoạt lại.
           examples:
             active_setting_exists:
-              summary: ACTIVE_SETTING_EXISTS — Đã có cấu hình hóa đơn đang hiệu lực.
+              summary: ACTIVE_SETTING_EXISTS — Đã có cấu hình cho cùng tòa/phòng, kể cả khi đang tắt.
               value:
                 statusCode: 409
                 code: ACTIVE_SETTING_EXISTS
