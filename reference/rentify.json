@@ -11995,7 +11995,7 @@
           }
         ],
         "summary": "List billing settings",
-        "description": "landlord. Liệt kê cài đặt thanh toán và nhắc hóa đơn. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 VALIDATION FAILED.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-30 | 🔴 BREAKING | removed the required property `data/items/dueDays` from the response with the `200` status | [#29](https://github.com/pbl6-home-renter/api-doc/pull/29) |\n| 2026-10-30 | 🔴 BREAKING | removed the required property `data/items/remindDays` from the response with the `200` status | [#29](https://github.com/pbl6-home-renter/api-doc/pull/29) |\n| 2026-10-30 | 🟢 NON_BREAKING | added the required property `data/items/buildingId` to the response with the `200` status | [#29](https://github.com/pbl6-home-renter/api-doc/pull/29) |\n| 2026-10-30 | 🟢 NON_BREAKING | added the required property `data/items/createdAt` to the response with the `200` status | [#29](https://github.com/pbl6-home-renter/api-doc/pull/29) |\n| 2026-10-30 | 🟢 NON_BREAKING | added the required property `data/items/landlordId` to the response with the `200` status | [#29](https://github.com/pbl6-home-renter/api-doc/pull/29) |\n| 2026-10-30 | 🟢 NON_BREAKING | added the required property `data/items/paymentDueDay` to the response with the `200` status | [#29](https://github.com/pbl6-home-renter/api-doc/pull/29) |\n| 2026-10-30 | 🟢 NON_BREAKING | added the required property `data/items/remindDay` to the response with the `200` status | [#29](https://github.com/pbl6-home-renter/api-doc/pull/29) |\n| 2026-10-30 | 🟢 NON_BREAKING | added the required property `data/items/updatedAt` to the response with the `200` status | [#29](https://github.com/pbl6-home-renter/api-doc/pull/29) |\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
+        "description": "landlord. Liệt kê cài đặt thanh toán và nhắc hóa đơn của chủ trọ; setting cấp phòng trả cả roomId và buildingId của phòng. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 VALIDATION FAILED.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-30 | 🔴 BREAKING | removed the required property `data/items/dueDays` from the response with the `200` status | [#29](https://github.com/pbl6-home-renter/api-doc/pull/29) |\n| 2026-10-30 | 🔴 BREAKING | removed the required property `data/items/remindDays` from the response with the `200` status | [#29](https://github.com/pbl6-home-renter/api-doc/pull/29) |\n| 2026-10-30 | 🟢 NON_BREAKING | added the required property `data/items/buildingId` to the response with the `200` status | [#29](https://github.com/pbl6-home-renter/api-doc/pull/29) |\n| 2026-10-30 | 🟢 NON_BREAKING | added the required property `data/items/createdAt` to the response with the `200` status | [#29](https://github.com/pbl6-home-renter/api-doc/pull/29) |\n| 2026-10-30 | 🟢 NON_BREAKING | added the required property `data/items/landlordId` to the response with the `200` status | [#29](https://github.com/pbl6-home-renter/api-doc/pull/29) |\n| 2026-10-30 | 🟢 NON_BREAKING | added the required property `data/items/paymentDueDay` to the response with the `200` status | [#29](https://github.com/pbl6-home-renter/api-doc/pull/29) |\n| 2026-10-30 | 🟢 NON_BREAKING | added the required property `data/items/remindDay` to the response with the `200` status | [#29](https://github.com/pbl6-home-renter/api-doc/pull/29) |\n| 2026-10-30 | 🟢 NON_BREAKING | added the required property `data/items/updatedAt` to the response with the `200` status | [#29](https://github.com/pbl6-home-renter/api-doc/pull/29) |\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "parameters": [
           {
             "name": "filter",
@@ -12129,10 +12129,10 @@
                       "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
                       "landlordId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
                       "scope": "room",
-                      "buildingId": null,
-                      "roomId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                      "buildingId": "52a85f64-5717-4562-b3fc-2c963f66afa6",
+                      "roomId": "61a85f64-5717-4562-b3fc-2c963f66afa6",
                       "paymentDueDay": 5,
-                      "remindDay": 3,
+                      "remindDay": 10,
                       "botEnabled": true,
                       "isActive": true,
                       "createdAt": "2026-10-30T00:00:00Z",
@@ -12188,7 +12188,7 @@
           }
         ],
         "summary": "Create billing setting",
-        "description": "landlord. Tạo cấu hình ngày thu dự kiến và nhắc nộp; không sinh overdue. Lỗi: 409 ACTIVE_SETTING_EXISTS · 422 VALIDATION_FAILED · 403 FORBIDDEN.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-30 | 🔴 BREAKING | the request property `buildingId` became not nullable | [#29](https://github.com/pbl6-home-renter/api-doc/pull/29) |\n| 2026-10-30 | 🔴 BREAKING | the request property `roomId` became not nullable | [#29](https://github.com/pbl6-home-renter/api-doc/pull/29) |\n| 2026-10-30 | 🔴 BREAKING | removed the required property `data/dueDays` from the response with the `201` status | [#29](https://github.com/pbl6-home-renter/api-doc/pull/29) |\n| 2026-10-30 | 🔴 BREAKING | removed the required property `data/remindDays` from the response with the `201` status | [#29](https://github.com/pbl6-home-renter/api-doc/pull/29) |\n| 2026-10-30 | 🟡 NEEDS_REVIEW | removed the request property `debtScanEnabled` | [#29](https://github.com/pbl6-home-renter/api-doc/pull/29) |\n| 2026-10-30 | 🟡 NEEDS_REVIEW | removed the request property `dueDays` | [#29](https://github.com/pbl6-home-renter/api-doc/pull/29) |\n| 2026-10-30 | 🟡 NEEDS_REVIEW | removed the request property `gracePeriodDays` | [#29](https://github.com/pbl6-home-renter/api-doc/pull/29) |\n| 2026-10-30 | 🟡 NEEDS_REVIEW | removed the request property `invoiceIssuanceDay` | [#29](https://github.com/pbl6-home-renter/api-doc/pull/29) |\n| 2026-10-30 | 🟡 NEEDS_REVIEW | removed the request property `meterCutoffDay` | [#29](https://github.com/pbl6-home-renter/api-doc/pull/29) |\n| 2026-10-30 | 🟡 NEEDS_REVIEW | removed the request property `overdueReminderIntervalDays` | [#29](https://github.com/pbl6-home-renter/api-doc/pull/29) |\n| 2026-10-30 | 🟡 NEEDS_REVIEW | removed the request property `remindDays` | [#29](https://github.com/pbl6-home-renter/api-doc/pull/29) |\n| 2026-10-30 | 🟡 NEEDS_REVIEW | removed the request property `reminderChannels` | [#29](https://github.com/pbl6-home-renter/api-doc/pull/29) |\n| 2026-10-30 | 🟢 NON_BREAKING | added the new optional request property `remindDay` | [#29](https://github.com/pbl6-home-renter/api-doc/pull/29) |\n| 2026-10-30 | 🟢 NON_BREAKING | added `subschema #1, subschema #2` to the request body `oneOf` list | [#29](https://github.com/pbl6-home-renter/api-doc/pull/29) |\n| 2026-10-30 | 🟢 NON_BREAKING | the request property `botEnabled` became optional | [#29](https://github.com/pbl6-home-renter/api-doc/pull/29) |\n| 2026-10-30 | 🟢 NON_BREAKING | the request property `paymentDueDay` became optional | [#29](https://github.com/pbl6-home-renter/api-doc/pull/29) |\n| 2026-10-30 | 🟢 NON_BREAKING | the `botEnabled` request property default value `true` was added | [#29](https://github.com/pbl6-home-renter/api-doc/pull/29) |\n| 2026-10-30 | 🟢 NON_BREAKING | the `paymentDueDay` request property default value `5.00` was added | [#29](https://github.com/pbl6-home-renter/api-doc/pull/29) |\n| 2026-10-30 | 🟢 NON_BREAKING | removed the `DUE_DAYS_INVALID` enum value from the `code` response property for the response status `422` | [#29](https://github.com/pbl6-home-renter/api-doc/pull/29) |\n| 2026-10-30 | 🟢 NON_BREAKING | added the required property `data/buildingId` to the response with the `201` status | [#29](https://github.com/pbl6-home-renter/api-doc/pull/29) |\n| 2026-10-30 | 🟢 NON_BREAKING | added the required property `data/createdAt` to the response with the `201` status | [#29](https://github.com/pbl6-home-renter/api-doc/pull/29) |\n| 2026-10-30 | 🟢 NON_BREAKING | added the required property `data/isActive` to the response with the `201` status | [#29](https://github.com/pbl6-home-renter/api-doc/pull/29) |\n| 2026-10-30 | 🟢 NON_BREAKING | added the required property `data/landlordId` to the response with the `201` status | [#29](https://github.com/pbl6-home-renter/api-doc/pull/29) |\n| 2026-10-30 | 🟢 NON_BREAKING | added the required property `data/paymentDueDay` to the response with the `201` status | [#29](https://github.com/pbl6-home-renter/api-doc/pull/29) |\n| 2026-10-30 | 🟢 NON_BREAKING | added the required property `data/remindDay` to the response with the `201` status | [#29](https://github.com/pbl6-home-renter/api-doc/pull/29) |\n| 2026-10-30 | 🟢 NON_BREAKING | added the required property `data/roomId` to the response with the `201` status | [#29](https://github.com/pbl6-home-renter/api-doc/pull/29) |\n| 2026-10-30 | 🟢 NON_BREAKING | added the required property `data/scope` to the response with the `201` status | [#29](https://github.com/pbl6-home-renter/api-doc/pull/29) |\n| 2026-10-30 | 🟢 NON_BREAKING | added the required property `data/updatedAt` to the response with the `201` status | [#29](https://github.com/pbl6-home-renter/api-doc/pull/29) |\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
+        "description": "landlord. Tạo cấu hình ngày thu dự kiến và ngày nhắc độc lập trong khoảng 1–28; không sinh overdue. Cấp phòng chỉ gửi roomId, server lấy buildingId từ Room. Mỗi tòa/phòng chỉ có một setting chưa xóa mềm, kể cả khi tắt; dùng PATCH để sửa hoặc bật lại. Lỗi: 409 ACTIVE_SETTING_EXISTS · 422 VALIDATION_FAILED · 403 FORBIDDEN.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-30 | 🔴 BREAKING | the request property `buildingId` became not nullable | [#29](https://github.com/pbl6-home-renter/api-doc/pull/29) |\n| 2026-10-30 | 🔴 BREAKING | the request property `roomId` became not nullable | [#29](https://github.com/pbl6-home-renter/api-doc/pull/29) |\n| 2026-10-30 | 🔴 BREAKING | removed the required property `data/dueDays` from the response with the `201` status | [#29](https://github.com/pbl6-home-renter/api-doc/pull/29) |\n| 2026-10-30 | 🔴 BREAKING | removed the required property `data/remindDays` from the response with the `201` status | [#29](https://github.com/pbl6-home-renter/api-doc/pull/29) |\n| 2026-10-30 | 🟡 NEEDS_REVIEW | removed the request property `debtScanEnabled` | [#29](https://github.com/pbl6-home-renter/api-doc/pull/29) |\n| 2026-10-30 | 🟡 NEEDS_REVIEW | removed the request property `dueDays` | [#29](https://github.com/pbl6-home-renter/api-doc/pull/29) |\n| 2026-10-30 | 🟡 NEEDS_REVIEW | removed the request property `gracePeriodDays` | [#29](https://github.com/pbl6-home-renter/api-doc/pull/29) |\n| 2026-10-30 | 🟡 NEEDS_REVIEW | removed the request property `invoiceIssuanceDay` | [#29](https://github.com/pbl6-home-renter/api-doc/pull/29) |\n| 2026-10-30 | 🟡 NEEDS_REVIEW | removed the request property `meterCutoffDay` | [#29](https://github.com/pbl6-home-renter/api-doc/pull/29) |\n| 2026-10-30 | 🟡 NEEDS_REVIEW | removed the request property `overdueReminderIntervalDays` | [#29](https://github.com/pbl6-home-renter/api-doc/pull/29) |\n| 2026-10-30 | 🟡 NEEDS_REVIEW | removed the request property `remindDays` | [#29](https://github.com/pbl6-home-renter/api-doc/pull/29) |\n| 2026-10-30 | 🟡 NEEDS_REVIEW | removed the request property `reminderChannels` | [#29](https://github.com/pbl6-home-renter/api-doc/pull/29) |\n| 2026-10-30 | 🟢 NON_BREAKING | added the new optional request property `remindDay` | [#29](https://github.com/pbl6-home-renter/api-doc/pull/29) |\n| 2026-10-30 | 🟢 NON_BREAKING | added `subschema #1, subschema #2` to the request body `oneOf` list | [#29](https://github.com/pbl6-home-renter/api-doc/pull/29) |\n| 2026-10-30 | 🟢 NON_BREAKING | the request property `botEnabled` became optional | [#29](https://github.com/pbl6-home-renter/api-doc/pull/29) |\n| 2026-10-30 | 🟢 NON_BREAKING | the request property `paymentDueDay` became optional | [#29](https://github.com/pbl6-home-renter/api-doc/pull/29) |\n| 2026-10-30 | 🟢 NON_BREAKING | the `botEnabled` request property default value `true` was added | [#29](https://github.com/pbl6-home-renter/api-doc/pull/29) |\n| 2026-10-30 | 🟢 NON_BREAKING | the `paymentDueDay` request property default value `5.00` was added | [#29](https://github.com/pbl6-home-renter/api-doc/pull/29) |\n| 2026-10-30 | 🟢 NON_BREAKING | removed the `DUE_DAYS_INVALID` enum value from the `code` response property for the response status `422` | [#29](https://github.com/pbl6-home-renter/api-doc/pull/29) |\n| 2026-10-30 | 🟢 NON_BREAKING | added the required property `data/buildingId` to the response with the `201` status | [#29](https://github.com/pbl6-home-renter/api-doc/pull/29) |\n| 2026-10-30 | 🟢 NON_BREAKING | added the required property `data/createdAt` to the response with the `201` status | [#29](https://github.com/pbl6-home-renter/api-doc/pull/29) |\n| 2026-10-30 | 🟢 NON_BREAKING | added the required property `data/isActive` to the response with the `201` status | [#29](https://github.com/pbl6-home-renter/api-doc/pull/29) |\n| 2026-10-30 | 🟢 NON_BREAKING | added the required property `data/landlordId` to the response with the `201` status | [#29](https://github.com/pbl6-home-renter/api-doc/pull/29) |\n| 2026-10-30 | 🟢 NON_BREAKING | added the required property `data/paymentDueDay` to the response with the `201` status | [#29](https://github.com/pbl6-home-renter/api-doc/pull/29) |\n| 2026-10-30 | 🟢 NON_BREAKING | added the required property `data/remindDay` to the response with the `201` status | [#29](https://github.com/pbl6-home-renter/api-doc/pull/29) |\n| 2026-10-30 | 🟢 NON_BREAKING | added the required property `data/roomId` to the response with the `201` status | [#29](https://github.com/pbl6-home-renter/api-doc/pull/29) |\n| 2026-10-30 | 🟢 NON_BREAKING | added the required property `data/scope` to the response with the `201` status | [#29](https://github.com/pbl6-home-renter/api-doc/pull/29) |\n| 2026-10-30 | 🟢 NON_BREAKING | added the required property `data/updatedAt` to the response with the `201` status | [#29](https://github.com/pbl6-home-renter/api-doc/pull/29) |\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "requestBody": {
           "required": true,
           "content": {
@@ -12198,9 +12198,9 @@
               },
               "example": {
                 "scope": "room",
-                "roomId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                "roomId": "61a85f64-5717-4562-b3fc-2c963f66afa6",
                 "paymentDueDay": 5,
-                "remindDay": 3,
+                "remindDay": 10,
                 "botEnabled": true
               }
             }
@@ -12244,10 +12244,10 @@
                     "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
                     "landlordId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
                     "scope": "room",
-                    "buildingId": null,
-                    "roomId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                    "buildingId": "52a85f64-5717-4562-b3fc-2c963f66afa6",
+                    "roomId": "61a85f64-5717-4562-b3fc-2c963f66afa6",
                     "paymentDueDay": 5,
-                    "remindDay": 3,
+                    "remindDay": 10,
                     "botEnabled": true,
                     "isActive": true,
                     "createdAt": "2026-10-30T00:00:00Z",
@@ -12258,10 +12258,10 @@
             },
             "headers": {
               "Location": {
-                "description": "Đường dẫn tài nguyên được tạo.",
+                "description": "Đường dẫn setting vừa tạo, chứa cùng ID với data.id; dùng ID này cho PATCH.",
                 "schema": {
                   "type": "string",
-                  "example": "/api/v1/billing-settings"
+                  "example": "/api/v1/billing-settings/3fa85f64-5717-4562-b3fc-2c963f66afa6"
                 }
               }
             }
@@ -12299,13 +12299,13 @@
                       "enum": [
                         "ACTIVE_SETTING_EXISTS"
                       ],
-                      "description": "- ACTIVE_SETTING_EXISTS: Đã có cấu hình cho cùng scope; dùng PATCH để cập nhật hoặc kích hoạt lại."
+                      "description": "- ACTIVE_SETTING_EXISTS: Đã có cấu hình chưa xóa mềm cho cùng tòa/phòng, kể cả khi isActive=false; dùng PATCH để cập nhật hoặc kích hoạt lại."
                     }
                   }
                 },
                 "examples": {
                   "active_setting_exists": {
-                    "summary": "ACTIVE_SETTING_EXISTS — Đã có cấu hình hóa đơn đang hiệu lực.",
+                    "summary": "ACTIVE_SETTING_EXISTS — Đã có cấu hình cho cùng tòa/phòng, kể cả khi đang tắt.",
                     "value": {
                       "statusCode": 409,
                       "code": "ACTIVE_SETTING_EXISTS"
@@ -12381,7 +12381,7 @@
           }
         ],
         "summary": "Update billing setting",
-        "description": "landlord. Cập nhật ngày thu dự kiến và nhắc nộp; không sinh overdue. Lỗi: 403 FORBIDDEN · 422 VALIDATION_FAILED.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-30 | 🔴 BREAKING | removed the required property `data/dueDays` from the response with the `200` status | [#29](https://github.com/pbl6-home-renter/api-doc/pull/29) |\n| 2026-10-30 | 🔴 BREAKING | removed the required property `data/remindDays` from the response with the `200` status | [#29](https://github.com/pbl6-home-renter/api-doc/pull/29) |\n| 2026-10-30 | 🟡 NEEDS_REVIEW | removed the request property `debtScanEnabled` | [#29](https://github.com/pbl6-home-renter/api-doc/pull/29) |\n| 2026-10-30 | 🟡 NEEDS_REVIEW | removed the request property `dueDays` | [#29](https://github.com/pbl6-home-renter/api-doc/pull/29) |\n| 2026-10-30 | 🟡 NEEDS_REVIEW | removed the request property `gracePeriodDays` | [#29](https://github.com/pbl6-home-renter/api-doc/pull/29) |\n| 2026-10-30 | 🟡 NEEDS_REVIEW | removed the request property `invoiceIssuanceDay` | [#29](https://github.com/pbl6-home-renter/api-doc/pull/29) |\n| 2026-10-30 | 🟡 NEEDS_REVIEW | removed the request property `meterCutoffDay` | [#29](https://github.com/pbl6-home-renter/api-doc/pull/29) |\n| 2026-10-30 | 🟡 NEEDS_REVIEW | removed the request property `overdueReminderIntervalDays` | [#29](https://github.com/pbl6-home-renter/api-doc/pull/29) |\n| 2026-10-30 | 🟡 NEEDS_REVIEW | removed the request property `remindDays` | [#29](https://github.com/pbl6-home-renter/api-doc/pull/29) |\n| 2026-10-30 | 🟡 NEEDS_REVIEW | removed the request property `reminderChannels` | [#29](https://github.com/pbl6-home-renter/api-doc/pull/29) |\n| 2026-10-30 | 🟢 NON_BREAKING | added the new optional request property `isActive` | [#29](https://github.com/pbl6-home-renter/api-doc/pull/29) |\n| 2026-10-30 | 🟢 NON_BREAKING | added the new optional request property `remindDay` | [#29](https://github.com/pbl6-home-renter/api-doc/pull/29) |\n| 2026-10-30 | 🟢 NON_BREAKING | removed the `DUE_DAYS_INVALID` enum value from the `code` response property for the response status `422` | [#29](https://github.com/pbl6-home-renter/api-doc/pull/29) |\n| 2026-10-30 | 🟢 NON_BREAKING | added the required property `data/buildingId` to the response with the `200` status | [#29](https://github.com/pbl6-home-renter/api-doc/pull/29) |\n| 2026-10-30 | 🟢 NON_BREAKING | added the required property `data/createdAt` to the response with the `200` status | [#29](https://github.com/pbl6-home-renter/api-doc/pull/29) |\n| 2026-10-30 | 🟢 NON_BREAKING | added the required property `data/isActive` to the response with the `200` status | [#29](https://github.com/pbl6-home-renter/api-doc/pull/29) |\n| 2026-10-30 | 🟢 NON_BREAKING | added the required property `data/landlordId` to the response with the `200` status | [#29](https://github.com/pbl6-home-renter/api-doc/pull/29) |\n| 2026-10-30 | 🟢 NON_BREAKING | added the required property `data/paymentDueDay` to the response with the `200` status | [#29](https://github.com/pbl6-home-renter/api-doc/pull/29) |\n| 2026-10-30 | 🟢 NON_BREAKING | added the required property `data/remindDay` to the response with the `200` status | [#29](https://github.com/pbl6-home-renter/api-doc/pull/29) |\n| 2026-10-30 | 🟢 NON_BREAKING | added the required property `data/roomId` to the response with the `200` status | [#29](https://github.com/pbl6-home-renter/api-doc/pull/29) |\n| 2026-10-30 | 🟢 NON_BREAKING | added the required property `data/scope` to the response with the `200` status | [#29](https://github.com/pbl6-home-renter/api-doc/pull/29) |\n| 2026-10-30 | 🟢 NON_BREAKING | added the required property `data/updatedAt` to the response with the `200` status | [#29](https://github.com/pbl6-home-renter/api-doc/pull/29) |\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
+        "description": "landlord. Cập nhật hoặc bật lại setting đã có theo billingSettingId; không gửi lại scope, buildingId hay roomId. Hai ngày được chọn độc lập trong khoảng 1–28; không sinh overdue. Lỗi: 403 FORBIDDEN · 422 VALIDATION_FAILED.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-30 | 🔴 BREAKING | removed the required property `data/dueDays` from the response with the `200` status | [#29](https://github.com/pbl6-home-renter/api-doc/pull/29) |\n| 2026-10-30 | 🔴 BREAKING | removed the required property `data/remindDays` from the response with the `200` status | [#29](https://github.com/pbl6-home-renter/api-doc/pull/29) |\n| 2026-10-30 | 🟡 NEEDS_REVIEW | removed the request property `debtScanEnabled` | [#29](https://github.com/pbl6-home-renter/api-doc/pull/29) |\n| 2026-10-30 | 🟡 NEEDS_REVIEW | removed the request property `dueDays` | [#29](https://github.com/pbl6-home-renter/api-doc/pull/29) |\n| 2026-10-30 | 🟡 NEEDS_REVIEW | removed the request property `gracePeriodDays` | [#29](https://github.com/pbl6-home-renter/api-doc/pull/29) |\n| 2026-10-30 | 🟡 NEEDS_REVIEW | removed the request property `invoiceIssuanceDay` | [#29](https://github.com/pbl6-home-renter/api-doc/pull/29) |\n| 2026-10-30 | 🟡 NEEDS_REVIEW | removed the request property `meterCutoffDay` | [#29](https://github.com/pbl6-home-renter/api-doc/pull/29) |\n| 2026-10-30 | 🟡 NEEDS_REVIEW | removed the request property `overdueReminderIntervalDays` | [#29](https://github.com/pbl6-home-renter/api-doc/pull/29) |\n| 2026-10-30 | 🟡 NEEDS_REVIEW | removed the request property `remindDays` | [#29](https://github.com/pbl6-home-renter/api-doc/pull/29) |\n| 2026-10-30 | 🟡 NEEDS_REVIEW | removed the request property `reminderChannels` | [#29](https://github.com/pbl6-home-renter/api-doc/pull/29) |\n| 2026-10-30 | 🟢 NON_BREAKING | added the new optional request property `isActive` | [#29](https://github.com/pbl6-home-renter/api-doc/pull/29) |\n| 2026-10-30 | 🟢 NON_BREAKING | added the new optional request property `remindDay` | [#29](https://github.com/pbl6-home-renter/api-doc/pull/29) |\n| 2026-10-30 | 🟢 NON_BREAKING | removed the `DUE_DAYS_INVALID` enum value from the `code` response property for the response status `422` | [#29](https://github.com/pbl6-home-renter/api-doc/pull/29) |\n| 2026-10-30 | 🟢 NON_BREAKING | added the required property `data/buildingId` to the response with the `200` status | [#29](https://github.com/pbl6-home-renter/api-doc/pull/29) |\n| 2026-10-30 | 🟢 NON_BREAKING | added the required property `data/createdAt` to the response with the `200` status | [#29](https://github.com/pbl6-home-renter/api-doc/pull/29) |\n| 2026-10-30 | 🟢 NON_BREAKING | added the required property `data/isActive` to the response with the `200` status | [#29](https://github.com/pbl6-home-renter/api-doc/pull/29) |\n| 2026-10-30 | 🟢 NON_BREAKING | added the required property `data/landlordId` to the response with the `200` status | [#29](https://github.com/pbl6-home-renter/api-doc/pull/29) |\n| 2026-10-30 | 🟢 NON_BREAKING | added the required property `data/paymentDueDay` to the response with the `200` status | [#29](https://github.com/pbl6-home-renter/api-doc/pull/29) |\n| 2026-10-30 | 🟢 NON_BREAKING | added the required property `data/remindDay` to the response with the `200` status | [#29](https://github.com/pbl6-home-renter/api-doc/pull/29) |\n| 2026-10-30 | 🟢 NON_BREAKING | added the required property `data/roomId` to the response with the `200` status | [#29](https://github.com/pbl6-home-renter/api-doc/pull/29) |\n| 2026-10-30 | 🟢 NON_BREAKING | added the required property `data/scope` to the response with the `200` status | [#29](https://github.com/pbl6-home-renter/api-doc/pull/29) |\n| 2026-10-30 | 🟢 NON_BREAKING | added the required property `data/updatedAt` to the response with the `200` status | [#29](https://github.com/pbl6-home-renter/api-doc/pull/29) |\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "parameters": [
           {
             "name": "billingSettingId",
@@ -12402,8 +12402,9 @@
               },
               "example": {
                 "paymentDueDay": 7,
-                "remindDay": 3,
-                "botEnabled": false
+                "remindDay": 10,
+                "botEnabled": false,
+                "isActive": true
               }
             }
           }
@@ -12446,10 +12447,10 @@
                     "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
                     "landlordId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
                     "scope": "room",
-                    "buildingId": null,
-                    "roomId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                    "buildingId": "52a85f64-5717-4562-b3fc-2c963f66afa6",
+                    "roomId": "61a85f64-5717-4562-b3fc-2c963f66afa6",
                     "paymentDueDay": 7,
-                    "remindDay": 3,
+                    "remindDay": 10,
                     "botEnabled": false,
                     "isActive": true,
                     "createdAt": "2026-10-30T00:00:00Z",
@@ -31301,7 +31302,7 @@
         "type": "object",
         "x-apidog-folder": "BillingSetting/Request",
         "title": "BillingSettingCreateRequestDto",
-        "description": "Cấu hình ngày thu dự kiến và nhắc nộp; không sinh trạng thái quá hạn.",
+        "description": "Cấu hình ngày thu dự kiến và nhắc nộp; hai ngày độc lập trong khoảng 1–28, không sinh trạng thái quá hạn. Với scope room, server lấy buildingId từ Room.",
         "additionalProperties": false,
         "properties": {
           "scope": {
@@ -31333,7 +31334,7 @@
             "minimum": 1,
             "maximum": 28,
             "nullable": true,
-            "description": "Ngày nhắc nộp; null là không nhắc."
+            "description": "Ngày nhắc nộp do chủ trọ tự chọn, có thể sau paymentDueDay; null là không nhắc."
           },
           "botEnabled": {
             "type": "boolean",
@@ -31390,7 +31391,7 @@
         "type": "object",
         "x-apidog-folder": "BillingSetting/Request",
         "title": "BillingSettingUpdateRequestDto",
-        "description": "Cập nhật ngày thu dự kiến và nhắc nộp cho một scope đã có.",
+        "description": "Cập nhật hoặc bật lại setting đã có; hai ngày được chọn độc lập trong khoảng 1–28. Scope và target không thay đổi.",
         "additionalProperties": false,
         "minProperties": 1,
         "properties": {
@@ -31405,7 +31406,7 @@
             "minimum": 1,
             "maximum": 28,
             "nullable": true,
-            "description": "Ngày nhắc nộp; null là không nhắc."
+            "description": "Ngày nhắc nộp do chủ trọ tự chọn, có thể sau paymentDueDay; null là không nhắc."
           },
           "botEnabled": {
             "type": "boolean"
@@ -31441,7 +31442,7 @@
           "buildingId": {
             "type": "string",
             "format": "uuid",
-            "nullable": true
+            "description": "ID tòa nhà của setting; với scope room, server lấy từ Room."
           },
           "roomId": {
             "type": "string",
@@ -31513,7 +31514,7 @@
           "buildingId": {
             "type": "string",
             "format": "uuid",
-            "nullable": true
+            "description": "ID tòa nhà của setting; với scope room, server lấy từ Room."
           },
           "roomId": {
             "type": "string",
@@ -31585,7 +31586,7 @@
           "buildingId": {
             "type": "string",
             "format": "uuid",
-            "nullable": true
+            "description": "ID tòa nhà của setting; với scope room, server lấy từ Room."
           },
           "roomId": {
             "type": "string",
@@ -31971,7 +31972,7 @@
         "type": "object",
         "x-apidog-folder": "BillingSetting",
         "title": "BillingSetting",
-        "description": "Cấu hình ngày thu dự kiến và nhắc nộp tiền (D39 - chỉ hiển thị, không sinh overdue tự động)",
+        "description": "Cấu hình ngày thu dự kiến và nhắc nộp tiền (D39 - chỉ hiển thị, không sinh overdue tự động). Mỗi tòa/phòng có một setting chưa xóa mềm, kể cả khi tắt; hai ngày độc lập trong khoảng 1–28.",
         "allOf": [
           {
             "$ref": "#/components/schemas/BaseEntity"
@@ -31997,9 +31998,8 @@
               "buildingId": {
                 "type": "string",
                 "format": "uuid",
-                "nullable": true,
-                "description": "ID tòa nhà (bắt buộc khi scope = building)",
-                "example": null
+                "description": "ID tòa nhà; ở scope room, server lấy từ Room và trả cùng roomId",
+                "example": "52a85f64-5717-4562-b3fc-2c963f66afa6"
               },
               "roomId": {
                 "type": "string",
@@ -32021,8 +32021,8 @@
                 "minimum": 1,
                 "maximum": 28,
                 "nullable": true,
-                "description": "Ngày trong tháng gợi ý nhắc nộp tiền (null = không nhắc)",
-                "example": 3
+                "description": "Ngày trong tháng gợi ý nhắc nộp tiền, độc lập với paymentDueDay (null = không nhắc)",
+                "example": 10
               },
               "botEnabled": {
                 "type": "boolean",
@@ -32040,6 +32040,7 @@
             "required": [
               "landlordId",
               "scope",
+              "buildingId",
               "paymentDueDay",
               "botEnabled",
               "isActive"

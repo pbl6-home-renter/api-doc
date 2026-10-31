@@ -7,7 +7,7 @@ patch:
   security:
     - BearerAuth: []
   summary: Update billing setting
-  description: 'landlord. Cập nhật ngày thu dự kiến và nhắc nộp; không sinh overdue. Lỗi: 403 FORBIDDEN · 422 VALIDATION_FAILED.'
+  description: 'landlord. Cập nhật hoặc bật lại setting đã có theo billingSettingId; không gửi lại scope, buildingId hay roomId. Hai ngày được chọn độc lập trong khoảng 1–28; không sinh overdue. Lỗi: 403 FORBIDDEN · 422 VALIDATION_FAILED.'
   parameters:
   - name: billingSettingId
     in: path
@@ -23,8 +23,9 @@ patch:
           $ref: ../../openapi.yaml#/components/schemas/BillingSettingUpdateRequestDto
         example:
           paymentDueDay: 7
-          remindDay: 3
+          remindDay: 10
           botEnabled: false
+          isActive: true
   responses:
     '200':
       description: 'Thành công: Cập nhật cài đặt hóa đơn.'
@@ -55,10 +56,10 @@ patch:
               id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
               landlordId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
               scope: room
-              buildingId: null
-              roomId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+              buildingId: 52a85f64-5717-4562-b3fc-2c963f66afa6
+              roomId: 61a85f64-5717-4562-b3fc-2c963f66afa6
               paymentDueDay: 7
-              remindDay: 3
+              remindDay: 10
               botEnabled: false
               isActive: true
               createdAt: '2026-10-30T00:00:00Z'

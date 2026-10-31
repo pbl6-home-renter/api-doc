@@ -1,7 +1,7 @@
 type: object
 x-apidog-folder: "BillingSetting"
 title: BillingSetting
-description: Cấu hình ngày thu dự kiến và nhắc nộp tiền (D39 - chỉ hiển thị, không sinh overdue tự động)
+description: Cấu hình ngày thu dự kiến và nhắc nộp tiền (D39 - chỉ hiển thị, không sinh overdue tự động). Mỗi tòa/phòng có một setting chưa xóa mềm, kể cả khi tắt; hai ngày độc lập trong khoảng 1–28.
 allOf:
   - $ref: '../../common/base-entity.yaml'
   - type: object
@@ -19,9 +19,8 @@ allOf:
       buildingId:
         type: string
         format: uuid
-        nullable: true
-        description: ID tòa nhà (bắt buộc khi scope = building)
-        example: null
+        description: ID tòa nhà; ở scope room, server lấy từ Room và trả cùng roomId
+        example: "52a85f64-5717-4562-b3fc-2c963f66afa6"
       roomId:
         type: string
         format: uuid
@@ -40,8 +39,8 @@ allOf:
         minimum: 1
         maximum: 28
         nullable: true
-        description: Ngày trong tháng gợi ý nhắc nộp tiền (null = không nhắc)
-        example: 3
+        description: Ngày trong tháng gợi ý nhắc nộp tiền, độc lập với paymentDueDay (null = không nhắc)
+        example: 10
       botEnabled:
         type: boolean
         default: true
@@ -55,6 +54,7 @@ allOf:
     required:
       - landlordId
       - scope
+      - buildingId
       - paymentDueDay
       - botEnabled
       - isActive
