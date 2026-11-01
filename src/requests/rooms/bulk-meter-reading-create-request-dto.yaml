@@ -1,7 +1,7 @@
 type: object
 x-apidog-folder: "MeterReading/Request"
 title: BulkMeterReadingCreateRequestDto
-description: Dữ liệu ghi chỉ số điện và nước hàng loạt cho toàn bộ các phòng trong tòa nhà
+description: Dữ liệu ghi chỉ số điện hoặc nước kỳ thường cho một tập phòng bất kỳ trong cùng tòa nhà. Mỗi phòng và loại công tơ được gửi phải có baseline trước đó; toàn bộ request được ghi hoặc rollback cùng nhau.
 additionalProperties: false
 
 properties:
@@ -15,16 +15,14 @@ properties:
     pattern: '^[0-9]{4}-(0[1-9]|1[0-2])$'
     description: Kỳ chốt chỉ số theo định dạng YYYY-MM
     example: "2026-09"
-  readingMethod:
-    type: string
-    enum: [CAMERA_CAPTURE, FILE_UPLOAD]
-    description: Phương thức thu thập ảnh (CAMERA_CAPTURE cho chụp trực tiếp, FILE_UPLOAD cho tải tệp từ thiết bị - quyền chủ nhà)
-    example: "CAMERA_CAPTURE"
   readings:
     type: array
-    description: Danh sách chỉ số điện nước từng phòng được ghi nhận
+    minItems: 1
+    maxItems: 200
+    description: Từ 1 đến 200 chỉ số kỳ thường; có thể gửi chỉ điện, chỉ nước hoặc cả hai cho từng phòng trong tòa. previousReading do server lấy từ currentReading bản ghi trước.
     items:
       type: object
+      additionalProperties: false
       properties:
         roomId:
           type: string
@@ -36,10 +34,6 @@ properties:
           enum: [electricity, water]
           description: Loại công tơ dịch vụ (điện hoặc nước)
           example: "electricity"
-        previousReading:
-          type: string
-          description: Chỉ số cũ (chuỗi số thập phân lưu trữ chính xác)
-          example: "1250.0"
         currentReading:
           type: string
           description: Chỉ số mới ghi nhận được
@@ -58,5 +52,4 @@ properties:
 required:
   - buildingId
   - recordedMonth
-  - readingMethod
   - readings
