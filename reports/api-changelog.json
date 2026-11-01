@@ -24177,6 +24177,4301 @@
           }
         }
       }
+    },
+    {
+      "id": "080233c603be2f1fd6318af33117660fe285e91ee9689a4d32bc2466d8cabdbb",
+      "label": "Thay đổi contract từ Git",
+      "classification": "BREAKING",
+      "contractId": "rentify-public",
+      "repository": "https://github.com/pbl6-home-renter/api-doc",
+      "baseHash": "c3111f506017b1d72ace7868aea24b32db2136e02fe4477bbb405bbc7caeda8b",
+      "headHash": "4b55ddbb41dfaf7b46ed28c0687b2732207922ba3d2d7f7133d1bd653aaf1b39",
+      "baseSource": "src/openapi.yaml",
+      "headSource": "src/openapi.yaml",
+      "detectedAt": "2026-11-01T14:51:43.922Z",
+      "committedAt": "2026-11-01T21:51:33+07:00",
+      "baseCommit": "220a72238d79df0beb66419c9a8acf8e73f50f28",
+      "headCommit": "d377a0df9c8f812a1e1a29699db55f13b32b948b",
+      "prUrl": "https://github.com/pbl6-home-renter/api-doc/pull/35",
+      "commitUrl": "https://github.com/pbl6-home-renter/api-doc/commit/d377a0df9c8f812a1e1a29699db55f13b32b948b",
+      "metadataKind": "Git revision thực tế",
+      "reason": "CHƯA CUNG CẤP — tác giả PR phải bổ sung lý do nghiệp vụ; không thể suy ra từ OpenAPI diff.",
+      "tools": {
+        "redocly": "2.64.1",
+        "oasdiff": "1.34.1"
+      },
+      "changes": [
+        {
+          "id": "response-property-became-optional",
+          "text": "the response property `data/items/title` became optional for the status `200`",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getConversations",
+          "path": "/conversations",
+          "section": "paths",
+          "fingerprint": "13daf0086fc8",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu vị trí và thay đổi trước/sau trong entry này với API adapter, DTO, parser và validation; cùng BE xác nhận phương án tương thích trước merge/phát hành."
+        },
+        {
+          "id": "response-property-enum-value-added",
+          "text": "added the new `system` enum value to the `data/items/lastMessage/type` response property for the response status `200`",
+          "comment": "The server may now return a value the previous contract excluded, so a client written against it may not handle the response. If the value set is meant to grow, declare it with x-extensible-enum.",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getConversations",
+          "path": "/conversations",
+          "section": "paths",
+          "fingerprint": "8de3e5ac5d6e",
+          "classification": "BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới system; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-property-min-length-unset",
+          "text": "the `data/items/title` response property's minLength was unset from `1` for the response status `200`",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getConversations",
+          "path": "/conversations",
+          "section": "paths",
+          "fingerprint": "c8e3b1ed10d5",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu vị trí và thay đổi trước/sau trong entry này với API adapter, DTO, parser và validation; cùng BE xác nhận phương án tương thích trước merge/phát hành."
+        },
+        {
+          "id": "response-required-property-removed",
+          "text": "removed the required property `data/items/type` from the response with the `200` status",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getConversations",
+          "path": "/conversations",
+          "section": "paths",
+          "fingerprint": "f3446830a2ec",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "api-path-removed-without-deprecation",
+          "text": "api path removed without deprecation",
+          "level": 3,
+          "operation": "POST",
+          "operationId": "postConversationsResolveConversation",
+          "path": "/conversations/resolve-conversation",
+          "section": "paths",
+          "baseSource": {
+            "file": "/tmp/rentify-contract-5J2vTe/base-0.json"
+          },
+          "fingerprint": "bb769716572a",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "response-property-became-optional",
+          "text": "the response property `data/title` became optional for the status `200`",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getConversationsConversationid",
+          "path": "/conversations/{conversationId}",
+          "section": "paths",
+          "fingerprint": "a9fb597c50ed",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu vị trí và thay đổi trước/sau trong entry này với API adapter, DTO, parser và validation; cùng BE xác nhận phương án tương thích trước merge/phát hành."
+        },
+        {
+          "id": "response-property-min-length-unset",
+          "text": "the `data/title` response property's minLength was unset from `1` for the response status `200`",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getConversationsConversationid",
+          "path": "/conversations/{conversationId}",
+          "section": "paths",
+          "fingerprint": "8be44161bb2d",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu vị trí và thay đổi trước/sau trong entry này với API adapter, DTO, parser và validation; cùng BE xác nhận phương án tương thích trước merge/phát hành."
+        },
+        {
+          "id": "response-required-property-removed",
+          "text": "removed the required property `data/contractId` from the response with the `200` status",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getConversationsConversationid",
+          "path": "/conversations/{conversationId}",
+          "section": "paths",
+          "fingerprint": "166efb1615f7",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "response-required-property-removed",
+          "text": "removed the required property `data/roomId` from the response with the `200` status",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getConversationsConversationid",
+          "path": "/conversations/{conversationId}",
+          "section": "paths",
+          "fingerprint": "a92ae36af139",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "response-required-property-removed",
+          "text": "removed the required property `data/type` from the response with the `200` status",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getConversationsConversationid",
+          "path": "/conversations/{conversationId}",
+          "section": "paths",
+          "fingerprint": "f1733d8860dc",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "response-required-property-removed",
+          "text": "removed the required property `data/items/enabled` from the response with the `200` status",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getMeNotificationPreference",
+          "path": "/me/notification-preference",
+          "section": "paths",
+          "fingerprint": "1b869a6c600d",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "new-required-request-property",
+          "text": "added the new required request property `preferences/items/pushEnabled`",
+          "level": 3,
+          "operation": "PUT",
+          "operationId": "putMeNotificationPreference",
+          "path": "/me/notification-preference",
+          "section": "paths",
+          "fingerprint": "17495fa356a7",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu vị trí và thay đổi trước/sau trong entry này với API adapter, DTO, parser và validation; cùng BE xác nhận phương án tương thích trước merge/phát hành."
+        },
+        {
+          "id": "request-property-enum-value-removed",
+          "text": "removed the enum value `account` of the request property `preferences/items/type`",
+          "level": 3,
+          "operation": "PUT",
+          "operationId": "putMeNotificationPreference",
+          "path": "/me/notification-preference",
+          "section": "paths",
+          "fingerprint": "fcafe4e03761",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu enum trong DTO/validation và nhánh switch/when; xử lý giá trị chưa biết, kiểm thử dữ liệu cũ và mới; phối hợp BE trước khi phát hành."
+        },
+        {
+          "id": "request-property-enum-value-removed",
+          "text": "removed the enum value `match` of the request property `preferences/items/type`",
+          "level": 3,
+          "operation": "PUT",
+          "operationId": "putMeNotificationPreference",
+          "path": "/me/notification-preference",
+          "section": "paths",
+          "fingerprint": "d4ee1d3cb4fe",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu enum trong DTO/validation và nhánh switch/when; xử lý giá trị chưa biết, kiểm thử dữ liệu cũ và mới; phối hợp BE trước khi phát hành."
+        },
+        {
+          "id": "request-property-enum-value-removed",
+          "text": "removed the enum value `web` of the request property `platform`",
+          "level": 3,
+          "operation": "POST",
+          "operationId": "postMePushDevices",
+          "path": "/me/push-devices",
+          "section": "paths",
+          "fingerprint": "9a72acafa21b",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu enum trong DTO/validation và nhánh switch/when; xử lý giá trị chưa biết, kiểm thử dữ liệu cũ và mới; phối hợp BE trước khi phát hành."
+        },
+        {
+          "id": "response-property-enum-value-added",
+          "text": "added the new `ios` enum value to the `data/platform` response property for the response status `201`",
+          "comment": "The server may now return a value the previous contract excluded, so a client written against it may not handle the response. If the value set is meant to grow, declare it with x-extensible-enum.",
+          "level": 3,
+          "operation": "POST",
+          "operationId": "postMePushDevices",
+          "path": "/me/push-devices",
+          "section": "paths",
+          "fingerprint": "676d8e440e52",
+          "classification": "BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới ios; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "new-required-request-parameter",
+          "text": "added the new required `query` request parameter `conversationId`",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getMessages",
+          "path": "/messages",
+          "section": "paths",
+          "fingerprint": "437bf3b1ca51",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu vị trí và thay đổi trước/sau trong entry này với API adapter, DTO, parser và validation; cùng BE xác nhận phương án tương thích trước merge/phát hành."
+        },
+        {
+          "id": "response-property-enum-value-added",
+          "text": "added the new `system` enum value to the `data/items/type` response property for the response status `200`",
+          "comment": "The server may now return a value the previous contract excluded, so a client written against it may not handle the response. If the value set is meant to grow, declare it with x-extensible-enum.",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getMessages",
+          "path": "/messages",
+          "section": "paths",
+          "fingerprint": "dd218b0d3e05",
+          "classification": "BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới system; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-required-property-removed",
+          "text": "removed the required property `data/items/senderId` from the response with the `200` status",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getMessages",
+          "path": "/messages",
+          "section": "paths",
+          "fingerprint": "d98ab1659124",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "new-required-request-property",
+          "text": "added the new required request property `clientMessageId`",
+          "level": 3,
+          "operation": "POST",
+          "operationId": "postMessages",
+          "path": "/messages",
+          "section": "paths",
+          "fingerprint": "410b38b3d6ce",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu vị trí và thay đổi trước/sau trong entry này với API adapter, DTO, parser và validation; cùng BE xác nhận phương án tương thích trước merge/phát hành."
+        },
+        {
+          "id": "request-property-enum-value-removed",
+          "text": "removed the enum value `bot` of the request property `type`",
+          "level": 3,
+          "operation": "POST",
+          "operationId": "postMessages",
+          "path": "/messages",
+          "section": "paths",
+          "fingerprint": "0da3bfa1008c",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu enum trong DTO/validation và nhánh switch/when; xử lý giá trị chưa biết, kiểm thử dữ liệu cũ và mới; phối hợp BE trước khi phát hành."
+        },
+        {
+          "id": "request-property-enum-value-removed",
+          "text": "removed the enum value `file` of the request property `type`",
+          "level": 3,
+          "operation": "POST",
+          "operationId": "postMessages",
+          "path": "/messages",
+          "section": "paths",
+          "fingerprint": "180a62859245",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu enum trong DTO/validation và nhánh switch/when; xử lý giá trị chưa biết, kiểm thử dữ liệu cũ và mới; phối hợp BE trước khi phát hành."
+        },
+        {
+          "id": "response-property-enum-value-added",
+          "text": "added the new `system` enum value to the `data/type` response property for the response status `201`",
+          "comment": "The server may now return a value the previous contract excluded, so a client written against it may not handle the response. If the value set is meant to grow, declare it with x-extensible-enum.",
+          "level": 3,
+          "operation": "POST",
+          "operationId": "postMessages",
+          "path": "/messages",
+          "section": "paths",
+          "fingerprint": "da7617e30f43",
+          "classification": "BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới system; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "new-required-request-property",
+          "text": "added the new required request property `lastReadSequence`",
+          "level": 3,
+          "operation": "POST",
+          "operationId": "postMessagesMarkRead",
+          "path": "/messages/mark-read",
+          "section": "paths",
+          "fingerprint": "6330eb782a19",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu vị trí và thay đổi trước/sau trong entry này với API adapter, DTO, parser và validation; cùng BE xác nhận phương án tương thích trước merge/phát hành."
+        },
+        {
+          "id": "response-property-became-optional",
+          "text": "the response property `data/items/data` became optional for the status `200`",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getNotifications",
+          "path": "/notifications",
+          "section": "paths",
+          "fingerprint": "3c638b896e07",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu vị trí và thay đổi trước/sau trong entry này với API adapter, DTO, parser và validation; cùng BE xác nhận phương án tương thích trước merge/phát hành."
+        },
+        {
+          "id": "response-property-max-length-unset",
+          "text": "the `data/items/type` response property's maxLength was unset from `50` for the response status `200`",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getNotifications",
+          "path": "/notifications",
+          "section": "paths",
+          "fingerprint": "ff1a83498ab4",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu vị trí và thay đổi trước/sau trong entry này với API adapter, DTO, parser và validation; cùng BE xác nhận phương án tương thích trước merge/phát hành."
+        },
+        {
+          "id": "response-property-min-length-unset",
+          "text": "the `data/items/type` response property's minLength was unset from `1` for the response status `200`",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getNotifications",
+          "path": "/notifications",
+          "section": "paths",
+          "fingerprint": "e7d55cc36612",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu vị trí và thay đổi trước/sau trong entry này với API adapter, DTO, parser và validation; cùng BE xác nhận phương án tương thích trước merge/phát hành."
+        },
+        {
+          "id": "request-parameter-removed",
+          "text": "deleted the `query` request parameter `filter`",
+          "comment": "This is a warning because some clients may return an error when receiving an unexpected parameter. It is recommended to deprecate the parameter first.",
+          "level": 2,
+          "operation": "GET",
+          "operationId": "getConversations",
+          "path": "/conversations",
+          "section": "paths",
+          "fingerprint": "2db3501f1f90",
+          "classification": "NEEDS_REVIEW",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "request-property-removed",
+          "text": "removed the request property `preferences/items/enabled`",
+          "level": 2,
+          "operation": "PUT",
+          "operationId": "putMeNotificationPreference",
+          "path": "/me/notification-preference",
+          "section": "paths",
+          "fingerprint": "293b9929264e",
+          "classification": "NEEDS_REVIEW",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "request-parameter-removed",
+          "text": "deleted the `query` request parameter `filter`",
+          "comment": "This is a warning because some clients may return an error when receiving an unexpected parameter. It is recommended to deprecate the parameter first.",
+          "level": 2,
+          "operation": "GET",
+          "operationId": "getMessages",
+          "path": "/messages",
+          "section": "paths",
+          "fingerprint": "2189a831063c",
+          "classification": "NEEDS_REVIEW",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "request-property-removed",
+          "text": "removed the request property `mentions`",
+          "level": 2,
+          "operation": "POST",
+          "operationId": "postMessages",
+          "path": "/messages",
+          "section": "paths",
+          "fingerprint": "f4c5b153e3cd",
+          "classification": "NEEDS_REVIEW",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "request-property-removed",
+          "text": "removed the request property `lastReadMessageId`",
+          "level": 2,
+          "operation": "POST",
+          "operationId": "postMessagesMarkRead",
+          "path": "/messages/mark-read",
+          "section": "paths",
+          "fingerprint": "20e9fc4b99fd",
+          "classification": "NEEDS_REVIEW",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "api-schema-removed",
+          "text": "removed the schema `MessageMention`",
+          "level": 1,
+          "section": "components",
+          "fingerprint": "6e4bbb0b0a59",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "api-version-not-bumped",
+          "text": "a breaking change was detected but the version is still `1.0.0`",
+          "level": 1,
+          "section": "info",
+          "fingerprint": "d3f96cd643c1",
+          "classification": "NON_BREAKING",
+          "clientImpact": "BE: xem lại quy ước version trước khi chấp nhận breaking change. FE/Mobile: theo kế hoạch chuyển đổi của entry này; version trong OpenAPI chưa chứng minh backend đã triển khai."
+        },
+        {
+          "id": "new-optional-request-parameter",
+          "text": "added the new optional `query` request parameter `contextId`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getConversations",
+          "path": "/conversations",
+          "section": "paths",
+          "fingerprint": "38347959ed15",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        },
+        {
+          "id": "new-optional-request-parameter",
+          "text": "added the new optional `query` request parameter `contextType`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getConversations",
+          "path": "/conversations",
+          "section": "paths",
+          "fingerprint": "8914b9da1aaf",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        },
+        {
+          "id": "response-optional-property-added",
+          "text": "added the optional property `data/items/avatarMediaId` to the response with the `200` status",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getConversations",
+          "path": "/conversations",
+          "section": "paths",
+          "fingerprint": "43ba94fe198d",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/items/avatarMediaId; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-optional-property-added",
+          "text": "added the optional property `data/items/contextId` to the response with the `200` status",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getConversations",
+          "path": "/conversations",
+          "section": "paths",
+          "fingerprint": "8b53caefec69",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/items/contextId; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-optional-property-added",
+          "text": "added the optional property `data/items/contextType` to the response with the `200` status",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getConversations",
+          "path": "/conversations",
+          "section": "paths",
+          "fingerprint": "62c292ddb89d",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/items/contextType; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-optional-property-added",
+          "text": "added the optional property `data/items/lastMessage/contentPreview` to the response with the `200` status",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getConversations",
+          "path": "/conversations",
+          "section": "paths",
+          "fingerprint": "ef6ab4987a6b",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/items/lastMessage/contentPreview; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-optional-property-added",
+          "text": "added the optional property `data/items/lastMessage/sequence` to the response with the `200` status",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getConversations",
+          "path": "/conversations",
+          "section": "paths",
+          "fingerprint": "ed13780db1b4",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/items/lastMessage/sequence; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-optional-property-removed",
+          "text": "removed the optional property `data/items/avatarUrl` from the response with the `200` status",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getConversations",
+          "path": "/conversations",
+          "section": "paths",
+          "fingerprint": "455ecae31045",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "response-optional-property-removed",
+          "text": "removed the optional property `data/items/buildingId` from the response with the `200` status",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getConversations",
+          "path": "/conversations",
+          "section": "paths",
+          "fingerprint": "37496dc57208",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "response-optional-property-removed",
+          "text": "removed the optional property `data/items/contextTag` from the response with the `200` status",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getConversations",
+          "path": "/conversations",
+          "section": "paths",
+          "fingerprint": "f786b40c7af1",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "response-optional-property-removed",
+          "text": "removed the optional property `data/items/lastMessage/content` from the response with the `200` status",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getConversations",
+          "path": "/conversations",
+          "section": "paths",
+          "fingerprint": "0de606c4f5cd",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "response-optional-property-removed",
+          "text": "removed the optional property `data/items/lastMessageAt` from the response with the `200` status",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getConversations",
+          "path": "/conversations",
+          "section": "paths",
+          "fingerprint": "fd10929e9d46",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "response-optional-property-removed",
+          "text": "removed the optional property `data/items/roomId` from the response with the `200` status",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getConversations",
+          "path": "/conversations",
+          "section": "paths",
+          "fingerprint": "a523c4a73caa",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "response-property-enum-value-removed",
+          "text": "removed the `file` enum value from the `data/items/lastMessage/type` response property for the response status `200`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getConversations",
+          "path": "/conversations",
+          "section": "paths",
+          "fingerprint": "a223d8539622",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu enum trong DTO/validation và nhánh switch/when; xử lý giá trị chưa biết, kiểm thử dữ liệu cũ và mới; phối hợp BE trước khi phát hành."
+        },
+        {
+          "id": "response-required-property-added",
+          "text": "added the required property `data/items/kind` to the response with the `200` status",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getConversations",
+          "path": "/conversations",
+          "section": "paths",
+          "fingerprint": "d72f3aa139eb",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/items/kind; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "endpoint-added",
+          "text": "endpoint added",
+          "level": 1,
+          "operation": "POST",
+          "operationId": "createConversation",
+          "path": "/conversations",
+          "section": "paths",
+          "revisionSource": {
+            "file": "/tmp/rentify-contract-5J2vTe/head-0.json"
+          },
+          "fingerprint": "6b14f7761a80",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        },
+        {
+          "id": "response-optional-property-added",
+          "text": "added the optional property `data/avatarMediaId` to the response with the `200` status",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getConversationsConversationid",
+          "path": "/conversations/{conversationId}",
+          "section": "paths",
+          "fingerprint": "976c925c1a31",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/avatarMediaId; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-optional-property-added",
+          "text": "added the optional property `data/contextId` to the response with the `200` status",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getConversationsConversationid",
+          "path": "/conversations/{conversationId}",
+          "section": "paths",
+          "fingerprint": "f0a105562340",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/contextId; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-optional-property-added",
+          "text": "added the optional property `data/contextType` to the response with the `200` status",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getConversationsConversationid",
+          "path": "/conversations/{conversationId}",
+          "section": "paths",
+          "fingerprint": "492c77f599f7",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/contextType; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-required-property-added",
+          "text": "added the required property `data/kind` to the response with the `200` status",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getConversationsConversationid",
+          "path": "/conversations/{conversationId}",
+          "section": "paths",
+          "fingerprint": "23633fc1749a",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/kind; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-required-property-added",
+          "text": "added the required property `data/members` to the response with the `200` status",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getConversationsConversationid",
+          "path": "/conversations/{conversationId}",
+          "section": "paths",
+          "fingerprint": "71d91e20d9fc",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/members; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "endpoint-added",
+          "text": "endpoint added",
+          "level": 1,
+          "operation": "PATCH",
+          "operationId": "updateConversation",
+          "path": "/conversations/{conversationId}",
+          "section": "paths",
+          "revisionSource": {
+            "file": "/tmp/rentify-contract-5J2vTe/head-0.json"
+          },
+          "fingerprint": "7e7ffe15aeb3",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        },
+        {
+          "id": "endpoint-added",
+          "text": "endpoint added",
+          "level": 1,
+          "operation": "POST",
+          "operationId": "sendBotReminder",
+          "path": "/conversations/{conversationId}/bot-reminders",
+          "section": "paths",
+          "revisionSource": {
+            "file": "/tmp/rentify-contract-5J2vTe/head-0.json"
+          },
+          "fingerprint": "94450c7799fc",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        },
+        {
+          "id": "endpoint-added",
+          "text": "endpoint added",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "listConversationMembers",
+          "path": "/conversations/{conversationId}/members",
+          "section": "paths",
+          "revisionSource": {
+            "file": "/tmp/rentify-contract-5J2vTe/head-0.json"
+          },
+          "fingerprint": "8299e9ec7713",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        },
+        {
+          "id": "endpoint-added",
+          "text": "endpoint added",
+          "level": 1,
+          "operation": "POST",
+          "operationId": "addConversationMembers",
+          "path": "/conversations/{conversationId}/members",
+          "section": "paths",
+          "revisionSource": {
+            "file": "/tmp/rentify-contract-5J2vTe/head-0.json"
+          },
+          "fingerprint": "3133cf0adc28",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        },
+        {
+          "id": "endpoint-added",
+          "text": "endpoint added",
+          "level": 1,
+          "operation": "DELETE",
+          "operationId": "leaveConversation",
+          "path": "/conversations/{conversationId}/members/me",
+          "section": "paths",
+          "revisionSource": {
+            "file": "/tmp/rentify-contract-5J2vTe/head-0.json"
+          },
+          "fingerprint": "d94ee181f187",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        },
+        {
+          "id": "endpoint-added",
+          "text": "endpoint added",
+          "level": 1,
+          "operation": "DELETE",
+          "operationId": "removeConversationMember",
+          "path": "/conversations/{conversationId}/members/{userId}",
+          "section": "paths",
+          "revisionSource": {
+            "file": "/tmp/rentify-contract-5J2vTe/head-0.json"
+          },
+          "fingerprint": "737b1924a24f",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        },
+        {
+          "id": "endpoint-added",
+          "text": "endpoint added",
+          "level": 1,
+          "operation": "PUT",
+          "operationId": "updateConversationMemberRole",
+          "path": "/conversations/{conversationId}/members/{userId}/role",
+          "section": "paths",
+          "revisionSource": {
+            "file": "/tmp/rentify-contract-5J2vTe/head-0.json"
+          },
+          "fingerprint": "499c7ccb2025",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        },
+        {
+          "id": "response-property-enum-value-removed",
+          "text": "removed the `account` enum value from the `data/items/type` response property for the response status `200`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getMeNotificationPreference",
+          "path": "/me/notification-preference",
+          "section": "paths",
+          "fingerprint": "461ece88d125",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu enum trong DTO/validation và nhánh switch/when; xử lý giá trị chưa biết, kiểm thử dữ liệu cũ và mới; phối hợp BE trước khi phát hành."
+        },
+        {
+          "id": "response-property-enum-value-removed",
+          "text": "removed the `match` enum value from the `data/items/type` response property for the response status `200`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getMeNotificationPreference",
+          "path": "/me/notification-preference",
+          "section": "paths",
+          "fingerprint": "9f7616e90840",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu enum trong DTO/validation và nhánh switch/when; xử lý giá trị chưa biết, kiểm thử dữ liệu cũ và mới; phối hợp BE trước khi phát hành."
+        },
+        {
+          "id": "response-required-property-added",
+          "text": "added the required property `data/items/pushEnabled` to the response with the `200` status",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getMeNotificationPreference",
+          "path": "/me/notification-preference",
+          "section": "paths",
+          "fingerprint": "d42433c53a7d",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/items/pushEnabled; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "request-property-enum-value-added",
+          "text": "added the new `ios` enum value to the request property `platform`",
+          "level": 1,
+          "operation": "POST",
+          "operationId": "postMePushDevices",
+          "path": "/me/push-devices",
+          "section": "paths",
+          "fingerprint": "311af066a65c",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu enum trong DTO/validation và nhánh switch/when; xử lý giá trị chưa biết, kiểm thử dữ liệu cũ và mới; phối hợp BE trước khi phát hành."
+        },
+        {
+          "id": "response-property-enum-value-removed",
+          "text": "removed the `web` enum value from the `data/platform` response property for the response status `201`",
+          "level": 1,
+          "operation": "POST",
+          "operationId": "postMePushDevices",
+          "path": "/me/push-devices",
+          "section": "paths",
+          "fingerprint": "9266fb7606ec",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu enum trong DTO/validation và nhánh switch/when; xử lý giá trị chưa biết, kiểm thử dữ liệu cũ và mới; phối hợp BE trước khi phát hành."
+        },
+        {
+          "id": "response-optional-property-added",
+          "text": "added the optional property `data/items/clientMessageId` to the response with the `200` status",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getMessages",
+          "path": "/messages",
+          "section": "paths",
+          "fingerprint": "7b28116772e7",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/items/clientMessageId; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-optional-property-added",
+          "text": "added the optional property `data/items/mediaId` to the response with the `200` status",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getMessages",
+          "path": "/messages",
+          "section": "paths",
+          "fingerprint": "f02d397f4043",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/items/mediaId; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-optional-property-added",
+          "text": "added the optional property `data/items/senderUserId` to the response with the `200` status",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getMessages",
+          "path": "/messages",
+          "section": "paths",
+          "fingerprint": "403d19b11012",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/items/senderUserId; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-property-enum-value-removed",
+          "text": "removed the `file` enum value from the `data/items/type` response property for the response status `200`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getMessages",
+          "path": "/messages",
+          "section": "paths",
+          "fingerprint": "c507188607f9",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu enum trong DTO/validation và nhánh switch/when; xử lý giá trị chưa biết, kiểm thử dữ liệu cũ và mới; phối hợp BE trước khi phát hành."
+        },
+        {
+          "id": "response-required-property-added",
+          "text": "added the required property `data/items/senderType` to the response with the `200` status",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getMessages",
+          "path": "/messages",
+          "section": "paths",
+          "fingerprint": "d0e7869347ed",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/items/senderType; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-required-property-added",
+          "text": "added the required property `data/items/sequence` to the response with the `200` status",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getMessages",
+          "path": "/messages",
+          "section": "paths",
+          "fingerprint": "6e102c24af3f",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/items/sequence; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-optional-property-added",
+          "text": "added the optional property `data/mediaId` to the response with the `201` status",
+          "level": 1,
+          "operation": "POST",
+          "operationId": "postMessages",
+          "path": "/messages",
+          "section": "paths",
+          "fingerprint": "bd7a51dbc86d",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/mediaId; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-property-enum-value-removed",
+          "text": "removed the `file` enum value from the `data/type` response property for the response status `201`",
+          "level": 1,
+          "operation": "POST",
+          "operationId": "postMessages",
+          "path": "/messages",
+          "section": "paths",
+          "fingerprint": "820cf2536a4f",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu enum trong DTO/validation và nhánh switch/when; xử lý giá trị chưa biết, kiểm thử dữ liệu cũ và mới; phối hợp BE trước khi phát hành."
+        },
+        {
+          "id": "response-required-property-added",
+          "text": "added the required property `data/clientMessageId` to the response with the `201` status",
+          "level": 1,
+          "operation": "POST",
+          "operationId": "postMessages",
+          "path": "/messages",
+          "section": "paths",
+          "fingerprint": "543e5b610864",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/clientMessageId; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-required-property-added",
+          "text": "added the required property `data/sequence` to the response with the `201` status",
+          "level": 1,
+          "operation": "POST",
+          "operationId": "postMessages",
+          "path": "/messages",
+          "section": "paths",
+          "fingerprint": "d27b04c7372d",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/sequence; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-optional-property-added",
+          "text": "added the optional property `data/items/deepLink` to the response with the `200` status",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getNotifications",
+          "path": "/notifications",
+          "section": "paths",
+          "fingerprint": "89cbf305c40c",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/items/deepLink; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-property-became-enum",
+          "text": "the `data/items/type` response property for the response status `200` was restricted to a list of enum values",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getNotifications",
+          "path": "/notifications",
+          "section": "paths",
+          "fingerprint": "16c855615a4d",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu enum trong DTO/validation và nhánh switch/when; xử lý giá trị chưa biết, kiểm thử dữ liệu cũ và mới; phối hợp BE trước khi phát hành."
+        },
+        {
+          "id": "response-required-property-added",
+          "text": "added the required property `data/items/body` to the response with the `200` status",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getNotifications",
+          "path": "/notifications",
+          "section": "paths",
+          "fingerprint": "b67d36da3bed",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/items/body; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-required-property-added",
+          "text": "added the required property `data/items/createdAt` to the response with the `200` status",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getNotifications",
+          "path": "/notifications",
+          "section": "paths",
+          "fingerprint": "8d131d58c066",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/items/createdAt; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-required-property-added",
+          "text": "added the required property `data/items/eventId` to the response with the `200` status",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getNotifications",
+          "path": "/notifications",
+          "section": "paths",
+          "fingerprint": "e96140ece1bc",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/items/eventId; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-required-property-added",
+          "text": "added the required property `data/items/recipientUserId` to the response with the `200` status",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getNotifications",
+          "path": "/notifications",
+          "section": "paths",
+          "fingerprint": "85ad3acb457a",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/items/recipientUserId; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-required-property-added",
+          "text": "added the required property `data/items/sourceService` to the response with the `200` status",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getNotifications",
+          "path": "/notifications",
+          "section": "paths",
+          "fingerprint": "00c405b9d861",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/items/sourceService; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-required-property-added",
+          "text": "added the required property `data/items/title` to the response with the `200` status",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getNotifications",
+          "path": "/notifications",
+          "section": "paths",
+          "fingerprint": "4724624866d0",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/items/title; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        }
+      ],
+      "locations": [
+        {
+          "pointer": "/components/schemas/Conversation/allOf",
+          "before": [
+            {
+              "$ref": "#/components/schemas/BaseEntity"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "enum": [
+                    "room",
+                    "building",
+                    "direct"
+                  ],
+                  "description": "Loại cuộc trò chuyện",
+                  "example": "room"
+                },
+                "roomId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "nullable": true,
+                  "description": "ID phòng liên kết (bắt buộc khi type = room)",
+                  "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                },
+                "buildingId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "nullable": true,
+                  "description": "ID tòa nhà liên kết (bắt buộc khi type = building)",
+                  "example": null
+                },
+                "contractId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "nullable": true,
+                  "description": "ID hợp đồng liên kết (bắt buộc khi type = room)",
+                  "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                },
+                "title": {
+                  "type": "string",
+                  "nullable": true,
+                  "minLength": 1,
+                  "maxLength": 255,
+                  "description": "Tiêu đề cuộc hội thoại",
+                  "example": "Chat tòa nhà Thanh Xuân"
+                }
+              },
+              "required": [
+                "type"
+              ]
+            }
+          ],
+          "after": [
+            {
+              "$ref": "#/components/schemas/BaseEntity"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "kind": {
+                  "type": "string",
+                  "enum": [
+                    "direct",
+                    "group"
+                  ],
+                  "description": "Kiểu hội thoại.",
+                  "example": "group"
+                },
+                "contextType": {
+                  "type": "string",
+                  "nullable": true,
+                  "enum": [
+                    "contract",
+                    "building"
+                  ],
+                  "description": "Loại tài nguyên liên kết; bỏ trống với chat tự do.",
+                  "example": "contract"
+                },
+                "contextId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "nullable": true,
+                  "description": "ID tài nguyên liên kết.",
+                  "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                },
+                "title": {
+                  "type": "string",
+                  "nullable": true,
+                  "minLength": 1,
+                  "maxLength": 255,
+                  "description": "Tiêu đề cuộc hội thoại",
+                  "example": "Chat tòa nhà Thanh Xuân"
+                },
+                "avatarMediaId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "nullable": true,
+                  "description": "ID ảnh đại diện nhóm trong Media Service."
+                },
+                "unreadCount": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "description": "Số tin chưa đọc của user hiện tại."
+                }
+              },
+              "required": [
+                "kind"
+              ]
+            }
+          ]
+        },
+        {
+          "pointer": "/components/schemas/Conversation/description",
+          "before": "Cuộc hội thoại chat (room chat theo hợp đồng, building chat, hoặc direct chat)",
+          "after": "Hội thoại chat generic, có thể là chat tự do hoặc gắn với một context nghiệp vụ."
+        },
+        {
+          "pointer": "/components/schemas/ConversationDetailResponseDto/description",
+          "before": "Chi tiết cuộc hội thoại",
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/ConversationDetailResponseDto/properties/avatarMediaId",
+          "before": null,
+          "after": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          }
+        },
+        {
+          "pointer": "/components/schemas/ConversationDetailResponseDto/properties/contextId",
+          "before": null,
+          "after": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          }
+        },
+        {
+          "pointer": "/components/schemas/ConversationDetailResponseDto/properties/contextType",
+          "before": null,
+          "after": {
+            "type": "string",
+            "nullable": true,
+            "enum": [
+              "contract",
+              "building"
+            ]
+          }
+        },
+        {
+          "pointer": "/components/schemas/ConversationDetailResponseDto/properties/contractId",
+          "before": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true,
+            "description": "Định danh duy nhất của hợp đồng liên quan."
+          },
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/ConversationDetailResponseDto/properties/id/description",
+          "before": "Định danh duy nhất của tài nguyên.",
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/ConversationDetailResponseDto/properties/kind",
+          "before": null,
+          "after": {
+            "type": "string",
+            "enum": [
+              "direct",
+              "group"
+            ]
+          }
+        },
+        {
+          "pointer": "/components/schemas/ConversationDetailResponseDto/properties/members",
+          "before": null,
+          "after": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ConversationMember"
+            }
+          }
+        },
+        {
+          "pointer": "/components/schemas/ConversationDetailResponseDto/properties/roomId",
+          "before": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true,
+            "description": "Định danh duy nhất của phòng liên quan."
+          },
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/ConversationDetailResponseDto/properties/title/description",
+          "before": "Thông tin title của tài nguyên trong ngữ cảnh DTO.",
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/ConversationDetailResponseDto/properties/title/minLength",
+          "before": 1,
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/ConversationDetailResponseDto/properties/type",
+          "before": {
+            "type": "string",
+            "enum": [
+              "room",
+              "building",
+              "direct"
+            ],
+            "description": "Thông tin type của tài nguyên trong ngữ cảnh DTO."
+          },
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/ConversationDetailResponseDto/properties/unreadCount/description",
+          "before": "Thông tin unread count của tài nguyên trong ngữ cảnh DTO.",
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/ConversationDetailResponseDto/required",
+          "before": [
+            "id",
+            "type",
+            "roomId",
+            "contractId",
+            "title",
+            "unreadCount"
+          ],
+          "after": [
+            "id",
+            "kind",
+            "unreadCount",
+            "members"
+          ]
+        },
+        {
+          "pointer": "/components/schemas/ConversationListResponseDto/description",
+          "before": "Danh sách cuộc hội thoại trao đổi (theo phòng, theo tòa nhà, hoặc nhắn riêng)",
+          "after": "Hội thoại hiển thị trong danh sách của user hiện tại."
+        },
+        {
+          "pointer": "/components/schemas/ConversationListResponseDto/properties/avatarMediaId",
+          "before": null,
+          "after": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          }
+        },
+        {
+          "pointer": "/components/schemas/ConversationListResponseDto/properties/avatarUrl",
+          "before": {
+            "type": "string",
+            "format": "uri",
+            "nullable": true,
+            "description": "Ảnh đại diện của hội thoại hoặc avatar người đối thoại."
+          },
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/ConversationListResponseDto/properties/buildingId",
+          "before": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true,
+            "description": "Định danh tòa nhà nếu là nhóm chat theo tòa."
+          },
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/ConversationListResponseDto/properties/contextId",
+          "before": null,
+          "after": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          }
+        },
+        {
+          "pointer": "/components/schemas/ConversationListResponseDto/properties/contextTag",
+          "before": {
+            "type": "string",
+            "nullable": true,
+            "description": "Tag ngữ cảnh hiển thị trên badge UI (VD: 'P.201', 'Tòa Thanh Xuân')."
+          },
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/ConversationListResponseDto/properties/contextType",
+          "before": null,
+          "after": {
+            "type": "string",
+            "nullable": true,
+            "enum": [
+              "contract",
+              "building"
+            ]
+          }
+        },
+        {
+          "pointer": "/components/schemas/ConversationListResponseDto/properties/id/description",
+          "before": "Định danh duy nhất của cuộc hội thoại.",
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/ConversationListResponseDto/properties/kind",
+          "before": null,
+          "after": {
+            "type": "string",
+            "enum": [
+              "direct",
+              "group"
+            ]
+          }
+        },
+        {
+          "pointer": "/components/schemas/ConversationListResponseDto/properties/lastMessage/description",
+          "before": "Tóm tắt nội dung tin nhắn mới nhất",
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/ConversationListResponseDto/properties/lastMessage/properties/content",
+          "before": {
+            "type": "string"
+          },
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/ConversationListResponseDto/properties/lastMessage/properties/contentPreview",
+          "before": null,
+          "after": {
+            "type": "string"
+          }
+        },
+        {
+          "pointer": "/components/schemas/ConversationListResponseDto/properties/lastMessage/properties/sequence",
+          "before": null,
+          "after": {
+            "type": "integer",
+            "format": "int64"
+          }
+        },
+        {
+          "pointer": "/components/schemas/ConversationListResponseDto/properties/lastMessage/properties/type/enum",
+          "before": [
+            "text",
+            "image",
+            "file",
+            "bot"
+          ],
+          "after": [
+            "text",
+            "image",
+            "system",
+            "bot"
+          ]
+        },
+        {
+          "pointer": "/components/schemas/ConversationListResponseDto/properties/lastMessageAt",
+          "before": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "description": "Thời điểm gửi tin nhắn gần nhất."
+          },
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/ConversationListResponseDto/properties/roomId",
+          "before": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true,
+            "description": "Định danh phòng nếu là nhóm chat theo phòng."
+          },
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/ConversationListResponseDto/properties/title/description",
+          "before": "Tiêu đề hội thoại (VD: 'Phòng 201 - Nhà trọ Thanh Xuân').",
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/ConversationListResponseDto/properties/title/minLength",
+          "before": 1,
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/ConversationListResponseDto/properties/type",
+          "before": {
+            "type": "string",
+            "enum": [
+              "room",
+              "building",
+              "direct"
+            ],
+            "description": "Phân loại hội thoại (room: nhóm phòng, building: nhóm cư dân tòa nhà, direct: nhắn tin trực tiếp 1-1).",
+            "example": "room"
+          },
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/ConversationListResponseDto/properties/unreadCount/description",
+          "before": "Số lượng tin nhắn chưa đọc của người dùng hiện tại.",
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/ConversationListResponseDto/required",
+          "before": [
+            "id",
+            "type",
+            "title",
+            "unreadCount"
+          ],
+          "after": [
+            "id",
+            "kind",
+            "unreadCount"
+          ]
+        },
+        {
+          "pointer": "/components/schemas/ConversationMember/allOf",
+          "before": [
+            {
+              "$ref": "#/components/schemas/BaseEntity"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "conversationId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "description": "ID cuộc hội thoại",
+                  "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                },
+                "userId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "description": "ID người dùng tham gia",
+                  "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                },
+                "joinedAt": {
+                  "type": "string",
+                  "format": "date-time",
+                  "description": "Thời điểm bắt đầu tham gia nhóm chat",
+                  "example": "2026-09-01T10:05:00Z"
+                },
+                "leftAt": {
+                  "type": "string",
+                  "format": "date-time",
+                  "nullable": true,
+                  "description": "Thời điểm rời khỏi nhóm chat (vẫn giữ quyền đọc lịch sử cũ)",
+                  "example": null
+                }
+              },
+              "required": [
+                "conversationId",
+                "userId",
+                "joinedAt"
+              ]
+            }
+          ],
+          "after": [
+            {
+              "$ref": "#/components/schemas/BaseEntity"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "conversationId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "description": "ID cuộc hội thoại",
+                  "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                },
+                "userId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "nullable": true,
+                  "description": "ID người dùng tham gia",
+                  "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                },
+                "participantType": {
+                  "type": "string",
+                  "enum": [
+                    "user",
+                    "system"
+                  ],
+                  "description": "Phân biệt user với participant hệ thống như bot."
+                },
+                "role": {
+                  "type": "string",
+                  "enum": [
+                    "admin",
+                    "member",
+                    "system"
+                  ]
+                },
+                "status": {
+                  "type": "string",
+                  "enum": [
+                    "active",
+                    "read_only"
+                  ]
+                },
+                "joinedAt": {
+                  "type": "string",
+                  "format": "date-time",
+                  "description": "Thời điểm bắt đầu tham gia nhóm chat",
+                  "example": "2026-09-01T10:05:00Z"
+                },
+                "leftAt": {
+                  "type": "string",
+                  "format": "date-time",
+                  "nullable": true,
+                  "description": "Thời điểm rời hoặc bị xóa khỏi hội thoại.",
+                  "example": null
+                },
+                "leftSequence": {
+                  "type": "integer",
+                  "format": "int64",
+                  "nullable": true,
+                  "description": "Tin cuối được phép đọc khi membership ở trạng thái read_only."
+                },
+                "lastReadSequence": {
+                  "type": "integer",
+                  "format": "int64",
+                  "minimum": 0,
+                  "description": "Sequence cuối đã đọc; unread tính từ sequence kế tiếp."
+                }
+              },
+              "required": [
+                "conversationId",
+                "participantType",
+                "role",
+                "status",
+                "joinedAt"
+              ]
+            }
+          ]
+        },
+        {
+          "pointer": "/components/schemas/Message/allOf",
+          "before": [
+            {
+              "$ref": "#/components/schemas/BaseEntity"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "conversationId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "description": "ID cuộc hội thoại chứa tin nhắn",
+                  "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                },
+                "senderId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "nullable": true,
+                  "description": "ID người gửi tin nhắn (null đối với thông báo từ bot)",
+                  "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                },
+                "type": {
+                  "type": "string",
+                  "enum": [
+                    "text",
+                    "image",
+                    "file",
+                    "bot"
+                  ],
+                  "description": "Loại tin nhắn",
+                  "example": "text"
+                },
+                "content": {
+                  "type": "string",
+                  "nullable": true,
+                  "description": "Nội dung tin nhắn dạng văn bản",
+                  "example": "Đã chốt số điện tháng 09: 180 kWh"
+                }
+              },
+              "required": [
+                "conversationId",
+                "type"
+              ]
+            }
+          ],
+          "after": [
+            {
+              "$ref": "#/components/schemas/BaseEntity"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "conversationId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "description": "ID cuộc hội thoại chứa tin nhắn",
+                  "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                },
+                "senderUserId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "nullable": true,
+                  "description": "ID user gửi; null với system message và bot.",
+                  "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                },
+                "senderType": {
+                  "type": "string",
+                  "enum": [
+                    "user",
+                    "system"
+                  ]
+                },
+                "type": {
+                  "type": "string",
+                  "enum": [
+                    "text",
+                    "image",
+                    "system",
+                    "bot"
+                  ],
+                  "description": "Loại tin nhắn",
+                  "example": "text"
+                },
+                "content": {
+                  "type": "string",
+                  "nullable": true,
+                  "description": "Nội dung tin nhắn dạng văn bản",
+                  "example": "Đã chốt số điện tháng 09: 180 kWh"
+                },
+                "mediaId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "nullable": true,
+                  "description": "Media ID của ảnh đã upload qua Media Service."
+                },
+                "sequence": {
+                  "type": "integer",
+                  "format": "int64",
+                  "minimum": 1
+                },
+                "clientMessageId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "description": "ID idempotency do client tạo."
+                },
+                "payload": {
+                  "type": "object",
+                  "nullable": true,
+                  "description": "Dữ liệu có cấu trúc cho system/bot message."
+                }
+              },
+              "required": [
+                "conversationId",
+                "type"
+              ]
+            }
+          ]
+        },
+        {
+          "pointer": "/components/schemas/Message/description",
+          "before": "Tin nhắn trao đổi trong cuộc hội thoại (hỗ trợ text, ảnh, file hoặc tin nhắn bot)",
+          "after": "Tin nhắn text, ảnh, system hoặc bot trong hội thoại."
+        },
+        {
+          "pointer": "/components/schemas/MessageListResponseDto/properties/clientMessageId",
+          "before": null,
+          "after": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        {
+          "pointer": "/components/schemas/MessageListResponseDto/properties/mediaId",
+          "before": null,
+          "after": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          }
+        },
+        {
+          "pointer": "/components/schemas/MessageListResponseDto/properties/senderId",
+          "before": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true,
+            "description": "Thông tin sender id của tài nguyên trong ngữ cảnh DTO."
+          },
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/MessageListResponseDto/properties/senderType",
+          "before": null,
+          "after": {
+            "type": "string",
+            "enum": [
+              "user",
+              "system"
+            ]
+          }
+        },
+        {
+          "pointer": "/components/schemas/MessageListResponseDto/properties/senderUserId",
+          "before": null,
+          "after": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          }
+        },
+        {
+          "pointer": "/components/schemas/MessageListResponseDto/properties/sequence",
+          "before": null,
+          "after": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 1
+          }
+        },
+        {
+          "pointer": "/components/schemas/MessageListResponseDto/properties/type/description",
+          "before": "Thông tin type của tài nguyên trong ngữ cảnh DTO.",
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/MessageListResponseDto/properties/type/enum",
+          "before": [
+            "text",
+            "image",
+            "file",
+            "bot"
+          ],
+          "after": [
+            "text",
+            "image",
+            "system",
+            "bot"
+          ]
+        },
+        {
+          "pointer": "/components/schemas/MessageListResponseDto/required",
+          "before": [
+            "id",
+            "conversationId",
+            "senderId",
+            "type",
+            "content",
+            "createdAt"
+          ],
+          "after": [
+            "id",
+            "conversationId",
+            "senderType",
+            "sequence",
+            "type",
+            "content",
+            "createdAt"
+          ]
+        },
+        {
+          "pointer": "/components/schemas/MessageMarkReadRequestDto/properties/lastReadMessageId",
+          "before": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Thông tin last read message id của tài nguyên trong ngữ cảnh DTO."
+          },
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/MessageMarkReadRequestDto/properties/lastReadSequence",
+          "before": null,
+          "after": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 0,
+            "description": "Sequence cuối đã đọc; server chỉ chấp nhận cursor tiến lên."
+          }
+        },
+        {
+          "pointer": "/components/schemas/MessageMarkReadRequestDto/required",
+          "before": [
+            "conversationId",
+            "lastReadMessageId"
+          ],
+          "after": [
+            "conversationId",
+            "lastReadSequence"
+          ]
+        },
+        {
+          "pointer": "/components/schemas/MessageMention",
+          "before": {
+            "type": "object",
+            "x-apidog-folder": "MessageMention",
+            "title": "MessageMention",
+            "description": "Người dùng được @tag trong tin nhắn chat",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/BaseEntity"
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "messageId": {
+                    "type": "string",
+                    "format": "uuid",
+                    "description": "ID tin nhắn chứa lượt nhắc tên",
+                    "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                  },
+                  "userId": {
+                    "type": "string",
+                    "format": "uuid",
+                    "description": "ID người dùng được @tag",
+                    "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                  }
+                },
+                "required": [
+                  "messageId",
+                  "userId"
+                ]
+              }
+            ]
+          },
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/MessageSendRequestDto/description",
+          "before": "Dữ liệu gửi tin nhắn trong cuộc hội thoại (hỗ trợ tag người dùng @User hoặc tag phòng @Room)",
+          "after": "Dữ liệu gửi một tin nhắn text hoặc một ảnh vào hội thoại."
+        },
+        {
+          "pointer": "/components/schemas/MessageSendRequestDto/properties/clientMessageId",
+          "before": null,
+          "after": {
+            "type": "string",
+            "format": "uuid",
+            "description": "ID duy nhất do client tạo để retry an toàn."
+          }
+        },
+        {
+          "pointer": "/components/schemas/MessageSendRequestDto/properties/content/example",
+          "before": "Chào bạn @Lê Văn C, phòng @P.201 hôm nay có ai ở nhà không?",
+          "after": "Chào bạn, hôm nay có ai ở nhà không?"
+        },
+        {
+          "pointer": "/components/schemas/MessageSendRequestDto/properties/mediaId/description",
+          "before": "ID tệp tin phương tiện đính kèm nếu type là image hoặc file.",
+          "after": "ID ảnh đã upload nếu type là image."
+        },
+        {
+          "pointer": "/components/schemas/MessageSendRequestDto/properties/mentions",
+          "before": {
+            "type": "array",
+            "nullable": true,
+            "description": "Danh sách các đối tượng được nhắc đến / tag tên trong tin nhắn (tag người dùng hoặc tag phòng)",
+            "items": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "enum": [
+                    "USER",
+                    "ROOM"
+                  ],
+                  "description": "Loại đối tượng được tag",
+                  "example": "USER"
+                },
+                "id": {
+                  "type": "string",
+                  "format": "uuid",
+                  "description": "Định danh UUID của user hoặc phòng được tag",
+                  "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                },
+                "displayName": {
+                  "type": "string",
+                  "description": "Tên hiển thị kèm theo dấu @",
+                  "example": "Lê Văn C"
+                }
+              },
+              "required": [
+                "type",
+                "id",
+                "displayName"
+              ]
+            }
+          },
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/MessageSendRequestDto/properties/type/enum",
+          "before": [
+            "text",
+            "image",
+            "file",
+            "bot"
+          ],
+          "after": [
+            "text",
+            "image"
+          ]
+        },
+        {
+          "pointer": "/components/schemas/MessageSendRequestDto/required",
+          "before": [
+            "conversationId",
+            "type"
+          ],
+          "after": [
+            "conversationId",
+            "clientMessageId",
+            "type"
+          ]
+        },
+        {
+          "pointer": "/components/schemas/MessageSendResponseDto/properties/clientMessageId",
+          "before": null,
+          "after": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        {
+          "pointer": "/components/schemas/MessageSendResponseDto/properties/mediaId",
+          "before": null,
+          "after": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          }
+        },
+        {
+          "pointer": "/components/schemas/MessageSendResponseDto/properties/sequence",
+          "before": null,
+          "after": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 1
+          }
+        },
+        {
+          "pointer": "/components/schemas/MessageSendResponseDto/properties/type/description",
+          "before": "Thông tin type của tài nguyên trong ngữ cảnh DTO.",
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/MessageSendResponseDto/properties/type/enum",
+          "before": [
+            "text",
+            "image",
+            "file",
+            "bot"
+          ],
+          "after": [
+            "text",
+            "image",
+            "system",
+            "bot"
+          ]
+        },
+        {
+          "pointer": "/components/schemas/MessageSendResponseDto/required",
+          "before": [
+            "id",
+            "conversationId",
+            "type",
+            "content",
+            "createdAt"
+          ],
+          "after": [
+            "id",
+            "conversationId",
+            "type",
+            "content",
+            "sequence",
+            "clientMessageId",
+            "createdAt"
+          ]
+        },
+        {
+          "pointer": "/components/schemas/NotificationListResponseDto/description",
+          "before": "Danh sách thông báo theo cursor",
+          "after": "Notification business đã lưu cho recipient, không chứa message chat."
+        },
+        {
+          "pointer": "/components/schemas/NotificationListResponseDto/properties/body",
+          "before": null,
+          "after": {
+            "type": "string",
+            "maxLength": 2000
+          }
+        },
+        {
+          "pointer": "/components/schemas/NotificationListResponseDto/properties/createdAt",
+          "before": null,
+          "after": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        {
+          "pointer": "/components/schemas/NotificationListResponseDto/properties/data/additionalProperties",
+          "before": null,
+          "after": true
+        },
+        {
+          "pointer": "/components/schemas/NotificationListResponseDto/properties/data/description",
+          "before": "Dữ liệu kết quả của thao tác.",
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/NotificationListResponseDto/properties/deepLink",
+          "before": null,
+          "after": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        {
+          "pointer": "/components/schemas/NotificationListResponseDto/properties/eventId",
+          "before": null,
+          "after": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        {
+          "pointer": "/components/schemas/NotificationListResponseDto/properties/id/description",
+          "before": "Định danh duy nhất của tài nguyên.",
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/NotificationListResponseDto/properties/readAt/description",
+          "before": "Thời điểm thông báo được đọc; null nghĩa là chưa đọc.",
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/NotificationListResponseDto/properties/recipientUserId",
+          "before": null,
+          "after": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        {
+          "pointer": "/components/schemas/NotificationListResponseDto/properties/sourceService",
+          "before": null,
+          "after": {
+            "type": "string"
+          }
+        },
+        {
+          "pointer": "/components/schemas/NotificationListResponseDto/properties/title",
+          "before": null,
+          "after": {
+            "type": "string",
+            "maxLength": 255
+          }
+        },
+        {
+          "pointer": "/components/schemas/NotificationListResponseDto/properties/type/description",
+          "before": "Thông tin type của tài nguyên trong ngữ cảnh DTO.",
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/NotificationListResponseDto/properties/type/enum",
+          "before": null,
+          "after": [
+            "invoice",
+            "issue"
+          ]
+        },
+        {
+          "pointer": "/components/schemas/NotificationListResponseDto/properties/type/maxLength",
+          "before": 50,
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/NotificationListResponseDto/properties/type/minLength",
+          "before": 1,
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/NotificationListResponseDto/required",
+          "before": [
+            "id",
+            "type",
+            "data",
+            "readAt"
+          ],
+          "after": [
+            "id",
+            "recipientUserId",
+            "sourceService",
+            "eventId",
+            "type",
+            "title",
+            "body",
+            "createdAt",
+            "readAt"
+          ]
+        },
+        {
+          "pointer": "/components/schemas/NotificationPreferenceDetailResponseDto/description",
+          "before": "Danh sách tùy biến thông báo của người dùng hiện tại",
+          "after": "Cài đặt bật/tắt push theo nhóm notification."
+        },
+        {
+          "pointer": "/components/schemas/NotificationPreferenceDetailResponseDto/properties/enabled",
+          "before": {
+            "type": "boolean",
+            "description": "Thông tin enabled của tài nguyên trong ngữ cảnh DTO."
+          },
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/NotificationPreferenceDetailResponseDto/properties/pushEnabled",
+          "before": null,
+          "after": {
+            "type": "boolean",
+            "default": true
+          }
+        },
+        {
+          "pointer": "/components/schemas/NotificationPreferenceDetailResponseDto/properties/type/description",
+          "before": "Thông tin type của tài nguyên trong ngữ cảnh DTO.",
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/NotificationPreferenceDetailResponseDto/properties/type/enum",
+          "before": [
+            "invoice",
+            "chat",
+            "issue",
+            "match",
+            "account"
+          ],
+          "after": [
+            "invoice",
+            "chat",
+            "issue"
+          ]
+        },
+        {
+          "pointer": "/components/schemas/NotificationPreferenceDetailResponseDto/required",
+          "before": [
+            "type",
+            "enabled"
+          ],
+          "after": [
+            "type",
+            "pushEnabled"
+          ]
+        },
+        {
+          "pointer": "/components/schemas/NotificationPreferenceUpdateRequestDto/properties/preferences/items/properties/enabled",
+          "before": {
+            "type": "boolean",
+            "description": "Thông tin enabled của tài nguyên trong ngữ cảnh DTO."
+          },
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/NotificationPreferenceUpdateRequestDto/properties/preferences/items/properties/pushEnabled",
+          "before": null,
+          "after": {
+            "type": "boolean",
+            "description": "Tắt push không làm mất notification trong inbox."
+          }
+        },
+        {
+          "pointer": "/components/schemas/NotificationPreferenceUpdateRequestDto/properties/preferences/items/properties/type/description",
+          "before": "Thông tin type của tài nguyên trong ngữ cảnh DTO.",
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/NotificationPreferenceUpdateRequestDto/properties/preferences/items/properties/type/enum",
+          "before": [
+            "invoice",
+            "chat",
+            "issue",
+            "match",
+            "account"
+          ],
+          "after": [
+            "invoice",
+            "chat",
+            "issue"
+          ]
+        },
+        {
+          "pointer": "/components/schemas/NotificationPreferenceUpdateRequestDto/properties/preferences/items/required",
+          "before": [
+            "type",
+            "enabled"
+          ],
+          "after": [
+            "type",
+            "pushEnabled"
+          ]
+        },
+        {
+          "pointer": "/components/schemas/PushDeviceRegisterRequestDto/properties/platform/enum",
+          "before": [
+            "android",
+            "web"
+          ],
+          "after": [
+            "android",
+            "ios"
+          ]
+        },
+        {
+          "pointer": "/components/schemas/PushDeviceRegisterResponseDto/properties/platform/enum",
+          "before": [
+            "android",
+            "web"
+          ],
+          "after": [
+            "android",
+            "ios"
+          ]
+        },
+        {
+          "pointer": "/paths/~1conversations/get/parameters",
+          "before": [
+            {
+              "name": "filter",
+              "in": "query",
+              "required": false,
+              "style": "deepObject",
+              "explode": true,
+              "description": "Bộ lọc được endpoint hỗ trợ.",
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "type": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            {
+              "name": "pageSize",
+              "in": "query",
+              "schema": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 100,
+                "default": 20
+              }
+            },
+            {
+              "name": "pageNo",
+              "in": "query",
+              "schema": {
+                "type": "integer",
+                "minimum": 1,
+                "default": 1
+              }
+            }
+          ],
+          "after": [
+            {
+              "name": "contextType",
+              "in": "query",
+              "required": false,
+              "schema": {
+                "type": "string",
+                "enum": [
+                  "contract",
+                  "building"
+                ]
+              },
+              "description": "Khi dùng cùng contextId, tra cứu hội thoại context đã được tạo bởi event nguồn."
+            },
+            {
+              "name": "contextId",
+              "in": "query",
+              "required": false,
+              "schema": {
+                "type": "string",
+                "format": "uuid"
+              }
+            },
+            {
+              "name": "pageSize",
+              "in": "query",
+              "schema": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 100,
+                "default": 20
+              }
+            },
+            {
+              "name": "pageNo",
+              "in": "query",
+              "schema": {
+                "type": "integer",
+                "minimum": 1,
+                "default": 1
+              }
+            }
+          ]
+        },
+        {
+          "pointer": "/paths/~1conversations/post",
+          "before": null,
+          "after": {
+            "tags": [
+              "Chat"
+            ],
+            "operationId": "createConversation",
+            "security": [
+              {
+                "BearerAuth": []
+              }
+            ],
+            "summary": "Tạo chat trực tiếp hoặc nhóm",
+            "description": "Chat trực tiếp dùng lại hội thoại duy nhất của cặp user; chat nhóm tạo mới và caller trở thành admin.",
+            "requestBody": {
+              "required": true,
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "kind"
+                    ],
+                    "properties": {
+                      "kind": {
+                        "type": "string",
+                        "enum": [
+                          "direct",
+                          "group"
+                        ]
+                      },
+                      "recipientUserId": {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "Bắt buộc với direct."
+                      },
+                      "memberUserIds": {
+                        "type": "array",
+                        "uniqueItems": true,
+                        "items": {
+                          "type": "string",
+                          "format": "uuid"
+                        },
+                        "description": "Thành viên ban đầu của group; không cần gồm caller."
+                      },
+                      "title": {
+                        "type": "string",
+                        "maxLength": 255
+                      },
+                      "avatarMediaId": {
+                        "type": "string",
+                        "format": "uuid"
+                      }
+                    }
+                  },
+                  "example": {
+                    "kind": "group",
+                    "memberUserIds": [
+                      "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                    ],
+                    "title": "Nhóm trao đổi"
+                  }
+                }
+              }
+            },
+            "responses": {
+              "201": {
+                "description": "Hội thoại được tạo hoặc chat direct hiện có được mở lại.",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "type": "object",
+                      "required": [
+                        "statusCode",
+                        "code",
+                        "data"
+                      ],
+                      "properties": {
+                        "statusCode": {
+                          "type": "integer",
+                          "enum": [
+                            201
+                          ]
+                        },
+                        "code": {
+                          "type": "string",
+                          "enum": [
+                            "CONVERSATION_CREATED",
+                            "CONVERSATION_REOPENED"
+                          ]
+                        },
+                        "data": {
+                          "$ref": "#/components/schemas/ConversationDetailResponseDto"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "400": {
+                "$ref": "#/components/responses/BadRequestBodyError"
+              },
+              "401": {
+                "$ref": "#/components/responses/UnauthorizedError"
+              },
+              "422": {
+                "$ref": "#/components/responses/ValidationError"
+              },
+              "500": {
+                "$ref": "#/components/responses/InternalServerError"
+              }
+            }
+          }
+        },
+        {
+          "pointer": "/paths/~1conversations~1resolve-conversation",
+          "before": {
+            "post": {
+              "tags": [
+                "Chat"
+              ],
+              "x-apidog-folder": "Conversation",
+              "x-apidog-status": "designing",
+              "operationId": "postConversationsResolveConversation",
+              "security": [
+                {
+                  "BearerAuth": []
+                }
+              ],
+              "summary": "Resolve conversation",
+              "description": "tenant, landlord. Lấy hội thoại của phòng hoặc tòa nhà. Lỗi nghiệp vụ: 422 EXACTLY ONE CONTEXT REQUIRED · 403 FORBIDDEN · 404 CONTEXT NOT FOUND.",
+              "requestBody": {
+                "required": true,
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "$ref": "#/components/schemas/ConversationResolveRequestDto"
+                    },
+                    "example": {
+                      "contractId": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                    }
+                  }
+                }
+              },
+              "responses": {
+                "200": {
+                  "description": "Thành công: Lấy hội thoại của phòng hoặc tòa nhà.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "required": [
+                          "statusCode",
+                          "code",
+                          "data"
+                        ],
+                        "properties": {
+                          "statusCode": {
+                            "type": "integer",
+                            "enum": [
+                              200
+                            ]
+                          },
+                          "code": {
+                            "type": "string",
+                            "enum": [
+                              "CONVERSATION_RESOLVED"
+                            ]
+                          },
+                          "data": {
+                            "$ref": "#/components/schemas/ConversationResolveResponseDto"
+                          }
+                        }
+                      },
+                      "example": {
+                        "statusCode": 200,
+                        "code": "CONVERSATION_RESOLVED",
+                        "data": {
+                          "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                          "type": "room",
+                          "contractId": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                        }
+                      }
+                    }
+                  }
+                },
+                "400": {
+                  "$ref": "#/components/responses/BadRequestBodyError"
+                },
+                "401": {
+                  "$ref": "#/components/responses/UnauthorizedError"
+                },
+                "403": {
+                  "$ref": "#/components/responses/ForbiddenError"
+                },
+                "404": {
+                  "x-apidog-name": "Not Found",
+                  "description": "Không tìm thấy tài nguyên được yêu cầu.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "required": [
+                          "statusCode",
+                          "code"
+                        ],
+                        "properties": {
+                          "statusCode": {
+                            "type": "integer",
+                            "enum": [
+                              404
+                            ]
+                          },
+                          "code": {
+                            "type": "string",
+                            "enum": [
+                              "CONTEXT_NOT_FOUND"
+                            ],
+                            "description": "- CONTEXT_NOT_FOUND: Không tìm thấy tài nguyên ngữ cảnh."
+                          }
+                        }
+                      },
+                      "examples": {
+                        "context_not_found": {
+                          "summary": "CONTEXT_NOT_FOUND — Không tìm thấy tài nguyên ngữ cảnh.",
+                          "value": {
+                            "statusCode": 404,
+                            "code": "CONTEXT_NOT_FOUND"
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "422": {
+                  "x-apidog-name": "Unprocessable Entity",
+                  "description": "Dữ liệu hợp lệ về cấu trúc nhưng vi phạm ràng buộc trường hoặc quy tắc nghiệp vụ.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "required": [
+                          "statusCode",
+                          "code"
+                        ],
+                        "properties": {
+                          "statusCode": {
+                            "type": "integer",
+                            "enum": [
+                              422
+                            ]
+                          },
+                          "code": {
+                            "type": "string",
+                            "enum": [
+                              "EXACTLY_ONE_CONTEXT_REQUIRED",
+                              "VALIDATION_FAILED"
+                            ],
+                            "description": "- EXACTLY_ONE_CONTEXT_REQUIRED: Phải chọn đúng một ngữ cảnh hội thoại.\n- VALIDATION_FAILED: Dữ liệu vi phạm ràng buộc schema hoặc quy tắc nghiệp vụ khác chưa có mã riêng."
+                          }
+                        }
+                      },
+                      "examples": {
+                        "exactly_one_context_required": {
+                          "summary": "EXACTLY_ONE_CONTEXT_REQUIRED — Phải chọn đúng một ngữ cảnh hội thoại.",
+                          "value": {
+                            "statusCode": 422,
+                            "code": "EXACTLY_ONE_CONTEXT_REQUIRED"
+                          }
+                        },
+                        "validation_failed": {
+                          "summary": "VALIDATION_FAILED — Dữ liệu vi phạm ràng buộc schema hoặc quy tắc nghiệp vụ khác chưa có mã riêng.",
+                          "value": {
+                            "statusCode": 422,
+                            "code": "VALIDATION_FAILED"
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "429": {
+                  "$ref": "#/components/responses/TooManyRequestsError"
+                },
+                "500": {
+                  "$ref": "#/components/responses/InternalServerError"
+                },
+                "503": {
+                  "$ref": "#/components/responses/AuthUnavailableError"
+                }
+              }
+            }
+          },
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1conversations~1{conversationId}/patch",
+          "before": null,
+          "after": {
+            "tags": [
+              "Chat"
+            ],
+            "operationId": "updateConversation",
+            "security": [
+              {
+                "BearerAuth": []
+              }
+            ],
+            "summary": "Sửa tên hoặc ảnh nhóm",
+            "description": "Chỉ admin group; thay đổi tạo system message và Socket event. Không áp dụng cho direct chat.",
+            "parameters": [
+              {
+                "name": "conversationId",
+                "in": "path",
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            ],
+            "requestBody": {
+              "required": true,
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "minProperties": 1,
+                    "properties": {
+                      "title": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 255,
+                        "nullable": true
+                      },
+                      "avatarMediaId": {
+                        "type": "string",
+                        "format": "uuid",
+                        "nullable": true
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "responses": {
+              "200": {
+                "description": "Thông tin nhóm được cập nhật."
+              },
+              "401": {
+                "$ref": "#/components/responses/UnauthorizedError"
+              },
+              "403": {
+                "$ref": "#/components/responses/ForbiddenError"
+              },
+              "404": {
+                "$ref": "#/components/responses/NotFoundError"
+              },
+              "422": {
+                "$ref": "#/components/responses/ValidationError"
+              }
+            }
+          }
+        },
+        {
+          "pointer": "/paths/~1conversations~1{conversationId}~1bot-reminders",
+          "before": null,
+          "after": {
+            "parameters": [
+              {
+                "name": "conversationId",
+                "in": "path",
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            ],
+            "post": {
+              "tags": [
+                "Chat"
+              ],
+              "operationId": "sendBotReminder",
+              "security": [
+                {
+                  "BearerAuth": []
+                }
+              ],
+              "summary": "Gửi bot reminder theo mẫu",
+              "description": "Landlord chọn mẫu và chủ động gửi; không có lịch tự động. Community kiểm tra quyền với tài nguyên, dựng nội dung bot message, lưu history, phát Socket và gửi push chat theo preference.",
+              "requestBody": {
+                "required": true,
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "required": [
+                        "templateType",
+                        "resourceId",
+                        "clientMessageId"
+                      ],
+                      "properties": {
+                        "templateType": {
+                          "type": "string",
+                          "enum": [
+                            "ocr_result",
+                            "invoice",
+                            "contract_expiring"
+                          ],
+                          "description": "Mẫu nội dung cần đăng."
+                        },
+                        "resourceId": {
+                          "type": "string",
+                          "format": "uuid",
+                          "description": "ID OCR result, invoice hoặc contract tương ứng với templateType."
+                        },
+                        "clientMessageId": {
+                          "type": "string",
+                          "format": "uuid",
+                          "description": "Idempotency key để retry không tạo bot message trùng."
+                        }
+                      }
+                    },
+                    "example": {
+                      "templateType": "invoice",
+                      "resourceId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                      "clientMessageId": "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d"
+                    }
+                  }
+                }
+              },
+              "responses": {
+                "201": {
+                  "description": "Bot message được lưu và gửi.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "object",
+                        "required": [
+                          "statusCode",
+                          "code",
+                          "data"
+                        ],
+                        "properties": {
+                          "statusCode": {
+                            "type": "integer",
+                            "enum": [
+                              201
+                            ]
+                          },
+                          "code": {
+                            "type": "string",
+                            "enum": [
+                              "BOT_REMINDER_SENT"
+                            ]
+                          },
+                          "data": {
+                            "$ref": "#/components/schemas/MessageSendResponseDto"
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "401": {
+                  "$ref": "#/components/responses/UnauthorizedError"
+                },
+                "403": {
+                  "$ref": "#/components/responses/ForbiddenError"
+                },
+                "404": {
+                  "$ref": "#/components/responses/NotFoundError"
+                },
+                "422": {
+                  "$ref": "#/components/responses/ValidationError"
+                },
+                "500": {
+                  "$ref": "#/components/responses/InternalServerError"
+                }
+              }
+            }
+          }
+        },
+        {
+          "pointer": "/paths/~1conversations~1{conversationId}~1members",
+          "before": null,
+          "after": {
+            "parameters": [
+              {
+                "name": "conversationId",
+                "in": "path",
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            ],
+            "get": {
+              "tags": [
+                "Chat"
+              ],
+              "operationId": "listConversationMembers",
+              "security": [
+                {
+                  "BearerAuth": []
+                }
+              ],
+              "summary": "Xem thành viên hội thoại",
+              "description": "Thành viên active và read_only có thể xem danh sách nếu còn quyền đọc.",
+              "responses": {
+                "200": {
+                  "description": "Danh sách thành viên.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "object",
+                        "properties": {
+                          "data": {
+                            "type": "array",
+                            "items": {
+                              "$ref": "#/components/schemas/ConversationMember"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "401": {
+                  "$ref": "#/components/responses/UnauthorizedError"
+                },
+                "403": {
+                  "$ref": "#/components/responses/ForbiddenError"
+                }
+              }
+            },
+            "post": {
+              "tags": [
+                "Chat"
+              ],
+              "operationId": "addConversationMembers",
+              "security": [
+                {
+                  "BearerAuth": []
+                }
+              ],
+              "summary": "Thêm thành viên nhóm",
+              "description": "Chỉ admin nhóm; membership cũ được kích hoạt lại và người được thêm xem toàn bộ lịch sử.",
+              "requestBody": {
+                "required": true,
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "required": [
+                        "userIds"
+                      ],
+                      "properties": {
+                        "userIds": {
+                          "type": "array",
+                          "minItems": 1,
+                          "uniqueItems": true,
+                          "items": {
+                            "type": "string",
+                            "format": "uuid"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "responses": {
+                "200": {
+                  "description": "Thành viên được thêm hoặc kích hoạt lại."
+                },
+                "401": {
+                  "$ref": "#/components/responses/UnauthorizedError"
+                },
+                "403": {
+                  "$ref": "#/components/responses/ForbiddenError"
+                },
+                "422": {
+                  "$ref": "#/components/responses/ValidationError"
+                }
+              }
+            }
+          }
+        },
+        {
+          "pointer": "/paths/~1conversations~1{conversationId}~1members~1me",
+          "before": null,
+          "after": {
+            "parameters": [
+              {
+                "name": "conversationId",
+                "in": "path",
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            ],
+            "delete": {
+              "tags": [
+                "Chat"
+              ],
+              "operationId": "leaveConversation",
+              "security": [
+                {
+                  "BearerAuth": []
+                }
+              ],
+              "summary": "Rời nhóm chat",
+              "description": "Membership chuyển read_only và thành viên chỉ xem được lịch sử đến thời điểm rời.",
+              "responses": {
+                "200": {
+                  "description": "Đã rời hội thoại; nếu là admin cuối thì quyền được chuyển cho thành viên tham gia sớm nhất."
+                },
+                "401": {
+                  "$ref": "#/components/responses/UnauthorizedError"
+                },
+                "403": {
+                  "$ref": "#/components/responses/ForbiddenError"
+                }
+              }
+            }
+          }
+        },
+        {
+          "pointer": "/paths/~1conversations~1{conversationId}~1members~1{userId}",
+          "before": null,
+          "after": {
+            "parameters": [
+              {
+                "name": "conversationId",
+                "in": "path",
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              },
+              {
+                "name": "userId",
+                "in": "path",
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            ],
+            "delete": {
+              "tags": [
+                "Chat"
+              ],
+              "operationId": "removeConversationMember",
+              "security": [
+                {
+                  "BearerAuth": []
+                }
+              ],
+              "summary": "Xóa thành viên khỏi nhóm",
+              "description": "Admin có thể xóa thành viên; membership chuyển read_only, chỉ đọc đến leftSequence. Admin cuối cùng được chuyển tự động.",
+              "responses": {
+                "200": {
+                  "description": "Thành viên bị thu hồi quyền gửi và nhận realtime."
+                },
+                "401": {
+                  "$ref": "#/components/responses/UnauthorizedError"
+                },
+                "403": {
+                  "$ref": "#/components/responses/ForbiddenError"
+                },
+                "404": {
+                  "$ref": "#/components/responses/NotFoundError"
+                }
+              }
+            }
+          }
+        },
+        {
+          "pointer": "/paths/~1conversations~1{conversationId}~1members~1{userId}~1role",
+          "before": null,
+          "after": {
+            "parameters": [
+              {
+                "name": "conversationId",
+                "in": "path",
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              },
+              {
+                "name": "userId",
+                "in": "path",
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            ],
+            "put": {
+              "tags": [
+                "Chat"
+              ],
+              "operationId": "updateConversationMemberRole",
+              "security": [
+                {
+                  "BearerAuth": []
+                }
+              ],
+              "summary": "Đổi vai trò thành viên",
+              "description": "Admin nhóm đặt vai trò admin hoặc member; không thể hạ admin cuối cùng.",
+              "requestBody": {
+                "required": true,
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "required": [
+                        "role"
+                      ],
+                      "properties": {
+                        "role": {
+                          "type": "string",
+                          "enum": [
+                            "admin",
+                            "member"
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "responses": {
+                "200": {
+                  "description": "Vai trò đã được cập nhật; thay đổi tạo system message."
+                },
+                "401": {
+                  "$ref": "#/components/responses/UnauthorizedError"
+                },
+                "403": {
+                  "$ref": "#/components/responses/ForbiddenError"
+                },
+                "422": {
+                  "$ref": "#/components/responses/ValidationError"
+                }
+              }
+            }
+          }
+        },
+        {
+          "pointer": "/paths/~1messages/get/parameters",
+          "before": [
+            {
+              "name": "filter",
+              "in": "query",
+              "required": false,
+              "style": "deepObject",
+              "explode": true,
+              "description": "Bộ lọc được endpoint hỗ trợ.",
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "conversationId": {
+                    "type": "string",
+                    "format": "uuid"
+                  }
+                }
+              }
+            },
+            {
+              "name": "cursor",
+              "in": "query",
+              "description": "Cursor opaque từ trang trước; bỏ qua ở trang đầu.",
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "pageSize",
+              "in": "query",
+              "schema": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 100,
+                "default": 30
+              }
+            }
+          ],
+          "after": [
+            {
+              "name": "conversationId",
+              "in": "query",
+              "required": true,
+              "schema": {
+                "type": "string",
+                "format": "uuid"
+              }
+            },
+            {
+              "name": "cursor",
+              "in": "query",
+              "description": "Cursor opaque từ trang trước; bỏ qua ở trang đầu.",
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "pageSize",
+              "in": "query",
+              "schema": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 100,
+                "default": 30
+              }
+            }
+          ]
+        },
+        {
+          "pointer": "/paths/~1messages~1mark-read/post/requestBody/content/application~1json/example/lastReadMessageId",
+          "before": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1messages~1mark-read/post/requestBody/content/application~1json/example/lastReadSequence",
+          "before": null,
+          "after": 42
+        }
+      ],
+      "semanticDiff": {
+        "paths": {
+          "added": [
+            "/conversations/{conversationId}/members/me",
+            "/conversations/{conversationId}/members/{userId}/role",
+            "/conversations/{conversationId}/members",
+            "/conversations/{conversationId}/bot-reminders",
+            "/conversations/{conversationId}/members/{userId}"
+          ],
+          "deleted": [
+            "/conversations/resolve-conversation"
+          ],
+          "modified": {
+            "/conversations": {
+              "operations": {
+                "added": [
+                  "POST"
+                ],
+                "modified": {
+                  "GET": {
+                    "parameters": {
+                      "added": {
+                        "query": [
+                          "contextType",
+                          "contextId"
+                        ]
+                      },
+                      "deleted": {
+                        "query": [
+                          "filter"
+                        ]
+                      }
+                    },
+                    "responses": {
+                      "modified": {
+                        "200": {
+                          "content": {
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "properties": {
+                                    "modified": {
+                                      "data": {
+                                        "items": {
+                                          "required": {
+                                            "added": [
+                                              "kind"
+                                            ],
+                                            "deleted": [
+                                              "title",
+                                              "type"
+                                            ]
+                                          },
+                                          "properties": {
+                                            "added": [
+                                              "contextType",
+                                              "contextId",
+                                              "avatarMediaId",
+                                              "kind"
+                                            ],
+                                            "deleted": [
+                                              "avatarUrl",
+                                              "lastMessageAt",
+                                              "type",
+                                              "contextTag",
+                                              "roomId",
+                                              "buildingId"
+                                            ],
+                                            "modified": {
+                                              "lastMessage": {
+                                                "properties": {
+                                                  "added": [
+                                                    "contentPreview",
+                                                    "sequence"
+                                                  ],
+                                                  "deleted": [
+                                                    "content"
+                                                  ],
+                                                  "modified": {
+                                                    "type": {
+                                                      "enum": {
+                                                        "added": [
+                                                          "system"
+                                                        ],
+                                                        "deleted": [
+                                                          "file"
+                                                        ]
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              },
+                                              "title": {
+                                                "minLength": {
+                                                  "from": 1,
+                                                  "to": 0
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "/conversations/{conversationId}": {
+              "operations": {
+                "added": [
+                  "PATCH"
+                ],
+                "modified": {
+                  "GET": {
+                    "responses": {
+                      "modified": {
+                        "200": {
+                          "content": {
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "properties": {
+                                    "modified": {
+                                      "data": {
+                                        "required": {
+                                          "added": [
+                                            "members",
+                                            "kind"
+                                          ],
+                                          "deleted": [
+                                            "roomId",
+                                            "contractId",
+                                            "title",
+                                            "type"
+                                          ]
+                                        },
+                                        "properties": {
+                                          "added": [
+                                            "contextId",
+                                            "avatarMediaId",
+                                            "members",
+                                            "kind",
+                                            "contextType"
+                                          ],
+                                          "deleted": [
+                                            "type",
+                                            "roomId",
+                                            "contractId"
+                                          ],
+                                          "modified": {
+                                            "title": {
+                                              "minLength": {
+                                                "from": 1,
+                                                "to": 0
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "/me/notification-preference": {
+              "operations": {
+                "modified": {
+                  "GET": {
+                    "responses": {
+                      "modified": {
+                        "200": {
+                          "content": {
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "properties": {
+                                    "modified": {
+                                      "data": {
+                                        "items": {
+                                          "required": {
+                                            "added": [
+                                              "pushEnabled"
+                                            ],
+                                            "deleted": [
+                                              "enabled"
+                                            ]
+                                          },
+                                          "properties": {
+                                            "added": [
+                                              "pushEnabled"
+                                            ],
+                                            "deleted": [
+                                              "enabled"
+                                            ],
+                                            "modified": {
+                                              "type": {
+                                                "enum": {
+                                                  "deleted": [
+                                                    "match",
+                                                    "account"
+                                                  ]
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "PUT": {
+                    "requestBody": {
+                      "content": {
+                        "modified": {
+                          "application/json": {
+                            "schema": {
+                              "properties": {
+                                "modified": {
+                                  "preferences": {
+                                    "items": {
+                                      "required": {
+                                        "added": [
+                                          "pushEnabled"
+                                        ],
+                                        "deleted": [
+                                          "enabled"
+                                        ]
+                                      },
+                                      "properties": {
+                                        "added": [
+                                          "pushEnabled"
+                                        ],
+                                        "deleted": [
+                                          "enabled"
+                                        ],
+                                        "modified": {
+                                          "type": {
+                                            "enum": {
+                                              "deleted": [
+                                                "match",
+                                                "account"
+                                              ]
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "/me/push-devices": {
+              "operations": {
+                "modified": {
+                  "POST": {
+                    "requestBody": {
+                      "content": {
+                        "modified": {
+                          "application/json": {
+                            "schema": {
+                              "properties": {
+                                "modified": {
+                                  "platform": {
+                                    "enum": {
+                                      "added": [
+                                        "ios"
+                                      ],
+                                      "deleted": [
+                                        "web"
+                                      ]
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "responses": {
+                      "modified": {
+                        "201": {
+                          "content": {
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "properties": {
+                                    "modified": {
+                                      "data": {
+                                        "properties": {
+                                          "modified": {
+                                            "platform": {
+                                              "enum": {
+                                                "added": [
+                                                  "ios"
+                                                ],
+                                                "deleted": [
+                                                  "web"
+                                                ]
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "/messages": {
+              "operations": {
+                "modified": {
+                  "GET": {
+                    "parameters": {
+                      "added": {
+                        "query": [
+                          "conversationId"
+                        ]
+                      },
+                      "deleted": {
+                        "query": [
+                          "filter"
+                        ]
+                      }
+                    },
+                    "responses": {
+                      "modified": {
+                        "200": {
+                          "content": {
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "properties": {
+                                    "modified": {
+                                      "data": {
+                                        "items": {
+                                          "required": {
+                                            "added": [
+                                              "senderType",
+                                              "sequence"
+                                            ],
+                                            "deleted": [
+                                              "senderId"
+                                            ]
+                                          },
+                                          "properties": {
+                                            "added": [
+                                              "senderType",
+                                              "sequence",
+                                              "clientMessageId",
+                                              "senderUserId",
+                                              "mediaId"
+                                            ],
+                                            "deleted": [
+                                              "senderId"
+                                            ],
+                                            "modified": {
+                                              "type": {
+                                                "enum": {
+                                                  "added": [
+                                                    "system"
+                                                  ],
+                                                  "deleted": [
+                                                    "file"
+                                                  ]
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "POST": {
+                    "requestBody": {
+                      "content": {
+                        "modified": {
+                          "application/json": {
+                            "schema": {
+                              "required": {
+                                "added": [
+                                  "clientMessageId"
+                                ]
+                              },
+                              "properties": {
+                                "added": [
+                                  "clientMessageId"
+                                ],
+                                "deleted": [
+                                  "mentions"
+                                ],
+                                "modified": {
+                                  "type": {
+                                    "enum": {
+                                      "deleted": [
+                                        "file",
+                                        "bot"
+                                      ]
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "responses": {
+                      "modified": {
+                        "201": {
+                          "content": {
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "properties": {
+                                    "modified": {
+                                      "data": {
+                                        "required": {
+                                          "added": [
+                                            "sequence",
+                                            "clientMessageId"
+                                          ]
+                                        },
+                                        "properties": {
+                                          "added": [
+                                            "mediaId",
+                                            "sequence",
+                                            "clientMessageId"
+                                          ],
+                                          "modified": {
+                                            "type": {
+                                              "enum": {
+                                                "added": [
+                                                  "system"
+                                                ],
+                                                "deleted": [
+                                                  "file"
+                                                ]
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "/messages/mark-read": {
+              "operations": {
+                "modified": {
+                  "POST": {
+                    "requestBody": {
+                      "content": {
+                        "modified": {
+                          "application/json": {
+                            "schema": {
+                              "required": {
+                                "added": [
+                                  "lastReadSequence"
+                                ],
+                                "deleted": [
+                                  "lastReadMessageId"
+                                ]
+                              },
+                              "properties": {
+                                "added": [
+                                  "lastReadSequence"
+                                ],
+                                "deleted": [
+                                  "lastReadMessageId"
+                                ]
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "/notifications": {
+              "operations": {
+                "modified": {
+                  "GET": {
+                    "responses": {
+                      "modified": {
+                        "200": {
+                          "content": {
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "properties": {
+                                    "modified": {
+                                      "data": {
+                                        "items": {
+                                          "required": {
+                                            "added": [
+                                              "body",
+                                              "eventId",
+                                              "createdAt",
+                                              "recipientUserId",
+                                              "sourceService",
+                                              "title"
+                                            ],
+                                            "deleted": [
+                                              "data"
+                                            ]
+                                          },
+                                          "properties": {
+                                            "added": [
+                                              "recipientUserId",
+                                              "body",
+                                              "createdAt",
+                                              "deepLink",
+                                              "sourceService",
+                                              "title",
+                                              "eventId"
+                                            ],
+                                            "modified": {
+                                              "data": {
+                                                "additionalPropertiesAllowed": {
+                                                  "from": null,
+                                                  "to": true
+                                                }
+                                              },
+                                              "type": {
+                                                "enum": {
+                                                  "enumAdded": true,
+                                                  "added": [
+                                                    "invoice",
+                                                    "issue"
+                                                  ]
+                                                },
+                                                "minLength": {
+                                                  "from": 1,
+                                                  "to": 0
+                                                },
+                                                "maxLength": {
+                                                  "from": 50,
+                                                  "to": null
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "components": {
+          "schemas": {
+            "deleted": [
+              "MessageMention"
+            ],
+            "modified": {
+              "Conversation": {
+                "required": {
+                  "added": [
+                    "kind"
+                  ],
+                  "deleted": [
+                    "type"
+                  ]
+                },
+                "properties": {
+                  "added": [
+                    "kind",
+                    "avatarMediaId",
+                    "contextType",
+                    "contextId",
+                    "unreadCount"
+                  ],
+                  "deleted": [
+                    "contractId",
+                    "roomId",
+                    "type",
+                    "buildingId"
+                  ]
+                }
+              },
+              "ConversationDetailResponseDto": {
+                "required": {
+                  "added": [
+                    "kind",
+                    "members"
+                  ],
+                  "deleted": [
+                    "type",
+                    "roomId",
+                    "contractId",
+                    "title"
+                  ]
+                },
+                "properties": {
+                  "added": [
+                    "contextType",
+                    "contextId",
+                    "avatarMediaId",
+                    "members",
+                    "kind"
+                  ],
+                  "deleted": [
+                    "contractId",
+                    "type",
+                    "roomId"
+                  ],
+                  "modified": {
+                    "title": {
+                      "minLength": {
+                        "from": 1,
+                        "to": 0
+                      }
+                    }
+                  }
+                }
+              },
+              "ConversationListResponseDto": {
+                "required": {
+                  "added": [
+                    "kind"
+                  ],
+                  "deleted": [
+                    "type",
+                    "title"
+                  ]
+                },
+                "properties": {
+                  "added": [
+                    "contextId",
+                    "avatarMediaId",
+                    "kind",
+                    "contextType"
+                  ],
+                  "deleted": [
+                    "roomId",
+                    "buildingId",
+                    "avatarUrl",
+                    "lastMessageAt",
+                    "type",
+                    "contextTag"
+                  ],
+                  "modified": {
+                    "lastMessage": {
+                      "properties": {
+                        "added": [
+                          "contentPreview",
+                          "sequence"
+                        ],
+                        "deleted": [
+                          "content"
+                        ],
+                        "modified": {
+                          "type": {
+                            "enum": {
+                              "added": [
+                                "system"
+                              ],
+                              "deleted": [
+                                "file"
+                              ]
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "title": {
+                      "minLength": {
+                        "from": 1,
+                        "to": 0
+                      }
+                    }
+                  }
+                }
+              },
+              "ConversationMember": {
+                "required": {
+                  "added": [
+                    "participantType",
+                    "role",
+                    "status"
+                  ],
+                  "deleted": [
+                    "userId"
+                  ]
+                },
+                "properties": {
+                  "added": [
+                    "participantType",
+                    "status",
+                    "leftSequence",
+                    "lastReadSequence",
+                    "role"
+                  ],
+                  "modified": {
+                    "userId": {
+                      "nullable": {
+                        "from": false,
+                        "to": true
+                      }
+                    }
+                  }
+                }
+              },
+              "Message": {
+                "properties": {
+                  "added": [
+                    "senderType",
+                    "mediaId",
+                    "payload",
+                    "clientMessageId",
+                    "senderUserId",
+                    "sequence"
+                  ],
+                  "deleted": [
+                    "senderId"
+                  ],
+                  "modified": {
+                    "type": {
+                      "enum": {
+                        "added": [
+                          "system"
+                        ],
+                        "deleted": [
+                          "file"
+                        ]
+                      }
+                    }
+                  }
+                }
+              },
+              "MessageListResponseDto": {
+                "required": {
+                  "added": [
+                    "senderType",
+                    "sequence"
+                  ],
+                  "deleted": [
+                    "senderId"
+                  ]
+                },
+                "properties": {
+                  "added": [
+                    "senderType",
+                    "sequence",
+                    "clientMessageId",
+                    "senderUserId",
+                    "mediaId"
+                  ],
+                  "deleted": [
+                    "senderId"
+                  ],
+                  "modified": {
+                    "type": {
+                      "enum": {
+                        "added": [
+                          "system"
+                        ],
+                        "deleted": [
+                          "file"
+                        ]
+                      }
+                    }
+                  }
+                }
+              },
+              "MessageMarkReadRequestDto": {
+                "required": {
+                  "added": [
+                    "lastReadSequence"
+                  ],
+                  "deleted": [
+                    "lastReadMessageId"
+                  ]
+                },
+                "properties": {
+                  "added": [
+                    "lastReadSequence"
+                  ],
+                  "deleted": [
+                    "lastReadMessageId"
+                  ]
+                }
+              },
+              "MessageSendRequestDto": {
+                "required": {
+                  "added": [
+                    "clientMessageId"
+                  ]
+                },
+                "properties": {
+                  "added": [
+                    "clientMessageId"
+                  ],
+                  "deleted": [
+                    "mentions"
+                  ],
+                  "modified": {
+                    "type": {
+                      "enum": {
+                        "deleted": [
+                          "file",
+                          "bot"
+                        ]
+                      }
+                    }
+                  }
+                }
+              },
+              "MessageSendResponseDto": {
+                "required": {
+                  "added": [
+                    "sequence",
+                    "clientMessageId"
+                  ]
+                },
+                "properties": {
+                  "added": [
+                    "sequence",
+                    "clientMessageId",
+                    "mediaId"
+                  ],
+                  "modified": {
+                    "type": {
+                      "enum": {
+                        "added": [
+                          "system"
+                        ],
+                        "deleted": [
+                          "file"
+                        ]
+                      }
+                    }
+                  }
+                }
+              },
+              "NotificationListResponseDto": {
+                "required": {
+                  "added": [
+                    "recipientUserId",
+                    "sourceService",
+                    "title",
+                    "eventId",
+                    "body",
+                    "createdAt"
+                  ],
+                  "deleted": [
+                    "data"
+                  ]
+                },
+                "properties": {
+                  "added": [
+                    "body",
+                    "createdAt",
+                    "deepLink",
+                    "sourceService",
+                    "title",
+                    "eventId",
+                    "recipientUserId"
+                  ],
+                  "modified": {
+                    "data": {
+                      "additionalPropertiesAllowed": {
+                        "from": null,
+                        "to": true
+                      }
+                    },
+                    "type": {
+                      "enum": {
+                        "enumAdded": true,
+                        "added": [
+                          "invoice",
+                          "issue"
+                        ]
+                      },
+                      "minLength": {
+                        "from": 1,
+                        "to": 0
+                      },
+                      "maxLength": {
+                        "from": 50,
+                        "to": null
+                      }
+                    }
+                  }
+                }
+              },
+              "NotificationPreferenceDetailResponseDto": {
+                "required": {
+                  "added": [
+                    "pushEnabled"
+                  ],
+                  "deleted": [
+                    "enabled"
+                  ]
+                },
+                "properties": {
+                  "added": [
+                    "pushEnabled"
+                  ],
+                  "deleted": [
+                    "enabled"
+                  ],
+                  "modified": {
+                    "type": {
+                      "enum": {
+                        "deleted": [
+                          "match",
+                          "account"
+                        ]
+                      }
+                    }
+                  }
+                }
+              },
+              "NotificationPreferenceUpdateRequestDto": {
+                "properties": {
+                  "modified": {
+                    "preferences": {
+                      "items": {
+                        "required": {
+                          "added": [
+                            "pushEnabled"
+                          ],
+                          "deleted": [
+                            "enabled"
+                          ]
+                        },
+                        "properties": {
+                          "added": [
+                            "pushEnabled"
+                          ],
+                          "deleted": [
+                            "enabled"
+                          ],
+                          "modified": {
+                            "type": {
+                              "enum": {
+                                "deleted": [
+                                  "match",
+                                  "account"
+                                ]
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "PushDeviceRegisterRequestDto": {
+                "properties": {
+                  "modified": {
+                    "platform": {
+                      "enum": {
+                        "added": [
+                          "ios"
+                        ],
+                        "deleted": [
+                          "web"
+                        ]
+                      }
+                    }
+                  }
+                }
+              },
+              "PushDeviceRegisterResponseDto": {
+                "properties": {
+                  "modified": {
+                    "platform": {
+                      "enum": {
+                        "added": [
+                          "ios"
+                        ],
+                        "deleted": [
+                          "web"
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   ]
 }
