@@ -2,12 +2,33 @@ get:
   tags:
   - Contract
   x-apidog-folder: ContractTemplate
-  x-apidog-status: designing
+  x-apidog-status: released
   operationId: getContractTemplates
   security:
     - BearerAuth: []
   summary: List contract templates
-  description: 'landlord. Liệt kê mẫu khả dụng. Lỗi nghiệp vụ: 403 FORBIDDEN.'
+  description: |-
+    Landlord. Endpoint đã triển khai trong Tenancy-Service.
+    Chỉ trả mẫu isActive = true và chưa xóa mềm, phân trang offset với pageNo mặc định 1,
+    pageSize mặc định 20 và tối đa 100. Không trả body HTML của mẫu.
+    Query không hợp lệ trả 422 VALIDATION_FAILED; field ngoài DTO trả 422 UNEXPECTED_FIELD.
+
+    ```mermaid
+    sequenceDiagram
+        autonumber
+        participant GW as API Gateway
+        participant TEN as Tenancy
+        participant DB as Tenancy DB
+
+        GW->>TEN: GET /api/v1/contract-templates + Bearer token
+        TEN->>TEN: Verify JWT, landlord role, active account and pagination
+        TEN->>DB: SELECT contract_templates WHERE is_active = true AND is_deleted = false<br/>ORDER BY created_at DESC, id ASC; OFFSET / LIMIT
+        DB-->>TEN: Active template rows
+        TEN->>DB: COUNT with the same visibility conditions when required by paginator
+        DB-->>TEN: totalItems
+        TEN->>TEN: Map templateKey, title, version and offset pagination
+        TEN-->>GW: 200 CONTRACT_TEMPLATES_FETCHED
+    ```
   parameters:
   - name: pageSize
     in: query
@@ -85,8 +106,8 @@ get:
             statusCode: 200
             code: CONTRACT_TEMPLATES_FETCHED
             data:
-            - templateKey: standard_residential_v1
-              title: Residential lease
+            - templateKey: standard-room-lease-v1
+              title: Hợp đồng thuê phòng trọ
               version: '1.0'
             pagination:
               type: offset
@@ -104,6 +125,21 @@ get:
       $ref: ../../openapi.yaml#/components/responses/AuthUnavailableError
     '403':
       $ref: ../../openapi.yaml#/components/responses/ForbiddenError
+    '422':
+      description: Query phân trang không hợp lệ hoặc chứa field ngoài DTO.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code]
+            properties:
+              statusCode:
+                type: integer
+                enum: [422]
+              code:
+                type: string
+                enum: [VALIDATION_FAILED, UNEXPECTED_FIELD]
     '429':
       $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
     '500':

@@ -1,11 +1,16 @@
 type: object
 x-apidog-folder: "Contract/Response"
 title: ContractActivateResponseDto
-description: Phản hồi khi kích hoạt hợp đồng
+description: Dữ liệu trong envelope 200 CONTRACT_ACTIVATED sau khi transaction kích hoạt hợp đồng thành công.
+additionalProperties: false
 properties:
-  id: { type: string, format: uuid , description: "Định danh duy nhất của tài nguyên." }
-  status: { type: string, enum: [active], example: active , description: "Trạng thái hiện tại của tài nguyên trong quy trình nghiệp vụ." }
-  activatedAt: { type: string, format: date-time , description: "Thông tin activated at của tài nguyên trong ngữ cảnh DTO." }
+  id: { type: string, format: uuid, description: "ID hợp đồng vừa được kích hoạt." }
+  status: { type: string, enum: [active], example: active, description: "Trạng thái hợp đồng sau khi kích hoạt." }
+  activatedAt:
+    type: string
+    format: date-time
+    description: Thời điểm kích hoạt lưu trong contracts.activated_at; cùng giá trị với activatedAt của event contract.activated.
+    example: '2026-11-01T03:00:00.000Z'
 
 required:
   - id

@@ -2,13 +2,66 @@ put:
   tags:
   - Contract
   x-apidog-folder: Contract
-  x-apidog-status: designing
+  x-apidog-status: released
   operationId: putContractsContractidApplyTemplate
   security:
     - BearerAuth: []
   summary: Apply template to draft contract
-  description: 'landlord. Áp mẫu vào hợp đồng nháp. Lỗi nghiệp vụ: 404 TEMPLATE NOT FOUND · 409 CONTRACT NOT DRAFT
-    · 403 FORBIDDEN.'
+  description: |-
+    Landlord. Đặc tả áp mẫu vào hợp đồng nháp.
+
+    **Trạng thái triển khai:** endpoint chưa được triển khai trong Tenancy-Service và đang tạm hoãn.
+    Contract hiện chưa có cơ chế lưu liên kết mẫu; cần chốt cơ chế lưu trước khi triển khai handler.
+    Nhãn released là trạng thái phát hành đặc tả; không xác nhận endpoint đã sẵn sàng chạy.
+    Sequence diagram dưới đây mô tả luồng dự kiến, chưa phải hành vi của service hiện tại.
+
+    Mẫu không có, inactive hoặc đã xóa trả 404 TEMPLATE_NOT_FOUND;
+    hợp đồng không có hoặc đã xóa trả 404 CONTRACT_NOT_FOUND; khác chủ trả 403 FORBIDDEN;
+    hợp đồng không còn draft trả 409 CONTRACT_NOT_DRAFT.
+    Khi triển khai, lưu liên kết mẫu và append outbox trong cùng UoW; relay publish sau commit.
+
+    ```mermaid
+    sequenceDiagram
+        autonumber
+        participant GW as API Gateway
+        participant TEN as Tenancy
+        participant DB as Tenancy DB
+        participant RELAY as Outbox Relay
+        participant MQ as RabbitMQ
+
+        Note over TEN,DB: Planned flow; template association persistence is not implemented
+        GW->>TEN: PUT /api/v1/contracts/{contractId}/apply-template + Bearer token
+        TEN->>TEN: Verify JWT, landlord role, active account, UUID and body
+        TEN->>DB: BEGIN
+        TEN->>DB: SELECT template WHERE template_key = templateKey<br/>AND is_active = true AND is_deleted = false
+        DB-->>TEN: Active template or null
+        alt Missing active template
+            TEN->>DB: ROLLBACK
+            TEN-->>GW: 404 TEMPLATE_NOT_FOUND
+        else Template exists
+            TEN->>DB: SELECT contract WHERE id = contractId AND is_deleted = false FOR UPDATE
+            DB-->>TEN: Contract or null
+            TEN->>TEN: Check existence, JWT ownership and draft status
+            alt Missing contract, wrong owner or non-draft
+                TEN->>DB: ROLLBACK
+                TEN-->>GW: 404 CONTRACT_NOT_FOUND / 403 FORBIDDEN / 409 CONTRACT_NOT_DRAFT
+            else Valid draft
+                TEN->>DB: Persist template association using the agreed storage mechanism
+                TEN->>DB: Append contract change to outbox_messages
+                alt Persistence fails
+                    TEN->>DB: ROLLBACK
+                    TEN-->>GW: Error response; no partial contract change
+                else Commit succeeds
+                    TEN->>DB: COMMIT
+                    TEN-->>GW: 200 CONTRACT_TEMPLATE_APPLIED
+                    RELAY->>DB: Claim committed outbox event
+                    RELAY->>MQ: Publish contract change
+                    MQ-->>RELAY: Publisher confirm
+                    RELAY->>DB: Mark outbox PUBLISHED
+                end
+            end
+        end
+    ```
   parameters:
   - name: contractId
     in: path
@@ -23,7 +76,7 @@ put:
         schema:
           $ref: ../../openapi.yaml#/components/schemas/ContractApplyTemplateRequestDto
         example:
-          templateKey: standard_residential_v1
+          templateKey: standard-room-lease-v1
   responses:
     '200':
       description: 'Thành công: Áp mẫu vào hợp đồng nháp.'
@@ -52,7 +105,7 @@ put:
             code: CONTRACT_TEMPLATE_APPLIED
             data:
               id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
-              templateKey: standard_residential_v1
+              templateKey: standard-room-lease-v1
               status: draft
     '400':
       $ref: ../../openapi.yaml#/components/responses/BadRequestBodyPathError
