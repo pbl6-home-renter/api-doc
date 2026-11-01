@@ -1,0 +1,15 @@
+parameters:
+  - name: conversationId
+    in: path
+    required: true
+    schema: { type: string, format: uuid }
+delete:
+  tags: [Chat]
+  operationId: leaveConversation
+  security: [{ BearerAuth: [] }]
+  summary: Rời nhóm chat
+  description: Membership chuyển read_only và thành viên chỉ xem được lịch sử đến thời điểm rời.
+  responses:
+    '200': { description: Đã rời hội thoại; nếu là admin cuối thì quyền được chuyển cho thành viên tham gia sớm nhất. }
+    '401': { $ref: ../../openapi.yaml#/components/responses/UnauthorizedError }
+    '403': { $ref: ../../openapi.yaml#/components/responses/ForbiddenError }

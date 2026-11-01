@@ -5,8 +5,11 @@ description: Phản hồi khi gửi tin nhắn
 properties:
   id: { type: string, format: uuid , description: "Định danh duy nhất của tài nguyên." }
   conversationId: { type: string, format: uuid , description: "Thông tin conversation id của tài nguyên trong ngữ cảnh DTO." }
-  type: { type: string, enum: [text, image, file, bot] , description: "Thông tin type của tài nguyên trong ngữ cảnh DTO." }
+  type: { type: string, enum: [text, image, system, bot] }
   content: { type: string, nullable: true , description: "Thông tin content của tài nguyên trong ngữ cảnh DTO." }
+  mediaId: { type: string, format: uuid, nullable: true }
+  sequence: { type: integer, format: int64, minimum: 1 }
+  clientMessageId: { type: string, format: uuid }
   createdAt: { type: string, format: date-time , description: "Thời điểm bản ghi được tạo, theo định dạng ngày giờ ISO 8601." }
 
 required:
@@ -14,4 +17,6 @@ required:
   - conversationId
   - type
   - content
+  - sequence
+  - clientMessageId
   - createdAt

@@ -200,8 +200,16 @@ paths:
     $ref: './paths/chat/conversations.yaml'
   /conversations/{conversationId}:
     $ref: './paths/chat/conversations-conversationId.yaml'
-  /conversations/resolve-conversation:
-    $ref: './paths/chat/conversations-resolve-conversation.yaml'
+  /conversations/{conversationId}/members:
+    $ref: './paths/chat/conversation-members.yaml'
+  /conversations/{conversationId}/members/{userId}:
+    $ref: './paths/chat/conversation-member-userId.yaml'
+  /conversations/{conversationId}/members/{userId}/role:
+    $ref: './paths/chat/conversation-member-role.yaml'
+  /conversations/{conversationId}/members/me:
+    $ref: './paths/chat/conversation-members-me.yaml'
+  /conversations/{conversationId}/bot-reminders:
+    $ref: './paths/chat/conversation-bot-reminders.yaml'
   /messages:
     $ref: './paths/chat/messages.yaml'
   /messages/mark-read:
@@ -651,8 +659,6 @@ components:
       $ref: './schemas/chat/conversation-member.yaml'
     Message:
       $ref: './schemas/chat/message.yaml'
-    MessageMention:
-      $ref: './schemas/chat/message-mention.yaml'
 
     # Domain: Matching
     MatchRequest:

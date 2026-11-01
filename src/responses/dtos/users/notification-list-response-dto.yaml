@@ -1,10 +1,17 @@
 type: object
 x-apidog-folder: "Notification/Response"
 title: NotificationListResponseDto
-description: Danh sách thông báo theo cursor
+description: Notification business đã lưu cho recipient, không chứa message chat.
 properties:
-  id: { type: string, format: uuid , description: "Định danh duy nhất của tài nguyên." }
-  type: { type: string, minLength: 1, maxLength: 50 , description: "Thông tin type của tài nguyên trong ngữ cảnh DTO." }
-  data: { type: object, nullable: true , description: "Dữ liệu kết quả của thao tác." }
-  readAt: { type: string, format: date-time, nullable: true , description: "Thời điểm thông báo được đọc; null nghĩa là chưa đọc." }
-required: [id, type, data, readAt]
+  id: { type: string, format: uuid }
+  recipientUserId: { type: string, format: uuid }
+  sourceService: { type: string }
+  eventId: { type: string, format: uuid }
+  type: { type: string, enum: [invoice, issue] }
+  title: { type: string, maxLength: 255 }
+  body: { type: string, maxLength: 2000 }
+  deepLink: { type: string, nullable: true }
+  data: { type: object, nullable: true, additionalProperties: true }
+  createdAt: { type: string, format: date-time }
+  readAt: { type: string, format: date-time, nullable: true }
+required: [id, recipientUserId, sourceService, eventId, type, title, body, createdAt, readAt]
