@@ -17,6 +17,10 @@ properties:
     type: string
     pattern: '^(0|[1-9][0-9]*)(\.[0-9]+)?$'
     description: Giá trị đã xác nhận; baseline phải có nguồn OCR và có thể được hiệu chỉnh tay.
+  previousReading:
+    type: string
+    pattern: '^(0|[1-9][0-9]*)(\.[0-9]+)?$'
+    description: Baseline cho phép landlord gửi 0 hoặc chỉ số đầu kỳ thực tế. Baseline đầu tiên nếu bỏ trống thì server dùng 0; baseline về sau bắt buộc gửi. Kỳ thường không gửi trường này; server lấy currentReading của bản ghi trước.
   readingDate:
     type: string
     format: date
@@ -24,7 +28,7 @@ properties:
   isBaseline:
     type: boolean
     default: false
-    description: Baseline lúc bàn giao hoặc thay đồng hồ; previousReading được server đặt là 0.
+    description: Baseline lúc bàn giao hoặc sau này (ví dụ thay đồng hồ); previousReading có thể bằng 0 hoặc chỉ số đầu kỳ thực tế.
   evidenceMediaId:
     type: string
     format: uuid

@@ -1,7 +1,7 @@
 type: object
 x-apidog-folder: "MeterReading/Response"
 title: BulkMeterReadingResponseDto
-description: Phản hồi tổng hợp kết quả ghi chỉ số điện nước hàng loạt và lượng tiêu thụ của tòa nhà
+description: Phản hồi tổng hợp các chỉ số đã ghi thành công trong một request bulk và lượng tiêu thụ tương ứng. Một dòng không hợp lệ làm cả request thất bại, không trả kết quả từng dòng lỗi trong response thành công.
 
 properties:
   buildingId:
@@ -20,7 +20,7 @@ properties:
   totalRoomsRecorded:
     type: integer
     minimum: 0
-    description: Tổng số phòng đã ghi nhận chỉ số thành công
+    description: Số roomId khác nhau có chỉ số được ghi thành công trong request này; không nhất thiết là toàn bộ phòng của tòa hoặc đã đủ cả điện và nước.
     example: 12
   totalElectricityUsage:
     type: string
@@ -67,13 +67,13 @@ properties:
           example: "12.0"
         status:
           type: string
-          enum: [SUCCESS, WARNING, ERROR]
-          description: Trạng thái ghi nhận
+          enum: [SUCCESS]
+          description: Chỉ có SUCCESS trong response 201; lỗi trả HTTP error và rollback toàn bộ request.
           example: "SUCCESS"
         note:
           type: string
           nullable: true
-          description: Cảnh báo bất thường (nếu có mức tiêu thụ tăng vọt so với tháng trước)
+          description: Ghi chú tùy chọn của kết quả thành công.
       required:
         - roomId
         - roomName

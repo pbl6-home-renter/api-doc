@@ -7,7 +7,7 @@ post:
   security:
     - BearerAuth: []
   summary: Bulk create meter readings
-  description: "landlord. Nhập và chốt chỉ số điện/nước hàng loạt cho nhiều phòng trong tòa nhà theo kỳ ghi số. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 VALIDATION FAILED · 409 DUPLICATE READING."
+  description: "landlord. Ghi 1–200 chỉ số điện/nước kỳ thường cho một tập phòng bất kỳ trong cùng tòa. Mỗi dòng phải có baseline trước đó. Các dòng trong request được ghi cùng một transaction; một dòng lỗi thì rollback toàn bộ và trả HTTP error, không có kết quả ERROR trong response 201. totalRoomsRecorded là số phòng khác nhau trong request. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 VALIDATION FAILED · 409 DUPLICATE READING."
   requestBody:
     required: true
     content:
@@ -17,11 +17,9 @@ post:
         example:
           buildingId: 9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d
           recordedMonth: "2026-09"
-          readingMethod: CAMERA_CAPTURE
           readings:
           - roomId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
             type: electricity
-            previousReading: "1250.0"
             currentReading: "1380.0"
             evidenceMediaId: 48fae08f-e1a5-48b4-9c02-e2513470ff42
   responses:
