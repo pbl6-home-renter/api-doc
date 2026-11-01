@@ -5,11 +5,59 @@
 
 Báo cáo lưu lịch sử các entry đã phát hiện, mới nhất ở trên. `NO_CHANGE` không xóa entry cũ; exit code chỉ phản ánh lần chạy hiện tại.
 
-Công cụ: Redocly 2.64.1; oasdiff 1.34.1. Số entry: **18**.
+Công cụ: Redocly 2.64.1; oasdiff 1.34.1. Số entry: **19**.
 
 Phân loại: **BREAKING** = client cũ có thể hỏng; **NON_BREAKING** = tương thích theo contract; **NEEDS_REVIEW** = chưa đủ bằng chứng.
 
 Các vị trí dùng JSON Pointer trên bundle tạm (`~1` là `/`). JSON đi kèm giữ toàn bộ semantic diff, fingerprint và hash phục vụ truy vết.
+
+## Thay đổi contract từ Git — BREAKING
+
+- ID: `712da49f38da570ccdc3bfd1e890ec54b78e25e830ee118f7521e9bd8b4f3d77`
+- Contract: rentify-public; repository: https://github.com/pbl6-home-renter/api-doc
+- Nguồn: `src/openapi.yaml` → `src/openapi.yaml`
+- Phát hiện (UTC): 2026-11-01T12:20:15.514Z; commit time: 2026-11-01T19:20:01+07:00
+- Commit nền: 4df3c7dd3cf332cfc908f1917091d770fd9d68c0
+- Commit đích/bối cảnh: [98861edcd25fa8409ce65a1d5a44a7dddab57a75](https://github.com/pbl6-home-renter/api-doc/commit/98861edcd25fa8409ce65a1d5a44a7dddab57a75)
+- PR: [https://github.com/pbl6-home-renter/api-doc/pull/33](https://github.com/pbl6-home-renter/api-doc/pull/33)
+- Loại metadata: Git revision thực tế
+- Lý do: CHƯA CUNG CẤP — tác giả PR phải bổ sung lý do nghiệp vụ; không thể suy ra từ OpenAPI diff.
+
+| Mức ảnh hưởng | Endpoint / vùng | Thay đổi | Hành động FE / Mobile |
+|---|---|---|---|
+| BREAKING | POST /meter-readings/bulk | the `readings` request property's maxItems was set to `200` (`request-property-max-items-set`) | FE và Mobile: đối chiếu vị trí và thay đổi trước/sau trong entry này với API adapter, DTO, parser và validation; cùng BE xác nhận phương án tương thích trước merge/phát hành. |
+| BREAKING | POST /meter-readings/bulk | the `readings` request property's minItems was set to `1` (`request-property-min-items-set`) | FE và Mobile: đối chiếu vị trí và thay đổi trước/sau trong entry này với API adapter, DTO, parser và validation; cùng BE xác nhận phương án tương thích trước merge/phát hành. |
+| NEEDS_REVIEW | POST /meter-readings/bulk | removed the request property `readingMethod` (`request-property-removed`) | FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ. |
+| NEEDS_REVIEW | POST /meter-readings/bulk | removed the request property `readings/items/previousReading` (`request-property-removed`) | FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ. |
+| NON_BREAKING | info | Đã phát hiện breaking change nhưng info.version vẫn là `1.0.0`. (`api-version-not-bumped`) | BE: xem lại quy ước version trước khi chấp nhận breaking change. FE/Mobile: theo kế hoạch chuyển đổi của entry này; version trong OpenAPI chưa chứng minh backend đã triển khai. |
+| NON_BREAKING | POST /meter-readings | added the new optional request property `previousReading` (`new-optional-request-property`) | FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI. |
+| NON_BREAKING | POST /meter-readings/bulk | removed the `ERROR` enum value from the `data/results/items/status` response property for the response status `201` (`response-property-enum-value-removed`) | FE và Mobile: đối chiếu enum trong DTO/validation và nhánh switch/when; xử lý giá trị chưa biết, kiểm thử dữ liệu cũ và mới; phối hợp BE trước khi phát hành. |
+| NON_BREAKING | POST /meter-readings/bulk | removed the `WARNING` enum value from the `data/results/items/status` response property for the response status `201` (`response-property-enum-value-removed`) | FE và Mobile: đối chiếu enum trong DTO/validation và nhánh switch/when; xử lý giá trị chưa biết, kiểm thử dữ liệu cũ và mới; phối hợp BE trước khi phát hành. |
+
+### Vị trí và giá trị trước/sau
+
+| Path / schema / field (JSON Pointer) | Trước | Sau |
+|---|---|---|
+| `/components/schemas/BulkMeterReadingCreateRequestDto/description` | "Dữ liệu ghi chỉ số điện và nước hàng loạt cho toàn bộ các phòng trong tòa nhà" | "Dữ liệu ghi chỉ số điện hoặc nước kỳ thường cho một tập phòng bất kỳ trong cùng tòa nhà. Mỗi phòng và loại công tơ được gửi phải có baseline trước đó; toàn bộ request được ghi hoặc rollback cùng nhau." |
+| `/components/schemas/BulkMeterReadingCreateRequestDto/properties/readingMethod` | {"type":"string","enum":["CAMERA_CAPTURE","FILE_UPLOAD"],"description":"Phương thức thu thập ảnh (CAMERA_CAPTURE cho chụp trực tiếp, FILE_UPLOAD cho tải tệp từ thiết bị - quyền chủ nhà)","example":"CAMERA_CAPTURE"} | null |
+| `/components/schemas/BulkMeterReadingCreateRequestDto/properties/readings/description` | "Danh sách chỉ số điện nước từng phòng được ghi nhận" | "Từ 1 đến 200 chỉ số kỳ thường; có thể gửi chỉ điện, chỉ nước hoặc cả hai cho từng phòng trong tòa. previousReading do server lấy từ currentReading bản ghi trước." |
+| `/components/schemas/BulkMeterReadingCreateRequestDto/properties/readings/items/additionalProperties` | null | false |
+| `/components/schemas/BulkMeterReadingCreateRequestDto/properties/readings/items/properties/previousReading` | {"type":"string","description":"Chỉ số cũ (chuỗi số thập phân lưu trữ chính xác)","example":"1250.0"} | null |
+| `/components/schemas/BulkMeterReadingCreateRequestDto/properties/readings/maxItems` | null | 200 |
+| `/components/schemas/BulkMeterReadingCreateRequestDto/properties/readings/minItems` | null | 1 |
+| `/components/schemas/BulkMeterReadingCreateRequestDto/required` | ["buildingId","recordedMonth","readingMethod","readings"] | ["buildingId","recordedMonth","readings"] |
+| `/components/schemas/BulkMeterReadingResponseDto/description` | "Phản hồi tổng hợp kết quả ghi chỉ số điện nước hàng loạt và lượng tiêu thụ của tòa nhà" | "Phản hồi tổng hợp các chỉ số đã ghi thành công trong một request bulk và lượng tiêu thụ tương ứng. Một dòng không hợp lệ làm cả request thất bại, không trả kết quả từng dòng lỗi trong response thành công." |
+| `/components/schemas/BulkMeterReadingResponseDto/properties/results/items/properties/note/description` | "Cảnh báo bất thường (nếu có mức tiêu thụ tăng vọt so với tháng trước)" | "Ghi chú tùy chọn của kết quả thành công." |
+| `/components/schemas/BulkMeterReadingResponseDto/properties/results/items/properties/status/description` | "Trạng thái ghi nhận" | "Chỉ có SUCCESS trong response 201; lỗi trả HTTP error và rollback toàn bộ request." |
+| `/components/schemas/BulkMeterReadingResponseDto/properties/results/items/properties/status/enum` | ["SUCCESS","WARNING","ERROR"] | ["SUCCESS"] |
+| `/components/schemas/BulkMeterReadingResponseDto/properties/totalRoomsRecorded/description` | "Tổng số phòng đã ghi nhận chỉ số thành công" | "Số roomId khác nhau có chỉ số được ghi thành công trong request này; không nhất thiết là toàn bộ phòng của tòa hoặc đã đủ cả điện và nước." |
+| `/components/schemas/MeterReadingCreateRequestDto/properties/isBaseline/description` | "Baseline lúc bàn giao hoặc thay đồng hồ; previousReading được server đặt là 0." | "Baseline lúc bàn giao hoặc sau này (ví dụ thay đồng hồ); previousReading có thể bằng 0 hoặc chỉ số đầu kỳ thực tế." |
+| `/components/schemas/MeterReadingCreateRequestDto/properties/previousReading` | null | {"type":"string","pattern":"^(0\|[1-9][0-9]*)(\\.[0-9]+)?$","description":"Baseline cho phép landlord gửi 0 hoặc chỉ số đầu kỳ thực tế. Baseline đầu tiên nếu bỏ trống thì server dùng 0; baseline về sau bắt buộc gửi. Kỳ thường không gửi trường này; server lấy currentReading của bản ghi trước."} |
+| `/paths/~1meter-readings~1bulk/post/description` | "landlord. Nhập và chốt chỉ số điện/nước hàng loạt cho nhiều phòng trong tòa nhà theo kỳ ghi số. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 VALIDATION FAILED · 409 DUPLICATE READING." | "landlord. Ghi 1–200 chỉ số điện/nước kỳ thường cho một tập phòng bất kỳ trong cùng tòa. Mỗi dòng phải có baseline trước đó. Các dòng trong request được ghi cùng một transaction; một dòng lỗi thì rollback toàn bộ và trả HTTP error, không có kết quả ERROR trong response 201. totalRoomsRecorded là số phòng khác nhau trong request. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 VALIDATION FAILED · 409 DUPLICATE READING." |
+| `/paths/~1meter-readings~1bulk/post/requestBody/content/application~1json/example/readingMethod` | "CAMERA_CAPTURE" | null |
+| `/paths/~1meter-readings~1bulk/post/requestBody/content/application~1json/example/readings` | [{"roomId":"3fa85f64-5717-4562-b3fc-2c963f66afa6","type":"electricity","previousReading":"1250.0","currentReading":"1380.0","evidenceMediaId":"48fae08f-e1a5-48b4-9c02-e2513470ff42"}] | [{"roomId":"3fa85f64-5717-4562-b3fc-2c963f66afa6","type":"electricity","currentReading":"1380.0","evidenceMediaId":"48fae08f-e1a5-48b4-9c02-e2513470ff42"}] |
+
+**Kiểm tra thủ công:** BE xác nhận lý do, endpoint dùng schema chung, thay đổi role/ownership mô tả bằng văn bản và thời điểm triển khai. FE/Mobile xác nhận tác động với parser và phiên bản client đang hỗ trợ.
 
 ## Thay đổi contract từ Git — NON_BREAKING
 
