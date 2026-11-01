@@ -1,0 +1,53 @@
+parameters:
+  - name: conversationId
+    in: path
+    required: true
+    schema: { type: string, format: uuid }
+post:
+  tags: [Chat]
+  operationId: sendBotReminder
+  security: [{ BearerAuth: [] }]
+  summary: Gửi bot reminder theo mẫu
+  description: Landlord chọn mẫu và chủ động gửi; không có lịch tự động. Community kiểm tra quyền với tài nguyên, dựng nội dung bot message, lưu history, phát Socket và gửi push chat theo preference.
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          type: object
+          additionalProperties: false
+          required: [templateType, resourceId, clientMessageId]
+          properties:
+            templateType:
+              type: string
+              enum: [ocr_result, invoice, contract_expiring]
+              description: Mẫu nội dung cần đăng.
+            resourceId:
+              type: string
+              format: uuid
+              description: ID OCR result, invoice hoặc contract tương ứng với templateType.
+            clientMessageId:
+              type: string
+              format: uuid
+              description: Idempotency key để retry không tạo bot message trùng.
+        example:
+          templateType: invoice
+          resourceId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+          clientMessageId: 9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d
+  responses:
+    '201':
+      description: Bot message được lưu và gửi.
+      content:
+        application/json:
+          schema:
+            type: object
+            required: [statusCode, code, data]
+            properties:
+              statusCode: { type: integer, enum: [201] }
+              code: { type: string, enum: [BOT_REMINDER_SENT] }
+              data: { $ref: ../../openapi.yaml#/components/schemas/MessageSendResponseDto }
+    '401': { $ref: ../../openapi.yaml#/components/responses/UnauthorizedError }
+    '403': { $ref: ../../openapi.yaml#/components/responses/ForbiddenError }
+    '404': { $ref: ../../openapi.yaml#/components/responses/NotFoundError }
+    '422': { $ref: ../../openapi.yaml#/components/responses/ValidationError }
+    '500': { $ref: ../../openapi.yaml#/components/responses/InternalServerError }

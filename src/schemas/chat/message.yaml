@@ -1,7 +1,7 @@
 type: object
 x-apidog-folder: "Message"
 title: Message
-description: Tin nhắn trao đổi trong cuộc hội thoại (hỗ trợ text, ảnh, file hoặc tin nhắn bot)
+description: Tin nhắn text, ảnh, system hoặc bot trong hội thoại.
 allOf:
   - $ref: '../../common/base-entity.yaml'
   - type: object
@@ -11,15 +11,18 @@ allOf:
         format: uuid
         description: ID cuộc hội thoại chứa tin nhắn
         example: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
-      senderId:
+      senderUserId:
         type: string
         format: uuid
         nullable: true
-        description: ID người gửi tin nhắn (null đối với thông báo từ bot)
+        description: ID user gửi; null với system message và bot.
         example: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+      senderType:
+        type: string
+        enum: [user, system]
       type:
         type: string
-        enum: [text, image, file, bot]
+        enum: [text, image, system, bot]
         description: Loại tin nhắn
         example: "text"
       content:
@@ -27,6 +30,23 @@ allOf:
         nullable: true
         description: Nội dung tin nhắn dạng văn bản
         example: "Đã chốt số điện tháng 09: 180 kWh"
+      mediaId:
+        type: string
+        format: uuid
+        nullable: true
+        description: Media ID của ảnh đã upload qua Media Service.
+      sequence:
+        type: integer
+        format: int64
+        minimum: 1
+      clientMessageId:
+        type: string
+        format: uuid
+        description: ID idempotency do client tạo.
+      payload:
+        type: object
+        nullable: true
+        description: Dữ liệu có cấu trúc cho system/bot message.
     required:
       - conversationId
       - type

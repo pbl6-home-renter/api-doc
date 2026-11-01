@@ -1,0 +1,30 @@
+parameters:
+  - name: conversationId
+    in: path
+    required: true
+    schema: { type: string, format: uuid }
+  - name: userId
+    in: path
+    required: true
+    schema: { type: string, format: uuid }
+put:
+  tags: [Chat]
+  operationId: updateConversationMemberRole
+  security: [{ BearerAuth: [] }]
+  summary: Đổi vai trò thành viên
+  description: Admin nhóm đặt vai trò admin hoặc member; không thể hạ admin cuối cùng.
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          type: object
+          additionalProperties: false
+          required: [role]
+          properties:
+            role: { type: string, enum: [admin, member] }
+  responses:
+    '200': { description: Vai trò đã được cập nhật; thay đổi tạo system message. }
+    '401': { $ref: ../../openapi.yaml#/components/responses/UnauthorizedError }
+    '403': { $ref: ../../openapi.yaml#/components/responses/ForbiddenError }
+    '422': { $ref: ../../openapi.yaml#/components/responses/ValidationError }

@@ -14,8 +14,19 @@ allOf:
       userId:
         type: string
         format: uuid
+        nullable: true
         description: ID người dùng tham gia
         example: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+      participantType:
+        type: string
+        enum: [user, system]
+        description: Phân biệt user với participant hệ thống như bot.
+      role:
+        type: string
+        enum: [admin, member, system]
+      status:
+        type: string
+        enum: [active, read_only]
       joinedAt:
         type: string
         format: date-time
@@ -25,9 +36,21 @@ allOf:
         type: string
         format: date-time
         nullable: true
-        description: Thời điểm rời khỏi nhóm chat (vẫn giữ quyền đọc lịch sử cũ)
+        description: Thời điểm rời hoặc bị xóa khỏi hội thoại.
         example: null
+      leftSequence:
+        type: integer
+        format: int64
+        nullable: true
+        description: Tin cuối được phép đọc khi membership ở trạng thái read_only.
+      lastReadSequence:
+        type: integer
+        format: int64
+        minimum: 0
+        description: Sequence cuối đã đọc; unread tính từ sequence kế tiếp.
     required:
       - conversationId
-      - userId
+      - participantType
+      - role
+      - status
       - joinedAt

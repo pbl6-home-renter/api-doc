@@ -1,0 +1,20 @@
+parameters:
+  - name: conversationId
+    in: path
+    required: true
+    schema: { type: string, format: uuid }
+  - name: userId
+    in: path
+    required: true
+    schema: { type: string, format: uuid }
+delete:
+  tags: [Chat]
+  operationId: removeConversationMember
+  security: [{ BearerAuth: [] }]
+  summary: Xóa thành viên khỏi nhóm
+  description: Admin có thể xóa thành viên; membership chuyển read_only, chỉ đọc đến leftSequence. Admin cuối cùng được chuyển tự động.
+  responses:
+    '200': { description: Thành viên bị thu hồi quyền gửi và nhận realtime. }
+    '401': { $ref: ../../openapi.yaml#/components/responses/UnauthorizedError }
+    '403': { $ref: ../../openapi.yaml#/components/responses/ForbiddenError }
+    '404': { $ref: ../../openapi.yaml#/components/responses/NotFoundError }

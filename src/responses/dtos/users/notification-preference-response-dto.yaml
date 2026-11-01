@@ -1,8 +1,8 @@
 type: object
 x-apidog-folder: "NotificationPreference/Response"
 title: NotificationPreferenceDetailResponseDto
-description: Danh sách tùy biến thông báo của người dùng hiện tại
+description: Cài đặt bật/tắt push theo nhóm notification.
 properties:
-  type: { type: string, enum: [invoice, chat, issue, match, account] , description: "Thông tin type của tài nguyên trong ngữ cảnh DTO." }
-  enabled: { type: boolean , description: "Thông tin enabled của tài nguyên trong ngữ cảnh DTO." }
-required: [type, enabled]
+  type: { type: string, enum: [invoice, chat, issue] }
+  pushEnabled: { type: boolean, default: true }
+required: [type, pushEnabled]

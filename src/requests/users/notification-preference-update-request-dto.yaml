@@ -11,7 +11,7 @@ properties:
       type: object
       additionalProperties: false
       properties:
-        type: { type: string, enum: [invoice, chat, issue, match, account] , description: "Thông tin type của tài nguyên trong ngữ cảnh DTO." }
-        enabled: { type: boolean , description: "Thông tin enabled của tài nguyên trong ngữ cảnh DTO." }
-      required: [type, enabled]
+        type: { type: string, enum: [invoice, chat, issue] }
+        pushEnabled: { type: boolean, description: Tắt push không làm mất notification trong inbox. }
+      required: [type, pushEnabled]
 required: [preferences]

@@ -10,19 +10,10 @@ get:
   description: 'tenant, landlord. Liệt kê tin nhắn trong một hội thoại. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 INVALID
     CURSOR · 404 CONVERSATION NOT FOUND.'
   parameters:
-  - name: filter
+  - name: conversationId
     in: query
-    required: false
-    style: deepObject
-    explode: true
-    description: Bộ lọc được endpoint hỗ trợ.
-    schema:
-      type: object
-      additionalProperties: false
-      properties:
-        conversationId:
-          type: string
-          format: uuid
+    required: true
+    schema: { type: string, format: uuid }
   - name: cursor
     in: query
     description: Cursor opaque từ trang trước; bỏ qua ở trang đầu.

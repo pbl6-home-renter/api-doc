@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "PBL6 Home Renter API Specification",
-    "description": "Tài liệu đặc tả hợp đồng API cho dự án PBL6 (Hệ thống quản lý nhà trọ và tìm bạn ở ghép). Được đồng bộ trực tiếp với Apidog từ Git repository theo kiến trúc modular component.\n\n<!-- contract-changelog -->\n**Thay đổi contract gần đây (không gắn endpoint)**\n\n| Vị trí | Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|---|\n| specification | 2026-10-30 | 🟡 NEEDS_REVIEW | Có khác biệt cấu trúc/metadata nhưng engine không phân loại tác động; xem bảng trước/sau. | [#28](https://github.com/pbl6-home-renter/api-doc/pull/28) |\n",
+    "description": "Tài liệu đặc tả hợp đồng API cho dự án PBL6 (Hệ thống quản lý nhà trọ và tìm bạn ở ghép). Được đồng bộ trực tiếp với Apidog từ Git repository theo kiến trúc modular component.\n\n<!-- contract-changelog -->\n**Thay đổi contract gần đây (không gắn endpoint)**\n\n| Vị trí | Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|---|\n| specification | 2026-10-30 | 🟡 NEEDS_REVIEW | Có khác biệt cấu trúc/metadata nhưng engine không phân loại tác động; xem bảng trước/sau. | [#28](https://github.com/pbl6-home-renter/api-doc/pull/28) |\n| POST /conversations/resolve-conversation | 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| POST /conversations/resolve-conversation | 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
     "version": "1.0.0"
   },
   "servers": [
@@ -20034,20 +20034,25 @@
         "description": "tenant, landlord. Liệt kê các hội thoại của người gọi. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 VALIDATION FAILED.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "parameters": [
           {
-            "name": "filter",
+            "name": "contextType",
             "in": "query",
             "required": false,
-            "style": "deepObject",
-            "explode": true,
-            "description": "Bộ lọc được endpoint hỗ trợ.",
             "schema": {
-              "type": "object",
-              "additionalProperties": false,
-              "properties": {
-                "type": {
-                  "type": "string"
-                }
-              }
+              "type": "string",
+              "enum": [
+                "contract",
+                "building"
+              ]
+            },
+            "description": "Khi dùng cùng contextId, tra cứu hội thoại context đã được tạo bởi event nguồn."
+          },
+          {
+            "name": "contextId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
             }
           },
           {
@@ -20195,6 +20200,118 @@
             "$ref": "#/components/responses/AuthUnavailableError"
           }
         }
+      },
+      "post": {
+        "tags": [
+          "Chat"
+        ],
+        "operationId": "createConversation",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "Tạo chat trực tiếp hoặc nhóm",
+        "description": "Chat trực tiếp dùng lại hội thoại duy nhất của cặp user; chat nhóm tạo mới và caller trở thành admin.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "kind"
+                ],
+                "properties": {
+                  "kind": {
+                    "type": "string",
+                    "enum": [
+                      "direct",
+                      "group"
+                    ]
+                  },
+                  "recipientUserId": {
+                    "type": "string",
+                    "format": "uuid",
+                    "description": "Bắt buộc với direct."
+                  },
+                  "memberUserIds": {
+                    "type": "array",
+                    "uniqueItems": true,
+                    "items": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "description": "Thành viên ban đầu của group; không cần gồm caller."
+                  },
+                  "title": {
+                    "type": "string",
+                    "maxLength": 255
+                  },
+                  "avatarMediaId": {
+                    "type": "string",
+                    "format": "uuid"
+                  }
+                }
+              },
+              "example": {
+                "kind": "group",
+                "memberUserIds": [
+                  "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                ],
+                "title": "Nhóm trao đổi"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Hội thoại được tạo hoặc chat direct hiện có được mở lại.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "statusCode",
+                    "code",
+                    "data"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        201
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "CONVERSATION_CREATED",
+                        "CONVERSATION_REOPENED"
+                      ]
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/ConversationDetailResponseDto"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequestBodyError"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "422": {
+            "$ref": "#/components/responses/ValidationError"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
       }
     },
     "/conversations/{conversationId}": {
@@ -20291,44 +20408,409 @@
             "$ref": "#/components/responses/AuthUnavailableError"
           }
         }
-      }
-    },
-    "/conversations/resolve-conversation": {
-      "post": {
+      },
+      "patch": {
         "tags": [
           "Chat"
         ],
-        "x-apidog-folder": "Conversation",
-        "x-apidog-status": "designing",
-        "operationId": "postConversationsResolveConversation",
+        "operationId": "updateConversation",
         "security": [
           {
             "BearerAuth": []
           }
         ],
-        "summary": "Resolve conversation",
-        "description": "tenant, landlord. Lấy hội thoại của phòng hoặc tòa nhà. Lỗi nghiệp vụ: 422 EXACTLY ONE CONTEXT REQUIRED · 403 FORBIDDEN · 404 CONTEXT NOT FOUND.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
+        "summary": "Sửa tên hoặc ảnh nhóm",
+        "description": "Chỉ admin group; thay đổi tạo system message và Socket event. Không áp dụng cho direct chat.",
+        "parameters": [
+          {
+            "name": "conversationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/ConversationResolveRequestDto"
-              },
-              "example": {
-                "contractId": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                "type": "object",
+                "additionalProperties": false,
+                "minProperties": 1,
+                "properties": {
+                  "title": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 255,
+                    "nullable": true
+                  },
+                  "avatarMediaId": {
+                    "type": "string",
+                    "format": "uuid",
+                    "nullable": true
+                  }
+                }
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Thành công: Lấy hội thoại của phòng hoặc tòa nhà.",
+            "description": "Thông tin nhóm được cập nhật."
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "403": {
+            "$ref": "#/components/responses/ForbiddenError"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundError"
+          },
+          "422": {
+            "$ref": "#/components/responses/ValidationError"
+          }
+        }
+      }
+    },
+    "/conversations/{conversationId}/members": {
+      "parameters": [
+        {
+          "name": "conversationId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      ],
+      "get": {
+        "tags": [
+          "Chat"
+        ],
+        "operationId": "listConversationMembers",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "Xem thành viên hội thoại",
+        "description": "Thành viên active và read_only có thể xem danh sách nếu còn quyền đọc.",
+        "responses": {
+          "200": {
+            "description": "Danh sách thành viên.",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "additionalProperties": false,
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/ConversationMember"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "403": {
+            "$ref": "#/components/responses/ForbiddenError"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Chat"
+        ],
+        "operationId": "addConversationMembers",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "Thêm thành viên nhóm",
+        "description": "Chỉ admin nhóm; membership cũ được kích hoạt lại và người được thêm xem toàn bộ lịch sử.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "userIds"
+                ],
+                "properties": {
+                  "userIds": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                      "type": "string",
+                      "format": "uuid"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Thành viên được thêm hoặc kích hoạt lại."
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "403": {
+            "$ref": "#/components/responses/ForbiddenError"
+          },
+          "422": {
+            "$ref": "#/components/responses/ValidationError"
+          }
+        }
+      }
+    },
+    "/conversations/{conversationId}/members/{userId}": {
+      "parameters": [
+        {
+          "name": "conversationId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        {
+          "name": "userId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      ],
+      "delete": {
+        "tags": [
+          "Chat"
+        ],
+        "operationId": "removeConversationMember",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "Xóa thành viên khỏi nhóm",
+        "description": "Admin có thể xóa thành viên; membership chuyển read_only, chỉ đọc đến leftSequence. Admin cuối cùng được chuyển tự động.",
+        "responses": {
+          "200": {
+            "description": "Thành viên bị thu hồi quyền gửi và nhận realtime."
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "403": {
+            "$ref": "#/components/responses/ForbiddenError"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundError"
+          }
+        }
+      }
+    },
+    "/conversations/{conversationId}/members/{userId}/role": {
+      "parameters": [
+        {
+          "name": "conversationId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        {
+          "name": "userId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      ],
+      "put": {
+        "tags": [
+          "Chat"
+        ],
+        "operationId": "updateConversationMemberRole",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "Đổi vai trò thành viên",
+        "description": "Admin nhóm đặt vai trò admin hoặc member; không thể hạ admin cuối cùng.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "role"
+                ],
+                "properties": {
+                  "role": {
+                    "type": "string",
+                    "enum": [
+                      "admin",
+                      "member"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Vai trò đã được cập nhật; thay đổi tạo system message."
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "403": {
+            "$ref": "#/components/responses/ForbiddenError"
+          },
+          "422": {
+            "$ref": "#/components/responses/ValidationError"
+          }
+        }
+      }
+    },
+    "/conversations/{conversationId}/members/me": {
+      "parameters": [
+        {
+          "name": "conversationId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      ],
+      "delete": {
+        "tags": [
+          "Chat"
+        ],
+        "operationId": "leaveConversation",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "Rời nhóm chat",
+        "description": "Membership chuyển read_only và thành viên chỉ xem được lịch sử đến thời điểm rời.",
+        "responses": {
+          "200": {
+            "description": "Đã rời hội thoại; nếu là admin cuối thì quyền được chuyển cho thành viên tham gia sớm nhất."
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "403": {
+            "$ref": "#/components/responses/ForbiddenError"
+          }
+        }
+      }
+    },
+    "/conversations/{conversationId}/bot-reminders": {
+      "parameters": [
+        {
+          "name": "conversationId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      ],
+      "post": {
+        "tags": [
+          "Chat"
+        ],
+        "operationId": "sendBotReminder",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "Gửi bot reminder theo mẫu",
+        "description": "Landlord chọn mẫu và chủ động gửi; không có lịch tự động. Community kiểm tra quyền với tài nguyên, dựng nội dung bot message, lưu history, phát Socket và gửi push chat theo preference.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "templateType",
+                  "resourceId",
+                  "clientMessageId"
+                ],
+                "properties": {
+                  "templateType": {
+                    "type": "string",
+                    "enum": [
+                      "ocr_result",
+                      "invoice",
+                      "contract_expiring"
+                    ],
+                    "description": "Mẫu nội dung cần đăng."
+                  },
+                  "resourceId": {
+                    "type": "string",
+                    "format": "uuid",
+                    "description": "ID OCR result, invoice hoặc contract tương ứng với templateType."
+                  },
+                  "clientMessageId": {
+                    "type": "string",
+                    "format": "uuid",
+                    "description": "Idempotency key để retry không tạo bot message trùng."
+                  }
+                }
+              },
+              "example": {
+                "templateType": "invoice",
+                "resourceId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                "clientMessageId": "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Bot message được lưu và gửi.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
                   "required": [
                     "statusCode",
                     "code",
@@ -20338,34 +20820,22 @@
                     "statusCode": {
                       "type": "integer",
                       "enum": [
-                        200
+                        201
                       ]
                     },
                     "code": {
                       "type": "string",
                       "enum": [
-                        "CONVERSATION_RESOLVED"
+                        "BOT_REMINDER_SENT"
                       ]
                     },
                     "data": {
-                      "$ref": "#/components/schemas/ConversationResolveResponseDto"
+                      "$ref": "#/components/schemas/MessageSendResponseDto"
                     }
-                  }
-                },
-                "example": {
-                  "statusCode": 200,
-                  "code": "CONVERSATION_RESOLVED",
-                  "data": {
-                    "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-                    "type": "room",
-                    "contractId": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
                   }
                 }
               }
             }
-          },
-          "400": {
-            "$ref": "#/components/responses/BadRequestBodyError"
           },
           "401": {
             "$ref": "#/components/responses/UnauthorizedError"
@@ -20374,101 +20844,13 @@
             "$ref": "#/components/responses/ForbiddenError"
           },
           "404": {
-            "x-apidog-name": "Not Found",
-            "description": "Không tìm thấy tài nguyên được yêu cầu.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "additionalProperties": false,
-                  "required": [
-                    "statusCode",
-                    "code"
-                  ],
-                  "properties": {
-                    "statusCode": {
-                      "type": "integer",
-                      "enum": [
-                        404
-                      ]
-                    },
-                    "code": {
-                      "type": "string",
-                      "enum": [
-                        "CONTEXT_NOT_FOUND"
-                      ],
-                      "description": "- CONTEXT_NOT_FOUND: Không tìm thấy tài nguyên ngữ cảnh."
-                    }
-                  }
-                },
-                "examples": {
-                  "context_not_found": {
-                    "summary": "CONTEXT_NOT_FOUND — Không tìm thấy tài nguyên ngữ cảnh.",
-                    "value": {
-                      "statusCode": 404,
-                      "code": "CONTEXT_NOT_FOUND"
-                    }
-                  }
-                }
-              }
-            }
+            "$ref": "#/components/responses/NotFoundError"
           },
           "422": {
-            "x-apidog-name": "Unprocessable Entity",
-            "description": "Dữ liệu hợp lệ về cấu trúc nhưng vi phạm ràng buộc trường hoặc quy tắc nghiệp vụ.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "additionalProperties": false,
-                  "required": [
-                    "statusCode",
-                    "code"
-                  ],
-                  "properties": {
-                    "statusCode": {
-                      "type": "integer",
-                      "enum": [
-                        422
-                      ]
-                    },
-                    "code": {
-                      "type": "string",
-                      "enum": [
-                        "EXACTLY_ONE_CONTEXT_REQUIRED",
-                        "VALIDATION_FAILED"
-                      ],
-                      "description": "- EXACTLY_ONE_CONTEXT_REQUIRED: Phải chọn đúng một ngữ cảnh hội thoại.\n- VALIDATION_FAILED: Dữ liệu vi phạm ràng buộc schema hoặc quy tắc nghiệp vụ khác chưa có mã riêng."
-                    }
-                  }
-                },
-                "examples": {
-                  "exactly_one_context_required": {
-                    "summary": "EXACTLY_ONE_CONTEXT_REQUIRED — Phải chọn đúng một ngữ cảnh hội thoại.",
-                    "value": {
-                      "statusCode": 422,
-                      "code": "EXACTLY_ONE_CONTEXT_REQUIRED"
-                    }
-                  },
-                  "validation_failed": {
-                    "summary": "VALIDATION_FAILED — Dữ liệu vi phạm ràng buộc schema hoặc quy tắc nghiệp vụ khác chưa có mã riêng.",
-                    "value": {
-                      "statusCode": 422,
-                      "code": "VALIDATION_FAILED"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "429": {
-            "$ref": "#/components/responses/TooManyRequestsError"
+            "$ref": "#/components/responses/ValidationError"
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
-          },
-          "503": {
-            "$ref": "#/components/responses/AuthUnavailableError"
           }
         }
       }
@@ -20490,21 +20872,12 @@
         "description": "tenant, landlord. Liệt kê tin nhắn trong một hội thoại. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 INVALID CURSOR · 404 CONVERSATION NOT FOUND.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "parameters": [
           {
-            "name": "filter",
+            "name": "conversationId",
             "in": "query",
-            "required": false,
-            "style": "deepObject",
-            "explode": true,
-            "description": "Bộ lọc được endpoint hỗ trợ.",
+            "required": true,
             "schema": {
-              "type": "object",
-              "additionalProperties": false,
-              "properties": {
-                "conversationId": {
-                  "type": "string",
-                  "format": "uuid"
-                }
-              }
+              "type": "string",
+              "format": "uuid"
             }
           },
           {
@@ -20939,7 +21312,7 @@
               },
               "example": {
                 "conversationId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-                "lastReadMessageId": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                "lastReadSequence": 42
               }
             }
           }
@@ -29676,71 +30049,62 @@
         "type": "object",
         "x-apidog-folder": "Conversation/Response",
         "title": "ConversationListResponseDto",
-        "description": "Danh sách cuộc hội thoại trao đổi (theo phòng, theo tòa nhà, hoặc nhắn riêng)",
+        "description": "Hội thoại hiển thị trong danh sách của user hiện tại.",
         "properties": {
           "id": {
             "type": "string",
-            "format": "uuid",
-            "description": "Định danh duy nhất của cuộc hội thoại."
+            "format": "uuid"
           },
-          "type": {
+          "kind": {
             "type": "string",
             "enum": [
-              "room",
-              "building",
-              "direct"
-            ],
-            "description": "Phân loại hội thoại (room: nhóm phòng, building: nhóm cư dân tòa nhà, direct: nhắn tin trực tiếp 1-1).",
-            "example": "room"
+              "direct",
+              "group"
+            ]
+          },
+          "contextType": {
+            "type": "string",
+            "nullable": true,
+            "enum": [
+              "contract",
+              "building"
+            ]
+          },
+          "contextId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
           },
           "title": {
             "type": "string",
             "nullable": true,
-            "minLength": 1,
-            "maxLength": 255,
-            "description": "Tiêu đề hội thoại (VD: 'Phòng 201 - Nhà trọ Thanh Xuân')."
+            "maxLength": 255
           },
-          "avatarUrl": {
-            "type": "string",
-            "format": "uri",
-            "nullable": true,
-            "description": "Ảnh đại diện của hội thoại hoặc avatar người đối thoại."
-          },
-          "contextTag": {
-            "type": "string",
-            "nullable": true,
-            "description": "Tag ngữ cảnh hiển thị trên badge UI (VD: 'P.201', 'Tòa Thanh Xuân')."
-          },
-          "roomId": {
+          "avatarMediaId": {
             "type": "string",
             "format": "uuid",
-            "nullable": true,
-            "description": "Định danh phòng nếu là nhóm chat theo phòng."
-          },
-          "buildingId": {
-            "type": "string",
-            "format": "uuid",
-            "nullable": true,
-            "description": "Định danh tòa nhà nếu là nhóm chat theo tòa."
+            "nullable": true
           },
           "unreadCount": {
             "type": "integer",
-            "minimum": 0,
-            "description": "Số lượng tin nhắn chưa đọc của người dùng hiện tại."
+            "minimum": 0
           },
           "lastMessage": {
             "type": "object",
             "nullable": true,
-            "description": "Tóm tắt nội dung tin nhắn mới nhất",
             "properties": {
               "id": {
                 "type": "string",
                 "format": "uuid"
               },
+              "sequence": {
+                "type": "integer",
+                "format": "int64"
+              },
               "senderName": {
                 "type": "string"
               },
-              "content": {
+              "contentPreview": {
                 "type": "string"
               },
               "type": {
@@ -29748,7 +30112,7 @@
                 "enum": [
                   "text",
                   "image",
-                  "file",
+                  "system",
                   "bot"
                 ]
               },
@@ -29757,18 +30121,11 @@
                 "format": "date-time"
               }
             }
-          },
-          "lastMessageAt": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true,
-            "description": "Thời điểm gửi tin nhắn gần nhất."
           }
         },
         "required": [
           "id",
-          "type",
-          "title",
+          "kind",
           "unreadCount"
         ]
       },
@@ -29776,54 +30133,57 @@
         "type": "object",
         "x-apidog-folder": "Conversation/Response",
         "title": "ConversationDetailResponseDto",
-        "description": "Chi tiết cuộc hội thoại",
         "properties": {
           "id": {
             "type": "string",
-            "format": "uuid",
-            "description": "Định danh duy nhất của tài nguyên."
+            "format": "uuid"
           },
-          "type": {
+          "kind": {
             "type": "string",
             "enum": [
-              "room",
-              "building",
-              "direct"
-            ],
-            "description": "Thông tin type của tài nguyên trong ngữ cảnh DTO."
+              "direct",
+              "group"
+            ]
           },
-          "roomId": {
+          "contextType": {
+            "type": "string",
+            "nullable": true,
+            "enum": [
+              "contract",
+              "building"
+            ]
+          },
+          "contextId": {
             "type": "string",
             "format": "uuid",
-            "nullable": true,
-            "description": "Định danh duy nhất của phòng liên quan."
-          },
-          "contractId": {
-            "type": "string",
-            "format": "uuid",
-            "nullable": true,
-            "description": "Định danh duy nhất của hợp đồng liên quan."
+            "nullable": true
           },
           "title": {
             "type": "string",
             "nullable": true,
-            "minLength": 1,
-            "maxLength": 255,
-            "description": "Thông tin title của tài nguyên trong ngữ cảnh DTO."
+            "maxLength": 255
+          },
+          "avatarMediaId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
           },
           "unreadCount": {
             "type": "integer",
-            "minimum": 0,
-            "description": "Thông tin unread count của tài nguyên trong ngữ cảnh DTO."
+            "minimum": 0
+          },
+          "members": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ConversationMember"
+            }
           }
         },
         "required": [
           "id",
-          "type",
-          "roomId",
-          "contractId",
-          "title",
-          "unreadCount"
+          "kind",
+          "unreadCount",
+          "members"
         ]
       },
       "ConversationResolveResponseDto": {
@@ -29863,7 +30223,7 @@
         "type": "object",
         "x-apidog-folder": "Message/Request",
         "title": "MessageSendRequestDto",
-        "description": "Dữ liệu gửi tin nhắn trong cuộc hội thoại (hỗ trợ tag người dùng @User hoặc tag phòng @Room)",
+        "description": "Dữ liệu gửi một tin nhắn text hoặc một ảnh vào hội thoại.",
         "additionalProperties": false,
         "properties": {
           "conversationId": {
@@ -29872,13 +30232,16 @@
             "description": "Định danh duy nhất của cuộc hội thoại nhận tin nhắn.",
             "example": "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d"
           },
+          "clientMessageId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "ID duy nhất do client tạo để retry an toàn."
+          },
           "type": {
             "type": "string",
             "enum": [
               "text",
-              "image",
-              "file",
-              "bot"
+              "image"
             ],
             "description": "Phân loại nội dung tin nhắn.",
             "example": "text"
@@ -29888,53 +30251,19 @@
             "nullable": true,
             "maxLength": 4000,
             "description": "Nội dung văn bản của tin nhắn.",
-            "example": "Chào bạn @Lê Văn C, phòng @P.201 hôm nay có ai ở nhà không?"
+            "example": "Chào bạn, hôm nay có ai ở nhà không?"
           },
           "mediaId": {
             "type": "string",
             "format": "uuid",
             "nullable": true,
-            "description": "ID tệp tin phương tiện đính kèm nếu type là image hoặc file.",
+            "description": "ID ảnh đã upload nếu type là image.",
             "example": null
-          },
-          "mentions": {
-            "type": "array",
-            "nullable": true,
-            "description": "Danh sách các đối tượng được nhắc đến / tag tên trong tin nhắn (tag người dùng hoặc tag phòng)",
-            "items": {
-              "type": "object",
-              "properties": {
-                "type": {
-                  "type": "string",
-                  "enum": [
-                    "USER",
-                    "ROOM"
-                  ],
-                  "description": "Loại đối tượng được tag",
-                  "example": "USER"
-                },
-                "id": {
-                  "type": "string",
-                  "format": "uuid",
-                  "description": "Định danh UUID của user hoặc phòng được tag",
-                  "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
-                },
-                "displayName": {
-                  "type": "string",
-                  "description": "Tên hiển thị kèm theo dấu @",
-                  "example": "Lê Văn C"
-                }
-              },
-              "required": [
-                "type",
-                "id",
-                "displayName"
-              ]
-            }
           }
         },
         "required": [
           "conversationId",
+          "clientMessageId",
           "type"
         ]
       },
@@ -29950,15 +30279,16 @@
             "format": "uuid",
             "description": "Thông tin conversation id của tài nguyên trong ngữ cảnh DTO."
           },
-          "lastReadMessageId": {
-            "type": "string",
-            "format": "uuid",
-            "description": "Thông tin last read message id của tài nguyên trong ngữ cảnh DTO."
+          "lastReadSequence": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 0,
+            "description": "Sequence cuối đã đọc; server chỉ chấp nhận cursor tiến lên."
           }
         },
         "required": [
           "conversationId",
-          "lastReadMessageId"
+          "lastReadSequence"
         ]
       },
       "MessageListResponseDto": {
@@ -29977,26 +30307,45 @@
             "format": "uuid",
             "description": "Thông tin conversation id của tài nguyên trong ngữ cảnh DTO."
           },
-          "senderId": {
+          "senderUserId": {
             "type": "string",
             "format": "uuid",
-            "nullable": true,
-            "description": "Thông tin sender id của tài nguyên trong ngữ cảnh DTO."
+            "nullable": true
+          },
+          "senderType": {
+            "type": "string",
+            "enum": [
+              "user",
+              "system"
+            ]
+          },
+          "sequence": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 1
+          },
+          "clientMessageId": {
+            "type": "string",
+            "format": "uuid"
           },
           "type": {
             "type": "string",
             "enum": [
               "text",
               "image",
-              "file",
+              "system",
               "bot"
-            ],
-            "description": "Thông tin type của tài nguyên trong ngữ cảnh DTO."
+            ]
           },
           "content": {
             "type": "string",
             "nullable": true,
             "description": "Thông tin content của tài nguyên trong ngữ cảnh DTO."
+          },
+          "mediaId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
           },
           "createdAt": {
             "type": "string",
@@ -30007,7 +30356,8 @@
         "required": [
           "id",
           "conversationId",
-          "senderId",
+          "senderType",
+          "sequence",
           "type",
           "content",
           "createdAt"
@@ -30034,15 +30384,28 @@
             "enum": [
               "text",
               "image",
-              "file",
+              "system",
               "bot"
-            ],
-            "description": "Thông tin type của tài nguyên trong ngữ cảnh DTO."
+            ]
           },
           "content": {
             "type": "string",
             "nullable": true,
             "description": "Thông tin content của tài nguyên trong ngữ cảnh DTO."
+          },
+          "mediaId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "sequence": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 1
+          },
+          "clientMessageId": {
+            "type": "string",
+            "format": "uuid"
           },
           "createdAt": {
             "type": "string",
@@ -30055,6 +30418,8 @@
           "conversationId",
           "type",
           "content",
+          "sequence",
+          "clientMessageId",
           "createdAt"
         ]
       },
@@ -30084,35 +30449,66 @@
         "type": "object",
         "x-apidog-folder": "Notification/Response",
         "title": "NotificationListResponseDto",
-        "description": "Danh sách thông báo theo cursor",
+        "description": "Notification business đã lưu cho recipient, không chứa message chat.",
         "properties": {
           "id": {
             "type": "string",
-            "format": "uuid",
-            "description": "Định danh duy nhất của tài nguyên."
+            "format": "uuid"
+          },
+          "recipientUserId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "sourceService": {
+            "type": "string"
+          },
+          "eventId": {
+            "type": "string",
+            "format": "uuid"
           },
           "type": {
             "type": "string",
-            "minLength": 1,
-            "maxLength": 50,
-            "description": "Thông tin type của tài nguyên trong ngữ cảnh DTO."
+            "enum": [
+              "invoice",
+              "issue"
+            ]
+          },
+          "title": {
+            "type": "string",
+            "maxLength": 255
+          },
+          "body": {
+            "type": "string",
+            "maxLength": 2000
+          },
+          "deepLink": {
+            "type": "string",
+            "nullable": true
           },
           "data": {
             "type": "object",
             "nullable": true,
-            "description": "Dữ liệu kết quả của thao tác."
+            "additionalProperties": true
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
           },
           "readAt": {
             "type": "string",
             "format": "date-time",
-            "nullable": true,
-            "description": "Thời điểm thông báo được đọc; null nghĩa là chưa đọc."
+            "nullable": true
           }
         },
         "required": [
           "id",
+          "recipientUserId",
+          "sourceService",
+          "eventId",
           "type",
-          "data",
+          "title",
+          "body",
+          "createdAt",
           "readAt"
         ]
       },
@@ -30173,20 +30569,17 @@
                   "enum": [
                     "invoice",
                     "chat",
-                    "issue",
-                    "match",
-                    "account"
-                  ],
-                  "description": "Thông tin type của tài nguyên trong ngữ cảnh DTO."
+                    "issue"
+                  ]
                 },
-                "enabled": {
+                "pushEnabled": {
                   "type": "boolean",
-                  "description": "Thông tin enabled của tài nguyên trong ngữ cảnh DTO."
+                  "description": "Tắt push không làm mất notification trong inbox."
                 }
               },
               "required": [
                 "type",
-                "enabled"
+                "pushEnabled"
               ]
             }
           }
@@ -30199,27 +30592,24 @@
         "type": "object",
         "x-apidog-folder": "NotificationPreference/Response",
         "title": "NotificationPreferenceDetailResponseDto",
-        "description": "Danh sách tùy biến thông báo của người dùng hiện tại",
+        "description": "Cài đặt bật/tắt push theo nhóm notification.",
         "properties": {
           "type": {
             "type": "string",
             "enum": [
               "invoice",
               "chat",
-              "issue",
-              "match",
-              "account"
-            ],
-            "description": "Thông tin type của tài nguyên trong ngữ cảnh DTO."
+              "issue"
+            ]
           },
-          "enabled": {
+          "pushEnabled": {
             "type": "boolean",
-            "description": "Thông tin enabled của tài nguyên trong ngữ cảnh DTO."
+            "default": true
           }
         },
         "required": [
           "type",
-          "enabled"
+          "pushEnabled"
         ]
       },
       "NotificationPreferenceUpdateResponseDto": {
@@ -32856,7 +33246,7 @@
         "type": "object",
         "x-apidog-folder": "Conversation",
         "title": "Conversation",
-        "description": "Cuộc hội thoại chat (room chat theo hợp đồng, building chat, hoặc direct chat)",
+        "description": "Hội thoại chat generic, có thể là chat tự do hoặc gắn với một context nghiệp vụ.",
         "allOf": [
           {
             "$ref": "#/components/schemas/BaseEntity"
@@ -32864,35 +33254,30 @@
           {
             "type": "object",
             "properties": {
-              "type": {
+              "kind": {
                 "type": "string",
                 "enum": [
-                  "room",
-                  "building",
-                  "direct"
+                  "direct",
+                  "group"
                 ],
-                "description": "Loại cuộc trò chuyện",
-                "example": "room"
+                "description": "Kiểu hội thoại.",
+                "example": "group"
               },
-              "roomId": {
+              "contextType": {
+                "type": "string",
+                "nullable": true,
+                "enum": [
+                  "contract",
+                  "building"
+                ],
+                "description": "Loại tài nguyên liên kết; bỏ trống với chat tự do.",
+                "example": "contract"
+              },
+              "contextId": {
                 "type": "string",
                 "format": "uuid",
                 "nullable": true,
-                "description": "ID phòng liên kết (bắt buộc khi type = room)",
-                "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
-              },
-              "buildingId": {
-                "type": "string",
-                "format": "uuid",
-                "nullable": true,
-                "description": "ID tòa nhà liên kết (bắt buộc khi type = building)",
-                "example": null
-              },
-              "contractId": {
-                "type": "string",
-                "format": "uuid",
-                "nullable": true,
-                "description": "ID hợp đồng liên kết (bắt buộc khi type = room)",
+                "description": "ID tài nguyên liên kết.",
                 "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
               },
               "title": {
@@ -32902,10 +33287,21 @@
                 "maxLength": 255,
                 "description": "Tiêu đề cuộc hội thoại",
                 "example": "Chat tòa nhà Thanh Xuân"
+              },
+              "avatarMediaId": {
+                "type": "string",
+                "format": "uuid",
+                "nullable": true,
+                "description": "ID ảnh đại diện nhóm trong Media Service."
+              },
+              "unreadCount": {
+                "type": "integer",
+                "minimum": 0,
+                "description": "Số tin chưa đọc của user hiện tại."
               }
             },
             "required": [
-              "type"
+              "kind"
             ]
           }
         ]
@@ -32931,8 +33327,32 @@
               "userId": {
                 "type": "string",
                 "format": "uuid",
+                "nullable": true,
                 "description": "ID người dùng tham gia",
                 "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+              },
+              "participantType": {
+                "type": "string",
+                "enum": [
+                  "user",
+                  "system"
+                ],
+                "description": "Phân biệt user với participant hệ thống như bot."
+              },
+              "role": {
+                "type": "string",
+                "enum": [
+                  "admin",
+                  "member",
+                  "system"
+                ]
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "active",
+                  "read_only"
+                ]
               },
               "joinedAt": {
                 "type": "string",
@@ -32944,13 +33364,27 @@
                 "type": "string",
                 "format": "date-time",
                 "nullable": true,
-                "description": "Thời điểm rời khỏi nhóm chat (vẫn giữ quyền đọc lịch sử cũ)",
+                "description": "Thời điểm rời hoặc bị xóa khỏi hội thoại.",
                 "example": null
+              },
+              "leftSequence": {
+                "type": "integer",
+                "format": "int64",
+                "nullable": true,
+                "description": "Tin cuối được phép đọc khi membership ở trạng thái read_only."
+              },
+              "lastReadSequence": {
+                "type": "integer",
+                "format": "int64",
+                "minimum": 0,
+                "description": "Sequence cuối đã đọc; unread tính từ sequence kế tiếp."
               }
             },
             "required": [
               "conversationId",
-              "userId",
+              "participantType",
+              "role",
+              "status",
               "joinedAt"
             ]
           }
@@ -32960,7 +33394,7 @@
         "type": "object",
         "x-apidog-folder": "Message",
         "title": "Message",
-        "description": "Tin nhắn trao đổi trong cuộc hội thoại (hỗ trợ text, ảnh, file hoặc tin nhắn bot)",
+        "description": "Tin nhắn text, ảnh, system hoặc bot trong hội thoại.",
         "allOf": [
           {
             "$ref": "#/components/schemas/BaseEntity"
@@ -32974,19 +33408,26 @@
                 "description": "ID cuộc hội thoại chứa tin nhắn",
                 "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
               },
-              "senderId": {
+              "senderUserId": {
                 "type": "string",
                 "format": "uuid",
                 "nullable": true,
-                "description": "ID người gửi tin nhắn (null đối với thông báo từ bot)",
+                "description": "ID user gửi; null với system message và bot.",
                 "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+              },
+              "senderType": {
+                "type": "string",
+                "enum": [
+                  "user",
+                  "system"
+                ]
               },
               "type": {
                 "type": "string",
                 "enum": [
                   "text",
                   "image",
-                  "file",
+                  "system",
                   "bot"
                 ],
                 "description": "Loại tin nhắn",
@@ -32997,43 +33438,32 @@
                 "nullable": true,
                 "description": "Nội dung tin nhắn dạng văn bản",
                 "example": "Đã chốt số điện tháng 09: 180 kWh"
+              },
+              "mediaId": {
+                "type": "string",
+                "format": "uuid",
+                "nullable": true,
+                "description": "Media ID của ảnh đã upload qua Media Service."
+              },
+              "sequence": {
+                "type": "integer",
+                "format": "int64",
+                "minimum": 1
+              },
+              "clientMessageId": {
+                "type": "string",
+                "format": "uuid",
+                "description": "ID idempotency do client tạo."
+              },
+              "payload": {
+                "type": "object",
+                "nullable": true,
+                "description": "Dữ liệu có cấu trúc cho system/bot message."
               }
             },
             "required": [
               "conversationId",
               "type"
-            ]
-          }
-        ]
-      },
-      "MessageMention": {
-        "type": "object",
-        "x-apidog-folder": "MessageMention",
-        "title": "MessageMention",
-        "description": "Người dùng được @tag trong tin nhắn chat",
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/BaseEntity"
-          },
-          {
-            "type": "object",
-            "properties": {
-              "messageId": {
-                "type": "string",
-                "format": "uuid",
-                "description": "ID tin nhắn chứa lượt nhắc tên",
-                "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
-              },
-              "userId": {
-                "type": "string",
-                "format": "uuid",
-                "description": "ID người dùng được @tag",
-                "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
-              }
-            },
-            "required": [
-              "messageId",
-              "userId"
             ]
           }
         ]
@@ -33266,7 +33696,7 @@
             "type": "string",
             "enum": [
               "android",
-              "web"
+              "ios"
             ],
             "description": "Nền tảng thiết bị",
             "example": "android"
@@ -33300,7 +33730,7 @@
             "type": "string",
             "enum": [
               "android",
-              "web"
+              "ios"
             ],
             "description": "Nền tảng thiết bị",
             "example": "android"

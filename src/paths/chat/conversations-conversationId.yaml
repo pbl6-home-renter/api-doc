@@ -62,3 +62,32 @@ get:
       $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
     '500':
       $ref: ../../openapi.yaml#/components/responses/InternalServerError
+
+patch:
+  tags: [Chat]
+  operationId: updateConversation
+  security: [{ BearerAuth: [] }]
+  summary: Sửa tên hoặc ảnh nhóm
+  description: Chỉ admin group; thay đổi tạo system message và Socket event. Không áp dụng cho direct chat.
+  parameters:
+    - name: conversationId
+      in: path
+      required: true
+      schema: { type: string, format: uuid }
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          type: object
+          additionalProperties: false
+          minProperties: 1
+          properties:
+            title: { type: string, minLength: 1, maxLength: 255, nullable: true }
+            avatarMediaId: { type: string, format: uuid, nullable: true }
+  responses:
+    '200': { description: Thông tin nhóm được cập nhật. }
+    '401': { $ref: ../../openapi.yaml#/components/responses/UnauthorizedError }
+    '403': { $ref: ../../openapi.yaml#/components/responses/ForbiddenError }
+    '404': { $ref: ../../openapi.yaml#/components/responses/NotFoundError }
+    '422': { $ref: ../../openapi.yaml#/components/responses/ValidationError }
