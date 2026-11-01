@@ -2,12 +2,36 @@ get:
   tags:
   - Contract
   x-apidog-folder: ContractTemplate
-  x-apidog-status: designing
+  x-apidog-status: released
   operationId: getContractTemplatesTemplatekey
   security:
     - BearerAuth: []
   summary: Get contract template
-  description: 'landlord. Đọc một mẫu. Lỗi nghiệp vụ: 404 NOT FOUND.'
+  description: |-
+    Landlord. Endpoint đã triển khai trong Tenancy-Service.
+    Mẫu không tồn tại, inactive hoặc đã xóa mềm đều trả 404 RESOURCE_NOT_FOUND.
+    Response gồm templateKey, title, version và requiredVariables; không trả body HTML.
+    Mẫu seed hiện tại là standard-room-lease-v1. landlordName là biến tùy chọn;
+    tenantCccd chưa được điền tự động vì Contract hiện tại không có field này.
+
+    ```mermaid
+    sequenceDiagram
+        autonumber
+        participant GW as API Gateway
+        participant TEN as Tenancy
+        participant DB as Tenancy DB
+
+        GW->>TEN: GET /api/v1/contract-templates/{templateKey} + Bearer token
+        TEN->>TEN: Verify JWT, landlord role and active account
+        TEN->>DB: SELECT template WHERE template_key = templateKey AND is_deleted = false
+        DB-->>TEN: Template or null
+        alt Missing or inactive template
+            TEN-->>GW: 404 RESOURCE_NOT_FOUND
+        else Active template
+            TEN->>TEN: Map template metadata and requiredVariables
+            TEN-->>GW: 200 CONTRACT_TEMPLATE_FETCHED
+        end
+    ```
   parameters:
   - name: templateKey
     in: path
@@ -41,13 +65,19 @@ get:
             statusCode: 200
             code: CONTRACT_TEMPLATE_FETCHED
             data:
-              templateKey: standard_residential_v1
-              title: Residential lease
+              templateKey: standard-room-lease-v1
+              title: Hợp đồng thuê phòng trọ
               version: '1.0'
               requiredVariables:
-              - landlordName
               - tenantName
+              - tenantPhone
+              - roomName
+              - buildingAddress
               - rentPrice
+              - depositAmount
+              - startDate
+              - endDate
+              - paymentDueDay
     '400':
       $ref: ../../openapi.yaml#/components/responses/BadRequestPathError
     '401':

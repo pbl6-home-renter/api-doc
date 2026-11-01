@@ -5,18 +5,17 @@ description: Danh sách hợp đồng thuê phòng dành cho chủ nhà quản l
 
 properties:
   id: { type: string, format: uuid, description: "Định danh duy nhất của hợp đồng." }
-  contractCode: { type: string, description: "Mã hợp đồng hiển thị trên giao diện (VD: HD-2026-0012)." }
+  contractCode: { type: string, example: "HD-3fa85f", description: "Mã hiển thị HD-<6 ký tự đầu id>, được suy ra từ id; không phải cột lưu riêng hoặc mã bảo đảm duy nhất." }
   roomId: { type: string, format: uuid, description: "Định danh duy nhất của phòng liên quan." }
   roomName: { type: string, description: "Tên phòng trọ (VD: P.201)." }
-  tenantName: { type: string, description: "Họ tên người đại diện ký hợp đồng." }
-  tenantPhone: { type: string, description: "Số điện thoại người đại diện." }
+  tenantName: { type: string, nullable: true, description: "Họ tên người thuê; có thể null khi liên kết tenantId và chưa lưu thông tin liên hệ." }
+  tenantPhone: { type: string, nullable: true, description: "Số điện thoại người thuê; có thể null khi liên kết tenantId và chưa lưu thông tin liên hệ." }
   status:
     type: string
     enum: [draft, signed, active, suspended, expired, terminated]
     description: "Trạng thái hợp đồng (draft: nháp, signed: đã ký, active: đang hiệu lực, suspended: tạm dừng, expired: hết hạn, terminated: đã thanh lý)."
-  rentalType: { type: string, enum: [MONTHLY, DAILY], description: "Hình thức thuê dài hạn hoặc ngắn hạn theo ngày." }
-  rentPrice: { type: integer, minimum: 0, description: "Giá thuê theo chu kỳ (VNĐ)." }
-  depositAmount: { type: integer, minimum: 0, description: "Tiền đặt cọc phòng (VNĐ)." }
+  rentPrice: { type: number, minimum: 0, description: "Giá thuê dài hạn (VNĐ)." }
+  depositAmount: { type: number, minimum: 0, description: "Tiền đặt cọc phòng (VNĐ)." }
   startDate: { type: string, format: date, description: "Thời điểm bắt đầu hợp đồng." }
   endDate: { type: string, format: date, description: "Thời điểm kết thúc hợp đồng." }
 

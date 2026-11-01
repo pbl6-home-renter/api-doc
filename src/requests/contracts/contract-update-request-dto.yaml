@@ -4,5 +4,5 @@ title: ContractUpdateRequestDto
 description: Dữ liệu cập nhật hợp đồng nháp
 additionalProperties: false
 properties:
-  description: { type: string, nullable: true, minLength: 1, maxLength: 500 , description: "Thông tin description của tài nguyên trong ngữ cảnh DTO." }
+  description: { type: string, nullable: true, minLength: 1, maxLength: 500, pattern: '\S', description: "Ghi chú mới, không được chỉ chứa khoảng trắng; null để xóa ghi chú." }
 required: [description]

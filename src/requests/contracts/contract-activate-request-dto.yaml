@@ -1,8 +1,18 @@
 type: object
 x-apidog-folder: "Contract/Request"
 title: ContractActivateRequestDto
-description: Dữ liệu kích hoạt hợp đồng
+description: >-
+  Body chỉ có signedContractMediaId bắt buộc, không nhận bytes file hay OTP/PIN.
+  Thiếu/null trả 422 VALIDATION_FAILED, UUID sai trả 422 INVALID_UUID,
+  field ngoài DTO trả 422 UNEXPECTED_FIELD. Điều kiện file ký được kiểm tra qua Identity trước transaction.
 additionalProperties: false
 properties:
-  signedContractMediaId: { type: string, format: uuid , description: "Thông tin signed contract media id của tài nguyên trong ngữ cảnh DTO." }
+  signedContractMediaId:
+    type: string
+    format: uuid
+    description: >-
+      ID Media của bản hợp đồng đã ký. Validator hiện nhận UUID v1 đến v5.
+      Adapter yêu cầu media có id khớp giá trị này, ownerType = contract,
+      ownerId = contractId trên URL, purpose = contract_signed và status = uploaded.
+      Giữ nguyên UUID do API trả về vì handler chưa chuẩn hóa hoa/thường khi đối chiếu.
 required: [signedContractMediaId]

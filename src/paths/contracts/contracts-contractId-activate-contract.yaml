@@ -6,9 +6,106 @@ post:
   operationId: postContractsContractidActivateContract
   security:
     - BearerAuth: []
-  summary: Activate contract
-  description: 'landlord. Kích hoạt hợp đồng đã ký. Lỗi nghiệp vụ: 409 CONTRACT NOT READY · 409 SIGNED FILE MISSING
-    · 403 FORBIDDEN.'
+  summary: Activate signed contract
+  description: |-
+    Landlord, yêu cầu JWT hợp lệ và tài khoản không bị khóa. Body chỉ gồm signedContractMediaId.
+    contractId sai định dạng UUID trả 400 BAD_REQUEST theo ParseUUIDPipe.
+    Thiếu hoặc null signedContractMediaId trả 422 VALIDATION_FAILED; UUID của file không hợp lệ trả
+    422 INVALID_UUID; field ngoài DTO trả 422 UNEXPECTED_FIELD.
+
+    Tenancy kiểm tra media trước khi mở transaction, qua GET /internal/media/{signedContractMediaId}
+    của Identity bằng service token. Adapter yêu cầu phần data của response envelope gồm
+    id, ownerType, ownerId, purpose và status. Chỉ chấp nhận id khớp signedContractMediaId,
+    ownerType = contract, ownerId = contractId, purpose = contract_signed và status = uploaded.
+    Identity timeout, không kết nối được, lỗi 5xx hoặc từ chối service token trả 503 SERVICE_UNAVAILABLE.
+    Các lỗi 4xx khác từ Identity được truyền nguyên trạng. Chưa xác minh được file thì không kích hoạt.
+
+    Sau khi media hợp lệ, trong cùng transaction: khóa hợp đồng, kiểm tra hợp đồng chưa bị xóa
+    và landlordId = user.id, khóa phòng, kích hoạt hợp đồng và chuyển phòng sang occupied.
+    Hợp đồng hoặc phòng không tồn tại/đã xóa trả 404 RESOURCE_NOT_FOUND; khác landlord trả 403 FORBIDDEN.
+    Vi phạm unique index UQ_contracts_room_active trả 409 ACTIVE_CONTRACT_EXISTS.
+    Vì media được kiểm tra trước, media không hợp lệ có thể trả 409 trước khi kiểm tra 404/403 của hợp đồng.
+
+    **Điều kiện lỗi theo Contract**
+
+    - `409 SIGNED_FILE_MISSING`: xảy ra khi có ít nhất một điều kiện:
+      media không tồn tại (Identity trả 404 hoặc response không có dữ liệu media);
+      `media.id` khác `signedContractMediaId`;
+      `ownerType` khác `contract`;
+      `ownerId` khác `contractId` trên URL;
+      `purpose` khác `contract_signed`;
+      hoặc file chưa upload xong (`status` khác `uploaded`). Không mở transaction ở nhánh này.
+    - `409 CONTRACT_NOT_READY`: hợp đồng không ở `draft` hoặc `signed`,
+      hoặc phòng không ở `available` (đang `maintenance` hoặc đã `occupied`).
+      Transaction rollback, không lưu thay đổi hợp đồng, phòng hoặc outbox.
+      Hợp đồng/phòng không tồn tại hoặc đã xóa được xử lý riêng bằng `404 RESOURCE_NOT_FOUND`.
+
+    Thành công trả 200 CONTRACT_ACTIVATED với id, status = active và activatedAt dạng ISO 8601 UTC.
+    activatedAt được lưu ở contracts.activated_at. Hợp đồng, phòng và hai outbox message
+    contract.activated, room.status_changed được ghi cùng transaction; lỗi ghi dữ liệu sẽ rollback.
+    Outbox relay publish sau khi commit. Không kiểm tra startDate so với ngày hiện tại; không dùng OTP/PIN.
+    Service chưa có rate limiter.
+
+    **Giới hạn tích hợp hiện tại:** Identity-Service local chưa triển khai GET /internal/media/{id};
+    response public complete-upload cũng chưa có field status. Dữ liệu ở trên là contract nội bộ
+    adapter đang yêu cầu, chưa phải endpoint media đã được triển khai. Nếu Identity trả 404 cho route
+    chưa có, Tenancy hiện trả 409 SIGNED_FILE_MISSING. signedContractMediaId được xác minh để kích hoạt,
+    nhưng hiện chưa được lưu trên Contract hoặc đưa vào event contract.activated.
+    Handler so sánh UUID theo chuỗi, chưa chuẩn hóa hoa/thường; giữ nguyên UUID do API trả về
+    để tránh bị từ chối nhầm bằng SIGNED_FILE_MISSING.
+
+    ```mermaid
+    sequenceDiagram
+        autonumber
+        participant GW as API Gateway
+        participant TEN as Tenancy
+        participant ID as Identity
+        participant DB as Tenancy DB
+        participant RELAY as Outbox Relay
+        participant MQ as RabbitMQ
+
+        GW->>TEN: POST /api/v1/contracts/{contractId}/activate-contract + Bearer token<br/>{signedContractMediaId}
+        TEN->>TEN: Verify JWT, landlord role, active account and request
+        TEN->>ID: GET /internal/media/{signedContractMediaId} + service token
+        alt Identity unavailable, timeout, 5xx or service-token rejection
+            TEN-->>GW: 503 SERVICE_UNAVAILABLE; no transaction
+        else Identity responds
+            ID-->>TEN: Response envelope containing media data, or 404
+            TEN->>TEN: Check id, ownerType, ownerId, purpose and uploaded status
+            alt Media missing, Identity 404 or media does not match
+                TEN-->>GW: 409 SIGNED_FILE_MISSING; no transaction
+            else Valid signed media
+                Note over TEN,DB: One transaction for contract + room + outbox
+                TEN->>DB: BEGIN; lock non-deleted contract FOR UPDATE
+                DB-->>TEN: Contract or null
+                TEN->>TEN: Require contract exists and landlordId = JWT user.id
+                alt Contract missing/deleted or wrong landlord
+                    TEN->>DB: ROLLBACK
+                    TEN-->>GW: 404 RESOURCE_NOT_FOUND / 403 FORBIDDEN
+                else Authorized contract
+                    TEN->>DB: Lock non-deleted room FOR UPDATE
+                    DB-->>TEN: Room or null
+                    TEN->>TEN: Require contract draft/signed and room available<br/>Maintenance or occupied room is not ready
+                    alt Room missing/deleted or contract/room not ready
+                        TEN->>DB: ROLLBACK
+                        TEN-->>GW: 404 RESOURCE_NOT_FOUND / 409 CONTRACT_NOT_READY
+                    else Ready for activation
+                        TEN->>DB: Save contract active + activated_at; save room occupied<br/>Append contract.activated and room.status_changed to outbox
+                        alt Active-room unique violation or persistence failure
+                            TEN->>DB: ROLLBACK
+                            TEN-->>GW: 409 ACTIVE_CONTRACT_EXISTS / 500 INTERNAL_SERVER_ERROR
+                        else Transaction succeeds
+                            TEN->>DB: COMMIT
+                            TEN-->>GW: 200 CONTRACT_ACTIVATED {id, status: active, activatedAt}
+                            RELAY->>DB: Claim committed outbox messages
+                            DB-->>RELAY: Committed contract.activated and room.status_changed
+                            RELAY-)MQ: Publish contract.activated and room.status_changed
+                        end
+                    end
+                end
+            end
+        end
+    ```
   parameters:
   - name: contractId
     in: path
@@ -53,13 +150,40 @@ post:
             data:
               id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
               status: active
-              activatedAt: '2026-09-23T11:10:00.000Z'
+              activatedAt: '2026-11-01T03:00:00.000Z'
     '400':
       $ref: ../../openapi.yaml#/components/responses/BadRequestBodyPathError
     '401':
       $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
     '503':
-      $ref: ../../openapi.yaml#/components/responses/AuthUnavailableError
+      description: Hạ tầng xác thực hoặc dịch vụ Identity dùng để kiểm tra file ký không khả dụng.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code]
+            properties:
+              statusCode:
+                type: integer
+                enum: [503]
+              code:
+                type: string
+                enum: [AUTH_UNAVAILABLE, SERVICE_UNAVAILABLE]
+                description: |-
+                  - AUTH_UNAVAILABLE: Không thể xác minh access token.
+                  - SERVICE_UNAVAILABLE: Identity timeout, mất kết nối, lỗi 5xx hoặc từ chối service token; không kích hoạt hợp đồng.
+          examples:
+            auth_unavailable:
+              summary: Hạ tầng xác thực không khả dụng.
+              value:
+                statusCode: 503
+                code: AUTH_UNAVAILABLE
+            service_unavailable:
+              summary: Không xác minh được file ký qua Identity.
+              value:
+                statusCode: 503
+                code: SERVICE_UNAVAILABLE
     '403':
       $ref: ../../openapi.yaml#/components/responses/ForbiddenError
     '404':
@@ -82,9 +206,11 @@ post:
                 enum:
                   - CONTRACT_NOT_READY
                   - SIGNED_FILE_MISSING
+                  - ACTIVE_CONTRACT_EXISTS
                 description: |-
-                  - CONTRACT_NOT_READY: Hợp đồng chưa đủ điều kiện để kích hoạt.
-                  - SIGNED_FILE_MISSING: Chưa có tệp hợp đồng đã ký.
+                  - CONTRACT_NOT_READY: Hợp đồng không ở draft/signed hoặc phòng đang maintenance/occupied; transaction rollback.
+                  - SIGNED_FILE_MISSING: Media không tồn tại/Identity trả 404, id khác signedContractMediaId, ownerType khác contract, ownerId khác contractId, purpose khác contract_signed hoặc chưa upload xong (status khác uploaded); chưa mở transaction.
+                  - ACTIVE_CONTRACT_EXISTS: Vi phạm unique index UQ_contracts_room_active vì phòng đã có hợp đồng active.
           examples:
             contract_not_ready:
               summary: CONTRACT_NOT_READY — Hợp đồng chưa đủ điều kiện để kích hoạt.
@@ -96,9 +222,45 @@ post:
               value:
                 statusCode: 409
                 code: SIGNED_FILE_MISSING
+            active_contract_exists:
+              summary: Phòng đã có hợp đồng active khi lưu dữ liệu.
+              value:
+                statusCode: 409
+                code: ACTIVE_CONTRACT_EXISTS
     '422':
-      $ref: ../../openapi.yaml#/components/responses/ValidationError
-    '429':
-      $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
+      description: Body thiếu field bắt buộc, signedContractMediaId sai định dạng hoặc có field ngoài DTO.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code]
+            properties:
+              statusCode:
+                type: integer
+                enum: [422]
+              code:
+                type: string
+                enum: [VALIDATION_FAILED, INVALID_UUID, UNEXPECTED_FIELD]
+                description: |-
+                  - VALIDATION_FAILED: signedContractMediaId bị thiếu hoặc null.
+                  - INVALID_UUID: signedContractMediaId không phải UUID hợp lệ theo validator của service.
+                  - UNEXPECTED_FIELD: Body có field ngoài signedContractMediaId.
+          examples:
+            validation_failed:
+              summary: Thiếu signedContractMediaId hoặc giá trị null.
+              value:
+                statusCode: 422
+                code: VALIDATION_FAILED
+            invalid_uuid:
+              summary: signedContractMediaId không phải UUID hợp lệ.
+              value:
+                statusCode: 422
+                code: INVALID_UUID
+            unexpected_field:
+              summary: Body có field ngoài DTO.
+              value:
+                statusCode: 422
+                code: UNEXPECTED_FIELD
     '500':
       $ref: ../../openapi.yaml#/components/responses/InternalServerError

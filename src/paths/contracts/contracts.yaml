@@ -7,7 +7,36 @@ get:
   security:
     - BearerAuth: []
   summary: List contracts
-  description: 'landlord. Quản lý hợp đồng của tôi. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 VALIDATION FAILED.'
+  description: |-
+    Landlord. Chỉ liệt kê hợp đồng thuộc user.id lấy từ JWT và chưa xóa mềm.
+    Hỗ trợ filter[roomId], filter[buildingId], filter[status], filter[tenantId];
+    roomName lấy bằng join rooms, contractCode suy ra theo HD-<6 ký tự đầu id>.
+    Thông tin tenant có thể null khi hợp đồng liên kết tài khoản nhưng chưa lưu thông tin liên hệ.
+    Sort chỉ nhận createdAt, mặc định createdAt desc; khi bằng nhau dùng id asc.
+    Chỉ hỗ trợ format=json; xlsx/csv/pdf trả 422 VALIDATION_FAILED.
+    UUID filter không hợp lệ trả 422 INVALID_UUID; field ngoài DTO trả 422 UNEXPECTED_FIELD.
+    Service chưa có rate limiter.
+
+    ```mermaid
+    sequenceDiagram
+        autonumber
+        participant GW as API Gateway
+        participant TEN as Tenancy
+        participant DB as Tenancy DB
+
+        GW->>TEN: GET /api/v1/contracts + Bearer token
+        TEN->>TEN: Verify JWT, landlord role, active account and query
+        alt Invalid query
+            TEN-->>GW: 422 VALIDATION_FAILED / INVALID_UUID / UNEXPECTED_FIELD
+        else Valid query
+            TEN->>DB: COUNT contracts JOIN rooms<br/>WHERE landlord_id = JWT user.id AND is_deleted = false<br/>with room, building, status and tenant filters
+            DB-->>TEN: totalItems
+            TEN->>DB: SELECT with the same joins and conditions<br/>ORDER BY created_at and id; OFFSET / LIMIT
+            DB-->>TEN: Contract rows with roomName
+            TEN->>TEN: Map response and derive contractCode from id
+            TEN-->>GW: 200 CONTRACTS_FETCHED + offset pagination
+        end
+    ```
   parameters:
   - name: filter
     in: query
@@ -27,9 +56,22 @@ get:
           format: uuid
         status:
           type: string
+          enum: [draft, signed, active, suspended, expired, terminated]
         tenantId:
           type: string
           format: uuid
+  - name: sort
+    in: query
+    schema:
+      type: string
+      enum: [createdAt]
+      default: createdAt
+  - name: order
+    in: query
+    schema:
+      type: string
+      enum: [asc, desc]
+      default: desc
   - name: pageSize
     in: query
     schema:
@@ -45,14 +87,11 @@ get:
       default: 1
   - name: format
     in: query
-    description: json trả envelope; định dạng khác trả file stream.
+    description: Chỉ hỗ trợ JSON; định dạng khác trả 422 VALIDATION_FAILED.
     schema:
       type: string
       enum:
       - json
-      - xlsx
-      - csv
-      - pdf
       default: json
   responses:
     '200':
@@ -122,12 +161,12 @@ get:
               status: draft
               rentPrice: 3500000
               depositAmount: 7000000
-              contractCode: Ví dụ
-              roomName: Ví dụ
-              tenantName: Ví dụ
+              contractCode: HD-3fa85f
+              roomName: P.201
+              tenantName: Trần Văn B
               tenantPhone: '0901234567'
-              startDate: '2026-09-23T11:55:00.000Z'
-              endDate: '2026-09-23T11:55:00.000Z'
+              startDate: '2026-09-01'
+              endDate: '2027-08-31'
             pagination:
               type: offset
               pageNo: 1
@@ -136,18 +175,6 @@ get:
               totalPages: 1
               hasNextPage: false
               hasPreviousPage: false
-        text/csv:
-          schema:
-            type: string
-            format: binary
-        application/pdf:
-          schema:
-            type: string
-            format: binary
-        application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
-          schema:
-            type: string
-            format: binary
     '400':
       $ref: ../../openapi.yaml#/components/responses/BadRequestQueryError
     '401':
@@ -157,9 +184,20 @@ get:
     '403':
       $ref: ../../openapi.yaml#/components/responses/ForbiddenError
     '422':
-      $ref: ../../openapi.yaml#/components/responses/ValidationError
-    '429':
-      $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
+      description: Query không hợp lệ, UUID filter không hợp lệ hoặc field ngoài DTO.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code]
+            properties:
+              statusCode:
+                type: integer
+                enum: [422]
+              code:
+                type: string
+                enum: [VALIDATION_FAILED, INVALID_UUID, UNEXPECTED_FIELD]
     '500':
       $ref: ../../openapi.yaml#/components/responses/InternalServerError
 post:
@@ -171,8 +209,67 @@ post:
   security:
     - BearerAuth: []
   summary: Create draft contract
-  description: 'landlord. Tạo hợp đồng nháp. Lỗi nghiệp vụ: 409 ACTIVE CONTRACT EXISTS · 422 TENANT IDENTITY INVALID
-    · 403 FORBIDDEN.'
+  description: |-
+    Landlord. Tạo hợp đồng ở trạng thái draft; landlordId luôn lấy từ JWT.
+    Room không tồn tại hoặc đã xóa trả 404 RESOURCE_NOT_FOUND; Room thuộc landlord khác trả 403 FORBIDDEN.
+    Room đã có hợp đồng active trả 409 ACTIVE_CONTRACT_EXISTS. Điều kiện active không loại hợp đồng đã xóa mềm,
+    theo partial unique index hiện tại. Tạo draft không đổi trạng thái Room.
+    Nếu tenantId null hoặc không gửi, phải có tenantName và tenantPhone; thiếu liên hệ trả 422 TENANT_IDENTITY_INVALID.
+    Khi có tenantId, mỗi trường liên hệ có thể null hoặc không gửi. Chưa kiểm tra tài khoản tenant bên Identity.
+    Body chỉ nhận các field có trong request schema. rentalType, tenantCccd, paymentDueDay,
+    templateKey, templateVariables và các field khác ngoài DTO trả 422 UNEXPECTED_FIELD.
+    roomId/tenantId không phải UUID trả 422 INVALID_UUID. Tiền thuê/cọc là số không âm;
+    ngày theo YYYY-MM-DD và startDate phải trước endDate.
+    Contract và outbox contract.created được lưu trong cùng transaction; relay publish sau commit.
+    Service chưa có rate limiter.
+
+    ```mermaid
+    sequenceDiagram
+        autonumber
+        participant GW as API Gateway
+        participant TEN as Tenancy
+        participant DB as Tenancy DB
+        participant RELAY as Outbox Relay
+        participant MQ as RabbitMQ
+
+        GW->>TEN: POST /api/v1/contracts + Bearer token
+        TEN->>TEN: Verify JWT, landlord role, active account and body
+        TEN->>DB: BEGIN
+        TEN->>DB: SELECT room WHERE id = roomId AND is_deleted = false FOR UPDATE
+        DB-->>TEN: Room or null
+        TEN->>TEN: Check room exists and landlordId equals JWT user.id
+        alt Missing room or wrong owner
+            TEN->>DB: ROLLBACK
+            TEN-->>GW: 404 RESOURCE_NOT_FOUND / 403 FORBIDDEN
+        else Owned room
+            TEN->>DB: Check contract WHERE room_id = roomId AND status = active
+            DB-->>TEN: Whether an active contract exists
+            alt Active contract exists
+                TEN->>DB: ROLLBACK
+                TEN-->>GW: 409 ACTIVE_CONTRACT_EXISTS
+            else No active contract
+                TEN->>TEN: Validate domain and create draft aggregate
+                alt Invalid domain
+                    TEN->>DB: ROLLBACK
+                    TEN-->>GW: 422 TENANT_IDENTITY_INVALID / VALIDATION_FAILED
+                else Valid draft
+                    TEN->>DB: INSERT contracts (draft, landlord_id from JWT)
+                    TEN->>DB: INSERT outbox_messages (contract.created)
+                    alt Storage operation fails
+                        TEN->>DB: ROLLBACK
+                        TEN-->>GW: Error response; neither row is committed
+                    else Commit succeeds
+                        TEN->>DB: COMMIT
+                        TEN-->>GW: 201 CONTRACT_CREATED
+                        RELAY->>DB: Claim committed outbox event
+                        RELAY->>MQ: Publish contract.created
+                        MQ-->>RELAY: Publisher confirm
+                        RELAY->>DB: Mark outbox PUBLISHED
+                    end
+                end
+            end
+        end
+    ```
   requestBody:
     required: true
     content:
@@ -189,8 +286,6 @@ post:
           startDate: '2026-09-01'
           endDate: '2027-08-31'
           vehicleCount: 1
-          rentalType: MONTHLY
-          tenantCccd: '048195001234'
   responses:
     '201':
       description: 'Thành công: Tạo hợp đồng nháp.'
@@ -222,12 +317,6 @@ post:
               status: draft
               tenantId: null
               rentPrice: 3500000
-      headers:
-        Location:
-          description: Đường dẫn tài nguyên được tạo.
-          schema:
-            type: string
-            example: /api/v1/contracts/{contractId}
     '400':
       $ref: ../../openapi.yaml#/components/responses/BadRequestBodyError
     '401':
@@ -236,6 +325,8 @@ post:
       $ref: ../../openapi.yaml#/components/responses/AuthUnavailableError
     '403':
       $ref: ../../openapi.yaml#/components/responses/ForbiddenError
+    '404':
+      $ref: ../../openapi.yaml#/components/responses/NotFoundError
     '409':
       x-apidog-name: Conflict
       description: Yêu cầu xung đột với trạng thái hiện tại hoặc dữ liệu đã tồn tại.
@@ -279,9 +370,13 @@ post:
                 enum:
                   - TENANT_IDENTITY_INVALID
                   - VALIDATION_FAILED
+                  - INVALID_UUID
+                  - UNEXPECTED_FIELD
                 description: |-
                   - TENANT_IDENTITY_INVALID: Thông tin nhận diện người thuê không hợp lệ.
                   - VALIDATION_FAILED: Dữ liệu vi phạm ràng buộc schema hoặc quy tắc nghiệp vụ khác chưa có mã riêng.
+                  - INVALID_UUID: roomId hoặc tenantId không phải UUID hợp lệ.
+                  - UNEXPECTED_FIELD: Body chứa field ngoài DTO.
           examples:
             tenant_identity_invalid:
               summary: TENANT_IDENTITY_INVALID — Thông tin nhận diện người thuê không hợp lệ.
@@ -293,7 +388,15 @@ post:
               value:
                 statusCode: 422
                 code: VALIDATION_FAILED
-    '429':
-      $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
+            invalid_uuid:
+              summary: INVALID_UUID — roomId hoặc tenantId không hợp lệ.
+              value:
+                statusCode: 422
+                code: INVALID_UUID
+            unexpected_field:
+              summary: UNEXPECTED_FIELD — Body chứa field ngoài DTO.
+              value:
+                statusCode: 422
+                code: UNEXPECTED_FIELD
     '500':
       $ref: ../../openapi.yaml#/components/responses/InternalServerError
