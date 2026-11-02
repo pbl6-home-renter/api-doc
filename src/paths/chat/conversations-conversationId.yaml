@@ -43,11 +43,20 @@ get:
             code: CONVERSATION_FETCHED
             data:
               id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
-              type: room
-              roomId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
-              contractId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
-              title: Phòng P.302
+              kind: group
+              contextType: contract
+              contextId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+              title: Trao đổi hợp đồng thuê
+              avatarMediaId: null
               unreadCount: 2
+              members:
+              - conversationId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                userId: 9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d
+                participantType: user
+                role: admin
+                status: active
+                joinedAt: '2026-11-02T09:00:00.000Z'
+                lastReadSequence: 12
     '400':
       $ref: ../../openapi.yaml#/components/responses/BadRequestPathError
     '401':

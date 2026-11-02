@@ -31,7 +31,7 @@ post:
     | `contract_signed` | `contract` | jpeg, png, webp, pdf | private | landlord sở hữu | không xóa được khi HĐ `signed/active/suspended/expired/terminated` |
     | `meter_reading_evidence` | `meter_reading` | jpeg, png, webp | private | landlord sở hữu; tenant của HĐ chỉ với `captureSource = camera_direct` | |
     | `issue_photo` | `issue_report` | jpeg, png, webp | private | người trong HĐ, landlord sở hữu | chưa hỗ trợ (503) |
-    | `chat_attachment` | `message` | jpeg, png, webp, pdf | private | người trong hội thoại | chưa hỗ trợ (503) |
+    | `chat_attachment` | `conversation` | jpeg, png, webp | private | upload: active member; download: người có quyền đọc message đang tham chiếu media | chưa hỗ trợ đến khi CB-07 hoàn tất (503) |
 
     Kích thước tối đa 10 MiB cho mọi purpose. Không hỗ trợ SVG/HTML/video.
 

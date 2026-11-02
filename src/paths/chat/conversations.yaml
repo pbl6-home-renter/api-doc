@@ -96,8 +96,11 @@ get:
             code: CONVERSATIONS_FETCHED
             data:
             - id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
-              type: room
-              title: Phòng P.302
+              kind: group
+              contextType: contract
+              contextId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+              title: Trao đổi hợp đồng thuê
+              avatarMediaId: null
               unreadCount: 2
             pagination:
               type: offset
@@ -146,10 +149,18 @@ post:
               description: Thành viên ban đầu của group; không cần gồm caller.
             title: { type: string, maxLength: 255 }
             avatarMediaId: { type: string, format: uuid }
-        example:
-          kind: group
-          memberUserIds: [3fa85f64-5717-4562-b3fc-2c963f66afa6]
-          title: Nhóm trao đổi
+        examples:
+          direct:
+            summary: Mở chat trực tiếp
+            value:
+              kind: direct
+              recipientUserId: 9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d
+          group:
+            summary: Tạo nhóm chat
+            value:
+              kind: group
+              memberUserIds: [3fa85f64-5717-4562-b3fc-2c963f66afa6]
+              title: Nhóm trao đổi
   responses:
     '201':
       description: Hội thoại được tạo hoặc chat direct hiện có được mở lại.
