@@ -4,5 +4,6 @@ title: ContractMemberLeaveRequestDto
 description: Dữ liệu ghi nhận thành viên rời hợp đồng
 additionalProperties: false
 properties:
-  leftOn: { type: string, format: date , description: "Ngày thành viên rời hợp đồng (YYYY-MM-DD)." }
-required: [leftOn]
+  contractId: { type: string, format: uuid, description: "Hợp đồng của tenant cần ghi nhận rời đi; bắt buộc để xác định đúng landlord và member." }
+  leftOn: { type: string, format: date , description: "Ngày rời (YYYY-MM-DD), ≥ joinedAt và ≤ endDate. Checkout áp dụng giới hạn riêng (P6-D71)." }
+required: [contractId, leftOn]
