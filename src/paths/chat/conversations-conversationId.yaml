@@ -96,10 +96,31 @@ get:
 
 patch:
   tags: [Chat]
+  x-apidog-folder: Conversation
+  x-apidog-status: designing
   operationId: updateConversation
   security: [{ BearerAuth: [] }]
   summary: Sửa tên hoặc ảnh nhóm
-  description: Chỉ admin group; thay đổi tạo system message và Socket event. Không áp dụng cho direct chat.
+  description: |
+    Chỉ admin đang active của group được đổi tên hoặc ảnh. Không hỗ trợ direct conversation. Gửi `null` để bỏ tên tùy chỉnh hoặc gỡ ảnh. Avatar phải được upload trước bằng Media purpose `conversation_avatar`, owner `conversation` và `ownerId=conversationId`; Community xác minh trạng thái, owner và purpose qua Identity trước khi cập nhật. Metadata và system message được ghi trong cùng transaction. Thay đổi metadata không gửi FCM.
+
+    ```mermaid
+    sequenceDiagram
+      participant C as Client
+      participant COM as Community
+      participant ID as Identity Media
+      participant DB as Community DB
+      C->>COM: PATCH /conversations/{conversationId} {title?, avatarMediaId?}
+      COM->>DB: Kiểm tra caller là active admin của group
+      alt avatarMediaId được gửi khác null
+        COM->>ID: GET /internal/media/conversation-avatar?mediaId&conversationId
+        ID->>ID: Kiểm tra uploaded, owner conversation và purpose conversation_avatar
+        ID-->>COM: valid
+      end
+      COM->>DB: Transaction: cập nhật metadata và thêm system message(s)
+      DB-->>COM: Commit
+      COM-->>C: 200 CONVERSATION_UPDATED
+    ```
   parameters:
     - name: conversationId
       in: path
@@ -110,15 +131,46 @@ patch:
     content:
       application/json:
         schema:
-          type: object
-          additionalProperties: false
-          minProperties: 1
-          properties:
-            title: { type: string, minLength: 1, maxLength: 255, nullable: true }
-            avatarMediaId: { type: string, format: uuid, nullable: true }
+          $ref: ../../openapi.yaml#/components/schemas/ConversationMetadataUpdateRequestDto
   responses:
-    '200': { description: Thông tin nhóm được cập nhật. }
+    '200':
+      description: Thông tin group được cập nhật.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code, data]
+            properties:
+              statusCode: { type: integer, enum: [200] }
+              code: { type: string, enum: [CONVERSATION_UPDATED] }
+              data:
+                $ref: ../../openapi.yaml#/components/schemas/ConversationMetadataUpdateResponseDto
+    '400': { $ref: ../../openapi.yaml#/components/responses/BadRequestBodyError }
     '401': { $ref: ../../openapi.yaml#/components/responses/UnauthorizedError }
     '403': { $ref: ../../openapi.yaml#/components/responses/ForbiddenError }
     '404': { $ref: ../../openapi.yaml#/components/responses/NotFoundError }
-    '422': { $ref: ../../openapi.yaml#/components/responses/ValidationError }
+    '422':
+      description: Request fields or avatar media are invalid.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code]
+            properties:
+              statusCode: { type: integer, enum: [422] }
+              code:
+                type: string
+                enum: [VALIDATION_FAILED, UNEXPECTED_FIELD, CONVERSATION_AVATAR_INVALID]
+    '503':
+      description: Identity Media tạm thời không khả dụng.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code]
+            properties:
+              statusCode: { type: integer, enum: [503] }
+              code: { type: string, enum: [SERVICE_UNAVAILABLE] }

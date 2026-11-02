@@ -1,0 +1,10 @@
+type: object
+x-apidog-folder: "Chat/System Message"
+title: ConversationTitleChangedPayload
+additionalProperties: false
+properties:
+  action: { type: string, enum: [conversation_title_changed] }
+  actorUserId: { type: string, format: uuid }
+  oldTitle: { type: string, nullable: true, maxLength: 255 }
+  newTitle: { type: string, nullable: true, maxLength: 255 }
+required: [action, actorUserId, oldTitle, newTitle]

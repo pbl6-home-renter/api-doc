@@ -8,10 +8,10 @@ get:
     - BearerAuth: []
   summary: Get or stream media
   description: |-
-    Stream completed media as before. For chat_attachment only, authorize the caller and redirect to a URL for direct storage access. Private chat media uses a signed R2 GET URL that expires after MEDIA_DOWNLOAD_URL_TTL_SECONDS (default 300 seconds); call this endpoint again to obtain a fresh URL.
+    Stream completed media as before. For chat_attachment and conversation_avatar, authorize the caller and redirect to a URL for direct storage access. Private chat media uses a signed R2 GET URL that expires after MEDIA_DOWNLOAD_URL_TTL_SECONDS (default 300 seconds); call this endpoint again to obtain a fresh URL.
 
     Private chat media requires a Bearer token. Web and mobile clients follow the redirect and download bytes directly from R2. Other private media keeps the API streaming response.
-    For chat_attachment, Community confirms the media is attached to a message in the conversation. Active members may read it; read-only members may read only messages with sequence less than or equal to leftSequence. Admin and uploader read bypasses do not apply.
+    For chat_attachment, Community confirms the media is attached to a message in the conversation. Active members may read it; read-only members may read only messages with sequence less than or equal to leftSequence. For conversation_avatar, only active conversation members may read. Admin and uploader read bypasses do not apply.
 
     Business errors: 401 UNAUTHORIZED, 403 FORBIDDEN, 404 RESOURCE_NOT_FOUND, 410 MEDIA_DELETED, 503 SERVICE_UNAVAILABLE.
   parameters:
@@ -30,7 +30,7 @@ get:
             type: string
             format: binary
     '302':
-      description: Redirect to a presigned R2 GET URL for chat_attachment.
+      description: Redirect to a presigned R2 GET URL for chat_attachment or conversation_avatar.
       headers:
         Location:
           description: Direct download URL; private URLs expire after the configured interval.

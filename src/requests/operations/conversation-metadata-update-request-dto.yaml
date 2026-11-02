@@ -1,0 +1,18 @@
+type: object
+x-apidog-folder: "Conversation/Request"
+title: ConversationMetadataUpdateRequestDto
+description: Cập nhật tên hoặc ảnh đại diện của group.
+additionalProperties: false
+minProperties: 1
+properties:
+  title:
+    type: string
+    nullable: true
+    minLength: 1
+    maxLength: 255
+    description: Gửi null để bỏ tên tùy chỉnh.
+  avatarMediaId:
+    type: string
+    format: uuid
+    nullable: true
+    description: Media ID purpose conversation_avatar đã upload hoàn tất; null để gỡ ảnh.

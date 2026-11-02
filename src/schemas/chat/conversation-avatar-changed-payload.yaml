@@ -1,0 +1,10 @@
+type: object
+x-apidog-folder: "Chat/System Message"
+title: ConversationAvatarChangedPayload
+additionalProperties: false
+properties:
+  action: { type: string, enum: [conversation_avatar_changed] }
+  actorUserId: { type: string, format: uuid }
+  oldAvatarMediaId: { type: string, format: uuid, nullable: true }
+  newAvatarMediaId: { type: string, format: uuid, nullable: true }
+required: [action, actorUserId, oldAvatarMediaId, newAvatarMediaId]
