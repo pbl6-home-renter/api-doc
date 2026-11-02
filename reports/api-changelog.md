@@ -5,11 +5,41 @@
 
 Báo cáo lưu lịch sử các entry đã phát hiện, mới nhất ở trên. `NO_CHANGE` không xóa entry cũ; exit code chỉ phản ánh lần chạy hiện tại.
 
-Công cụ: Redocly 2.64.1; oasdiff 1.34.1. Số entry: **22**.
+Công cụ: Redocly 2.64.1; oasdiff 1.34.1. Số entry: **23**.
 
 Phân loại: **BREAKING** = client cũ có thể hỏng; **NON_BREAKING** = tương thích theo contract; **NEEDS_REVIEW** = chưa đủ bằng chứng.
 
 Các vị trí dùng JSON Pointer trên bundle tạm (`~1` là `/`). JSON đi kèm giữ toàn bộ semantic diff, fingerprint và hash phục vụ truy vết.
+
+## Thay đổi contract từ Git — BREAKING
+
+- ID: `c62882ddca9df4495dffac4f8e96571b343b28080c155ed477dd06fc9bfd4f8c`
+- Contract: rentify-public; repository: https://github.com/pbl6-home-renter/api-doc
+- Nguồn: `src/openapi.yaml` → `src/openapi.yaml`
+- Phát hiện (UTC): 2026-11-02T03:50:27.346Z; commit time: 2026-11-02T10:50:15+07:00
+- Commit nền: 1af06e0e6c430fb4ab4a7cea67c83ed8dcf1b142
+- Commit đích/bối cảnh: [fa66b19412f8bf6946b8b25b08797048418cf36d](https://github.com/pbl6-home-renter/api-doc/commit/fa66b19412f8bf6946b8b25b08797048418cf36d)
+- PR: [https://github.com/pbl6-home-renter/api-doc/pull/37](https://github.com/pbl6-home-renter/api-doc/pull/37)
+- Loại metadata: Git revision thực tế
+- Lý do: CHƯA CUNG CẤP — tác giả PR phải bổ sung lý do nghiệp vụ; không thể suy ra từ OpenAPI diff.
+
+| Mức ảnh hưởng | Endpoint / vùng | Thay đổi | Hành động FE / Mobile |
+|---|---|---|---|
+| BREAKING | POST /conversations | the `memberUserIds` request property's maxItems was set to `100` (`request-property-max-items-set`) | FE và Mobile: đối chiếu vị trí và thay đổi trước/sau trong entry này với API adapter, DTO, parser và validation; cùng BE xác nhận phương án tương thích trước merge/phát hành. |
+| NEEDS_REVIEW | POST /conversations | removed the request property `avatarMediaId` (`request-property-removed`) | FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ. |
+| NON_BREAKING | info | Đã phát hiện breaking change nhưng info.version vẫn là `1.0.0`. (`api-version-not-bumped`) | BE: xem lại quy ước version trước khi chấp nhận breaking change. FE/Mobile: theo kế hoạch chuyển đổi của entry này; version trong OpenAPI chưa chứng minh backend đã triển khai. |
+| NON_BREAKING | POST /conversations | added the non-success response with the status `503` (`response-non-success-status-added`) | FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI. |
+
+### Vị trí và giá trị trước/sau
+
+| Path / schema / field (JSON Pointer) | Trước | Sau |
+|---|---|---|
+| `/paths/~1conversations/post/description` | "Chat trực tiếp dùng lại hội thoại duy nhất của cặp user; chat nhóm tạo mới và caller trở thành admin." | "Chat trực tiếp dùng lại hội thoại duy nhất của cặp user; chat nhóm tạo mới và caller trở thành admin. Tạo group chưa gắn ảnh đại diện; sau khi tạo, client upload ảnh theo conversationId rồi cập nhật qua PATCH /conversations/{conversationId}.\n\n```mermaid\nsequenceDiagram\n    participant C as Client\n    participant COM as Community\n    participant ID as Identity\n    participant DB as Community DB\n    C-&gt;&gt;COM: POST /conversations\n    COM-&gt;&gt;COM: Verify JWT and validate request\n    opt Có recipient/memberUserIds\n        COM-&gt;&gt;ID: GET /internal/users?ids=... (X-Service-Token)\n        ID--&gt;&gt;COM: Users with id and isDeleted\n    end\n    COM-&gt;&gt;DB: Transaction: create/reopen conversation and save members\n    DB--&gt;&gt;COM: Conversation and membership records\n    COM--&gt;&gt;C: 201 CONVERSATION_CREATED or CONVERSATION_REOPENED\n```\n" |
+| `/paths/~1conversations/post/requestBody/content/application~1json/schema/properties/avatarMediaId` | {"type":"string","format":"uuid"} | null |
+| `/paths/~1conversations/post/requestBody/content/application~1json/schema/properties/memberUserIds/maxItems` | null | 100 |
+| `/paths/~1conversations/post/responses/503` | null | {"description":"Identity service unavailable; no conversation was created."} |
+
+**Kiểm tra thủ công:** BE xác nhận lý do, endpoint dùng schema chung, thay đổi role/ownership mô tả bằng văn bản và thời điểm triển khai. FE/Mobile xác nhận tác động với parser và phiên bản client đang hỗ trợ.
 
 ## Thay đổi contract từ Git — BREAKING
 

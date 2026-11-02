@@ -31908,6 +31908,146 @@
           }
         }
       }
+    },
+    {
+      "id": "c62882ddca9df4495dffac4f8e96571b343b28080c155ed477dd06fc9bfd4f8c",
+      "label": "Thay đổi contract từ Git",
+      "classification": "BREAKING",
+      "contractId": "rentify-public",
+      "repository": "https://github.com/pbl6-home-renter/api-doc",
+      "baseHash": "281881bf7d14c41578135bb43d91d774e6715e4cfe044beb98e6c0682a599775",
+      "headHash": "ca371bb749d697292535b516c2964991d06e8d8c37d761cb1293835645807774",
+      "baseSource": "src/openapi.yaml",
+      "headSource": "src/openapi.yaml",
+      "detectedAt": "2026-11-02T03:50:27.346Z",
+      "committedAt": "2026-11-02T10:50:15+07:00",
+      "baseCommit": "1af06e0e6c430fb4ab4a7cea67c83ed8dcf1b142",
+      "headCommit": "fa66b19412f8bf6946b8b25b08797048418cf36d",
+      "prUrl": "https://github.com/pbl6-home-renter/api-doc/pull/37",
+      "commitUrl": "https://github.com/pbl6-home-renter/api-doc/commit/fa66b19412f8bf6946b8b25b08797048418cf36d",
+      "metadataKind": "Git revision thực tế",
+      "reason": "CHƯA CUNG CẤP — tác giả PR phải bổ sung lý do nghiệp vụ; không thể suy ra từ OpenAPI diff.",
+      "tools": {
+        "redocly": "2.64.1",
+        "oasdiff": "1.34.1"
+      },
+      "changes": [
+        {
+          "id": "request-property-max-items-set",
+          "text": "the `memberUserIds` request property's maxItems was set to `100`",
+          "comment": "Setting a bound rejects values the previous contract accepted. If your clients are known to stay within the new limit, lower this check with --severity-levels.",
+          "level": 3,
+          "operation": "POST",
+          "operationId": "createConversation",
+          "path": "/conversations",
+          "section": "paths",
+          "fingerprint": "0674acc98c52",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu vị trí và thay đổi trước/sau trong entry này với API adapter, DTO, parser và validation; cùng BE xác nhận phương án tương thích trước merge/phát hành."
+        },
+        {
+          "id": "request-property-removed",
+          "text": "removed the request property `avatarMediaId`",
+          "level": 2,
+          "operation": "POST",
+          "operationId": "createConversation",
+          "path": "/conversations",
+          "section": "paths",
+          "fingerprint": "57fd496ccfd4",
+          "classification": "NEEDS_REVIEW",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "api-version-not-bumped",
+          "text": "a breaking change was detected but the version is still `1.0.0`",
+          "level": 1,
+          "section": "info",
+          "fingerprint": "d3f96cd643c1",
+          "classification": "NON_BREAKING",
+          "clientImpact": "BE: xem lại quy ước version trước khi chấp nhận breaking change. FE/Mobile: theo kế hoạch chuyển đổi của entry này; version trong OpenAPI chưa chứng minh backend đã triển khai."
+        },
+        {
+          "id": "response-non-success-status-added",
+          "text": "added the non-success response with the status `503`",
+          "level": 1,
+          "operation": "POST",
+          "operationId": "createConversation",
+          "path": "/conversations",
+          "section": "paths",
+          "fingerprint": "188fbdda6263",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        }
+      ],
+      "locations": [
+        {
+          "pointer": "/paths/~1conversations/post/description",
+          "before": "Chat trực tiếp dùng lại hội thoại duy nhất của cặp user; chat nhóm tạo mới và caller trở thành admin.",
+          "after": "Chat trực tiếp dùng lại hội thoại duy nhất của cặp user; chat nhóm tạo mới và caller trở thành admin. Tạo group chưa gắn ảnh đại diện; sau khi tạo, client upload ảnh theo conversationId rồi cập nhật qua PATCH /conversations/{conversationId}.\n\n```mermaid\nsequenceDiagram\n    participant C as Client\n    participant COM as Community\n    participant ID as Identity\n    participant DB as Community DB\n    C->>COM: POST /conversations\n    COM->>COM: Verify JWT and validate request\n    opt Có recipient/memberUserIds\n        COM->>ID: GET /internal/users?ids=... (X-Service-Token)\n        ID-->>COM: Users with id and isDeleted\n    end\n    COM->>DB: Transaction: create/reopen conversation and save members\n    DB-->>COM: Conversation and membership records\n    COM-->>C: 201 CONVERSATION_CREATED or CONVERSATION_REOPENED\n```\n"
+        },
+        {
+          "pointer": "/paths/~1conversations/post/requestBody/content/application~1json/schema/properties/avatarMediaId",
+          "before": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1conversations/post/requestBody/content/application~1json/schema/properties/memberUserIds/maxItems",
+          "before": null,
+          "after": 100
+        },
+        {
+          "pointer": "/paths/~1conversations/post/responses/503",
+          "before": null,
+          "after": {
+            "description": "Identity service unavailable; no conversation was created."
+          }
+        }
+      ],
+      "semanticDiff": {
+        "paths": {
+          "modified": {
+            "/conversations": {
+              "operations": {
+                "modified": {
+                  "POST": {
+                    "requestBody": {
+                      "content": {
+                        "modified": {
+                          "application/json": {
+                            "schema": {
+                              "properties": {
+                                "deleted": [
+                                  "avatarMediaId"
+                                ],
+                                "modified": {
+                                  "memberUserIds": {
+                                    "maxItems": {
+                                      "from": null,
+                                      "to": 100
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "responses": {
+                      "added": [
+                        "503"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   ]
 }
