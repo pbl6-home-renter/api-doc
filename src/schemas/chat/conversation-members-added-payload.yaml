@@ -1,0 +1,24 @@
+title: ConversationMembersAddedPayload
+type: object
+additionalProperties: false
+required: [action, actorUserId, members]
+properties:
+  action:
+    type: string
+    enum: [members_added]
+  actorUserId:
+    type: string
+    format: uuid
+  members:
+    type: array
+    items:
+      type: object
+      additionalProperties: false
+      required: [userId, displayName]
+      properties:
+        userId:
+          type: string
+          format: uuid
+        displayName:
+          type: string
+          maxLength: 254

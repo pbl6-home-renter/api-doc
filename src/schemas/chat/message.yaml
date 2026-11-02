@@ -50,7 +50,16 @@ allOf:
       payload:
         type: object
         nullable: true
-        description: Dữ liệu có cấu trúc cho system/bot message.
+        description: For system messages with action=members_added, payload follows ConversationMembersAddedPayload. Other system/bot payloads may be added by their features.
+        anyOf:
+          - $ref: '../../openapi.yaml#/components/schemas/ConversationMembersAddedPayload'
+          - type: object
+        example:
+          action: members_added
+          actorUserId: 9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d
+          members:
+            - userId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+              displayName: Nguyễn Văn A
     required:
       - conversationId
       - senderName
