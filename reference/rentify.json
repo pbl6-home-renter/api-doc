@@ -21047,8 +21047,10 @@
             "BearerAuth": []
           }
         ],
+        "x-apidog-folder": "ConversationMember",
+        "x-apidog-status": "designing",
         "summary": "Đổi vai trò thành viên",
-        "description": "Admin nhóm đặt vai trò admin hoặc member; không thể hạ admin cuối cùng.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-11-01 | 🟢 NON_BREAKING | Thêm endpoint mới. | [#35](https://github.com/pbl6-home-renter/api-doc/pull/35) |\n",
+        "description": "Chỉ admin active của group được đổi vai trò user active khác trong nhóm giữa `admin` và `member`; không áp dụng với direct conversation. Không thể hạ admin cuối cùng. Thay đổi role và system message `member_role_changed` được ghi cùng transaction. Payload lưu `actorUserId`, snapshot member và `oldRole`/`newRole`. Nếu role đích đã đúng như hiện tại, trả thành công nhưng không tạo message trùng. Không gửi FCM.\n\n```mermaid\nsequenceDiagram\n    participant C as Client\n    participant COM as Community\n    participant DB as Community DB\n    C->>COM: PUT /conversations/{conversationId}/members/{userId}/role\n    COM->>DB: Begin transaction and lock conversation/members\n    COM->>COM: Verify caller is active group admin and target is active user member\n    COM->>DB: Check last-admin constraint\n    COM->>DB: Update role and append member_role_changed system message atomically\n    COM-->>C: 200 CONVERSATION_MEMBER_ROLE_UPDATED\n```\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-11-01 | 🟢 NON_BREAKING | Thêm endpoint mới. | [#35](https://github.com/pbl6-home-renter/api-doc/pull/35) |\n",
         "requestBody": {
           "required": true,
           "content": {
@@ -21074,13 +21076,88 @@
         },
         "responses": {
           "200": {
-            "description": "Vai trò đã được cập nhật; thay đổi tạo system message."
+            "description": "Vai trò đã được cập nhật; nếu có thay đổi, system message được lưu cùng transaction.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code",
+                    "data"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        200
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "CONVERSATION_MEMBER_ROLE_UPDATED"
+                      ]
+                    },
+                    "data": {
+                      "type": "object",
+                      "nullable": true,
+                      "enum": [
+                        null
+                      ]
+                    }
+                  }
+                },
+                "example": {
+                  "statusCode": 200,
+                  "code": "CONVERSATION_MEMBER_ROLE_UPDATED",
+                  "data": null
+                }
+              }
+            }
           },
           "401": {
             "$ref": "#/components/responses/UnauthorizedError"
           },
           "403": {
             "$ref": "#/components/responses/ForbiddenError"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundError"
+          },
+          "409": {
+            "description": "Không thể hạ vai trò của admin cuối cùng.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        409
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "LAST_ADMIN_CANNOT_BE_DEMOTED"
+                      ]
+                    }
+                  }
+                },
+                "example": {
+                  "statusCode": 409,
+                  "code": "LAST_ADMIN_CANNOT_BE_DEMOTED"
+                }
+              }
+            }
           },
           "422": {
             "$ref": "#/components/responses/ValidationError"
@@ -34012,6 +34089,63 @@
           }
         }
       },
+      "ConversationMemberRoleChangedPayload": {
+        "title": "ConversationMemberRoleChangedPayload",
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "action",
+          "actorUserId",
+          "member",
+          "oldRole",
+          "newRole"
+        ],
+        "properties": {
+          "action": {
+            "type": "string",
+            "enum": [
+              "member_role_changed"
+            ]
+          },
+          "actorUserId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "User admin thực hiện thay đổi vai trò."
+          },
+          "member": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "userId",
+              "displayName"
+            ],
+            "properties": {
+              "userId": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "displayName": {
+                "type": "string",
+                "maxLength": 254
+              }
+            }
+          },
+          "oldRole": {
+            "type": "string",
+            "enum": [
+              "admin",
+              "member"
+            ]
+          },
+          "newRole": {
+            "type": "string",
+            "enum": [
+              "admin",
+              "member"
+            ]
+          }
+        }
+      },
       "Message": {
         "type": "object",
         "x-apidog-folder": "Message",
@@ -34098,6 +34232,9 @@
                   },
                   {
                     "$ref": "#/components/schemas/ConversationAdminTransferredPayload"
+                  },
+                  {
+                    "$ref": "#/components/schemas/ConversationMemberRoleChangedPayload"
                   }
                 ],
                 "discriminator": {
@@ -34106,7 +34243,8 @@
                     "members_added": "#/components/schemas/ConversationMembersAddedPayload",
                     "member_kicked": "#/components/schemas/ConversationMemberKickedPayload",
                     "member_left": "#/components/schemas/ConversationMemberLeftPayload",
-                    "admin_transferred": "#/components/schemas/ConversationAdminTransferredPayload"
+                    "admin_transferred": "#/components/schemas/ConversationAdminTransferredPayload",
+                    "member_role_changed": "#/components/schemas/ConversationMemberRoleChangedPayload"
                   }
                 },
                 "example": {
