@@ -34478,6 +34478,533 @@
           }
         }
       }
+    },
+    {
+      "id": "e91138e770c7f3e5a24bbf73f234370667a9dd6d859cee79a118729524007697",
+      "label": "Thay đổi contract từ Git",
+      "classification": "NON_BREAKING",
+      "contractId": "rentify-public",
+      "repository": "https://github.com/pbl6-home-renter/api-doc",
+      "baseHash": "7cc5b21fe0721b3e4cb2594e544f1d89ba094b59edd3d5f56b455dc53d437a5a",
+      "headHash": "2f41c62096315aa2373097a917df42330434948d0b4ebd991e696824a1af3b4c",
+      "baseSource": "src/openapi.yaml",
+      "headSource": "src/openapi.yaml",
+      "detectedAt": "2026-11-02T08:27:19.685Z",
+      "committedAt": "2026-11-02T15:27:06+07:00",
+      "baseCommit": "ec89360eb0ac5a704270f5011ce22e235b4fb04c",
+      "headCommit": "02ed2255c701655d6a5a0359af0ee953454c2ea7",
+      "prUrl": "https://github.com/pbl6-home-renter/api-doc/pull/41",
+      "commitUrl": "https://github.com/pbl6-home-renter/api-doc/commit/02ed2255c701655d6a5a0359af0ee953454c2ea7",
+      "metadataKind": "Git revision thực tế",
+      "reason": "CHƯA CUNG CẤP — tác giả PR phải bổ sung lý do nghiệp vụ; không thể suy ra từ OpenAPI diff.",
+      "tools": {
+        "redocly": "2.64.1",
+        "oasdiff": "1.34.1"
+      },
+      "changes": [
+        {
+          "id": "response-media-type-added",
+          "text": "added the media type `application/json` for the response with the status `200`",
+          "level": 1,
+          "operation": "PUT",
+          "operationId": "updateConversationMemberRole",
+          "path": "/conversations/{conversationId}/members/{userId}/role",
+          "section": "paths",
+          "fingerprint": "54f779058ff8",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        },
+        {
+          "id": "response-non-success-status-added",
+          "text": "added the non-success response with the status `404`",
+          "level": 1,
+          "operation": "PUT",
+          "operationId": "updateConversationMemberRole",
+          "path": "/conversations/{conversationId}/members/{userId}/role",
+          "section": "paths",
+          "fingerprint": "9a663f869654",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        },
+        {
+          "id": "response-non-success-status-added",
+          "text": "added the non-success response with the status `409`",
+          "level": 1,
+          "operation": "PUT",
+          "operationId": "updateConversationMemberRole",
+          "path": "/conversations/{conversationId}/members/{userId}/role",
+          "section": "paths",
+          "fingerprint": "ed0feca38aec",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        }
+      ],
+      "locations": [
+        {
+          "pointer": "/components/schemas/ConversationMemberRoleChangedPayload",
+          "before": null,
+          "after": {
+            "title": "ConversationMemberRoleChangedPayload",
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "action",
+              "actorUserId",
+              "member",
+              "oldRole",
+              "newRole"
+            ],
+            "properties": {
+              "action": {
+                "type": "string",
+                "enum": [
+                  "member_role_changed"
+                ]
+              },
+              "actorUserId": {
+                "type": "string",
+                "format": "uuid",
+                "description": "User admin thực hiện thay đổi vai trò."
+              },
+              "member": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "userId",
+                  "displayName"
+                ],
+                "properties": {
+                  "userId": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "displayName": {
+                    "type": "string",
+                    "maxLength": 254
+                  }
+                }
+              },
+              "oldRole": {
+                "type": "string",
+                "enum": [
+                  "admin",
+                  "member"
+                ]
+              },
+              "newRole": {
+                "type": "string",
+                "enum": [
+                  "admin",
+                  "member"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "pointer": "/components/schemas/Message/allOf",
+          "before": [
+            {
+              "$ref": "#/components/schemas/BaseEntity"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "conversationId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "description": "ID cuộc hội thoại chứa tin nhắn",
+                  "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                },
+                "senderUserId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "nullable": true,
+                  "description": "ID user gửi; null với system message và bot.",
+                  "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                },
+                "senderName": {
+                  "type": "string",
+                  "maxLength": 254,
+                  "description": "Tên người gửi được snapshot tại thời điểm tạo message."
+                },
+                "senderType": {
+                  "type": "string",
+                  "enum": [
+                    "user",
+                    "system"
+                  ]
+                },
+                "type": {
+                  "type": "string",
+                  "enum": [
+                    "text",
+                    "image",
+                    "system",
+                    "bot"
+                  ],
+                  "description": "Loại tin nhắn",
+                  "example": "text"
+                },
+                "content": {
+                  "type": "string",
+                  "nullable": true,
+                  "description": "Nội dung tin nhắn dạng văn bản",
+                  "example": "Đã chốt số điện tháng 09: 180 kWh"
+                },
+                "mediaId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "nullable": true,
+                  "description": "Media ID của ảnh đã upload qua Media Service."
+                },
+                "sequence": {
+                  "type": "integer",
+                  "format": "int64",
+                  "minimum": 1
+                },
+                "clientMessageId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "description": "ID idempotency do client tạo."
+                },
+                "payload": {
+                  "type": "object",
+                  "nullable": true,
+                  "description": "Payload is a discriminated union for implemented system actions.",
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/ConversationMembersAddedPayload"
+                    },
+                    {
+                      "$ref": "#/components/schemas/ConversationMemberKickedPayload"
+                    },
+                    {
+                      "$ref": "#/components/schemas/ConversationMemberLeftPayload"
+                    },
+                    {
+                      "$ref": "#/components/schemas/ConversationAdminTransferredPayload"
+                    }
+                  ],
+                  "discriminator": {
+                    "propertyName": "action",
+                    "mapping": {
+                      "members_added": "#/components/schemas/ConversationMembersAddedPayload",
+                      "member_kicked": "#/components/schemas/ConversationMemberKickedPayload",
+                      "member_left": "#/components/schemas/ConversationMemberLeftPayload",
+                      "admin_transferred": "#/components/schemas/ConversationAdminTransferredPayload"
+                    }
+                  },
+                  "example": {
+                    "action": "members_added",
+                    "actorUserId": "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d",
+                    "members": [
+                      {
+                        "userId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                        "displayName": "Nguyễn Văn A"
+                      }
+                    ]
+                  }
+                }
+              },
+              "required": [
+                "conversationId",
+                "senderName",
+                "type"
+              ]
+            }
+          ],
+          "after": [
+            {
+              "$ref": "#/components/schemas/BaseEntity"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "conversationId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "description": "ID cuộc hội thoại chứa tin nhắn",
+                  "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                },
+                "senderUserId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "nullable": true,
+                  "description": "ID user gửi; null với system message và bot.",
+                  "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                },
+                "senderName": {
+                  "type": "string",
+                  "maxLength": 254,
+                  "description": "Tên người gửi được snapshot tại thời điểm tạo message."
+                },
+                "senderType": {
+                  "type": "string",
+                  "enum": [
+                    "user",
+                    "system"
+                  ]
+                },
+                "type": {
+                  "type": "string",
+                  "enum": [
+                    "text",
+                    "image",
+                    "system",
+                    "bot"
+                  ],
+                  "description": "Loại tin nhắn",
+                  "example": "text"
+                },
+                "content": {
+                  "type": "string",
+                  "nullable": true,
+                  "description": "Nội dung tin nhắn dạng văn bản",
+                  "example": "Đã chốt số điện tháng 09: 180 kWh"
+                },
+                "mediaId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "nullable": true,
+                  "description": "Media ID của ảnh đã upload qua Media Service."
+                },
+                "sequence": {
+                  "type": "integer",
+                  "format": "int64",
+                  "minimum": 1
+                },
+                "clientMessageId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "description": "ID idempotency do client tạo."
+                },
+                "payload": {
+                  "type": "object",
+                  "nullable": true,
+                  "description": "Payload is a discriminated union for implemented system actions.",
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/ConversationMembersAddedPayload"
+                    },
+                    {
+                      "$ref": "#/components/schemas/ConversationMemberKickedPayload"
+                    },
+                    {
+                      "$ref": "#/components/schemas/ConversationMemberLeftPayload"
+                    },
+                    {
+                      "$ref": "#/components/schemas/ConversationAdminTransferredPayload"
+                    },
+                    {
+                      "$ref": "#/components/schemas/ConversationMemberRoleChangedPayload"
+                    }
+                  ],
+                  "discriminator": {
+                    "propertyName": "action",
+                    "mapping": {
+                      "members_added": "#/components/schemas/ConversationMembersAddedPayload",
+                      "member_kicked": "#/components/schemas/ConversationMemberKickedPayload",
+                      "member_left": "#/components/schemas/ConversationMemberLeftPayload",
+                      "admin_transferred": "#/components/schemas/ConversationAdminTransferredPayload",
+                      "member_role_changed": "#/components/schemas/ConversationMemberRoleChangedPayload"
+                    }
+                  },
+                  "example": {
+                    "action": "members_added",
+                    "actorUserId": "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d",
+                    "members": [
+                      {
+                        "userId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                        "displayName": "Nguyễn Văn A"
+                      }
+                    ]
+                  }
+                }
+              },
+              "required": [
+                "conversationId",
+                "senderName",
+                "type"
+              ]
+            }
+          ]
+        },
+        {
+          "pointer": "/paths/~1conversations~1{conversationId}~1members~1{userId}~1role/put/description",
+          "before": "Admin nhóm đặt vai trò admin hoặc member; không thể hạ admin cuối cùng.",
+          "after": "Chỉ admin active của group được đổi vai trò user active khác trong nhóm giữa `admin` và `member`; không áp dụng với direct conversation. Không thể hạ admin cuối cùng. Thay đổi role và system message `member_role_changed` được ghi cùng transaction. Payload lưu `actorUserId`, snapshot member và `oldRole`/`newRole`. Nếu role đích đã đúng như hiện tại, trả thành công nhưng không tạo message trùng. Không gửi FCM.\n\n```mermaid\nsequenceDiagram\n    participant C as Client\n    participant COM as Community\n    participant DB as Community DB\n    C->>COM: PUT /conversations/{conversationId}/members/{userId}/role\n    COM->>DB: Begin transaction and lock conversation/members\n    COM->>COM: Verify caller is active group admin and target is active user member\n    COM->>DB: Check last-admin constraint\n    COM->>DB: Update role and append member_role_changed system message atomically\n    COM-->>C: 200 CONVERSATION_MEMBER_ROLE_UPDATED\n```\n"
+        },
+        {
+          "pointer": "/paths/~1conversations~1{conversationId}~1members~1{userId}~1role/put/responses/200/content",
+          "before": null,
+          "after": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "statusCode",
+                  "code",
+                  "data"
+                ],
+                "properties": {
+                  "statusCode": {
+                    "type": "integer",
+                    "enum": [
+                      200
+                    ]
+                  },
+                  "code": {
+                    "type": "string",
+                    "enum": [
+                      "CONVERSATION_MEMBER_ROLE_UPDATED"
+                    ]
+                  },
+                  "data": {
+                    "type": "object",
+                    "nullable": true,
+                    "enum": [
+                      null
+                    ]
+                  }
+                }
+              },
+              "example": {
+                "statusCode": 200,
+                "code": "CONVERSATION_MEMBER_ROLE_UPDATED",
+                "data": null
+              }
+            }
+          }
+        },
+        {
+          "pointer": "/paths/~1conversations~1{conversationId}~1members~1{userId}~1role/put/responses/200/description",
+          "before": "Vai trò đã được cập nhật; thay đổi tạo system message.",
+          "after": "Vai trò đã được cập nhật; nếu có thay đổi, system message được lưu cùng transaction."
+        },
+        {
+          "pointer": "/paths/~1conversations~1{conversationId}~1members~1{userId}~1role/put/responses/404",
+          "before": null,
+          "after": {
+            "$ref": "#/components/responses/NotFoundError"
+          }
+        },
+        {
+          "pointer": "/paths/~1conversations~1{conversationId}~1members~1{userId}~1role/put/responses/409",
+          "before": null,
+          "after": {
+            "description": "Không thể hạ vai trò của admin cuối cùng.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        409
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "LAST_ADMIN_CANNOT_BE_DEMOTED"
+                      ]
+                    }
+                  }
+                },
+                "example": {
+                  "statusCode": 409,
+                  "code": "LAST_ADMIN_CANNOT_BE_DEMOTED"
+                }
+              }
+            }
+          }
+        },
+        {
+          "pointer": "/paths/~1conversations~1{conversationId}~1members~1{userId}~1role/put/x-apidog-folder",
+          "before": null,
+          "after": "ConversationMember"
+        },
+        {
+          "pointer": "/paths/~1conversations~1{conversationId}~1members~1{userId}~1role/put/x-apidog-status",
+          "before": null,
+          "after": "designing"
+        }
+      ],
+      "semanticDiff": {
+        "paths": {
+          "modified": {
+            "/conversations/{conversationId}/members/{userId}/role": {
+              "operations": {
+                "modified": {
+                  "PUT": {
+                    "extensions": {
+                      "added": [
+                        "x-apidog-folder",
+                        "x-apidog-status"
+                      ]
+                    },
+                    "responses": {
+                      "added": [
+                        "409",
+                        "404"
+                      ],
+                      "modified": {
+                        "200": {
+                          "content": {
+                            "added": [
+                              "application/json"
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "components": {
+          "schemas": {
+            "added": [
+              "ConversationMemberRoleChangedPayload"
+            ],
+            "modified": {
+              "Message": {
+                "properties": {
+                  "modified": {
+                    "payload": {
+                      "oneOf": {
+                        "added": [
+                          {
+                            "index": 4,
+                            "component": "ConversationMemberRoleChangedPayload"
+                          }
+                        ]
+                      },
+                      "discriminatorDiff": {
+                        "mapping": {
+                          "added": [
+                            "member_role_changed"
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   ]
 }
