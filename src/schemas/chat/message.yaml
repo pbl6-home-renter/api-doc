@@ -17,6 +17,10 @@ allOf:
         nullable: true
         description: ID user gửi; null với system message và bot.
         example: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+      senderName:
+        type: string
+        maxLength: 254
+        description: Tên người gửi được snapshot tại thời điểm tạo message.
       senderType:
         type: string
         enum: [user, system]
@@ -49,4 +53,5 @@ allOf:
         description: Dữ liệu có cấu trúc cho system/bot message.
     required:
       - conversationId
+      - senderName
       - type

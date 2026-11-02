@@ -7,7 +7,28 @@ get:
   security:
     - BearerAuth: []
   summary: Get conversation details
-  description: 'tenant, landlord. Đọc chi tiết hội thoại. Lỗi nghiệp vụ: 403 FORBIDDEN · 404 NOT FOUND.'
+  description: |
+    Xem chi tiết hội thoại của caller. Thành viên active và read-only được xem; user chưa từng là member nhận 403. Read-only chỉ được tải tin nhắn tới `leftSequence` qua API messages.
+
+    ```mermaid
+    sequenceDiagram
+        participant C as Client
+        participant COM as Community
+        participant DB as Community DB
+        C->>COM: GET /conversations/{conversationId}
+        COM->>COM: Verify JWT and validate conversationId
+        COM->>DB: Find conversation and caller membership
+        DB-->>COM: Conversation and membership state
+        alt Conversation does not exist
+            COM-->>C: 404 NOT_FOUND
+        else Caller is not a member
+            COM-->>C: 403 FORBIDDEN
+        else Caller is active or read-only member
+            COM->>DB: Load member list and unread count within read boundary
+            DB-->>COM: Conversation detail
+            COM-->>C: 200 CONVERSATION_FETCHED
+        end
+    ```
   parameters:
   - name: conversationId
     in: path
@@ -52,6 +73,7 @@ get:
               members:
               - conversationId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
                 userId: 9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d
+                displayName: Bảo Dương
                 participantType: user
                 role: admin
                 status: active

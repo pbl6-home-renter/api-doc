@@ -17,6 +17,10 @@ allOf:
         nullable: true
         description: ID người dùng tham gia
         example: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+      displayName:
+        type: string
+        maxLength: 254
+        description: Tên hiển thị được snapshot khi thêm thành viên.
       participantType:
         type: string
         enum: [user, system]
@@ -50,6 +54,7 @@ allOf:
         description: Sequence cuối đã đọc; unread tính từ sequence kế tiếp.
     required:
       - conversationId
+      - displayName
       - participantType
       - role
       - status
