@@ -35200,6 +35200,302 @@
           }
         }
       }
+    },
+    {
+      "id": "9417df8354669ff852d93aecfa5e18c3b3a538ebdd67d13c449768d34c027b12",
+      "label": "Thay đổi contract từ Git",
+      "classification": "BREAKING",
+      "contractId": "rentify-public",
+      "repository": "https://github.com/pbl6-home-renter/api-doc",
+      "baseHash": "cf81828cb39b4540c81865f817d6652d85014c4620178bd47c94ab93b162a954",
+      "headHash": "b0a7ac796ebcd1d375d151cd363eb0bfa543e0844b62dea0334f02ca1322bd0a",
+      "baseSource": "src/openapi.yaml",
+      "headSource": "src/openapi.yaml",
+      "detectedAt": "2026-11-02T10:01:33.558Z",
+      "committedAt": "2026-11-02T17:01:21+07:00",
+      "baseCommit": "097bff32a23ed30eaca5b67d8ba41b4cb589a995",
+      "headCommit": "097af8d65289eb4ccb99899d0cffc8cc4f89f118",
+      "prUrl": "https://github.com/pbl6-home-renter/api-doc/pull/43",
+      "commitUrl": "https://github.com/pbl6-home-renter/api-doc/commit/097af8d65289eb4ccb99899d0cffc8cc4f89f118",
+      "metadataKind": "Git revision thực tế",
+      "reason": "CHƯA CUNG CẤP — tác giả PR phải bổ sung lý do nghiệp vụ; không thể suy ra từ OpenAPI diff.",
+      "tools": {
+        "redocly": "2.64.1",
+        "oasdiff": "1.34.1"
+      },
+      "changes": [
+        {
+          "id": "response-property-became-nullable",
+          "text": "the response property `data/items/clientMessageId` became nullable for the status `200`",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getMessages",
+          "path": "/messages",
+          "section": "paths",
+          "fingerprint": "2a83587a9d18",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu vị trí và thay đổi trước/sau trong entry này với API adapter, DTO, parser và validation; cùng BE xác nhận phương án tương thích trước merge/phát hành."
+        },
+        {
+          "id": "api-version-not-bumped",
+          "text": "a breaking change was detected but the version is still `1.0.0`",
+          "level": 1,
+          "section": "info",
+          "fingerprint": "d3f96cd643c1",
+          "classification": "NON_BREAKING",
+          "clientImpact": "BE: xem lại quy ước version trước khi chấp nhận breaking change. FE/Mobile: theo kế hoạch chuyển đổi của entry này; version trong OpenAPI chưa chứng minh backend đã triển khai."
+        },
+        {
+          "id": "response-property-became-required",
+          "text": "the response property `data/items/clientMessageId` became required for the status `200`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getMessages",
+          "path": "/messages",
+          "section": "paths",
+          "fingerprint": "c09aace66792",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        },
+        {
+          "id": "response-property-became-required",
+          "text": "the response property `data/items/mediaId` became required for the status `200`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getMessages",
+          "path": "/messages",
+          "section": "paths",
+          "fingerprint": "13ac601dba1a",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        },
+        {
+          "id": "response-property-became-required",
+          "text": "the response property `data/items/senderUserId` became required for the status `200`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getMessages",
+          "path": "/messages",
+          "section": "paths",
+          "fingerprint": "117cd73ba32a",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        },
+        {
+          "id": "response-required-property-added",
+          "text": "added the required property `data/items/payload` to the response with the `200` status",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getMessages",
+          "path": "/messages",
+          "section": "paths",
+          "fingerprint": "77df2d054e91",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/items/payload; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        }
+      ],
+      "locations": [
+        {
+          "pointer": "/components/schemas/MessageListResponseDto/properties/clientMessageId/description",
+          "before": null,
+          "after": "ID retry do client tạo; null với system message."
+        },
+        {
+          "pointer": "/components/schemas/MessageListResponseDto/properties/clientMessageId/nullable",
+          "before": null,
+          "after": true
+        },
+        {
+          "pointer": "/components/schemas/MessageListResponseDto/properties/payload",
+          "before": null,
+          "after": {
+            "type": "object",
+            "nullable": true,
+            "description": "Payload có discriminator `action` cho system message.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/ConversationMembersAddedPayload"
+              },
+              {
+                "$ref": "#/components/schemas/ConversationMemberKickedPayload"
+              },
+              {
+                "$ref": "#/components/schemas/ConversationMemberLeftPayload"
+              },
+              {
+                "$ref": "#/components/schemas/ConversationAdminTransferredPayload"
+              },
+              {
+                "$ref": "#/components/schemas/ConversationMemberRoleChangedPayload"
+              }
+            ],
+            "discriminator": {
+              "propertyName": "action"
+            }
+          }
+        },
+        {
+          "pointer": "/components/schemas/MessageListResponseDto/properties/senderUserId/description",
+          "before": null,
+          "after": "ID user gửi tin; null với system message."
+        },
+        {
+          "pointer": "/components/schemas/MessageListResponseDto/required",
+          "before": [
+            "id",
+            "conversationId",
+            "senderType",
+            "senderName",
+            "sequence",
+            "type",
+            "content",
+            "createdAt"
+          ],
+          "after": [
+            "id",
+            "conversationId",
+            "senderUserId",
+            "senderName",
+            "senderType",
+            "sequence",
+            "clientMessageId",
+            "type",
+            "content",
+            "mediaId",
+            "payload",
+            "createdAt"
+          ]
+        },
+        {
+          "pointer": "/paths/~1messages/get/description",
+          "before": "tenant, landlord. Liệt kê tin nhắn trong một hội thoại. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 INVALID CURSOR · 404 CONVERSATION NOT FOUND.",
+          "after": "List messages in a conversation for landlords and tenants, ordered by sequence descending so clients can load the newest messages first and request older pages with the returned opaque cursor. Active members can read all history. Read-only members can only read messages up to their `leftSequence`."
+        },
+        {
+          "pointer": "/paths/~1messages/get/responses/200/content/application~1json/example/data",
+          "before": [
+            {
+              "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+              "conversationId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+              "senderUserId": "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d",
+              "senderName": "Nguyễn Văn A",
+              "senderType": "user",
+              "sequence": 42,
+              "clientMessageId": "a95a1d13-f91c-4c71-9c61-24b498d0fd0e",
+              "type": "text",
+              "content": "Dạ em gửi ảnh vòi xịt ạ",
+              "createdAt": "2026-09-23T11:30:00.000Z"
+            }
+          ],
+          "after": [
+            {
+              "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+              "conversationId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+              "senderUserId": "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d",
+              "senderName": "Nguyễn Văn A",
+              "senderType": "user",
+              "sequence": 42,
+              "clientMessageId": "a95a1d13-f91c-4c71-9c61-24b498d0fd0e",
+              "type": "text",
+              "content": "Dạ em gửi ảnh vòi xịt ạ",
+              "mediaId": null,
+              "payload": null,
+              "createdAt": "2026-09-23T11:30:00.000Z"
+            }
+          ]
+        },
+        {
+          "pointer": "/paths/~1messages/post/description",
+          "before": "tenant, landlord. Gửi tin nhắn. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 MESSAGE CONTENT INVALID.",
+          "after": "Send a text or image message for landlords and tenants. Text messages require non-empty content. Image messages require a completed Media record with ownerType `conversation`, ownerId equal to `conversationId`, and purpose `chat_attachment`; Community validates the media with Identity before persisting the message. Only active members can send. Retrying the same `(senderMemberId, clientMessageId)` returns the existing message.\n\n```mermaid\nsequenceDiagram\n  participant C as Client\n  participant COM as Community\n  participant ID as Identity Media\n  participant DB as Community DB\n  C->>COM: POST /messages\n  COM->>COM: Check active membership and idempotency key\n  opt type=image and not a retry\n    COM->>ID: GET /internal/media/chat-attachment?mediaId&conversationId\n    ID-->>COM: valid = uploaded, chat_attachment, same conversation\n  end\n  COM->>DB: Lock conversation, recheck membership, allocate sequence, save message\n  DB-->>COM: Message\n  COM-->>C: 201 MESSAGE_SENT\n```"
+        }
+      ],
+      "semanticDiff": {
+        "paths": {
+          "modified": {
+            "/messages": {
+              "operations": {
+                "modified": {
+                  "GET": {
+                    "responses": {
+                      "modified": {
+                        "200": {
+                          "content": {
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "properties": {
+                                    "modified": {
+                                      "data": {
+                                        "items": {
+                                          "required": {
+                                            "added": [
+                                              "payload",
+                                              "senderUserId",
+                                              "mediaId",
+                                              "clientMessageId"
+                                            ]
+                                          },
+                                          "properties": {
+                                            "added": [
+                                              "payload"
+                                            ],
+                                            "modified": {
+                                              "clientMessageId": {
+                                                "nullable": {
+                                                  "from": false,
+                                                  "to": true
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "components": {
+          "schemas": {
+            "modified": {
+              "MessageListResponseDto": {
+                "required": {
+                  "added": [
+                    "payload",
+                    "clientMessageId",
+                    "mediaId",
+                    "senderUserId"
+                  ]
+                },
+                "properties": {
+                  "added": [
+                    "payload"
+                  ],
+                  "modified": {
+                    "clientMessageId": {
+                      "nullable": {
+                        "from": false,
+                        "to": true
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   ]
 }

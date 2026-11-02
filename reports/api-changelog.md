@@ -5,11 +5,47 @@
 
 Báo cáo lưu lịch sử các entry đã phát hiện, mới nhất ở trên. `NO_CHANGE` không xóa entry cũ; exit code chỉ phản ánh lần chạy hiện tại.
 
-Công cụ: Redocly 2.64.1; oasdiff 1.34.1. Số entry: **28**.
+Công cụ: Redocly 2.64.1; oasdiff 1.34.1. Số entry: **29**.
 
 Phân loại: **BREAKING** = client cũ có thể hỏng; **NON_BREAKING** = tương thích theo contract; **NEEDS_REVIEW** = chưa đủ bằng chứng.
 
 Các vị trí dùng JSON Pointer trên bundle tạm (`~1` là `/`). JSON đi kèm giữ toàn bộ semantic diff, fingerprint và hash phục vụ truy vết.
+
+## Thay đổi contract từ Git — BREAKING
+
+- ID: `9417df8354669ff852d93aecfa5e18c3b3a538ebdd67d13c449768d34c027b12`
+- Contract: rentify-public; repository: https://github.com/pbl6-home-renter/api-doc
+- Nguồn: `src/openapi.yaml` → `src/openapi.yaml`
+- Phát hiện (UTC): 2026-11-02T10:01:33.558Z; commit time: 2026-11-02T17:01:21+07:00
+- Commit nền: 097bff32a23ed30eaca5b67d8ba41b4cb589a995
+- Commit đích/bối cảnh: [097af8d65289eb4ccb99899d0cffc8cc4f89f118](https://github.com/pbl6-home-renter/api-doc/commit/097af8d65289eb4ccb99899d0cffc8cc4f89f118)
+- PR: [https://github.com/pbl6-home-renter/api-doc/pull/43](https://github.com/pbl6-home-renter/api-doc/pull/43)
+- Loại metadata: Git revision thực tế
+- Lý do: CHƯA CUNG CẤP — tác giả PR phải bổ sung lý do nghiệp vụ; không thể suy ra từ OpenAPI diff.
+
+| Mức ảnh hưởng | Endpoint / vùng | Thay đổi | Hành động FE / Mobile |
+|---|---|---|---|
+| BREAKING | GET /messages | the response property `data/items/clientMessageId` became nullable for the status `200` (`response-property-became-nullable`) | FE và Mobile: đối chiếu vị trí và thay đổi trước/sau trong entry này với API adapter, DTO, parser và validation; cùng BE xác nhận phương án tương thích trước merge/phát hành. |
+| NON_BREAKING | info | Đã phát hiện breaking change nhưng info.version vẫn là `1.0.0`. (`api-version-not-bumped`) | BE: xem lại quy ước version trước khi chấp nhận breaking change. FE/Mobile: theo kế hoạch chuyển đổi của entry này; version trong OpenAPI chưa chứng minh backend đã triển khai. |
+| NON_BREAKING | GET /messages | the response property `data/items/clientMessageId` became required for the status `200` (`response-property-became-required`) | FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI. |
+| NON_BREAKING | GET /messages | the response property `data/items/mediaId` became required for the status `200` (`response-property-became-required`) | FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI. |
+| NON_BREAKING | GET /messages | the response property `data/items/senderUserId` became required for the status `200` (`response-property-became-required`) | FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI. |
+| NON_BREAKING | GET /messages | added the required property `data/items/payload` to the response with the `200` status (`response-required-property-added`) | FE: có thể bỏ qua field mới data/items/payload; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại. |
+
+### Vị trí và giá trị trước/sau
+
+| Path / schema / field (JSON Pointer) | Trước | Sau |
+|---|---|---|
+| `/components/schemas/MessageListResponseDto/properties/clientMessageId/description` | null | "ID retry do client tạo; null với system message." |
+| `/components/schemas/MessageListResponseDto/properties/clientMessageId/nullable` | null | true |
+| `/components/schemas/MessageListResponseDto/properties/payload` | null | {"type":"object","nullable":true,"description":"Payload có discriminator `action` cho system message.","oneOf":[{"$ref":"#/components/schemas/ConversationMembersAddedPayload"},{"$ref":"#/components/schemas/ConversationMemberKickedPayload"},{"$ref":"#/components/schemas/ConversationMemberLeftPayload"},{"$ref":"#/components/schemas/ConversationAdminTransferredPayload"},{"$ref":"#/components/schemas/ConversationMemberRoleChangedPayload"}],"discriminator":{"propertyName":"action"}} |
+| `/components/schemas/MessageListResponseDto/properties/senderUserId/description` | null | "ID user gửi tin; null với system message." |
+| `/components/schemas/MessageListResponseDto/required` | ["id","conversationId","senderType","senderName","sequence","type","content","createdAt"] | ["id","conversationId","senderUserId","senderName","senderType","sequence","clientMessageId","type","content","mediaId","payload","createdAt"] |
+| `/paths/~1messages/get/description` | "tenant, landlord. Liệt kê tin nhắn trong một hội thoại. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 INVALID CURSOR · 404 CONVERSATION NOT FOUND." | "List messages in a conversation for landlords and tenants, ordered by sequence descending so clients can load the newest messages first and request older pages with the returned opaque cursor. Active members can read all history. Read-only members can only read messages up to their `leftSequence`." |
+| `/paths/~1messages/get/responses/200/content/application~1json/example/data` | [{"id":"3fa85f64-5717-4562-b3fc-2c963f66afa6","conversationId":"3fa85f64-5717-4562-b3fc-2c963f66afa6","senderUserId":"9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d","senderName":"Nguyễn Văn A","senderType":"user","sequence":42,"clientMessageId":"a95a1d13-f91c-4c71-9c61-24b498d0fd0e","type":"text","content":"Dạ em gửi ảnh vòi xịt ạ","createdAt":"2026-09-23T11:30:00.000Z"}] | [{"id":"3fa85f64-5717-4562-b3fc-2c963f66afa6","conversationId":"3fa85f64-5717-4562-b3fc-2c963f66afa6","senderUserId":"9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d","senderName":"Nguyễn Văn A","senderType":"user","sequence":42,"clientMessageId":"a95a1d13-f91c-4c71-9c61-24b498d0fd0e","type":"text","content":"Dạ em gửi ảnh vòi xịt ạ","mediaId":null,"payload":null,"createdAt":"2026-09-23T11:30:00.000Z"}] |
+| `/paths/~1messages/post/description` | "tenant, landlord. Gửi tin nhắn. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 MESSAGE CONTENT INVALID." | "Send a text or image message for landlords and tenants. Text messages require non-empty content. Image messages require a completed Media record with ownerType `conversation`, ownerId equal to `conversationId`, and purpose `chat_attachment`; Community validates the media with Identity before persisting the message. Only active members can send. Retrying the same `(senderMemberId, clientMessageId)` returns the existing message.\n\n```mermaid\nsequenceDiagram\n  participant C as Client\n  participant COM as Community\n  participant ID as Identity Media\n  participant DB as Community DB\n  C-&gt;&gt;COM: POST /messages\n  COM-&gt;&gt;COM: Check active membership and idempotency key\n  opt type=image and not a retry\n    COM-&gt;&gt;ID: GET /internal/media/chat-attachment?mediaId&conversationId\n    ID--&gt;&gt;COM: valid = uploaded, chat_attachment, same conversation\n  end\n  COM-&gt;&gt;DB: Lock conversation, recheck membership, allocate sequence, save message\n  DB--&gt;&gt;COM: Message\n  COM--&gt;&gt;C: 201 MESSAGE_SENT\n```" |
+
+**Kiểm tra thủ công:** BE xác nhận lý do, endpoint dùng schema chung, thay đổi role/ownership mô tả bằng văn bản và thời điểm triển khai. FE/Mobile xác nhận tác động với parser và phiên bản client đang hỗ trợ.
 
 ## Thay đổi contract từ Git — NON_BREAKING
 
