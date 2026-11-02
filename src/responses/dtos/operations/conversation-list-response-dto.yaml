@@ -1,7 +1,7 @@
 type: object
 x-apidog-folder: "Conversation/Response"
 title: ConversationListResponseDto
-description: Hội thoại hiển thị trong danh sách của user hiện tại.
+description: Hội thoại hiển thị trong danh sách của user hiện tại, theo thời điểm hoạt động mới nhất.
 properties:
   id: { type: string, format: uuid }
   kind: { type: string, enum: [direct, group] }
@@ -16,8 +16,8 @@ properties:
     properties:
       id: { type: string, format: uuid }
       sequence: { type: integer, format: int64 }
-      senderName: { type: string }
-      contentPreview: { type: string }
+      senderName: { type: string, maxLength: 254, description: Tên người gửi được snapshot lúc gửi tin. }
+      contentPreview: { type: string, maxLength: 120, description: Nội dung rút gọn; ảnh hiển thị Đã gửi ảnh. }
       type: { type: string, enum: [text, image, system, bot] }
       sentAt: { type: string, format: date-time }
 required: [id, kind, unreadCount]

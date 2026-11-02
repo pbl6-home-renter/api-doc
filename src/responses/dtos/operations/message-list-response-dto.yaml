@@ -6,6 +6,7 @@ properties:
   id: { type: string, format: uuid , description: "Định danh duy nhất của tài nguyên." }
   conversationId: { type: string, format: uuid , description: "Thông tin conversation id của tài nguyên trong ngữ cảnh DTO." }
   senderUserId: { type: string, format: uuid, nullable: true }
+  senderName: { type: string, maxLength: 254 }
   senderType: { type: string, enum: [user, system] }
   sequence: { type: integer, format: int64, minimum: 1 }
   clientMessageId: { type: string, format: uuid }
@@ -13,4 +14,4 @@ properties:
   content: { type: string, nullable: true , description: "Thông tin content của tài nguyên trong ngữ cảnh DTO." }
   mediaId: { type: string, format: uuid, nullable: true }
   createdAt: { type: string, format: date-time , description: "Thời điểm bản ghi được tạo, theo định dạng ngày giờ ISO 8601." }
-required: [id, conversationId, senderType, sequence, type, content, createdAt]
+required: [id, conversationId, senderType, senderName, sequence, type, content, createdAt]

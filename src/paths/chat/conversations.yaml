@@ -7,8 +7,22 @@ get:
   security:
     - BearerAuth: []
   summary: List conversations
-  description: 'tenant, landlord. Liệt kê các hội thoại của người gọi. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 VALIDATION
-    FAILED.'
+  description: |
+    Liệt kê các hội thoại mà user hiện tại là thành viên active hoặc read-only. Nếu có `contextType` thì bắt buộc gửi cùng `contextId`; API chỉ lọc hội thoại đã tồn tại, không tạo mới. Kết quả sắp xếp theo thời điểm tin nhắn gần nhất giảm dần; hội thoại chưa có tin nhắn dùng thời điểm tạo. `lastMessage.senderName` lấy từ snapshot trên message, không gọi Identity khi đọc danh sách.
+
+    ```mermaid
+    sequenceDiagram
+        participant C as Client
+        participant COM as Community
+        participant DB as Community DB
+        C->>COM: GET /conversations?pageNo&pageSize&contextType&contextId
+        COM->>COM: Verify JWT and validate query
+        COM->>DB: Page conversations joined to caller membership
+        DB-->>COM: Conversations and pagination count
+        COM->>DB: Load latest readable message and unread count per conversation
+        DB-->>COM: Message snapshot and unread projections
+        COM-->>C: 200 CONVERSATIONS_FETCHED
+    ```
   parameters:
   - name: contextType
     in: query

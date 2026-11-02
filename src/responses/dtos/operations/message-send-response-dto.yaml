@@ -5,6 +5,7 @@ description: Phản hồi khi gửi tin nhắn
 properties:
   id: { type: string, format: uuid , description: "Định danh duy nhất của tài nguyên." }
   conversationId: { type: string, format: uuid , description: "Thông tin conversation id của tài nguyên trong ngữ cảnh DTO." }
+  senderName: { type: string, maxLength: 254 }
   type: { type: string, enum: [text, image, system, bot] }
   content: { type: string, nullable: true , description: "Thông tin content của tài nguyên trong ngữ cảnh DTO." }
   mediaId: { type: string, format: uuid, nullable: true }
@@ -15,6 +16,7 @@ properties:
 required:
   - id
   - conversationId
+  - senderName
   - type
   - content
   - sequence
