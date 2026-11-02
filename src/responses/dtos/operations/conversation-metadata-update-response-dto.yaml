@@ -1,0 +1,11 @@
+type: object
+x-apidog-folder: "Conversation/Response"
+title: ConversationMetadataUpdateResponseDto
+properties:
+  id: { type: string, format: uuid }
+  kind: { type: string, enum: [direct, group] }
+  contextType: { type: string, nullable: true, enum: [contract, building] }
+  contextId: { type: string, format: uuid, nullable: true }
+  title: { type: string, nullable: true, maxLength: 255 }
+  avatarMediaId: { type: string, format: uuid, nullable: true }
+required: [id, kind, contextType, contextId, title, avatarMediaId]
