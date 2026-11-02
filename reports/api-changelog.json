@@ -28472,6 +28472,2665 @@
           }
         }
       }
+    },
+    {
+      "id": "e52473dfb81be37c5b2b1d8db6982461210177404228af874f33479fef428468",
+      "label": "Thay đổi contract từ Git",
+      "classification": "BREAKING",
+      "contractId": "rentify-public",
+      "repository": "https://github.com/pbl6-home-renter/api-doc",
+      "baseHash": "4b55ddbb41dfaf7b46ed28c0687b2732207922ba3d2d7f7133d1bd653aaf1b39",
+      "headHash": "d80baef81d40af55306dbf477ca9fa16c611d85ac47bdb3b6c9b4b8533791566",
+      "baseSource": "src/openapi.yaml",
+      "headSource": "src/openapi.yaml",
+      "detectedAt": "2026-11-02T01:33:22.830Z",
+      "committedAt": "2026-11-02T08:33:12+07:00",
+      "baseCommit": "f4a71a1adc1ed91bd0f4fc6979ecc69c52c9197f",
+      "headCommit": "1e5d259f8f2c9dd9ea0fd16d3ee6ad883039d597",
+      "prUrl": "https://github.com/pbl6-home-renter/api-doc/pull/34",
+      "commitUrl": "https://github.com/pbl6-home-renter/api-doc/commit/1e5d259f8f2c9dd9ea0fd16d3ee6ad883039d597",
+      "metadataKind": "Git revision thực tế",
+      "reason": "CHƯA CUNG CẤP — tác giả PR phải bổ sung lý do nghiệp vụ; không thể suy ra từ OpenAPI diff.",
+      "tools": {
+        "redocly": "2.64.1",
+        "oasdiff": "1.34.1"
+      },
+      "changes": [
+        {
+          "id": "request-parameter-enum-value-removed",
+          "text": "removed the enum value `csv` from the `query` request parameter `format`",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getContracts",
+          "path": "/contracts",
+          "section": "paths",
+          "fingerprint": "35b237243bd5",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu enum trong DTO/validation và nhánh switch/when; xử lý giá trị chưa biết, kiểm thử dữ liệu cũ và mới; phối hợp BE trước khi phát hành."
+        },
+        {
+          "id": "request-parameter-enum-value-removed",
+          "text": "removed the enum value `pdf` from the `query` request parameter `format`",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getContracts",
+          "path": "/contracts",
+          "section": "paths",
+          "fingerprint": "8e630de269b5",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu enum trong DTO/validation và nhánh switch/when; xử lý giá trị chưa biết, kiểm thử dữ liệu cũ và mới; phối hợp BE trước khi phát hành."
+        },
+        {
+          "id": "request-parameter-enum-value-removed",
+          "text": "removed the enum value `xlsx` from the `query` request parameter `format`",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getContracts",
+          "path": "/contracts",
+          "section": "paths",
+          "fingerprint": "ededbbe18eba",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu enum trong DTO/validation và nhánh switch/when; xử lý giá trị chưa biết, kiểm thử dữ liệu cũ và mới; phối hợp BE trước khi phát hành."
+        },
+        {
+          "id": "response-media-type-removed",
+          "text": "removed the media type `application/pdf` for the response with the status `200`",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getContracts",
+          "path": "/contracts",
+          "section": "paths",
+          "fingerprint": "f88b8874c0ce",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "response-media-type-removed",
+          "text": "removed the media type `application/vnd.openxmlformats-officedocument.spreadsheetml.sheet` for the response with the status `200`",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getContracts",
+          "path": "/contracts",
+          "section": "paths",
+          "fingerprint": "46008a49e375",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "response-media-type-removed",
+          "text": "removed the media type `text/csv` for the response with the status `200`",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getContracts",
+          "path": "/contracts",
+          "section": "paths",
+          "fingerprint": "c840dec9fea3",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "response-property-became-nullable",
+          "text": "the response property `data/items/tenantName` became nullable for the status `200`",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getContracts",
+          "path": "/contracts",
+          "section": "paths",
+          "fingerprint": "5cfb04d0831d",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu vị trí và thay đổi trước/sau trong entry này với API adapter, DTO, parser và validation; cùng BE xác nhận phương án tương thích trước merge/phát hành."
+        },
+        {
+          "id": "response-property-became-nullable",
+          "text": "the response property `data/items/tenantPhone` became nullable for the status `200`",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getContracts",
+          "path": "/contracts",
+          "section": "paths",
+          "fingerprint": "09e19d972170",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu vị trí và thay đổi trước/sau trong entry này với API adapter, DTO, parser và validation; cùng BE xác nhận phương án tương thích trước merge/phát hành."
+        },
+        {
+          "id": "response-property-enum-value-added",
+          "text": "added the new `INVALID_UUID` enum value to the `code` response property for the response status `422`",
+          "comment": "The server may now return a value the previous contract excluded, so a client written against it may not handle the response. If the value set is meant to grow, declare it with x-extensible-enum.",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getContracts",
+          "path": "/contracts",
+          "section": "paths",
+          "fingerprint": "737b343967f8",
+          "classification": "BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới INVALID_UUID; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-property-enum-value-added",
+          "text": "added the new `UNEXPECTED_FIELD` enum value to the `code` response property for the response status `422`",
+          "comment": "The server may now return a value the previous contract excluded, so a client written against it may not handle the response. If the value set is meant to grow, declare it with x-extensible-enum.",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getContracts",
+          "path": "/contracts",
+          "section": "paths",
+          "fingerprint": "573ad5c766dc",
+          "classification": "BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới UNEXPECTED_FIELD; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-property-type-generalized",
+          "text": "the `data/items/depositAmount` response's property `type` was widened from `integer` to `number` for status `200`",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getContracts",
+          "path": "/contracts",
+          "section": "paths",
+          "fingerprint": "fb5aac7a5e28",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu vị trí và thay đổi trước/sau trong entry này với API adapter, DTO, parser và validation; cùng BE xác nhận phương án tương thích trước merge/phát hành."
+        },
+        {
+          "id": "response-property-type-generalized",
+          "text": "the `data/items/rentPrice` response's property `type` was widened from `integer` to `number` for status `200`",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getContracts",
+          "path": "/contracts",
+          "section": "paths",
+          "fingerprint": "47b1e42519a9",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu vị trí và thay đổi trước/sau trong entry này với API adapter, DTO, parser và validation; cùng BE xác nhận phương án tương thích trước merge/phát hành."
+        },
+        {
+          "id": "request-property-max-set",
+          "text": "the `vehicleCount` request property's max was set to `2147483647.00`",
+          "comment": "Setting a bound rejects values the previous contract accepted. If your clients are known to stay within the new limit, lower this check with --severity-levels.",
+          "level": 3,
+          "operation": "POST",
+          "operationId": "postContracts",
+          "path": "/contracts",
+          "section": "paths",
+          "fingerprint": "6f4e18eca239",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu vị trí và thay đổi trước/sau trong entry này với API adapter, DTO, parser và validation; cùng BE xác nhận phương án tương thích trước merge/phát hành."
+        },
+        {
+          "id": "request-property-pattern-added",
+          "text": "added the pattern `\\S` to the request property `tenantName`",
+          "comment": "This is a breaking change because adding a pattern restriction to a previously unrestricted parameter will reject values that were previously accepted, breaking existing clients",
+          "level": 3,
+          "operation": "POST",
+          "operationId": "postContracts",
+          "path": "/contracts",
+          "section": "paths",
+          "fingerprint": "0e057ee30a9c",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu vị trí và thay đổi trước/sau trong entry này với API adapter, DTO, parser và validation; cùng BE xác nhận phương án tương thích trước merge/phát hành."
+        },
+        {
+          "id": "response-property-enum-value-added",
+          "text": "added the new `INVALID_UUID` enum value to the `code` response property for the response status `422`",
+          "comment": "The server may now return a value the previous contract excluded, so a client written against it may not handle the response. If the value set is meant to grow, declare it with x-extensible-enum.",
+          "level": 3,
+          "operation": "POST",
+          "operationId": "postContracts",
+          "path": "/contracts",
+          "section": "paths",
+          "fingerprint": "c1f0b4bbfd19",
+          "classification": "BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới INVALID_UUID; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-property-enum-value-added",
+          "text": "added the new `UNEXPECTED_FIELD` enum value to the `code` response property for the response status `422`",
+          "comment": "The server may now return a value the previous contract excluded, so a client written against it may not handle the response. If the value set is meant to grow, declare it with x-extensible-enum.",
+          "level": 3,
+          "operation": "POST",
+          "operationId": "postContracts",
+          "path": "/contracts",
+          "section": "paths",
+          "fingerprint": "e4b3dddc2af4",
+          "classification": "BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới UNEXPECTED_FIELD; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-property-type-generalized",
+          "text": "the `data/rentPrice` response's property `type` was widened from `integer` to `number` for status `201`",
+          "level": 3,
+          "operation": "POST",
+          "operationId": "postContracts",
+          "path": "/contracts",
+          "section": "paths",
+          "fingerprint": "68a86cbbcef7",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu vị trí và thay đổi trước/sau trong entry này với API adapter, DTO, parser và validation; cùng BE xác nhận phương án tương thích trước merge/phát hành."
+        },
+        {
+          "id": "response-property-type-generalized",
+          "text": "the `data/depositAmount` response's property `type` was widened from `integer` to `number` for status `200`",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getContractsContractid",
+          "path": "/contracts/{contractId}",
+          "section": "paths",
+          "fingerprint": "13f10b1ca9be",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu vị trí và thay đổi trước/sau trong entry này với API adapter, DTO, parser và validation; cùng BE xác nhận phương án tương thích trước merge/phát hành."
+        },
+        {
+          "id": "response-property-type-generalized",
+          "text": "the `data/rentPrice` response's property `type` was widened from `integer` to `number` for status `200`",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getContractsContractid",
+          "path": "/contracts/{contractId}",
+          "section": "paths",
+          "fingerprint": "d1ffede5f95b",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu vị trí và thay đổi trước/sau trong entry này với API adapter, DTO, parser và validation; cùng BE xác nhận phương án tương thích trước merge/phát hành."
+        },
+        {
+          "id": "response-required-property-removed",
+          "text": "removed the required property `data/signedContractMediaId` from the response with the `200` status",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getContractsContractid",
+          "path": "/contracts/{contractId}",
+          "section": "paths",
+          "fingerprint": "9147656d6a4c",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "request-property-pattern-added",
+          "text": "added the pattern `\\S` to the request property `description`",
+          "comment": "This is a breaking change because adding a pattern restriction to a previously unrestricted parameter will reject values that were previously accepted, breaking existing clients",
+          "level": 3,
+          "operation": "PATCH",
+          "operationId": "patchContractsContractid",
+          "path": "/contracts/{contractId}",
+          "section": "paths",
+          "fingerprint": "96242d1a50ff",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu vị trí và thay đổi trước/sau trong entry này với API adapter, DTO, parser và validation; cùng BE xác nhận phương án tương thích trước merge/phát hành."
+        },
+        {
+          "id": "response-property-enum-value-added",
+          "text": "added the new `UNEXPECTED_FIELD` enum value to the `code` response property for the response status `422`",
+          "comment": "The server may now return a value the previous contract excluded, so a client written against it may not handle the response. If the value set is meant to grow, declare it with x-extensible-enum.",
+          "level": 3,
+          "operation": "PATCH",
+          "operationId": "patchContractsContractid",
+          "path": "/contracts/{contractId}",
+          "section": "paths",
+          "fingerprint": "bc51a2ff9227",
+          "classification": "BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới UNEXPECTED_FIELD; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-property-enum-value-added",
+          "text": "added the new `ACTIVE_CONTRACT_EXISTS` enum value to the `code` response property for the response status `409`",
+          "comment": "The server may now return a value the previous contract excluded, so a client written against it may not handle the response. If the value set is meant to grow, declare it with x-extensible-enum.",
+          "level": 3,
+          "operation": "POST",
+          "operationId": "postContractsContractidActivateContract",
+          "path": "/contracts/{contractId}/activate-contract",
+          "section": "paths",
+          "fingerprint": "91446fe91d08",
+          "classification": "BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới ACTIVE_CONTRACT_EXISTS; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-property-enum-value-added",
+          "text": "added the new `INVALID_UUID` enum value to the `code` response property for the response status `422`",
+          "comment": "The server may now return a value the previous contract excluded, so a client written against it may not handle the response. If the value set is meant to grow, declare it with x-extensible-enum.",
+          "level": 3,
+          "operation": "POST",
+          "operationId": "postContractsContractidActivateContract",
+          "path": "/contracts/{contractId}/activate-contract",
+          "section": "paths",
+          "fingerprint": "e1a580081c0a",
+          "classification": "BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới INVALID_UUID; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-property-enum-value-added",
+          "text": "added the new `SERVICE_UNAVAILABLE` enum value to the `code` response property for the response status `503`",
+          "comment": "The server may now return a value the previous contract excluded, so a client written against it may not handle the response. If the value set is meant to grow, declare it with x-extensible-enum.",
+          "level": 3,
+          "operation": "POST",
+          "operationId": "postContractsContractidActivateContract",
+          "path": "/contracts/{contractId}/activate-contract",
+          "section": "paths",
+          "fingerprint": "595606accacd",
+          "classification": "BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới SERVICE_UNAVAILABLE; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-property-enum-value-added",
+          "text": "added the new `UNEXPECTED_FIELD` enum value to the `code` response property for the response status `422`",
+          "comment": "The server may now return a value the previous contract excluded, so a client written against it may not handle the response. If the value set is meant to grow, declare it with x-extensible-enum.",
+          "level": 3,
+          "operation": "POST",
+          "operationId": "postContractsContractidActivateContract",
+          "path": "/contracts/{contractId}/activate-contract",
+          "section": "paths",
+          "fingerprint": "cf51ddf5167c",
+          "classification": "BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới UNEXPECTED_FIELD; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "request-property-removed",
+          "text": "removed the request property `paymentDueDay`",
+          "level": 2,
+          "operation": "POST",
+          "operationId": "postContracts",
+          "path": "/contracts",
+          "section": "paths",
+          "fingerprint": "bfd24f7acc49",
+          "classification": "NEEDS_REVIEW",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "request-property-removed",
+          "text": "removed the request property `rentalType`",
+          "level": 2,
+          "operation": "POST",
+          "operationId": "postContracts",
+          "path": "/contracts",
+          "section": "paths",
+          "fingerprint": "ebd41aed8376",
+          "classification": "NEEDS_REVIEW",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "request-property-removed",
+          "text": "removed the request property `templateKey`",
+          "level": 2,
+          "operation": "POST",
+          "operationId": "postContracts",
+          "path": "/contracts",
+          "section": "paths",
+          "fingerprint": "c57bec253943",
+          "classification": "NEEDS_REVIEW",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "request-property-removed",
+          "text": "removed the request property `templateVariables`",
+          "level": 2,
+          "operation": "POST",
+          "operationId": "postContracts",
+          "path": "/contracts",
+          "section": "paths",
+          "fingerprint": "abab8f026404",
+          "classification": "NEEDS_REVIEW",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "request-property-removed",
+          "text": "removed the request property `tenantCccd`",
+          "level": 2,
+          "operation": "POST",
+          "operationId": "postContracts",
+          "path": "/contracts",
+          "section": "paths",
+          "fingerprint": "6c804b37455b",
+          "classification": "NEEDS_REVIEW",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "api-version-not-bumped",
+          "text": "a breaking change was detected but the version is still `1.0.0`",
+          "level": 1,
+          "section": "info",
+          "fingerprint": "d3f96cd643c1",
+          "classification": "NON_BREAKING",
+          "clientImpact": "BE: xem lại quy ước version trước khi chấp nhận breaking change. FE/Mobile: theo kế hoạch chuyển đổi của entry này; version trong OpenAPI chưa chứng minh backend đã triển khai."
+        },
+        {
+          "id": "response-non-success-status-added",
+          "text": "added the non-success response with the status `422`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getContractTemplates",
+          "path": "/contract-templates",
+          "section": "paths",
+          "fingerprint": "a77deb19183a",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        },
+        {
+          "id": "new-optional-request-parameter",
+          "text": "added the new optional `query` request parameter `order`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getContracts",
+          "path": "/contracts",
+          "section": "paths",
+          "fingerprint": "f52294b42103",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        },
+        {
+          "id": "new-optional-request-parameter",
+          "text": "added the new optional `query` request parameter `sort`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getContracts",
+          "path": "/contracts",
+          "section": "paths",
+          "fingerprint": "f466452d121c",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        },
+        {
+          "id": "request-parameter-property-enum-value-added",
+          "text": "added the enum value `active` to the property `status` of the `query` request parameter `filter`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getContracts",
+          "path": "/contracts",
+          "section": "paths",
+          "fingerprint": "ff3a57ac88cd",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu enum trong DTO/validation và nhánh switch/when; xử lý giá trị chưa biết, kiểm thử dữ liệu cũ và mới; phối hợp BE trước khi phát hành."
+        },
+        {
+          "id": "request-parameter-property-enum-value-added",
+          "text": "added the enum value `draft` to the property `status` of the `query` request parameter `filter`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getContracts",
+          "path": "/contracts",
+          "section": "paths",
+          "fingerprint": "12d2b492d706",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu enum trong DTO/validation và nhánh switch/when; xử lý giá trị chưa biết, kiểm thử dữ liệu cũ và mới; phối hợp BE trước khi phát hành."
+        },
+        {
+          "id": "request-parameter-property-enum-value-added",
+          "text": "added the enum value `expired` to the property `status` of the `query` request parameter `filter`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getContracts",
+          "path": "/contracts",
+          "section": "paths",
+          "fingerprint": "014e8683d151",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu enum trong DTO/validation và nhánh switch/when; xử lý giá trị chưa biết, kiểm thử dữ liệu cũ và mới; phối hợp BE trước khi phát hành."
+        },
+        {
+          "id": "request-parameter-property-enum-value-added",
+          "text": "added the enum value `signed` to the property `status` of the `query` request parameter `filter`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getContracts",
+          "path": "/contracts",
+          "section": "paths",
+          "fingerprint": "b5f6edd53e73",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu enum trong DTO/validation và nhánh switch/when; xử lý giá trị chưa biết, kiểm thử dữ liệu cũ và mới; phối hợp BE trước khi phát hành."
+        },
+        {
+          "id": "request-parameter-property-enum-value-added",
+          "text": "added the enum value `suspended` to the property `status` of the `query` request parameter `filter`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getContracts",
+          "path": "/contracts",
+          "section": "paths",
+          "fingerprint": "98be735fdebc",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu enum trong DTO/validation và nhánh switch/when; xử lý giá trị chưa biết, kiểm thử dữ liệu cũ và mới; phối hợp BE trước khi phát hành."
+        },
+        {
+          "id": "request-parameter-property-enum-value-added",
+          "text": "added the enum value `terminated` to the property `status` of the `query` request parameter `filter`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getContracts",
+          "path": "/contracts",
+          "section": "paths",
+          "fingerprint": "63f3fd1be56a",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu enum trong DTO/validation và nhánh switch/when; xử lý giá trị chưa biết, kiểm thử dữ liệu cũ và mới; phối hợp BE trước khi phát hành."
+        },
+        {
+          "id": "response-non-success-status-removed",
+          "text": "removed the non-success response with the status `429`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getContracts",
+          "path": "/contracts",
+          "section": "paths",
+          "fingerprint": "7aed5ce7ade7",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "response-optional-property-removed",
+          "text": "removed the optional property `data/items/rentalType` from the response with the `200` status",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getContracts",
+          "path": "/contracts",
+          "section": "paths",
+          "fingerprint": "e83c52ec6ef5",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "optional-response-header-removed",
+          "text": "the optional response header `location` removed for the status `201`",
+          "level": 1,
+          "operation": "POST",
+          "operationId": "postContracts",
+          "path": "/contracts",
+          "section": "paths",
+          "baseSource": {
+            "file": "/tmp/rentify-contract-3IdXlc/base-0.json"
+          },
+          "fingerprint": "c6ccda29a275",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "request-body-any-of-added",
+          "text": "added `subschema #1, subschema #2` to the request body `anyOf` list",
+          "level": 1,
+          "operation": "POST",
+          "operationId": "postContracts",
+          "path": "/contracts",
+          "section": "paths",
+          "fingerprint": "4820e30b2dd5",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        },
+        {
+          "id": "request-property-became-nullable",
+          "text": "the request property `tenantName` became nullable",
+          "level": 1,
+          "operation": "POST",
+          "operationId": "postContracts",
+          "path": "/contracts",
+          "section": "paths",
+          "fingerprint": "10d1c5dec756",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        },
+        {
+          "id": "request-property-became-nullable",
+          "text": "the request property `tenantPhone` became nullable",
+          "level": 1,
+          "operation": "POST",
+          "operationId": "postContracts",
+          "path": "/contracts",
+          "section": "paths",
+          "fingerprint": "3c00522716aa",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        },
+        {
+          "id": "request-property-became-optional",
+          "text": "the request property `tenantName` became optional",
+          "level": 1,
+          "operation": "POST",
+          "operationId": "postContracts",
+          "path": "/contracts",
+          "section": "paths",
+          "fingerprint": "15fc659c0458",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        },
+        {
+          "id": "request-property-became-optional",
+          "text": "the request property `tenantPhone` became optional",
+          "level": 1,
+          "operation": "POST",
+          "operationId": "postContracts",
+          "path": "/contracts",
+          "section": "paths",
+          "fingerprint": "f16ea16e177f",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        },
+        {
+          "id": "request-property-type-generalized",
+          "text": "the `depositAmount` request property `type` was widened from `integer` to `number`",
+          "level": 1,
+          "operation": "POST",
+          "operationId": "postContracts",
+          "path": "/contracts",
+          "section": "paths",
+          "fingerprint": "9116b5391cfc",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        },
+        {
+          "id": "request-property-type-generalized",
+          "text": "the `rentPrice` request property `type` was widened from `integer` to `number`",
+          "level": 1,
+          "operation": "POST",
+          "operationId": "postContracts",
+          "path": "/contracts",
+          "section": "paths",
+          "fingerprint": "9f27f1886ebc",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        },
+        {
+          "id": "response-non-success-status-added",
+          "text": "added the non-success response with the status `404`",
+          "level": 1,
+          "operation": "POST",
+          "operationId": "postContracts",
+          "path": "/contracts",
+          "section": "paths",
+          "fingerprint": "a13fbfd2f3c0",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        },
+        {
+          "id": "response-non-success-status-removed",
+          "text": "removed the non-success response with the status `429`",
+          "level": 1,
+          "operation": "POST",
+          "operationId": "postContracts",
+          "path": "/contracts",
+          "section": "paths",
+          "fingerprint": "34fd7285eee6",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "response-non-success-status-removed",
+          "text": "removed the non-success response with the status `429`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getContractsContractid",
+          "path": "/contracts/{contractId}",
+          "section": "paths",
+          "fingerprint": "771c0131d1d2",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "response-required-property-added",
+          "text": "added the required property `data/description` to the response with the `200` status",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getContractsContractid",
+          "path": "/contracts/{contractId}",
+          "section": "paths",
+          "fingerprint": "7b54e5ebaa49",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/description; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-required-property-added",
+          "text": "added the required property `data/vehicleCount` to the response with the `200` status",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getContractsContractid",
+          "path": "/contracts/{contractId}",
+          "section": "paths",
+          "fingerprint": "40e71a52b706",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/vehicleCount; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-non-success-status-removed",
+          "text": "removed the non-success response with the status `429`",
+          "level": 1,
+          "operation": "PATCH",
+          "operationId": "patchContractsContractid",
+          "path": "/contracts/{contractId}",
+          "section": "paths",
+          "fingerprint": "68e1d5f5cdd9",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "response-non-success-status-removed",
+          "text": "removed the non-success response with the status `429`",
+          "level": 1,
+          "operation": "POST",
+          "operationId": "postContractsContractidActivateContract",
+          "path": "/contracts/{contractId}/activate-contract",
+          "section": "paths",
+          "fingerprint": "125cee3035b4",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        }
+      ],
+      "locations": [
+        {
+          "pointer": "/components/schemas/ContractActivateRequestDto/description",
+          "before": "Dữ liệu kích hoạt hợp đồng",
+          "after": "Body chỉ có signedContractMediaId bắt buộc, không nhận bytes file hay OTP/PIN. Thiếu/null trả 422 VALIDATION_FAILED, UUID sai trả 422 INVALID_UUID, field ngoài DTO trả 422 UNEXPECTED_FIELD. Điều kiện file ký được kiểm tra qua Identity trước transaction."
+        },
+        {
+          "pointer": "/components/schemas/ContractActivateRequestDto/properties/signedContractMediaId/description",
+          "before": "Thông tin signed contract media id của tài nguyên trong ngữ cảnh DTO.",
+          "after": "ID Media của bản hợp đồng đã ký. Validator hiện nhận UUID v1 đến v5. Adapter yêu cầu media có id khớp giá trị này, ownerType = contract, ownerId = contractId trên URL, purpose = contract_signed và status = uploaded. Giữ nguyên UUID do API trả về vì handler chưa chuẩn hóa hoa/thường khi đối chiếu."
+        },
+        {
+          "pointer": "/components/schemas/ContractActivateResponseDto/additionalProperties",
+          "before": null,
+          "after": false
+        },
+        {
+          "pointer": "/components/schemas/ContractActivateResponseDto/description",
+          "before": "Phản hồi khi kích hoạt hợp đồng",
+          "after": "Dữ liệu trong envelope 200 CONTRACT_ACTIVATED sau khi transaction kích hoạt hợp đồng thành công."
+        },
+        {
+          "pointer": "/components/schemas/ContractActivateResponseDto/properties/activatedAt/description",
+          "before": "Thông tin activated at của tài nguyên trong ngữ cảnh DTO.",
+          "after": "Thời điểm kích hoạt lưu trong contracts.activated_at; cùng giá trị với activatedAt của event contract.activated."
+        },
+        {
+          "pointer": "/components/schemas/ContractActivateResponseDto/properties/activatedAt/example",
+          "before": null,
+          "after": "2026-11-01T03:00:00.000Z"
+        },
+        {
+          "pointer": "/components/schemas/ContractActivateResponseDto/properties/id/description",
+          "before": "Định danh duy nhất của tài nguyên.",
+          "after": "ID hợp đồng vừa được kích hoạt."
+        },
+        {
+          "pointer": "/components/schemas/ContractActivateResponseDto/properties/status/description",
+          "before": "Trạng thái hiện tại của tài nguyên trong quy trình nghiệp vụ.",
+          "after": "Trạng thái hợp đồng sau khi kích hoạt."
+        },
+        {
+          "pointer": "/components/schemas/ContractCreateRequestDto/anyOf",
+          "before": null,
+          "after": [
+            {
+              "required": [
+                "tenantId"
+              ],
+              "properties": {
+                "tenantId": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            {
+              "required": [
+                "tenantName",
+                "tenantPhone"
+              ],
+              "properties": {
+                "tenantName": {
+                  "type": "string"
+                },
+                "tenantPhone": {
+                  "type": "string"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "pointer": "/components/schemas/ContractCreateRequestDto/description",
+          "before": "Dữ liệu tạo hợp đồng thuê phòng mới",
+          "after": "Dữ liệu tạo hợp đồng nháp theo entity Contract hiện tại của Tenancy-Service. landlordId lấy từ JWT, không gửi trong body. Nếu tenantId null hoặc không gửi, tenantName và tenantPhone bắt buộc có giá trị. Khi có tenantId, hai trường liên hệ được phép null hoặc không gửi; service chưa kiểm tra tài khoản tenant bên Identity."
+        },
+        {
+          "pointer": "/components/schemas/ContractCreateRequestDto/properties/depositAmount/type",
+          "before": "integer",
+          "after": "number"
+        },
+        {
+          "pointer": "/components/schemas/ContractCreateRequestDto/properties/endDate/description",
+          "before": "Ngày kết thúc hợp đồng thuê",
+          "after": "Ngày kết thúc theo YYYY-MM-DD; phải sau startDate"
+        },
+        {
+          "pointer": "/components/schemas/ContractCreateRequestDto/properties/paymentDueDay",
+          "before": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 28,
+            "nullable": true,
+            "description": "Ngày trong tháng người thuê phải đóng tiền phòng (1-28; chỉ áp dụng cho MONTHLY)",
+            "example": 5
+          },
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/ContractCreateRequestDto/properties/rentPrice/description",
+          "before": "Tiền thuê theo chu kỳ (tháng hoặc ngày tùy rentalType) (VNĐ)",
+          "after": "Tiền thuê dài hạn thỏa thuận trên hợp đồng (VNĐ)"
+        },
+        {
+          "pointer": "/components/schemas/ContractCreateRequestDto/properties/rentPrice/type",
+          "before": "integer",
+          "after": "number"
+        },
+        {
+          "pointer": "/components/schemas/ContractCreateRequestDto/properties/rentalType",
+          "before": {
+            "type": "string",
+            "enum": [
+              "MONTHLY",
+              "DAILY"
+            ],
+            "description": "Hình thức thuê dài hạn theo tháng (MONTHLY) hoặc ngắn hạn theo ngày (DAILY, không tính theo giờ)",
+            "example": "MONTHLY"
+          },
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/ContractCreateRequestDto/properties/startDate/description",
+          "before": "Ngày bắt đầu tính tiền thuê phòng",
+          "after": "Ngày bắt đầu theo YYYY-MM-DD; phải trước endDate"
+        },
+        {
+          "pointer": "/components/schemas/ContractCreateRequestDto/properties/templateKey",
+          "before": {
+            "type": "string",
+            "nullable": true,
+            "description": "Mã mẫu văn bản hợp đồng áp dụng",
+            "example": "STANDARD_RENTAL_CONTRACT_V1"
+          },
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/ContractCreateRequestDto/properties/templateVariables",
+          "before": {
+            "type": "object",
+            "nullable": true,
+            "description": "Dữ liệu biến tùy chỉnh điền vào các trường trong mẫu hợp đồng"
+          },
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/ContractCreateRequestDto/properties/tenantCccd",
+          "before": {
+            "type": "string",
+            "minLength": 9,
+            "maxLength": 12,
+            "description": "Số CCCD/CMND của người đại diện ký hợp đồng để đối chiếu dân sự",
+            "example": "048195001234"
+          },
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/ContractCreateRequestDto/properties/tenantName/description",
+          "before": "Họ tên người đại diện ký hợp đồng",
+          "after": "Họ tên người thuê, không được chỉ chứa khoảng trắng; bắt buộc khi không có tenantId"
+        },
+        {
+          "pointer": "/components/schemas/ContractCreateRequestDto/properties/tenantName/nullable",
+          "before": null,
+          "after": true
+        },
+        {
+          "pointer": "/components/schemas/ContractCreateRequestDto/properties/tenantName/pattern",
+          "before": null,
+          "after": "\\S"
+        },
+        {
+          "pointer": "/components/schemas/ContractCreateRequestDto/properties/tenantPhone/description",
+          "before": "Số điện thoại người đại diện ký hợp đồng",
+          "after": "Số điện thoại người thuê; bắt buộc khi không có tenantId"
+        },
+        {
+          "pointer": "/components/schemas/ContractCreateRequestDto/properties/tenantPhone/nullable",
+          "before": null,
+          "after": true
+        },
+        {
+          "pointer": "/components/schemas/ContractCreateRequestDto/properties/vehicleCount/maximum",
+          "before": null,
+          "after": 2147483647
+        },
+        {
+          "pointer": "/components/schemas/ContractCreateRequestDto/required",
+          "before": [
+            "roomId",
+            "rentalType",
+            "tenantName",
+            "tenantPhone",
+            "tenantCccd",
+            "depositAmount",
+            "rentPrice",
+            "startDate",
+            "endDate"
+          ],
+          "after": [
+            "roomId",
+            "depositAmount",
+            "rentPrice",
+            "startDate",
+            "endDate"
+          ]
+        },
+        {
+          "pointer": "/components/schemas/ContractCreateResponseDto/properties/rentPrice/type",
+          "before": "integer",
+          "after": "number"
+        },
+        {
+          "pointer": "/components/schemas/ContractDetailResponseDto/properties/depositAmount/type",
+          "before": "integer",
+          "after": "number"
+        },
+        {
+          "pointer": "/components/schemas/ContractDetailResponseDto/properties/description",
+          "before": null,
+          "after": {
+            "type": "string",
+            "nullable": true,
+            "minLength": 1,
+            "maxLength": 500,
+            "description": "Ghi chú hợp đồng; chỉ sửa khi còn draft."
+          }
+        },
+        {
+          "pointer": "/components/schemas/ContractDetailResponseDto/properties/rentPrice/type",
+          "before": "integer",
+          "after": "number"
+        },
+        {
+          "pointer": "/components/schemas/ContractDetailResponseDto/properties/signedContractMediaId",
+          "before": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true,
+            "description": "Thông tin signed contract media id của tài nguyên trong ngữ cảnh DTO."
+          },
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/ContractDetailResponseDto/properties/vehicleCount",
+          "before": null,
+          "after": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 2147483647,
+            "nullable": true,
+            "description": "Số xe đã khai báo; null khi chưa khai báo."
+          }
+        },
+        {
+          "pointer": "/components/schemas/ContractDetailResponseDto/required",
+          "before": [
+            "id",
+            "roomId",
+            "status",
+            "tenantId",
+            "tenantName",
+            "tenantPhone",
+            "rentPrice",
+            "depositAmount",
+            "startDate",
+            "endDate",
+            "signedContractMediaId"
+          ],
+          "after": [
+            "id",
+            "roomId",
+            "status",
+            "tenantId",
+            "tenantName",
+            "tenantPhone",
+            "rentPrice",
+            "depositAmount",
+            "startDate",
+            "endDate",
+            "vehicleCount",
+            "description"
+          ]
+        },
+        {
+          "pointer": "/components/schemas/ContractListResponseDto/properties/contractCode/description",
+          "before": "Mã hợp đồng hiển thị trên giao diện (VD: HD-2026-0012).",
+          "after": "Mã hiển thị HD-<6 ký tự đầu id>, được suy ra từ id; không phải cột lưu riêng hoặc mã bảo đảm duy nhất."
+        },
+        {
+          "pointer": "/components/schemas/ContractListResponseDto/properties/contractCode/example",
+          "before": null,
+          "after": "HD-3fa85f"
+        },
+        {
+          "pointer": "/components/schemas/ContractListResponseDto/properties/depositAmount/type",
+          "before": "integer",
+          "after": "number"
+        },
+        {
+          "pointer": "/components/schemas/ContractListResponseDto/properties/rentPrice/description",
+          "before": "Giá thuê theo chu kỳ (VNĐ).",
+          "after": "Giá thuê dài hạn (VNĐ)."
+        },
+        {
+          "pointer": "/components/schemas/ContractListResponseDto/properties/rentPrice/type",
+          "before": "integer",
+          "after": "number"
+        },
+        {
+          "pointer": "/components/schemas/ContractListResponseDto/properties/rentalType",
+          "before": {
+            "type": "string",
+            "enum": [
+              "MONTHLY",
+              "DAILY"
+            ],
+            "description": "Hình thức thuê dài hạn hoặc ngắn hạn theo ngày."
+          },
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/ContractListResponseDto/properties/tenantName/description",
+          "before": "Họ tên người đại diện ký hợp đồng.",
+          "after": "Họ tên người thuê; có thể null khi liên kết tenantId và chưa lưu thông tin liên hệ."
+        },
+        {
+          "pointer": "/components/schemas/ContractListResponseDto/properties/tenantName/nullable",
+          "before": null,
+          "after": true
+        },
+        {
+          "pointer": "/components/schemas/ContractListResponseDto/properties/tenantPhone/description",
+          "before": "Số điện thoại người đại diện.",
+          "after": "Số điện thoại người thuê; có thể null khi liên kết tenantId và chưa lưu thông tin liên hệ."
+        },
+        {
+          "pointer": "/components/schemas/ContractListResponseDto/properties/tenantPhone/nullable",
+          "before": null,
+          "after": true
+        },
+        {
+          "pointer": "/components/schemas/ContractUpdateRequestDto/properties/description/description",
+          "before": "Thông tin description của tài nguyên trong ngữ cảnh DTO.",
+          "after": "Ghi chú mới, không được chỉ chứa khoảng trắng; null để xóa ghi chú."
+        },
+        {
+          "pointer": "/components/schemas/ContractUpdateRequestDto/properties/description/pattern",
+          "before": null,
+          "after": "\\S"
+        },
+        {
+          "pointer": "/paths/~1contract-templates/get/description",
+          "before": "landlord. Liệt kê mẫu khả dụng. Lỗi nghiệp vụ: 403 FORBIDDEN.",
+          "after": "Landlord. Endpoint đã triển khai trong Tenancy-Service.\nChỉ trả mẫu isActive = true và chưa xóa mềm, phân trang offset với pageNo mặc định 1,\npageSize mặc định 20 và tối đa 100. Không trả body HTML của mẫu.\nQuery không hợp lệ trả 422 VALIDATION_FAILED; field ngoài DTO trả 422 UNEXPECTED_FIELD.\n\n```mermaid\nsequenceDiagram\n    autonumber\n    participant GW as API Gateway\n    participant TEN as Tenancy\n    participant DB as Tenancy DB\n\n    GW->>TEN: GET /api/v1/contract-templates + Bearer token\n    TEN->>TEN: Verify JWT, landlord role, active account and pagination\n    TEN->>DB: SELECT contract_templates WHERE is_active = true AND is_deleted = false<br/>ORDER BY created_at DESC, id ASC; OFFSET / LIMIT\n    DB-->>TEN: Active template rows\n    TEN->>DB: COUNT with the same visibility conditions when required by paginator\n    DB-->>TEN: totalItems\n    TEN->>TEN: Map templateKey, title, version and offset pagination\n    TEN-->>GW: 200 CONTRACT_TEMPLATES_FETCHED\n```"
+        },
+        {
+          "pointer": "/paths/~1contract-templates/get/responses/200/content/application~1json/example/data",
+          "before": [
+            {
+              "templateKey": "standard_residential_v1",
+              "title": "Residential lease",
+              "version": "1.0"
+            }
+          ],
+          "after": [
+            {
+              "templateKey": "standard-room-lease-v1",
+              "title": "Hợp đồng thuê phòng trọ",
+              "version": "1.0"
+            }
+          ]
+        },
+        {
+          "pointer": "/paths/~1contract-templates/get/responses/422",
+          "before": null,
+          "after": {
+            "description": "Query phân trang không hợp lệ hoặc chứa field ngoài DTO.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        422
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "VALIDATION_FAILED",
+                        "UNEXPECTED_FIELD"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "pointer": "/paths/~1contract-templates/get/x-apidog-status",
+          "before": "designing",
+          "after": "released"
+        },
+        {
+          "pointer": "/paths/~1contract-templates~1{templateKey}/get/description",
+          "before": "landlord. Đọc một mẫu. Lỗi nghiệp vụ: 404 NOT FOUND.",
+          "after": "Landlord. Endpoint đã triển khai trong Tenancy-Service.\nMẫu không tồn tại, inactive hoặc đã xóa mềm đều trả 404 RESOURCE_NOT_FOUND.\nResponse gồm templateKey, title, version và requiredVariables; không trả body HTML.\nMẫu seed hiện tại là standard-room-lease-v1. landlordName là biến tùy chọn;\ntenantCccd chưa được điền tự động vì Contract hiện tại không có field này.\n\n```mermaid\nsequenceDiagram\n    autonumber\n    participant GW as API Gateway\n    participant TEN as Tenancy\n    participant DB as Tenancy DB\n\n    GW->>TEN: GET /api/v1/contract-templates/{templateKey} + Bearer token\n    TEN->>TEN: Verify JWT, landlord role and active account\n    TEN->>DB: SELECT template WHERE template_key = templateKey AND is_deleted = false\n    DB-->>TEN: Template or null\n    alt Missing or inactive template\n        TEN-->>GW: 404 RESOURCE_NOT_FOUND\n    else Active template\n        TEN->>TEN: Map template metadata and requiredVariables\n        TEN-->>GW: 200 CONTRACT_TEMPLATE_FETCHED\n    end\n```"
+        },
+        {
+          "pointer": "/paths/~1contract-templates~1{templateKey}/get/responses/200/content/application~1json/example/data/requiredVariables",
+          "before": [
+            "landlordName",
+            "tenantName",
+            "rentPrice"
+          ],
+          "after": [
+            "tenantName",
+            "tenantPhone",
+            "roomName",
+            "buildingAddress",
+            "rentPrice",
+            "depositAmount",
+            "startDate",
+            "endDate",
+            "paymentDueDay"
+          ]
+        },
+        {
+          "pointer": "/paths/~1contract-templates~1{templateKey}/get/responses/200/content/application~1json/example/data/templateKey",
+          "before": "standard_residential_v1",
+          "after": "standard-room-lease-v1"
+        },
+        {
+          "pointer": "/paths/~1contract-templates~1{templateKey}/get/responses/200/content/application~1json/example/data/title",
+          "before": "Residential lease",
+          "after": "Hợp đồng thuê phòng trọ"
+        },
+        {
+          "pointer": "/paths/~1contract-templates~1{templateKey}/get/x-apidog-status",
+          "before": "designing",
+          "after": "released"
+        },
+        {
+          "pointer": "/paths/~1contracts/get/description",
+          "before": "landlord. Quản lý hợp đồng của tôi. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 VALIDATION FAILED.",
+          "after": "Landlord. Chỉ liệt kê hợp đồng thuộc user.id lấy từ JWT và chưa xóa mềm.\nHỗ trợ filter[roomId], filter[buildingId], filter[status], filter[tenantId];\nroomName lấy bằng join rooms, contractCode suy ra theo HD-<6 ký tự đầu id>.\nThông tin tenant có thể null khi hợp đồng liên kết tài khoản nhưng chưa lưu thông tin liên hệ.\nSort chỉ nhận createdAt, mặc định createdAt desc; khi bằng nhau dùng id asc.\nChỉ hỗ trợ format=json; xlsx/csv/pdf trả 422 VALIDATION_FAILED.\nUUID filter không hợp lệ trả 422 INVALID_UUID; field ngoài DTO trả 422 UNEXPECTED_FIELD.\nService chưa có rate limiter.\n\n```mermaid\nsequenceDiagram\n    autonumber\n    participant GW as API Gateway\n    participant TEN as Tenancy\n    participant DB as Tenancy DB\n\n    GW->>TEN: GET /api/v1/contracts + Bearer token\n    TEN->>TEN: Verify JWT, landlord role, active account and query\n    alt Invalid query\n        TEN-->>GW: 422 VALIDATION_FAILED / INVALID_UUID / UNEXPECTED_FIELD\n    else Valid query\n        TEN->>DB: COUNT contracts JOIN rooms<br/>WHERE landlord_id = JWT user.id AND is_deleted = false<br/>with room, building, status and tenant filters\n        DB-->>TEN: totalItems\n        TEN->>DB: SELECT with the same joins and conditions<br/>ORDER BY created_at and id; OFFSET / LIMIT\n        DB-->>TEN: Contract rows with roomName\n        TEN->>TEN: Map response and derive contractCode from id\n        TEN-->>GW: 200 CONTRACTS_FETCHED + offset pagination\n    end\n```"
+        },
+        {
+          "pointer": "/paths/~1contracts/get/parameters",
+          "before": [
+            {
+              "name": "filter",
+              "in": "query",
+              "required": false,
+              "style": "deepObject",
+              "explode": true,
+              "description": "Bộ lọc được endpoint hỗ trợ.",
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "roomId": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "buildingId": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "status": {
+                    "type": "string"
+                  },
+                  "tenantId": {
+                    "type": "string",
+                    "format": "uuid"
+                  }
+                }
+              }
+            },
+            {
+              "name": "pageSize",
+              "in": "query",
+              "schema": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 100,
+                "default": 20
+              }
+            },
+            {
+              "name": "pageNo",
+              "in": "query",
+              "schema": {
+                "type": "integer",
+                "minimum": 1,
+                "default": 1
+              }
+            },
+            {
+              "name": "format",
+              "in": "query",
+              "description": "json trả envelope; định dạng khác trả file stream.",
+              "schema": {
+                "type": "string",
+                "enum": [
+                  "json",
+                  "xlsx",
+                  "csv",
+                  "pdf"
+                ],
+                "default": "json"
+              }
+            }
+          ],
+          "after": [
+            {
+              "name": "filter",
+              "in": "query",
+              "required": false,
+              "style": "deepObject",
+              "explode": true,
+              "description": "Bộ lọc được endpoint hỗ trợ.",
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "roomId": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "buildingId": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "status": {
+                    "type": "string",
+                    "enum": [
+                      "draft",
+                      "signed",
+                      "active",
+                      "suspended",
+                      "expired",
+                      "terminated"
+                    ]
+                  },
+                  "tenantId": {
+                    "type": "string",
+                    "format": "uuid"
+                  }
+                }
+              }
+            },
+            {
+              "name": "sort",
+              "in": "query",
+              "schema": {
+                "type": "string",
+                "enum": [
+                  "createdAt"
+                ],
+                "default": "createdAt"
+              }
+            },
+            {
+              "name": "order",
+              "in": "query",
+              "schema": {
+                "type": "string",
+                "enum": [
+                  "asc",
+                  "desc"
+                ],
+                "default": "desc"
+              }
+            },
+            {
+              "name": "pageSize",
+              "in": "query",
+              "schema": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 100,
+                "default": 20
+              }
+            },
+            {
+              "name": "pageNo",
+              "in": "query",
+              "schema": {
+                "type": "integer",
+                "minimum": 1,
+                "default": 1
+              }
+            },
+            {
+              "name": "format",
+              "in": "query",
+              "description": "Chỉ hỗ trợ JSON; định dạng khác trả 422 VALIDATION_FAILED.",
+              "schema": {
+                "type": "string",
+                "enum": [
+                  "json"
+                ],
+                "default": "json"
+              }
+            }
+          ]
+        },
+        {
+          "pointer": "/paths/~1contracts/get/responses/200/content/application~1json/example/data",
+          "before": [
+            {
+              "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+              "roomId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+              "status": "draft",
+              "rentPrice": 3500000,
+              "depositAmount": 7000000,
+              "contractCode": "Ví dụ",
+              "roomName": "Ví dụ",
+              "tenantName": "Ví dụ",
+              "tenantPhone": "0901234567",
+              "startDate": "2026-09-23T11:55:00.000Z",
+              "endDate": "2026-09-23T11:55:00.000Z"
+            }
+          ],
+          "after": [
+            {
+              "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+              "roomId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+              "status": "draft",
+              "rentPrice": 3500000,
+              "depositAmount": 7000000,
+              "contractCode": "HD-3fa85f",
+              "roomName": "P.201",
+              "tenantName": "Trần Văn B",
+              "tenantPhone": "0901234567",
+              "startDate": "2026-09-01",
+              "endDate": "2027-08-31"
+            }
+          ]
+        },
+        {
+          "pointer": "/paths/~1contracts/get/responses/200/content/application~1pdf",
+          "before": {
+            "schema": {
+              "type": "string",
+              "format": "binary"
+            }
+          },
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1contracts/get/responses/200/content/application~1vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+          "before": {
+            "schema": {
+              "type": "string",
+              "format": "binary"
+            }
+          },
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1contracts/get/responses/200/content/text~1csv",
+          "before": {
+            "schema": {
+              "type": "string",
+              "format": "binary"
+            }
+          },
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1contracts/get/responses/422/$ref",
+          "before": "#/components/responses/ValidationError",
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1contracts/get/responses/422/content",
+          "before": null,
+          "after": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "statusCode",
+                  "code"
+                ],
+                "properties": {
+                  "statusCode": {
+                    "type": "integer",
+                    "enum": [
+                      422
+                    ]
+                  },
+                  "code": {
+                    "type": "string",
+                    "enum": [
+                      "VALIDATION_FAILED",
+                      "INVALID_UUID",
+                      "UNEXPECTED_FIELD"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "pointer": "/paths/~1contracts/get/responses/422/description",
+          "before": null,
+          "after": "Query không hợp lệ, UUID filter không hợp lệ hoặc field ngoài DTO."
+        },
+        {
+          "pointer": "/paths/~1contracts/get/responses/429",
+          "before": {
+            "$ref": "#/components/responses/TooManyRequestsError"
+          },
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1contracts/post/description",
+          "before": "landlord. Tạo hợp đồng nháp. Lỗi nghiệp vụ: 409 ACTIVE CONTRACT EXISTS · 422 TENANT IDENTITY INVALID · 403 FORBIDDEN.",
+          "after": "Landlord. Tạo hợp đồng ở trạng thái draft; landlordId luôn lấy từ JWT.\nRoom không tồn tại hoặc đã xóa trả 404 RESOURCE_NOT_FOUND; Room thuộc landlord khác trả 403 FORBIDDEN.\nRoom đã có hợp đồng active trả 409 ACTIVE_CONTRACT_EXISTS. Điều kiện active không loại hợp đồng đã xóa mềm,\ntheo partial unique index hiện tại. Tạo draft không đổi trạng thái Room.\nNếu tenantId null hoặc không gửi, phải có tenantName và tenantPhone; thiếu liên hệ trả 422 TENANT_IDENTITY_INVALID.\nKhi có tenantId, mỗi trường liên hệ có thể null hoặc không gửi. Chưa kiểm tra tài khoản tenant bên Identity.\nBody chỉ nhận các field có trong request schema. rentalType, tenantCccd, paymentDueDay,\ntemplateKey, templateVariables và các field khác ngoài DTO trả 422 UNEXPECTED_FIELD.\nroomId/tenantId không phải UUID trả 422 INVALID_UUID. Tiền thuê/cọc là số không âm;\nngày theo YYYY-MM-DD và startDate phải trước endDate.\nContract và outbox contract.created được lưu trong cùng transaction; relay publish sau commit.\nService chưa có rate limiter.\n\n```mermaid\nsequenceDiagram\n    autonumber\n    participant GW as API Gateway\n    participant TEN as Tenancy\n    participant DB as Tenancy DB\n    participant RELAY as Outbox Relay\n    participant MQ as RabbitMQ\n\n    GW->>TEN: POST /api/v1/contracts + Bearer token\n    TEN->>TEN: Verify JWT, landlord role, active account and body\n    TEN->>DB: BEGIN\n    TEN->>DB: SELECT room WHERE id = roomId AND is_deleted = false FOR UPDATE\n    DB-->>TEN: Room or null\n    TEN->>TEN: Check room exists and landlordId equals JWT user.id\n    alt Missing room or wrong owner\n        TEN->>DB: ROLLBACK\n        TEN-->>GW: 404 RESOURCE_NOT_FOUND / 403 FORBIDDEN\n    else Owned room\n        TEN->>DB: Check contract WHERE room_id = roomId AND status = active\n        DB-->>TEN: Whether an active contract exists\n        alt Active contract exists\n            TEN->>DB: ROLLBACK\n            TEN-->>GW: 409 ACTIVE_CONTRACT_EXISTS\n        else No active contract\n            TEN->>TEN: Validate domain and create draft aggregate\n            alt Invalid domain\n                TEN->>DB: ROLLBACK\n                TEN-->>GW: 422 TENANT_IDENTITY_INVALID / VALIDATION_FAILED\n            else Valid draft\n                TEN->>DB: INSERT contracts (draft, landlord_id from JWT)\n                TEN->>DB: INSERT outbox_messages (contract.created)\n                alt Storage operation fails\n                    TEN->>DB: ROLLBACK\n                    TEN-->>GW: Error response; neither row is committed\n                else Commit succeeds\n                    TEN->>DB: COMMIT\n                    TEN-->>GW: 201 CONTRACT_CREATED\n                    RELAY->>DB: Claim committed outbox event\n                    RELAY->>MQ: Publish contract.created\n                    MQ-->>RELAY: Publisher confirm\n                    RELAY->>DB: Mark outbox PUBLISHED\n                end\n            end\n        end\n    end\n```"
+        },
+        {
+          "pointer": "/paths/~1contracts/post/requestBody/content/application~1json/example/rentalType",
+          "before": "MONTHLY",
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1contracts/post/requestBody/content/application~1json/example/tenantCccd",
+          "before": "048195001234",
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1contracts/post/responses/201/headers",
+          "before": {
+            "Location": {
+              "description": "Đường dẫn tài nguyên được tạo.",
+              "schema": {
+                "type": "string",
+                "example": "/api/v1/contracts/{contractId}"
+              }
+            }
+          },
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1contracts/post/responses/404",
+          "before": null,
+          "after": {
+            "$ref": "#/components/responses/NotFoundError"
+          }
+        },
+        {
+          "pointer": "/paths/~1contracts/post/responses/422/content/application~1json/examples/invalid_uuid",
+          "before": null,
+          "after": {
+            "summary": "INVALID_UUID — roomId hoặc tenantId không hợp lệ.",
+            "value": {
+              "statusCode": 422,
+              "code": "INVALID_UUID"
+            }
+          }
+        },
+        {
+          "pointer": "/paths/~1contracts/post/responses/422/content/application~1json/examples/unexpected_field",
+          "before": null,
+          "after": {
+            "summary": "UNEXPECTED_FIELD — Body chứa field ngoài DTO.",
+            "value": {
+              "statusCode": 422,
+              "code": "UNEXPECTED_FIELD"
+            }
+          }
+        },
+        {
+          "pointer": "/paths/~1contracts/post/responses/422/content/application~1json/schema/properties/code/description",
+          "before": "- TENANT_IDENTITY_INVALID: Thông tin nhận diện người thuê không hợp lệ.\n- VALIDATION_FAILED: Dữ liệu vi phạm ràng buộc schema hoặc quy tắc nghiệp vụ khác chưa có mã riêng.",
+          "after": "- TENANT_IDENTITY_INVALID: Thông tin nhận diện người thuê không hợp lệ.\n- VALIDATION_FAILED: Dữ liệu vi phạm ràng buộc schema hoặc quy tắc nghiệp vụ khác chưa có mã riêng.\n- INVALID_UUID: roomId hoặc tenantId không phải UUID hợp lệ.\n- UNEXPECTED_FIELD: Body chứa field ngoài DTO."
+        },
+        {
+          "pointer": "/paths/~1contracts/post/responses/422/content/application~1json/schema/properties/code/enum",
+          "before": [
+            "TENANT_IDENTITY_INVALID",
+            "VALIDATION_FAILED"
+          ],
+          "after": [
+            "TENANT_IDENTITY_INVALID",
+            "VALIDATION_FAILED",
+            "INVALID_UUID",
+            "UNEXPECTED_FIELD"
+          ]
+        },
+        {
+          "pointer": "/paths/~1contracts/post/responses/429",
+          "before": {
+            "$ref": "#/components/responses/TooManyRequestsError"
+          },
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1contracts~1{contractId}/get/description",
+          "before": "landlord, tenant. Đọc một hợp đồng. Lỗi nghiệp vụ: 403 FORBIDDEN · 404 NOT FOUND.",
+          "after": "Landlord hoặc tenant, yêu cầu JWT hợp lệ và tài khoản không bị khóa.\nLandlord chỉ xem hợp đồng có landlordId = user.id; tenant chỉ xem hợp đồng có tenantId = user.id.\nNgười gọi không liên quan trả 403 FORBIDDEN. Hợp đồng không tồn tại hoặc đã xóa mềm trả 404 RESOURCE_NOT_FOUND.\ncontractId không phải UUID trả 400 BAD_REQUEST theo ParseUUIDPipe.\nResponse phản ánh entity hiện tại, gồm vehicleCount và description; chưa trả signedContractMediaId.\nService chưa có rate limiter.\n\n```mermaid\nsequenceDiagram\n    autonumber\n    participant GW as API Gateway\n    participant TEN as Tenancy\n    participant DB as Tenancy DB\n\n    GW->>TEN: GET /api/v1/contracts/{contractId} + Bearer token\n    TEN->>TEN: Verify JWT, landlord/tenant role, active account and UUID\n    TEN->>DB: SELECT contract WHERE id = contractId AND is_deleted = false\n    DB-->>TEN: Contract or null\n    alt Missing or deleted contract\n        TEN-->>GW: 404 RESOURCE_NOT_FOUND\n    else Contract exists\n        TEN->>TEN: Match landlordId for landlord or tenantId for tenant\n        alt Caller is not the owner or linked tenant\n            TEN-->>GW: 403 FORBIDDEN\n        else Authorized caller\n            TEN->>TEN: Map ContractDetailResponseDto\n            TEN-->>GW: 200 CONTRACT_FETCHED\n        end\n    end\n```"
+        },
+        {
+          "pointer": "/paths/~1contracts~1{contractId}/get/responses/200/content/application~1json/example/data/description",
+          "before": null,
+          "after": "Đóng tiền trước ngày 5 hàng tháng"
+        },
+        {
+          "pointer": "/paths/~1contracts~1{contractId}/get/responses/200/content/application~1json/example/data/signedContractMediaId",
+          "before": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1contracts~1{contractId}/get/responses/200/content/application~1json/example/data/vehicleCount",
+          "before": null,
+          "after": 1
+        },
+        {
+          "pointer": "/paths/~1contracts~1{contractId}/get/responses/429",
+          "before": {
+            "$ref": "#/components/responses/TooManyRequestsError"
+          },
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1contracts~1{contractId}/patch/description",
+          "before": "landlord. Sửa hợp đồng nháp. Lỗi nghiệp vụ: 409 CONTRACT NOT DRAFT · 403 FORBIDDEN · 422 VALIDATION FAILED.",
+          "after": "Landlord. Chỉ sửa description của hợp đồng thuộc user.id lấy từ JWT và còn trạng thái draft.\ndescription bắt buộc xuất hiện; null để xóa ghi chú, chuỗi phải dài 1–500 ký tự và không chỉ chứa khoảng trắng.\nHợp đồng không tồn tại hoặc đã xóa mềm trả 404 RESOURCE_NOT_FOUND; khác chủ trả 403 FORBIDDEN;\nkhông còn draft trả 409 CONTRACT_NOT_DRAFT. contractId không phải UUID trả 400 BAD_REQUEST.\nField ngoài DTO trả 422 UNEXPECTED_FIELD; giá trị không hợp lệ trả 422 VALIDATION_FAILED.\nContract và outbox contract.updated được lưu trong cùng transaction; relay publish sau commit.\nService chưa có rate limiter.\n\n```mermaid\nsequenceDiagram\n    autonumber\n    participant GW as API Gateway\n    participant TEN as Tenancy\n    participant DB as Tenancy DB\n    participant RELAY as Outbox Relay\n    participant MQ as RabbitMQ\n\n    GW->>TEN: PATCH /api/v1/contracts/{contractId} + Bearer token\n    TEN->>TEN: Verify JWT, landlord role, active account, UUID and body\n    TEN->>DB: BEGIN\n    TEN->>DB: SELECT contract WHERE id = contractId AND is_deleted = false FOR UPDATE\n    DB-->>TEN: Contract or null\n    TEN->>TEN: Check existence, ownership, draft status and description\n    alt Missing contract, wrong owner, non-draft or invalid description\n        TEN->>DB: ROLLBACK\n        TEN-->>GW: 404 / 403 / 409 / 422 with matching error code\n    else Valid update\n        TEN->>DB: UPDATE description and updated_at\n        TEN->>DB: INSERT outbox_messages (contract.updated)\n        alt Storage operation fails\n            TEN->>DB: ROLLBACK\n            TEN-->>GW: Error response; neither change is committed\n        else Commit succeeds\n            TEN->>DB: COMMIT\n            TEN-->>GW: 200 CONTRACT_UPDATED\n            RELAY->>DB: Claim committed outbox event\n            RELAY->>MQ: Publish contract.updated\n            MQ-->>RELAY: Publisher confirm\n            RELAY->>DB: Mark outbox PUBLISHED\n        end\n    end\n```"
+        },
+        {
+          "pointer": "/paths/~1contracts~1{contractId}/patch/responses/422/$ref",
+          "before": "#/components/responses/ValidationError",
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1contracts~1{contractId}/patch/responses/422/content",
+          "before": null,
+          "after": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "statusCode",
+                  "code"
+                ],
+                "properties": {
+                  "statusCode": {
+                    "type": "integer",
+                    "enum": [
+                      422
+                    ]
+                  },
+                  "code": {
+                    "type": "string",
+                    "enum": [
+                      "VALIDATION_FAILED",
+                      "UNEXPECTED_FIELD"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "pointer": "/paths/~1contracts~1{contractId}/patch/responses/422/description",
+          "before": null,
+          "after": "description không hợp lệ hoặc body chứa field ngoài DTO."
+        },
+        {
+          "pointer": "/paths/~1contracts~1{contractId}/patch/responses/429",
+          "before": {
+            "$ref": "#/components/responses/TooManyRequestsError"
+          },
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1contracts~1{contractId}~1activate-contract/post/description",
+          "before": "landlord. Kích hoạt hợp đồng đã ký. Lỗi nghiệp vụ: 409 CONTRACT NOT READY · 409 SIGNED FILE MISSING · 403 FORBIDDEN.",
+          "after": "Landlord, yêu cầu JWT hợp lệ và tài khoản không bị khóa. Body chỉ gồm signedContractMediaId.\ncontractId sai định dạng UUID trả 400 BAD_REQUEST theo ParseUUIDPipe.\nThiếu hoặc null signedContractMediaId trả 422 VALIDATION_FAILED; UUID của file không hợp lệ trả\n422 INVALID_UUID; field ngoài DTO trả 422 UNEXPECTED_FIELD.\n\nTenancy kiểm tra media trước khi mở transaction, qua GET /internal/media/{signedContractMediaId}\ncủa Identity bằng service token. Adapter yêu cầu phần data của response envelope gồm\nid, ownerType, ownerId, purpose và status. Chỉ chấp nhận id khớp signedContractMediaId,\nownerType = contract, ownerId = contractId, purpose = contract_signed và status = uploaded.\nIdentity timeout, không kết nối được, lỗi 5xx hoặc từ chối service token trả 503 SERVICE_UNAVAILABLE.\nCác lỗi 4xx khác từ Identity được truyền nguyên trạng. Chưa xác minh được file thì không kích hoạt.\n\nSau khi media hợp lệ, trong cùng transaction: khóa hợp đồng, kiểm tra hợp đồng chưa bị xóa\nvà landlordId = user.id, khóa phòng, kích hoạt hợp đồng và chuyển phòng sang occupied.\nHợp đồng hoặc phòng không tồn tại/đã xóa trả 404 RESOURCE_NOT_FOUND; khác landlord trả 403 FORBIDDEN.\nVi phạm unique index UQ_contracts_room_active trả 409 ACTIVE_CONTRACT_EXISTS.\nVì media được kiểm tra trước, media không hợp lệ có thể trả 409 trước khi kiểm tra 404/403 của hợp đồng.\n\n**Điều kiện lỗi theo Contract**\n\n- `409 SIGNED_FILE_MISSING`: xảy ra khi có ít nhất một điều kiện:\n  media không tồn tại (Identity trả 404 hoặc response không có dữ liệu media);\n  `media.id` khác `signedContractMediaId`;\n  `ownerType` khác `contract`;\n  `ownerId` khác `contractId` trên URL;\n  `purpose` khác `contract_signed`;\n  hoặc file chưa upload xong (`status` khác `uploaded`). Không mở transaction ở nhánh này.\n- `409 CONTRACT_NOT_READY`: hợp đồng không ở `draft` hoặc `signed`,\n  hoặc phòng không ở `available` (đang `maintenance` hoặc đã `occupied`).\n  Transaction rollback, không lưu thay đổi hợp đồng, phòng hoặc outbox.\n  Hợp đồng/phòng không tồn tại hoặc đã xóa được xử lý riêng bằng `404 RESOURCE_NOT_FOUND`.\n\nThành công trả 200 CONTRACT_ACTIVATED với id, status = active và activatedAt dạng ISO 8601 UTC.\nactivatedAt được lưu ở contracts.activated_at. Hợp đồng, phòng và hai outbox message\ncontract.activated, room.status_changed được ghi cùng transaction; lỗi ghi dữ liệu sẽ rollback.\nOutbox relay publish sau khi commit. Không kiểm tra startDate so với ngày hiện tại; không dùng OTP/PIN.\nService chưa có rate limiter.\n\n**Giới hạn tích hợp hiện tại:** Identity-Service local chưa triển khai GET /internal/media/{id};\nresponse public complete-upload cũng chưa có field status. Dữ liệu ở trên là contract nội bộ\nadapter đang yêu cầu, chưa phải endpoint media đã được triển khai. Nếu Identity trả 404 cho route\nchưa có, Tenancy hiện trả 409 SIGNED_FILE_MISSING. signedContractMediaId được xác minh để kích hoạt,\nnhưng hiện chưa được lưu trên Contract hoặc đưa vào event contract.activated.\nHandler so sánh UUID theo chuỗi, chưa chuẩn hóa hoa/thường; giữ nguyên UUID do API trả về\nđể tránh bị từ chối nhầm bằng SIGNED_FILE_MISSING.\n\n```mermaid\nsequenceDiagram\n    autonumber\n    participant GW as API Gateway\n    participant TEN as Tenancy\n    participant ID as Identity\n    participant DB as Tenancy DB\n    participant RELAY as Outbox Relay\n    participant MQ as RabbitMQ\n\n    GW->>TEN: POST /api/v1/contracts/{contractId}/activate-contract + Bearer token<br/>{signedContractMediaId}\n    TEN->>TEN: Verify JWT, landlord role, active account and request\n    TEN->>ID: GET /internal/media/{signedContractMediaId} + service token\n    alt Identity unavailable, timeout, 5xx or service-token rejection\n        TEN-->>GW: 503 SERVICE_UNAVAILABLE; no transaction\n    else Identity responds\n        ID-->>TEN: Response envelope containing media data, or 404\n        TEN->>TEN: Check id, ownerType, ownerId, purpose and uploaded status\n        alt Media missing, Identity 404 or media does not match\n            TEN-->>GW: 409 SIGNED_FILE_MISSING; no transaction\n        else Valid signed media\n            Note over TEN,DB: One transaction for contract + room + outbox\n            TEN->>DB: BEGIN; lock non-deleted contract FOR UPDATE\n            DB-->>TEN: Contract or null\n            TEN->>TEN: Require contract exists and landlordId = JWT user.id\n            alt Contract missing/deleted or wrong landlord\n                TEN->>DB: ROLLBACK\n                TEN-->>GW: 404 RESOURCE_NOT_FOUND / 403 FORBIDDEN\n            else Authorized contract\n                TEN->>DB: Lock non-deleted room FOR UPDATE\n                DB-->>TEN: Room or null\n                TEN->>TEN: Require contract draft/signed and room available<br/>Maintenance or occupied room is not ready\n                alt Room missing/deleted or contract/room not ready\n                    TEN->>DB: ROLLBACK\n                    TEN-->>GW: 404 RESOURCE_NOT_FOUND / 409 CONTRACT_NOT_READY\n                else Ready for activation\n                    TEN->>DB: Save contract active + activated_at; save room occupied<br/>Append contract.activated and room.status_changed to outbox\n                    alt Active-room unique violation or persistence failure\n                        TEN->>DB: ROLLBACK\n                        TEN-->>GW: 409 ACTIVE_CONTRACT_EXISTS / 500 INTERNAL_SERVER_ERROR\n                    else Transaction succeeds\n                        TEN->>DB: COMMIT\n                        TEN-->>GW: 200 CONTRACT_ACTIVATED {id, status: active, activatedAt}\n                        RELAY->>DB: Claim committed outbox messages\n                        DB-->>RELAY: Committed contract.activated and room.status_changed\n                        RELAY-)MQ: Publish contract.activated and room.status_changed\n                    end\n                end\n            end\n        end\n    end\n```"
+        },
+        {
+          "pointer": "/paths/~1contracts~1{contractId}~1activate-contract/post/responses/200/content/application~1json/example/data/activatedAt",
+          "before": "2026-09-23T11:10:00.000Z",
+          "after": "2026-11-01T03:00:00.000Z"
+        },
+        {
+          "pointer": "/paths/~1contracts~1{contractId}~1activate-contract/post/responses/409/content/application~1json/examples/active_contract_exists",
+          "before": null,
+          "after": {
+            "summary": "Phòng đã có hợp đồng active khi lưu dữ liệu.",
+            "value": {
+              "statusCode": 409,
+              "code": "ACTIVE_CONTRACT_EXISTS"
+            }
+          }
+        },
+        {
+          "pointer": "/paths/~1contracts~1{contractId}~1activate-contract/post/responses/409/content/application~1json/schema/properties/code/description",
+          "before": "- CONTRACT_NOT_READY: Hợp đồng chưa đủ điều kiện để kích hoạt.\n- SIGNED_FILE_MISSING: Chưa có tệp hợp đồng đã ký.",
+          "after": "- CONTRACT_NOT_READY: Hợp đồng không ở draft/signed hoặc phòng đang maintenance/occupied; transaction rollback.\n- SIGNED_FILE_MISSING: Media không tồn tại/Identity trả 404, id khác signedContractMediaId, ownerType khác contract, ownerId khác contractId, purpose khác contract_signed hoặc chưa upload xong (status khác uploaded); chưa mở transaction.\n- ACTIVE_CONTRACT_EXISTS: Vi phạm unique index UQ_contracts_room_active vì phòng đã có hợp đồng active."
+        },
+        {
+          "pointer": "/paths/~1contracts~1{contractId}~1activate-contract/post/responses/409/content/application~1json/schema/properties/code/enum",
+          "before": [
+            "CONTRACT_NOT_READY",
+            "SIGNED_FILE_MISSING"
+          ],
+          "after": [
+            "CONTRACT_NOT_READY",
+            "SIGNED_FILE_MISSING",
+            "ACTIVE_CONTRACT_EXISTS"
+          ]
+        },
+        {
+          "pointer": "/paths/~1contracts~1{contractId}~1activate-contract/post/responses/422/$ref",
+          "before": "#/components/responses/ValidationError",
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1contracts~1{contractId}~1activate-contract/post/responses/422/content",
+          "before": null,
+          "after": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "statusCode",
+                  "code"
+                ],
+                "properties": {
+                  "statusCode": {
+                    "type": "integer",
+                    "enum": [
+                      422
+                    ]
+                  },
+                  "code": {
+                    "type": "string",
+                    "enum": [
+                      "VALIDATION_FAILED",
+                      "INVALID_UUID",
+                      "UNEXPECTED_FIELD"
+                    ],
+                    "description": "- VALIDATION_FAILED: signedContractMediaId bị thiếu hoặc null.\n- INVALID_UUID: signedContractMediaId không phải UUID hợp lệ theo validator của service.\n- UNEXPECTED_FIELD: Body có field ngoài signedContractMediaId."
+                  }
+                }
+              },
+              "examples": {
+                "validation_failed": {
+                  "summary": "Thiếu signedContractMediaId hoặc giá trị null.",
+                  "value": {
+                    "statusCode": 422,
+                    "code": "VALIDATION_FAILED"
+                  }
+                },
+                "invalid_uuid": {
+                  "summary": "signedContractMediaId không phải UUID hợp lệ.",
+                  "value": {
+                    "statusCode": 422,
+                    "code": "INVALID_UUID"
+                  }
+                },
+                "unexpected_field": {
+                  "summary": "Body có field ngoài DTO.",
+                  "value": {
+                    "statusCode": 422,
+                    "code": "UNEXPECTED_FIELD"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "pointer": "/paths/~1contracts~1{contractId}~1activate-contract/post/responses/422/description",
+          "before": null,
+          "after": "Body thiếu field bắt buộc, signedContractMediaId sai định dạng hoặc có field ngoài DTO."
+        },
+        {
+          "pointer": "/paths/~1contracts~1{contractId}~1activate-contract/post/responses/429",
+          "before": {
+            "$ref": "#/components/responses/TooManyRequestsError"
+          },
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1contracts~1{contractId}~1activate-contract/post/responses/503/$ref",
+          "before": "#/components/responses/AuthUnavailableError",
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1contracts~1{contractId}~1activate-contract/post/responses/503/content",
+          "before": null,
+          "after": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "statusCode",
+                  "code"
+                ],
+                "properties": {
+                  "statusCode": {
+                    "type": "integer",
+                    "enum": [
+                      503
+                    ]
+                  },
+                  "code": {
+                    "type": "string",
+                    "enum": [
+                      "AUTH_UNAVAILABLE",
+                      "SERVICE_UNAVAILABLE"
+                    ],
+                    "description": "- AUTH_UNAVAILABLE: Không thể xác minh access token.\n- SERVICE_UNAVAILABLE: Identity timeout, mất kết nối, lỗi 5xx hoặc từ chối service token; không kích hoạt hợp đồng."
+                  }
+                }
+              },
+              "examples": {
+                "auth_unavailable": {
+                  "summary": "Hạ tầng xác thực không khả dụng.",
+                  "value": {
+                    "statusCode": 503,
+                    "code": "AUTH_UNAVAILABLE"
+                  }
+                },
+                "service_unavailable": {
+                  "summary": "Không xác minh được file ký qua Identity.",
+                  "value": {
+                    "statusCode": 503,
+                    "code": "SERVICE_UNAVAILABLE"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "pointer": "/paths/~1contracts~1{contractId}~1activate-contract/post/responses/503/description",
+          "before": null,
+          "after": "Hạ tầng xác thực hoặc dịch vụ Identity dùng để kiểm tra file ký không khả dụng."
+        },
+        {
+          "pointer": "/paths/~1contracts~1{contractId}~1activate-contract/post/summary",
+          "before": "Activate contract",
+          "after": "Activate signed contract"
+        },
+        {
+          "pointer": "/paths/~1contracts~1{contractId}~1apply-template/put/description",
+          "before": "landlord. Áp mẫu vào hợp đồng nháp. Lỗi nghiệp vụ: 404 TEMPLATE NOT FOUND · 409 CONTRACT NOT DRAFT · 403 FORBIDDEN.",
+          "after": "Landlord. Đặc tả áp mẫu vào hợp đồng nháp.\n\n**Trạng thái triển khai:** endpoint chưa được triển khai trong Tenancy-Service và đang tạm hoãn.\nContract hiện chưa có cơ chế lưu liên kết mẫu; cần chốt cơ chế lưu trước khi triển khai handler.\nNhãn released là trạng thái phát hành đặc tả; không xác nhận endpoint đã sẵn sàng chạy.\nSequence diagram dưới đây mô tả luồng dự kiến, chưa phải hành vi của service hiện tại.\n\nMẫu không có, inactive hoặc đã xóa trả 404 TEMPLATE_NOT_FOUND;\nhợp đồng không có hoặc đã xóa trả 404 CONTRACT_NOT_FOUND; khác chủ trả 403 FORBIDDEN;\nhợp đồng không còn draft trả 409 CONTRACT_NOT_DRAFT.\nKhi triển khai, lưu liên kết mẫu và append outbox trong cùng UoW; relay publish sau commit.\n\n```mermaid\nsequenceDiagram\n    autonumber\n    participant GW as API Gateway\n    participant TEN as Tenancy\n    participant DB as Tenancy DB\n    participant RELAY as Outbox Relay\n    participant MQ as RabbitMQ\n\n    Note over TEN,DB: Planned flow; template association persistence is not implemented\n    GW->>TEN: PUT /api/v1/contracts/{contractId}/apply-template + Bearer token\n    TEN->>TEN: Verify JWT, landlord role, active account, UUID and body\n    TEN->>DB: BEGIN\n    TEN->>DB: SELECT template WHERE template_key = templateKey<br/>AND is_active = true AND is_deleted = false\n    DB-->>TEN: Active template or null\n    alt Missing active template\n        TEN->>DB: ROLLBACK\n        TEN-->>GW: 404 TEMPLATE_NOT_FOUND\n    else Template exists\n        TEN->>DB: SELECT contract WHERE id = contractId AND is_deleted = false FOR UPDATE\n        DB-->>TEN: Contract or null\n        TEN->>TEN: Check existence, JWT ownership and draft status\n        alt Missing contract, wrong owner or non-draft\n            TEN->>DB: ROLLBACK\n            TEN-->>GW: 404 CONTRACT_NOT_FOUND / 403 FORBIDDEN / 409 CONTRACT_NOT_DRAFT\n        else Valid draft\n            TEN->>DB: Persist template association using the agreed storage mechanism\n            TEN->>DB: Append contract change to outbox_messages\n            alt Persistence fails\n                TEN->>DB: ROLLBACK\n                TEN-->>GW: Error response; no partial contract change\n            else Commit succeeds\n                TEN->>DB: COMMIT\n                TEN-->>GW: 200 CONTRACT_TEMPLATE_APPLIED\n                RELAY->>DB: Claim committed outbox event\n                RELAY->>MQ: Publish contract change\n                MQ-->>RELAY: Publisher confirm\n                RELAY->>DB: Mark outbox PUBLISHED\n            end\n        end\n    end\n```"
+        },
+        {
+          "pointer": "/paths/~1contracts~1{contractId}~1apply-template/put/requestBody/content/application~1json/example/templateKey",
+          "before": "standard_residential_v1",
+          "after": "standard-room-lease-v1"
+        },
+        {
+          "pointer": "/paths/~1contracts~1{contractId}~1apply-template/put/responses/200/content/application~1json/example/data/templateKey",
+          "before": "standard_residential_v1",
+          "after": "standard-room-lease-v1"
+        },
+        {
+          "pointer": "/paths/~1contracts~1{contractId}~1apply-template/put/x-apidog-status",
+          "before": "designing",
+          "after": "released"
+        },
+        {
+          "pointer": "/paths/~1contracts~1{contractId}~1generate-draft-document/post/description",
+          "before": "landlord. Sinh tài liệu nháp. Lỗi nghiệp vụ: 403 FORBIDDEN · 409 CONTRACT NOT DRAFT · 422 TEMPLATE DATA INVALID.",
+          "after": "Landlord. Đặc tả sinh PDF nháp để in và ký tay.\n\n**Trạng thái triển khai:** endpoint chưa được triển khai trong Tenancy-Service và đang tạm hoãn.\nHiện mới có renderer PDF; chưa có handler lấy dữ liệu hệ thống, liên kết tài liệu với Contract\nhoặc adapter upload media. Identity-Service cũng chưa có internal endpoint upload/complete cho luồng này.\nNhãn released là trạng thái phát hành đặc tả; không xác nhận endpoint đã sẵn sàng chạy.\nSequence diagram dưới đây là luồng dự kiến; tên và contract của internal API cần người làm P6-04 chốt.\nInternal API sẽ được gọi trực tiếp từ Tenancy sang Identity bằng service token, không public qua gateway.\n\nBiến lấy từ Contract, Room, Building và BillingSetting; paymentDueDay lấy từ BillingSetting,\nkhông tự thêm vào Contract. landlordName lấy qua internal user lookup; nếu không có thì để trống và log warning.\nRenderer kiểm tra requiredVariables trước khi tạo PDF; thiếu hoặc rỗng trả 422 TEMPLATE_DATA_INVALID,\nsố 0 vẫn hợp lệ. tenantCccd chưa được điền tự động; mẫu hiện tại để chỗ trống để đối chiếu khi ký.\n\nChuẩn bị upload, PUT PDF lên R2 và complete upload đều nằm ngoài UoW transaction ghi Contract.\nSau upload phải lock và kiểm tra lại hợp đồng còn draft, còn tồn tại và thuộc landlord trước khi lưu liên kết\nmedia cùng outbox. File upload xong nhưng transaction thất bại có thể chưa được gắn vào Contract;\ncơ chế xử lý file chưa gắn cần chốt cùng P6-04.\n\n```mermaid\nsequenceDiagram\n    autonumber\n    participant GW as API Gateway\n    participant TEN as Tenancy\n    participant DB as Tenancy DB\n    participant ID as Identity Media\n    participant R2 as Cloudflare R2\n    participant RELAY as Outbox Relay\n    participant MQ as RabbitMQ\n\n    Note over TEN,R2: Planned flow; upload API and document association storage are not implemented\n    GW->>TEN: POST /api/v1/contracts/{contractId}/generate-draft-document + Bearer token\n    TEN->>TEN: Verify JWT, landlord role, active account, UUID and body\n    TEN->>DB: Read contract, room, building, billing setting and active template\n    DB-->>TEN: Data snapshot\n    TEN->>TEN: Check contract exists, belongs to caller and is draft\n    TEN->>ID: GET /internal/users for landlord display name\n    ID-->>TEN: User data or lookup failure\n    TEN->>TEN: Use blank optional landlordName and warn when unavailable\n    TEN->>TEN: Validate requiredVariables and render Vietnamese PDF\n    alt Missing or invalid required variables\n        TEN-->>GW: 422 TEMPLATE_DATA_INVALID\n    else PDF rendered\n        Note over TEN,R2: No Contract write transaction is open during these upload steps\n        TEN->>ID: Prepare server upload for contract_template (internal API to be agreed)\n        ID-->>TEN: Preparation result\n        alt Preparation fails\n            TEN-->>GW: Error response; no Contract update or outbox append\n        else mediaId and uploadUrl obtained\n            TEN->>R2: PUT PDF buffer to uploadUrl\n            R2-->>TEN: Upload result\n            alt Upload fails\n                TEN-->>GW: Error response; no Contract update or outbox append\n            else Object stored\n                TEN->>ID: Complete server upload (internal API to be agreed)\n                ID-->>TEN: Completion result\n                alt Completion fails\n                    TEN-->>GW: Error response; no Contract update or outbox append\n                else Media ready\n                    TEN->>DB: BEGIN\n                    TEN->>DB: SELECT contract WHERE id = contractId AND is_deleted = false FOR UPDATE\n                    DB-->>TEN: Current contract or null\n                    TEN->>TEN: Recheck existence, JWT ownership and draft status\n                    alt Contract changed, missing or unauthorized\n                        TEN->>DB: ROLLBACK\n                        TEN-->>GW: 404 / 403 / 409; uploaded file remains unassociated\n                    else Valid draft\n                        TEN->>DB: Persist draft media association using the agreed storage mechanism\n                        TEN->>DB: Append contract change to outbox_messages\n                        alt Persistence fails\n                            TEN->>DB: ROLLBACK\n                            TEN-->>GW: Error response; uploaded file remains unassociated\n                        else Commit succeeds\n                            TEN->>DB: COMMIT\n                            TEN-->>GW: 201 CONTRACT_DRAFT_GENERATED with contractId, mediaId and purpose\n                            RELAY->>DB: Claim committed outbox event\n                            RELAY->>MQ: Publish contract change\n                            MQ-->>RELAY: Publisher confirm\n                            RELAY->>DB: Mark outbox PUBLISHED\n                        end\n                    end\n                end\n            end\n        end\n    end\n```"
+        },
+        {
+          "pointer": "/paths/~1contracts~1{contractId}~1generate-draft-document/post/requestBody/content/application~1json/example/templateKey",
+          "before": "standard_residential_v1",
+          "after": "standard-room-lease-v1"
+        },
+        {
+          "pointer": "/paths/~1contracts~1{contractId}~1generate-draft-document/post/x-apidog-status",
+          "before": "designing",
+          "after": "released"
+        }
+      ],
+      "semanticDiff": {
+        "paths": {
+          "modified": {
+            "/contract-templates": {
+              "operations": {
+                "modified": {
+                  "GET": {
+                    "extensions": {
+                      "modified": {
+                        "x-apidog-status": [
+                          {
+                            "oldValue": "designing",
+                            "value": "released",
+                            "op": "replace",
+                            "from": "",
+                            "path": ""
+                          }
+                        ]
+                      }
+                    },
+                    "responses": {
+                      "added": [
+                        "422"
+                      ]
+                    }
+                  }
+                }
+              }
+            },
+            "/contract-templates/{templateKey}": {
+              "operations": {
+                "modified": {
+                  "GET": {
+                    "extensions": {
+                      "modified": {
+                        "x-apidog-status": [
+                          {
+                            "oldValue": "designing",
+                            "value": "released",
+                            "op": "replace",
+                            "from": "",
+                            "path": ""
+                          }
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "/contracts": {
+              "operations": {
+                "modified": {
+                  "GET": {
+                    "parameters": {
+                      "added": {
+                        "query": [
+                          "sort",
+                          "order"
+                        ]
+                      },
+                      "modified": {
+                        "query": {
+                          "filter": {
+                            "schema": {
+                              "properties": {
+                                "modified": {
+                                  "status": {
+                                    "enum": {
+                                      "enumAdded": true,
+                                      "added": [
+                                        "draft",
+                                        "signed",
+                                        "active",
+                                        "suspended",
+                                        "expired",
+                                        "terminated"
+                                      ]
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          },
+                          "format": {
+                            "schema": {
+                              "enum": {
+                                "deleted": [
+                                  "xlsx",
+                                  "csv",
+                                  "pdf"
+                                ]
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "responses": {
+                      "deleted": [
+                        "429"
+                      ],
+                      "modified": {
+                        "200": {
+                          "content": {
+                            "deleted": [
+                              "application/pdf",
+                              "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                              "text/csv"
+                            ],
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "properties": {
+                                    "modified": {
+                                      "data": {
+                                        "items": {
+                                          "properties": {
+                                            "deleted": [
+                                              "rentalType"
+                                            ],
+                                            "modified": {
+                                              "depositAmount": {
+                                                "type": {
+                                                  "added": [
+                                                    "number"
+                                                  ],
+                                                  "deleted": [
+                                                    "integer"
+                                                  ]
+                                                }
+                                              },
+                                              "rentPrice": {
+                                                "type": {
+                                                  "added": [
+                                                    "number"
+                                                  ],
+                                                  "deleted": [
+                                                    "integer"
+                                                  ]
+                                                }
+                                              },
+                                              "tenantName": {
+                                                "nullable": {
+                                                  "from": false,
+                                                  "to": true
+                                                }
+                                              },
+                                              "tenantPhone": {
+                                                "nullable": {
+                                                  "from": false,
+                                                  "to": true
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "422": {
+                          "extensions": {
+                            "deleted": [
+                              "x-apidog-name"
+                            ]
+                          },
+                          "content": {
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "properties": {
+                                    "modified": {
+                                      "code": {
+                                        "enum": {
+                                          "added": [
+                                            "INVALID_UUID",
+                                            "UNEXPECTED_FIELD"
+                                          ]
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "POST": {
+                    "requestBody": {
+                      "content": {
+                        "modified": {
+                          "application/json": {
+                            "schema": {
+                              "anyOf": {
+                                "added": [
+                                  {
+                                    "index": 0
+                                  },
+                                  {
+                                    "index": 1
+                                  }
+                                ]
+                              },
+                              "required": {
+                                "deleted": [
+                                  "rentalType",
+                                  "tenantPhone",
+                                  "tenantCccd",
+                                  "tenantName"
+                                ]
+                              },
+                              "properties": {
+                                "deleted": [
+                                  "templateVariables",
+                                  "paymentDueDay",
+                                  "templateKey",
+                                  "rentalType",
+                                  "tenantCccd"
+                                ],
+                                "modified": {
+                                  "depositAmount": {
+                                    "type": {
+                                      "added": [
+                                        "number"
+                                      ],
+                                      "deleted": [
+                                        "integer"
+                                      ]
+                                    }
+                                  },
+                                  "rentPrice": {
+                                    "type": {
+                                      "added": [
+                                        "number"
+                                      ],
+                                      "deleted": [
+                                        "integer"
+                                      ]
+                                    }
+                                  },
+                                  "tenantName": {
+                                    "nullable": {
+                                      "from": false,
+                                      "to": true
+                                    },
+                                    "pattern": {
+                                      "from": "",
+                                      "to": "\\S"
+                                    }
+                                  },
+                                  "tenantPhone": {
+                                    "nullable": {
+                                      "from": false,
+                                      "to": true
+                                    }
+                                  },
+                                  "vehicleCount": {
+                                    "max": {
+                                      "from": null,
+                                      "to": 2147483647
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "responses": {
+                      "added": [
+                        "404"
+                      ],
+                      "deleted": [
+                        "429"
+                      ],
+                      "modified": {
+                        "201": {
+                          "headers": {
+                            "deleted": [
+                              "location"
+                            ]
+                          },
+                          "content": {
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "properties": {
+                                    "modified": {
+                                      "data": {
+                                        "properties": {
+                                          "modified": {
+                                            "rentPrice": {
+                                              "type": {
+                                                "added": [
+                                                  "number"
+                                                ],
+                                                "deleted": [
+                                                  "integer"
+                                                ]
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "422": {
+                          "content": {
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "properties": {
+                                    "modified": {
+                                      "code": {
+                                        "enum": {
+                                          "added": [
+                                            "INVALID_UUID",
+                                            "UNEXPECTED_FIELD"
+                                          ]
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "/contracts/{contractId}": {
+              "operations": {
+                "modified": {
+                  "GET": {
+                    "responses": {
+                      "deleted": [
+                        "429"
+                      ],
+                      "modified": {
+                        "200": {
+                          "content": {
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "properties": {
+                                    "modified": {
+                                      "data": {
+                                        "required": {
+                                          "added": [
+                                            "vehicleCount",
+                                            "description"
+                                          ],
+                                          "deleted": [
+                                            "signedContractMediaId"
+                                          ]
+                                        },
+                                        "properties": {
+                                          "added": [
+                                            "vehicleCount",
+                                            "description"
+                                          ],
+                                          "deleted": [
+                                            "signedContractMediaId"
+                                          ],
+                                          "modified": {
+                                            "depositAmount": {
+                                              "type": {
+                                                "added": [
+                                                  "number"
+                                                ],
+                                                "deleted": [
+                                                  "integer"
+                                                ]
+                                              }
+                                            },
+                                            "rentPrice": {
+                                              "type": {
+                                                "added": [
+                                                  "number"
+                                                ],
+                                                "deleted": [
+                                                  "integer"
+                                                ]
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "PATCH": {
+                    "requestBody": {
+                      "content": {
+                        "modified": {
+                          "application/json": {
+                            "schema": {
+                              "properties": {
+                                "modified": {
+                                  "description": {
+                                    "pattern": {
+                                      "from": "",
+                                      "to": "\\S"
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "responses": {
+                      "deleted": [
+                        "429"
+                      ],
+                      "modified": {
+                        "422": {
+                          "extensions": {
+                            "deleted": [
+                              "x-apidog-name"
+                            ]
+                          },
+                          "content": {
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "properties": {
+                                    "modified": {
+                                      "code": {
+                                        "enum": {
+                                          "added": [
+                                            "UNEXPECTED_FIELD"
+                                          ]
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "/contracts/{contractId}/activate-contract": {
+              "operations": {
+                "modified": {
+                  "POST": {
+                    "responses": {
+                      "deleted": [
+                        "429"
+                      ],
+                      "modified": {
+                        "200": {
+                          "content": {
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "properties": {
+                                    "modified": {
+                                      "data": {
+                                        "additionalPropertiesAllowed": {
+                                          "from": null,
+                                          "to": false
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "409": {
+                          "content": {
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "properties": {
+                                    "modified": {
+                                      "code": {
+                                        "enum": {
+                                          "added": [
+                                            "ACTIVE_CONTRACT_EXISTS"
+                                          ]
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "422": {
+                          "extensions": {
+                            "deleted": [
+                              "x-apidog-name"
+                            ]
+                          },
+                          "content": {
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "properties": {
+                                    "modified": {
+                                      "code": {
+                                        "enum": {
+                                          "added": [
+                                            "INVALID_UUID",
+                                            "UNEXPECTED_FIELD"
+                                          ]
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "503": {
+                          "extensions": {
+                            "deleted": [
+                              "x-apidog-name"
+                            ]
+                          },
+                          "content": {
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "properties": {
+                                    "modified": {
+                                      "code": {
+                                        "enum": {
+                                          "added": [
+                                            "SERVICE_UNAVAILABLE"
+                                          ]
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "/contracts/{contractId}/apply-template": {
+              "operations": {
+                "modified": {
+                  "PUT": {
+                    "extensions": {
+                      "modified": {
+                        "x-apidog-status": [
+                          {
+                            "oldValue": "designing",
+                            "value": "released",
+                            "op": "replace",
+                            "from": "",
+                            "path": ""
+                          }
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "/contracts/{contractId}/generate-draft-document": {
+              "operations": {
+                "modified": {
+                  "POST": {
+                    "extensions": {
+                      "modified": {
+                        "x-apidog-status": [
+                          {
+                            "oldValue": "designing",
+                            "value": "released",
+                            "op": "replace",
+                            "from": "",
+                            "path": ""
+                          }
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "components": {
+          "schemas": {
+            "modified": {
+              "ContractActivateResponseDto": {
+                "additionalPropertiesAllowed": {
+                  "from": null,
+                  "to": false
+                }
+              },
+              "ContractCreateRequestDto": {
+                "anyOf": {
+                  "added": [
+                    {
+                      "index": 0
+                    },
+                    {
+                      "index": 1
+                    }
+                  ]
+                },
+                "required": {
+                  "deleted": [
+                    "rentalType",
+                    "tenantPhone",
+                    "tenantCccd",
+                    "tenantName"
+                  ]
+                },
+                "properties": {
+                  "deleted": [
+                    "templateVariables",
+                    "paymentDueDay",
+                    "templateKey",
+                    "rentalType",
+                    "tenantCccd"
+                  ],
+                  "modified": {
+                    "depositAmount": {
+                      "type": {
+                        "added": [
+                          "number"
+                        ],
+                        "deleted": [
+                          "integer"
+                        ]
+                      }
+                    },
+                    "rentPrice": {
+                      "type": {
+                        "added": [
+                          "number"
+                        ],
+                        "deleted": [
+                          "integer"
+                        ]
+                      }
+                    },
+                    "tenantName": {
+                      "nullable": {
+                        "from": false,
+                        "to": true
+                      },
+                      "pattern": {
+                        "from": "",
+                        "to": "\\S"
+                      }
+                    },
+                    "tenantPhone": {
+                      "nullable": {
+                        "from": false,
+                        "to": true
+                      }
+                    },
+                    "vehicleCount": {
+                      "max": {
+                        "from": null,
+                        "to": 2147483647
+                      }
+                    }
+                  }
+                }
+              },
+              "ContractCreateResponseDto": {
+                "properties": {
+                  "modified": {
+                    "rentPrice": {
+                      "type": {
+                        "added": [
+                          "number"
+                        ],
+                        "deleted": [
+                          "integer"
+                        ]
+                      }
+                    }
+                  }
+                }
+              },
+              "ContractDetailResponseDto": {
+                "required": {
+                  "added": [
+                    "description",
+                    "vehicleCount"
+                  ],
+                  "deleted": [
+                    "signedContractMediaId"
+                  ]
+                },
+                "properties": {
+                  "added": [
+                    "vehicleCount",
+                    "description"
+                  ],
+                  "deleted": [
+                    "signedContractMediaId"
+                  ],
+                  "modified": {
+                    "depositAmount": {
+                      "type": {
+                        "added": [
+                          "number"
+                        ],
+                        "deleted": [
+                          "integer"
+                        ]
+                      }
+                    },
+                    "rentPrice": {
+                      "type": {
+                        "added": [
+                          "number"
+                        ],
+                        "deleted": [
+                          "integer"
+                        ]
+                      }
+                    }
+                  }
+                }
+              },
+              "ContractListResponseDto": {
+                "properties": {
+                  "deleted": [
+                    "rentalType"
+                  ],
+                  "modified": {
+                    "depositAmount": {
+                      "type": {
+                        "added": [
+                          "number"
+                        ],
+                        "deleted": [
+                          "integer"
+                        ]
+                      }
+                    },
+                    "rentPrice": {
+                      "type": {
+                        "added": [
+                          "number"
+                        ],
+                        "deleted": [
+                          "integer"
+                        ]
+                      }
+                    },
+                    "tenantName": {
+                      "nullable": {
+                        "from": false,
+                        "to": true
+                      }
+                    },
+                    "tenantPhone": {
+                      "nullable": {
+                        "from": false,
+                        "to": true
+                      }
+                    }
+                  }
+                }
+              },
+              "ContractUpdateRequestDto": {
+                "properties": {
+                  "modified": {
+                    "description": {
+                      "pattern": {
+                        "from": "",
+                        "to": "\\S"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   ]
 }
