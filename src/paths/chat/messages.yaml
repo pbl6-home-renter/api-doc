@@ -80,7 +80,10 @@ get:
             data:
             - id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
               conversationId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
-              senderId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+              senderUserId: 9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d
+              senderType: user
+              sequence: 42
+              clientMessageId: a95a1d13-f91c-4c71-9c61-24b498d0fd0e
               type: text
               content: Dạ em gửi ảnh vòi xịt ạ
               createdAt: '2026-09-23T11:30:00.000Z'
@@ -167,7 +170,7 @@ post:
   security:
     - BearerAuth: []
   summary: Send message
-  description: 'tenant, landlord. Gửi tin nhắn. Lỗi nghiệp vụ: 403 FORBIDDEN · 409 CONVERSATION ARCHIVED · 422 MESSAGE
+  description: 'tenant, landlord. Gửi tin nhắn. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 MESSAGE
     CONTENT INVALID.'
   requestBody:
     required: true
@@ -177,6 +180,7 @@ post:
           $ref: ../../openapi.yaml#/components/schemas/MessageSendRequestDto
         example:
           conversationId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+          clientMessageId: a95a1d13-f91c-4c71-9c61-24b498d0fd0e
           type: text
           content: Dạ thợ mấy giờ qua kiểm được ạ
           mediaId: null
@@ -211,6 +215,8 @@ post:
               conversationId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
               type: text
               content: Dạ thợ mấy giờ qua kiểm được ạ
+              sequence: 43
+              clientMessageId: a95a1d13-f91c-4c71-9c61-24b498d0fd0e
               createdAt: '2026-09-23T11:38:00.000Z'
       headers:
         Location:
@@ -226,31 +232,6 @@ post:
       $ref: ../../openapi.yaml#/components/responses/AuthUnavailableError
     '403':
       $ref: ../../openapi.yaml#/components/responses/ForbiddenError
-    '409':
-      x-apidog-name: Conflict
-      description: Yêu cầu xung đột với trạng thái hiện tại hoặc dữ liệu đã tồn tại.
-      content:
-        application/json:
-          schema:
-            type: object
-            additionalProperties: false
-            required: [statusCode, code]
-            properties:
-              statusCode:
-                type: integer
-                enum: [409]
-              code:
-                type: string
-                enum:
-                  - CONVERSATION_ARCHIVED
-                description: |-
-                  - CONVERSATION_ARCHIVED: Hội thoại đã được lưu trữ.
-          examples:
-            conversation_archived:
-              summary: CONVERSATION_ARCHIVED — Hội thoại đã được lưu trữ.
-              value:
-                statusCode: 409
-                code: CONVERSATION_ARCHIVED
     '422':
       x-apidog-name: Unprocessable Entity
       description: Dữ liệu hợp lệ về cấu trúc nhưng vi phạm ràng buộc trường hoặc quy tắc nghiệp vụ.

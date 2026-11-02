@@ -71,15 +71,15 @@ post:
               code:
                 type: string
                 enum:
-                  - MESSAGE_NOT_FOUND
+                  - CONVERSATION_NOT_FOUND
                 description: |-
-                  - MESSAGE_NOT_FOUND: Không tìm thấy tin nhắn.
+                  - CONVERSATION_NOT_FOUND: Không tìm thấy hội thoại.
           examples:
-            message_not_found:
-              summary: MESSAGE_NOT_FOUND — Không tìm thấy tin nhắn.
+            conversation_not_found:
+              summary: CONVERSATION_NOT_FOUND — Không tìm thấy hội thoại.
               value:
                 statusCode: 404
-                code: MESSAGE_NOT_FOUND
+                code: CONVERSATION_NOT_FOUND
     '422':
       x-apidog-name: Unprocessable Entity
       description: Dữ liệu hợp lệ về cấu trúc nhưng vi phạm ràng buộc trường hoặc quy tắc nghiệp vụ.
