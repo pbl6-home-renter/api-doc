@@ -1,14 +1,15 @@
 post:
-  tags:
-  - Notification
+  tags: [Notification]
   x-apidog-folder: PushDevice
   x-apidog-status: designing
   operationId: postMePushDevices
   security:
     - BearerAuth: []
-  summary: Register push device
-  description: 'tenant, landlord, admin. Đăng ký device token. Lỗi nghiệp vụ: 422 VALIDATION FAILED · 409 DUPLICATE
-    DEVICE.'
+  summary: Register or refresh Android push device
+  description: >-
+    Đăng ký FCM token Android của user đang đăng nhập. Gửi lại cùng token cập nhật
+    lastSeenAt, kích hoạt lại token đã thu hồi và trả cùng device ID. Token đang
+    thuộc user khác được chuyển quyền sở hữu atomically; không tạo bản ghi trùng.
   requestBody:
     required: true
     content:
@@ -19,74 +20,34 @@ post:
           platform: android
           token: fcm-token-example
   responses:
-    '201':
-      description: 'Thành công: Đăng ký device token.'
+    '200':
+      description: Device đã được đăng ký hoặc cập nhật.
       content:
         application/json:
           schema:
             type: object
             additionalProperties: false
-            required:
-            - statusCode
-            - code
-            - data
+            required: [statusCode, code, data]
             properties:
-              statusCode:
-                type: integer
-                enum:
-                - 201
-              code:
-                type: string
-                enum:
-                - PUSH_DEVICE_REGISTERED
+              statusCode: { type: integer, enum: [200] }
+              code: { type: string, enum: [PUSH_DEVICE_REGISTERED] }
               data:
                 $ref: ../../openapi.yaml#/components/schemas/PushDeviceRegisterResponseDto
           example:
-            statusCode: 201
+            statusCode: 200
             code: PUSH_DEVICE_REGISTERED
             data:
               id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
               platform: android
-      headers:
-        Location:
-          description: Đường dẫn tài nguyên được tạo.
-          schema:
-            type: string
-            example: /api/v1/me/push-devices
     '400':
       $ref: ../../openapi.yaml#/components/responses/BadRequestBodyError
     '401':
       $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
-    '503':
-      $ref: ../../openapi.yaml#/components/responses/AuthUnavailableError
-    '409':
-      x-apidog-name: Conflict
-      description: Yêu cầu xung đột với trạng thái hiện tại hoặc dữ liệu đã tồn tại.
-      content:
-        application/json:
-          schema:
-            type: object
-            additionalProperties: false
-            required: [statusCode, code]
-            properties:
-              statusCode:
-                type: integer
-                enum: [409]
-              code:
-                type: string
-                enum:
-                  - DUPLICATE_DEVICE
-                description: |-
-                  - DUPLICATE_DEVICE: Thiết bị đã được đăng ký.
-          examples:
-            duplicate_device:
-              summary: DUPLICATE_DEVICE — Thiết bị đã được đăng ký.
-              value:
-                statusCode: 409
-                code: DUPLICATE_DEVICE
     '422':
       $ref: ../../openapi.yaml#/components/responses/ValidationError
     '429':
       $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
     '500':
       $ref: ../../openapi.yaml#/components/responses/InternalServerError
+    '503':
+      $ref: ../../openapi.yaml#/components/responses/AuthUnavailableError
