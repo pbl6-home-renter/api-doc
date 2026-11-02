@@ -36575,6 +36575,846 @@
           }
         }
       }
+    },
+    {
+      "id": "6222e860859061a149de008d67b4ac0018bf440a86d2e1338309ee25ee4369c4",
+      "label": "Thay đổi contract từ Git",
+      "classification": "BREAKING",
+      "contractId": "rentify-public",
+      "repository": "https://github.com/pbl6-home-renter/api-doc",
+      "baseHash": "8a16fb1bc1ab0aaa1f3a1bfecefcabbfdecaf7746baf1254b1d2f61d79efd72c",
+      "headHash": "41dfd84d8a0c6b122acdecf9dd01ee3d52f383924e86d5568af78e6d3871d2cc",
+      "baseSource": "src/openapi.yaml",
+      "headSource": "src/openapi.yaml",
+      "detectedAt": "2026-11-02T15:46:56.182Z",
+      "committedAt": "2026-11-02T22:46:41+07:00",
+      "baseCommit": "b8130d865299988bdb64f9ba627fa10866a9ba81",
+      "headCommit": "92f81e104b3d8384583d4dc3734a9d816a54ad6b",
+      "prUrl": "https://github.com/pbl6-home-renter/api-doc/pull/46",
+      "commitUrl": "https://github.com/pbl6-home-renter/api-doc/commit/92f81e104b3d8384583d4dc3734a9d816a54ad6b",
+      "metadataKind": "Git revision thực tế",
+      "reason": "CHƯA CUNG CẤP — tác giả PR phải bổ sung lý do nghiệp vụ; không thể suy ra từ OpenAPI diff.",
+      "tools": {
+        "redocly": "2.64.1",
+        "oasdiff": "1.34.1"
+      },
+      "changes": [
+        {
+          "id": "request-property-max-items-set",
+          "text": "the `preferences` request property's maxItems was set to `3`",
+          "comment": "Setting a bound rejects values the previous contract accepted. If your clients are known to stay within the new limit, lower this check with --severity-levels.",
+          "level": 3,
+          "operation": "PUT",
+          "operationId": "putMeNotificationPreference",
+          "path": "/me/notification-preference",
+          "section": "paths",
+          "fingerprint": "8786e1e00614",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu vị trí và thay đổi trước/sau trong entry này với API adapter, DTO, parser và validation; cùng BE xác nhận phương án tương thích trước merge/phát hành."
+        },
+        {
+          "id": "request-property-min-items-set",
+          "text": "the `preferences` request property's minItems was set to `3`",
+          "comment": "Setting a bound rejects values the previous contract accepted. If your clients are known to stay within the new limit, lower this check with --severity-levels.",
+          "level": 3,
+          "operation": "PUT",
+          "operationId": "putMeNotificationPreference",
+          "path": "/me/notification-preference",
+          "section": "paths",
+          "fingerprint": "31d97e8c39d1",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu vị trí và thay đổi trước/sau trong entry này với API adapter, DTO, parser và validation; cùng BE xác nhận phương án tương thích trước merge/phát hành."
+        },
+        {
+          "id": "response-success-status-removed",
+          "text": "removed the success response with the status `201`",
+          "level": 3,
+          "operation": "POST",
+          "operationId": "postMePushDevices",
+          "path": "/me/push-devices",
+          "section": "paths",
+          "fingerprint": "051ec11d84cb",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "api-version-not-bumped",
+          "text": "a breaking change was detected but the version is still `1.0.0`",
+          "level": 1,
+          "section": "info",
+          "fingerprint": "d3f96cd643c1",
+          "classification": "NON_BREAKING",
+          "clientImpact": "BE: xem lại quy ước version trước khi chấp nhận breaking change. FE/Mobile: theo kế hoạch chuyển đổi của entry này; version trong OpenAPI chưa chứng minh backend đã triển khai."
+        },
+        {
+          "id": "response-non-success-status-removed",
+          "text": "removed the non-success response with the status `409`",
+          "level": 1,
+          "operation": "POST",
+          "operationId": "postMePushDevices",
+          "path": "/me/push-devices",
+          "section": "paths",
+          "fingerprint": "869fc670b5f8",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "response-success-status-added",
+          "text": "added the success response with the status `200`",
+          "level": 1,
+          "operation": "POST",
+          "operationId": "postMePushDevices",
+          "path": "/me/push-devices",
+          "section": "paths",
+          "fingerprint": "ddffa202ca9b",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        }
+      ],
+      "locations": [
+        {
+          "pointer": "/components/schemas/Notification/allOf",
+          "before": [
+            {
+              "$ref": "#/components/schemas/BaseEntity"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "userId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "description": "ID người nhận thông báo",
+                  "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                },
+                "type": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 50,
+                  "description": "Loại sự kiện thông báo (vd invoice_due, contract_expiry)",
+                  "example": "invoice_due"
+                },
+                "data": {
+                  "type": "object",
+                  "nullable": true,
+                  "description": "Payload dữ liệu hỗ trợ deep-link",
+                  "example": {
+                    "invoiceId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                    "amount": 4610000
+                  }
+                },
+                "readAt": {
+                  "type": "string",
+                  "format": "date-time",
+                  "nullable": true,
+                  "description": "Thời điểm người dùng đọc thông báo",
+                  "example": null
+                },
+                "sentAt": {
+                  "type": "string",
+                  "format": "date-time",
+                  "nullable": true,
+                  "description": "Thời điểm bắn thông báo qua Firebase Cloud Messaging (FCM)",
+                  "example": "2026-09-05T10:00:00Z"
+                }
+              },
+              "required": [
+                "userId",
+                "type"
+              ]
+            }
+          ],
+          "after": [
+            {
+              "$ref": "#/components/schemas/BaseEntity"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "recipientUserId": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "sourceService": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "eventId": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "type": {
+                  "type": "string",
+                  "enum": [
+                    "invoice",
+                    "issue"
+                  ]
+                },
+                "title": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 255
+                },
+                "body": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 2000
+                },
+                "deepLink": {
+                  "type": "string",
+                  "nullable": true
+                },
+                "data": {
+                  "type": "object",
+                  "nullable": true,
+                  "additionalProperties": true
+                },
+                "readAt": {
+                  "type": "string",
+                  "format": "date-time",
+                  "nullable": true
+                }
+              },
+              "required": [
+                "recipientUserId",
+                "sourceService",
+                "eventId",
+                "type",
+                "title",
+                "body",
+                "readAt"
+              ]
+            }
+          ]
+        },
+        {
+          "pointer": "/components/schemas/Notification/description",
+          "before": "Thông báo gửi đến người dùng (inbox trong ứng dụng và push FCM)",
+          "after": "Một thông báo nghiệp vụ đã lưu cho một người nhận; không chứa message chat."
+        },
+        {
+          "pointer": "/components/schemas/NotificationPreference/allOf",
+          "before": [
+            {
+              "$ref": "#/components/schemas/BaseEntity"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "userId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "description": "ID người dùng",
+                  "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                },
+                "type": {
+                  "type": "string",
+                  "enum": [
+                    "invoice",
+                    "chat",
+                    "issue",
+                    "match",
+                    "account"
+                  ],
+                  "description": "Nhóm thông báo cài đặt",
+                  "example": "invoice"
+                },
+                "enabled": {
+                  "type": "boolean",
+                  "default": true,
+                  "description": "Trạng thái cho phép gửi thông báo của nhóm này",
+                  "example": true
+                }
+              },
+              "required": [
+                "userId",
+                "type",
+                "enabled"
+              ]
+            }
+          ],
+          "after": [
+            {
+              "$ref": "#/components/schemas/BaseEntity"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "userId": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "type": {
+                  "type": "string",
+                  "enum": [
+                    "chat",
+                    "invoice",
+                    "issue"
+                  ]
+                },
+                "pushEnabled": {
+                  "type": "boolean",
+                  "default": true
+                }
+              },
+              "required": [
+                "userId",
+                "type",
+                "pushEnabled"
+              ]
+            }
+          ]
+        },
+        {
+          "pointer": "/components/schemas/NotificationPreference/description",
+          "before": "Cài đặt bật/tắt nhận thông báo theo từng danh mục của người dùng",
+          "after": "Cài đặt push của user theo nhóm. Tắt push không xóa hoặc ẩn notification inbox."
+        },
+        {
+          "pointer": "/components/schemas/NotificationPreferenceUpdateRequestDto/properties/preferences/description",
+          "before": "Thông tin preferences của tài nguyên trong ngữ cảnh DTO.",
+          "after": "Thay toàn bộ cấu hình; cần đúng một mục cho mỗi loại chat, invoice, issue."
+        },
+        {
+          "pointer": "/components/schemas/NotificationPreferenceUpdateRequestDto/properties/preferences/maxItems",
+          "before": null,
+          "after": 3
+        },
+        {
+          "pointer": "/components/schemas/NotificationPreferenceUpdateRequestDto/properties/preferences/minItems",
+          "before": null,
+          "after": 3
+        },
+        {
+          "pointer": "/components/schemas/PushDevice/allOf",
+          "before": [
+            {
+              "$ref": "#/components/schemas/BaseEntity"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "userId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "description": "ID người dùng sở hữu thiết bị",
+                  "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                },
+                "token": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 512,
+                  "description": "FCM Registration Token duy nhất của thiết bị",
+                  "example": "f_zZ9...Xy1"
+                },
+                "platform": {
+                  "type": "string",
+                  "enum": [
+                    "android",
+                    "web"
+                  ],
+                  "description": "Nền tảng thiết bị",
+                  "example": "android"
+                },
+                "lastSeenAt": {
+                  "type": "string",
+                  "format": "date-time",
+                  "nullable": true,
+                  "description": "Thời điểm hoạt động gần nhất để dọn token cũ",
+                  "example": "2026-09-05T10:00:00Z"
+                }
+              },
+              "required": [
+                "userId",
+                "token",
+                "platform"
+              ]
+            }
+          ],
+          "after": [
+            {
+              "$ref": "#/components/schemas/BaseEntity"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "userId": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "token": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 512
+                },
+                "platform": {
+                  "type": "string",
+                  "enum": [
+                    "android"
+                  ]
+                },
+                "lastSeenAt": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "revokedAt": {
+                  "type": "string",
+                  "format": "date-time",
+                  "nullable": true
+                }
+              },
+              "required": [
+                "userId",
+                "token",
+                "platform",
+                "lastSeenAt",
+                "revokedAt"
+              ]
+            }
+          ]
+        },
+        {
+          "pointer": "/components/schemas/PushDevice/description",
+          "before": "Thiết bị đăng ký nhận thông báo đẩy FCM của người dùng",
+          "after": "FCM token Android thuộc user đang đăng nhập; đăng ký lại cùng token cập nhật bản ghi cũ."
+        },
+        {
+          "pointer": "/paths/~1me~1notification-preference/get/responses/200/content/application~1json/example/data",
+          "before": [
+            {
+              "type": "invoice",
+              "enabled": true
+            },
+            {
+              "type": "chat",
+              "enabled": true
+            },
+            {
+              "type": "issue",
+              "enabled": true
+            },
+            {
+              "type": "match",
+              "enabled": true
+            },
+            {
+              "type": "account",
+              "enabled": true
+            }
+          ],
+          "after": [
+            {
+              "type": "invoice",
+              "pushEnabled": true
+            },
+            {
+              "type": "chat",
+              "pushEnabled": true
+            },
+            {
+              "type": "issue",
+              "pushEnabled": true
+            }
+          ]
+        },
+        {
+          "pointer": "/paths/~1me~1notification-preference/put/requestBody/content/application~1json/example/preferences",
+          "before": [
+            {
+              "type": "invoice",
+              "enabled": true
+            },
+            {
+              "type": "chat",
+              "enabled": false
+            }
+          ],
+          "after": [
+            {
+              "type": "invoice",
+              "pushEnabled": true
+            },
+            {
+              "type": "chat",
+              "pushEnabled": false
+            },
+            {
+              "type": "issue",
+              "pushEnabled": true
+            }
+          ]
+        },
+        {
+          "pointer": "/paths/~1me~1push-devices/post/description",
+          "before": "tenant, landlord, admin. Đăng ký device token. Lỗi nghiệp vụ: 422 VALIDATION FAILED · 409 DUPLICATE DEVICE.",
+          "after": "Đăng ký FCM token Android của user đang đăng nhập. Gửi lại cùng token cập nhật lastSeenAt, kích hoạt lại token đã thu hồi và trả cùng device ID. Token đang thuộc user khác được chuyển quyền sở hữu atomically; không tạo bản ghi trùng."
+        },
+        {
+          "pointer": "/paths/~1me~1push-devices/post/responses/200",
+          "before": null,
+          "after": {
+            "description": "Device đã được đăng ký hoặc cập nhật.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code",
+                    "data"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        200
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "PUSH_DEVICE_REGISTERED"
+                      ]
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/PushDeviceRegisterResponseDto"
+                    }
+                  }
+                },
+                "example": {
+                  "statusCode": 200,
+                  "code": "PUSH_DEVICE_REGISTERED",
+                  "data": {
+                    "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                    "platform": "android"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "pointer": "/paths/~1me~1push-devices/post/responses/201",
+          "before": {
+            "description": "Thành công: Đăng ký device token.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code",
+                    "data"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        201
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "PUSH_DEVICE_REGISTERED"
+                      ]
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/PushDeviceRegisterResponseDto"
+                    }
+                  }
+                },
+                "example": {
+                  "statusCode": 201,
+                  "code": "PUSH_DEVICE_REGISTERED",
+                  "data": {
+                    "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                    "platform": "android"
+                  }
+                }
+              }
+            },
+            "headers": {
+              "Location": {
+                "description": "Đường dẫn tài nguyên được tạo.",
+                "schema": {
+                  "type": "string",
+                  "example": "/api/v1/me/push-devices"
+                }
+              }
+            }
+          },
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1me~1push-devices/post/responses/409",
+          "before": {
+            "x-apidog-name": "Conflict",
+            "description": "Yêu cầu xung đột với trạng thái hiện tại hoặc dữ liệu đã tồn tại.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        409
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "DUPLICATE_DEVICE"
+                      ],
+                      "description": "- DUPLICATE_DEVICE: Thiết bị đã được đăng ký."
+                    }
+                  }
+                },
+                "examples": {
+                  "duplicate_device": {
+                    "summary": "DUPLICATE_DEVICE — Thiết bị đã được đăng ký.",
+                    "value": {
+                      "statusCode": 409,
+                      "code": "DUPLICATE_DEVICE"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1me~1push-devices/post/summary",
+          "before": "Register push device",
+          "after": "Register or refresh Android push device"
+        },
+        {
+          "pointer": "/paths/~1notifications/get/responses/200/content/application~1json/example/data",
+          "before": [
+            {
+              "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+              "type": "invoice_due",
+              "data": {
+                "invoiceId": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+              },
+              "readAt": null
+            }
+          ],
+          "after": [
+            {
+              "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+              "recipientUserId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+              "sourceService": "tenancy",
+              "eventId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+              "type": "invoice",
+              "title": "Hóa đơn mới",
+              "body": "Bạn có một hóa đơn cần thanh toán.",
+              "deepLink": "/invoices/3fa85f64-5717-4562-b3fc-2c963f66afa6",
+              "data": {
+                "invoiceId": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+              },
+              "createdAt": "2026-09-23T11:40:00.000Z",
+              "readAt": null
+            }
+          ]
+        }
+      ],
+      "semanticDiff": {
+        "paths": {
+          "modified": {
+            "/me/notification-preference": {
+              "operations": {
+                "modified": {
+                  "PUT": {
+                    "requestBody": {
+                      "content": {
+                        "modified": {
+                          "application/json": {
+                            "schema": {
+                              "properties": {
+                                "modified": {
+                                  "preferences": {
+                                    "minItems": {
+                                      "from": 0,
+                                      "to": 3
+                                    },
+                                    "maxItems": {
+                                      "from": null,
+                                      "to": 3
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "/me/push-devices": {
+              "operations": {
+                "modified": {
+                  "POST": {
+                    "responses": {
+                      "added": [
+                        "200"
+                      ],
+                      "deleted": [
+                        "201",
+                        "409"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "components": {
+          "schemas": {
+            "modified": {
+              "Notification": {
+                "required": {
+                  "added": [
+                    "title",
+                    "recipientUserId",
+                    "body",
+                    "readAt",
+                    "sourceService",
+                    "eventId"
+                  ],
+                  "deleted": [
+                    "userId"
+                  ]
+                },
+                "properties": {
+                  "added": [
+                    "sourceService",
+                    "eventId",
+                    "title",
+                    "recipientUserId",
+                    "deepLink",
+                    "body"
+                  ],
+                  "deleted": [
+                    "sentAt",
+                    "userId"
+                  ],
+                  "modified": {
+                    "data": {
+                      "additionalPropertiesAllowed": {
+                        "from": null,
+                        "to": true
+                      }
+                    },
+                    "type": {
+                      "enum": {
+                        "enumAdded": true,
+                        "added": [
+                          "invoice",
+                          "issue"
+                        ]
+                      },
+                      "minLength": {
+                        "from": 1,
+                        "to": 0
+                      },
+                      "maxLength": {
+                        "from": 50,
+                        "to": null
+                      }
+                    }
+                  }
+                }
+              },
+              "NotificationPreference": {
+                "required": {
+                  "added": [
+                    "pushEnabled"
+                  ],
+                  "deleted": [
+                    "enabled"
+                  ]
+                },
+                "properties": {
+                  "added": [
+                    "pushEnabled"
+                  ],
+                  "deleted": [
+                    "enabled"
+                  ],
+                  "modified": {
+                    "type": {
+                      "enum": {
+                        "deleted": [
+                          "match",
+                          "account"
+                        ]
+                      }
+                    }
+                  }
+                }
+              },
+              "NotificationPreferenceUpdateRequestDto": {
+                "properties": {
+                  "modified": {
+                    "preferences": {
+                      "minItems": {
+                        "from": 0,
+                        "to": 3
+                      },
+                      "maxItems": {
+                        "from": null,
+                        "to": 3
+                      }
+                    }
+                  }
+                }
+              },
+              "PushDevice": {
+                "required": {
+                  "added": [
+                    "lastSeenAt",
+                    "revokedAt"
+                  ]
+                },
+                "properties": {
+                  "added": [
+                    "revokedAt"
+                  ],
+                  "modified": {
+                    "lastSeenAt": {
+                      "nullable": {
+                        "from": true,
+                        "to": false
+                      }
+                    },
+                    "platform": {
+                      "enum": {
+                        "deleted": [
+                          "web"
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   ]
 }
