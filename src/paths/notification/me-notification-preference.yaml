@@ -38,15 +38,11 @@ get:
             code: NOTIFICATION_PREFERENCES_FETCHED
             data:
             - type: invoice
-              enabled: true
+              pushEnabled: true
             - type: chat
-              enabled: true
+              pushEnabled: true
             - type: issue
-              enabled: true
-            - type: match
-              enabled: true
-            - type: account
-              enabled: true
+              pushEnabled: true
     '400':
       $ref: ../../openapi.yaml#/components/responses/BadRequestError
     '401':
@@ -77,9 +73,11 @@ put:
         example:
           preferences:
           - type: invoice
-            enabled: true
+            pushEnabled: true
           - type: chat
-            enabled: false
+            pushEnabled: false
+          - type: issue
+            pushEnabled: true
   responses:
     '200':
       description: 'Thành công: Thay toàn bộ tuỳ biến thông báo.'

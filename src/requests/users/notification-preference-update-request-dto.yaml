@@ -6,7 +6,9 @@ additionalProperties: false
 properties:
   preferences:
     type: array
-    description: Thông tin preferences của tài nguyên trong ngữ cảnh DTO.
+    minItems: 3
+    maxItems: 3
+    description: Thay toàn bộ cấu hình; cần đúng một mục cho mỗi loại chat, invoice, issue.
     items:
       type: object
       additionalProperties: false
