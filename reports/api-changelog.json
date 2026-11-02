@@ -33683,6 +33683,801 @@
           }
         }
       }
+    },
+    {
+      "id": "455aeff28d99188a46611f21e29163b0f7150ac1fd9b6d97628a312fa52148af",
+      "label": "Thay đổi contract từ Git",
+      "classification": "NON_BREAKING",
+      "contractId": "rentify-public",
+      "repository": "https://github.com/pbl6-home-renter/api-doc",
+      "baseHash": "c10704924b7c3359b2204b04378f9e9a2c50ab85c8d61ce4f904c4153be52889",
+      "headHash": "7cc5b21fe0721b3e4cb2594e544f1d89ba094b59edd3d5f56b455dc53d437a5a",
+      "baseSource": "src/openapi.yaml",
+      "headSource": "src/openapi.yaml",
+      "detectedAt": "2026-11-02T07:53:37.800Z",
+      "committedAt": "2026-11-02T14:53:25+07:00",
+      "baseCommit": "a51f2e79d121f5f55125c0900df82827c5b75bbc",
+      "headCommit": "91363784de2337740e5eef1c9f0deae3f51a42fb",
+      "prUrl": "https://github.com/pbl6-home-renter/api-doc/pull/40",
+      "commitUrl": "https://github.com/pbl6-home-renter/api-doc/commit/91363784de2337740e5eef1c9f0deae3f51a42fb",
+      "metadataKind": "Git revision thực tế",
+      "reason": "CHƯA CUNG CẤP — tác giả PR phải bổ sung lý do nghiệp vụ; không thể suy ra từ OpenAPI diff.",
+      "tools": {
+        "redocly": "2.64.1",
+        "oasdiff": "1.34.1"
+      },
+      "changes": [
+        {
+          "id": "response-media-type-added",
+          "text": "added the media type `application/json` for the response with the status `200`",
+          "level": 1,
+          "operation": "DELETE",
+          "operationId": "leaveConversation",
+          "path": "/conversations/{conversationId}/members/me",
+          "section": "paths",
+          "fingerprint": "663bbe5e4909",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        },
+        {
+          "id": "response-non-success-status-added",
+          "text": "added the non-success response with the status `404`",
+          "level": 1,
+          "operation": "DELETE",
+          "operationId": "leaveConversation",
+          "path": "/conversations/{conversationId}/members/me",
+          "section": "paths",
+          "fingerprint": "a693e0eb0747",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        },
+        {
+          "id": "response-non-success-status-added",
+          "text": "added the non-success response with the status `409`",
+          "level": 1,
+          "operation": "DELETE",
+          "operationId": "leaveConversation",
+          "path": "/conversations/{conversationId}/members/me",
+          "section": "paths",
+          "fingerprint": "a1764d04e8af",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        },
+        {
+          "id": "response-non-success-status-added",
+          "text": "added the non-success response with the status `422`",
+          "level": 1,
+          "operation": "DELETE",
+          "operationId": "leaveConversation",
+          "path": "/conversations/{conversationId}/members/me",
+          "section": "paths",
+          "fingerprint": "1a76174745aa",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        },
+        {
+          "id": "response-media-type-added",
+          "text": "added the media type `application/json` for the response with the status `200`",
+          "level": 1,
+          "operation": "DELETE",
+          "operationId": "removeConversationMember",
+          "path": "/conversations/{conversationId}/members/{userId}",
+          "section": "paths",
+          "fingerprint": "d87f997ab167",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        },
+        {
+          "id": "response-non-success-status-added",
+          "text": "added the non-success response with the status `409`",
+          "level": 1,
+          "operation": "DELETE",
+          "operationId": "removeConversationMember",
+          "path": "/conversations/{conversationId}/members/{userId}",
+          "section": "paths",
+          "fingerprint": "5daca89e611c",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        },
+        {
+          "id": "response-non-success-status-added",
+          "text": "added the non-success response with the status `422`",
+          "level": 1,
+          "operation": "DELETE",
+          "operationId": "removeConversationMember",
+          "path": "/conversations/{conversationId}/members/{userId}",
+          "section": "paths",
+          "fingerprint": "f687f3977e79",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        }
+      ],
+      "locations": [
+        {
+          "pointer": "/components/schemas/ConversationAdminTransferredPayload",
+          "before": null,
+          "after": {
+            "title": "ConversationAdminTransferredPayload",
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "action",
+              "actorUserId",
+              "member"
+            ],
+            "properties": {
+              "action": {
+                "type": "string",
+                "enum": [
+                  "admin_transferred"
+                ]
+              },
+              "actorUserId": {
+                "type": "string",
+                "format": "uuid",
+                "description": "User kick/rời dẫn tới việc chuyển quyền admin."
+              },
+              "member": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "userId",
+                  "displayName"
+                ],
+                "properties": {
+                  "userId": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "displayName": {
+                    "type": "string",
+                    "maxLength": 254
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "pointer": "/components/schemas/ConversationMemberKickedPayload",
+          "before": null,
+          "after": {
+            "title": "ConversationMemberKickedPayload",
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "action",
+              "actorUserId",
+              "member"
+            ],
+            "properties": {
+              "action": {
+                "type": "string",
+                "enum": [
+                  "member_kicked"
+                ]
+              },
+              "actorUserId": {
+                "type": "string",
+                "format": "uuid",
+                "description": "User admin thực hiện thao tác kick."
+              },
+              "member": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "userId",
+                  "displayName"
+                ],
+                "properties": {
+                  "userId": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "displayName": {
+                    "type": "string",
+                    "maxLength": 254
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "pointer": "/components/schemas/ConversationMemberLeftPayload",
+          "before": null,
+          "after": {
+            "title": "ConversationMemberLeftPayload",
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "action",
+              "actorUserId",
+              "member"
+            ],
+            "properties": {
+              "action": {
+                "type": "string",
+                "enum": [
+                  "member_left"
+                ]
+              },
+              "actorUserId": {
+                "type": "string",
+                "format": "uuid",
+                "description": "User tự rời group; trùng với member.userId."
+              },
+              "member": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "userId",
+                  "displayName"
+                ],
+                "properties": {
+                  "userId": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "displayName": {
+                    "type": "string",
+                    "maxLength": 254
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "pointer": "/components/schemas/Message/allOf",
+          "before": [
+            {
+              "$ref": "#/components/schemas/BaseEntity"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "conversationId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "description": "ID cuộc hội thoại chứa tin nhắn",
+                  "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                },
+                "senderUserId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "nullable": true,
+                  "description": "ID user gửi; null với system message và bot.",
+                  "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                },
+                "senderName": {
+                  "type": "string",
+                  "maxLength": 254,
+                  "description": "Tên người gửi được snapshot tại thời điểm tạo message."
+                },
+                "senderType": {
+                  "type": "string",
+                  "enum": [
+                    "user",
+                    "system"
+                  ]
+                },
+                "type": {
+                  "type": "string",
+                  "enum": [
+                    "text",
+                    "image",
+                    "system",
+                    "bot"
+                  ],
+                  "description": "Loại tin nhắn",
+                  "example": "text"
+                },
+                "content": {
+                  "type": "string",
+                  "nullable": true,
+                  "description": "Nội dung tin nhắn dạng văn bản",
+                  "example": "Đã chốt số điện tháng 09: 180 kWh"
+                },
+                "mediaId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "nullable": true,
+                  "description": "Media ID của ảnh đã upload qua Media Service."
+                },
+                "sequence": {
+                  "type": "integer",
+                  "format": "int64",
+                  "minimum": 1
+                },
+                "clientMessageId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "description": "ID idempotency do client tạo."
+                },
+                "payload": {
+                  "type": "object",
+                  "nullable": true,
+                  "description": "For system messages with action=members_added, payload follows ConversationMembersAddedPayload. Other system/bot payloads may be added by their features.",
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/ConversationMembersAddedPayload"
+                    },
+                    {
+                      "type": "object"
+                    }
+                  ],
+                  "example": {
+                    "action": "members_added",
+                    "actorUserId": "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d",
+                    "members": [
+                      {
+                        "userId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                        "displayName": "Nguyễn Văn A"
+                      }
+                    ]
+                  }
+                }
+              },
+              "required": [
+                "conversationId",
+                "senderName",
+                "type"
+              ]
+            }
+          ],
+          "after": [
+            {
+              "$ref": "#/components/schemas/BaseEntity"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "conversationId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "description": "ID cuộc hội thoại chứa tin nhắn",
+                  "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                },
+                "senderUserId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "nullable": true,
+                  "description": "ID user gửi; null với system message và bot.",
+                  "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                },
+                "senderName": {
+                  "type": "string",
+                  "maxLength": 254,
+                  "description": "Tên người gửi được snapshot tại thời điểm tạo message."
+                },
+                "senderType": {
+                  "type": "string",
+                  "enum": [
+                    "user",
+                    "system"
+                  ]
+                },
+                "type": {
+                  "type": "string",
+                  "enum": [
+                    "text",
+                    "image",
+                    "system",
+                    "bot"
+                  ],
+                  "description": "Loại tin nhắn",
+                  "example": "text"
+                },
+                "content": {
+                  "type": "string",
+                  "nullable": true,
+                  "description": "Nội dung tin nhắn dạng văn bản",
+                  "example": "Đã chốt số điện tháng 09: 180 kWh"
+                },
+                "mediaId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "nullable": true,
+                  "description": "Media ID của ảnh đã upload qua Media Service."
+                },
+                "sequence": {
+                  "type": "integer",
+                  "format": "int64",
+                  "minimum": 1
+                },
+                "clientMessageId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "description": "ID idempotency do client tạo."
+                },
+                "payload": {
+                  "type": "object",
+                  "nullable": true,
+                  "description": "Payload is a discriminated union for implemented system actions.",
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/ConversationMembersAddedPayload"
+                    },
+                    {
+                      "$ref": "#/components/schemas/ConversationMemberKickedPayload"
+                    },
+                    {
+                      "$ref": "#/components/schemas/ConversationMemberLeftPayload"
+                    },
+                    {
+                      "$ref": "#/components/schemas/ConversationAdminTransferredPayload"
+                    }
+                  ],
+                  "discriminator": {
+                    "propertyName": "action",
+                    "mapping": {
+                      "members_added": "#/components/schemas/ConversationMembersAddedPayload",
+                      "member_kicked": "#/components/schemas/ConversationMemberKickedPayload",
+                      "member_left": "#/components/schemas/ConversationMemberLeftPayload",
+                      "admin_transferred": "#/components/schemas/ConversationAdminTransferredPayload"
+                    }
+                  },
+                  "example": {
+                    "action": "members_added",
+                    "actorUserId": "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d",
+                    "members": [
+                      {
+                        "userId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                        "displayName": "Nguyễn Văn A"
+                      }
+                    ]
+                  }
+                }
+              },
+              "required": [
+                "conversationId",
+                "senderName",
+                "type"
+              ]
+            }
+          ]
+        },
+        {
+          "pointer": "/paths/~1conversations~1{conversationId}~1members~1me/delete/description",
+          "before": "Membership chuyển read_only và thành viên chỉ xem được lịch sử đến thời điểm rời.",
+          "after": "User active tự rời group. Membership không bị xóa; chuyển sang read_only và chỉ đọc tới `leftSequence`. Hệ thống ghi system message `member_left`. Nếu user là admin cuối cùng, quyền admin chuyển cho user active còn lại có `joinedAt` sớm nhất; hệ thống ghi thêm `admin_transferred`. `leftSequence` bao gồm các system message trong cùng transaction. Nếu không còn user active để duy trì nhóm, trả 409 và rollback toàn bộ thay đổi. Không gửi FCM.\n\n```mermaid\nsequenceDiagram\n    participant C as Client\n    participant COM as Community\n    participant DB as Community DB\n    C->>COM: DELETE /conversations/{conversationId}/members/me\n    COM->>DB: Begin transaction and lock conversation/members\n    COM->>COM: Verify caller is active user member of group\n    COM->>DB: Lock message sequence and resolve active admin successor when needed\n    COM->>DB: Save member_left, optional admin_transferred, and read-only boundary atomically\n    COM-->>C: 200 CONVERSATION_LEFT\n```\n"
+        },
+        {
+          "pointer": "/paths/~1conversations~1{conversationId}~1members~1me/delete/responses/200/content",
+          "before": null,
+          "after": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "statusCode",
+                  "code",
+                  "data"
+                ],
+                "properties": {
+                  "statusCode": {
+                    "type": "integer",
+                    "enum": [
+                      200
+                    ]
+                  },
+                  "code": {
+                    "type": "string",
+                    "enum": [
+                      "CONVERSATION_LEFT"
+                    ]
+                  },
+                  "data": {
+                    "type": "object",
+                    "nullable": true,
+                    "enum": [
+                      null
+                    ]
+                  }
+                }
+              },
+              "example": {
+                "statusCode": 200,
+                "code": "CONVERSATION_LEFT",
+                "data": null
+              }
+            }
+          }
+        },
+        {
+          "pointer": "/paths/~1conversations~1{conversationId}~1members~1me/delete/responses/200/description",
+          "before": "Đã rời hội thoại; nếu là admin cuối thì quyền được chuyển cho thành viên tham gia sớm nhất.",
+          "after": "User đã rời group; membership, boundary và system message đã được lưu nguyên tử."
+        },
+        {
+          "pointer": "/paths/~1conversations~1{conversationId}~1members~1me/delete/responses/404",
+          "before": null,
+          "after": {
+            "$ref": "#/components/responses/NotFoundError"
+          }
+        },
+        {
+          "pointer": "/paths/~1conversations~1{conversationId}~1members~1me/delete/responses/409",
+          "before": null,
+          "after": {
+            "description": "Không thể để group không còn user active.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        409
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "GROUP_MUST_RETAIN_ACTIVE_MEMBER"
+                      ]
+                    }
+                  }
+                },
+                "example": {
+                  "statusCode": 409,
+                  "code": "GROUP_MUST_RETAIN_ACTIVE_MEMBER"
+                }
+              }
+            }
+          }
+        },
+        {
+          "pointer": "/paths/~1conversations~1{conversationId}~1members~1me/delete/responses/422",
+          "before": null,
+          "after": {
+            "$ref": "#/components/responses/ValidationError"
+          }
+        },
+        {
+          "pointer": "/paths/~1conversations~1{conversationId}~1members~1me/delete/x-apidog-folder",
+          "before": null,
+          "after": "ConversationMember"
+        },
+        {
+          "pointer": "/paths/~1conversations~1{conversationId}~1members~1me/delete/x-apidog-status",
+          "before": null,
+          "after": "designing"
+        },
+        {
+          "pointer": "/paths/~1conversations~1{conversationId}~1members~1{userId}/delete/description",
+          "before": "Admin có thể xóa thành viên; membership chuyển read_only, chỉ đọc đến leftSequence. Admin cuối cùng được chuyển tự động.",
+          "after": "Chỉ admin active của group được kick thành viên user active khác mình. Membership không bị xóa; chuyển sang read_only và chỉ đọc tới `leftSequence`. Hệ thống ghi system message `member_kicked`. Nếu đây là admin cuối cùng, quyền admin chuyển cho user active còn lại có `joinedAt` sớm nhất; hệ thống ghi thêm `admin_transferred`. `leftSequence` bao gồm cả hai system message trong cùng transaction. Nếu không còn user active để duy trì nhóm, trả 409 và rollback toàn bộ thay đổi. Không gửi FCM.\n\n```mermaid\nsequenceDiagram\n    participant C as Client\n    participant COM as Community\n    participant DB as Community DB\n    C->>COM: DELETE /conversations/{conversationId}/members/{userId}\n    COM->>DB: Begin transaction and lock conversation/members\n    COM->>COM: Verify caller is active group admin and target is active user member\n    COM->>DB: Lock message sequence and resolve active admin successor when needed\n    COM->>DB: Save member_kicked, optional admin_transferred, and read-only boundary atomically\n    COM-->>C: 200 CONVERSATION_MEMBER_REMOVED\n```\n"
+        },
+        {
+          "pointer": "/paths/~1conversations~1{conversationId}~1members~1{userId}/delete/responses/200/content",
+          "before": null,
+          "after": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "statusCode",
+                  "code",
+                  "data"
+                ],
+                "properties": {
+                  "statusCode": {
+                    "type": "integer",
+                    "enum": [
+                      200
+                    ]
+                  },
+                  "code": {
+                    "type": "string",
+                    "enum": [
+                      "CONVERSATION_MEMBER_REMOVED"
+                    ]
+                  },
+                  "data": {
+                    "type": "object",
+                    "nullable": true,
+                    "enum": [
+                      null
+                    ]
+                  }
+                }
+              },
+              "example": {
+                "statusCode": 200,
+                "code": "CONVERSATION_MEMBER_REMOVED",
+                "data": null
+              }
+            }
+          }
+        },
+        {
+          "pointer": "/paths/~1conversations~1{conversationId}~1members~1{userId}/delete/responses/200/description",
+          "before": "Thành viên bị thu hồi quyền gửi và nhận realtime.",
+          "after": "Thành viên đã bị kick; thay đổi và system message đã được lưu nguyên tử."
+        },
+        {
+          "pointer": "/paths/~1conversations~1{conversationId}~1members~1{userId}/delete/responses/409",
+          "before": null,
+          "after": {
+            "description": "Không thể loại bỏ user active cuối cùng khỏi group.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        409
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "GROUP_MUST_RETAIN_ACTIVE_MEMBER"
+                      ]
+                    }
+                  }
+                },
+                "example": {
+                  "statusCode": 409,
+                  "code": "GROUP_MUST_RETAIN_ACTIVE_MEMBER"
+                }
+              }
+            }
+          }
+        },
+        {
+          "pointer": "/paths/~1conversations~1{conversationId}~1members~1{userId}/delete/responses/422",
+          "before": null,
+          "after": {
+            "$ref": "#/components/responses/ValidationError"
+          }
+        },
+        {
+          "pointer": "/paths/~1conversations~1{conversationId}~1members~1{userId}/delete/x-apidog-folder",
+          "before": null,
+          "after": "ConversationMember"
+        },
+        {
+          "pointer": "/paths/~1conversations~1{conversationId}~1members~1{userId}/delete/x-apidog-status",
+          "before": null,
+          "after": "designing"
+        }
+      ],
+      "semanticDiff": {
+        "paths": {
+          "modified": {
+            "/conversations/{conversationId}/members/me": {
+              "operations": {
+                "modified": {
+                  "DELETE": {
+                    "extensions": {
+                      "added": [
+                        "x-apidog-folder",
+                        "x-apidog-status"
+                      ]
+                    },
+                    "responses": {
+                      "added": [
+                        "409",
+                        "422",
+                        "404"
+                      ],
+                      "modified": {
+                        "200": {
+                          "content": {
+                            "added": [
+                              "application/json"
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "/conversations/{conversationId}/members/{userId}": {
+              "operations": {
+                "modified": {
+                  "DELETE": {
+                    "extensions": {
+                      "added": [
+                        "x-apidog-folder",
+                        "x-apidog-status"
+                      ]
+                    },
+                    "responses": {
+                      "added": [
+                        "422",
+                        "409"
+                      ],
+                      "modified": {
+                        "200": {
+                          "content": {
+                            "added": [
+                              "application/json"
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "components": {
+          "schemas": {
+            "added": [
+              "ConversationMemberKickedPayload",
+              "ConversationAdminTransferredPayload",
+              "ConversationMemberLeftPayload"
+            ],
+            "modified": {
+              "Message": {
+                "properties": {
+                  "modified": {
+                    "payload": {
+                      "oneOf": {
+                        "added": [
+                          {
+                            "index": 0,
+                            "component": "ConversationMembersAddedPayload"
+                          },
+                          {
+                            "index": 1,
+                            "component": "ConversationMemberKickedPayload"
+                          },
+                          {
+                            "index": 2,
+                            "component": "ConversationMemberLeftPayload"
+                          },
+                          {
+                            "index": 3,
+                            "component": "ConversationAdminTransferredPayload"
+                          }
+                        ]
+                      },
+                      "anyOf": {
+                        "deleted": [
+                          {
+                            "index": 0,
+                            "component": "ConversationMembersAddedPayload"
+                          },
+                          {
+                            "index": 1
+                          }
+                        ]
+                      },
+                      "discriminatorDiff": {
+                        "added": true
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   ]
 }
