@@ -29,6 +29,8 @@
 
 ## Giới thiệu
 
+Contract Socket.IO cho Community Chat: [docs/community-socket-v1.md](docs/community-socket-v1.md).
+
 Repository này (GitHub: `be`, thư mục local: `api-docs`) lưu **đặc tả API OpenAPI 3.0.3** của Rentify — hệ thống quản lý nhà trọ và tìm bạn ở ghép. Đặc tả được viết bằng YAML module hóa trong `src/`, bundle thành [`reference/rentify.json`](reference/rentify.json) và đồng bộ với dự án **`rentify`** trên Apidog. FE (React) và mobile (Android) build theo contract này; backend service phải khớp với nó.
 
 Hiện contract gồm **93 path / 118 operation**, chia theo 10 tag:
