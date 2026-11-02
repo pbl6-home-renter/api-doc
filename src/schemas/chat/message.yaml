@@ -56,6 +56,7 @@ allOf:
           - $ref: '../../openapi.yaml#/components/schemas/ConversationMemberKickedPayload'
           - $ref: '../../openapi.yaml#/components/schemas/ConversationMemberLeftPayload'
           - $ref: '../../openapi.yaml#/components/schemas/ConversationAdminTransferredPayload'
+          - $ref: '../../openapi.yaml#/components/schemas/ConversationMemberRoleChangedPayload'
         discriminator:
           propertyName: action
           mapping:
@@ -63,6 +64,7 @@ allOf:
             member_kicked: '../../openapi.yaml#/components/schemas/ConversationMemberKickedPayload'
             member_left: '../../openapi.yaml#/components/schemas/ConversationMemberLeftPayload'
             admin_transferred: '../../openapi.yaml#/components/schemas/ConversationAdminTransferredPayload'
+            member_role_changed: '../../openapi.yaml#/components/schemas/ConversationMemberRoleChangedPayload'
         example:
           action: members_added
           actorUserId: 9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d

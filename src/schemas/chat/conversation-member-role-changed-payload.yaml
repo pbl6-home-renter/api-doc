@@ -1,0 +1,29 @@
+title: ConversationMemberRoleChangedPayload
+type: object
+additionalProperties: false
+required: [action, actorUserId, member, oldRole, newRole]
+properties:
+  action:
+    type: string
+    enum: [member_role_changed]
+  actorUserId:
+    type: string
+    format: uuid
+    description: User admin thực hiện thay đổi vai trò.
+  member:
+    type: object
+    additionalProperties: false
+    required: [userId, displayName]
+    properties:
+      userId:
+        type: string
+        format: uuid
+      displayName:
+        type: string
+        maxLength: 254
+  oldRole:
+    type: string
+    enum: [admin, member]
+  newRole:
+    type: string
+    enum: [admin, member]
