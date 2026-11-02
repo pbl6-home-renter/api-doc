@@ -7,9 +7,51 @@ delete:
   tags: [Chat]
   operationId: leaveConversation
   security: [{ BearerAuth: [] }]
+  x-apidog-folder: ConversationMember
+  x-apidog-status: designing
   summary: Rời nhóm chat
-  description: Membership chuyển read_only và thành viên chỉ xem được lịch sử đến thời điểm rời.
+  description: |
+    User active tự rời group. Membership không bị xóa; chuyển sang read_only và chỉ đọc tới `leftSequence`. Hệ thống ghi system message `member_left`. Nếu user là admin cuối cùng, quyền admin chuyển cho user active còn lại có `joinedAt` sớm nhất; hệ thống ghi thêm `admin_transferred`. `leftSequence` bao gồm các system message trong cùng transaction. Nếu không còn user active để duy trì nhóm, trả 409 và rollback toàn bộ thay đổi. Không gửi FCM.
+
+    ```mermaid
+    sequenceDiagram
+        participant C as Client
+        participant COM as Community
+        participant DB as Community DB
+        C->>COM: DELETE /conversations/{conversationId}/members/me
+        COM->>DB: Begin transaction and lock conversation/members
+        COM->>COM: Verify caller is active user member of group
+        COM->>DB: Lock message sequence and resolve active admin successor when needed
+        COM->>DB: Save member_left, optional admin_transferred, and read-only boundary atomically
+        COM-->>C: 200 CONVERSATION_LEFT
+    ```
   responses:
-    '200': { description: Đã rời hội thoại; nếu là admin cuối thì quyền được chuyển cho thành viên tham gia sớm nhất. }
+    '200':
+      description: User đã rời group; membership, boundary và system message đã được lưu nguyên tử.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code, data]
+            properties:
+              statusCode: { type: integer, enum: [200] }
+              code: { type: string, enum: [CONVERSATION_LEFT] }
+              data: { type: object, nullable: true, enum: [null] }
+          example: { statusCode: 200, code: CONVERSATION_LEFT, data: null }
     '401': { $ref: ../../openapi.yaml#/components/responses/UnauthorizedError }
     '403': { $ref: ../../openapi.yaml#/components/responses/ForbiddenError }
+    '404': { $ref: ../../openapi.yaml#/components/responses/NotFoundError }
+    '409':
+      description: Không thể để group không còn user active.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code]
+            properties:
+              statusCode: { type: integer, enum: [409] }
+              code: { type: string, enum: [GROUP_MUST_RETAIN_ACTIVE_MEMBER] }
+          example: { statusCode: 409, code: GROUP_MUST_RETAIN_ACTIVE_MEMBER }
+    '422': { $ref: ../../openapi.yaml#/components/responses/ValidationError }
