@@ -20725,16 +20725,36 @@
             "BearerAuth": []
           }
         ],
+        "x-apidog-folder": "ConversationMember",
+        "x-apidog-status": "designing",
         "summary": "Xem thành viên hội thoại",
-        "description": "Thành viên active và read_only có thể xem danh sách nếu còn quyền đọc.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-11-02 | 🟢 NON_BREAKING | added the required property `data/items/displayName` to the response with the `200` status | [#38](https://github.com/pbl6-home-renter/api-doc/pull/38) |\n| 2026-11-01 | 🟢 NON_BREAKING | Thêm endpoint mới. | [#35](https://github.com/pbl6-home-renter/api-doc/pull/35) |\n",
+        "description": "Thành viên active hoặc read_only được xem danh sách member của conversation nếu còn quyền đọc. Member đã rời chỉ đọc được tới leftSequence khi lấy lịch sử message; response này trả membership hiện có để hiển thị trạng thái thành viên.\n\n```mermaid\nsequenceDiagram\n    participant C as Client\n    participant COM as Community\n    participant DB as Community DB\n    C->>COM: GET /conversations/{conversationId}/members\n    COM->>COM: Verify JWT and conversationId\n    COM->>DB: Check conversation and caller membership\n    DB-->>COM: Conversation and active/read_only access\n    COM->>DB: Load non-deleted members ordered by joinedAt\n    DB-->>COM: Member snapshots\n    COM-->>C: 200 CONVERSATION_MEMBERS_FETCHED\n```\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-11-02 | 🟢 NON_BREAKING | added the required property `data/items/displayName` to the response with the `200` status | [#38](https://github.com/pbl6-home-renter/api-doc/pull/38) |\n| 2026-11-01 | 🟢 NON_BREAKING | Thêm endpoint mới. | [#35](https://github.com/pbl6-home-renter/api-doc/pull/35) |\n",
         "responses": {
           "200": {
-            "description": "Danh sách thành viên.",
+            "description": "Thành viên hội thoại.",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code",
+                    "data"
+                  ],
                   "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        200
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "CONVERSATION_MEMBERS_FETCHED"
+                      ]
+                    },
                     "data": {
                       "type": "array",
                       "items": {
@@ -20742,15 +20762,29 @@
                       }
                     }
                   }
+                },
+                "example": {
+                  "statusCode": 200,
+                  "code": "CONVERSATION_MEMBERS_FETCHED",
+                  "data": []
                 }
               }
             }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequestPathError"
           },
           "401": {
             "$ref": "#/components/responses/UnauthorizedError"
           },
           "403": {
             "$ref": "#/components/responses/ForbiddenError"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundError"
+          },
+          "503": {
+            "$ref": "#/components/responses/AuthUnavailableError"
           }
         }
       },
@@ -20764,8 +20798,10 @@
             "BearerAuth": []
           }
         ],
+        "x-apidog-folder": "ConversationMember",
+        "x-apidog-status": "designing",
         "summary": "Thêm thành viên nhóm",
-        "description": "Chỉ admin nhóm; membership cũ được kích hoạt lại và người được thêm xem toàn bộ lịch sử.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-11-01 | 🟢 NON_BREAKING | Thêm endpoint mới. | [#35](https://github.com/pbl6-home-renter/api-doc/pull/35) |\n",
+        "description": "Chỉ admin group được thêm member. Membership read_only được kích hoạt lại; member mới hoặc được kích hoạt lại xem toàn bộ lịch sử. Toàn bộ userIds phải hợp lệ và chưa active; nếu một user không hợp lệ hoặc đã active thì không thay đổi member nào. Thao tác ghi system message action=members_added trong cùng transaction. `payload` gồm `action`, `actorUserId` và `members` (mỗi phần tử có `userId`, `displayName`).\n\n```mermaid\nsequenceDiagram\n    participant C as Client\n    participant COM as Community\n    participant ID as Identity\n    participant DB as Community DB\n    C->>COM: POST /conversations/{conversationId}/members\n    COM->>DB: Verify group and caller admin\n    COM->>ID: Batch lookup names for userIds\n    ID-->>COM: User IDs and display names\n    COM->>DB: Begin transaction and lock conversation\n    COM->>DB: Add/reactivate members and save members_added system message\n    DB-->>COM: Commit member records and message atomically\n    COM-->>C: 200 CONVERSATION_MEMBERS_ADDED with members\n```\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-11-01 | 🟢 NON_BREAKING | Thêm endpoint mới. | [#35](https://github.com/pbl6-home-renter/api-doc/pull/35) |\n",
         "requestBody": {
           "required": true,
           "content": {
@@ -20793,7 +20829,48 @@
         },
         "responses": {
           "200": {
-            "description": "Thành viên được thêm hoặc kích hoạt lại."
+            "description": "Member được thêm hoặc kích hoạt lại.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code",
+                    "data"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        200
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "CONVERSATION_MEMBERS_ADDED"
+                      ]
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/ConversationMember"
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "statusCode": 200,
+                  "code": "CONVERSATION_MEMBERS_ADDED",
+                  "data": []
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequestBodyError"
           },
           "401": {
             "$ref": "#/components/responses/UnauthorizedError"
@@ -20801,8 +20878,14 @@
           "403": {
             "$ref": "#/components/responses/ForbiddenError"
           },
+          "404": {
+            "$ref": "#/components/responses/NotFoundError"
+          },
           "422": {
             "$ref": "#/components/responses/ValidationError"
+          },
+          "503": {
+            "$ref": "#/components/responses/AuthUnavailableError"
           }
         }
       }
@@ -33606,6 +33689,49 @@
           }
         ]
       },
+      "ConversationMembersAddedPayload": {
+        "title": "ConversationMembersAddedPayload",
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "action",
+          "actorUserId",
+          "members"
+        ],
+        "properties": {
+          "action": {
+            "type": "string",
+            "enum": [
+              "members_added"
+            ]
+          },
+          "actorUserId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "members": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "userId",
+                "displayName"
+              ],
+              "properties": {
+                "userId": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "displayName": {
+                  "type": "string",
+                  "maxLength": 254
+                }
+              }
+            }
+          }
+        }
+      },
       "Message": {
         "type": "object",
         "x-apidog-folder": "Message",
@@ -33679,7 +33805,25 @@
               "payload": {
                 "type": "object",
                 "nullable": true,
-                "description": "Dữ liệu có cấu trúc cho system/bot message."
+                "description": "For system messages with action=members_added, payload follows ConversationMembersAddedPayload. Other system/bot payloads may be added by their features.",
+                "anyOf": [
+                  {
+                    "$ref": "#/components/schemas/ConversationMembersAddedPayload"
+                  },
+                  {
+                    "type": "object"
+                  }
+                ],
+                "example": {
+                  "action": "members_added",
+                  "actorUserId": "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d",
+                  "members": [
+                    {
+                      "userId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                      "displayName": "Nguyễn Văn A"
+                    }
+                  ]
+                }
               }
             },
             "required": [
