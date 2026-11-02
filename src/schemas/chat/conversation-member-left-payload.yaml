@@ -1,0 +1,23 @@
+title: ConversationMemberLeftPayload
+type: object
+additionalProperties: false
+required: [action, actorUserId, member]
+properties:
+  action:
+    type: string
+    enum: [member_left]
+  actorUserId:
+    type: string
+    format: uuid
+    description: User tự rời group; trùng với member.userId.
+  member:
+    type: object
+    additionalProperties: false
+    required: [userId, displayName]
+    properties:
+      userId:
+        type: string
+        format: uuid
+      displayName:
+        type: string
+        maxLength: 254

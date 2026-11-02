@@ -1,0 +1,23 @@
+title: ConversationAdminTransferredPayload
+type: object
+additionalProperties: false
+required: [action, actorUserId, member]
+properties:
+  action:
+    type: string
+    enum: [admin_transferred]
+  actorUserId:
+    type: string
+    format: uuid
+    description: User kick/rời dẫn tới việc chuyển quyền admin.
+  member:
+    type: object
+    additionalProperties: false
+    required: [userId, displayName]
+    properties:
+      userId:
+        type: string
+        format: uuid
+      displayName:
+        type: string
+        maxLength: 254

@@ -50,10 +50,19 @@ allOf:
       payload:
         type: object
         nullable: true
-        description: For system messages with action=members_added, payload follows ConversationMembersAddedPayload. Other system/bot payloads may be added by their features.
-        anyOf:
+        description: Payload is a discriminated union for implemented system actions.
+        oneOf:
           - $ref: '../../openapi.yaml#/components/schemas/ConversationMembersAddedPayload'
-          - type: object
+          - $ref: '../../openapi.yaml#/components/schemas/ConversationMemberKickedPayload'
+          - $ref: '../../openapi.yaml#/components/schemas/ConversationMemberLeftPayload'
+          - $ref: '../../openapi.yaml#/components/schemas/ConversationAdminTransferredPayload'
+        discriminator:
+          propertyName: action
+          mapping:
+            members_added: '../../openapi.yaml#/components/schemas/ConversationMembersAddedPayload'
+            member_kicked: '../../openapi.yaml#/components/schemas/ConversationMemberKickedPayload'
+            member_left: '../../openapi.yaml#/components/schemas/ConversationMemberLeftPayload'
+            admin_transferred: '../../openapi.yaml#/components/schemas/ConversationAdminTransferredPayload'
         example:
           action: members_added
           actorUserId: 9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d

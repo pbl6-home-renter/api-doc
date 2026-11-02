@@ -20921,11 +20921,52 @@
             "BearerAuth": []
           }
         ],
+        "x-apidog-folder": "ConversationMember",
+        "x-apidog-status": "designing",
         "summary": "Xóa thành viên khỏi nhóm",
-        "description": "Admin có thể xóa thành viên; membership chuyển read_only, chỉ đọc đến leftSequence. Admin cuối cùng được chuyển tự động.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-11-01 | 🟢 NON_BREAKING | Thêm endpoint mới. | [#35](https://github.com/pbl6-home-renter/api-doc/pull/35) |\n",
+        "description": "Chỉ admin active của group được kick thành viên user active khác mình. Membership không bị xóa; chuyển sang read_only và chỉ đọc tới `leftSequence`. Hệ thống ghi system message `member_kicked`. Nếu đây là admin cuối cùng, quyền admin chuyển cho user active còn lại có `joinedAt` sớm nhất; hệ thống ghi thêm `admin_transferred`. `leftSequence` bao gồm cả hai system message trong cùng transaction. Nếu không còn user active để duy trì nhóm, trả 409 và rollback toàn bộ thay đổi. Không gửi FCM.\n\n```mermaid\nsequenceDiagram\n    participant C as Client\n    participant COM as Community\n    participant DB as Community DB\n    C->>COM: DELETE /conversations/{conversationId}/members/{userId}\n    COM->>DB: Begin transaction and lock conversation/members\n    COM->>COM: Verify caller is active group admin and target is active user member\n    COM->>DB: Lock message sequence and resolve active admin successor when needed\n    COM->>DB: Save member_kicked, optional admin_transferred, and read-only boundary atomically\n    COM-->>C: 200 CONVERSATION_MEMBER_REMOVED\n```\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-11-01 | 🟢 NON_BREAKING | Thêm endpoint mới. | [#35](https://github.com/pbl6-home-renter/api-doc/pull/35) |\n",
         "responses": {
           "200": {
-            "description": "Thành viên bị thu hồi quyền gửi và nhận realtime."
+            "description": "Thành viên đã bị kick; thay đổi và system message đã được lưu nguyên tử.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code",
+                    "data"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        200
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "CONVERSATION_MEMBER_REMOVED"
+                      ]
+                    },
+                    "data": {
+                      "type": "object",
+                      "nullable": true,
+                      "enum": [
+                        null
+                      ]
+                    }
+                  }
+                },
+                "example": {
+                  "statusCode": 200,
+                  "code": "CONVERSATION_MEMBER_REMOVED",
+                  "data": null
+                }
+              }
+            }
           },
           "401": {
             "$ref": "#/components/responses/UnauthorizedError"
@@ -20935,6 +20976,42 @@
           },
           "404": {
             "$ref": "#/components/responses/NotFoundError"
+          },
+          "409": {
+            "description": "Không thể loại bỏ user active cuối cùng khỏi group.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        409
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "GROUP_MUST_RETAIN_ACTIVE_MEMBER"
+                      ]
+                    }
+                  }
+                },
+                "example": {
+                  "statusCode": 409,
+                  "code": "GROUP_MUST_RETAIN_ACTIVE_MEMBER"
+                }
+              }
+            }
+          },
+          "422": {
+            "$ref": "#/components/responses/ValidationError"
           }
         }
       }
@@ -21033,17 +21110,97 @@
             "BearerAuth": []
           }
         ],
+        "x-apidog-folder": "ConversationMember",
+        "x-apidog-status": "designing",
         "summary": "Rời nhóm chat",
-        "description": "Membership chuyển read_only và thành viên chỉ xem được lịch sử đến thời điểm rời.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-11-01 | 🟢 NON_BREAKING | Thêm endpoint mới. | [#35](https://github.com/pbl6-home-renter/api-doc/pull/35) |\n",
+        "description": "User active tự rời group. Membership không bị xóa; chuyển sang read_only và chỉ đọc tới `leftSequence`. Hệ thống ghi system message `member_left`. Nếu user là admin cuối cùng, quyền admin chuyển cho user active còn lại có `joinedAt` sớm nhất; hệ thống ghi thêm `admin_transferred`. `leftSequence` bao gồm các system message trong cùng transaction. Nếu không còn user active để duy trì nhóm, trả 409 và rollback toàn bộ thay đổi. Không gửi FCM.\n\n```mermaid\nsequenceDiagram\n    participant C as Client\n    participant COM as Community\n    participant DB as Community DB\n    C->>COM: DELETE /conversations/{conversationId}/members/me\n    COM->>DB: Begin transaction and lock conversation/members\n    COM->>COM: Verify caller is active user member of group\n    COM->>DB: Lock message sequence and resolve active admin successor when needed\n    COM->>DB: Save member_left, optional admin_transferred, and read-only boundary atomically\n    COM-->>C: 200 CONVERSATION_LEFT\n```\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-11-01 | 🟢 NON_BREAKING | Thêm endpoint mới. | [#35](https://github.com/pbl6-home-renter/api-doc/pull/35) |\n",
         "responses": {
           "200": {
-            "description": "Đã rời hội thoại; nếu là admin cuối thì quyền được chuyển cho thành viên tham gia sớm nhất."
+            "description": "User đã rời group; membership, boundary và system message đã được lưu nguyên tử.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code",
+                    "data"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        200
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "CONVERSATION_LEFT"
+                      ]
+                    },
+                    "data": {
+                      "type": "object",
+                      "nullable": true,
+                      "enum": [
+                        null
+                      ]
+                    }
+                  }
+                },
+                "example": {
+                  "statusCode": 200,
+                  "code": "CONVERSATION_LEFT",
+                  "data": null
+                }
+              }
+            }
           },
           "401": {
             "$ref": "#/components/responses/UnauthorizedError"
           },
           "403": {
             "$ref": "#/components/responses/ForbiddenError"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundError"
+          },
+          "409": {
+            "description": "Không thể để group không còn user active.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        409
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "GROUP_MUST_RETAIN_ACTIVE_MEMBER"
+                      ]
+                    }
+                  }
+                },
+                "example": {
+                  "statusCode": 409,
+                  "code": "GROUP_MUST_RETAIN_ACTIVE_MEMBER"
+                }
+              }
+            }
+          },
+          "422": {
+            "$ref": "#/components/responses/ValidationError"
           }
         }
       }
@@ -33732,6 +33889,129 @@
           }
         }
       },
+      "ConversationMemberKickedPayload": {
+        "title": "ConversationMemberKickedPayload",
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "action",
+          "actorUserId",
+          "member"
+        ],
+        "properties": {
+          "action": {
+            "type": "string",
+            "enum": [
+              "member_kicked"
+            ]
+          },
+          "actorUserId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "User admin thực hiện thao tác kick."
+          },
+          "member": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "userId",
+              "displayName"
+            ],
+            "properties": {
+              "userId": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "displayName": {
+                "type": "string",
+                "maxLength": 254
+              }
+            }
+          }
+        }
+      },
+      "ConversationMemberLeftPayload": {
+        "title": "ConversationMemberLeftPayload",
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "action",
+          "actorUserId",
+          "member"
+        ],
+        "properties": {
+          "action": {
+            "type": "string",
+            "enum": [
+              "member_left"
+            ]
+          },
+          "actorUserId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "User tự rời group; trùng với member.userId."
+          },
+          "member": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "userId",
+              "displayName"
+            ],
+            "properties": {
+              "userId": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "displayName": {
+                "type": "string",
+                "maxLength": 254
+              }
+            }
+          }
+        }
+      },
+      "ConversationAdminTransferredPayload": {
+        "title": "ConversationAdminTransferredPayload",
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "action",
+          "actorUserId",
+          "member"
+        ],
+        "properties": {
+          "action": {
+            "type": "string",
+            "enum": [
+              "admin_transferred"
+            ]
+          },
+          "actorUserId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "User kick/rời dẫn tới việc chuyển quyền admin."
+          },
+          "member": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "userId",
+              "displayName"
+            ],
+            "properties": {
+              "userId": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "displayName": {
+                "type": "string",
+                "maxLength": 254
+              }
+            }
+          }
+        }
+      },
       "Message": {
         "type": "object",
         "x-apidog-folder": "Message",
@@ -33805,15 +34085,30 @@
               "payload": {
                 "type": "object",
                 "nullable": true,
-                "description": "For system messages with action=members_added, payload follows ConversationMembersAddedPayload. Other system/bot payloads may be added by their features.",
-                "anyOf": [
+                "description": "Payload is a discriminated union for implemented system actions.",
+                "oneOf": [
                   {
                     "$ref": "#/components/schemas/ConversationMembersAddedPayload"
                   },
                   {
-                    "type": "object"
+                    "$ref": "#/components/schemas/ConversationMemberKickedPayload"
+                  },
+                  {
+                    "$ref": "#/components/schemas/ConversationMemberLeftPayload"
+                  },
+                  {
+                    "$ref": "#/components/schemas/ConversationAdminTransferredPayload"
                   }
                 ],
+                "discriminator": {
+                  "propertyName": "action",
+                  "mapping": {
+                    "members_added": "#/components/schemas/ConversationMembersAddedPayload",
+                    "member_kicked": "#/components/schemas/ConversationMemberKickedPayload",
+                    "member_left": "#/components/schemas/ConversationMemberLeftPayload",
+                    "admin_transferred": "#/components/schemas/ConversationAdminTransferredPayload"
+                  }
+                },
                 "example": {
                   "action": "members_added",
                   "actorUserId": "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d",
