@@ -2,15 +2,47 @@ post:
   tags:
   - Contract
   x-apidog-folder: ContractMember
-  x-apidog-status: designing
-  operationId: postContractMembersContractmemberidLeaveContract
+  x-apidog-status: released
+  operationId: postContractMembersTenantidLeaveContract
   security:
     - BearerAuth: []
   summary: Record contract member leave
-  description: 'landlord. Ghi nhận thành viên rời đi. Lỗi nghiệp vụ: 403 FORBIDDEN · 409 MEMBER ALREADY LEFT · 422
-    LEFT DATE INVALID.'
+  description: |-
+    Identify the membership by tenantId (the tenant account UUID in the URL) and contractId (required in the body).
+    tenantId is not the contract_members record ID. Members with tenant_id = null cannot use this endpoint.
+    Landlord must own the selected contract; it must be active (409 CONTRACT_NOT_ACTIVE).
+    Lock the contract before locking the member. Join contract_members with contracts and match both IDs,
+    excluding soft-deleted rows. Prefer a membership without a departure, then the latest departure
+    when the tenant has left and rejoined. The response id remains the contract_members record ID. An already recorded departure returns
+    409 MEMBER_ALREADY_LEFT, including a scheduled departure. leftOn must be >= joinedAt and
+    <= contract endDate (422 LEFT_DATE_INVALID). leftOn = joinedAt is allowed.
+    Unknown member/contract: 404 RESOURCE_NOT_FOUND; other landlord: 403 FORBIDDEN.
+    Set left_at without deleting the record, and append contract_member.left in the same transaction.
+    The upper endDate limit belongs to this handler; the shared domain leave method permits checkout
+    after endDate (P6-D71 addendum). Response uses leftAt; request uses leftOn.
+
+    ```mermaid
+    sequenceDiagram
+        participant GW as API Gateway
+        participant TEN as Tenancy
+        participant DB as Tenancy DB
+        GW->>TEN: POST /contract-members/{tenantId}/leave-contract {contractId, leftOn}
+        TEN->>TEN: Verify JWT, landlord role, active account and request
+        TEN->>DB: BEGIN; lock body.contractId FOR UPDATE
+        TEN->>TEN: Require contract owner and active status
+        TEN->>DB: JOIN contract_members with contracts WHERE tenant_id = path.tenantId AND contract_id = body.contractId<br/>Exclude deleted rows; prefer current membership; lock member FOR UPDATE
+        TEN->>TEN: Require owner and active contract; lock member; validate departure and dates
+        alt Missing record / forbidden / business validation failure
+            TEN->>DB: ROLLBACK
+            TEN-->>GW: 404 / 403 / 409 / 422
+        else Valid operation
+            TEN->>DB: UPDATE contract_members.left_at; INSERT contract_member.left into outbox
+            TEN->>DB: COMMIT
+            TEN-->>GW: 200 CONTRACT_MEMBER_LEFT
+        end
+    ```
   parameters:
-  - name: contractMemberId
+  - name: tenantId
     in: path
     required: true
     schema:
@@ -23,6 +55,7 @@ post:
         schema:
           $ref: ../../openapi.yaml#/components/schemas/ContractMemberLeaveRequestDto
         example:
+          contractId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
           leftOn: '2026-10-01'
   responses:
     '200':
@@ -79,6 +112,7 @@ post:
               code:
                 type: string
                 enum:
+                  - CONTRACT_NOT_ACTIVE
                   - MEMBER_ALREADY_LEFT
                 description: |-
                   - MEMBER_ALREADY_LEFT: Thành viên đã rời hợp đồng.

@@ -2,14 +2,44 @@ patch:
   tags:
   - Contract
   x-apidog-folder: ContractMember
-  x-apidog-status: designing
-  operationId: patchContractMembersContractmemberid
+  x-apidog-status: released
+  operationId: patchContractMembersTenantid
   security:
     - BearerAuth: []
   summary: Update contract member
-  description: 'landlord. Cập nhật thành viên. Lỗi nghiệp vụ: 403 FORBIDDEN · 409 MEMBER LEFT · 422 VALIDATION FAILED.'
+  description: |-
+    Identify the membership by tenantId (tenant account UUID in the URL) and required contractId in the body.
+    Members with tenant_id = null cannot use this endpoint. Update tenantPhone (Vietnamese phone number)
+    only in the selected contract, owned by the requesting landlord. The response id is the membership record ID.
+    Join contract_members with contracts using both IDs, excluding soft-deleted rows.
+    Prefer the current membership if the tenant has left and rejoined the same contract.
+    Lock the contract before the member. A departed member (leftAt <= today, UTC)
+    returns 409 MEMBER_LEFT. A matching tenantId or new phone on another active member returns
+    409 MEMBER_ALREADY_EXISTS. Unknown member/contract: 404 RESOURCE_NOT_FOUND; other landlord: 403 FORBIDDEN.
+    No requirement that the contract is active for this phone-only update. The record is never deleted.
+
+    ```mermaid
+    sequenceDiagram
+        participant GW as API Gateway
+        participant TEN as Tenancy
+        participant DB as Tenancy DB
+        GW->>TEN: PATCH /contract-members/{tenantId} {contractId, tenantPhone}
+        TEN->>TEN: Verify JWT, landlord role, active account and request
+        TEN->>DB: BEGIN; lock body.contractId FOR UPDATE
+        TEN->>TEN: Require contract owner
+        TEN->>DB: JOIN contract_members with contracts WHERE tenant_id = path.tenantId AND contract_id = body.contractId<br/>Exclude deleted rows; prefer current membership; lock member FOR UPDATE
+        TEN->>TEN: Require owner; lock member; reject departed member and duplicates
+        alt Missing record / forbidden / business validation failure
+            TEN->>DB: ROLLBACK
+            TEN-->>GW: 404 / 403 / 409 / 422
+        else Valid operation
+            TEN->>DB: UPDATE contract_members.tenant_phone
+            TEN->>DB: COMMIT
+            TEN-->>GW: 200 CONTRACT_MEMBER_UPDATED
+        end
+    ```
   parameters:
-  - name: contractMemberId
+  - name: tenantId
     in: path
     required: true
     schema:
@@ -22,6 +52,7 @@ patch:
         schema:
           $ref: ../../openapi.yaml#/components/schemas/ContractMemberUpdateRequestDto
         example:
+          contractId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
           tenantPhone: '0921234567'
   responses:
     '200':
@@ -79,6 +110,7 @@ patch:
                 type: string
                 enum:
                   - MEMBER_LEFT
+                  - MEMBER_ALREADY_EXISTS
                 description: |-
                   - MEMBER_LEFT: Thành viên đã rời hợp đồng.
           examples:

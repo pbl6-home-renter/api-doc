@@ -21,7 +21,8 @@ post:
     Các lỗi 4xx khác từ Identity được truyền nguyên trạng. Chưa xác minh được file thì không kích hoạt.
 
     Sau khi media hợp lệ, trong cùng transaction: khóa hợp đồng, kiểm tra hợp đồng chưa bị xóa
-    và landlordId = user.id, khóa phòng, kích hoạt hợp đồng và chuyển phòng sang occupied.
+    và landlordId = user.id, khóa phòng, kích hoạt hợp đồng, tự thêm đại diện vào contract_members với joined_at = start_date
+    và chuyển phòng sang occupied. Member giữ tenant_id/name/phone từ hợp đồng, không có cờ đại diện.
     Hợp đồng hoặc phòng không tồn tại/đã xóa trả 404 RESOURCE_NOT_FOUND; khác landlord trả 403 FORBIDDEN.
     Vi phạm unique index UQ_contracts_room_active trả 409 ACTIVE_CONTRACT_EXISTS.
     Vì media được kiểm tra trước, media không hợp lệ có thể trả 409 trước khi kiểm tra 404/403 của hợp đồng.
@@ -41,8 +42,8 @@ post:
       Hợp đồng/phòng không tồn tại hoặc đã xóa được xử lý riêng bằng `404 RESOURCE_NOT_FOUND`.
 
     Thành công trả 200 CONTRACT_ACTIVATED với id, status = active và activatedAt dạng ISO 8601 UTC.
-    activatedAt được lưu ở contracts.activated_at. Hợp đồng, phòng và hai outbox message
-    contract.activated, room.status_changed được ghi cùng transaction; lỗi ghi dữ liệu sẽ rollback.
+    activatedAt được lưu ở contracts.activated_at. Hợp đồng, member đại diện, phòng và ba outbox message
+    contract.activated, contract_member.added, room.status_changed được ghi cùng transaction; lỗi ghi dữ liệu sẽ rollback.
     Outbox relay publish sau khi commit. Không kiểm tra startDate so với ngày hiện tại; không dùng OTP/PIN.
     Service chưa có rate limiter.
 
@@ -75,7 +76,7 @@ post:
             alt Media missing, Identity 404 or media does not match
                 TEN-->>GW: 409 SIGNED_FILE_MISSING; no transaction
             else Valid signed media
-                Note over TEN,DB: One transaction for contract + room + outbox
+                Note over TEN,DB: One transaction for contract + representative member + room + outbox
                 TEN->>DB: BEGIN; lock non-deleted contract FOR UPDATE
                 DB-->>TEN: Contract or null
                 TEN->>TEN: Require contract exists and landlordId = JWT user.id
@@ -90,7 +91,7 @@ post:
                         TEN->>DB: ROLLBACK
                         TEN-->>GW: 404 RESOURCE_NOT_FOUND / 409 CONTRACT_NOT_READY
                     else Ready for activation
-                        TEN->>DB: Save contract active + activated_at; save room occupied<br/>Append contract.activated and room.status_changed to outbox
+                        TEN->>DB: Insert representative member with joined_at = contract.start_date<br/>Save contract active + activated_at; save room occupied<br/>Append contract.activated, contract_member.added and room.status_changed to outbox
                         alt Active-room unique violation or persistence failure
                             TEN->>DB: ROLLBACK
                             TEN-->>GW: 409 ACTIVE_CONTRACT_EXISTS / 500 INTERNAL_SERVER_ERROR

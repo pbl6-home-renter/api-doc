@@ -4,5 +4,6 @@ title: ContractMemberUpdateRequestDto
 description: Dữ liệu cập nhật số điện thoại thành viên hợp đồng
 additionalProperties: false
 properties:
+  contractId: { type: string, format: uuid, description: "Hợp đồng chứa member cần cập nhật; bắt buộc để xác định đúng landlord và tenant." }
   tenantPhone: { type: string, minLength: 10, maxLength: 12, pattern: '^0[0-9]{9}$|^\+84[0-9]{9}$', description: "Số điện thoại mới của thành viên hợp đồng." }
-required: [tenantPhone]
+required: [contractId, tenantPhone]
