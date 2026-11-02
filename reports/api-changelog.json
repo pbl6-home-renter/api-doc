@@ -35005,6 +35005,201 @@
           }
         }
       }
+    },
+    {
+      "id": "f176e383bc75c0476255405623834046144d3f2335d16f3c51119287ddbe874c",
+      "label": "Thay đổi contract từ Git",
+      "classification": "NON_BREAKING",
+      "contractId": "rentify-public",
+      "repository": "https://github.com/pbl6-home-renter/api-doc",
+      "baseHash": "2f41c62096315aa2373097a917df42330434948d0b4ebd991e696824a1af3b4c",
+      "headHash": "cf81828cb39b4540c81865f817d6652d85014c4620178bd47c94ab93b162a954",
+      "baseSource": "src/openapi.yaml",
+      "headSource": "src/openapi.yaml",
+      "detectedAt": "2026-11-02T09:15:35.740Z",
+      "committedAt": "2026-11-02T16:15:22+07:00",
+      "baseCommit": "035ab0c1f9d5011993a8e8a89a9a973269366a7e",
+      "headCommit": "ee7e40c6742986bec8d730d2ad806afa656e048b",
+      "prUrl": "https://github.com/pbl6-home-renter/api-doc/pull/42",
+      "commitUrl": "https://github.com/pbl6-home-renter/api-doc/commit/ee7e40c6742986bec8d730d2ad806afa656e048b",
+      "metadataKind": "Git revision thực tế",
+      "reason": "CHƯA CUNG CẤP — tác giả PR phải bổ sung lý do nghiệp vụ; không thể suy ra từ OpenAPI diff.",
+      "tools": {
+        "redocly": "2.64.1",
+        "oasdiff": "1.34.1"
+      },
+      "changes": [
+        {
+          "id": "optional-response-header-removed",
+          "text": "the optional response header `content-disposition` removed for the status `200`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getMediaMediaid",
+          "path": "/media/{mediaId}",
+          "section": "paths",
+          "baseSource": {
+            "file": "/tmp/rentify-contract-Cwlo1k/base-0.json"
+          },
+          "fingerprint": "11f28f71a99a",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "optional-response-header-removed",
+          "text": "the optional response header `content-length` removed for the status `200`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getMediaMediaid",
+          "path": "/media/{mediaId}",
+          "section": "paths",
+          "baseSource": {
+            "file": "/tmp/rentify-contract-Cwlo1k/base-0.json"
+          },
+          "fingerprint": "1566abdb2c7c",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "optional-response-header-removed",
+          "text": "the optional response header `content-type` removed for the status `200`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getMediaMediaid",
+          "path": "/media/{mediaId}",
+          "section": "paths",
+          "baseSource": {
+            "file": "/tmp/rentify-contract-Cwlo1k/base-0.json"
+          },
+          "fingerprint": "8535320f7c6a",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "response-non-success-status-added",
+          "text": "added the non-success response with the status `302`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getMediaMediaid",
+          "path": "/media/{mediaId}",
+          "section": "paths",
+          "fingerprint": "3a8a021e0e72",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        }
+      ],
+      "locations": [
+        {
+          "pointer": "/paths/~1media~1presign-upload/post/description",
+          "before": "tenant, landlord, admin. Bước 1/3 của luồng upload: xin upload ticket + presigned URL để client PUT file trực tiếp lên storage (Cloudflare R2). Server không nhận bytes file.\n\n**Luồng upload**\n\n1. `POST /media/presign-upload` → nhận `id`, `uploadUrl`, `requiredHeaders`, `expiresIn`.\n2. `PUT {uploadUrl}` với body là file (binary) và đúng `requiredHeaders` (không gửi `Authorization`).\n3. `POST /media/{id}/complete-upload` → server kiểm tra object trên storage và trả `url` để đọc.\n\nLiên kết file với thực thể cha được xác định ngay lúc presign qua `ownerType` + `ownerId` + `purpose`; không có bước \"gắn\" riêng. Các API nghiệp vụ khác (ví dụ `photoMediaIds` khi tạo phòng) nhận `id` của Media đã complete.\n\n**Quy tắc theo `purpose`** (admin luôn được upload; người upload luôn đọc được file của mình)\n\n| purpose | ownerType hợp lệ | MIME cho phép | Hiển thị | Ai được upload | Ghi chú |\n|---|---|---|---|---|---|\n| `avatar` | `user` | jpeg, png, webp | public | chính user đó | 1 file/owner, file mới thay file cũ |\n| `cover_photo` | `building`, `room` | jpeg, png, webp | public | landlord sở hữu | 1 file/owner, file mới thay file cũ |\n| `gallery_photo` | `building`, `room` | jpeg, png, webp | public | landlord sở hữu | |\n| `ownership_proof` | `building` | jpeg, png, webp, pdf | private | landlord sở hữu | không xóa được khi building `approved` |\n| `cccd_front`, `cccd_back` | `user`, `contract_member` | jpeg, png, webp | private | chính user, thành viên HĐ, landlord sở hữu | |\n| `contract_template` | `contract` | pdf | private | landlord sở hữu | |\n| `contract_signed` | `contract` | jpeg, png, webp, pdf | private | landlord sở hữu | không xóa được khi HĐ `signed/active/suspended/expired/terminated` |\n| `meter_reading_evidence` | `meter_reading` | jpeg, png, webp | private | landlord sở hữu; tenant của HĐ chỉ với `captureSource = camera_direct` | |\n| `issue_photo` | `issue_report` | jpeg, png, webp | private | người trong HĐ, landlord sở hữu | chưa hỗ trợ (503) |\n| `chat_attachment` | `conversation` | jpeg, png, webp | private | upload: active member; download: người có quyền đọc message đang tham chiếu media | chưa hỗ trợ đến khi CB-07 hoàn tất (503) |\n\nKích thước tối đa 10 MiB cho mọi purpose. Không hỗ trợ SVG/HTML/video.\n\nLỗi nghiệp vụ: 403 FORBIDDEN (không có quyền với thực thể cha, hoặc thực thể cha không tồn tại) · 422 INVALID_PURPOSE (`purpose` không hợp lệ với `ownerType`) · 422 MEDIA_TYPE_NOT_ALLOWED (MIME, đuôi file hoặc kích thước không hợp lệ) · 503 SERVICE_UNAVAILABLE.\n\n```mermaid\nsequenceDiagram\n    autonumber\n    participant C as Client\n    participant GW as API Gateway\n    participant ID as Identity\n    participant TN as Tenancy\n    participant R2 as Cloudflare R2\n\n    C->>GW: POST /media/presign-upload {ownerType, ownerId, purpose, fileName, contentType, size}\n    GW->>ID: forward + Authorization\n    ID->>ID: Kiểm tra purpose ↔ ownerType, MIME, đuôi file, size\n    ID->>TN: GET /internal/ownership/{ownerType}/{ownerId} (trừ ownerType = user)\n    ID->>ID: Lưu Media pending_upload, ký PUT URL (Content-Type)\n    ID-->>C: 201 MEDIA_UPLOAD_TICKET_ISSUED {id, uploadUrl, requiredHeaders, expiresIn}\n    C->>R2: PUT uploadUrl + Content-Type (binary)\n    R2-->>C: 200\n    C->>GW: POST /media/{id}/complete-upload\n    GW->>ID: forward\n    ID->>R2: HEAD object (so khớp size + Content-Type)\n    ID-->>C: 200 MEDIA_UPLOAD_COMPLETED {id, fileType, url}\n```",
+          "after": "tenant, landlord, admin. Bước 1/3 của luồng upload: xin upload ticket + presigned URL để client PUT file trực tiếp lên storage (Cloudflare R2). Server không nhận bytes file.\n\n**Luồng upload**\n\n1. `POST /media/presign-upload` → nhận `id`, `uploadUrl`, `requiredHeaders`, `expiresIn`.\n2. `PUT {uploadUrl}` với body là file (binary) và đúng `requiredHeaders` (không gửi `Authorization`).\n3. `POST /media/{id}/complete-upload` → server kiểm tra object trên storage và trả `url` để đọc.\n\nLiên kết file với thực thể cha được xác định ngay lúc presign qua `ownerType` + `ownerId` + `purpose`; không có bước \"gắn\" riêng. Các API nghiệp vụ khác (ví dụ `photoMediaIds` khi tạo phòng) nhận `id` của Media đã complete.\n\n**Quy tắc theo `purpose`** (admin luôn được upload; người upload luôn đọc được file của mình)\n\n| purpose | ownerType hợp lệ | MIME cho phép | Hiển thị | Ai được upload | Ghi chú |\n|---|---|---|---|---|---|\n| `avatar` | `user` | jpeg, png, webp | public | chính user đó | 1 file/owner, file mới thay file cũ |\n| `cover_photo` | `building`, `room` | jpeg, png, webp | public | landlord sở hữu | 1 file/owner, file mới thay file cũ |\n| `gallery_photo` | `building`, `room` | jpeg, png, webp | public | landlord sở hữu | |\n| `ownership_proof` | `building` | jpeg, png, webp, pdf | private | landlord sở hữu | không xóa được khi building `approved` |\n| `cccd_front`, `cccd_back` | `user`, `contract_member` | jpeg, png, webp | private | chính user, thành viên HĐ, landlord sở hữu | |\n| `contract_template` | `contract` | pdf | private | landlord sở hữu | |\n| `contract_signed` | `contract` | jpeg, png, webp, pdf | private | landlord sở hữu | không xóa được khi HĐ `signed/active/suspended/expired/terminated` |\n| `meter_reading_evidence` | `meter_reading` | jpeg, png, webp | private | landlord sở hữu; tenant của HĐ chỉ với `captureSource = camera_direct` | |\n| `issue_photo` | `issue_report` | jpeg, png, webp | private | người trong HĐ, landlord sở hữu | chưa hỗ trợ (503) |\n| `chat_attachment` | `conversation` | jpeg, png, webp | private | upload: active member; download: member allowed to read the message that references the media | Community verifies active membership on upload and message linkage on read |\n\nKích thước tối đa 10 MiB cho mọi purpose. Không hỗ trợ SVG/HTML/video.\n\nLỗi nghiệp vụ: 403 FORBIDDEN (không có quyền với thực thể cha, hoặc thực thể cha không tồn tại) · 422 INVALID_PURPOSE (`purpose` không hợp lệ với `ownerType`) · 422 MEDIA_TYPE_NOT_ALLOWED (MIME, đuôi file hoặc kích thước không hợp lệ) · 503 SERVICE_UNAVAILABLE.\n\n```mermaid\nsequenceDiagram\n    autonumber\n    participant C as Client\n    participant GW as API Gateway\n    participant ID as Identity\n    participant TN as Tenancy\n    participant CM as Community\n    participant R2 as Cloudflare R2\n\n    C->>GW: POST /media/presign-upload {ownerType, ownerId, purpose, fileName, contentType, size}\n    GW->>ID: forward + Authorization\n    ID->>ID: Kiểm tra purpose ↔ ownerType, MIME, đuôi file, size\n    alt ownerType = conversation\n        ID->>CM: GET /internal/ownership/conversation/{conversationId}?actorUserId=... (X-Service-Token)\n        CM-->>ID: Active member authorization\n    else owner type belongs to Tenancy\n    ID->>TN: GET /internal/ownership/{ownerType}/{ownerId} (trừ ownerType = user)\n        TN-->>ID: Owner snapshot\n    end\n    ID->>ID: Lưu Media pending_upload, ký PUT URL (Content-Type)\n    ID-->>C: 201 MEDIA_UPLOAD_TICKET_ISSUED {id, uploadUrl, requiredHeaders, expiresIn}\n    C->>R2: PUT uploadUrl + Content-Type (binary)\n    R2-->>C: 200\n    C->>GW: POST /media/{id}/complete-upload\n    GW->>ID: forward\n    ID->>R2: HEAD object (so khớp size + Content-Type)\n    ID-->>C: 200 MEDIA_UPLOAD_COMPLETED {id, fileType, url}\n```"
+        },
+        {
+          "pointer": "/paths/~1media~1presign-upload/post/responses/503/content/application~1json/schema/properties/code/description",
+          "before": "- AUTH_UNAVAILABLE: Hạ tầng xác thực tạm thời không khả dụng.\n- SERVICE_UNAVAILABLE: Storage (R2) chưa được cấu hình, hoặc service sở hữu thực thể cha chưa sẵn sàng (hiện tại `issue_report`, `message`).",
+          "after": "- AUTH_UNAVAILABLE: Hạ tầng xác thực tạm thời không khả dụng.\n- SERVICE_UNAVAILABLE: Storage or the owning service is unavailable."
+        },
+        {
+          "pointer": "/paths/~1media~1{mediaId}/delete/responses/503/content/application~1json/schema/properties/code/description",
+          "before": "- AUTH_UNAVAILABLE: Hạ tầng xác thực tạm thời không khả dụng.\n- SERVICE_UNAVAILABLE: Storage (R2) chưa được cấu hình, hoặc service sở hữu thực thể cha chưa sẵn sàng (hiện tại `issue_report`, `message`).",
+          "after": "- AUTH_UNAVAILABLE: Hạ tầng xác thực tạm thời không khả dụng.\n- SERVICE_UNAVAILABLE: Storage or the owning service is unavailable."
+        },
+        {
+          "pointer": "/paths/~1media~1{mediaId}/get/description",
+          "before": "Stream nội dung một Media đã complete (không bọc JSON envelope). Dùng cho file **private**: `url` trả về từ complete-upload có dạng `/api/v1/media/{mediaId}`.\n\n- File public (`avatar`, `cover_photo`, `gallery_photo`) đã có URL R2 public, client nên dùng URL đó thay vì gọi endpoint này.\n- Cần Bearer token (gateway không mở public route này), nên trình duyệt không thể dùng trực tiếp trong `<img src>`; web phải tải về dạng blob rồi tạo object URL.\n- Quyền đọc: admin, người upload, và các vai trò theo `purpose` (xem bảng ở `POST /media/presign-upload`).\n- `Content-Disposition: inline; filename*=UTF-8''<fileName>`.\n\nLỗi nghiệp vụ: 401 UNAUTHORIZED · 403 FORBIDDEN · 404 RESOURCE_NOT_FOUND (không tồn tại hoặc chưa complete) · 410 MEDIA_DELETED.",
+          "after": "Stream completed media as before. For chat_attachment only, authorize the caller and redirect to a URL for direct storage access. Private chat media uses a signed R2 GET URL that expires after MEDIA_DOWNLOAD_URL_TTL_SECONDS (default 300 seconds); call this endpoint again to obtain a fresh URL.\n\nPrivate chat media requires a Bearer token. Web and mobile clients follow the redirect and download bytes directly from R2. Other private media keeps the API streaming response.\nFor chat_attachment, Community confirms the media is attached to a message in the conversation. Active members may read it; read-only members may read only messages with sequence less than or equal to leftSequence. Admin and uploader read bypasses do not apply.\n\nBusiness errors: 401 UNAUTHORIZED, 403 FORBIDDEN, 404 RESOURCE_NOT_FOUND, 410 MEDIA_DELETED, 503 SERVICE_UNAVAILABLE."
+        },
+        {
+          "pointer": "/paths/~1media~1{mediaId}/get/responses/200/description",
+          "before": "Thành công: Đọc hoặc stream một tệp.",
+          "after": "Stream media content (all purposes except chat_attachment)."
+        },
+        {
+          "pointer": "/paths/~1media~1{mediaId}/get/responses/200/headers",
+          "before": {
+            "Content-Disposition": {
+              "description": "Tên tệp tải xuống.",
+              "schema": {
+                "type": "string"
+              }
+            },
+            "Content-Type": {
+              "description": "MIME type của tệp.",
+              "schema": {
+                "type": "string",
+                "enum": [
+                  "image/jpeg",
+                  "image/png",
+                  "image/webp",
+                  "application/pdf"
+                ]
+              }
+            },
+            "Content-Length": {
+              "description": "Kích thước tệp tính bằng byte.",
+              "schema": {
+                "type": "integer"
+              }
+            }
+          },
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1media~1{mediaId}/get/responses/302",
+          "before": null,
+          "after": {
+            "description": "Redirect to a presigned R2 GET URL for chat_attachment.",
+            "headers": {
+              "Location": {
+                "description": "Direct download URL; private URLs expire after the configured interval.",
+                "schema": {
+                  "type": "string",
+                  "format": "uri"
+                }
+              }
+            }
+          }
+        },
+        {
+          "pointer": "/paths/~1media~1{mediaId}/get/responses/503/content/application~1json/schema/properties/code/description",
+          "before": "- AUTH_UNAVAILABLE: Hạ tầng xác thực tạm thời không khả dụng.\n- SERVICE_UNAVAILABLE: Storage (R2) chưa được cấu hình, hoặc service sở hữu thực thể cha chưa sẵn sàng (hiện tại `issue_report`, `message`).",
+          "after": "- AUTH_UNAVAILABLE: Hạ tầng xác thực tạm thời không khả dụng.\n- SERVICE_UNAVAILABLE: Storage or the owning service is unavailable."
+        },
+        {
+          "pointer": "/paths/~1media~1{mediaId}~1complete-upload/post/description",
+          "before": "tenant, landlord, admin. Bước 3/3 của luồng upload: gọi sau khi PUT file lên `uploadUrl` thành công. Không có body.\n\n- Chỉ người đã presign mới được complete.\n- Server `HEAD` object trên storage; kích thước và `Content-Type` thật phải khớp đúng `size`/`contentType` lúc presign, nếu lệch thì object bị xóa và trả `422 MEDIA_TYPE_NOT_ALLOWED` (phải presign lại).\n- Idempotent: gọi lại trên Media đã complete trả lại cùng kết quả `200`.\n- Với `avatar`/`cover_photo` (1 file/owner), file cũ cùng owner + purpose bị xóa mềm khi file mới complete.\n- `url`: purpose public trả URL tuyệt đối trên R2; purpose private trả `/api/v1/media/{mediaId}`.\n\nLỗi nghiệp vụ: 403 FORBIDDEN (không phải người upload) · 404 RESOURCE_NOT_FOUND · 409 UPLOAD_NOT_COMPLETED (chưa thấy file trên storage) · 410 TICKET_EXPIRED · 410 MEDIA_DELETED · 422 MEDIA_TYPE_NOT_ALLOWED.",
+          "after": "tenant, landlord, admin. Bước 3/3 của luồng upload: gọi sau khi PUT file lên `uploadUrl` thành công. Không có body.\n\n- Chỉ người đã presign mới được complete. Với `chat_attachment`, Community xác nhận caller vẫn là active member của conversation.\n- Server `HEAD` object trên storage; kích thước và `Content-Type` thật phải khớp đúng `size`/`contentType` lúc presign, nếu lệch thì object bị xóa và trả `422 MEDIA_TYPE_NOT_ALLOWED` (phải presign lại).\n- Idempotent: gọi lại trên Media đã complete trả lại cùng kết quả `200`.\n- Với `avatar`/`cover_photo` (1 file/owner), file cũ cùng owner + purpose bị xóa mềm khi file mới complete.\n- `url`: purpose public trả URL tuyệt đối trên R2; purpose private trả `/api/v1/media/{mediaId}`.\n\nLỗi nghiệp vụ: 403 FORBIDDEN (không phải người upload) · 404 RESOURCE_NOT_FOUND · 409 UPLOAD_NOT_COMPLETED (chưa thấy file trên storage) · 410 TICKET_EXPIRED · 410 MEDIA_DELETED · 422 MEDIA_TYPE_NOT_ALLOWED."
+        }
+      ],
+      "semanticDiff": {
+        "paths": {
+          "modified": {
+            "/media/{mediaId}": {
+              "operations": {
+                "modified": {
+                  "GET": {
+                    "responses": {
+                      "added": [
+                        "302"
+                      ],
+                      "modified": {
+                        "200": {
+                          "headers": {
+                            "deleted": [
+                              "content-type",
+                              "content-disposition",
+                              "content-length"
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   ]
 }
