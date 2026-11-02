@@ -10,7 +10,7 @@ post:
   description: |-
     tenant, landlord, admin. Bước 3/3 của luồng upload: gọi sau khi PUT file lên `uploadUrl` thành công. Không có body.
 
-    - Chỉ người đã presign mới được complete.
+    - Chỉ người đã presign mới được complete. Với `chat_attachment`, Community xác nhận caller vẫn là active member của conversation.
     - Server `HEAD` object trên storage; kích thước và `Content-Type` thật phải khớp đúng `size`/`contentType` lúc presign, nếu lệch thì object bị xóa và trả `422 MEDIA_TYPE_NOT_ALLOWED` (phải presign lại).
     - Idempotent: gọi lại trên Media đã complete trả lại cùng kết quả `200`.
     - Với `avatar`/`cover_photo` (1 file/owner), file cũ cùng owner + purpose bị xóa mềm khi file mới complete.
