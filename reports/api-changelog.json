@@ -33037,6 +33037,652 @@
           }
         }
       }
+    },
+    {
+      "id": "3aab717023bbd3e0f10bbed07597a2c15d6856a541434199b0163d05ce6e184c",
+      "label": "Thay đổi contract từ Git",
+      "classification": "NON_BREAKING",
+      "contractId": "rentify-public",
+      "repository": "https://github.com/pbl6-home-renter/api-doc",
+      "baseHash": "5b180ae954827c63ec5f0ab95389a17f3d9845e78190a8259edaf4d6fb4cc1e7",
+      "headHash": "c10704924b7c3359b2204b04378f9e9a2c50ab85c8d61ce4f904c4153be52889",
+      "baseSource": "src/openapi.yaml",
+      "headSource": "src/openapi.yaml",
+      "detectedAt": "2026-11-02T06:46:13.160Z",
+      "committedAt": "2026-11-02T13:45:51+07:00",
+      "baseCommit": "25e76edf90350628d1de6edc53916d573e5ea32d",
+      "headCommit": "993f05cca9ee979f2aa4a7fcae5011f1a4fa7c9b",
+      "prUrl": "https://github.com/pbl6-home-renter/api-doc/pull/39",
+      "commitUrl": "https://github.com/pbl6-home-renter/api-doc/commit/993f05cca9ee979f2aa4a7fcae5011f1a4fa7c9b",
+      "metadataKind": "Git revision thực tế",
+      "reason": "CHƯA CUNG CẤP — tác giả PR phải bổ sung lý do nghiệp vụ; không thể suy ra từ OpenAPI diff.",
+      "tools": {
+        "redocly": "2.64.1",
+        "oasdiff": "1.34.1"
+      },
+      "changes": [
+        {
+          "id": "response-non-success-status-added",
+          "text": "added the non-success response with the status `400`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "listConversationMembers",
+          "path": "/conversations/{conversationId}/members",
+          "section": "paths",
+          "fingerprint": "2eb129430aca",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        },
+        {
+          "id": "response-non-success-status-added",
+          "text": "added the non-success response with the status `404`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "listConversationMembers",
+          "path": "/conversations/{conversationId}/members",
+          "section": "paths",
+          "fingerprint": "b751998cf88c",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        },
+        {
+          "id": "response-non-success-status-added",
+          "text": "added the non-success response with the status `503`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "listConversationMembers",
+          "path": "/conversations/{conversationId}/members",
+          "section": "paths",
+          "fingerprint": "9e43f0138b05",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        },
+        {
+          "id": "response-property-became-required",
+          "text": "the response property `data` became required for the status `200`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "listConversationMembers",
+          "path": "/conversations/{conversationId}/members",
+          "section": "paths",
+          "fingerprint": "b36f135a530f",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        },
+        {
+          "id": "response-required-property-added",
+          "text": "added the required property `code` to the response with the `200` status",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "listConversationMembers",
+          "path": "/conversations/{conversationId}/members",
+          "section": "paths",
+          "fingerprint": "ed121e525d6d",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới code; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-required-property-added",
+          "text": "added the required property `statusCode` to the response with the `200` status",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "listConversationMembers",
+          "path": "/conversations/{conversationId}/members",
+          "section": "paths",
+          "fingerprint": "701afe973f25",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới statusCode; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-media-type-added",
+          "text": "added the media type `application/json` for the response with the status `200`",
+          "level": 1,
+          "operation": "POST",
+          "operationId": "addConversationMembers",
+          "path": "/conversations/{conversationId}/members",
+          "section": "paths",
+          "fingerprint": "49c7948b1bde",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        },
+        {
+          "id": "response-non-success-status-added",
+          "text": "added the non-success response with the status `400`",
+          "level": 1,
+          "operation": "POST",
+          "operationId": "addConversationMembers",
+          "path": "/conversations/{conversationId}/members",
+          "section": "paths",
+          "fingerprint": "e940ca22371d",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        },
+        {
+          "id": "response-non-success-status-added",
+          "text": "added the non-success response with the status `404`",
+          "level": 1,
+          "operation": "POST",
+          "operationId": "addConversationMembers",
+          "path": "/conversations/{conversationId}/members",
+          "section": "paths",
+          "fingerprint": "946441921131",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        },
+        {
+          "id": "response-non-success-status-added",
+          "text": "added the non-success response with the status `503`",
+          "level": 1,
+          "operation": "POST",
+          "operationId": "addConversationMembers",
+          "path": "/conversations/{conversationId}/members",
+          "section": "paths",
+          "fingerprint": "838f602f8aef",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        }
+      ],
+      "locations": [
+        {
+          "pointer": "/components/schemas/ConversationMembersAddedPayload",
+          "before": null,
+          "after": {
+            "title": "ConversationMembersAddedPayload",
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "action",
+              "actorUserId",
+              "members"
+            ],
+            "properties": {
+              "action": {
+                "type": "string",
+                "enum": [
+                  "members_added"
+                ]
+              },
+              "actorUserId": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "members": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "userId",
+                    "displayName"
+                  ],
+                  "properties": {
+                    "userId": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "displayName": {
+                      "type": "string",
+                      "maxLength": 254
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "pointer": "/components/schemas/Message/allOf",
+          "before": [
+            {
+              "$ref": "#/components/schemas/BaseEntity"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "conversationId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "description": "ID cuộc hội thoại chứa tin nhắn",
+                  "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                },
+                "senderUserId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "nullable": true,
+                  "description": "ID user gửi; null với system message và bot.",
+                  "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                },
+                "senderName": {
+                  "type": "string",
+                  "maxLength": 254,
+                  "description": "Tên người gửi được snapshot tại thời điểm tạo message."
+                },
+                "senderType": {
+                  "type": "string",
+                  "enum": [
+                    "user",
+                    "system"
+                  ]
+                },
+                "type": {
+                  "type": "string",
+                  "enum": [
+                    "text",
+                    "image",
+                    "system",
+                    "bot"
+                  ],
+                  "description": "Loại tin nhắn",
+                  "example": "text"
+                },
+                "content": {
+                  "type": "string",
+                  "nullable": true,
+                  "description": "Nội dung tin nhắn dạng văn bản",
+                  "example": "Đã chốt số điện tháng 09: 180 kWh"
+                },
+                "mediaId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "nullable": true,
+                  "description": "Media ID của ảnh đã upload qua Media Service."
+                },
+                "sequence": {
+                  "type": "integer",
+                  "format": "int64",
+                  "minimum": 1
+                },
+                "clientMessageId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "description": "ID idempotency do client tạo."
+                },
+                "payload": {
+                  "type": "object",
+                  "nullable": true,
+                  "description": "Dữ liệu có cấu trúc cho system/bot message."
+                }
+              },
+              "required": [
+                "conversationId",
+                "senderName",
+                "type"
+              ]
+            }
+          ],
+          "after": [
+            {
+              "$ref": "#/components/schemas/BaseEntity"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "conversationId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "description": "ID cuộc hội thoại chứa tin nhắn",
+                  "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                },
+                "senderUserId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "nullable": true,
+                  "description": "ID user gửi; null với system message và bot.",
+                  "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                },
+                "senderName": {
+                  "type": "string",
+                  "maxLength": 254,
+                  "description": "Tên người gửi được snapshot tại thời điểm tạo message."
+                },
+                "senderType": {
+                  "type": "string",
+                  "enum": [
+                    "user",
+                    "system"
+                  ]
+                },
+                "type": {
+                  "type": "string",
+                  "enum": [
+                    "text",
+                    "image",
+                    "system",
+                    "bot"
+                  ],
+                  "description": "Loại tin nhắn",
+                  "example": "text"
+                },
+                "content": {
+                  "type": "string",
+                  "nullable": true,
+                  "description": "Nội dung tin nhắn dạng văn bản",
+                  "example": "Đã chốt số điện tháng 09: 180 kWh"
+                },
+                "mediaId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "nullable": true,
+                  "description": "Media ID của ảnh đã upload qua Media Service."
+                },
+                "sequence": {
+                  "type": "integer",
+                  "format": "int64",
+                  "minimum": 1
+                },
+                "clientMessageId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "description": "ID idempotency do client tạo."
+                },
+                "payload": {
+                  "type": "object",
+                  "nullable": true,
+                  "description": "For system messages with action=members_added, payload follows ConversationMembersAddedPayload. Other system/bot payloads may be added by their features.",
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/ConversationMembersAddedPayload"
+                    },
+                    {
+                      "type": "object"
+                    }
+                  ],
+                  "example": {
+                    "action": "members_added",
+                    "actorUserId": "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d",
+                    "members": [
+                      {
+                        "userId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                        "displayName": "Nguyễn Văn A"
+                      }
+                    ]
+                  }
+                }
+              },
+              "required": [
+                "conversationId",
+                "senderName",
+                "type"
+              ]
+            }
+          ]
+        },
+        {
+          "pointer": "/paths/~1conversations~1{conversationId}~1members/get/description",
+          "before": "Thành viên active và read_only có thể xem danh sách nếu còn quyền đọc.",
+          "after": "Thành viên active hoặc read_only được xem danh sách member của conversation nếu còn quyền đọc. Member đã rời chỉ đọc được tới leftSequence khi lấy lịch sử message; response này trả membership hiện có để hiển thị trạng thái thành viên.\n\n```mermaid\nsequenceDiagram\n    participant C as Client\n    participant COM as Community\n    participant DB as Community DB\n    C->>COM: GET /conversations/{conversationId}/members\n    COM->>COM: Verify JWT and conversationId\n    COM->>DB: Check conversation and caller membership\n    DB-->>COM: Conversation and active/read_only access\n    COM->>DB: Load non-deleted members ordered by joinedAt\n    DB-->>COM: Member snapshots\n    COM-->>C: 200 CONVERSATION_MEMBERS_FETCHED\n```\n"
+        },
+        {
+          "pointer": "/paths/~1conversations~1{conversationId}~1members/get/responses/200/content/application~1json/example",
+          "before": null,
+          "after": {
+            "statusCode": 200,
+            "code": "CONVERSATION_MEMBERS_FETCHED",
+            "data": []
+          }
+        },
+        {
+          "pointer": "/paths/~1conversations~1{conversationId}~1members/get/responses/200/content/application~1json/schema/additionalProperties",
+          "before": null,
+          "after": false
+        },
+        {
+          "pointer": "/paths/~1conversations~1{conversationId}~1members/get/responses/200/content/application~1json/schema/properties/code",
+          "before": null,
+          "after": {
+            "type": "string",
+            "enum": [
+              "CONVERSATION_MEMBERS_FETCHED"
+            ]
+          }
+        },
+        {
+          "pointer": "/paths/~1conversations~1{conversationId}~1members/get/responses/200/content/application~1json/schema/properties/statusCode",
+          "before": null,
+          "after": {
+            "type": "integer",
+            "enum": [
+              200
+            ]
+          }
+        },
+        {
+          "pointer": "/paths/~1conversations~1{conversationId}~1members/get/responses/200/content/application~1json/schema/required",
+          "before": null,
+          "after": [
+            "statusCode",
+            "code",
+            "data"
+          ]
+        },
+        {
+          "pointer": "/paths/~1conversations~1{conversationId}~1members/get/responses/200/description",
+          "before": "Danh sách thành viên.",
+          "after": "Thành viên hội thoại."
+        },
+        {
+          "pointer": "/paths/~1conversations~1{conversationId}~1members/get/responses/400",
+          "before": null,
+          "after": {
+            "$ref": "#/components/responses/BadRequestPathError"
+          }
+        },
+        {
+          "pointer": "/paths/~1conversations~1{conversationId}~1members/get/responses/404",
+          "before": null,
+          "after": {
+            "$ref": "#/components/responses/NotFoundError"
+          }
+        },
+        {
+          "pointer": "/paths/~1conversations~1{conversationId}~1members/get/responses/503",
+          "before": null,
+          "after": {
+            "$ref": "#/components/responses/AuthUnavailableError"
+          }
+        },
+        {
+          "pointer": "/paths/~1conversations~1{conversationId}~1members/get/x-apidog-folder",
+          "before": null,
+          "after": "ConversationMember"
+        },
+        {
+          "pointer": "/paths/~1conversations~1{conversationId}~1members/get/x-apidog-status",
+          "before": null,
+          "after": "designing"
+        },
+        {
+          "pointer": "/paths/~1conversations~1{conversationId}~1members/post/description",
+          "before": "Chỉ admin nhóm; membership cũ được kích hoạt lại và người được thêm xem toàn bộ lịch sử.",
+          "after": "Chỉ admin group được thêm member. Membership read_only được kích hoạt lại; member mới hoặc được kích hoạt lại xem toàn bộ lịch sử. Toàn bộ userIds phải hợp lệ và chưa active; nếu một user không hợp lệ hoặc đã active thì không thay đổi member nào. Thao tác ghi system message action=members_added trong cùng transaction. `payload` gồm `action`, `actorUserId` và `members` (mỗi phần tử có `userId`, `displayName`).\n\n```mermaid\nsequenceDiagram\n    participant C as Client\n    participant COM as Community\n    participant ID as Identity\n    participant DB as Community DB\n    C->>COM: POST /conversations/{conversationId}/members\n    COM->>DB: Verify group and caller admin\n    COM->>ID: Batch lookup names for userIds\n    ID-->>COM: User IDs and display names\n    COM->>DB: Begin transaction and lock conversation\n    COM->>DB: Add/reactivate members and save members_added system message\n    DB-->>COM: Commit member records and message atomically\n    COM-->>C: 200 CONVERSATION_MEMBERS_ADDED with members\n```\n"
+        },
+        {
+          "pointer": "/paths/~1conversations~1{conversationId}~1members/post/responses/200/content",
+          "before": null,
+          "after": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "statusCode",
+                  "code",
+                  "data"
+                ],
+                "properties": {
+                  "statusCode": {
+                    "type": "integer",
+                    "enum": [
+                      200
+                    ]
+                  },
+                  "code": {
+                    "type": "string",
+                    "enum": [
+                      "CONVERSATION_MEMBERS_ADDED"
+                    ]
+                  },
+                  "data": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/ConversationMember"
+                    }
+                  }
+                }
+              },
+              "example": {
+                "statusCode": 200,
+                "code": "CONVERSATION_MEMBERS_ADDED",
+                "data": []
+              }
+            }
+          }
+        },
+        {
+          "pointer": "/paths/~1conversations~1{conversationId}~1members/post/responses/200/description",
+          "before": "Thành viên được thêm hoặc kích hoạt lại.",
+          "after": "Member được thêm hoặc kích hoạt lại."
+        },
+        {
+          "pointer": "/paths/~1conversations~1{conversationId}~1members/post/responses/400",
+          "before": null,
+          "after": {
+            "$ref": "#/components/responses/BadRequestBodyError"
+          }
+        },
+        {
+          "pointer": "/paths/~1conversations~1{conversationId}~1members/post/responses/404",
+          "before": null,
+          "after": {
+            "$ref": "#/components/responses/NotFoundError"
+          }
+        },
+        {
+          "pointer": "/paths/~1conversations~1{conversationId}~1members/post/responses/503",
+          "before": null,
+          "after": {
+            "$ref": "#/components/responses/AuthUnavailableError"
+          }
+        },
+        {
+          "pointer": "/paths/~1conversations~1{conversationId}~1members/post/x-apidog-folder",
+          "before": null,
+          "after": "ConversationMember"
+        },
+        {
+          "pointer": "/paths/~1conversations~1{conversationId}~1members/post/x-apidog-status",
+          "before": null,
+          "after": "designing"
+        }
+      ],
+      "semanticDiff": {
+        "paths": {
+          "modified": {
+            "/conversations/{conversationId}/members": {
+              "operations": {
+                "modified": {
+                  "GET": {
+                    "extensions": {
+                      "added": [
+                        "x-apidog-folder",
+                        "x-apidog-status"
+                      ]
+                    },
+                    "responses": {
+                      "added": [
+                        "404",
+                        "503",
+                        "400"
+                      ],
+                      "modified": {
+                        "200": {
+                          "content": {
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "additionalPropertiesAllowed": {
+                                    "from": null,
+                                    "to": false
+                                  },
+                                  "required": {
+                                    "added": [
+                                      "statusCode",
+                                      "code",
+                                      "data"
+                                    ]
+                                  },
+                                  "properties": {
+                                    "added": [
+                                      "statusCode",
+                                      "code"
+                                    ]
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "POST": {
+                    "extensions": {
+                      "added": [
+                        "x-apidog-folder",
+                        "x-apidog-status"
+                      ]
+                    },
+                    "responses": {
+                      "added": [
+                        "503",
+                        "400",
+                        "404"
+                      ],
+                      "modified": {
+                        "200": {
+                          "content": {
+                            "added": [
+                              "application/json"
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "components": {
+          "schemas": {
+            "added": [
+              "ConversationMembersAddedPayload"
+            ],
+            "modified": {
+              "Message": {
+                "properties": {
+                  "modified": {
+                    "payload": {
+                      "anyOf": {
+                        "added": [
+                          {
+                            "index": 0,
+                            "component": "ConversationMembersAddedPayload"
+                          },
+                          {
+                            "index": 1
+                          }
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   ]
 }
