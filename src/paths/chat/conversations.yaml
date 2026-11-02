@@ -130,7 +130,25 @@ post:
   operationId: createConversation
   security: [{ BearerAuth: [] }]
   summary: Tạo chat trực tiếp hoặc nhóm
-  description: Chat trực tiếp dùng lại hội thoại duy nhất của cặp user; chat nhóm tạo mới và caller trở thành admin.
+  description: |
+    Chat trực tiếp dùng lại hội thoại duy nhất của cặp user; chat nhóm tạo mới và caller trở thành admin. Tạo group chưa gắn ảnh đại diện; sau khi tạo, client upload ảnh theo conversationId rồi cập nhật qua PATCH /conversations/{conversationId}.
+
+    ```mermaid
+    sequenceDiagram
+        participant C as Client
+        participant COM as Community
+        participant ID as Identity
+        participant DB as Community DB
+        C->>COM: POST /conversations
+        COM->>COM: Verify JWT and validate request
+        opt Có recipient/memberUserIds
+            COM->>ID: GET /internal/users?ids=... (X-Service-Token)
+            ID-->>COM: Users with id and isDeleted
+        end
+        COM->>DB: Transaction: create/reopen conversation and save members
+        DB-->>COM: Conversation and membership records
+        COM-->>C: 201 CONVERSATION_CREATED or CONVERSATION_REOPENED
+    ```
   requestBody:
     required: true
     content:
@@ -144,11 +162,11 @@ post:
             recipientUserId: { type: string, format: uuid, description: Bắt buộc với direct. }
             memberUserIds:
               type: array
+              maxItems: 100
               uniqueItems: true
               items: { type: string, format: uuid }
               description: Thành viên ban đầu của group; không cần gồm caller.
             title: { type: string, maxLength: 255 }
-            avatarMediaId: { type: string, format: uuid }
         examples:
           direct:
             summary: Mở chat trực tiếp
@@ -176,4 +194,5 @@ post:
     '400': { $ref: ../../openapi.yaml#/components/responses/BadRequestBodyError }
     '401': { $ref: ../../openapi.yaml#/components/responses/UnauthorizedError }
     '422': { $ref: ../../openapi.yaml#/components/responses/ValidationError }
+    '503': { description: Identity service unavailable; no conversation was created. }
     '500': { $ref: ../../openapi.yaml#/components/responses/InternalServerError }
