@@ -5,13 +5,25 @@ description: Danh sách tin nhắn theo cursor
 properties:
   id: { type: string, format: uuid , description: "Định danh duy nhất của tài nguyên." }
   conversationId: { type: string, format: uuid , description: "Thông tin conversation id của tài nguyên trong ngữ cảnh DTO." }
-  senderUserId: { type: string, format: uuid, nullable: true }
+  senderUserId: { type: string, format: uuid, nullable: true, description: "ID user gửi tin; null với system message." }
   senderName: { type: string, maxLength: 254 }
   senderType: { type: string, enum: [user, system] }
   sequence: { type: integer, format: int64, minimum: 1 }
-  clientMessageId: { type: string, format: uuid }
+  clientMessageId: { type: string, format: uuid, nullable: true, description: "ID retry do client tạo; null với system message." }
   type: { type: string, enum: [text, image, system, bot] }
   content: { type: string, nullable: true , description: "Thông tin content của tài nguyên trong ngữ cảnh DTO." }
   mediaId: { type: string, format: uuid, nullable: true }
+  payload:
+    type: object
+    nullable: true
+    description: Payload có discriminator `action` cho system message.
+    oneOf:
+      - $ref: ../../../openapi.yaml#/components/schemas/ConversationMembersAddedPayload
+      - $ref: ../../../openapi.yaml#/components/schemas/ConversationMemberKickedPayload
+      - $ref: ../../../openapi.yaml#/components/schemas/ConversationMemberLeftPayload
+      - $ref: ../../../openapi.yaml#/components/schemas/ConversationAdminTransferredPayload
+      - $ref: ../../../openapi.yaml#/components/schemas/ConversationMemberRoleChangedPayload
+    discriminator:
+      propertyName: action
   createdAt: { type: string, format: date-time , description: "Thời điểm bản ghi được tạo, theo định dạng ngày giờ ISO 8601." }
-required: [id, conversationId, senderType, senderName, sequence, type, content, createdAt]
+required: [id, conversationId, senderUserId, senderName, senderType, sequence, clientMessageId, type, content, mediaId, payload, createdAt]

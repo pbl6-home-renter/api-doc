@@ -7,8 +7,8 @@ get:
   security:
     - BearerAuth: []
   summary: List messages
-  description: 'tenant, landlord. Liệt kê tin nhắn trong một hội thoại. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 INVALID
-    CURSOR · 404 CONVERSATION NOT FOUND.'
+  description: |-
+    List messages in a conversation for landlords and tenants, ordered by sequence descending so clients can load the newest messages first and request older pages with the returned opaque cursor. Active members can read all history. Read-only members can only read messages up to their `leftSequence`.
   parameters:
   - name: conversationId
     in: query
@@ -87,6 +87,8 @@ get:
               clientMessageId: a95a1d13-f91c-4c71-9c61-24b498d0fd0e
               type: text
               content: Dạ em gửi ảnh vòi xịt ạ
+              mediaId: null
+              payload: null
               createdAt: '2026-09-23T11:30:00.000Z'
             pagination:
               type: cursor
@@ -171,8 +173,25 @@ post:
   security:
     - BearerAuth: []
   summary: Send message
-  description: 'tenant, landlord. Gửi tin nhắn. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 MESSAGE
-    CONTENT INVALID.'
+  description: |-
+    Send a text or image message for landlords and tenants. Text messages require non-empty content. Image messages require a completed Media record with ownerType `conversation`, ownerId equal to `conversationId`, and purpose `chat_attachment`; Community validates the media with Identity before persisting the message. Only active members can send. Retrying the same `(senderMemberId, clientMessageId)` returns the existing message.
+
+    ```mermaid
+    sequenceDiagram
+      participant C as Client
+      participant COM as Community
+      participant ID as Identity Media
+      participant DB as Community DB
+      C->>COM: POST /messages
+      COM->>COM: Check active membership and idempotency key
+      opt type=image and not a retry
+        COM->>ID: GET /internal/media/chat-attachment?mediaId&conversationId
+        ID-->>COM: valid = uploaded, chat_attachment, same conversation
+      end
+      COM->>DB: Lock conversation, recheck membership, allocate sequence, save message
+      DB-->>COM: Message
+      COM-->>C: 201 MESSAGE_SENT
+    ```
   requestBody:
     required: true
     content:
