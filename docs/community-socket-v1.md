@@ -38,8 +38,12 @@ socket.on('session:ready', () => {
 | `conversation:read-updated` | `{ conversationId, unreadCount, lastReadSequence }` | Mọi session của user vừa mark-read. |
 | `conversation:access-revoked` | `{ conversationId }` | Mọi session của user vừa leave/bị kick; server cũng loại các session khỏi room. |
 | `conversation:available` | `{ conversationId }` | Mọi session của user khi conversation được tạo/mở lại hoặc khi được thêm/kích hoạt lại; client có thể gọi REST rồi join. |
+| `notification:created` | `{ notificationId, type, title, body, deepLink, data, createdAt }` | Mọi session của user nhận notification. |
+| `notification:read-state-updated` | `{ notificationId, readAt, all }` | Mọi session của user vừa mark-read; `all=true` và `notificationId=null` khi mark-all-read. |
 
-`message:created` được phát sau khi lưu thành công. Retry `POST /messages` cùng `clientMessageId` trả message cũ và không phát lại event. System message của thay đổi nhóm cũng phát qua Socket, không gửi FCM ở lát cắt này. Chat message không tạo notification inbox.
+`message:created` được phát sau khi lưu thành công. Retry `POST /messages` cùng `clientMessageId` trả message cũ và không phát lại event. System message của thay đổi nhóm cũng phát qua Socket nhưng không gửi FCM. Chat message của user được gửi FCM (category `chat`) cho các member khác, không tạo notification inbox.
+
+`notification:created` được phát sau khi notification đã lưu vào inbox. Socket và FCM là best-effort: nếu mất, client vẫn thấy notification qua `GET /notifications`.
 
 ## Mất kết nối và đồng bộ
 
