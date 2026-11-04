@@ -12,7 +12,7 @@ get:
 
     - Người gọi: chỉ `landlord`, `tenant` có `status=active`. Admin nhận 403 `FORBIDDEN`; tài khoản bị khóa nhận 403 `ACCOUNT_LOCKED`.
     - Kết quả: chỉ user `landlord`/`tenant`, `status=active`, chưa bị xóa; luôn loại chính người gọi.
-    - `q` bắt buộc, được trim; khớp **một phần** tên (`contains`) không phân biệt chữ hoa/thường và dấu tiếng Việt (`Nguyen` khớp `Nguyễn`, `duc` khớp `Đức`). Ký tự `%`, `_`, `\` trong `q` được hiểu theo nghĩa đen.
+    - `q` tùy chọn; bỏ trống hoặc chỉ có khoảng trắng thì trả danh sách phân trang. Khi có từ khóa, server trim rồi khớp một phần tên không phân biệt chữ hoa/thường và dấu tiếng Việt. Ký tự %, _ và backslash trong q được hiểu theo nghĩa đen.
     - Lọc, đếm `totalItems` và phân trang đều chạy trên DB trước khi cắt trang. Sắp xếp cố định theo `name` tăng dần rồi `id` tăng dần.
     - Mỗi phần tử chỉ có `id`, `name`; không trả email, phone, role, status hoặc avatar. Hai người trùng tên được trả thành hai phần tử khác `id`.
     - Không cần PostgreSQL extension: Identity chuẩn hóa dấu bằng hàm `translate()` sẵn có trên cả cột `name` và `q`. Truy vấn quét theo điều kiện role/status/is_deleted, không dùng index cho phần tìm tên.
@@ -24,19 +24,19 @@ get:
         participant ID as Identity
         participant DB as Identity DB
 
-        GW->>ID: GET /users/directory?q&pageNo&pageSize
+        GW->>ID: GET /users/directory?pageNo&pageSize[&q]
         ID->>ID: Verify JWT, role landlord/tenant, account active
-        ID->>DB: Users active landlord/tenant, not deleted, id != caller,<br/>fold(name) LIKE %fold(q)% ORDER BY name, id + count
+        ID->>DB: Users active landlord/tenant, not deleted, id != caller,<br/>optional name filter, ORDER BY name, id + count
         ID-->>GW: 200 USER_DIRECTORY_FETCHED [{id, name}] + pagination
     ```
   parameters:
   - name: q
     in: query
-    required: true
-    description: Từ khóa tên, 1–100 ký tự sau khi trim.
+    required: false
+    description: Từ khóa tên tùy chọn, 1–100 ký tự sau khi trim; để trống trả danh sách phân trang.
     schema:
       type: string
-      minLength: 1
+      minLength: 0
       maxLength: 100
     example: Nguyen
   - name: pageNo
@@ -56,7 +56,7 @@ get:
       default: 20
   responses:
     '200':
-      description: 'Thành công: Danh sách Landlord/Tenant khớp tên.'
+      description: 'Thành công: Danh sách Landlord/Tenant đang hoạt động, lọc theo tên nếu có q.'
       content:
         application/json:
           schema:
@@ -134,7 +134,7 @@ get:
     '403':
       $ref: ../../openapi.yaml#/components/responses/ForbiddenError
     '422':
-      description: '`q` thiếu, rỗng sau khi trim hoặc dài hơn 100 ký tự; `pageNo`/`pageSize` ngoài giới hạn; `UNEXPECTED_FIELD` khi gửi tham số query không có trong contract.'
+      description: 'q dài hơn 100 ký tự hoặc không phải chuỗi; pageNo/pageSize ngoài giới hạn; UNEXPECTED_FIELD khi gửi tham số query không có trong contract.'
       content:
         application/json:
           schema:
