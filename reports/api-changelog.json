@@ -37415,6 +37415,1296 @@
           }
         }
       }
+    },
+    {
+      "id": "a75d0cfda1a1a288bdec79da07c0922ec439a9f7badde7f00a2ae0939983defa",
+      "label": "Thay đổi contract từ Git",
+      "classification": "BREAKING",
+      "contractId": "rentify-public",
+      "repository": "https://github.com/pbl6-home-renter/api-doc",
+      "baseHash": "41dfd84d8a0c6b122acdecf9dd01ee3d52f383924e86d5568af78e6d3871d2cc",
+      "headHash": "af72a3fa719a0ceb0734777a2883bfe3a9c91d95f4125482dae188719a84f640",
+      "baseSource": "src/openapi.yaml",
+      "headSource": "src/openapi.yaml",
+      "detectedAt": "2026-11-04T09:06:18.449Z",
+      "committedAt": "2026-11-04T16:06:05+07:00",
+      "baseCommit": "829828fe305286c0b3dfc018ec99823ecf82676c",
+      "headCommit": "03a05e6195186d4e37d6d86cd94caf308316eb26",
+      "prUrl": "https://github.com/pbl6-home-renter/api-doc/pull/49",
+      "commitUrl": "https://github.com/pbl6-home-renter/api-doc/commit/03a05e6195186d4e37d6d86cd94caf308316eb26",
+      "metadataKind": "Git revision thực tế",
+      "reason": "Web Chat v1 trên web cần tìm người để chat, tìm hội thoại toàn DB, badge tổng tin chưa đọc và nhận tin mới ở mọi trang. Hành vi sản phẩm đã được PM chốt trong `pm/phase-7/discovery/web-chat-v1-decisions.md`.",
+      "tools": {
+        "redocly": "2.64.1",
+        "oasdiff": "1.34.1"
+      },
+      "changes": [
+        {
+          "id": "response-property-enum-value-added",
+          "text": "added the new `UNEXPECTED_FIELD` enum value to the `code` response property for the response status `422`",
+          "comment": "The server may now return a value the previous contract excluded, so a client written against it may not handle the response. If the value set is meant to grow, declare it with x-extensible-enum.",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getConversations",
+          "path": "/conversations",
+          "section": "paths",
+          "fingerprint": "4caf4915f2d4",
+          "classification": "BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới UNEXPECTED_FIELD; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-property-enum-value-added",
+          "text": "added the new `undefined` enum value to the `data/items/contextType` response property for the response status `200`",
+          "comment": "The server may now return a value the previous contract excluded, so a client written against it may not handle the response. If the value set is meant to grow, declare it with x-extensible-enum.",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getConversations",
+          "path": "/conversations",
+          "section": "paths",
+          "fingerprint": "2a91e02ee812",
+          "classification": "BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới undefined; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-property-enum-value-added",
+          "text": "added the new `GROUP_MEMBERS_INSUFFICIENT` enum value to the `code` response property for the response status `422`",
+          "comment": "The server may now return a value the previous contract excluded, so a client written against it may not handle the response. If the value set is meant to grow, declare it with x-extensible-enum.",
+          "level": 3,
+          "operation": "POST",
+          "operationId": "createConversation",
+          "path": "/conversations",
+          "section": "paths",
+          "fingerprint": "b1e473ac16f2",
+          "classification": "BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới GROUP_MEMBERS_INSUFFICIENT; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-property-enum-value-added",
+          "text": "added the new `UNEXPECTED_FIELD` enum value to the `code` response property for the response status `422`",
+          "comment": "The server may now return a value the previous contract excluded, so a client written against it may not handle the response. If the value set is meant to grow, declare it with x-extensible-enum.",
+          "level": 3,
+          "operation": "POST",
+          "operationId": "createConversation",
+          "path": "/conversations",
+          "section": "paths",
+          "fingerprint": "223334b89cc8",
+          "classification": "BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới UNEXPECTED_FIELD; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-property-enum-value-added",
+          "text": "added the new `undefined` enum value to the `data/contextType` response property for the response status `201`",
+          "comment": "The server may now return a value the previous contract excluded, so a client written against it may not handle the response. If the value set is meant to grow, declare it with x-extensible-enum.",
+          "level": 3,
+          "operation": "POST",
+          "operationId": "createConversation",
+          "path": "/conversations",
+          "section": "paths",
+          "fingerprint": "41bcabf53157",
+          "classification": "BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới undefined; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-property-enum-value-added",
+          "text": "added the new `undefined` enum value to the `data/contextType` response property for the response status `200`",
+          "comment": "The server may now return a value the previous contract excluded, so a client written against it may not handle the response. If the value set is meant to grow, declare it with x-extensible-enum.",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getConversationsConversationid",
+          "path": "/conversations/{conversationId}",
+          "section": "paths",
+          "fingerprint": "c993a37300a0",
+          "classification": "BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới undefined; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "api-version-not-bumped",
+          "text": "a breaking change was detected but the version is still `1.0.0`",
+          "level": 1,
+          "section": "info",
+          "fingerprint": "d3f96cd643c1",
+          "classification": "NON_BREAKING",
+          "clientImpact": "BE: xem lại quy ước version trước khi chấp nhận breaking change. FE/Mobile: theo kế hoạch chuyển đổi của entry này; version trong OpenAPI chưa chứng minh backend đã triển khai."
+        },
+        {
+          "id": "new-optional-request-parameter",
+          "text": "added the new optional `query` request parameter `hasContext`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getConversations",
+          "path": "/conversations",
+          "section": "paths",
+          "fingerprint": "31c17ab5174f",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        },
+        {
+          "id": "new-optional-request-parameter",
+          "text": "added the new optional `query` request parameter `kind`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getConversations",
+          "path": "/conversations",
+          "section": "paths",
+          "fingerprint": "2ac85dd59c98",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        },
+        {
+          "id": "new-optional-request-parameter",
+          "text": "added the new optional `query` request parameter `otherUserId`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getConversations",
+          "path": "/conversations",
+          "section": "paths",
+          "fingerprint": "6460f6fa047d",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        },
+        {
+          "id": "new-optional-request-parameter",
+          "text": "added the new optional `query` request parameter `q`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getConversations",
+          "path": "/conversations",
+          "section": "paths",
+          "fingerprint": "e4ae6c5610c9",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        },
+        {
+          "id": "response-required-property-added",
+          "text": "added the required property `data/items/displayName` to the response with the `200` status",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getConversations",
+          "path": "/conversations",
+          "section": "paths",
+          "fingerprint": "7acfebbbae15",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/items/displayName; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "request-property-became-nullable",
+          "text": "the request property `title` became nullable",
+          "level": 1,
+          "operation": "POST",
+          "operationId": "createConversation",
+          "path": "/conversations",
+          "section": "paths",
+          "fingerprint": "96db8f66e74d",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        },
+        {
+          "id": "response-required-property-added",
+          "text": "added the required property `data/displayName` to the response with the `201` status",
+          "level": 1,
+          "operation": "POST",
+          "operationId": "createConversation",
+          "path": "/conversations",
+          "section": "paths",
+          "fingerprint": "3dff9383fb2c",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/displayName; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "endpoint-added",
+          "text": "endpoint added",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getConversationsUnreadSummary",
+          "path": "/conversations/unread-summary",
+          "section": "paths",
+          "revisionSource": {
+            "file": "/tmp/rentify-contract-H4Lkqv/head-0.json"
+          },
+          "fingerprint": "ad2042e6edb5",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        },
+        {
+          "id": "response-required-property-added",
+          "text": "added the required property `data/displayName` to the response with the `200` status",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getConversationsConversationid",
+          "path": "/conversations/{conversationId}",
+          "section": "paths",
+          "fingerprint": "9cfeed1e9cbb",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/displayName; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "endpoint-added",
+          "text": "endpoint added",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getUsersDirectory",
+          "path": "/users/directory",
+          "section": "paths",
+          "revisionSource": {
+            "file": "/tmp/rentify-contract-H4Lkqv/head-0.json"
+          },
+          "fingerprint": "2f7a455373a1",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        }
+      ],
+      "locations": [
+        {
+          "pointer": "/components/schemas/ConversationDetailResponseDto/properties/contextType/enum",
+          "before": [
+            "contract",
+            "building"
+          ],
+          "after": [
+            "contract",
+            "building",
+            null
+          ]
+        },
+        {
+          "pointer": "/components/schemas/ConversationDetailResponseDto/properties/displayName",
+          "before": null,
+          "after": {
+            "type": "string",
+            "nullable": true,
+            "maxLength": 255,
+            "description": "Tên hiển thị theo người đang xem. Direct dùng `displayName` snapshot của người còn lại trên ConversationMember (không cập nhật khi người đó đổi tên hồ sơ); group dùng `title` đã lưu. `null` chỉ khi dữ liệu cũ không có title/thành viên còn lại."
+          }
+        },
+        {
+          "pointer": "/components/schemas/ConversationDetailResponseDto/properties/unreadCount/description",
+          "before": null,
+          "after": "Số tin text/image/bot chưa đọc của người khác gửi; không tính system, read-only chỉ tới leftSequence."
+        },
+        {
+          "pointer": "/components/schemas/ConversationDetailResponseDto/required",
+          "before": [
+            "id",
+            "kind",
+            "unreadCount",
+            "members"
+          ],
+          "after": [
+            "id",
+            "kind",
+            "displayName",
+            "unreadCount",
+            "members"
+          ]
+        },
+        {
+          "pointer": "/components/schemas/ConversationListResponseDto/properties/contextType/enum",
+          "before": [
+            "contract",
+            "building"
+          ],
+          "after": [
+            "contract",
+            "building",
+            null
+          ]
+        },
+        {
+          "pointer": "/components/schemas/ConversationListResponseDto/properties/displayName",
+          "before": null,
+          "after": {
+            "type": "string",
+            "nullable": true,
+            "maxLength": 255,
+            "description": "Tên hiển thị theo người đang xem. Direct dùng `displayName` snapshot của người còn lại trên ConversationMember (không cập nhật khi người đó đổi tên hồ sơ); group dùng `title` đã lưu. `null` chỉ khi dữ liệu cũ không có title/thành viên còn lại."
+          }
+        },
+        {
+          "pointer": "/components/schemas/ConversationListResponseDto/properties/unreadCount/description",
+          "before": null,
+          "after": "Số tin text/image/bot chưa đọc của người khác gửi; không tính system, read-only chỉ tới leftSequence."
+        },
+        {
+          "pointer": "/components/schemas/ConversationListResponseDto/required",
+          "before": [
+            "id",
+            "kind",
+            "unreadCount"
+          ],
+          "after": [
+            "id",
+            "kind",
+            "displayName",
+            "unreadCount"
+          ]
+        },
+        {
+          "pointer": "/components/schemas/ConversationUnreadSummaryResponseDto",
+          "before": null,
+          "after": {
+            "type": "object",
+            "x-apidog-folder": "Conversation/Response",
+            "title": "ConversationUnreadSummaryResponseDto",
+            "description": "Tổng tin nhắn chưa đọc của user hiện tại; FE tự hiển thị `9+` khi giá trị lớn hơn 9.",
+            "properties": {
+              "totalUnreadCount": {
+                "type": "integer",
+                "minimum": 0,
+                "description": "Tổng thật (không cắt ở 9) của unreadCount trên mọi hội thoại user được phép đọc.",
+                "example": 12
+              }
+            },
+            "required": [
+              "totalUnreadCount"
+            ],
+            "additionalProperties": false
+          }
+        },
+        {
+          "pointer": "/components/schemas/UserDirectoryResponseDto",
+          "before": null,
+          "after": {
+            "type": "object",
+            "x-apidog-folder": "User/Response",
+            "title": "UserDirectoryResponseDto",
+            "description": "Một Landlord/Tenant đang hoạt động trong kết quả tìm người để chat; chỉ lộ ID và tên.",
+            "properties": {
+              "id": {
+                "type": "string",
+                "format": "uuid",
+                "description": "Định danh người dùng, dùng làm recipientUserId/memberUserIds khi tạo hội thoại.",
+                "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+              },
+              "name": {
+                "type": "string",
+                "description": "Họ và tên hiện tại của người dùng.",
+                "example": "Nguyễn Văn An"
+              }
+            },
+            "required": [
+              "id",
+              "name"
+            ],
+            "additionalProperties": false
+          }
+        },
+        {
+          "pointer": "/paths/~1conversations/get/description",
+          "before": "Liệt kê các hội thoại mà user hiện tại là thành viên active hoặc read-only. Nếu có `contextType` thì bắt buộc gửi cùng `contextId`; API chỉ lọc hội thoại đã tồn tại, không tạo mới. Kết quả sắp xếp theo thời điểm tin nhắn gần nhất giảm dần; hội thoại chưa có tin nhắn dùng thời điểm tạo. `lastMessage.senderName` lấy từ snapshot trên message, không gọi Identity khi đọc danh sách.\n\n```mermaid\nsequenceDiagram\n    participant C as Client\n    participant COM as Community\n    participant DB as Community DB\n    C->>COM: GET /conversations?pageNo&pageSize&contextType&contextId\n    COM->>COM: Verify JWT and validate query\n    COM->>DB: Page conversations joined to caller membership\n    DB-->>COM: Conversations and pagination count\n    COM->>DB: Load latest readable message and unread count per conversation\n    DB-->>COM: Message snapshot and unread projections\n    COM-->>C: 200 CONVERSATIONS_FETCHED\n```\n",
+          "after": "Liệt kê các hội thoại mà user hiện tại là thành viên `active` hoặc `read_only`. Mọi bộ lọc, `totalItems` và phân trang đều chạy trên DB trước khi cắt trang. Kết quả sắp xếp theo thời điểm tin nhắn gần nhất giảm dần (hội thoại chưa có tin dùng thời điểm tạo), tie-break `id` giảm dần. `lastMessage.senderName` lấy từ snapshot trên message, `displayName` lấy từ snapshot trên membership; không gọi Identity khi đọc danh sách.\n\n**Hiển thị mặc định (áp dụng cho mọi chế độ, kể cả lookup):**\n- Direct chưa có message nào mà người xem được đọc thì **không** xuất hiện với cả hai người (kể cả khi `POST /conversations` đã tạo/khôi phục nhưng gửi tin đầu lỗi).\n- Group vừa tạo chưa có message vẫn xuất hiện.\n- Không truyền bộ lọc nào: trả cả chat tự do lẫn chat có context.\n\n**Bộ lọc** (kết hợp bằng AND):\n\n| Tham số | Ý nghĩa |\n|---|---|\n| `kind` | `direct` hoặc `group`. |\n| `hasContext` | `false`: chỉ chat tự do (`contextType` null); `true`: chỉ chat có context. Web Chat v1 gửi `hasContext=false`. |\n| `contextType` + `contextId` | Tra cứu hội thoại context đã được tạo bởi event nguồn; phải đi cùng nhau. |\n| `q` | 1–100 ký tự sau khi trim; khớp một phần, không phân biệt hoa/thường và dấu tiếng Việt. Group: so với `title` đã lưu. Direct: so với `displayName` snapshot của **người còn lại** trên `ConversationMember`. Không tìm theo tên của chính người xem hay nội dung message. |\n| `kind=direct&otherUserId=<uuid>` | Lookup chỉ đọc: trả 0 hoặc 1 direct giữa caller và `otherUserId` đã có message mà caller được đọc. Không tạo conversation, không khôi phục/kích hoạt lại membership. Nếu chưa có history thì `data=[]`; khi gửi tin đầu, client gọi `POST /conversations` để resolve lại ID. |\n\n**Kết hợp không hợp lệ → 422 `VALIDATION_FAILED`:** `otherUserId` thiếu `kind=direct`; `otherUserId` đi cùng `q`, `hasContext`, `contextType` hoặc `contextId`; `otherUserId` bằng chính caller; chỉ có một trong `contextType`/`contextId`; `hasContext=false` đi cùng `contextType`/`contextId`; `q` rỗng sau khi trim hoặc dài hơn 100 ký tự. Tham số lạ → 422 `UNEXPECTED_FIELD`. `hasContext` chỉ nhận `true`/`false`; `otherUserId`/`contextId` phải là UUID.\n\nTìm không dấu dùng hàm `translate()` sẵn có của PostgreSQL, không cần extension; phần tìm tên không dùng index.\n\n```mermaid\nsequenceDiagram\n    participant C as Client\n    participant COM as Community\n    participant DB as Community DB\n    C->>COM: GET /conversations?kind&hasContext&q&otherUserId&contextType&contextId&pageNo&pageSize\n    COM->>COM: Verify JWT and validate query combination\n    COM->>DB: Page conversations joined to caller membership,<br/>hide empty direct, apply filters + count\n    DB-->>COM: Conversations, viewer displayName and pagination count\n    COM->>DB: Load latest readable message and unread count per conversation (one query)\n    DB-->>COM: Message snapshot and unread projections\n    COM-->>C: 200 CONVERSATIONS_FETCHED\n```\n"
+        },
+        {
+          "pointer": "/paths/~1conversations/get/parameters",
+          "before": [
+            {
+              "name": "contextType",
+              "in": "query",
+              "required": false,
+              "schema": {
+                "type": "string",
+                "enum": [
+                  "contract",
+                  "building"
+                ]
+              },
+              "description": "Khi dùng cùng contextId, tra cứu hội thoại context đã được tạo bởi event nguồn."
+            },
+            {
+              "name": "contextId",
+              "in": "query",
+              "required": false,
+              "schema": {
+                "type": "string",
+                "format": "uuid"
+              }
+            },
+            {
+              "name": "pageSize",
+              "in": "query",
+              "schema": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 100,
+                "default": 20
+              }
+            },
+            {
+              "name": "pageNo",
+              "in": "query",
+              "schema": {
+                "type": "integer",
+                "minimum": 1,
+                "default": 1
+              }
+            }
+          ],
+          "after": [
+            {
+              "name": "contextType",
+              "in": "query",
+              "required": false,
+              "schema": {
+                "type": "string",
+                "enum": [
+                  "contract",
+                  "building"
+                ]
+              },
+              "description": "Khi dùng cùng contextId, tra cứu hội thoại context đã được tạo bởi event nguồn."
+            },
+            {
+              "name": "contextId",
+              "in": "query",
+              "required": false,
+              "schema": {
+                "type": "string",
+                "format": "uuid"
+              }
+            },
+            {
+              "name": "kind",
+              "in": "query",
+              "required": false,
+              "schema": {
+                "type": "string",
+                "enum": [
+                  "direct",
+                  "group"
+                ]
+              },
+              "description": "Lọc theo loại hội thoại. Bắt buộc là `direct` khi có `otherUserId`."
+            },
+            {
+              "name": "hasContext",
+              "in": "query",
+              "required": false,
+              "schema": {
+                "type": "boolean"
+              },
+              "description": "`false` chỉ lấy chat tự do; `true` chỉ lấy chat có context. Bỏ trống để lấy cả hai."
+            },
+            {
+              "name": "q",
+              "in": "query",
+              "required": false,
+              "schema": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 100
+              },
+              "description": "Tìm theo title group hoặc tên snapshot của người còn lại trong direct; không phân biệt hoa/thường và dấu tiếng Việt.",
+              "example": "Nguyen"
+            },
+            {
+              "name": "otherUserId",
+              "in": "query",
+              "required": false,
+              "schema": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "description": "Chỉ dùng với `kind=direct`; tra cứu direct đã có history với user này, không ghi DB."
+            },
+            {
+              "name": "pageSize",
+              "in": "query",
+              "schema": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 100,
+                "default": 20
+              }
+            },
+            {
+              "name": "pageNo",
+              "in": "query",
+              "schema": {
+                "type": "integer",
+                "minimum": 1,
+                "default": 1
+              }
+            }
+          ]
+        },
+        {
+          "pointer": "/paths/~1conversations/get/responses/200/content/application~1json/example/data",
+          "before": [
+            {
+              "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+              "kind": "group",
+              "contextType": "contract",
+              "contextId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+              "title": "Trao đổi hợp đồng thuê",
+              "avatarMediaId": null,
+              "unreadCount": 2
+            }
+          ],
+          "after": [
+            {
+              "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+              "kind": "direct",
+              "contextType": null,
+              "contextId": null,
+              "title": null,
+              "displayName": "Nguyễn Văn An",
+              "avatarMediaId": null,
+              "unreadCount": 2,
+              "lastMessage": {
+                "id": "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d",
+                "sequence": 42,
+                "senderName": "Nguyễn Văn An",
+                "contentPreview": "Mai anh qua xem phòng nhé",
+                "type": "text",
+                "sentAt": "2026-11-04T08:30:00.000Z"
+              }
+            }
+          ]
+        },
+        {
+          "pointer": "/paths/~1conversations/get/responses/422/$ref",
+          "before": "#/components/responses/ValidationError",
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1conversations/get/responses/422/content",
+          "before": null,
+          "after": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "statusCode",
+                  "code"
+                ],
+                "properties": {
+                  "statusCode": {
+                    "type": "integer",
+                    "enum": [
+                      422
+                    ]
+                  },
+                  "code": {
+                    "type": "string",
+                    "enum": [
+                      "VALIDATION_FAILED",
+                      "UNEXPECTED_FIELD"
+                    ]
+                  }
+                }
+              },
+              "example": {
+                "statusCode": 422,
+                "code": "VALIDATION_FAILED"
+              }
+            }
+          }
+        },
+        {
+          "pointer": "/paths/~1conversations/get/responses/422/description",
+          "before": null,
+          "after": "Kết hợp query không hợp lệ (`VALIDATION_FAILED`) hoặc tham số lạ (`UNEXPECTED_FIELD`)."
+        },
+        {
+          "pointer": "/paths/~1conversations/post/description",
+          "before": "Chat trực tiếp dùng lại hội thoại duy nhất của cặp user; chat nhóm tạo mới và caller trở thành admin. Tạo group chưa gắn ảnh đại diện; sau khi tạo, client upload ảnh theo conversationId rồi cập nhật qua PATCH /conversations/{conversationId}.\n\n```mermaid\nsequenceDiagram\n    participant C as Client\n    participant COM as Community\n    participant ID as Identity\n    participant DB as Community DB\n    C->>COM: POST /conversations\n    COM->>COM: Verify JWT and validate request\n    opt Có recipient/memberUserIds\n        COM->>ID: GET /internal/users?ids=... (X-Service-Token)\n        ID-->>COM: Users with id and isDeleted\n    end\n    COM->>DB: Transaction: create/reopen conversation and save members\n    DB-->>COM: Conversation and membership records\n    COM-->>C: 201 CONVERSATION_CREATED or CONVERSATION_REOPENED\n```\n",
+          "after": "Chat trực tiếp dùng lại hội thoại duy nhất của cặp user; chat nhóm tạo mới và caller trở thành admin. Tạo group chưa gắn ảnh đại diện; sau khi tạo, client upload ảnh theo conversationId rồi cập nhật qua PATCH /conversations/{conversationId}.\n\n**Direct:** vẫn tạo/khôi phục conversation và membership cho cả hai người ngay, nhưng direct chưa có message không xuất hiện trong `GET /conversations` (xem mô tả GET). Web Chat v1 chỉ gọi khi gửi tin đầu tiên, rồi gọi `POST /messages`.\n\n**Group tự do:**\n- `memberUserIds` bắt buộc, phải có **ít nhất 2 user khác caller** (nhóm tối thiểu 3 người kể cả caller). UUID trùng (không phân biệt hoa/thường) và chính caller không được tính. Thiếu → 422 `GROUP_MEMBERS_INSUFFICIENT`.\n- Mọi user phải tồn tại và chưa bị xóa theo Identity; nếu không → 422 `VALIDATION_FAILED`. Identity lỗi → 503, không tạo gì.\n- Caller là `admin`, thành viên khác là `member`.\n- `title` tùy chọn. Bỏ trống, `null` hoặc chỉ khoảng trắng → server lưu **tên mặc định**: `displayName` snapshot của caller rồi các thành viên theo thứ tự trong `memberUserIds` (đã bỏ trùng/caller), nối bằng `\", \"`. Tên trùng vẫn giữ nguyên từng người. Nếu dài hơn 255 ký tự thì cắt còn 254 ký tự, bỏ dấu phẩy/khoảng trắng cuối và thêm `…`. Tên được lưu một lần khi tạo, không tính lại khi thêm/xóa thành viên hay đổi tên hồ sơ.\n- Group xuất hiện ngay trong `GET /conversations` của mọi thành viên dù chưa có tin.\n\n```mermaid\nsequenceDiagram\n    participant C as Client\n    participant COM as Community\n    participant ID as Identity\n    participant DB as Community DB\n    C->>COM: POST /conversations\n    COM->>COM: Verify JWT and validate request\n    opt Có recipient/memberUserIds\n        COM->>ID: GET /internal/users?ids=... (X-Service-Token)\n        ID-->>COM: Users with id and isDeleted\n    end\n    COM->>DB: Transaction: create/reopen conversation and save members\n    DB-->>COM: Conversation and membership records\n    COM-->>C: 201 CONVERSATION_CREATED or CONVERSATION_REOPENED\n```\n"
+        },
+        {
+          "pointer": "/paths/~1conversations/post/requestBody/content/application~1json/examples/group/value/memberUserIds",
+          "before": [
+            "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+          ],
+          "after": [
+            "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+            "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d"
+          ]
+        },
+        {
+          "pointer": "/paths/~1conversations/post/requestBody/content/application~1json/examples/groupDefaultTitle",
+          "before": null,
+          "after": {
+            "summary": "Tạo nhóm không đặt tên (server dùng tên mặc định)",
+            "value": {
+              "kind": "group",
+              "memberUserIds": [
+                "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d"
+              ]
+            }
+          }
+        },
+        {
+          "pointer": "/paths/~1conversations/post/requestBody/content/application~1json/schema/properties/memberUserIds/description",
+          "before": "Thành viên ban đầu của group; không cần gồm caller.",
+          "after": "Bắt buộc với group; ít nhất 2 user khác caller. Không cần gồm caller."
+        },
+        {
+          "pointer": "/paths/~1conversations/post/requestBody/content/application~1json/schema/properties/title/description",
+          "before": null,
+          "after": "Chỉ dùng với group. Bỏ trống, null hoặc chỉ khoảng trắng thì server tạo tên mặc định từ thành viên ban đầu."
+        },
+        {
+          "pointer": "/paths/~1conversations/post/requestBody/content/application~1json/schema/properties/title/nullable",
+          "before": null,
+          "after": true
+        },
+        {
+          "pointer": "/paths/~1conversations/post/responses/422/$ref",
+          "before": "#/components/responses/ValidationError",
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1conversations/post/responses/422/content",
+          "before": null,
+          "after": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "statusCode",
+                  "code"
+                ],
+                "properties": {
+                  "statusCode": {
+                    "type": "integer",
+                    "enum": [
+                      422
+                    ]
+                  },
+                  "code": {
+                    "type": "string",
+                    "enum": [
+                      "GROUP_MEMBERS_INSUFFICIENT",
+                      "VALIDATION_FAILED",
+                      "UNEXPECTED_FIELD"
+                    ]
+                  }
+                }
+              },
+              "example": {
+                "statusCode": 422,
+                "code": "GROUP_MEMBERS_INSUFFICIENT"
+              }
+            }
+          }
+        },
+        {
+          "pointer": "/paths/~1conversations/post/responses/422/description",
+          "before": null,
+          "after": "- `GROUP_MEMBERS_INSUFFICIENT`: group có ít hơn 2 user khác caller.\n- `VALIDATION_FAILED`: field sai kiểu/định dạng, sai shape theo `kind`, user không tồn tại hoặc direct tới chính caller.\n- `UNEXPECTED_FIELD`: body có field lạ."
+        },
+        {
+          "pointer": "/paths/~1conversations~1unread-summary",
+          "before": null,
+          "after": {
+            "get": {
+              "tags": [
+                "Chat"
+              ],
+              "x-apidog-folder": "Conversation",
+              "x-apidog-status": "designing",
+              "operationId": "getConversationsUnreadSummary",
+              "security": [
+                {
+                  "BearerAuth": []
+                }
+              ],
+              "summary": "Get total unread messages",
+              "description": "Tổng số **tin nhắn** chưa đọc của user hiện tại trên **mọi** hội thoại user được phép đọc (member `active` hoặc `read_only`, mọi `kind`, có hoặc không có context). FE dùng để khởi tạo và đồng bộ lại badge Chat khi mở ứng dụng, reconnect Socket hoặc nhận `conversation:read-updated`; không cộng `unreadCount` của một trang `GET /conversations` để suy ra tổng. `userId` lấy từ JWT, không nhận từ client.\n\n**Quy tắc unread chung** (giống `unreadCount` của `GET /conversations`, `GET /conversations/{conversationId}`, response `POST /messages/mark-read` và Socket `conversation:read-updated`): đếm message chưa xóa có `type` thuộc `text`, `image`, `bot`; `sequence > lastReadSequence` của member; người gửi khác chính member đó. Message `system` vẫn có trong lịch sử nhưng không bao giờ được đếm. Member `read_only` chỉ đếm tới `leftSequence`.\n\nRoute tĩnh `/conversations/unread-summary` được khai báo trước `/conversations/{conversationId}`; `conversationId` luôn là UUID nên `unread-summary` không bị hiểu là ID.\n\n```mermaid\nsequenceDiagram\n    participant C as Client\n    participant COM as Community\n    participant DB as Community DB\n    C->>COM: GET /conversations/unread-summary\n    COM->>COM: Verify JWT\n    COM->>DB: SUM unread over readable memberships of caller\n    DB-->>COM: totalUnreadCount\n    COM-->>C: 200 CONVERSATION_UNREAD_SUMMARY_FETCHED\n```\n",
+              "responses": {
+                "200": {
+                  "description": "Thành công: Tổng số tin nhắn chưa đọc của người gọi.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "required": [
+                          "statusCode",
+                          "code",
+                          "data"
+                        ],
+                        "properties": {
+                          "statusCode": {
+                            "type": "integer",
+                            "enum": [
+                              200
+                            ]
+                          },
+                          "code": {
+                            "type": "string",
+                            "enum": [
+                              "CONVERSATION_UNREAD_SUMMARY_FETCHED"
+                            ]
+                          },
+                          "data": {
+                            "$ref": "#/components/schemas/ConversationUnreadSummaryResponseDto"
+                          }
+                        }
+                      },
+                      "example": {
+                        "statusCode": 200,
+                        "code": "CONVERSATION_UNREAD_SUMMARY_FETCHED",
+                        "data": {
+                          "totalUnreadCount": 12
+                        }
+                      }
+                    }
+                  }
+                },
+                "401": {
+                  "$ref": "#/components/responses/UnauthorizedError"
+                },
+                "403": {
+                  "$ref": "#/components/responses/ForbiddenError"
+                },
+                "422": {
+                  "description": "`UNEXPECTED_FIELD` khi gửi tham số query; endpoint không nhận tham số.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "required": [
+                          "statusCode",
+                          "code"
+                        ],
+                        "properties": {
+                          "statusCode": {
+                            "type": "integer",
+                            "enum": [
+                              422
+                            ]
+                          },
+                          "code": {
+                            "type": "string",
+                            "enum": [
+                              "UNEXPECTED_FIELD"
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "429": {
+                  "$ref": "#/components/responses/TooManyRequestsError"
+                },
+                "500": {
+                  "$ref": "#/components/responses/InternalServerError"
+                },
+                "503": {
+                  "$ref": "#/components/responses/AuthUnavailableError"
+                }
+              }
+            }
+          }
+        },
+        {
+          "pointer": "/paths/~1conversations~1{conversationId}/get/responses/200/content/application~1json/example/data/displayName",
+          "before": null,
+          "after": "Trao đổi hợp đồng thuê"
+        },
+        {
+          "pointer": "/paths/~1messages~1mark-read/post/description",
+          "before": "tenant, landlord. Đánh dấu đã đọc một hội thoại. Lỗi nghiệp vụ: 403 FORBIDDEN · 404 MESSAGE NOT FOUND · 422 READ CURSOR INVALID · điều kiện migration cho con trỏ.",
+          "after": "tenant, landlord. Đánh dấu đã đọc một hội thoại. `unreadCount` trả về và trong Socket `conversation:read-updated` dùng chung quy tắc unread với `GET /conversations/unread-summary`: chỉ đếm `text`/`image`/`bot` của người khác, không đếm `system`, read-only chỉ tới `leftSequence`. Lỗi nghiệp vụ: 403 FORBIDDEN · 404 MESSAGE NOT FOUND · 422 READ CURSOR INVALID · điều kiện migration cho con trỏ."
+        },
+        {
+          "pointer": "/paths/~1users~1directory",
+          "before": null,
+          "after": {
+            "get": {
+              "tags": [
+                "User"
+              ],
+              "x-apidog-folder": "User",
+              "x-apidog-status": "designing",
+              "operationId": "getUsersDirectory",
+              "security": [
+                {
+                  "BearerAuth": []
+                }
+              ],
+              "summary": "Search user directory",
+              "description": "Landlord/Tenant đang hoạt động tìm Landlord/Tenant khác theo tên để mở chat 1:1 hoặc tạo nhóm (Web Chat v1). Endpoint tách khỏi `GET /users` nên không nới quyền danh sách quản trị của Admin.\n\n- Người gọi: chỉ `landlord`, `tenant` có `status=active`. Admin nhận 403 `FORBIDDEN`; tài khoản bị khóa nhận 403 `ACCOUNT_LOCKED`.\n- Kết quả: chỉ user `landlord`/`tenant`, `status=active`, chưa bị xóa; luôn loại chính người gọi.\n- `q` tùy chọn; bỏ trống hoặc chỉ có khoảng trắng thì trả danh sách phân trang. Khi có từ khóa, server trim rồi khớp một phần tên không phân biệt chữ hoa/thường và dấu tiếng Việt. Ký tự %, _ và backslash trong q được hiểu theo nghĩa đen.\n- Lọc, đếm `totalItems` và phân trang đều chạy trên DB trước khi cắt trang. Sắp xếp cố định theo `name` tăng dần rồi `id` tăng dần.\n- Mỗi phần tử chỉ có `id`, `name`; không trả email, phone, role, status hoặc avatar. Hai người trùng tên được trả thành hai phần tử khác `id`.\n- Không cần PostgreSQL extension: Identity chuẩn hóa dấu bằng hàm `translate()` sẵn có trên cả cột `name` và `q`. Truy vấn quét theo điều kiện role/status/is_deleted, không dùng index cho phần tìm tên.\n\n```mermaid\nsequenceDiagram\n    autonumber\n    participant GW as API Gateway\n    participant ID as Identity\n    participant DB as Identity DB\n\n    GW->>ID: GET /users/directory?pageNo&pageSize[&q]\n    ID->>ID: Verify JWT, role landlord/tenant, account active\n    ID->>DB: Users active landlord/tenant, not deleted, id != caller,<br/>optional name filter, ORDER BY name, id + count\n    ID-->>GW: 200 USER_DIRECTORY_FETCHED [{id, name}] + pagination\n```",
+              "parameters": [
+                {
+                  "name": "q",
+                  "in": "query",
+                  "required": false,
+                  "description": "Từ khóa tên tùy chọn, 1–100 ký tự sau khi trim; để trống trả danh sách phân trang.",
+                  "schema": {
+                    "type": "string",
+                    "minLength": 0,
+                    "maxLength": 100
+                  },
+                  "example": "Nguyen"
+                },
+                {
+                  "name": "pageNo",
+                  "in": "query",
+                  "description": "Số trang offset, bắt đầu từ 1.",
+                  "schema": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "default": 1
+                  }
+                },
+                {
+                  "name": "pageSize",
+                  "in": "query",
+                  "description": "Số bản ghi mỗi trang.",
+                  "schema": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 100,
+                    "default": 20
+                  }
+                }
+              ],
+              "responses": {
+                "200": {
+                  "description": "Thành công: Danh sách Landlord/Tenant đang hoạt động, lọc theo tên nếu có q.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "required": [
+                          "statusCode",
+                          "code",
+                          "data",
+                          "pagination"
+                        ],
+                        "properties": {
+                          "statusCode": {
+                            "type": "integer",
+                            "enum": [
+                              200
+                            ]
+                          },
+                          "code": {
+                            "type": "string",
+                            "enum": [
+                              "USER_DIRECTORY_FETCHED"
+                            ]
+                          },
+                          "data": {
+                            "type": "array",
+                            "items": {
+                              "$ref": "#/components/schemas/UserDirectoryResponseDto"
+                            }
+                          },
+                          "pagination": {
+                            "type": "object",
+                            "additionalProperties": false,
+                            "required": [
+                              "type",
+                              "pageNo",
+                              "pageSize",
+                              "totalItems",
+                              "totalPages",
+                              "hasNextPage",
+                              "hasPreviousPage"
+                            ],
+                            "properties": {
+                              "type": {
+                                "type": "string",
+                                "enum": [
+                                  "offset"
+                                ]
+                              },
+                              "pageNo": {
+                                "type": "integer",
+                                "minimum": 1
+                              },
+                              "pageSize": {
+                                "type": "integer",
+                                "minimum": 1,
+                                "maximum": 100
+                              },
+                              "totalItems": {
+                                "type": "integer",
+                                "minimum": 0
+                              },
+                              "totalPages": {
+                                "type": "integer",
+                                "minimum": 0
+                              },
+                              "hasNextPage": {
+                                "type": "boolean"
+                              },
+                              "hasPreviousPage": {
+                                "type": "boolean"
+                              }
+                            }
+                          }
+                        }
+                      },
+                      "example": {
+                        "statusCode": 200,
+                        "code": "USER_DIRECTORY_FETCHED",
+                        "data": [
+                          {
+                            "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                            "name": "Nguyễn Văn An"
+                          }
+                        ],
+                        "pagination": {
+                          "type": "offset",
+                          "pageNo": 1,
+                          "pageSize": 20,
+                          "totalItems": 1,
+                          "totalPages": 1,
+                          "hasNextPage": false,
+                          "hasPreviousPage": false
+                        }
+                      }
+                    }
+                  }
+                },
+                "400": {
+                  "$ref": "#/components/responses/BadRequestQueryError"
+                },
+                "401": {
+                  "$ref": "#/components/responses/UnauthorizedError"
+                },
+                "403": {
+                  "$ref": "#/components/responses/ForbiddenError"
+                },
+                "422": {
+                  "description": "q dài hơn 100 ký tự hoặc không phải chuỗi; pageNo/pageSize ngoài giới hạn; UNEXPECTED_FIELD khi gửi tham số query không có trong contract.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "required": [
+                          "statusCode",
+                          "code"
+                        ],
+                        "properties": {
+                          "statusCode": {
+                            "type": "integer",
+                            "enum": [
+                              422
+                            ]
+                          },
+                          "code": {
+                            "type": "string",
+                            "enum": [
+                              "VALIDATION_FAILED",
+                              "UNEXPECTED_FIELD"
+                            ]
+                          }
+                        }
+                      },
+                      "example": {
+                        "statusCode": 422,
+                        "code": "VALIDATION_FAILED"
+                      }
+                    }
+                  }
+                },
+                "429": {
+                  "$ref": "#/components/responses/TooManyRequestsError"
+                },
+                "500": {
+                  "$ref": "#/components/responses/InternalServerError"
+                },
+                "503": {
+                  "$ref": "#/components/responses/AuthUnavailableError"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "semanticDiff": {
+        "paths": {
+          "added": [
+            "/conversations/unread-summary",
+            "/users/directory"
+          ],
+          "modified": {
+            "/conversations": {
+              "operations": {
+                "modified": {
+                  "GET": {
+                    "parameters": {
+                      "added": {
+                        "query": [
+                          "kind",
+                          "hasContext",
+                          "q",
+                          "otherUserId"
+                        ]
+                      }
+                    },
+                    "responses": {
+                      "modified": {
+                        "200": {
+                          "content": {
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "properties": {
+                                    "modified": {
+                                      "data": {
+                                        "items": {
+                                          "required": {
+                                            "added": [
+                                              "displayName"
+                                            ]
+                                          },
+                                          "properties": {
+                                            "added": [
+                                              "displayName"
+                                            ],
+                                            "modified": {
+                                              "contextType": {
+                                                "enum": {
+                                                  "added": [
+                                                    null
+                                                  ]
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "422": {
+                          "extensions": {
+                            "deleted": [
+                              "x-apidog-name"
+                            ]
+                          },
+                          "content": {
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "properties": {
+                                    "modified": {
+                                      "code": {
+                                        "enum": {
+                                          "added": [
+                                            "UNEXPECTED_FIELD"
+                                          ]
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "POST": {
+                    "requestBody": {
+                      "content": {
+                        "modified": {
+                          "application/json": {
+                            "schema": {
+                              "properties": {
+                                "modified": {
+                                  "title": {
+                                    "nullable": {
+                                      "from": false,
+                                      "to": true
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "responses": {
+                      "modified": {
+                        "201": {
+                          "content": {
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "properties": {
+                                    "modified": {
+                                      "data": {
+                                        "required": {
+                                          "added": [
+                                            "displayName"
+                                          ]
+                                        },
+                                        "properties": {
+                                          "added": [
+                                            "displayName"
+                                          ],
+                                          "modified": {
+                                            "contextType": {
+                                              "enum": {
+                                                "added": [
+                                                  null
+                                                ]
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "422": {
+                          "extensions": {
+                            "deleted": [
+                              "x-apidog-name"
+                            ]
+                          },
+                          "content": {
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "properties": {
+                                    "modified": {
+                                      "code": {
+                                        "enum": {
+                                          "added": [
+                                            "GROUP_MEMBERS_INSUFFICIENT",
+                                            "UNEXPECTED_FIELD"
+                                          ]
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "/conversations/{conversationId}": {
+              "operations": {
+                "modified": {
+                  "GET": {
+                    "responses": {
+                      "modified": {
+                        "200": {
+                          "content": {
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "properties": {
+                                    "modified": {
+                                      "data": {
+                                        "required": {
+                                          "added": [
+                                            "displayName"
+                                          ]
+                                        },
+                                        "properties": {
+                                          "added": [
+                                            "displayName"
+                                          ],
+                                          "modified": {
+                                            "contextType": {
+                                              "enum": {
+                                                "added": [
+                                                  null
+                                                ]
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "components": {
+          "schemas": {
+            "added": [
+              "UserDirectoryResponseDto",
+              "ConversationUnreadSummaryResponseDto"
+            ],
+            "modified": {
+              "ConversationDetailResponseDto": {
+                "required": {
+                  "added": [
+                    "displayName"
+                  ]
+                },
+                "properties": {
+                  "added": [
+                    "displayName"
+                  ],
+                  "modified": {
+                    "contextType": {
+                      "enum": {
+                        "added": [
+                          null
+                        ]
+                      }
+                    }
+                  }
+                }
+              },
+              "ConversationListResponseDto": {
+                "required": {
+                  "added": [
+                    "displayName"
+                  ]
+                },
+                "properties": {
+                  "added": [
+                    "displayName"
+                  ],
+                  "modified": {
+                    "contextType": {
+                      "enum": {
+                        "added": [
+                          null
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   ]
 }
