@@ -38,6 +38,7 @@ socket.on('session:ready', () => {
 | `conversation:read-updated` | `{ conversationId, unreadCount, lastReadSequence }` | Mọi session của user vừa mark-read. |
 | `conversation:access-revoked` | `{ conversationId }` | Mọi session của user vừa leave/bị kick; server cũng loại các session khỏi room. |
 | `conversation:available` | `{ conversationId }` | Mọi session của user khi conversation được tạo/mở lại hoặc khi được thêm/kích hoạt lại; client có thể gọi REST rồi join. |
+| `chat:message-received` | `{ messageId, conversationId, sequence, senderUserId, senderName, conversationName, type, contentPreview, createdAt }` | User room của mọi member **user** đang `active` trong conversation, **kể cả người gửi** (để tab khác của người gửi cập nhật list). Chỉ cho message `text`, `image`, `bot`; không phát cho `system`. Chi tiết ở mục [Tin mới trên user room](#tin-mới-trên-user-room). |
 | `notification:created` | `{ notificationId, type, title, body, deepLink, data, createdAt }` | Mọi session của user nhận notification. |
 | `notification:read-state-updated` | `{ notificationId, readAt, all }` | Mọi session của user vừa mark-read; `all=true` và `notificationId=null` khi mark-all-read. |
 
@@ -45,8 +46,33 @@ socket.on('session:ready', () => {
 
 `notification:created` được phát sau khi notification đã lưu vào inbox. Socket và FCM là best-effort: nếu mất, client vẫn thấy notification qua `GET /notifications`.
 
+## Tin mới trên user room
+
+`chat:message-received` giúp FE cập nhật badge, toast và danh sách hội thoại ở **mọi trang** mà không phải join mọi conversation. Server tự đưa mỗi session vào user room sau `session:ready`; client không cần join.
+
+| Field | Kiểu | Ý nghĩa |
+|---|---|---|
+| `messageId` | uuid | Bằng `id` của message REST và `message:created`; khóa khử trùng. |
+| `conversationId` | uuid | |
+| `sequence` | string | Bigint dạng chuỗi, giống `sequence` của message REST. |
+| `senderUserId` | uuid \| null | `null` khi `type=bot`. |
+| `senderName` | string | Snapshot tên người gửi trên message. |
+| `conversationName` | string \| null | Tên theo **người nhận** event: direct là `displayName` snapshot của người còn lại với người nhận; group là `title` đã lưu. Cùng giá trị với `displayName` trong `GET /conversations` của người nhận. |
+| `type` | `text` \| `image` \| `bot` | Không bao giờ là `system`. |
+| `contentPreview` | string | Tối đa 120 ký tự (cắt 117 + `...`, như `lastMessage.contentPreview`); `image` là `Đã gửi ảnh`; content rỗng thành `""`. |
+| `createdAt` | date-time | |
+
+Quy tắc:
+
+- Phát **sau khi** transaction lưu message commit, cùng thời điểm `message:created`. Retry `POST /messages` cùng `clientMessageId` trả message cũ và **không** phát lại.
+- Người nhận: member `participantType=user`, `status=active`, chưa xóa. Member `read_only`/đã rời không nhận. Event **không chứa unread count**; FE tự tăng unread tại chỗ và lấy lại tổng qua `GET /conversations/unread-summary` khi mở app, reconnect hoặc nhận `conversation:read-updated`.
+- `senderUserId` trùng user hiện tại: FE chỉ cập nhật list (đưa conversation lên đầu, cập nhật last message), **không** tăng unread, **không** toast.
+- Tin đầu tiên của direct: cả hai người nhận event. Nếu `conversationId` chưa có trong cache list, FE refetch `GET /conversations` thay vì tự dựng hàng. `conversation:available` của direct chưa có message không làm hiện chat trống (REST list vẫn ẩn).
+- Chống trùng với `message:created`: một message có thể đến qua cả conversation room lẫn user room. FE khử trùng theo `messageId`. Nếu user đang mở đúng conversation đó và tab đang hiển thị, `chat:message-received` **không** tạo toast; việc hiển thị và mark-read do màn chat quyết định. Mỗi `messageId` tạo tối đa một toast.
+- Best-effort như các event khác: không replay; REST là nguồn phục hồi.
+
 ## Mất kết nối và đồng bộ
 
-Socket là kênh tín hiệu, không bảo đảm client nhận đủ mọi event. Sau `connect` hoặc `reconnect`, client tải các message còn thiếu bằng REST cursor; `sequence` xác định thứ tự trong một conversation. Nếu nhận lại một message sau REST sync, client khử trùng bằng `id`. Trạng thái unread lấy từ REST conversation list/detail và đồng bộ qua `conversation:read-updated` khi có mark-read.
+Socket là kênh tín hiệu, không bảo đảm client nhận đủ mọi event. Sau `connect` hoặc `reconnect`, client tải các message còn thiếu bằng REST cursor; `sequence` xác định thứ tự trong một conversation. Nếu nhận lại một message sau REST sync, client khử trùng bằng `id`. Trạng thái unread lấy từ REST conversation list/detail và `GET /conversations/unread-summary`, đồng bộ qua `conversation:read-updated` khi có mark-read. `unreadCount` trong `conversation:read-updated` dùng cùng quy tắc unread với REST: chỉ đếm `text`/`image`/`bot` của người khác, không đếm `system`, read-only chỉ tới `leftSequence`.
 
 Lát cắt đầu chạy một Community instance. Khi chạy nhiều instance cần Socket.IO adapter dùng chung (ví dụ Redis) để room, revoke và fan-out hoạt động xuyên instance.

@@ -8,18 +8,37 @@ get:
     - BearerAuth: []
   summary: List conversations
   description: |
-    Liệt kê các hội thoại mà user hiện tại là thành viên active hoặc read-only. Nếu có `contextType` thì bắt buộc gửi cùng `contextId`; API chỉ lọc hội thoại đã tồn tại, không tạo mới. Kết quả sắp xếp theo thời điểm tin nhắn gần nhất giảm dần; hội thoại chưa có tin nhắn dùng thời điểm tạo. `lastMessage.senderName` lấy từ snapshot trên message, không gọi Identity khi đọc danh sách.
+    Liệt kê các hội thoại mà user hiện tại là thành viên `active` hoặc `read_only`. Mọi bộ lọc, `totalItems` và phân trang đều chạy trên DB trước khi cắt trang. Kết quả sắp xếp theo thời điểm tin nhắn gần nhất giảm dần (hội thoại chưa có tin dùng thời điểm tạo), tie-break `id` giảm dần. `lastMessage.senderName` lấy từ snapshot trên message, `displayName` lấy từ snapshot trên membership; không gọi Identity khi đọc danh sách.
+
+    **Hiển thị mặc định (áp dụng cho mọi chế độ, kể cả lookup):**
+    - Direct chưa có message nào mà người xem được đọc thì **không** xuất hiện với cả hai người (kể cả khi `POST /conversations` đã tạo/khôi phục nhưng gửi tin đầu lỗi).
+    - Group vừa tạo chưa có message vẫn xuất hiện.
+    - Không truyền bộ lọc nào: trả cả chat tự do lẫn chat có context.
+
+    **Bộ lọc** (kết hợp bằng AND):
+
+    | Tham số | Ý nghĩa |
+    |---|---|
+    | `kind` | `direct` hoặc `group`. |
+    | `hasContext` | `false`: chỉ chat tự do (`contextType` null); `true`: chỉ chat có context. Web Chat v1 gửi `hasContext=false`. |
+    | `contextType` + `contextId` | Tra cứu hội thoại context đã được tạo bởi event nguồn; phải đi cùng nhau. |
+    | `q` | 1–100 ký tự sau khi trim; khớp một phần, không phân biệt hoa/thường và dấu tiếng Việt. Group: so với `title` đã lưu. Direct: so với `displayName` snapshot của **người còn lại** trên `ConversationMember`. Không tìm theo tên của chính người xem hay nội dung message. |
+    | `kind=direct&otherUserId=<uuid>` | Lookup chỉ đọc: trả 0 hoặc 1 direct giữa caller và `otherUserId` đã có message mà caller được đọc. Không tạo conversation, không khôi phục/kích hoạt lại membership. Nếu chưa có history thì `data=[]`; khi gửi tin đầu, client gọi `POST /conversations` để resolve lại ID. |
+
+    **Kết hợp không hợp lệ → 422 `VALIDATION_FAILED`:** `otherUserId` thiếu `kind=direct`; `otherUserId` đi cùng `q`, `hasContext`, `contextType` hoặc `contextId`; `otherUserId` bằng chính caller; chỉ có một trong `contextType`/`contextId`; `hasContext=false` đi cùng `contextType`/`contextId`; `q` rỗng sau khi trim hoặc dài hơn 100 ký tự. Tham số lạ → 422 `UNEXPECTED_FIELD`. `hasContext` chỉ nhận `true`/`false`; `otherUserId`/`contextId` phải là UUID.
+
+    Tìm không dấu dùng hàm `translate()` sẵn có của PostgreSQL, không cần extension; phần tìm tên không dùng index.
 
     ```mermaid
     sequenceDiagram
         participant C as Client
         participant COM as Community
         participant DB as Community DB
-        C->>COM: GET /conversations?pageNo&pageSize&contextType&contextId
-        COM->>COM: Verify JWT and validate query
-        COM->>DB: Page conversations joined to caller membership
-        DB-->>COM: Conversations and pagination count
-        COM->>DB: Load latest readable message and unread count per conversation
+        C->>COM: GET /conversations?kind&hasContext&q&otherUserId&contextType&contextId&pageNo&pageSize
+        COM->>COM: Verify JWT and validate query combination
+        COM->>DB: Page conversations joined to caller membership,<br/>hide empty direct, apply filters + count
+        DB-->>COM: Conversations, viewer displayName and pagination count
+        COM->>DB: Load latest readable message and unread count per conversation (one query)
         DB-->>COM: Message snapshot and unread projections
         COM-->>C: 200 CONVERSATIONS_FETCHED
     ```
@@ -33,6 +52,27 @@ get:
     in: query
     required: false
     schema: { type: string, format: uuid }
+  - name: kind
+    in: query
+    required: false
+    schema: { type: string, enum: [direct, group] }
+    description: Lọc theo loại hội thoại. Bắt buộc là `direct` khi có `otherUserId`.
+  - name: hasContext
+    in: query
+    required: false
+    schema: { type: boolean }
+    description: '`false` chỉ lấy chat tự do; `true` chỉ lấy chat có context. Bỏ trống để lấy cả hai.'
+  - name: q
+    in: query
+    required: false
+    schema: { type: string, minLength: 1, maxLength: 100 }
+    description: Tìm theo title group hoặc tên snapshot của người còn lại trong direct; không phân biệt hoa/thường và dấu tiếng Việt.
+    example: Nguyen
+  - name: otherUserId
+    in: query
+    required: false
+    schema: { type: string, format: uuid }
+    description: Chỉ dùng với `kind=direct`; tra cứu direct đã có history với user này, không ghi DB.
   - name: pageSize
     in: query
     schema:
@@ -110,12 +150,20 @@ get:
             code: CONVERSATIONS_FETCHED
             data:
             - id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
-              kind: group
-              contextType: contract
-              contextId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
-              title: Trao đổi hợp đồng thuê
+              kind: direct
+              contextType: null
+              contextId: null
+              title: null
+              displayName: Nguyễn Văn An
               avatarMediaId: null
               unreadCount: 2
+              lastMessage:
+                id: 9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d
+                sequence: 42
+                senderName: Nguyễn Văn An
+                contentPreview: Mai anh qua xem phòng nhé
+                type: text
+                sentAt: '2026-11-04T08:30:00.000Z'
             pagination:
               type: offset
               pageNo: 1
@@ -133,7 +181,19 @@ get:
     '403':
       $ref: ../../openapi.yaml#/components/responses/ForbiddenError
     '422':
-      $ref: ../../openapi.yaml#/components/responses/ValidationError
+      description: Kết hợp query không hợp lệ (`VALIDATION_FAILED`) hoặc tham số lạ (`UNEXPECTED_FIELD`).
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code]
+            properties:
+              statusCode: { type: integer, enum: [422] }
+              code: { type: string, enum: [VALIDATION_FAILED, UNEXPECTED_FIELD] }
+          example:
+            statusCode: 422
+            code: VALIDATION_FAILED
     '429':
       $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
     '500':
@@ -146,6 +206,15 @@ post:
   summary: Tạo chat trực tiếp hoặc nhóm
   description: |
     Chat trực tiếp dùng lại hội thoại duy nhất của cặp user; chat nhóm tạo mới và caller trở thành admin. Tạo group chưa gắn ảnh đại diện; sau khi tạo, client upload ảnh theo conversationId rồi cập nhật qua PATCH /conversations/{conversationId}.
+
+    **Direct:** vẫn tạo/khôi phục conversation và membership cho cả hai người ngay, nhưng direct chưa có message không xuất hiện trong `GET /conversations` (xem mô tả GET). Web Chat v1 chỉ gọi khi gửi tin đầu tiên, rồi gọi `POST /messages`.
+
+    **Group tự do:**
+    - `memberUserIds` bắt buộc, phải có **ít nhất 2 user khác caller** (nhóm tối thiểu 3 người kể cả caller). UUID trùng (không phân biệt hoa/thường) và chính caller không được tính. Thiếu → 422 `GROUP_MEMBERS_INSUFFICIENT`.
+    - Mọi user phải tồn tại và chưa bị xóa theo Identity; nếu không → 422 `VALIDATION_FAILED`. Identity lỗi → 503, không tạo gì.
+    - Caller là `admin`, thành viên khác là `member`.
+    - `title` tùy chọn. Bỏ trống, `null` hoặc chỉ khoảng trắng → server lưu **tên mặc định**: `displayName` snapshot của caller rồi các thành viên theo thứ tự trong `memberUserIds` (đã bỏ trùng/caller), nối bằng `", "`. Tên trùng vẫn giữ nguyên từng người. Nếu dài hơn 255 ký tự thì cắt còn 254 ký tự, bỏ dấu phẩy/khoảng trắng cuối và thêm `…`. Tên được lưu một lần khi tạo, không tính lại khi thêm/xóa thành viên hay đổi tên hồ sơ.
+    - Group xuất hiện ngay trong `GET /conversations` của mọi thành viên dù chưa có tin.
 
     ```mermaid
     sequenceDiagram
@@ -179,8 +248,12 @@ post:
               maxItems: 100
               uniqueItems: true
               items: { type: string, format: uuid }
-              description: Thành viên ban đầu của group; không cần gồm caller.
-            title: { type: string, maxLength: 255 }
+              description: Bắt buộc với group; ít nhất 2 user khác caller. Không cần gồm caller.
+            title:
+              type: string
+              nullable: true
+              maxLength: 255
+              description: Chỉ dùng với group. Bỏ trống, null hoặc chỉ khoảng trắng thì server tạo tên mặc định từ thành viên ban đầu.
         examples:
           direct:
             summary: Mở chat trực tiếp
@@ -191,8 +264,13 @@ post:
             summary: Tạo nhóm chat
             value:
               kind: group
-              memberUserIds: [3fa85f64-5717-4562-b3fc-2c963f66afa6]
+              memberUserIds: [3fa85f64-5717-4562-b3fc-2c963f66afa6, 9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d]
               title: Nhóm trao đổi
+          groupDefaultTitle:
+            summary: Tạo nhóm không đặt tên (server dùng tên mặc định)
+            value:
+              kind: group
+              memberUserIds: [3fa85f64-5717-4562-b3fc-2c963f66afa6, 9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d]
   responses:
     '201':
       description: Hội thoại được tạo hoặc chat direct hiện có được mở lại.
@@ -207,6 +285,22 @@ post:
               data: { $ref: ../../openapi.yaml#/components/schemas/ConversationDetailResponseDto }
     '400': { $ref: ../../openapi.yaml#/components/responses/BadRequestBodyError }
     '401': { $ref: ../../openapi.yaml#/components/responses/UnauthorizedError }
-    '422': { $ref: ../../openapi.yaml#/components/responses/ValidationError }
+    '422':
+      description: |-
+        - `GROUP_MEMBERS_INSUFFICIENT`: group có ít hơn 2 user khác caller.
+        - `VALIDATION_FAILED`: field sai kiểu/định dạng, sai shape theo `kind`, user không tồn tại hoặc direct tới chính caller.
+        - `UNEXPECTED_FIELD`: body có field lạ.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code]
+            properties:
+              statusCode: { type: integer, enum: [422] }
+              code: { type: string, enum: [GROUP_MEMBERS_INSUFFICIENT, VALIDATION_FAILED, UNEXPECTED_FIELD] }
+          example:
+            statusCode: 422
+            code: GROUP_MEMBERS_INSUFFICIENT
     '503': { description: Identity service unavailable; no conversation was created. }
     '500': { $ref: ../../openapi.yaml#/components/responses/InternalServerError }

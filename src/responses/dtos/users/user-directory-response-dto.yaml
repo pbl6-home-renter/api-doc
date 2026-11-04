@@ -1,0 +1,18 @@
+type: object
+x-apidog-folder: User/Response
+title: UserDirectoryResponseDto
+description: Một Landlord/Tenant đang hoạt động trong kết quả tìm người để chat; chỉ lộ ID và tên.
+properties:
+  id:
+    type: string
+    format: uuid
+    description: Định danh người dùng, dùng làm recipientUserId/memberUserIds khi tạo hội thoại.
+    example: '3fa85f64-5717-4562-b3fc-2c963f66afa6'
+  name:
+    type: string
+    description: Họ và tên hiện tại của người dùng.
+    example: Nguyễn Văn An
+required:
+- id
+- name
+additionalProperties: false

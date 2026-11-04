@@ -1,0 +1,76 @@
+get:
+  tags:
+  - Chat
+  x-apidog-folder: Conversation
+  x-apidog-status: designing
+  operationId: getConversationsUnreadSummary
+  security:
+  - BearerAuth: []
+  summary: Get total unread messages
+  description: |
+    Tổng số **tin nhắn** chưa đọc của user hiện tại trên **mọi** hội thoại user được phép đọc (member `active` hoặc `read_only`, mọi `kind`, có hoặc không có context). FE dùng để khởi tạo và đồng bộ lại badge Chat khi mở ứng dụng, reconnect Socket hoặc nhận `conversation:read-updated`; không cộng `unreadCount` của một trang `GET /conversations` để suy ra tổng. `userId` lấy từ JWT, không nhận từ client.
+
+    **Quy tắc unread chung** (giống `unreadCount` của `GET /conversations`, `GET /conversations/{conversationId}`, response `POST /messages/mark-read` và Socket `conversation:read-updated`): đếm message chưa xóa có `type` thuộc `text`, `image`, `bot`; `sequence > lastReadSequence` của member; người gửi khác chính member đó. Message `system` vẫn có trong lịch sử nhưng không bao giờ được đếm. Member `read_only` chỉ đếm tới `leftSequence`.
+
+    Route tĩnh `/conversations/unread-summary` được khai báo trước `/conversations/{conversationId}`; `conversationId` luôn là UUID nên `unread-summary` không bị hiểu là ID.
+
+    ```mermaid
+    sequenceDiagram
+        participant C as Client
+        participant COM as Community
+        participant DB as Community DB
+        C->>COM: GET /conversations/unread-summary
+        COM->>COM: Verify JWT
+        COM->>DB: SUM unread over readable memberships of caller
+        DB-->>COM: totalUnreadCount
+        COM-->>C: 200 CONVERSATION_UNREAD_SUMMARY_FETCHED
+    ```
+  responses:
+    '200':
+      description: 'Thành công: Tổng số tin nhắn chưa đọc của người gọi.'
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required:
+            - statusCode
+            - code
+            - data
+            properties:
+              statusCode:
+                type: integer
+                enum:
+                - 200
+              code:
+                type: string
+                enum:
+                - CONVERSATION_UNREAD_SUMMARY_FETCHED
+              data:
+                $ref: ../../openapi.yaml#/components/schemas/ConversationUnreadSummaryResponseDto
+          example:
+            statusCode: 200
+            code: CONVERSATION_UNREAD_SUMMARY_FETCHED
+            data:
+              totalUnreadCount: 12
+    '401':
+      $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
+    '403':
+      $ref: ../../openapi.yaml#/components/responses/ForbiddenError
+    '422':
+      description: '`UNEXPECTED_FIELD` khi gửi tham số query; endpoint không nhận tham số.'
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code]
+            properties:
+              statusCode: { type: integer, enum: [422] }
+              code: { type: string, enum: [UNEXPECTED_FIELD] }
+    '429':
+      $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
+    '503':
+      $ref: ../../openapi.yaml#/components/responses/AuthUnavailableError
+    '500':
+      $ref: ../../openapi.yaml#/components/responses/InternalServerError
