@@ -20,9 +20,24 @@ properties:
     nullable: true
     properties:
       id: { type: string, format: uuid }
-      sequence: { type: integer, format: int64 }
+      sequence: { type: string, pattern: '^\d+$', example: '42', description: Bigint sequence dưới dạng chuỗi thập phân. }
       senderName: { type: string, maxLength: 254, description: Tên người gửi được snapshot lúc gửi tin. }
       contentPreview: { type: string, maxLength: 120, description: Nội dung rút gọn; ảnh hiển thị Đã gửi ảnh. }
       type: { type: string, enum: [text, image, system, bot] }
       sentAt: { type: string, format: date-time }
+      payload:
+        type: object
+        nullable: true
+        description: Payload phân biệt theo action của system message; FE dùng để dựng preview bản địa hóa.
+        oneOf:
+          - $ref: ../../../openapi.yaml#/components/schemas/ConversationMembersAddedPayload
+          - $ref: ../../../openapi.yaml#/components/schemas/ConversationMemberKickedPayload
+          - $ref: ../../../openapi.yaml#/components/schemas/ConversationMemberLeftPayload
+          - $ref: ../../../openapi.yaml#/components/schemas/ConversationAdminTransferredPayload
+          - $ref: ../../../openapi.yaml#/components/schemas/ConversationMemberRoleChangedPayload
+          - $ref: ../../../openapi.yaml#/components/schemas/ConversationTitleChangedPayload
+          - $ref: ../../../openapi.yaml#/components/schemas/ConversationAvatarChangedPayload
+        discriminator:
+          propertyName: action
+    required: [id, sequence, senderName, contentPreview, type, sentAt, payload]
 required: [id, kind, displayName, unreadCount]

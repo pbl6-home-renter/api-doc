@@ -5,6 +5,7 @@ additionalProperties: false
 properties:
   action: { type: string, enum: [conversation_avatar_changed] }
   actorUserId: { type: string, format: uuid }
+  actorDisplayName: { type: string, maxLength: 254, description: Snapshot tên hiển thị của người thực hiện thao tác. }
   oldAvatarMediaId: { type: string, format: uuid, nullable: true }
   newAvatarMediaId: { type: string, format: uuid, nullable: true }
-required: [action, actorUserId, oldAvatarMediaId, newAvatarMediaId]
+required: [action, actorUserId, actorDisplayName, oldAvatarMediaId, newAvatarMediaId]

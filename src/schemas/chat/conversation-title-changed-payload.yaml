@@ -5,6 +5,7 @@ additionalProperties: false
 properties:
   action: { type: string, enum: [conversation_title_changed] }
   actorUserId: { type: string, format: uuid }
+  actorDisplayName: { type: string, maxLength: 254, description: Snapshot tên hiển thị của người thực hiện thao tác. }
   oldTitle: { type: string, nullable: true, maxLength: 255 }
   newTitle: { type: string, nullable: true, maxLength: 255 }
-required: [action, actorUserId, oldTitle, newTitle]
+required: [action, actorUserId, actorDisplayName, oldTitle, newTitle]

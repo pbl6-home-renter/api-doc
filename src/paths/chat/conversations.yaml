@@ -27,6 +27,8 @@ get:
 
     **Kết hợp không hợp lệ → 422 `VALIDATION_FAILED`:** `otherUserId` thiếu `kind=direct`; `otherUserId` đi cùng `q`, `hasContext`, `contextType` hoặc `contextId`; `otherUserId` bằng chính caller; chỉ có một trong `contextType`/`contextId`; `hasContext=false` đi cùng `contextType`/`contextId`; `q` rỗng sau khi trim hoặc dài hơn 100 ký tự. Tham số lạ → 422 `UNEXPECTED_FIELD`. `hasContext` chỉ nhận `true`/`false`; `otherUserId`/`contextId` phải là UUID.
 
+    Mọi sequence/cursor trong response đều là chuỗi thập phân. `lastMessage.payload` trả payload có discriminator khi message là system để client dựng preview đã bản địa hóa; các message khác trả `null`.
+
     Tìm không dấu dùng hàm `translate()` sẵn có của PostgreSQL, không cần extension; phần tìm tên không dùng index.
 
     ```mermaid
@@ -159,11 +161,12 @@ get:
               unreadCount: 2
               lastMessage:
                 id: 9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d
-                sequence: 42
+                sequence: '42'
                 senderName: Nguyễn Văn An
                 contentPreview: Mai anh qua xem phòng nhé
                 type: text
                 sentAt: '2026-11-04T08:30:00.000Z'
+                payload: null
             pagination:
               type: offset
               pageNo: 1

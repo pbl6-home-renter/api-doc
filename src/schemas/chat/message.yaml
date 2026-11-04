@@ -40,9 +40,10 @@ allOf:
         nullable: true
         description: Media ID của ảnh đã upload qua Media Service.
       sequence:
-        type: integer
-        format: int64
-        minimum: 1
+        type: string
+        pattern: '^\d+$'
+        example: '42'
+        description: Bigint sequence dưới dạng chuỗi thập phân để giữ chính xác trong JavaScript.
       clientMessageId:
         type: string
         format: uuid
@@ -72,6 +73,7 @@ allOf:
         example:
           action: members_added
           actorUserId: 9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d
+          actorDisplayName: Nguyễn Văn An
           members:
             - userId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
               displayName: Nguyễn Văn A

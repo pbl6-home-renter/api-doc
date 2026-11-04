@@ -15,7 +15,7 @@ put:
   x-apidog-status: designing
   summary: Đổi vai trò thành viên
   description: |
-    Chỉ admin active của group được đổi vai trò user active khác trong nhóm giữa `admin` và `member`; không áp dụng với direct conversation. Không thể hạ admin cuối cùng. Thay đổi role và system message `member_role_changed` được ghi cùng transaction. Payload lưu `actorUserId`, snapshot member và `oldRole`/`newRole`. Nếu role đích đã đúng như hiện tại, trả thành công nhưng không tạo message trùng. Không gửi FCM.
+    Chỉ admin active của group được đổi vai trò user active khác trong nhóm giữa `admin` và `member`; không áp dụng với direct conversation. Không thể hạ admin cuối cùng. Thay đổi role và system message `member_role_changed` được ghi cùng transaction. Payload lưu `actorUserId`, snapshot `actorDisplayName`, snapshot member và `oldRole`/`newRole`. Nếu role đích đã đúng như hiện tại, trả thành công nhưng không tạo message trùng. Không gửi FCM.
 
     ```mermaid
     sequenceDiagram

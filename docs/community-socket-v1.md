@@ -48,6 +48,8 @@ socket.on('session:ready', () => {
 
 ## Tin mới trên user room
 
+Mọi giá trị sequence/cursor trong REST và Socket (`sequence`, `lastReadSequence`, `leftSequence`) là chuỗi thập phân, ví dụ `"42"`. Không dùng JSON number cho bigint để tránh mất chính xác ở JavaScript.
+
 `chat:message-received` giúp FE cập nhật badge, toast và danh sách hội thoại ở **mọi trang** mà không phải join mọi conversation. Server tự đưa mỗi session vào user room sau `session:ready`; client không cần join.
 
 | Field | Kiểu | Ý nghĩa |
