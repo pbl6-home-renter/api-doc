@@ -5,7 +5,7 @@ description: Danh sách hợp đồng thuê phòng của khách thuê hiện t�
 
 properties:
   id: { type: string, format: uuid, description: "Định danh duy nhất của hợp đồng." }
-  contractCode: { type: string, description: "Mã hợp đồng (VD: HD-2026-0012)." }
+  contractCode: { type: string, example: "HD-3fa85f", description: "HD- followed by the first six characters of the contract ID." }
   roomId: { type: string, format: uuid, description: "Định danh phòng liên quan." }
   roomName: { type: string, description: "Tên phòng trọ (VD: P.201)." }
   buildingName: { type: string, description: "Tên tòa nhà." }
@@ -13,7 +13,6 @@ properties:
     type: string
     enum: [draft, signed, active, suspended, expired, terminated]
     description: "Trạng thái hợp đồng."
-  rentalType: { type: string, enum: [MONTHLY, DAILY], description: "Hình thức thuê dài hạn hoặc ngắn hạn theo ngày." }
   rentPrice: { type: integer, minimum: 0, description: "Giá thuê theo chu kỳ (VNĐ)." }
   depositAmount: { type: integer, minimum: 0, description: "Tiền đặt cọc phòng (VNĐ)." }
   startDate: { type: string, format: date, description: "Thời điểm bắt đầu hợp đồng." }

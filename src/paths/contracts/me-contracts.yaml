@@ -7,7 +7,38 @@ get:
   security:
     - BearerAuth: []
   summary: List my contracts
-  description: 'tenant. Hợp đồng của tôi. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 VALIDATION FAILED.'
+  description: |-
+    Tenant. Requires a valid JWT and an active account.
+    Returns contracts where the caller is the named tenant (contracts.tenant_id) or a member who has not left.
+    A member has not left when is_deleted = false and left_at IS NULL or left_at is after today (UTC),
+    matching the contract-member status definition. Leaving today or earlier does not grant member access.
+    Soft-deleted contracts are excluded. Being both the named tenant and a member returns one item.
+    Each item includes roomName, buildingName and contractCode (HD- followed by the first six ID characters).
+    rentalType is not part of Contract. Money fields use the same numeric representation as GET /contracts.
+    Supports filter[status], filter[roomId] and offset pagination. Defaults to startDate descending, then id ascending.
+    sort only accepts startDate; order accepts asc or desc. Only format=json is supported.
+    Invalid query values or unsupported fields return 422 VALIDATION_FAILED.
+    An invalid filter[roomId] returns 422 INVALID_UUID, matching the existing project UUID validator.
+    Other roles return 403 FORBIDDEN.
+    Contracts returned here can also be opened through GET /contracts/{contractId} while access remains valid.
+    The service does not currently apply rate limiting.
+
+    ```mermaid
+    sequenceDiagram
+        autonumber
+        participant GW as API Gateway
+        participant TEN as Tenancy
+        participant DB as Tenancy DB
+
+        GW->>TEN: GET /api/v1/me/contracts + Bearer token
+        TEN->>TEN: Verify JWT, tenant role, active account and query
+        TEN->>DB: COUNT contracts JOIN rooms JOIN buildings WHERE not deleted AND (named tenant OR EXISTS active membership)
+        DB-->>TEN: Total matching contracts
+        TEN->>DB: SELECT same scope and filters ORDER BY start_date DESC, id ASC LIMIT pageSize OFFSET offset
+        DB-->>TEN: Contracts with room and building names
+        TEN->>TEN: Map ContractMyListResponseDto and offset pagination
+        TEN-->>GW: 200 CONTRACTS_MY_FETCHED
+    ```
   parameters:
   - name: filter
     in: query
@@ -21,6 +52,7 @@ get:
       properties:
         status:
           type: string
+          enum: [draft, signed, active, suspended, expired, terminated]
         roomId:
           type: string
           format: uuid
@@ -37,16 +69,25 @@ get:
       type: integer
       minimum: 1
       default: 1
+  - name: sort
+    in: query
+    schema:
+      type: string
+      enum: [startDate]
+      default: startDate
+  - name: order
+    in: query
+    schema:
+      type: string
+      enum: [asc, desc]
+      default: desc
   - name: format
     in: query
-    description: json trả envelope; định dạng khác trả file stream.
+    description: Only JSON is supported. Other formats return 422 VALIDATION_FAILED.
     schema:
       type: string
       enum:
       - json
-      - xlsx
-      - csv
-      - pdf
       default: json
   responses:
     '200':
@@ -116,11 +157,11 @@ get:
               status: active
               rentPrice: 3500000
               depositAmount: 7000000
-              contractCode: Ví dụ
-              roomName: Ví dụ
-              buildingName: Ví dụ
-              startDate: '2026-09-23T11:55:00.000Z'
-              endDate: '2026-09-23T11:55:00.000Z'
+              contractCode: HD-3fa85f
+              roomName: P.201
+              buildingName: Building A
+              startDate: '2026-09-01'
+              endDate: '2027-08-31'
             pagination:
               type: offset
               pageNo: 1
@@ -129,18 +170,6 @@ get:
               totalPages: 1
               hasNextPage: false
               hasPreviousPage: false
-        text/csv:
-          schema:
-            type: string
-            format: binary
-        application/pdf:
-          schema:
-            type: string
-            format: binary
-        application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
-          schema:
-            type: string
-            format: binary
     '400':
       $ref: ../../openapi.yaml#/components/responses/BadRequestQueryError
     '401':
@@ -150,8 +179,19 @@ get:
     '403':
       $ref: ../../openapi.yaml#/components/responses/ForbiddenError
     '422':
-      $ref: ../../openapi.yaml#/components/responses/ValidationError
-    '429':
-      $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
+      description: Invalid filters, pagination, sort, order, format or unsupported query fields.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code]
+            properties:
+              statusCode:
+                type: integer
+                enum: [422]
+              code:
+                type: string
+                enum: [VALIDATION_FAILED, INVALID_UUID]
     '500':
       $ref: ../../openapi.yaml#/components/responses/InternalServerError

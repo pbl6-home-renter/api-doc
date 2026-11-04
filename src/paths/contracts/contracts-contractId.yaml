@@ -9,7 +9,11 @@ get:
   summary: Get contract details
   description: |-
     Landlord hoặc tenant, yêu cầu JWT hợp lệ và tài khoản không bị khóa.
-    Landlord chỉ xem hợp đồng có landlordId = user.id; tenant chỉ xem hợp đồng có tenantId = user.id.
+    Landlord chỉ xem hợp đồng có landlordId = user.id.
+    Tenant xem được khi tenantId = user.id hoặc là member chưa rời của hợp đồng:
+    member có tenant_id = user.id, is_deleted = false và left_at IS NULL hoặc left_at > hôm nay (UTC).
+    Member rời hôm nay hoặc trước đó không được cấp quyền qua membership.
+    Quyền tenant dùng cùng phạm vi với GET /me/contracts và danh sách member.
     Người gọi không liên quan trả 403 FORBIDDEN. Hợp đồng không tồn tại hoặc đã xóa mềm trả 404 RESOURCE_NOT_FOUND.
     contractId không phải UUID trả 400 BAD_REQUEST theo ParseUUIDPipe.
     Response phản ánh entity hiện tại, gồm vehicleCount và description; chưa trả signedContractMediaId.
@@ -30,7 +34,11 @@ get:
             TEN-->>GW: 404 RESOURCE_NOT_FOUND
         else Contract exists
             TEN->>TEN: Match landlordId for landlord or tenantId for tenant
-            alt Caller is not the owner or linked tenant
+            opt Tenant is not the named tenant
+                TEN->>DB: EXISTS member WHERE contract_id and tenant_id match, not deleted, left_at IS NULL or after today (UTC)
+                DB-->>TEN: Membership access
+            end
+            alt Caller is not the owner, named tenant or member who has not left
                 TEN-->>GW: 403 FORBIDDEN
             else Authorized caller
                 TEN->>TEN: Map ContractDetailResponseDto
@@ -104,12 +112,17 @@ patch:
   operationId: patchContractsContractid
   security:
     - BearerAuth: []
-  summary: Update draft contract
+  summary: Update draft or active contract
   description: |-
-    Landlord. Chỉ sửa description của hợp đồng thuộc user.id lấy từ JWT và còn trạng thái draft.
-    description bắt buộc xuất hiện; null để xóa ghi chú, chuỗi phải dài 1–500 ký tự và không chỉ chứa khoảng trắng.
+    Landlord. Update a contract owned by user.id from the verified JWT.
+    Draft contracts retain the existing description-only update flow; description is required and vehicleCount is rejected.
+    Active contracts accept vehicleCount and/or description. An empty update is invalid.
+    vehicleCount must be null or an integer between 0 and 2147483647. Omitted fields keep their existing value.
+    description may be null to clear the note; otherwise it must contain 1-500 characters and not be whitespace-only.
+    Vehicle-count changes are used when pending invoices are regenerated; issued invoice snapshots remain unchanged.
     Hợp đồng không tồn tại hoặc đã xóa mềm trả 404 RESOURCE_NOT_FOUND; khác chủ trả 403 FORBIDDEN;
-    không còn draft trả 409 CONTRACT_NOT_DRAFT. contractId không phải UUID trả 400 BAD_REQUEST.
+    statuses other than draft/active return 409 CONTRACT_NOT_DRAFT. A draft vehicleCount update also returns this conflict.
+    contractId không phải UUID trả 400 BAD_REQUEST.
     Field ngoài DTO trả 422 UNEXPECTED_FIELD; giá trị không hợp lệ trả 422 VALIDATION_FAILED.
     Contract và outbox contract.updated được lưu trong cùng transaction; relay publish sau commit.
     Service chưa có rate limiter.
@@ -128,12 +141,12 @@ patch:
         TEN->>DB: BEGIN
         TEN->>DB: SELECT contract WHERE id = contractId AND is_deleted = false FOR UPDATE
         DB-->>TEN: Contract or null
-        TEN->>TEN: Check existence, ownership, draft status and description
-        alt Missing contract, wrong owner, non-draft or invalid description
+        TEN->>TEN: Check existence, ownership, draft/active state and allowed updates
+        alt Missing contract, wrong owner, unsupported state or invalid update
             TEN->>DB: ROLLBACK
             TEN-->>GW: 404 / 403 / 409 / 422 with matching error code
         else Valid update
-            TEN->>DB: UPDATE description and updated_at
+            TEN->>DB: UPDATE supplied description / active vehicle_count and updated_at
             TEN->>DB: INSERT outbox_messages (contract.updated)
             alt Storage operation fails
                 TEN->>DB: ROLLBACK
@@ -165,7 +178,7 @@ patch:
           description: Đóng tiền trước ngày 5 hàng tháng
   responses:
     '200':
-      description: 'Thành công: Sửa hợp đồng nháp.'
+      description: Contract updated successfully.
       content:
         application/json:
           schema:
@@ -229,7 +242,7 @@ patch:
                 statusCode: 409
                 code: CONTRACT_NOT_DRAFT
     '422':
-      description: description không hợp lệ hoặc body chứa field ngoài DTO.
+      description: Invalid description/vehicleCount, an empty update, or fields outside the DTO.
       content:
         application/json:
           schema:

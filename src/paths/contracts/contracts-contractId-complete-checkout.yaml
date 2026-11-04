@@ -7,8 +7,66 @@ post:
   security:
     - BearerAuth: []
   summary: Complete checkout
-  description: "landlord. Hoàn tất trả phòng và kết thúc hợp đồng. Sau khi checkout thành công, phòng sẽ tự động chuyển sang trạng thái chờ dọn dẹp và chuẩn bị cho thuê mới (Room.status = pending_cleanup). Sau khi chủ trọ nghiệm thu dọn dẹp xong, gọi POST /rooms/{roomId}/mark-ready để đưa phòng về available. Lỗi nghiệp vụ: 409 CONTRACT NOT ACTIVE · 403 FORBIDDEN · 422 SETTLEMENT NOT READY.
-    NOT READY."
+  description: |-
+    Landlord. Requires a valid JWT and an active account. Only the contract owner may complete checkout.
+    The contract must be active, otherwise 409 CONTRACT_NOT_ACTIVE.
+    completedOn is a YYYY-MM-DD date between the contract start date and today (UTC), inclusive.
+    Invalid format or a date outside the contract start date to today range returns 422 VALIDATION_FAILED.
+    completedOn must also be on or after joinedAt for every member who has not left;
+    a violation returns 422 LEFT_DATE_INVALID, the same domain error used by leave-contract.
+    Checkout may take place after the contract end date; the end-date restriction belongs to leave-contract only.
+    The invoice period is completedOn sliced to YYYY-MM. At least one non-deleted invoice for that contract/period
+    must be issued, and none may be pending; otherwise 409 SETTLEMENT_NOT_READY. Voided invoices do not satisfy readiness.
+    In one transaction, lock the contract, check invoices, set remaining members' left_at to completedOn,
+    terminate the contract, move the room from occupied to maintenance, and persist all corresponding outbox events.
+    A member has not left when left_at IS NULL or after today (UTC). A future scheduled leave is replaced by completedOn;
+    previous departures and soft-deleted members are preserved. A room already in maintenance stays there.
+    The response echoes completedOn; no completed_on or terminated_at column is added to contracts.
+    No deposit settlement, early termination fee or automatic checkout-date prorating is performed.
+    Call POST /rooms/{roomId}/mark-ready after cleaning to make the room available again.
+    Field outside the request DTO returns 422 UNEXPECTED_FIELD, matching existing project validation.
+    The invoices table is supplied by P6-02g1. The service does not currently apply rate limiting.
+
+    ```mermaid
+    sequenceDiagram
+        autonumber
+        participant GW as API Gateway
+        participant TEN as Tenancy
+        participant DB as Tenancy DB
+        participant RELAY as Outbox Relay
+        participant MQ as RabbitMQ
+
+        GW->>TEN: POST /api/v1/contracts/{contractId}/complete-checkout { completedOn }
+        TEN->>TEN: Verify JWT, landlord role, active account, UUID and body
+        TEN->>DB: BEGIN
+        TEN->>DB: SELECT contract WHERE id matches AND not deleted FOR UPDATE
+        TEN->>TEN: Check existence, ownership, active status and completedOn
+        TEN->>DB: Check issued invoice exists and no pending invoice for contract and completedOn period
+        TEN->>DB: SELECT non-deleted members WHERE left_at IS NULL OR after today (UTC)
+        TEN->>TEN: Validate completedOn against each joinedAt and record member departures
+        TEN->>DB: SELECT room FOR UPDATE
+        TEN->>TEN: Transition room to maintenance
+        alt Invalid state, date, owner or invoice readiness
+            TEN->>DB: ROLLBACK
+            TEN-->>GW: 403 / 404 / 409 / 422 with matching error code
+        else Valid checkout
+            TEN->>DB: UPDATE contract status to terminated
+            TEN->>DB: UPDATE remaining members left_at
+            TEN->>DB: UPDATE room status to maintenance
+            TEN->>DB: INSERT outbox contract.terminated, contract_member.left, room.status_changed
+            alt Storage operation fails
+                TEN->>DB: ROLLBACK
+                TEN-->>GW: Error response; all changes roll back
+            else Commit succeeds
+                TEN->>DB: COMMIT
+                TEN-->>GW: 200 CONTRACT_CHECKOUT_COMPLETED { id, status: terminated, completedOn }
+                RELAY->>DB: Claim committed outbox events
+                RELAY->>MQ: Publish events
+                MQ-->>RELAY: Publisher confirm
+                RELAY->>DB: Mark outbox PUBLISHED
+            end
+        end
+    ```
   parameters:
   - name: contractId
     in: path
@@ -52,7 +110,7 @@ post:
             code: CONTRACT_CHECKOUT_COMPLETED
             data:
               id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
-              status: expired
+              status: terminated
               completedOn: '2026-09-30'
     '400':
       $ref: ../../openapi.yaml#/components/responses/BadRequestBodyPathError
@@ -81,14 +139,23 @@ post:
                 type: string
                 enum:
                   - CONTRACT_NOT_ACTIVE
+                  - SETTLEMENT_NOT_READY
+                  - INVALID_ROOM_TRANSITION
                 description: |-
                   - CONTRACT_NOT_ACTIVE: Hợp đồng không ở trạng thái đang hiệu lực.
+                  - SETTLEMENT_NOT_READY: The checkout period has no issued invoice or still has a pending invoice.
+                  - INVALID_ROOM_TRANSITION: The room is neither occupied nor in maintenance.
           examples:
             contract_not_active:
               summary: CONTRACT_NOT_ACTIVE — Hợp đồng không ở trạng thái đang hiệu lực.
               value:
                 statusCode: 409
                 code: CONTRACT_NOT_ACTIVE
+            settlement_not_ready:
+              summary: Checkout period is not ready
+              value:
+                statusCode: 409
+                code: SETTLEMENT_NOT_READY
     '422':
       x-apidog-name: Unprocessable Entity
       description: Dữ liệu hợp lệ về cấu trúc nhưng vi phạm ràng buộc trường hoặc quy tắc nghiệp vụ.
@@ -105,23 +172,23 @@ post:
               code:
                 type: string
                 enum:
-                  - SETTLEMENT_NOT_READY
                   - VALIDATION_FAILED
+                  - LEFT_DATE_INVALID
+                  - UNEXPECTED_FIELD
                 description: |-
-                  - SETTLEMENT_NOT_READY: Hợp đồng chưa đủ điều kiện để quyết toán.
                   - VALIDATION_FAILED: Dữ liệu vi phạm ràng buộc schema hoặc quy tắc nghiệp vụ khác chưa có mã riêng.
+                  - LEFT_DATE_INVALID: completedOn is before joinedAt of a remaining member.
+                  - UNEXPECTED_FIELD: The request contains fields outside the DTO.
           examples:
-            settlement_not_ready:
-              summary: SETTLEMENT_NOT_READY — Hợp đồng chưa đủ điều kiện để quyết toán.
+            left_date_invalid:
+              summary: Checkout date is before a remaining member joined
               value:
                 statusCode: 422
-                code: SETTLEMENT_NOT_READY
+                code: LEFT_DATE_INVALID
             validation_failed:
               summary: VALIDATION_FAILED — Dữ liệu vi phạm ràng buộc schema hoặc quy tắc nghiệp vụ khác chưa có mã riêng.
               value:
                 statusCode: 422
                 code: VALIDATION_FAILED
-    '429':
-      $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
     '500':
       $ref: ../../openapi.yaml#/components/responses/InternalServerError

@@ -1,8 +1,9 @@
 type: object
 x-apidog-folder: "Contract/Request"
 title: ContractUpdateRequestDto
-description: Dữ liệu cập nhật hợp đồng nháp
+description: Draft updates require description. Active contracts accept description and/or vehicleCount. Other fields are rejected by the existing DTO whitelist.
 additionalProperties: false
+minProperties: 1
 properties:
   description: { type: string, nullable: true, minLength: 1, maxLength: 500, pattern: '\S', description: "Ghi chú mới, không được chỉ chứa khoảng trắng; null để xóa ghi chú." }
-required: [description]
+  vehicleCount: { type: integer, minimum: 0, maximum: 2147483647, nullable: true, description: "Active contracts only. Number of vehicles; null clears the value. Issued invoice snapshots are unchanged." }

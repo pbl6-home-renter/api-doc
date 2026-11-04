@@ -4,7 +4,7 @@ title: ContractCompleteCheckoutResponseDto
 description: Phản hồi khi hoàn tất trả phòng
 properties:
   id: { type: string, format: uuid , description: "Định danh duy nhất của tài nguyên." }
-  status: { type: string, enum: [expired], example: expired , description: "Trạng thái hiện tại của tài nguyên trong quy trình nghiệp vụ." }
+  status: { type: string, enum: [terminated], example: terminated, description: "Contract status after checkout." }
   completedOn: { type: string, format: date , description: "Thông tin completed on của tài nguyên trong ngữ cảnh DTO." }
 
 required:
