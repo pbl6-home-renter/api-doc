@@ -5,5 +5,5 @@ description: Dữ liệu cập nhật con trỏ đã đọc
 additionalProperties: false
 properties:
   conversationId: { type: string, format: uuid , description: "Thông tin conversation id của tài nguyên trong ngữ cảnh DTO." }
-  lastReadSequence: { type: integer, format: int64, minimum: 0, description: "Sequence cuối đã đọc; server chỉ chấp nhận cursor tiến lên." }
+  lastReadSequence: { type: string, pattern: '^\d+$', example: '42', description: "Sequence cuối đã đọc dạng chuỗi thập phân; server chỉ chấp nhận cursor tiến lên." }
 required: [conversationId, lastReadSequence]

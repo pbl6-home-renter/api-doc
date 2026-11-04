@@ -1,7 +1,7 @@
 title: ConversationAdminTransferredPayload
 type: object
 additionalProperties: false
-required: [action, actorUserId, member]
+required: [action, actorUserId, actorDisplayName, member]
 properties:
   action:
     type: string
@@ -10,6 +10,10 @@ properties:
     type: string
     format: uuid
     description: User kick/rời dẫn tới việc chuyển quyền admin.
+  actorDisplayName:
+    type: string
+    maxLength: 254
+    description: Snapshot tên hiển thị của người thực hiện thao tác.
   member:
     type: object
     additionalProperties: false

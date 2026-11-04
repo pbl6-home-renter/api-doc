@@ -43,14 +43,14 @@ allOf:
         description: Thời điểm rời hoặc bị xóa khỏi hội thoại.
         example: null
       leftSequence:
-        type: integer
-        format: int64
+        type: string
+        pattern: '^\d+$'
         nullable: true
         description: Tin cuối được phép đọc khi membership ở trạng thái read_only.
       lastReadSequence:
-        type: integer
-        format: int64
-        minimum: 0
+        type: string
+        pattern: '^\d+$'
+        example: '12'
         description: Sequence cuối đã đọc; unread tính từ sequence kế tiếp.
     required:
       - conversationId

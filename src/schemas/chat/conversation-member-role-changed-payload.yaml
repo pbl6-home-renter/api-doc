@@ -1,7 +1,7 @@
 title: ConversationMemberRoleChangedPayload
 type: object
 additionalProperties: false
-required: [action, actorUserId, member, oldRole, newRole]
+required: [action, actorUserId, actorDisplayName, member, oldRole, newRole]
 properties:
   action:
     type: string
@@ -10,6 +10,10 @@ properties:
     type: string
     format: uuid
     description: User admin thực hiện thay đổi vai trò.
+  actorDisplayName:
+    type: string
+    maxLength: 254
+    description: Snapshot tên hiển thị của người thực hiện thao tác.
   member:
     type: object
     additionalProperties: false

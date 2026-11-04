@@ -58,7 +58,7 @@ post:
   x-apidog-status: designing
   summary: Thêm thành viên nhóm
   description: |
-    Chỉ admin group được thêm member. Membership read_only được kích hoạt lại; member mới hoặc được kích hoạt lại xem toàn bộ lịch sử. Toàn bộ userIds phải hợp lệ và chưa active; nếu một user không hợp lệ hoặc đã active thì không thay đổi member nào. Thao tác ghi system message action=members_added trong cùng transaction. `payload` gồm `action`, `actorUserId` và `members` (mỗi phần tử có `userId`, `displayName`).
+    Chỉ admin group được thêm member. Membership read_only được kích hoạt lại; member mới hoặc được kích hoạt lại xem toàn bộ lịch sử. Toàn bộ userIds phải hợp lệ và chưa active; nếu một user không hợp lệ hoặc đã active thì không thay đổi member nào. Thao tác ghi system message action=members_added trong cùng transaction. `payload` gồm `action`, `actorUserId`, snapshot `actorDisplayName` và `members` (mỗi phần tử có `userId`, `displayName`).
 
     ```mermaid
     sequenceDiagram

@@ -20373,7 +20373,7 @@
           }
         ],
         "summary": "List conversations",
-        "description": "Liệt kê các hội thoại mà user hiện tại là thành viên `active` hoặc `read_only`. Mọi bộ lọc, `totalItems` và phân trang đều chạy trên DB trước khi cắt trang. Kết quả sắp xếp theo thời điểm tin nhắn gần nhất giảm dần (hội thoại chưa có tin dùng thời điểm tạo), tie-break `id` giảm dần. `lastMessage.senderName` lấy từ snapshot trên message, `displayName` lấy từ snapshot trên membership; không gọi Identity khi đọc danh sách.\n\n**Hiển thị mặc định (áp dụng cho mọi chế độ, kể cả lookup):**\n- Direct chưa có message nào mà người xem được đọc thì **không** xuất hiện với cả hai người (kể cả khi `POST /conversations` đã tạo/khôi phục nhưng gửi tin đầu lỗi).\n- Group vừa tạo chưa có message vẫn xuất hiện.\n- Không truyền bộ lọc nào: trả cả chat tự do lẫn chat có context.\n\n**Bộ lọc** (kết hợp bằng AND):\n\n| Tham số | Ý nghĩa |\n|---|---|\n| `kind` | `direct` hoặc `group`. |\n| `hasContext` | `false`: chỉ chat tự do (`contextType` null); `true`: chỉ chat có context. Web Chat v1 gửi `hasContext=false`. |\n| `contextType` + `contextId` | Tra cứu hội thoại context đã được tạo bởi event nguồn; phải đi cùng nhau. |\n| `q` | 1–100 ký tự sau khi trim; khớp một phần, không phân biệt hoa/thường và dấu tiếng Việt. Group: so với `title` đã lưu. Direct: so với `displayName` snapshot của **người còn lại** trên `ConversationMember`. Không tìm theo tên của chính người xem hay nội dung message. |\n| `kind=direct&otherUserId=<uuid>` | Lookup chỉ đọc: trả 0 hoặc 1 direct giữa caller và `otherUserId` đã có message mà caller được đọc. Không tạo conversation, không khôi phục/kích hoạt lại membership. Nếu chưa có history thì `data=[]`; khi gửi tin đầu, client gọi `POST /conversations` để resolve lại ID. |\n\n**Kết hợp không hợp lệ → 422 `VALIDATION_FAILED`:** `otherUserId` thiếu `kind=direct`; `otherUserId` đi cùng `q`, `hasContext`, `contextType` hoặc `contextId`; `otherUserId` bằng chính caller; chỉ có một trong `contextType`/`contextId`; `hasContext=false` đi cùng `contextType`/`contextId`; `q` rỗng sau khi trim hoặc dài hơn 100 ký tự. Tham số lạ → 422 `UNEXPECTED_FIELD`. `hasContext` chỉ nhận `true`/`false`; `otherUserId`/`contextId` phải là UUID.\n\nTìm không dấu dùng hàm `translate()` sẵn có của PostgreSQL, không cần extension; phần tìm tên không dùng index.\n\n```mermaid\nsequenceDiagram\n    participant C as Client\n    participant COM as Community\n    participant DB as Community DB\n    C->>COM: GET /conversations?kind&hasContext&q&otherUserId&contextType&contextId&pageNo&pageSize\n    COM->>COM: Verify JWT and validate query combination\n    COM->>DB: Page conversations joined to caller membership,<br/>hide empty direct, apply filters + count\n    DB-->>COM: Conversations, viewer displayName and pagination count\n    COM->>DB: Load latest readable message and unread count per conversation (one query)\n    DB-->>COM: Message snapshot and unread projections\n    COM-->>C: 200 CONVERSATIONS_FETCHED\n```\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-11-04 | 🔴 BREAKING | added the new `UNEXPECTED_FIELD` enum value to the `code` response property for the response status `422` | [#49](https://github.com/pbl6-home-renter/api-doc/pull/49) |\n| 2026-11-04 | 🔴 BREAKING | added the new `undefined` enum value to the `data/items/contextType` response property for the response status `200` | [#49](https://github.com/pbl6-home-renter/api-doc/pull/49) |\n| 2026-11-04 | 🟢 NON_BREAKING | added the new optional `query` request parameter `hasContext` | [#49](https://github.com/pbl6-home-renter/api-doc/pull/49) |\n| 2026-11-04 | 🟢 NON_BREAKING | added the new optional `query` request parameter `kind` | [#49](https://github.com/pbl6-home-renter/api-doc/pull/49) |\n| 2026-11-04 | 🟢 NON_BREAKING | added the new optional `query` request parameter `otherUserId` | [#49](https://github.com/pbl6-home-renter/api-doc/pull/49) |\n| 2026-11-04 | 🟢 NON_BREAKING | added the new optional `query` request parameter `q` | [#49](https://github.com/pbl6-home-renter/api-doc/pull/49) |\n| 2026-11-04 | 🟢 NON_BREAKING | added the required property `data/items/displayName` to the response with the `200` status | [#49](https://github.com/pbl6-home-renter/api-doc/pull/49) |\n| 2026-11-02 | 🟢 NON_BREAKING | the `data/items/lastMessage/contentPreview` response property's maxLength was set to `120` for the response status `200` | [#38](https://github.com/pbl6-home-renter/api-doc/pull/38) |\n| 2026-11-02 | 🟢 NON_BREAKING | the `data/items/lastMessage/senderName` response property's maxLength was set to `254` for the response status `200` | [#38](https://github.com/pbl6-home-renter/api-doc/pull/38) |\n| 2026-11-01 | 🔴 BREAKING | the response property `data/items/title` became optional for the status `200` | [#35](https://github.com/pbl6-home-renter/api-doc/pull/35) |\n| 2026-11-01 | 🔴 BREAKING | added the new `system` enum value to the `data/items/lastMessage/type` response property for the response status `200` | [#35](https://github.com/pbl6-home-renter/api-doc/pull/35) |\n| 2026-11-01 | 🔴 BREAKING | the `data/items/title` response property's minLength was unset from `1` for the response status `200` | [#35](https://github.com/pbl6-home-renter/api-doc/pull/35) |\n| 2026-11-01 | 🔴 BREAKING | removed the required property `data/items/type` from the response with the `200` status | [#35](https://github.com/pbl6-home-renter/api-doc/pull/35) |\n| 2026-11-01 | 🟡 NEEDS_REVIEW | deleted the `query` request parameter `filter` | [#35](https://github.com/pbl6-home-renter/api-doc/pull/35) |\n| 2026-11-01 | 🟢 NON_BREAKING | added the new optional `query` request parameter `contextId` | [#35](https://github.com/pbl6-home-renter/api-doc/pull/35) |\n| 2026-11-01 | 🟢 NON_BREAKING | added the new optional `query` request parameter `contextType` | [#35](https://github.com/pbl6-home-renter/api-doc/pull/35) |\n| 2026-11-01 | 🟢 NON_BREAKING | Thêm field response tùy chọn `data/items/avatarMediaId` ở HTTP 200. | [#35](https://github.com/pbl6-home-renter/api-doc/pull/35) |\n| 2026-11-01 | 🟢 NON_BREAKING | Thêm field response tùy chọn `data/items/contextId` ở HTTP 200. | [#35](https://github.com/pbl6-home-renter/api-doc/pull/35) |\n| 2026-11-01 | 🟢 NON_BREAKING | Thêm field response tùy chọn `data/items/contextType` ở HTTP 200. | [#35](https://github.com/pbl6-home-renter/api-doc/pull/35) |\n| 2026-11-01 | 🟢 NON_BREAKING | Thêm field response tùy chọn `data/items/lastMessage/contentPreview` ở HTTP 200. | [#35](https://github.com/pbl6-home-renter/api-doc/pull/35) |\n| 2026-11-01 | 🟢 NON_BREAKING | Thêm field response tùy chọn `data/items/lastMessage/sequence` ở HTTP 200. | [#35](https://github.com/pbl6-home-renter/api-doc/pull/35) |\n| 2026-11-01 | 🟢 NON_BREAKING | removed the optional property `data/items/avatarUrl` from the response with the `200` status | [#35](https://github.com/pbl6-home-renter/api-doc/pull/35) |\n| 2026-11-01 | 🟢 NON_BREAKING | removed the optional property `data/items/buildingId` from the response with the `200` status | [#35](https://github.com/pbl6-home-renter/api-doc/pull/35) |\n| 2026-11-01 | 🟢 NON_BREAKING | removed the optional property `data/items/contextTag` from the response with the `200` status | [#35](https://github.com/pbl6-home-renter/api-doc/pull/35) |\n| 2026-11-01 | 🟢 NON_BREAKING | removed the optional property `data/items/lastMessage/content` from the response with the `200` status | [#35](https://github.com/pbl6-home-renter/api-doc/pull/35) |\n| 2026-11-01 | 🟢 NON_BREAKING | removed the optional property `data/items/lastMessageAt` from the response with the `200` status | [#35](https://github.com/pbl6-home-renter/api-doc/pull/35) |\n| 2026-11-01 | 🟢 NON_BREAKING | removed the optional property `data/items/roomId` from the response with the `200` status | [#35](https://github.com/pbl6-home-renter/api-doc/pull/35) |\n| 2026-11-01 | 🟢 NON_BREAKING | removed the `file` enum value from the `data/items/lastMessage/type` response property for the response status `200` | [#35](https://github.com/pbl6-home-renter/api-doc/pull/35) |\n| 2026-11-01 | 🟢 NON_BREAKING | added the required property `data/items/kind` to the response with the `200` status | [#35](https://github.com/pbl6-home-renter/api-doc/pull/35) |\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
+        "description": "Liệt kê các hội thoại mà user hiện tại là thành viên `active` hoặc `read_only`. Mọi bộ lọc, `totalItems` và phân trang đều chạy trên DB trước khi cắt trang. Kết quả sắp xếp theo thời điểm tin nhắn gần nhất giảm dần (hội thoại chưa có tin dùng thời điểm tạo), tie-break `id` giảm dần. `lastMessage.senderName` lấy từ snapshot trên message, `displayName` lấy từ snapshot trên membership; không gọi Identity khi đọc danh sách.\n\n**Hiển thị mặc định (áp dụng cho mọi chế độ, kể cả lookup):**\n- Direct chưa có message nào mà người xem được đọc thì **không** xuất hiện với cả hai người (kể cả khi `POST /conversations` đã tạo/khôi phục nhưng gửi tin đầu lỗi).\n- Group vừa tạo chưa có message vẫn xuất hiện.\n- Không truyền bộ lọc nào: trả cả chat tự do lẫn chat có context.\n\n**Bộ lọc** (kết hợp bằng AND):\n\n| Tham số | Ý nghĩa |\n|---|---|\n| `kind` | `direct` hoặc `group`. |\n| `hasContext` | `false`: chỉ chat tự do (`contextType` null); `true`: chỉ chat có context. Web Chat v1 gửi `hasContext=false`. |\n| `contextType` + `contextId` | Tra cứu hội thoại context đã được tạo bởi event nguồn; phải đi cùng nhau. |\n| `q` | 1–100 ký tự sau khi trim; khớp một phần, không phân biệt hoa/thường và dấu tiếng Việt. Group: so với `title` đã lưu. Direct: so với `displayName` snapshot của **người còn lại** trên `ConversationMember`. Không tìm theo tên của chính người xem hay nội dung message. |\n| `kind=direct&otherUserId=<uuid>` | Lookup chỉ đọc: trả 0 hoặc 1 direct giữa caller và `otherUserId` đã có message mà caller được đọc. Không tạo conversation, không khôi phục/kích hoạt lại membership. Nếu chưa có history thì `data=[]`; khi gửi tin đầu, client gọi `POST /conversations` để resolve lại ID. |\n\n**Kết hợp không hợp lệ → 422 `VALIDATION_FAILED`:** `otherUserId` thiếu `kind=direct`; `otherUserId` đi cùng `q`, `hasContext`, `contextType` hoặc `contextId`; `otherUserId` bằng chính caller; chỉ có một trong `contextType`/`contextId`; `hasContext=false` đi cùng `contextType`/`contextId`; `q` rỗng sau khi trim hoặc dài hơn 100 ký tự. Tham số lạ → 422 `UNEXPECTED_FIELD`. `hasContext` chỉ nhận `true`/`false`; `otherUserId`/`contextId` phải là UUID.\n\nMọi sequence/cursor trong response đều là chuỗi thập phân. `lastMessage.payload` trả payload có discriminator khi message là system để client dựng preview đã bản địa hóa; các message khác trả `null`.\n\nTìm không dấu dùng hàm `translate()` sẵn có của PostgreSQL, không cần extension; phần tìm tên không dùng index.\n\n```mermaid\nsequenceDiagram\n    participant C as Client\n    participant COM as Community\n    participant DB as Community DB\n    C->>COM: GET /conversations?kind&hasContext&q&otherUserId&contextType&contextId&pageNo&pageSize\n    COM->>COM: Verify JWT and validate query combination\n    COM->>DB: Page conversations joined to caller membership,<br/>hide empty direct, apply filters + count\n    DB-->>COM: Conversations, viewer displayName and pagination count\n    COM->>DB: Load latest readable message and unread count per conversation (one query)\n    DB-->>COM: Message snapshot and unread projections\n    COM-->>C: 200 CONVERSATIONS_FETCHED\n```\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-11-04 | 🔴 BREAKING | added the new `UNEXPECTED_FIELD` enum value to the `code` response property for the response status `422` | [#49](https://github.com/pbl6-home-renter/api-doc/pull/49) |\n| 2026-11-04 | 🔴 BREAKING | added the new `undefined` enum value to the `data/items/contextType` response property for the response status `200` | [#49](https://github.com/pbl6-home-renter/api-doc/pull/49) |\n| 2026-11-04 | 🟢 NON_BREAKING | added the new optional `query` request parameter `hasContext` | [#49](https://github.com/pbl6-home-renter/api-doc/pull/49) |\n| 2026-11-04 | 🟢 NON_BREAKING | added the new optional `query` request parameter `kind` | [#49](https://github.com/pbl6-home-renter/api-doc/pull/49) |\n| 2026-11-04 | 🟢 NON_BREAKING | added the new optional `query` request parameter `otherUserId` | [#49](https://github.com/pbl6-home-renter/api-doc/pull/49) |\n| 2026-11-04 | 🟢 NON_BREAKING | added the new optional `query` request parameter `q` | [#49](https://github.com/pbl6-home-renter/api-doc/pull/49) |\n| 2026-11-04 | 🟢 NON_BREAKING | added the required property `data/items/displayName` to the response with the `200` status | [#49](https://github.com/pbl6-home-renter/api-doc/pull/49) |\n| 2026-11-02 | 🟢 NON_BREAKING | the `data/items/lastMessage/contentPreview` response property's maxLength was set to `120` for the response status `200` | [#38](https://github.com/pbl6-home-renter/api-doc/pull/38) |\n| 2026-11-02 | 🟢 NON_BREAKING | the `data/items/lastMessage/senderName` response property's maxLength was set to `254` for the response status `200` | [#38](https://github.com/pbl6-home-renter/api-doc/pull/38) |\n| 2026-11-01 | 🔴 BREAKING | the response property `data/items/title` became optional for the status `200` | [#35](https://github.com/pbl6-home-renter/api-doc/pull/35) |\n| 2026-11-01 | 🔴 BREAKING | added the new `system` enum value to the `data/items/lastMessage/type` response property for the response status `200` | [#35](https://github.com/pbl6-home-renter/api-doc/pull/35) |\n| 2026-11-01 | 🔴 BREAKING | the `data/items/title` response property's minLength was unset from `1` for the response status `200` | [#35](https://github.com/pbl6-home-renter/api-doc/pull/35) |\n| 2026-11-01 | 🔴 BREAKING | removed the required property `data/items/type` from the response with the `200` status | [#35](https://github.com/pbl6-home-renter/api-doc/pull/35) |\n| 2026-11-01 | 🟡 NEEDS_REVIEW | deleted the `query` request parameter `filter` | [#35](https://github.com/pbl6-home-renter/api-doc/pull/35) |\n| 2026-11-01 | 🟢 NON_BREAKING | added the new optional `query` request parameter `contextId` | [#35](https://github.com/pbl6-home-renter/api-doc/pull/35) |\n| 2026-11-01 | 🟢 NON_BREAKING | added the new optional `query` request parameter `contextType` | [#35](https://github.com/pbl6-home-renter/api-doc/pull/35) |\n| 2026-11-01 | 🟢 NON_BREAKING | Thêm field response tùy chọn `data/items/avatarMediaId` ở HTTP 200. | [#35](https://github.com/pbl6-home-renter/api-doc/pull/35) |\n| 2026-11-01 | 🟢 NON_BREAKING | Thêm field response tùy chọn `data/items/contextId` ở HTTP 200. | [#35](https://github.com/pbl6-home-renter/api-doc/pull/35) |\n| 2026-11-01 | 🟢 NON_BREAKING | Thêm field response tùy chọn `data/items/contextType` ở HTTP 200. | [#35](https://github.com/pbl6-home-renter/api-doc/pull/35) |\n| 2026-11-01 | 🟢 NON_BREAKING | Thêm field response tùy chọn `data/items/lastMessage/contentPreview` ở HTTP 200. | [#35](https://github.com/pbl6-home-renter/api-doc/pull/35) |\n| 2026-11-01 | 🟢 NON_BREAKING | Thêm field response tùy chọn `data/items/lastMessage/sequence` ở HTTP 200. | [#35](https://github.com/pbl6-home-renter/api-doc/pull/35) |\n| 2026-11-01 | 🟢 NON_BREAKING | removed the optional property `data/items/avatarUrl` from the response with the `200` status | [#35](https://github.com/pbl6-home-renter/api-doc/pull/35) |\n| 2026-11-01 | 🟢 NON_BREAKING | removed the optional property `data/items/buildingId` from the response with the `200` status | [#35](https://github.com/pbl6-home-renter/api-doc/pull/35) |\n| 2026-11-01 | 🟢 NON_BREAKING | removed the optional property `data/items/contextTag` from the response with the `200` status | [#35](https://github.com/pbl6-home-renter/api-doc/pull/35) |\n| 2026-11-01 | 🟢 NON_BREAKING | removed the optional property `data/items/lastMessage/content` from the response with the `200` status | [#35](https://github.com/pbl6-home-renter/api-doc/pull/35) |\n| 2026-11-01 | 🟢 NON_BREAKING | removed the optional property `data/items/lastMessageAt` from the response with the `200` status | [#35](https://github.com/pbl6-home-renter/api-doc/pull/35) |\n| 2026-11-01 | 🟢 NON_BREAKING | removed the optional property `data/items/roomId` from the response with the `200` status | [#35](https://github.com/pbl6-home-renter/api-doc/pull/35) |\n| 2026-11-01 | 🟢 NON_BREAKING | removed the `file` enum value from the `data/items/lastMessage/type` response property for the response status `200` | [#35](https://github.com/pbl6-home-renter/api-doc/pull/35) |\n| 2026-11-01 | 🟢 NON_BREAKING | added the required property `data/items/kind` to the response with the `200` status | [#35](https://github.com/pbl6-home-renter/api-doc/pull/35) |\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "parameters": [
           {
             "name": "contextType",
@@ -20555,11 +20555,12 @@
                       "unreadCount": 2,
                       "lastMessage": {
                         "id": "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d",
-                        "sequence": 42,
+                        "sequence": "42",
                         "senderName": "Nguyễn Văn An",
                         "contentPreview": "Mai anh qua xem phòng nhé",
                         "type": "text",
-                        "sentAt": "2026-11-04T08:30:00.000Z"
+                        "sentAt": "2026-11-04T08:30:00.000Z",
+                        "payload": null
                       }
                     }
                   ],
@@ -20981,7 +20982,7 @@
                         "role": "admin",
                         "status": "active",
                         "joinedAt": "2026-11-02T09:00:00.000Z",
-                        "lastReadSequence": 12
+                        "lastReadSequence": "12"
                       }
                     ]
                   }
@@ -21254,7 +21255,7 @@
         "x-apidog-folder": "ConversationMember",
         "x-apidog-status": "designing",
         "summary": "Thêm thành viên nhóm",
-        "description": "Chỉ admin group được thêm member. Membership read_only được kích hoạt lại; member mới hoặc được kích hoạt lại xem toàn bộ lịch sử. Toàn bộ userIds phải hợp lệ và chưa active; nếu một user không hợp lệ hoặc đã active thì không thay đổi member nào. Thao tác ghi system message action=members_added trong cùng transaction. `payload` gồm `action`, `actorUserId` và `members` (mỗi phần tử có `userId`, `displayName`).\n\n```mermaid\nsequenceDiagram\n    participant C as Client\n    participant COM as Community\n    participant ID as Identity\n    participant DB as Community DB\n    C->>COM: POST /conversations/{conversationId}/members\n    COM->>DB: Verify group and caller admin\n    COM->>ID: Batch lookup names for userIds\n    ID-->>COM: User IDs and display names\n    COM->>DB: Begin transaction and lock conversation\n    COM->>DB: Add/reactivate members and save members_added system message\n    DB-->>COM: Commit member records and message atomically\n    COM-->>C: 200 CONVERSATION_MEMBERS_ADDED with members\n```\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-11-02 | 🟢 NON_BREAKING | added the media type `application/json` for the response with the status `200` | [#39](https://github.com/pbl6-home-renter/api-doc/pull/39) |\n| 2026-11-02 | 🟢 NON_BREAKING | added the non-success response with the status `400` | [#39](https://github.com/pbl6-home-renter/api-doc/pull/39) |\n| 2026-11-02 | 🟢 NON_BREAKING | added the non-success response with the status `404` | [#39](https://github.com/pbl6-home-renter/api-doc/pull/39) |\n| 2026-11-02 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#39](https://github.com/pbl6-home-renter/api-doc/pull/39) |\n| 2026-11-01 | 🟢 NON_BREAKING | Thêm endpoint mới. | [#35](https://github.com/pbl6-home-renter/api-doc/pull/35) |\n",
+        "description": "Chỉ admin group được thêm member. Membership read_only được kích hoạt lại; member mới hoặc được kích hoạt lại xem toàn bộ lịch sử. Toàn bộ userIds phải hợp lệ và chưa active; nếu một user không hợp lệ hoặc đã active thì không thay đổi member nào. Thao tác ghi system message action=members_added trong cùng transaction. `payload` gồm `action`, `actorUserId`, snapshot `actorDisplayName` và `members` (mỗi phần tử có `userId`, `displayName`).\n\n```mermaid\nsequenceDiagram\n    participant C as Client\n    participant COM as Community\n    participant ID as Identity\n    participant DB as Community DB\n    C->>COM: POST /conversations/{conversationId}/members\n    COM->>DB: Verify group and caller admin\n    COM->>ID: Batch lookup names for userIds\n    ID-->>COM: User IDs and display names\n    COM->>DB: Begin transaction and lock conversation\n    COM->>DB: Add/reactivate members and save members_added system message\n    DB-->>COM: Commit member records and message atomically\n    COM-->>C: 200 CONVERSATION_MEMBERS_ADDED with members\n```\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-11-02 | 🟢 NON_BREAKING | added the media type `application/json` for the response with the status `200` | [#39](https://github.com/pbl6-home-renter/api-doc/pull/39) |\n| 2026-11-02 | 🟢 NON_BREAKING | added the non-success response with the status `400` | [#39](https://github.com/pbl6-home-renter/api-doc/pull/39) |\n| 2026-11-02 | 🟢 NON_BREAKING | added the non-success response with the status `404` | [#39](https://github.com/pbl6-home-renter/api-doc/pull/39) |\n| 2026-11-02 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#39](https://github.com/pbl6-home-renter/api-doc/pull/39) |\n| 2026-11-01 | 🟢 NON_BREAKING | Thêm endpoint mới. | [#35](https://github.com/pbl6-home-renter/api-doc/pull/35) |\n",
         "requestBody": {
           "required": true,
           "content": {
@@ -21503,7 +21504,7 @@
         "x-apidog-folder": "ConversationMember",
         "x-apidog-status": "designing",
         "summary": "Đổi vai trò thành viên",
-        "description": "Chỉ admin active của group được đổi vai trò user active khác trong nhóm giữa `admin` và `member`; không áp dụng với direct conversation. Không thể hạ admin cuối cùng. Thay đổi role và system message `member_role_changed` được ghi cùng transaction. Payload lưu `actorUserId`, snapshot member và `oldRole`/`newRole`. Nếu role đích đã đúng như hiện tại, trả thành công nhưng không tạo message trùng. Không gửi FCM.\n\n```mermaid\nsequenceDiagram\n    participant C as Client\n    participant COM as Community\n    participant DB as Community DB\n    C->>COM: PUT /conversations/{conversationId}/members/{userId}/role\n    COM->>DB: Begin transaction and lock conversation/members\n    COM->>COM: Verify caller is active group admin and target is active user member\n    COM->>DB: Check last-admin constraint\n    COM->>DB: Update role and append member_role_changed system message atomically\n    COM-->>C: 200 CONVERSATION_MEMBER_ROLE_UPDATED\n```\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-11-02 | 🟢 NON_BREAKING | added the media type `application/json` for the response with the status `200` | [#41](https://github.com/pbl6-home-renter/api-doc/pull/41) |\n| 2026-11-02 | 🟢 NON_BREAKING | added the non-success response with the status `404` | [#41](https://github.com/pbl6-home-renter/api-doc/pull/41) |\n| 2026-11-02 | 🟢 NON_BREAKING | added the non-success response with the status `409` | [#41](https://github.com/pbl6-home-renter/api-doc/pull/41) |\n| 2026-11-01 | 🟢 NON_BREAKING | Thêm endpoint mới. | [#35](https://github.com/pbl6-home-renter/api-doc/pull/35) |\n",
+        "description": "Chỉ admin active của group được đổi vai trò user active khác trong nhóm giữa `admin` và `member`; không áp dụng với direct conversation. Không thể hạ admin cuối cùng. Thay đổi role và system message `member_role_changed` được ghi cùng transaction. Payload lưu `actorUserId`, snapshot `actorDisplayName`, snapshot member và `oldRole`/`newRole`. Nếu role đích đã đúng như hiện tại, trả thành công nhưng không tạo message trùng. Không gửi FCM.\n\n```mermaid\nsequenceDiagram\n    participant C as Client\n    participant COM as Community\n    participant DB as Community DB\n    C->>COM: PUT /conversations/{conversationId}/members/{userId}/role\n    COM->>DB: Begin transaction and lock conversation/members\n    COM->>COM: Verify caller is active group admin and target is active user member\n    COM->>DB: Check last-admin constraint\n    COM->>DB: Update role and append member_role_changed system message atomically\n    COM-->>C: 200 CONVERSATION_MEMBER_ROLE_UPDATED\n```\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-11-02 | 🟢 NON_BREAKING | added the media type `application/json` for the response with the status `200` | [#41](https://github.com/pbl6-home-renter/api-doc/pull/41) |\n| 2026-11-02 | 🟢 NON_BREAKING | added the non-success response with the status `404` | [#41](https://github.com/pbl6-home-renter/api-doc/pull/41) |\n| 2026-11-02 | 🟢 NON_BREAKING | added the non-success response with the status `409` | [#41](https://github.com/pbl6-home-renter/api-doc/pull/41) |\n| 2026-11-01 | 🟢 NON_BREAKING | Thêm endpoint mới. | [#35](https://github.com/pbl6-home-renter/api-doc/pull/35) |\n",
         "requestBody": {
           "required": true,
           "content": {
@@ -21971,7 +21972,7 @@
                       "senderUserId": "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d",
                       "senderName": "Nguyễn Văn A",
                       "senderType": "user",
-                      "sequence": 42,
+                      "sequence": "42",
                       "clientMessageId": "a95a1d13-f91c-4c71-9c61-24b498d0fd0e",
                       "type": "text",
                       "content": "Dạ em gửi ảnh vòi xịt ạ",
@@ -22169,7 +22170,7 @@
                     "senderName": "Nguyễn Văn A",
                     "type": "text",
                     "content": "Dạ thợ mấy giờ qua kiểm được ạ",
-                    "sequence": 43,
+                    "sequence": "43",
                     "clientMessageId": "a95a1d13-f91c-4c71-9c61-24b498d0fd0e",
                     "createdAt": "2026-09-23T11:38:00.000Z"
                   }
@@ -22269,7 +22270,7 @@
           }
         ],
         "summary": "Mark messages as read",
-        "description": "tenant, landlord. Đánh dấu đã đọc một hội thoại. `unreadCount` trả về và trong Socket `conversation:read-updated` dùng chung quy tắc unread với `GET /conversations/unread-summary`: chỉ đếm `text`/`image`/`bot` của người khác, không đếm `system`, read-only chỉ tới `leftSequence`. Lỗi nghiệp vụ: 403 FORBIDDEN · 404 MESSAGE NOT FOUND · 422 READ CURSOR INVALID · điều kiện migration cho con trỏ.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-11-02 | 🔴 BREAKING | added the new `CONVERSATION_NOT_FOUND` enum value to the `code` response property for the response status `404` | [#36](https://github.com/pbl6-home-renter/api-doc/pull/36) |\n| 2026-11-02 | 🟢 NON_BREAKING | removed the `MESSAGE_NOT_FOUND` enum value from the `code` response property for the response status `404` | [#36](https://github.com/pbl6-home-renter/api-doc/pull/36) |\n| 2026-11-01 | 🔴 BREAKING | added the new required request property `lastReadSequence` | [#35](https://github.com/pbl6-home-renter/api-doc/pull/35) |\n| 2026-11-01 | 🟡 NEEDS_REVIEW | removed the request property `lastReadMessageId` | [#35](https://github.com/pbl6-home-renter/api-doc/pull/35) |\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
+        "description": "tenant, landlord. Đánh dấu đã đọc một hội thoại. `lastReadSequence` là chuỗi bigint thập phân. `unreadCount` trả về và trong Socket `conversation:read-updated` dùng chung quy tắc unread với `GET /conversations/unread-summary`: chỉ đếm `text`/`image`/`bot` của người khác, không đếm `system`, read-only chỉ tới `leftSequence`. Lỗi nghiệp vụ: 403 FORBIDDEN · 404 MESSAGE NOT FOUND · 422 READ CURSOR INVALID · điều kiện migration cho con trỏ.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-11-02 | 🔴 BREAKING | added the new `CONVERSATION_NOT_FOUND` enum value to the `code` response property for the response status `404` | [#36](https://github.com/pbl6-home-renter/api-doc/pull/36) |\n| 2026-11-02 | 🟢 NON_BREAKING | removed the `MESSAGE_NOT_FOUND` enum value from the `code` response property for the response status `404` | [#36](https://github.com/pbl6-home-renter/api-doc/pull/36) |\n| 2026-11-01 | 🔴 BREAKING | added the new required request property `lastReadSequence` | [#35](https://github.com/pbl6-home-renter/api-doc/pull/35) |\n| 2026-11-01 | 🟡 NEEDS_REVIEW | removed the request property `lastReadMessageId` | [#35](https://github.com/pbl6-home-renter/api-doc/pull/35) |\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "requestBody": {
           "required": true,
           "content": {
@@ -22279,7 +22280,7 @@
               },
               "example": {
                 "conversationId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-                "lastReadSequence": 42
+                "lastReadSequence": "42"
               }
             }
           }
@@ -31099,8 +31100,10 @@
                 "format": "uuid"
               },
               "sequence": {
-                "type": "integer",
-                "format": "int64"
+                "type": "string",
+                "pattern": "^\\d+$",
+                "example": "42",
+                "description": "Bigint sequence dưới dạng chuỗi thập phân."
               },
               "senderName": {
                 "type": "string",
@@ -31124,8 +31127,48 @@
               "sentAt": {
                 "type": "string",
                 "format": "date-time"
+              },
+              "payload": {
+                "type": "object",
+                "nullable": true,
+                "description": "Payload phân biệt theo action của system message; FE dùng để dựng preview bản địa hóa.",
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/ConversationMembersAddedPayload"
+                  },
+                  {
+                    "$ref": "#/components/schemas/ConversationMemberKickedPayload"
+                  },
+                  {
+                    "$ref": "#/components/schemas/ConversationMemberLeftPayload"
+                  },
+                  {
+                    "$ref": "#/components/schemas/ConversationAdminTransferredPayload"
+                  },
+                  {
+                    "$ref": "#/components/schemas/ConversationMemberRoleChangedPayload"
+                  },
+                  {
+                    "$ref": "#/components/schemas/ConversationTitleChangedPayload"
+                  },
+                  {
+                    "$ref": "#/components/schemas/ConversationAvatarChangedPayload"
+                  }
+                ],
+                "discriminator": {
+                  "propertyName": "action"
+                }
               }
-            }
+            },
+            "required": [
+              "id",
+              "sequence",
+              "senderName",
+              "contentPreview",
+              "type",
+              "sentAt",
+              "payload"
+            ]
           }
         },
         "required": [
@@ -31385,10 +31428,10 @@
             "description": "Thông tin conversation id của tài nguyên trong ngữ cảnh DTO."
           },
           "lastReadSequence": {
-            "type": "integer",
-            "format": "int64",
-            "minimum": 0,
-            "description": "Sequence cuối đã đọc; server chỉ chấp nhận cursor tiến lên."
+            "type": "string",
+            "pattern": "^\\d+$",
+            "example": "42",
+            "description": "Sequence cuối đã đọc dạng chuỗi thập phân; server chỉ chấp nhận cursor tiến lên."
           }
         },
         "required": [
@@ -31430,9 +31473,10 @@
             ]
           },
           "sequence": {
-            "type": "integer",
-            "format": "int64",
-            "minimum": 1
+            "type": "string",
+            "pattern": "^\\d+$",
+            "example": "42",
+            "description": "Bigint sequence dưới dạng chuỗi thập phân."
           },
           "clientMessageId": {
             "type": "string",
@@ -31545,9 +31589,10 @@
             "nullable": true
           },
           "sequence": {
-            "type": "integer",
-            "format": "int64",
-            "minimum": 1
+            "type": "string",
+            "pattern": "^\\d+$",
+            "example": "43",
+            "description": "Bigint sequence dưới dạng chuỗi thập phân."
           },
           "clientMessageId": {
             "type": "string",
@@ -34526,15 +34571,15 @@
                 "example": null
               },
               "leftSequence": {
-                "type": "integer",
-                "format": "int64",
+                "type": "string",
+                "pattern": "^\\d+$",
                 "nullable": true,
                 "description": "Tin cuối được phép đọc khi membership ở trạng thái read_only."
               },
               "lastReadSequence": {
-                "type": "integer",
-                "format": "int64",
-                "minimum": 0,
+                "type": "string",
+                "pattern": "^\\d+$",
+                "example": "12",
                 "description": "Sequence cuối đã đọc; unread tính từ sequence kế tiếp."
               }
             },
@@ -34556,6 +34601,7 @@
         "required": [
           "action",
           "actorUserId",
+          "actorDisplayName",
           "members"
         ],
         "properties": {
@@ -34568,6 +34614,11 @@
           "actorUserId": {
             "type": "string",
             "format": "uuid"
+          },
+          "actorDisplayName": {
+            "type": "string",
+            "maxLength": 254,
+            "description": "Snapshot tên hiển thị của người thực hiện thao tác."
           },
           "members": {
             "type": "array",
@@ -34599,6 +34650,7 @@
         "required": [
           "action",
           "actorUserId",
+          "actorDisplayName",
           "member"
         ],
         "properties": {
@@ -34612,6 +34664,11 @@
             "type": "string",
             "format": "uuid",
             "description": "User admin thực hiện thao tác kick."
+          },
+          "actorDisplayName": {
+            "type": "string",
+            "maxLength": 254,
+            "description": "Snapshot tên hiển thị của người thực hiện thao tác."
           },
           "member": {
             "type": "object",
@@ -34640,6 +34697,7 @@
         "required": [
           "action",
           "actorUserId",
+          "actorDisplayName",
           "member"
         ],
         "properties": {
@@ -34653,6 +34711,11 @@
             "type": "string",
             "format": "uuid",
             "description": "User tự rời group; trùng với member.userId."
+          },
+          "actorDisplayName": {
+            "type": "string",
+            "maxLength": 254,
+            "description": "Snapshot tên hiển thị của người thực hiện thao tác."
           },
           "member": {
             "type": "object",
@@ -34681,6 +34744,7 @@
         "required": [
           "action",
           "actorUserId",
+          "actorDisplayName",
           "member"
         ],
         "properties": {
@@ -34694,6 +34758,11 @@
             "type": "string",
             "format": "uuid",
             "description": "User kick/rời dẫn tới việc chuyển quyền admin."
+          },
+          "actorDisplayName": {
+            "type": "string",
+            "maxLength": 254,
+            "description": "Snapshot tên hiển thị của người thực hiện thao tác."
           },
           "member": {
             "type": "object",
@@ -34722,6 +34791,7 @@
         "required": [
           "action",
           "actorUserId",
+          "actorDisplayName",
           "member",
           "oldRole",
           "newRole"
@@ -34737,6 +34807,11 @@
             "type": "string",
             "format": "uuid",
             "description": "User admin thực hiện thay đổi vai trò."
+          },
+          "actorDisplayName": {
+            "type": "string",
+            "maxLength": 254,
+            "description": "Snapshot tên hiển thị của người thực hiện thao tác."
           },
           "member": {
             "type": "object",
@@ -34788,6 +34863,11 @@
             "type": "string",
             "format": "uuid"
           },
+          "actorDisplayName": {
+            "type": "string",
+            "maxLength": 254,
+            "description": "Snapshot tên hiển thị của người thực hiện thao tác."
+          },
           "oldTitle": {
             "type": "string",
             "nullable": true,
@@ -34802,6 +34882,7 @@
         "required": [
           "action",
           "actorUserId",
+          "actorDisplayName",
           "oldTitle",
           "newTitle"
         ]
@@ -34822,6 +34903,11 @@
             "type": "string",
             "format": "uuid"
           },
+          "actorDisplayName": {
+            "type": "string",
+            "maxLength": 254,
+            "description": "Snapshot tên hiển thị của người thực hiện thao tác."
+          },
           "oldAvatarMediaId": {
             "type": "string",
             "format": "uuid",
@@ -34836,6 +34922,7 @@
         "required": [
           "action",
           "actorUserId",
+          "actorDisplayName",
           "oldAvatarMediaId",
           "newAvatarMediaId"
         ]
@@ -34901,9 +34988,10 @@
                 "description": "Media ID của ảnh đã upload qua Media Service."
               },
               "sequence": {
-                "type": "integer",
-                "format": "int64",
-                "minimum": 1
+                "type": "string",
+                "pattern": "^\\d+$",
+                "example": "42",
+                "description": "Bigint sequence dưới dạng chuỗi thập phân để giữ chính xác trong JavaScript."
               },
               "clientMessageId": {
                 "type": "string",
@@ -34952,6 +35040,7 @@
                 "example": {
                   "action": "members_added",
                   "actorUserId": "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d",
+                  "actorDisplayName": "Nguyễn Văn An",
                   "members": [
                     {
                       "userId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
