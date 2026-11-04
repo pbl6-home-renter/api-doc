@@ -38705,6 +38705,2833 @@
           }
         }
       }
+    },
+    {
+      "id": "4f366c16928a7de1ecbdc8bb3c4ffb1a600cf88d999a0546154724c8d2001981",
+      "label": "Thay đổi contract từ Git",
+      "classification": "BREAKING",
+      "contractId": "rentify-public",
+      "repository": "https://github.com/pbl6-home-renter/api-doc",
+      "baseHash": "af72a3fa719a0ceb0734777a2883bfe3a9c91d95f4125482dae188719a84f640",
+      "headHash": "34aff9e28e9c0889de6eb729abce844c7f7d7d742d9509bd633baf9215581fcf",
+      "baseSource": "src/openapi.yaml",
+      "headSource": "src/openapi.yaml",
+      "detectedAt": "2026-11-04T15:47:29.235Z",
+      "committedAt": "2026-11-04T22:47:13+07:00",
+      "baseCommit": "1a37a30d19f49594a4ceb9098d6df4b5ca03c6e6",
+      "headCommit": "4d0d4908fdf5d42bd250128b4c3903743b78db13",
+      "prUrl": "https://github.com/pbl6-home-renter/api-doc/pull/51",
+      "commitUrl": "https://github.com/pbl6-home-renter/api-doc/commit/4d0d4908fdf5d42bd250128b4c3903743b78db13",
+      "metadataKind": "Git revision thực tế",
+      "reason": "CHƯA CUNG CẤP — tác giả PR phải bổ sung lý do nghiệp vụ; không thể suy ra từ OpenAPI diff.",
+      "tools": {
+        "redocly": "2.64.1",
+        "oasdiff": "1.34.1"
+      },
+      "changes": [
+        {
+          "id": "response-property-type-changed",
+          "text": "the `data/items/lastMessage/sequence` response's property `type/format` changed from `integer/int64` to `string` for status `200`",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getConversations",
+          "path": "/conversations",
+          "section": "paths",
+          "fingerprint": "29882031cc04",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu vị trí và thay đổi trước/sau trong entry này với API adapter, DTO, parser và validation; cùng BE xác nhận phương án tương thích trước merge/phát hành."
+        },
+        {
+          "id": "response-property-min-unset",
+          "text": "the `data/members/items/lastReadSequence` response property's min was unset from `0.00` for the response status `201`",
+          "level": 3,
+          "operation": "POST",
+          "operationId": "createConversation",
+          "path": "/conversations",
+          "section": "paths",
+          "fingerprint": "dbe537f288aa",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu vị trí và thay đổi trước/sau trong entry này với API adapter, DTO, parser và validation; cùng BE xác nhận phương án tương thích trước merge/phát hành."
+        },
+        {
+          "id": "response-property-type-changed",
+          "text": "the `data/members/items/lastReadSequence` response's property `type/format` changed from `integer/int64` to `string` for status `201`",
+          "level": 3,
+          "operation": "POST",
+          "operationId": "createConversation",
+          "path": "/conversations",
+          "section": "paths",
+          "fingerprint": "5966a2c8620d",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu vị trí và thay đổi trước/sau trong entry này với API adapter, DTO, parser và validation; cùng BE xác nhận phương án tương thích trước merge/phát hành."
+        },
+        {
+          "id": "response-property-type-changed",
+          "text": "the `data/members/items/leftSequence` response's property `type/format` changed from `integer/int64` to `string` for status `201`",
+          "level": 3,
+          "operation": "POST",
+          "operationId": "createConversation",
+          "path": "/conversations",
+          "section": "paths",
+          "fingerprint": "450bf53ca236",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu vị trí và thay đổi trước/sau trong entry này với API adapter, DTO, parser và validation; cùng BE xác nhận phương án tương thích trước merge/phát hành."
+        },
+        {
+          "id": "response-property-min-unset",
+          "text": "the `data/members/items/lastReadSequence` response property's min was unset from `0.00` for the response status `200`",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getConversationsConversationid",
+          "path": "/conversations/{conversationId}",
+          "section": "paths",
+          "fingerprint": "f378471427a5",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu vị trí và thay đổi trước/sau trong entry này với API adapter, DTO, parser và validation; cùng BE xác nhận phương án tương thích trước merge/phát hành."
+        },
+        {
+          "id": "response-property-type-changed",
+          "text": "the `data/members/items/lastReadSequence` response's property `type/format` changed from `integer/int64` to `string` for status `200`",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getConversationsConversationid",
+          "path": "/conversations/{conversationId}",
+          "section": "paths",
+          "fingerprint": "70744e2218fc",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu vị trí và thay đổi trước/sau trong entry này với API adapter, DTO, parser và validation; cùng BE xác nhận phương án tương thích trước merge/phát hành."
+        },
+        {
+          "id": "response-property-type-changed",
+          "text": "the `data/members/items/leftSequence` response's property `type/format` changed from `integer/int64` to `string` for status `200`",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getConversationsConversationid",
+          "path": "/conversations/{conversationId}",
+          "section": "paths",
+          "fingerprint": "346923c73884",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu vị trí và thay đổi trước/sau trong entry này với API adapter, DTO, parser và validation; cùng BE xác nhận phương án tương thích trước merge/phát hành."
+        },
+        {
+          "id": "response-property-min-unset",
+          "text": "the `data/sequence` response property's min was unset from `1.00` for the response status `201`",
+          "level": 3,
+          "operation": "POST",
+          "operationId": "sendBotReminder",
+          "path": "/conversations/{conversationId}/bot-reminders",
+          "section": "paths",
+          "fingerprint": "a43d658f1672",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu vị trí và thay đổi trước/sau trong entry này với API adapter, DTO, parser và validation; cùng BE xác nhận phương án tương thích trước merge/phát hành."
+        },
+        {
+          "id": "response-property-type-changed",
+          "text": "the `data/sequence` response's property `type/format` changed from `integer/int64` to `string` for status `201`",
+          "level": 3,
+          "operation": "POST",
+          "operationId": "sendBotReminder",
+          "path": "/conversations/{conversationId}/bot-reminders",
+          "section": "paths",
+          "fingerprint": "e05d67f93e83",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu vị trí và thay đổi trước/sau trong entry này với API adapter, DTO, parser và validation; cùng BE xác nhận phương án tương thích trước merge/phát hành."
+        },
+        {
+          "id": "response-property-min-unset",
+          "text": "the `data/items/lastReadSequence` response property's min was unset from `0.00` for the response status `200`",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "listConversationMembers",
+          "path": "/conversations/{conversationId}/members",
+          "section": "paths",
+          "fingerprint": "e205fde019a7",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu vị trí và thay đổi trước/sau trong entry này với API adapter, DTO, parser và validation; cùng BE xác nhận phương án tương thích trước merge/phát hành."
+        },
+        {
+          "id": "response-property-type-changed",
+          "text": "the `data/items/lastReadSequence` response's property `type/format` changed from `integer/int64` to `string` for status `200`",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "listConversationMembers",
+          "path": "/conversations/{conversationId}/members",
+          "section": "paths",
+          "fingerprint": "4b28cbbaf4a5",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu vị trí và thay đổi trước/sau trong entry này với API adapter, DTO, parser và validation; cùng BE xác nhận phương án tương thích trước merge/phát hành."
+        },
+        {
+          "id": "response-property-type-changed",
+          "text": "the `data/items/leftSequence` response's property `type/format` changed from `integer/int64` to `string` for status `200`",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "listConversationMembers",
+          "path": "/conversations/{conversationId}/members",
+          "section": "paths",
+          "fingerprint": "c0a133a99a67",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu vị trí và thay đổi trước/sau trong entry này với API adapter, DTO, parser và validation; cùng BE xác nhận phương án tương thích trước merge/phát hành."
+        },
+        {
+          "id": "response-property-min-unset",
+          "text": "the `data/items/lastReadSequence` response property's min was unset from `0.00` for the response status `200`",
+          "level": 3,
+          "operation": "POST",
+          "operationId": "addConversationMembers",
+          "path": "/conversations/{conversationId}/members",
+          "section": "paths",
+          "fingerprint": "fe012968529a",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu vị trí và thay đổi trước/sau trong entry này với API adapter, DTO, parser và validation; cùng BE xác nhận phương án tương thích trước merge/phát hành."
+        },
+        {
+          "id": "response-property-type-changed",
+          "text": "the `data/items/lastReadSequence` response's property `type/format` changed from `integer/int64` to `string` for status `200`",
+          "level": 3,
+          "operation": "POST",
+          "operationId": "addConversationMembers",
+          "path": "/conversations/{conversationId}/members",
+          "section": "paths",
+          "fingerprint": "c4c8ed8ed2de",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu vị trí và thay đổi trước/sau trong entry này với API adapter, DTO, parser và validation; cùng BE xác nhận phương án tương thích trước merge/phát hành."
+        },
+        {
+          "id": "response-property-type-changed",
+          "text": "the `data/items/leftSequence` response's property `type/format` changed from `integer/int64` to `string` for status `200`",
+          "level": 3,
+          "operation": "POST",
+          "operationId": "addConversationMembers",
+          "path": "/conversations/{conversationId}/members",
+          "section": "paths",
+          "fingerprint": "8ccd3ff177af",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu vị trí và thay đổi trước/sau trong entry này với API adapter, DTO, parser và validation; cùng BE xác nhận phương án tương thích trước merge/phát hành."
+        },
+        {
+          "id": "response-property-min-unset",
+          "text": "the `data/items/sequence` response property's min was unset from `1.00` for the response status `200`",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getMessages",
+          "path": "/messages",
+          "section": "paths",
+          "fingerprint": "1524f85d4984",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu vị trí và thay đổi trước/sau trong entry này với API adapter, DTO, parser và validation; cùng BE xác nhận phương án tương thích trước merge/phát hành."
+        },
+        {
+          "id": "response-property-type-changed",
+          "text": "the `data/items/sequence` response's property `type/format` changed from `integer/int64` to `string` for status `200`",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getMessages",
+          "path": "/messages",
+          "section": "paths",
+          "fingerprint": "ea77d663ccaf",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu vị trí và thay đổi trước/sau trong entry này với API adapter, DTO, parser và validation; cùng BE xác nhận phương án tương thích trước merge/phát hành."
+        },
+        {
+          "id": "response-property-min-unset",
+          "text": "the `data/sequence` response property's min was unset from `1.00` for the response status `201`",
+          "level": 3,
+          "operation": "POST",
+          "operationId": "postMessages",
+          "path": "/messages",
+          "section": "paths",
+          "fingerprint": "620dbafa805e",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu vị trí và thay đổi trước/sau trong entry này với API adapter, DTO, parser và validation; cùng BE xác nhận phương án tương thích trước merge/phát hành."
+        },
+        {
+          "id": "response-property-type-changed",
+          "text": "the `data/sequence` response's property `type/format` changed from `integer/int64` to `string` for status `201`",
+          "level": 3,
+          "operation": "POST",
+          "operationId": "postMessages",
+          "path": "/messages",
+          "section": "paths",
+          "fingerprint": "47b8fe762618",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu vị trí và thay đổi trước/sau trong entry này với API adapter, DTO, parser và validation; cùng BE xác nhận phương án tương thích trước merge/phát hành."
+        },
+        {
+          "id": "request-property-pattern-added",
+          "text": "added the pattern `^\\d+$` to the request property `lastReadSequence`",
+          "comment": "This is a breaking change because adding a pattern restriction to a previously unrestricted parameter will reject values that were previously accepted, breaking existing clients",
+          "level": 3,
+          "operation": "POST",
+          "operationId": "postMessagesMarkRead",
+          "path": "/messages/mark-read",
+          "section": "paths",
+          "fingerprint": "4f91b34483f7",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu vị trí và thay đổi trước/sau trong entry này với API adapter, DTO, parser và validation; cùng BE xác nhận phương án tương thích trước merge/phát hành."
+        },
+        {
+          "id": "request-property-type-changed",
+          "text": "the `lastReadSequence` request property `type/format` changed from `integer/int64` to `string`",
+          "level": 3,
+          "operation": "POST",
+          "operationId": "postMessagesMarkRead",
+          "path": "/messages/mark-read",
+          "section": "paths",
+          "fingerprint": "367878e4e129",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu vị trí và thay đổi trước/sau trong entry này với API adapter, DTO, parser và validation; cùng BE xác nhận phương án tương thích trước merge/phát hành."
+        },
+        {
+          "id": "api-version-not-bumped",
+          "text": "a breaking change was detected but the version is still `1.0.0`",
+          "level": 1,
+          "section": "info",
+          "fingerprint": "d3f96cd643c1",
+          "classification": "NON_BREAKING",
+          "clientImpact": "BE: xem lại quy ước version trước khi chấp nhận breaking change. FE/Mobile: theo kế hoạch chuyển đổi của entry này; version trong OpenAPI chưa chứng minh backend đã triển khai."
+        },
+        {
+          "id": "response-property-became-required",
+          "text": "the response property `data/items/lastMessage/contentPreview` became required for the status `200`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getConversations",
+          "path": "/conversations",
+          "section": "paths",
+          "fingerprint": "a1d4bf9826f1",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        },
+        {
+          "id": "response-property-became-required",
+          "text": "the response property `data/items/lastMessage/id` became required for the status `200`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getConversations",
+          "path": "/conversations",
+          "section": "paths",
+          "fingerprint": "a78e8396ed97",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        },
+        {
+          "id": "response-property-became-required",
+          "text": "the response property `data/items/lastMessage/senderName` became required for the status `200`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getConversations",
+          "path": "/conversations",
+          "section": "paths",
+          "fingerprint": "ac577ff3de4c",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        },
+        {
+          "id": "response-property-became-required",
+          "text": "the response property `data/items/lastMessage/sentAt` became required for the status `200`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getConversations",
+          "path": "/conversations",
+          "section": "paths",
+          "fingerprint": "9156b690d0d0",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        },
+        {
+          "id": "response-property-became-required",
+          "text": "the response property `data/items/lastMessage/sequence` became required for the status `200`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getConversations",
+          "path": "/conversations",
+          "section": "paths",
+          "fingerprint": "ba47a6c2e947",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        },
+        {
+          "id": "response-property-became-required",
+          "text": "the response property `data/items/lastMessage/type` became required for the status `200`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getConversations",
+          "path": "/conversations",
+          "section": "paths",
+          "fingerprint": "9b70b9fc2f1c",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        },
+        {
+          "id": "response-property-pattern-added",
+          "text": "the `data/items/lastMessage/sequence` response's property pattern `^\\d+$` was added for the status `200`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getConversations",
+          "path": "/conversations",
+          "section": "paths",
+          "fingerprint": "8a25a921a8d1",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/items/lastMessage/sequence; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-required-property-added",
+          "text": "added the required property `data/items/lastMessage/payload` to the response with the `200` status",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getConversations",
+          "path": "/conversations",
+          "section": "paths",
+          "fingerprint": "ecd77ca60a2a",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/items/lastMessage/payload; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-property-pattern-added",
+          "text": "the `data/members/items/lastReadSequence` response's property pattern `^\\d+$` was added for the status `201`",
+          "level": 1,
+          "operation": "POST",
+          "operationId": "createConversation",
+          "path": "/conversations",
+          "section": "paths",
+          "fingerprint": "7f8a61713972",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/members/items/lastReadSequence; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-property-pattern-added",
+          "text": "the `data/members/items/leftSequence` response's property pattern `^\\d+$` was added for the status `201`",
+          "level": 1,
+          "operation": "POST",
+          "operationId": "createConversation",
+          "path": "/conversations",
+          "section": "paths",
+          "fingerprint": "92ea7aede354",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/members/items/leftSequence; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-property-pattern-added",
+          "text": "the `data/members/items/lastReadSequence` response's property pattern `^\\d+$` was added for the status `200`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getConversationsConversationid",
+          "path": "/conversations/{conversationId}",
+          "section": "paths",
+          "fingerprint": "79cb875af04f",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/members/items/lastReadSequence; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-property-pattern-added",
+          "text": "the `data/members/items/leftSequence` response's property pattern `^\\d+$` was added for the status `200`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getConversationsConversationid",
+          "path": "/conversations/{conversationId}",
+          "section": "paths",
+          "fingerprint": "f635e08f6ab6",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/members/items/leftSequence; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-property-pattern-added",
+          "text": "the `data/sequence` response's property pattern `^\\d+$` was added for the status `201`",
+          "level": 1,
+          "operation": "POST",
+          "operationId": "sendBotReminder",
+          "path": "/conversations/{conversationId}/bot-reminders",
+          "section": "paths",
+          "fingerprint": "836b8eabd24f",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/sequence; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-property-pattern-added",
+          "text": "the `data/items/lastReadSequence` response's property pattern `^\\d+$` was added for the status `200`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "listConversationMembers",
+          "path": "/conversations/{conversationId}/members",
+          "section": "paths",
+          "fingerprint": "dda7e897019a",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/items/lastReadSequence; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-property-pattern-added",
+          "text": "the `data/items/leftSequence` response's property pattern `^\\d+$` was added for the status `200`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "listConversationMembers",
+          "path": "/conversations/{conversationId}/members",
+          "section": "paths",
+          "fingerprint": "dc06129f5753",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/items/leftSequence; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-property-pattern-added",
+          "text": "the `data/items/lastReadSequence` response's property pattern `^\\d+$` was added for the status `200`",
+          "level": 1,
+          "operation": "POST",
+          "operationId": "addConversationMembers",
+          "path": "/conversations/{conversationId}/members",
+          "section": "paths",
+          "fingerprint": "7f52b1c99f8a",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/items/lastReadSequence; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-property-pattern-added",
+          "text": "the `data/items/leftSequence` response's property pattern `^\\d+$` was added for the status `200`",
+          "level": 1,
+          "operation": "POST",
+          "operationId": "addConversationMembers",
+          "path": "/conversations/{conversationId}/members",
+          "section": "paths",
+          "fingerprint": "0dbe047a7e91",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/items/leftSequence; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-property-pattern-added",
+          "text": "the `data/items/sequence` response's property pattern `^\\d+$` was added for the status `200`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getMessages",
+          "path": "/messages",
+          "section": "paths",
+          "fingerprint": "3651e6aa5622",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/items/sequence; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-required-property-added",
+          "text": "added the required property `data/items/payload/oneOf[subschema #1: ConversationMembersAddedPayload]/actorDisplayName` to the response with the `200` status",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getMessages",
+          "path": "/messages",
+          "section": "paths",
+          "fingerprint": "70e1d54995d1",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/items/payload/oneOf[subschema #1: ConversationMembersAddedPayload]/actorDisplayName; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-required-property-added",
+          "text": "added the required property `data/items/payload/oneOf[subschema #2: ConversationMemberKickedPayload]/actorDisplayName` to the response with the `200` status",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getMessages",
+          "path": "/messages",
+          "section": "paths",
+          "fingerprint": "80888a6db510",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/items/payload/oneOf[subschema #2: ConversationMemberKickedPayload]/actorDisplayName; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-required-property-added",
+          "text": "added the required property `data/items/payload/oneOf[subschema #3: ConversationMemberLeftPayload]/actorDisplayName` to the response with the `200` status",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getMessages",
+          "path": "/messages",
+          "section": "paths",
+          "fingerprint": "af137efdf18f",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/items/payload/oneOf[subschema #3: ConversationMemberLeftPayload]/actorDisplayName; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-required-property-added",
+          "text": "added the required property `data/items/payload/oneOf[subschema #4: ConversationAdminTransferredPayload]/actorDisplayName` to the response with the `200` status",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getMessages",
+          "path": "/messages",
+          "section": "paths",
+          "fingerprint": "c4dc9fe865f6",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/items/payload/oneOf[subschema #4: ConversationAdminTransferredPayload]/actorDisplayName; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-required-property-added",
+          "text": "added the required property `data/items/payload/oneOf[subschema #5: ConversationMemberRoleChangedPayload]/actorDisplayName` to the response with the `200` status",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getMessages",
+          "path": "/messages",
+          "section": "paths",
+          "fingerprint": "3ad95b2dfeae",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/items/payload/oneOf[subschema #5: ConversationMemberRoleChangedPayload]/actorDisplayName; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-property-pattern-added",
+          "text": "the `data/sequence` response's property pattern `^\\d+$` was added for the status `201`",
+          "level": 1,
+          "operation": "POST",
+          "operationId": "postMessages",
+          "path": "/messages",
+          "section": "paths",
+          "fingerprint": "41d8a82cab27",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/sequence; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "request-property-min-unset",
+          "text": "the `lastReadSequence` request property's min was unset from `0.00`",
+          "level": 1,
+          "operation": "POST",
+          "operationId": "postMessagesMarkRead",
+          "path": "/messages/mark-read",
+          "section": "paths",
+          "fingerprint": "f03418aedbb9",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        }
+      ],
+      "locations": [
+        {
+          "pointer": "/components/schemas/ConversationAdminTransferredPayload/properties/actorDisplayName",
+          "before": null,
+          "after": {
+            "type": "string",
+            "maxLength": 254,
+            "description": "Snapshot tên hiển thị của người thực hiện thao tác."
+          }
+        },
+        {
+          "pointer": "/components/schemas/ConversationAdminTransferredPayload/required",
+          "before": [
+            "action",
+            "actorUserId",
+            "member"
+          ],
+          "after": [
+            "action",
+            "actorUserId",
+            "actorDisplayName",
+            "member"
+          ]
+        },
+        {
+          "pointer": "/components/schemas/ConversationAvatarChangedPayload/properties/actorDisplayName",
+          "before": null,
+          "after": {
+            "type": "string",
+            "maxLength": 254,
+            "description": "Snapshot tên hiển thị của người thực hiện thao tác."
+          }
+        },
+        {
+          "pointer": "/components/schemas/ConversationAvatarChangedPayload/required",
+          "before": [
+            "action",
+            "actorUserId",
+            "oldAvatarMediaId",
+            "newAvatarMediaId"
+          ],
+          "after": [
+            "action",
+            "actorUserId",
+            "actorDisplayName",
+            "oldAvatarMediaId",
+            "newAvatarMediaId"
+          ]
+        },
+        {
+          "pointer": "/components/schemas/ConversationListResponseDto/properties/lastMessage/properties/payload",
+          "before": null,
+          "after": {
+            "type": "object",
+            "nullable": true,
+            "description": "Payload phân biệt theo action của system message; FE dùng để dựng preview bản địa hóa.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/ConversationMembersAddedPayload"
+              },
+              {
+                "$ref": "#/components/schemas/ConversationMemberKickedPayload"
+              },
+              {
+                "$ref": "#/components/schemas/ConversationMemberLeftPayload"
+              },
+              {
+                "$ref": "#/components/schemas/ConversationAdminTransferredPayload"
+              },
+              {
+                "$ref": "#/components/schemas/ConversationMemberRoleChangedPayload"
+              },
+              {
+                "$ref": "#/components/schemas/ConversationTitleChangedPayload"
+              },
+              {
+                "$ref": "#/components/schemas/ConversationAvatarChangedPayload"
+              }
+            ],
+            "discriminator": {
+              "propertyName": "action"
+            }
+          }
+        },
+        {
+          "pointer": "/components/schemas/ConversationListResponseDto/properties/lastMessage/properties/sequence/description",
+          "before": null,
+          "after": "Bigint sequence dưới dạng chuỗi thập phân."
+        },
+        {
+          "pointer": "/components/schemas/ConversationListResponseDto/properties/lastMessage/properties/sequence/example",
+          "before": null,
+          "after": "42"
+        },
+        {
+          "pointer": "/components/schemas/ConversationListResponseDto/properties/lastMessage/properties/sequence/format",
+          "before": "int64",
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/ConversationListResponseDto/properties/lastMessage/properties/sequence/pattern",
+          "before": null,
+          "after": "^\\d+$"
+        },
+        {
+          "pointer": "/components/schemas/ConversationListResponseDto/properties/lastMessage/properties/sequence/type",
+          "before": "integer",
+          "after": "string"
+        },
+        {
+          "pointer": "/components/schemas/ConversationListResponseDto/properties/lastMessage/required",
+          "before": null,
+          "after": [
+            "id",
+            "sequence",
+            "senderName",
+            "contentPreview",
+            "type",
+            "sentAt",
+            "payload"
+          ]
+        },
+        {
+          "pointer": "/components/schemas/ConversationMember/allOf",
+          "before": [
+            {
+              "$ref": "#/components/schemas/BaseEntity"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "conversationId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "description": "ID cuộc hội thoại",
+                  "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                },
+                "userId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "nullable": true,
+                  "description": "ID người dùng tham gia",
+                  "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                },
+                "displayName": {
+                  "type": "string",
+                  "maxLength": 254,
+                  "description": "Tên hiển thị được snapshot khi thêm thành viên."
+                },
+                "participantType": {
+                  "type": "string",
+                  "enum": [
+                    "user",
+                    "system"
+                  ],
+                  "description": "Phân biệt user với participant hệ thống như bot."
+                },
+                "role": {
+                  "type": "string",
+                  "enum": [
+                    "admin",
+                    "member",
+                    "system"
+                  ]
+                },
+                "status": {
+                  "type": "string",
+                  "enum": [
+                    "active",
+                    "read_only"
+                  ]
+                },
+                "joinedAt": {
+                  "type": "string",
+                  "format": "date-time",
+                  "description": "Thời điểm bắt đầu tham gia nhóm chat",
+                  "example": "2026-09-01T10:05:00Z"
+                },
+                "leftAt": {
+                  "type": "string",
+                  "format": "date-time",
+                  "nullable": true,
+                  "description": "Thời điểm rời hoặc bị xóa khỏi hội thoại.",
+                  "example": null
+                },
+                "leftSequence": {
+                  "type": "integer",
+                  "format": "int64",
+                  "nullable": true,
+                  "description": "Tin cuối được phép đọc khi membership ở trạng thái read_only."
+                },
+                "lastReadSequence": {
+                  "type": "integer",
+                  "format": "int64",
+                  "minimum": 0,
+                  "description": "Sequence cuối đã đọc; unread tính từ sequence kế tiếp."
+                }
+              },
+              "required": [
+                "conversationId",
+                "displayName",
+                "participantType",
+                "role",
+                "status",
+                "joinedAt"
+              ]
+            }
+          ],
+          "after": [
+            {
+              "$ref": "#/components/schemas/BaseEntity"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "conversationId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "description": "ID cuộc hội thoại",
+                  "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                },
+                "userId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "nullable": true,
+                  "description": "ID người dùng tham gia",
+                  "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                },
+                "displayName": {
+                  "type": "string",
+                  "maxLength": 254,
+                  "description": "Tên hiển thị được snapshot khi thêm thành viên."
+                },
+                "participantType": {
+                  "type": "string",
+                  "enum": [
+                    "user",
+                    "system"
+                  ],
+                  "description": "Phân biệt user với participant hệ thống như bot."
+                },
+                "role": {
+                  "type": "string",
+                  "enum": [
+                    "admin",
+                    "member",
+                    "system"
+                  ]
+                },
+                "status": {
+                  "type": "string",
+                  "enum": [
+                    "active",
+                    "read_only"
+                  ]
+                },
+                "joinedAt": {
+                  "type": "string",
+                  "format": "date-time",
+                  "description": "Thời điểm bắt đầu tham gia nhóm chat",
+                  "example": "2026-09-01T10:05:00Z"
+                },
+                "leftAt": {
+                  "type": "string",
+                  "format": "date-time",
+                  "nullable": true,
+                  "description": "Thời điểm rời hoặc bị xóa khỏi hội thoại.",
+                  "example": null
+                },
+                "leftSequence": {
+                  "type": "string",
+                  "pattern": "^\\d+$",
+                  "nullable": true,
+                  "description": "Tin cuối được phép đọc khi membership ở trạng thái read_only."
+                },
+                "lastReadSequence": {
+                  "type": "string",
+                  "pattern": "^\\d+$",
+                  "example": "12",
+                  "description": "Sequence cuối đã đọc; unread tính từ sequence kế tiếp."
+                }
+              },
+              "required": [
+                "conversationId",
+                "displayName",
+                "participantType",
+                "role",
+                "status",
+                "joinedAt"
+              ]
+            }
+          ]
+        },
+        {
+          "pointer": "/components/schemas/ConversationMemberKickedPayload/properties/actorDisplayName",
+          "before": null,
+          "after": {
+            "type": "string",
+            "maxLength": 254,
+            "description": "Snapshot tên hiển thị của người thực hiện thao tác."
+          }
+        },
+        {
+          "pointer": "/components/schemas/ConversationMemberKickedPayload/required",
+          "before": [
+            "action",
+            "actorUserId",
+            "member"
+          ],
+          "after": [
+            "action",
+            "actorUserId",
+            "actorDisplayName",
+            "member"
+          ]
+        },
+        {
+          "pointer": "/components/schemas/ConversationMemberLeftPayload/properties/actorDisplayName",
+          "before": null,
+          "after": {
+            "type": "string",
+            "maxLength": 254,
+            "description": "Snapshot tên hiển thị của người thực hiện thao tác."
+          }
+        },
+        {
+          "pointer": "/components/schemas/ConversationMemberLeftPayload/required",
+          "before": [
+            "action",
+            "actorUserId",
+            "member"
+          ],
+          "after": [
+            "action",
+            "actorUserId",
+            "actorDisplayName",
+            "member"
+          ]
+        },
+        {
+          "pointer": "/components/schemas/ConversationMemberRoleChangedPayload/properties/actorDisplayName",
+          "before": null,
+          "after": {
+            "type": "string",
+            "maxLength": 254,
+            "description": "Snapshot tên hiển thị của người thực hiện thao tác."
+          }
+        },
+        {
+          "pointer": "/components/schemas/ConversationMemberRoleChangedPayload/required",
+          "before": [
+            "action",
+            "actorUserId",
+            "member",
+            "oldRole",
+            "newRole"
+          ],
+          "after": [
+            "action",
+            "actorUserId",
+            "actorDisplayName",
+            "member",
+            "oldRole",
+            "newRole"
+          ]
+        },
+        {
+          "pointer": "/components/schemas/ConversationMembersAddedPayload/properties/actorDisplayName",
+          "before": null,
+          "after": {
+            "type": "string",
+            "maxLength": 254,
+            "description": "Snapshot tên hiển thị của người thực hiện thao tác."
+          }
+        },
+        {
+          "pointer": "/components/schemas/ConversationMembersAddedPayload/required",
+          "before": [
+            "action",
+            "actorUserId",
+            "members"
+          ],
+          "after": [
+            "action",
+            "actorUserId",
+            "actorDisplayName",
+            "members"
+          ]
+        },
+        {
+          "pointer": "/components/schemas/ConversationTitleChangedPayload/properties/actorDisplayName",
+          "before": null,
+          "after": {
+            "type": "string",
+            "maxLength": 254,
+            "description": "Snapshot tên hiển thị của người thực hiện thao tác."
+          }
+        },
+        {
+          "pointer": "/components/schemas/ConversationTitleChangedPayload/required",
+          "before": [
+            "action",
+            "actorUserId",
+            "oldTitle",
+            "newTitle"
+          ],
+          "after": [
+            "action",
+            "actorUserId",
+            "actorDisplayName",
+            "oldTitle",
+            "newTitle"
+          ]
+        },
+        {
+          "pointer": "/components/schemas/Message/allOf",
+          "before": [
+            {
+              "$ref": "#/components/schemas/BaseEntity"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "conversationId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "description": "ID cuộc hội thoại chứa tin nhắn",
+                  "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                },
+                "senderUserId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "nullable": true,
+                  "description": "ID user gửi; null với system message và bot.",
+                  "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                },
+                "senderName": {
+                  "type": "string",
+                  "maxLength": 254,
+                  "description": "Tên người gửi được snapshot tại thời điểm tạo message."
+                },
+                "senderType": {
+                  "type": "string",
+                  "enum": [
+                    "user",
+                    "system"
+                  ]
+                },
+                "type": {
+                  "type": "string",
+                  "enum": [
+                    "text",
+                    "image",
+                    "system",
+                    "bot"
+                  ],
+                  "description": "Loại tin nhắn",
+                  "example": "text"
+                },
+                "content": {
+                  "type": "string",
+                  "nullable": true,
+                  "description": "Nội dung tin nhắn dạng văn bản",
+                  "example": "Đã chốt số điện tháng 09: 180 kWh"
+                },
+                "mediaId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "nullable": true,
+                  "description": "Media ID của ảnh đã upload qua Media Service."
+                },
+                "sequence": {
+                  "type": "integer",
+                  "format": "int64",
+                  "minimum": 1
+                },
+                "clientMessageId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "description": "ID idempotency do client tạo."
+                },
+                "payload": {
+                  "type": "object",
+                  "nullable": true,
+                  "description": "Payload is a discriminated union for implemented system actions.",
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/ConversationMembersAddedPayload"
+                    },
+                    {
+                      "$ref": "#/components/schemas/ConversationMemberKickedPayload"
+                    },
+                    {
+                      "$ref": "#/components/schemas/ConversationMemberLeftPayload"
+                    },
+                    {
+                      "$ref": "#/components/schemas/ConversationAdminTransferredPayload"
+                    },
+                    {
+                      "$ref": "#/components/schemas/ConversationMemberRoleChangedPayload"
+                    },
+                    {
+                      "$ref": "#/components/schemas/ConversationTitleChangedPayload"
+                    },
+                    {
+                      "$ref": "#/components/schemas/ConversationAvatarChangedPayload"
+                    }
+                  ],
+                  "discriminator": {
+                    "propertyName": "action",
+                    "mapping": {
+                      "members_added": "#/components/schemas/ConversationMembersAddedPayload",
+                      "member_kicked": "#/components/schemas/ConversationMemberKickedPayload",
+                      "member_left": "#/components/schemas/ConversationMemberLeftPayload",
+                      "admin_transferred": "#/components/schemas/ConversationAdminTransferredPayload",
+                      "member_role_changed": "#/components/schemas/ConversationMemberRoleChangedPayload",
+                      "conversation_title_changed": "#/components/schemas/ConversationTitleChangedPayload",
+                      "conversation_avatar_changed": "#/components/schemas/ConversationAvatarChangedPayload"
+                    }
+                  },
+                  "example": {
+                    "action": "members_added",
+                    "actorUserId": "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d",
+                    "members": [
+                      {
+                        "userId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                        "displayName": "Nguyễn Văn A"
+                      }
+                    ]
+                  }
+                }
+              },
+              "required": [
+                "conversationId",
+                "senderName",
+                "type"
+              ]
+            }
+          ],
+          "after": [
+            {
+              "$ref": "#/components/schemas/BaseEntity"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "conversationId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "description": "ID cuộc hội thoại chứa tin nhắn",
+                  "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                },
+                "senderUserId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "nullable": true,
+                  "description": "ID user gửi; null với system message và bot.",
+                  "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                },
+                "senderName": {
+                  "type": "string",
+                  "maxLength": 254,
+                  "description": "Tên người gửi được snapshot tại thời điểm tạo message."
+                },
+                "senderType": {
+                  "type": "string",
+                  "enum": [
+                    "user",
+                    "system"
+                  ]
+                },
+                "type": {
+                  "type": "string",
+                  "enum": [
+                    "text",
+                    "image",
+                    "system",
+                    "bot"
+                  ],
+                  "description": "Loại tin nhắn",
+                  "example": "text"
+                },
+                "content": {
+                  "type": "string",
+                  "nullable": true,
+                  "description": "Nội dung tin nhắn dạng văn bản",
+                  "example": "Đã chốt số điện tháng 09: 180 kWh"
+                },
+                "mediaId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "nullable": true,
+                  "description": "Media ID của ảnh đã upload qua Media Service."
+                },
+                "sequence": {
+                  "type": "string",
+                  "pattern": "^\\d+$",
+                  "example": "42",
+                  "description": "Bigint sequence dưới dạng chuỗi thập phân để giữ chính xác trong JavaScript."
+                },
+                "clientMessageId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "description": "ID idempotency do client tạo."
+                },
+                "payload": {
+                  "type": "object",
+                  "nullable": true,
+                  "description": "Payload is a discriminated union for implemented system actions.",
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/ConversationMembersAddedPayload"
+                    },
+                    {
+                      "$ref": "#/components/schemas/ConversationMemberKickedPayload"
+                    },
+                    {
+                      "$ref": "#/components/schemas/ConversationMemberLeftPayload"
+                    },
+                    {
+                      "$ref": "#/components/schemas/ConversationAdminTransferredPayload"
+                    },
+                    {
+                      "$ref": "#/components/schemas/ConversationMemberRoleChangedPayload"
+                    },
+                    {
+                      "$ref": "#/components/schemas/ConversationTitleChangedPayload"
+                    },
+                    {
+                      "$ref": "#/components/schemas/ConversationAvatarChangedPayload"
+                    }
+                  ],
+                  "discriminator": {
+                    "propertyName": "action",
+                    "mapping": {
+                      "members_added": "#/components/schemas/ConversationMembersAddedPayload",
+                      "member_kicked": "#/components/schemas/ConversationMemberKickedPayload",
+                      "member_left": "#/components/schemas/ConversationMemberLeftPayload",
+                      "admin_transferred": "#/components/schemas/ConversationAdminTransferredPayload",
+                      "member_role_changed": "#/components/schemas/ConversationMemberRoleChangedPayload",
+                      "conversation_title_changed": "#/components/schemas/ConversationTitleChangedPayload",
+                      "conversation_avatar_changed": "#/components/schemas/ConversationAvatarChangedPayload"
+                    }
+                  },
+                  "example": {
+                    "action": "members_added",
+                    "actorUserId": "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d",
+                    "actorDisplayName": "Nguyễn Văn An",
+                    "members": [
+                      {
+                        "userId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                        "displayName": "Nguyễn Văn A"
+                      }
+                    ]
+                  }
+                }
+              },
+              "required": [
+                "conversationId",
+                "senderName",
+                "type"
+              ]
+            }
+          ]
+        },
+        {
+          "pointer": "/components/schemas/MessageListResponseDto/properties/sequence/description",
+          "before": null,
+          "after": "Bigint sequence dưới dạng chuỗi thập phân."
+        },
+        {
+          "pointer": "/components/schemas/MessageListResponseDto/properties/sequence/example",
+          "before": null,
+          "after": "42"
+        },
+        {
+          "pointer": "/components/schemas/MessageListResponseDto/properties/sequence/format",
+          "before": "int64",
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/MessageListResponseDto/properties/sequence/minimum",
+          "before": 1,
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/MessageListResponseDto/properties/sequence/pattern",
+          "before": null,
+          "after": "^\\d+$"
+        },
+        {
+          "pointer": "/components/schemas/MessageListResponseDto/properties/sequence/type",
+          "before": "integer",
+          "after": "string"
+        },
+        {
+          "pointer": "/components/schemas/MessageMarkReadRequestDto/properties/lastReadSequence/description",
+          "before": "Sequence cuối đã đọc; server chỉ chấp nhận cursor tiến lên.",
+          "after": "Sequence cuối đã đọc dạng chuỗi thập phân; server chỉ chấp nhận cursor tiến lên."
+        },
+        {
+          "pointer": "/components/schemas/MessageMarkReadRequestDto/properties/lastReadSequence/example",
+          "before": null,
+          "after": "42"
+        },
+        {
+          "pointer": "/components/schemas/MessageMarkReadRequestDto/properties/lastReadSequence/format",
+          "before": "int64",
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/MessageMarkReadRequestDto/properties/lastReadSequence/minimum",
+          "before": 0,
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/MessageMarkReadRequestDto/properties/lastReadSequence/pattern",
+          "before": null,
+          "after": "^\\d+$"
+        },
+        {
+          "pointer": "/components/schemas/MessageMarkReadRequestDto/properties/lastReadSequence/type",
+          "before": "integer",
+          "after": "string"
+        },
+        {
+          "pointer": "/components/schemas/MessageSendResponseDto/properties/sequence/description",
+          "before": null,
+          "after": "Bigint sequence dưới dạng chuỗi thập phân."
+        },
+        {
+          "pointer": "/components/schemas/MessageSendResponseDto/properties/sequence/example",
+          "before": null,
+          "after": "43"
+        },
+        {
+          "pointer": "/components/schemas/MessageSendResponseDto/properties/sequence/format",
+          "before": "int64",
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/MessageSendResponseDto/properties/sequence/minimum",
+          "before": 1,
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/MessageSendResponseDto/properties/sequence/pattern",
+          "before": null,
+          "after": "^\\d+$"
+        },
+        {
+          "pointer": "/components/schemas/MessageSendResponseDto/properties/sequence/type",
+          "before": "integer",
+          "after": "string"
+        },
+        {
+          "pointer": "/paths/~1conversations/get/description",
+          "before": "Liệt kê các hội thoại mà user hiện tại là thành viên `active` hoặc `read_only`. Mọi bộ lọc, `totalItems` và phân trang đều chạy trên DB trước khi cắt trang. Kết quả sắp xếp theo thời điểm tin nhắn gần nhất giảm dần (hội thoại chưa có tin dùng thời điểm tạo), tie-break `id` giảm dần. `lastMessage.senderName` lấy từ snapshot trên message, `displayName` lấy từ snapshot trên membership; không gọi Identity khi đọc danh sách.\n\n**Hiển thị mặc định (áp dụng cho mọi chế độ, kể cả lookup):**\n- Direct chưa có message nào mà người xem được đọc thì **không** xuất hiện với cả hai người (kể cả khi `POST /conversations` đã tạo/khôi phục nhưng gửi tin đầu lỗi).\n- Group vừa tạo chưa có message vẫn xuất hiện.\n- Không truyền bộ lọc nào: trả cả chat tự do lẫn chat có context.\n\n**Bộ lọc** (kết hợp bằng AND):\n\n| Tham số | Ý nghĩa |\n|---|---|\n| `kind` | `direct` hoặc `group`. |\n| `hasContext` | `false`: chỉ chat tự do (`contextType` null); `true`: chỉ chat có context. Web Chat v1 gửi `hasContext=false`. |\n| `contextType` + `contextId` | Tra cứu hội thoại context đã được tạo bởi event nguồn; phải đi cùng nhau. |\n| `q` | 1–100 ký tự sau khi trim; khớp một phần, không phân biệt hoa/thường và dấu tiếng Việt. Group: so với `title` đã lưu. Direct: so với `displayName` snapshot của **người còn lại** trên `ConversationMember`. Không tìm theo tên của chính người xem hay nội dung message. |\n| `kind=direct&otherUserId=<uuid>` | Lookup chỉ đọc: trả 0 hoặc 1 direct giữa caller và `otherUserId` đã có message mà caller được đọc. Không tạo conversation, không khôi phục/kích hoạt lại membership. Nếu chưa có history thì `data=[]`; khi gửi tin đầu, client gọi `POST /conversations` để resolve lại ID. |\n\n**Kết hợp không hợp lệ → 422 `VALIDATION_FAILED`:** `otherUserId` thiếu `kind=direct`; `otherUserId` đi cùng `q`, `hasContext`, `contextType` hoặc `contextId`; `otherUserId` bằng chính caller; chỉ có một trong `contextType`/`contextId`; `hasContext=false` đi cùng `contextType`/`contextId`; `q` rỗng sau khi trim hoặc dài hơn 100 ký tự. Tham số lạ → 422 `UNEXPECTED_FIELD`. `hasContext` chỉ nhận `true`/`false`; `otherUserId`/`contextId` phải là UUID.\n\nTìm không dấu dùng hàm `translate()` sẵn có của PostgreSQL, không cần extension; phần tìm tên không dùng index.\n\n```mermaid\nsequenceDiagram\n    participant C as Client\n    participant COM as Community\n    participant DB as Community DB\n    C->>COM: GET /conversations?kind&hasContext&q&otherUserId&contextType&contextId&pageNo&pageSize\n    COM->>COM: Verify JWT and validate query combination\n    COM->>DB: Page conversations joined to caller membership,<br/>hide empty direct, apply filters + count\n    DB-->>COM: Conversations, viewer displayName and pagination count\n    COM->>DB: Load latest readable message and unread count per conversation (one query)\n    DB-->>COM: Message snapshot and unread projections\n    COM-->>C: 200 CONVERSATIONS_FETCHED\n```\n",
+          "after": "Liệt kê các hội thoại mà user hiện tại là thành viên `active` hoặc `read_only`. Mọi bộ lọc, `totalItems` và phân trang đều chạy trên DB trước khi cắt trang. Kết quả sắp xếp theo thời điểm tin nhắn gần nhất giảm dần (hội thoại chưa có tin dùng thời điểm tạo), tie-break `id` giảm dần. `lastMessage.senderName` lấy từ snapshot trên message, `displayName` lấy từ snapshot trên membership; không gọi Identity khi đọc danh sách.\n\n**Hiển thị mặc định (áp dụng cho mọi chế độ, kể cả lookup):**\n- Direct chưa có message nào mà người xem được đọc thì **không** xuất hiện với cả hai người (kể cả khi `POST /conversations` đã tạo/khôi phục nhưng gửi tin đầu lỗi).\n- Group vừa tạo chưa có message vẫn xuất hiện.\n- Không truyền bộ lọc nào: trả cả chat tự do lẫn chat có context.\n\n**Bộ lọc** (kết hợp bằng AND):\n\n| Tham số | Ý nghĩa |\n|---|---|\n| `kind` | `direct` hoặc `group`. |\n| `hasContext` | `false`: chỉ chat tự do (`contextType` null); `true`: chỉ chat có context. Web Chat v1 gửi `hasContext=false`. |\n| `contextType` + `contextId` | Tra cứu hội thoại context đã được tạo bởi event nguồn; phải đi cùng nhau. |\n| `q` | 1–100 ký tự sau khi trim; khớp một phần, không phân biệt hoa/thường và dấu tiếng Việt. Group: so với `title` đã lưu. Direct: so với `displayName` snapshot của **người còn lại** trên `ConversationMember`. Không tìm theo tên của chính người xem hay nội dung message. |\n| `kind=direct&otherUserId=<uuid>` | Lookup chỉ đọc: trả 0 hoặc 1 direct giữa caller và `otherUserId` đã có message mà caller được đọc. Không tạo conversation, không khôi phục/kích hoạt lại membership. Nếu chưa có history thì `data=[]`; khi gửi tin đầu, client gọi `POST /conversations` để resolve lại ID. |\n\n**Kết hợp không hợp lệ → 422 `VALIDATION_FAILED`:** `otherUserId` thiếu `kind=direct`; `otherUserId` đi cùng `q`, `hasContext`, `contextType` hoặc `contextId`; `otherUserId` bằng chính caller; chỉ có một trong `contextType`/`contextId`; `hasContext=false` đi cùng `contextType`/`contextId`; `q` rỗng sau khi trim hoặc dài hơn 100 ký tự. Tham số lạ → 422 `UNEXPECTED_FIELD`. `hasContext` chỉ nhận `true`/`false`; `otherUserId`/`contextId` phải là UUID.\n\nMọi sequence/cursor trong response đều là chuỗi thập phân. `lastMessage.payload` trả payload có discriminator khi message là system để client dựng preview đã bản địa hóa; các message khác trả `null`.\n\nTìm không dấu dùng hàm `translate()` sẵn có của PostgreSQL, không cần extension; phần tìm tên không dùng index.\n\n```mermaid\nsequenceDiagram\n    participant C as Client\n    participant COM as Community\n    participant DB as Community DB\n    C->>COM: GET /conversations?kind&hasContext&q&otherUserId&contextType&contextId&pageNo&pageSize\n    COM->>COM: Verify JWT and validate query combination\n    COM->>DB: Page conversations joined to caller membership,<br/>hide empty direct, apply filters + count\n    DB-->>COM: Conversations, viewer displayName and pagination count\n    COM->>DB: Load latest readable message and unread count per conversation (one query)\n    DB-->>COM: Message snapshot and unread projections\n    COM-->>C: 200 CONVERSATIONS_FETCHED\n```\n"
+        },
+        {
+          "pointer": "/paths/~1conversations/get/responses/200/content/application~1json/example/data",
+          "before": [
+            {
+              "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+              "kind": "direct",
+              "contextType": null,
+              "contextId": null,
+              "title": null,
+              "displayName": "Nguyễn Văn An",
+              "avatarMediaId": null,
+              "unreadCount": 2,
+              "lastMessage": {
+                "id": "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d",
+                "sequence": 42,
+                "senderName": "Nguyễn Văn An",
+                "contentPreview": "Mai anh qua xem phòng nhé",
+                "type": "text",
+                "sentAt": "2026-11-04T08:30:00.000Z"
+              }
+            }
+          ],
+          "after": [
+            {
+              "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+              "kind": "direct",
+              "contextType": null,
+              "contextId": null,
+              "title": null,
+              "displayName": "Nguyễn Văn An",
+              "avatarMediaId": null,
+              "unreadCount": 2,
+              "lastMessage": {
+                "id": "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d",
+                "sequence": "42",
+                "senderName": "Nguyễn Văn An",
+                "contentPreview": "Mai anh qua xem phòng nhé",
+                "type": "text",
+                "sentAt": "2026-11-04T08:30:00.000Z",
+                "payload": null
+              }
+            }
+          ]
+        },
+        {
+          "pointer": "/paths/~1conversations~1{conversationId}/get/responses/200/content/application~1json/example/data/members",
+          "before": [
+            {
+              "conversationId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+              "userId": "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d",
+              "displayName": "Bảo Dương",
+              "participantType": "user",
+              "role": "admin",
+              "status": "active",
+              "joinedAt": "2026-11-02T09:00:00.000Z",
+              "lastReadSequence": 12
+            }
+          ],
+          "after": [
+            {
+              "conversationId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+              "userId": "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d",
+              "displayName": "Bảo Dương",
+              "participantType": "user",
+              "role": "admin",
+              "status": "active",
+              "joinedAt": "2026-11-02T09:00:00.000Z",
+              "lastReadSequence": "12"
+            }
+          ]
+        },
+        {
+          "pointer": "/paths/~1conversations~1{conversationId}~1members/post/description",
+          "before": "Chỉ admin group được thêm member. Membership read_only được kích hoạt lại; member mới hoặc được kích hoạt lại xem toàn bộ lịch sử. Toàn bộ userIds phải hợp lệ và chưa active; nếu một user không hợp lệ hoặc đã active thì không thay đổi member nào. Thao tác ghi system message action=members_added trong cùng transaction. `payload` gồm `action`, `actorUserId` và `members` (mỗi phần tử có `userId`, `displayName`).\n\n```mermaid\nsequenceDiagram\n    participant C as Client\n    participant COM as Community\n    participant ID as Identity\n    participant DB as Community DB\n    C->>COM: POST /conversations/{conversationId}/members\n    COM->>DB: Verify group and caller admin\n    COM->>ID: Batch lookup names for userIds\n    ID-->>COM: User IDs and display names\n    COM->>DB: Begin transaction and lock conversation\n    COM->>DB: Add/reactivate members and save members_added system message\n    DB-->>COM: Commit member records and message atomically\n    COM-->>C: 200 CONVERSATION_MEMBERS_ADDED with members\n```\n",
+          "after": "Chỉ admin group được thêm member. Membership read_only được kích hoạt lại; member mới hoặc được kích hoạt lại xem toàn bộ lịch sử. Toàn bộ userIds phải hợp lệ và chưa active; nếu một user không hợp lệ hoặc đã active thì không thay đổi member nào. Thao tác ghi system message action=members_added trong cùng transaction. `payload` gồm `action`, `actorUserId`, snapshot `actorDisplayName` và `members` (mỗi phần tử có `userId`, `displayName`).\n\n```mermaid\nsequenceDiagram\n    participant C as Client\n    participant COM as Community\n    participant ID as Identity\n    participant DB as Community DB\n    C->>COM: POST /conversations/{conversationId}/members\n    COM->>DB: Verify group and caller admin\n    COM->>ID: Batch lookup names for userIds\n    ID-->>COM: User IDs and display names\n    COM->>DB: Begin transaction and lock conversation\n    COM->>DB: Add/reactivate members and save members_added system message\n    DB-->>COM: Commit member records and message atomically\n    COM-->>C: 200 CONVERSATION_MEMBERS_ADDED with members\n```\n"
+        },
+        {
+          "pointer": "/paths/~1conversations~1{conversationId}~1members~1{userId}~1role/put/description",
+          "before": "Chỉ admin active của group được đổi vai trò user active khác trong nhóm giữa `admin` và `member`; không áp dụng với direct conversation. Không thể hạ admin cuối cùng. Thay đổi role và system message `member_role_changed` được ghi cùng transaction. Payload lưu `actorUserId`, snapshot member và `oldRole`/`newRole`. Nếu role đích đã đúng như hiện tại, trả thành công nhưng không tạo message trùng. Không gửi FCM.\n\n```mermaid\nsequenceDiagram\n    participant C as Client\n    participant COM as Community\n    participant DB as Community DB\n    C->>COM: PUT /conversations/{conversationId}/members/{userId}/role\n    COM->>DB: Begin transaction and lock conversation/members\n    COM->>COM: Verify caller is active group admin and target is active user member\n    COM->>DB: Check last-admin constraint\n    COM->>DB: Update role and append member_role_changed system message atomically\n    COM-->>C: 200 CONVERSATION_MEMBER_ROLE_UPDATED\n```\n",
+          "after": "Chỉ admin active của group được đổi vai trò user active khác trong nhóm giữa `admin` và `member`; không áp dụng với direct conversation. Không thể hạ admin cuối cùng. Thay đổi role và system message `member_role_changed` được ghi cùng transaction. Payload lưu `actorUserId`, snapshot `actorDisplayName`, snapshot member và `oldRole`/`newRole`. Nếu role đích đã đúng như hiện tại, trả thành công nhưng không tạo message trùng. Không gửi FCM.\n\n```mermaid\nsequenceDiagram\n    participant C as Client\n    participant COM as Community\n    participant DB as Community DB\n    C->>COM: PUT /conversations/{conversationId}/members/{userId}/role\n    COM->>DB: Begin transaction and lock conversation/members\n    COM->>COM: Verify caller is active group admin and target is active user member\n    COM->>DB: Check last-admin constraint\n    COM->>DB: Update role and append member_role_changed system message atomically\n    COM-->>C: 200 CONVERSATION_MEMBER_ROLE_UPDATED\n```\n"
+        },
+        {
+          "pointer": "/paths/~1messages/get/responses/200/content/application~1json/example/data",
+          "before": [
+            {
+              "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+              "conversationId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+              "senderUserId": "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d",
+              "senderName": "Nguyễn Văn A",
+              "senderType": "user",
+              "sequence": 42,
+              "clientMessageId": "a95a1d13-f91c-4c71-9c61-24b498d0fd0e",
+              "type": "text",
+              "content": "Dạ em gửi ảnh vòi xịt ạ",
+              "mediaId": null,
+              "payload": null,
+              "createdAt": "2026-09-23T11:30:00.000Z"
+            }
+          ],
+          "after": [
+            {
+              "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+              "conversationId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+              "senderUserId": "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d",
+              "senderName": "Nguyễn Văn A",
+              "senderType": "user",
+              "sequence": "42",
+              "clientMessageId": "a95a1d13-f91c-4c71-9c61-24b498d0fd0e",
+              "type": "text",
+              "content": "Dạ em gửi ảnh vòi xịt ạ",
+              "mediaId": null,
+              "payload": null,
+              "createdAt": "2026-09-23T11:30:00.000Z"
+            }
+          ]
+        },
+        {
+          "pointer": "/paths/~1messages/post/responses/201/content/application~1json/example/data/sequence",
+          "before": 43,
+          "after": "43"
+        },
+        {
+          "pointer": "/paths/~1messages~1mark-read/post/description",
+          "before": "tenant, landlord. Đánh dấu đã đọc một hội thoại. `unreadCount` trả về và trong Socket `conversation:read-updated` dùng chung quy tắc unread với `GET /conversations/unread-summary`: chỉ đếm `text`/`image`/`bot` của người khác, không đếm `system`, read-only chỉ tới `leftSequence`. Lỗi nghiệp vụ: 403 FORBIDDEN · 404 MESSAGE NOT FOUND · 422 READ CURSOR INVALID · điều kiện migration cho con trỏ.",
+          "after": "tenant, landlord. Đánh dấu đã đọc một hội thoại. `lastReadSequence` là chuỗi bigint thập phân. `unreadCount` trả về và trong Socket `conversation:read-updated` dùng chung quy tắc unread với `GET /conversations/unread-summary`: chỉ đếm `text`/`image`/`bot` của người khác, không đếm `system`, read-only chỉ tới `leftSequence`. Lỗi nghiệp vụ: 403 FORBIDDEN · 404 MESSAGE NOT FOUND · 422 READ CURSOR INVALID · điều kiện migration cho con trỏ."
+        },
+        {
+          "pointer": "/paths/~1messages~1mark-read/post/requestBody/content/application~1json/example/lastReadSequence",
+          "before": 42,
+          "after": "42"
+        }
+      ],
+      "semanticDiff": {
+        "paths": {
+          "modified": {
+            "/conversations": {
+              "operations": {
+                "modified": {
+                  "GET": {
+                    "responses": {
+                      "modified": {
+                        "200": {
+                          "content": {
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "properties": {
+                                    "modified": {
+                                      "data": {
+                                        "items": {
+                                          "properties": {
+                                            "modified": {
+                                              "lastMessage": {
+                                                "required": {
+                                                  "added": [
+                                                    "senderName",
+                                                    "contentPreview",
+                                                    "type",
+                                                    "sentAt",
+                                                    "payload",
+                                                    "id",
+                                                    "sequence"
+                                                  ]
+                                                },
+                                                "properties": {
+                                                  "added": [
+                                                    "payload"
+                                                  ],
+                                                  "modified": {
+                                                    "sequence": {
+                                                      "type": {
+                                                        "added": [
+                                                          "string"
+                                                        ],
+                                                        "deleted": [
+                                                          "integer"
+                                                        ]
+                                                      },
+                                                      "format": {
+                                                        "from": "int64",
+                                                        "to": ""
+                                                      },
+                                                      "pattern": {
+                                                        "from": "",
+                                                        "to": "^\\d+$"
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "POST": {
+                    "responses": {
+                      "modified": {
+                        "201": {
+                          "content": {
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "properties": {
+                                    "modified": {
+                                      "data": {
+                                        "properties": {
+                                          "modified": {
+                                            "members": {
+                                              "items": {
+                                                "properties": {
+                                                  "modified": {
+                                                    "lastReadSequence": {
+                                                      "type": {
+                                                        "added": [
+                                                          "string"
+                                                        ],
+                                                        "deleted": [
+                                                          "integer"
+                                                        ]
+                                                      },
+                                                      "format": {
+                                                        "from": "int64",
+                                                        "to": ""
+                                                      },
+                                                      "min": {
+                                                        "from": 0,
+                                                        "to": null
+                                                      },
+                                                      "pattern": {
+                                                        "from": "",
+                                                        "to": "^\\d+$"
+                                                      }
+                                                    },
+                                                    "leftSequence": {
+                                                      "type": {
+                                                        "added": [
+                                                          "string"
+                                                        ],
+                                                        "deleted": [
+                                                          "integer"
+                                                        ]
+                                                      },
+                                                      "format": {
+                                                        "from": "int64",
+                                                        "to": ""
+                                                      },
+                                                      "pattern": {
+                                                        "from": "",
+                                                        "to": "^\\d+$"
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "/conversations/{conversationId}": {
+              "operations": {
+                "modified": {
+                  "GET": {
+                    "responses": {
+                      "modified": {
+                        "200": {
+                          "content": {
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "properties": {
+                                    "modified": {
+                                      "data": {
+                                        "properties": {
+                                          "modified": {
+                                            "members": {
+                                              "items": {
+                                                "properties": {
+                                                  "modified": {
+                                                    "lastReadSequence": {
+                                                      "type": {
+                                                        "added": [
+                                                          "string"
+                                                        ],
+                                                        "deleted": [
+                                                          "integer"
+                                                        ]
+                                                      },
+                                                      "format": {
+                                                        "from": "int64",
+                                                        "to": ""
+                                                      },
+                                                      "min": {
+                                                        "from": 0,
+                                                        "to": null
+                                                      },
+                                                      "pattern": {
+                                                        "from": "",
+                                                        "to": "^\\d+$"
+                                                      }
+                                                    },
+                                                    "leftSequence": {
+                                                      "type": {
+                                                        "added": [
+                                                          "string"
+                                                        ],
+                                                        "deleted": [
+                                                          "integer"
+                                                        ]
+                                                      },
+                                                      "format": {
+                                                        "from": "int64",
+                                                        "to": ""
+                                                      },
+                                                      "pattern": {
+                                                        "from": "",
+                                                        "to": "^\\d+$"
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "/conversations/{conversationId}/bot-reminders": {
+              "operations": {
+                "modified": {
+                  "POST": {
+                    "responses": {
+                      "modified": {
+                        "201": {
+                          "content": {
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "properties": {
+                                    "modified": {
+                                      "data": {
+                                        "properties": {
+                                          "modified": {
+                                            "sequence": {
+                                              "type": {
+                                                "added": [
+                                                  "string"
+                                                ],
+                                                "deleted": [
+                                                  "integer"
+                                                ]
+                                              },
+                                              "format": {
+                                                "from": "int64",
+                                                "to": ""
+                                              },
+                                              "min": {
+                                                "from": 1,
+                                                "to": null
+                                              },
+                                              "pattern": {
+                                                "from": "",
+                                                "to": "^\\d+$"
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "/conversations/{conversationId}/members": {
+              "operations": {
+                "modified": {
+                  "GET": {
+                    "responses": {
+                      "modified": {
+                        "200": {
+                          "content": {
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "properties": {
+                                    "modified": {
+                                      "data": {
+                                        "items": {
+                                          "properties": {
+                                            "modified": {
+                                              "lastReadSequence": {
+                                                "type": {
+                                                  "added": [
+                                                    "string"
+                                                  ],
+                                                  "deleted": [
+                                                    "integer"
+                                                  ]
+                                                },
+                                                "format": {
+                                                  "from": "int64",
+                                                  "to": ""
+                                                },
+                                                "min": {
+                                                  "from": 0,
+                                                  "to": null
+                                                },
+                                                "pattern": {
+                                                  "from": "",
+                                                  "to": "^\\d+$"
+                                                }
+                                              },
+                                              "leftSequence": {
+                                                "type": {
+                                                  "added": [
+                                                    "string"
+                                                  ],
+                                                  "deleted": [
+                                                    "integer"
+                                                  ]
+                                                },
+                                                "format": {
+                                                  "from": "int64",
+                                                  "to": ""
+                                                },
+                                                "pattern": {
+                                                  "from": "",
+                                                  "to": "^\\d+$"
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "POST": {
+                    "responses": {
+                      "modified": {
+                        "200": {
+                          "content": {
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "properties": {
+                                    "modified": {
+                                      "data": {
+                                        "items": {
+                                          "properties": {
+                                            "modified": {
+                                              "lastReadSequence": {
+                                                "type": {
+                                                  "added": [
+                                                    "string"
+                                                  ],
+                                                  "deleted": [
+                                                    "integer"
+                                                  ]
+                                                },
+                                                "format": {
+                                                  "from": "int64",
+                                                  "to": ""
+                                                },
+                                                "min": {
+                                                  "from": 0,
+                                                  "to": null
+                                                },
+                                                "pattern": {
+                                                  "from": "",
+                                                  "to": "^\\d+$"
+                                                }
+                                              },
+                                              "leftSequence": {
+                                                "type": {
+                                                  "added": [
+                                                    "string"
+                                                  ],
+                                                  "deleted": [
+                                                    "integer"
+                                                  ]
+                                                },
+                                                "format": {
+                                                  "from": "int64",
+                                                  "to": ""
+                                                },
+                                                "pattern": {
+                                                  "from": "",
+                                                  "to": "^\\d+$"
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "/messages": {
+              "operations": {
+                "modified": {
+                  "GET": {
+                    "responses": {
+                      "modified": {
+                        "200": {
+                          "content": {
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "properties": {
+                                    "modified": {
+                                      "data": {
+                                        "items": {
+                                          "properties": {
+                                            "modified": {
+                                              "payload": {
+                                                "oneOf": {
+                                                  "modified": [
+                                                    {
+                                                      "base": {
+                                                        "index": 0,
+                                                        "component": "ConversationMembersAddedPayload",
+                                                        "title": "ConversationMembersAddedPayload"
+                                                      },
+                                                      "revision": {
+                                                        "index": 0,
+                                                        "component": "ConversationMembersAddedPayload",
+                                                        "title": "ConversationMembersAddedPayload"
+                                                      },
+                                                      "diff": {
+                                                        "required": {
+                                                          "added": [
+                                                            "actorDisplayName"
+                                                          ]
+                                                        },
+                                                        "properties": {
+                                                          "added": [
+                                                            "actorDisplayName"
+                                                          ]
+                                                        }
+                                                      }
+                                                    },
+                                                    {
+                                                      "base": {
+                                                        "index": 1,
+                                                        "component": "ConversationMemberKickedPayload",
+                                                        "title": "ConversationMemberKickedPayload"
+                                                      },
+                                                      "revision": {
+                                                        "index": 1,
+                                                        "component": "ConversationMemberKickedPayload",
+                                                        "title": "ConversationMemberKickedPayload"
+                                                      },
+                                                      "diff": {
+                                                        "required": {
+                                                          "added": [
+                                                            "actorDisplayName"
+                                                          ]
+                                                        },
+                                                        "properties": {
+                                                          "added": [
+                                                            "actorDisplayName"
+                                                          ]
+                                                        }
+                                                      }
+                                                    },
+                                                    {
+                                                      "base": {
+                                                        "index": 2,
+                                                        "component": "ConversationMemberLeftPayload",
+                                                        "title": "ConversationMemberLeftPayload"
+                                                      },
+                                                      "revision": {
+                                                        "index": 2,
+                                                        "component": "ConversationMemberLeftPayload",
+                                                        "title": "ConversationMemberLeftPayload"
+                                                      },
+                                                      "diff": {
+                                                        "required": {
+                                                          "added": [
+                                                            "actorDisplayName"
+                                                          ]
+                                                        },
+                                                        "properties": {
+                                                          "added": [
+                                                            "actorDisplayName"
+                                                          ]
+                                                        }
+                                                      }
+                                                    },
+                                                    {
+                                                      "base": {
+                                                        "index": 3,
+                                                        "component": "ConversationAdminTransferredPayload",
+                                                        "title": "ConversationAdminTransferredPayload"
+                                                      },
+                                                      "revision": {
+                                                        "index": 3,
+                                                        "component": "ConversationAdminTransferredPayload",
+                                                        "title": "ConversationAdminTransferredPayload"
+                                                      },
+                                                      "diff": {
+                                                        "required": {
+                                                          "added": [
+                                                            "actorDisplayName"
+                                                          ]
+                                                        },
+                                                        "properties": {
+                                                          "added": [
+                                                            "actorDisplayName"
+                                                          ]
+                                                        }
+                                                      }
+                                                    },
+                                                    {
+                                                      "base": {
+                                                        "index": 4,
+                                                        "component": "ConversationMemberRoleChangedPayload",
+                                                        "title": "ConversationMemberRoleChangedPayload"
+                                                      },
+                                                      "revision": {
+                                                        "index": 4,
+                                                        "component": "ConversationMemberRoleChangedPayload",
+                                                        "title": "ConversationMemberRoleChangedPayload"
+                                                      },
+                                                      "diff": {
+                                                        "required": {
+                                                          "added": [
+                                                            "actorDisplayName"
+                                                          ]
+                                                        },
+                                                        "properties": {
+                                                          "added": [
+                                                            "actorDisplayName"
+                                                          ]
+                                                        }
+                                                      }
+                                                    }
+                                                  ]
+                                                }
+                                              },
+                                              "sequence": {
+                                                "type": {
+                                                  "added": [
+                                                    "string"
+                                                  ],
+                                                  "deleted": [
+                                                    "integer"
+                                                  ]
+                                                },
+                                                "format": {
+                                                  "from": "int64",
+                                                  "to": ""
+                                                },
+                                                "min": {
+                                                  "from": 1,
+                                                  "to": null
+                                                },
+                                                "pattern": {
+                                                  "from": "",
+                                                  "to": "^\\d+$"
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "POST": {
+                    "responses": {
+                      "modified": {
+                        "201": {
+                          "content": {
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "properties": {
+                                    "modified": {
+                                      "data": {
+                                        "properties": {
+                                          "modified": {
+                                            "sequence": {
+                                              "type": {
+                                                "added": [
+                                                  "string"
+                                                ],
+                                                "deleted": [
+                                                  "integer"
+                                                ]
+                                              },
+                                              "format": {
+                                                "from": "int64",
+                                                "to": ""
+                                              },
+                                              "min": {
+                                                "from": 1,
+                                                "to": null
+                                              },
+                                              "pattern": {
+                                                "from": "",
+                                                "to": "^\\d+$"
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "/messages/mark-read": {
+              "operations": {
+                "modified": {
+                  "POST": {
+                    "requestBody": {
+                      "content": {
+                        "modified": {
+                          "application/json": {
+                            "schema": {
+                              "properties": {
+                                "modified": {
+                                  "lastReadSequence": {
+                                    "type": {
+                                      "added": [
+                                        "string"
+                                      ],
+                                      "deleted": [
+                                        "integer"
+                                      ]
+                                    },
+                                    "format": {
+                                      "from": "int64",
+                                      "to": ""
+                                    },
+                                    "min": {
+                                      "from": 0,
+                                      "to": null
+                                    },
+                                    "pattern": {
+                                      "from": "",
+                                      "to": "^\\d+$"
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "components": {
+          "schemas": {
+            "modified": {
+              "ConversationAdminTransferredPayload": {
+                "required": {
+                  "added": [
+                    "actorDisplayName"
+                  ]
+                },
+                "properties": {
+                  "added": [
+                    "actorDisplayName"
+                  ]
+                }
+              },
+              "ConversationAvatarChangedPayload": {
+                "required": {
+                  "added": [
+                    "actorDisplayName"
+                  ]
+                },
+                "properties": {
+                  "added": [
+                    "actorDisplayName"
+                  ]
+                }
+              },
+              "ConversationDetailResponseDto": {
+                "properties": {
+                  "modified": {
+                    "members": {
+                      "items": {
+                        "properties": {
+                          "modified": {
+                            "lastReadSequence": {
+                              "type": {
+                                "added": [
+                                  "string"
+                                ],
+                                "deleted": [
+                                  "integer"
+                                ]
+                              },
+                              "format": {
+                                "from": "int64",
+                                "to": ""
+                              },
+                              "min": {
+                                "from": 0,
+                                "to": null
+                              },
+                              "pattern": {
+                                "from": "",
+                                "to": "^\\d+$"
+                              }
+                            },
+                            "leftSequence": {
+                              "type": {
+                                "added": [
+                                  "string"
+                                ],
+                                "deleted": [
+                                  "integer"
+                                ]
+                              },
+                              "format": {
+                                "from": "int64",
+                                "to": ""
+                              },
+                              "pattern": {
+                                "from": "",
+                                "to": "^\\d+$"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "ConversationListResponseDto": {
+                "properties": {
+                  "modified": {
+                    "lastMessage": {
+                      "required": {
+                        "added": [
+                          "senderName",
+                          "contentPreview",
+                          "type",
+                          "sentAt",
+                          "payload",
+                          "id",
+                          "sequence"
+                        ]
+                      },
+                      "properties": {
+                        "added": [
+                          "payload"
+                        ],
+                        "modified": {
+                          "sequence": {
+                            "type": {
+                              "added": [
+                                "string"
+                              ],
+                              "deleted": [
+                                "integer"
+                              ]
+                            },
+                            "format": {
+                              "from": "int64",
+                              "to": ""
+                            },
+                            "pattern": {
+                              "from": "",
+                              "to": "^\\d+$"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "ConversationMember": {
+                "properties": {
+                  "modified": {
+                    "lastReadSequence": {
+                      "type": {
+                        "added": [
+                          "string"
+                        ],
+                        "deleted": [
+                          "integer"
+                        ]
+                      },
+                      "format": {
+                        "from": "int64",
+                        "to": ""
+                      },
+                      "min": {
+                        "from": 0,
+                        "to": null
+                      },
+                      "pattern": {
+                        "from": "",
+                        "to": "^\\d+$"
+                      }
+                    },
+                    "leftSequence": {
+                      "type": {
+                        "added": [
+                          "string"
+                        ],
+                        "deleted": [
+                          "integer"
+                        ]
+                      },
+                      "format": {
+                        "from": "int64",
+                        "to": ""
+                      },
+                      "pattern": {
+                        "from": "",
+                        "to": "^\\d+$"
+                      }
+                    }
+                  }
+                }
+              },
+              "ConversationMemberKickedPayload": {
+                "required": {
+                  "added": [
+                    "actorDisplayName"
+                  ]
+                },
+                "properties": {
+                  "added": [
+                    "actorDisplayName"
+                  ]
+                }
+              },
+              "ConversationMemberLeftPayload": {
+                "required": {
+                  "added": [
+                    "actorDisplayName"
+                  ]
+                },
+                "properties": {
+                  "added": [
+                    "actorDisplayName"
+                  ]
+                }
+              },
+              "ConversationMemberRoleChangedPayload": {
+                "required": {
+                  "added": [
+                    "actorDisplayName"
+                  ]
+                },
+                "properties": {
+                  "added": [
+                    "actorDisplayName"
+                  ]
+                }
+              },
+              "ConversationMembersAddedPayload": {
+                "required": {
+                  "added": [
+                    "actorDisplayName"
+                  ]
+                },
+                "properties": {
+                  "added": [
+                    "actorDisplayName"
+                  ]
+                }
+              },
+              "ConversationTitleChangedPayload": {
+                "required": {
+                  "added": [
+                    "actorDisplayName"
+                  ]
+                },
+                "properties": {
+                  "added": [
+                    "actorDisplayName"
+                  ]
+                }
+              },
+              "Message": {
+                "properties": {
+                  "modified": {
+                    "payload": {
+                      "oneOf": {
+                        "modified": [
+                          {
+                            "base": {
+                              "index": 0,
+                              "component": "ConversationMembersAddedPayload",
+                              "title": "ConversationMembersAddedPayload"
+                            },
+                            "revision": {
+                              "index": 0,
+                              "component": "ConversationMembersAddedPayload",
+                              "title": "ConversationMembersAddedPayload"
+                            },
+                            "diff": {
+                              "required": {
+                                "added": [
+                                  "actorDisplayName"
+                                ]
+                              },
+                              "properties": {
+                                "added": [
+                                  "actorDisplayName"
+                                ]
+                              }
+                            }
+                          },
+                          {
+                            "base": {
+                              "index": 1,
+                              "component": "ConversationMemberKickedPayload",
+                              "title": "ConversationMemberKickedPayload"
+                            },
+                            "revision": {
+                              "index": 1,
+                              "component": "ConversationMemberKickedPayload",
+                              "title": "ConversationMemberKickedPayload"
+                            },
+                            "diff": {
+                              "required": {
+                                "added": [
+                                  "actorDisplayName"
+                                ]
+                              },
+                              "properties": {
+                                "added": [
+                                  "actorDisplayName"
+                                ]
+                              }
+                            }
+                          },
+                          {
+                            "base": {
+                              "index": 2,
+                              "component": "ConversationMemberLeftPayload",
+                              "title": "ConversationMemberLeftPayload"
+                            },
+                            "revision": {
+                              "index": 2,
+                              "component": "ConversationMemberLeftPayload",
+                              "title": "ConversationMemberLeftPayload"
+                            },
+                            "diff": {
+                              "required": {
+                                "added": [
+                                  "actorDisplayName"
+                                ]
+                              },
+                              "properties": {
+                                "added": [
+                                  "actorDisplayName"
+                                ]
+                              }
+                            }
+                          },
+                          {
+                            "base": {
+                              "index": 3,
+                              "component": "ConversationAdminTransferredPayload",
+                              "title": "ConversationAdminTransferredPayload"
+                            },
+                            "revision": {
+                              "index": 3,
+                              "component": "ConversationAdminTransferredPayload",
+                              "title": "ConversationAdminTransferredPayload"
+                            },
+                            "diff": {
+                              "required": {
+                                "added": [
+                                  "actorDisplayName"
+                                ]
+                              },
+                              "properties": {
+                                "added": [
+                                  "actorDisplayName"
+                                ]
+                              }
+                            }
+                          },
+                          {
+                            "base": {
+                              "index": 4,
+                              "component": "ConversationMemberRoleChangedPayload",
+                              "title": "ConversationMemberRoleChangedPayload"
+                            },
+                            "revision": {
+                              "index": 4,
+                              "component": "ConversationMemberRoleChangedPayload",
+                              "title": "ConversationMemberRoleChangedPayload"
+                            },
+                            "diff": {
+                              "required": {
+                                "added": [
+                                  "actorDisplayName"
+                                ]
+                              },
+                              "properties": {
+                                "added": [
+                                  "actorDisplayName"
+                                ]
+                              }
+                            }
+                          },
+                          {
+                            "base": {
+                              "index": 5,
+                              "component": "ConversationTitleChangedPayload",
+                              "title": "ConversationTitleChangedPayload"
+                            },
+                            "revision": {
+                              "index": 5,
+                              "component": "ConversationTitleChangedPayload",
+                              "title": "ConversationTitleChangedPayload"
+                            },
+                            "diff": {
+                              "required": {
+                                "added": [
+                                  "actorDisplayName"
+                                ]
+                              },
+                              "properties": {
+                                "added": [
+                                  "actorDisplayName"
+                                ]
+                              }
+                            }
+                          },
+                          {
+                            "base": {
+                              "index": 6,
+                              "component": "ConversationAvatarChangedPayload",
+                              "title": "ConversationAvatarChangedPayload"
+                            },
+                            "revision": {
+                              "index": 6,
+                              "component": "ConversationAvatarChangedPayload",
+                              "title": "ConversationAvatarChangedPayload"
+                            },
+                            "diff": {
+                              "required": {
+                                "added": [
+                                  "actorDisplayName"
+                                ]
+                              },
+                              "properties": {
+                                "added": [
+                                  "actorDisplayName"
+                                ]
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    "sequence": {
+                      "type": {
+                        "added": [
+                          "string"
+                        ],
+                        "deleted": [
+                          "integer"
+                        ]
+                      },
+                      "format": {
+                        "from": "int64",
+                        "to": ""
+                      },
+                      "min": {
+                        "from": 1,
+                        "to": null
+                      },
+                      "pattern": {
+                        "from": "",
+                        "to": "^\\d+$"
+                      }
+                    }
+                  }
+                }
+              },
+              "MessageListResponseDto": {
+                "properties": {
+                  "modified": {
+                    "payload": {
+                      "oneOf": {
+                        "modified": [
+                          {
+                            "base": {
+                              "index": 0,
+                              "component": "ConversationMembersAddedPayload",
+                              "title": "ConversationMembersAddedPayload"
+                            },
+                            "revision": {
+                              "index": 0,
+                              "component": "ConversationMembersAddedPayload",
+                              "title": "ConversationMembersAddedPayload"
+                            },
+                            "diff": {
+                              "required": {
+                                "added": [
+                                  "actorDisplayName"
+                                ]
+                              },
+                              "properties": {
+                                "added": [
+                                  "actorDisplayName"
+                                ]
+                              }
+                            }
+                          },
+                          {
+                            "base": {
+                              "index": 1,
+                              "component": "ConversationMemberKickedPayload",
+                              "title": "ConversationMemberKickedPayload"
+                            },
+                            "revision": {
+                              "index": 1,
+                              "component": "ConversationMemberKickedPayload",
+                              "title": "ConversationMemberKickedPayload"
+                            },
+                            "diff": {
+                              "required": {
+                                "added": [
+                                  "actorDisplayName"
+                                ]
+                              },
+                              "properties": {
+                                "added": [
+                                  "actorDisplayName"
+                                ]
+                              }
+                            }
+                          },
+                          {
+                            "base": {
+                              "index": 2,
+                              "component": "ConversationMemberLeftPayload",
+                              "title": "ConversationMemberLeftPayload"
+                            },
+                            "revision": {
+                              "index": 2,
+                              "component": "ConversationMemberLeftPayload",
+                              "title": "ConversationMemberLeftPayload"
+                            },
+                            "diff": {
+                              "required": {
+                                "added": [
+                                  "actorDisplayName"
+                                ]
+                              },
+                              "properties": {
+                                "added": [
+                                  "actorDisplayName"
+                                ]
+                              }
+                            }
+                          },
+                          {
+                            "base": {
+                              "index": 3,
+                              "component": "ConversationAdminTransferredPayload",
+                              "title": "ConversationAdminTransferredPayload"
+                            },
+                            "revision": {
+                              "index": 3,
+                              "component": "ConversationAdminTransferredPayload",
+                              "title": "ConversationAdminTransferredPayload"
+                            },
+                            "diff": {
+                              "required": {
+                                "added": [
+                                  "actorDisplayName"
+                                ]
+                              },
+                              "properties": {
+                                "added": [
+                                  "actorDisplayName"
+                                ]
+                              }
+                            }
+                          },
+                          {
+                            "base": {
+                              "index": 4,
+                              "component": "ConversationMemberRoleChangedPayload",
+                              "title": "ConversationMemberRoleChangedPayload"
+                            },
+                            "revision": {
+                              "index": 4,
+                              "component": "ConversationMemberRoleChangedPayload",
+                              "title": "ConversationMemberRoleChangedPayload"
+                            },
+                            "diff": {
+                              "required": {
+                                "added": [
+                                  "actorDisplayName"
+                                ]
+                              },
+                              "properties": {
+                                "added": [
+                                  "actorDisplayName"
+                                ]
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    "sequence": {
+                      "type": {
+                        "added": [
+                          "string"
+                        ],
+                        "deleted": [
+                          "integer"
+                        ]
+                      },
+                      "format": {
+                        "from": "int64",
+                        "to": ""
+                      },
+                      "min": {
+                        "from": 1,
+                        "to": null
+                      },
+                      "pattern": {
+                        "from": "",
+                        "to": "^\\d+$"
+                      }
+                    }
+                  }
+                }
+              },
+              "MessageMarkReadRequestDto": {
+                "properties": {
+                  "modified": {
+                    "lastReadSequence": {
+                      "type": {
+                        "added": [
+                          "string"
+                        ],
+                        "deleted": [
+                          "integer"
+                        ]
+                      },
+                      "format": {
+                        "from": "int64",
+                        "to": ""
+                      },
+                      "min": {
+                        "from": 0,
+                        "to": null
+                      },
+                      "pattern": {
+                        "from": "",
+                        "to": "^\\d+$"
+                      }
+                    }
+                  }
+                }
+              },
+              "MessageSendResponseDto": {
+                "properties": {
+                  "modified": {
+                    "sequence": {
+                      "type": {
+                        "added": [
+                          "string"
+                        ],
+                        "deleted": [
+                          "integer"
+                        ]
+                      },
+                      "format": {
+                        "from": "int64",
+                        "to": ""
+                      },
+                      "min": {
+                        "from": 1,
+                        "to": null
+                      },
+                      "pattern": {
+                        "from": "",
+                        "to": "^\\d+$"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   ]
 }
