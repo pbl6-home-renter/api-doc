@@ -1,0 +1,155 @@
+get:
+  tags:
+  - User
+  x-apidog-folder: User
+  x-apidog-status: designing
+  operationId: getUsersDirectory
+  security:
+  - BearerAuth: []
+  summary: Search user directory
+  description: |-
+    Landlord/Tenant đang hoạt động tìm Landlord/Tenant khác theo tên để mở chat 1:1 hoặc tạo nhóm (Web Chat v1). Endpoint tách khỏi `GET /users` nên không nới quyền danh sách quản trị của Admin.
+
+    - Người gọi: chỉ `landlord`, `tenant` có `status=active`. Admin nhận 403 `FORBIDDEN`; tài khoản bị khóa nhận 403 `ACCOUNT_LOCKED`.
+    - Kết quả: chỉ user `landlord`/`tenant`, `status=active`, chưa bị xóa; luôn loại chính người gọi.
+    - `q` bắt buộc, được trim; khớp **một phần** tên (`contains`) không phân biệt chữ hoa/thường và dấu tiếng Việt (`Nguyen` khớp `Nguyễn`, `duc` khớp `Đức`). Ký tự `%`, `_`, `\` trong `q` được hiểu theo nghĩa đen.
+    - Lọc, đếm `totalItems` và phân trang đều chạy trên DB trước khi cắt trang. Sắp xếp cố định theo `name` tăng dần rồi `id` tăng dần.
+    - Mỗi phần tử chỉ có `id`, `name`; không trả email, phone, role, status hoặc avatar. Hai người trùng tên được trả thành hai phần tử khác `id`.
+    - Không cần PostgreSQL extension: Identity chuẩn hóa dấu bằng hàm `translate()` sẵn có trên cả cột `name` và `q`. Truy vấn quét theo điều kiện role/status/is_deleted, không dùng index cho phần tìm tên.
+
+    ```mermaid
+    sequenceDiagram
+        autonumber
+        participant GW as API Gateway
+        participant ID as Identity
+        participant DB as Identity DB
+
+        GW->>ID: GET /users/directory?q&pageNo&pageSize
+        ID->>ID: Verify JWT, role landlord/tenant, account active
+        ID->>DB: Users active landlord/tenant, not deleted, id != caller,<br/>fold(name) LIKE %fold(q)% ORDER BY name, id + count
+        ID-->>GW: 200 USER_DIRECTORY_FETCHED [{id, name}] + pagination
+    ```
+  parameters:
+  - name: q
+    in: query
+    required: true
+    description: Từ khóa tên, 1–100 ký tự sau khi trim.
+    schema:
+      type: string
+      minLength: 1
+      maxLength: 100
+    example: Nguyen
+  - name: pageNo
+    in: query
+    description: Số trang offset, bắt đầu từ 1.
+    schema:
+      type: integer
+      minimum: 1
+      default: 1
+  - name: pageSize
+    in: query
+    description: Số bản ghi mỗi trang.
+    schema:
+      type: integer
+      minimum: 1
+      maximum: 100
+      default: 20
+  responses:
+    '200':
+      description: 'Thành công: Danh sách Landlord/Tenant khớp tên.'
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required:
+            - statusCode
+            - code
+            - data
+            - pagination
+            properties:
+              statusCode:
+                type: integer
+                enum:
+                - 200
+              code:
+                type: string
+                enum:
+                - USER_DIRECTORY_FETCHED
+              data:
+                type: array
+                items:
+                  $ref: ../../openapi.yaml#/components/schemas/UserDirectoryResponseDto
+              pagination:
+                type: object
+                additionalProperties: false
+                required:
+                - type
+                - pageNo
+                - pageSize
+                - totalItems
+                - totalPages
+                - hasNextPage
+                - hasPreviousPage
+                properties:
+                  type:
+                    type: string
+                    enum:
+                    - offset
+                  pageNo:
+                    type: integer
+                    minimum: 1
+                  pageSize:
+                    type: integer
+                    minimum: 1
+                    maximum: 100
+                  totalItems:
+                    type: integer
+                    minimum: 0
+                  totalPages:
+                    type: integer
+                    minimum: 0
+                  hasNextPage:
+                    type: boolean
+                  hasPreviousPage:
+                    type: boolean
+          example:
+            statusCode: 200
+            code: USER_DIRECTORY_FETCHED
+            data:
+            - id: '3fa85f64-5717-4562-b3fc-2c963f66afa6'
+              name: Nguyễn Văn An
+            pagination:
+              type: offset
+              pageNo: 1
+              pageSize: 20
+              totalItems: 1
+              totalPages: 1
+              hasNextPage: false
+              hasPreviousPage: false
+    '400':
+      $ref: ../../openapi.yaml#/components/responses/BadRequestQueryError
+    '401':
+      $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
+    '403':
+      $ref: ../../openapi.yaml#/components/responses/ForbiddenError
+    '422':
+      description: '`q` thiếu, rỗng sau khi trim hoặc dài hơn 100 ký tự; `pageNo`/`pageSize` ngoài giới hạn; `UNEXPECTED_FIELD` khi gửi tham số query không có trong contract.'
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code]
+            properties:
+              statusCode: { type: integer, enum: [422] }
+              code: { type: string, enum: [VALIDATION_FAILED, UNEXPECTED_FIELD] }
+          example:
+            statusCode: 422
+            code: VALIDATION_FAILED
+    '429':
+      $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
+    '503':
+      $ref: ../../openapi.yaml#/components/responses/AuthUnavailableError
+    '500':
+      $ref: ../../openapi.yaml#/components/responses/InternalServerError

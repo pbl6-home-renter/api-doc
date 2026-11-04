@@ -1,0 +1,12 @@
+type: object
+x-apidog-folder: "Conversation/Response"
+title: ConversationUnreadSummaryResponseDto
+description: Tổng tin nhắn chưa đọc của user hiện tại; FE tự hiển thị `9+` khi giá trị lớn hơn 9.
+properties:
+  totalUnreadCount:
+    type: integer
+    minimum: 0
+    description: Tổng thật (không cắt ở 9) của unreadCount trên mọi hội thoại user được phép đọc.
+    example: 12
+required: [totalUnreadCount]
+additionalProperties: false

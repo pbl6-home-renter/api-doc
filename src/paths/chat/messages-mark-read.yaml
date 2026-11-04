@@ -7,8 +7,9 @@ post:
   security:
     - BearerAuth: []
   summary: Mark messages as read
-  description: 'tenant, landlord. Đánh dấu đã đọc một hội thoại. Lỗi nghiệp vụ: 403 FORBIDDEN · 404 MESSAGE NOT
-    FOUND · 422 READ CURSOR INVALID · điều kiện migration cho con trỏ.'
+  description: 'tenant, landlord. Đánh dấu đã đọc một hội thoại. `unreadCount` trả về và trong Socket `conversation:read-updated`
+    dùng chung quy tắc unread với `GET /conversations/unread-summary`: chỉ đếm `text`/`image`/`bot` của người khác, không đếm `system`,
+    read-only chỉ tới `leftSequence`. Lỗi nghiệp vụ: 403 FORBIDDEN · 404 MESSAGE NOT FOUND · 422 READ CURSOR INVALID · điều kiện migration cho con trỏ.'
   requestBody:
     required: true
     content:
