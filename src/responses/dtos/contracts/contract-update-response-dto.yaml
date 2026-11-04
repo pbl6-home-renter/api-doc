@@ -1,10 +1,10 @@
 type: object
 x-apidog-folder: "Contract/Response"
 title: ContractUpdateResponseDto
-description: Phản hồi khi cập nhật hợp đồng nháp
+description: Response after updating a draft or active contract
 properties:
   id: { type: string, format: uuid , description: "Định danh duy nhất của tài nguyên." }
-  status: { type: string, enum: [draft], example: draft , description: "Trạng thái hiện tại của tài nguyên trong quy trình nghiệp vụ." }
+  status: { type: string, enum: [draft, active], example: active, description: "Current contract status." }
   description: { type: string, nullable: true, minLength: 1, maxLength: 500 , description: "Thông tin description của tài nguyên trong ngữ cảnh DTO." }
 
 required:

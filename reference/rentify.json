@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "PBL6 Home Renter API Specification",
-    "description": "Tài liệu đặc tả hợp đồng API cho dự án PBL6 (Hệ thống quản lý nhà trọ và tìm bạn ở ghép). Được đồng bộ trực tiếp với Apidog từ Git repository theo kiến trúc modular component.\n\n<!-- contract-changelog -->\n**Thay đổi contract gần đây (không gắn endpoint)**\n\n| Vị trí | Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|---|\n| POST /conversations/resolve-conversation | 2026-11-01 | 🔴 BREAKING | api path removed without deprecation | [#35](https://github.com/pbl6-home-renter/api-doc/pull/35) |\n| components | 2026-11-01 | 🟢 NON_BREAKING | removed the schema `MessageMention` | [#35](https://github.com/pbl6-home-renter/api-doc/pull/35) |\n| specification | 2026-10-30 | 🟡 NEEDS_REVIEW | Có khác biệt cấu trúc/metadata nhưng engine không phân loại tác động; xem bảng trước/sau. | [#28](https://github.com/pbl6-home-renter/api-doc/pull/28) |\n| POST /conversations/resolve-conversation | 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| POST /conversations/resolve-conversation | 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
+    "description": "Tài liệu đặc tả hợp đồng API cho dự án PBL6 (Hệ thống quản lý nhà trọ và tìm bạn ở ghép). Được đồng bộ trực tiếp với Apidog từ Git repository theo kiến trúc modular component.\n\n<!-- contract-changelog -->\n**Thay đổi contract gần đây (không gắn endpoint)**\n\n| Vị trí | Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|---|\n| POST /conversations/resolve-conversation | 2026-11-01 | 🔴 BREAKING | api path removed without deprecation | [#35](https://github.com/pbl6-home-renter/api-doc/pull/35) |\n| components | 2026-11-01 | 🟢 NON_BREAKING | removed the schema `MessageMention` | [#35](https://github.com/pbl6-home-renter/api-doc/pull/35) |\n| specification | 2026-10-30 | 🟡 NEEDS_REVIEW | Có khác biệt cấu trúc/metadata nhưng engine không phân loại tác động; xem bảng trước/sau. | [#28](https://github.com/pbl6-home-renter/api-doc/pull/28) |\n| PATCH /contract-members/{contractMemberId} | 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| POST /contract-members/{contractMemberId}/leave-contract | 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| POST /conversations/resolve-conversation | 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| PATCH /contract-members/{contractMemberId} | 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| POST /contract-members/{contractMemberId}/leave-contract | 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| POST /conversations/resolve-conversation | 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
     "version": "1.0.0"
   },
   "servers": [
@@ -12830,7 +12830,7 @@
           }
         ],
         "summary": "List my contracts",
-        "description": "tenant. Hợp đồng của tôi. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 VALIDATION FAILED.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
+        "description": "Tenant. Requires a valid JWT and an active account.\nReturns contracts where the caller is the named tenant (contracts.tenant_id) or a member who has not left.\nA member has not left when is_deleted = false and left_at IS NULL or left_at is after today (UTC),\nmatching the contract-member status definition. Leaving today or earlier does not grant member access.\nSoft-deleted contracts are excluded. Being both the named tenant and a member returns one item.\nEach item includes roomName, buildingName and contractCode (HD- followed by the first six ID characters).\nrentalType is not part of Contract. Money fields use the same numeric representation as GET /contracts.\nSupports filter[status], filter[roomId] and offset pagination. Defaults to startDate descending, then id ascending.\nsort only accepts startDate; order accepts asc or desc. Only format=json is supported.\nInvalid query values or unsupported fields return 422 VALIDATION_FAILED.\nAn invalid filter[roomId] returns 422 INVALID_UUID, matching the existing project UUID validator.\nOther roles return 403 FORBIDDEN.\nContracts returned here can also be opened through GET /contracts/{contractId} while access remains valid.\nThe service does not currently apply rate limiting.\n\n```mermaid\nsequenceDiagram\n    autonumber\n    participant GW as API Gateway\n    participant TEN as Tenancy\n    participant DB as Tenancy DB\n\n    GW->>TEN: GET /api/v1/me/contracts + Bearer token\n    TEN->>TEN: Verify JWT, tenant role, active account and query\n    TEN->>DB: COUNT contracts JOIN rooms JOIN buildings WHERE not deleted AND (named tenant OR EXISTS active membership)\n    DB-->>TEN: Total matching contracts\n    TEN->>DB: SELECT same scope and filters ORDER BY start_date DESC, id ASC LIMIT pageSize OFFSET offset\n    DB-->>TEN: Contracts with room and building names\n    TEN->>TEN: Map ContractMyListResponseDto and offset pagination\n    TEN-->>GW: 200 CONTRACTS_MY_FETCHED\n```\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "parameters": [
           {
             "name": "filter",
@@ -12844,7 +12844,15 @@
               "additionalProperties": false,
               "properties": {
                 "status": {
-                  "type": "string"
+                  "type": "string",
+                  "enum": [
+                    "draft",
+                    "signed",
+                    "active",
+                    "suspended",
+                    "expired",
+                    "terminated"
+                  ]
                 },
                 "roomId": {
                   "type": "string",
@@ -12873,16 +12881,36 @@
             }
           },
           {
-            "name": "format",
+            "name": "sort",
             "in": "query",
-            "description": "json trả envelope; định dạng khác trả file stream.",
             "schema": {
               "type": "string",
               "enum": [
-                "json",
-                "xlsx",
-                "csv",
-                "pdf"
+                "startDate"
+              ],
+              "default": "startDate"
+            }
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ],
+              "default": "desc"
+            }
+          },
+          {
+            "name": "format",
+            "in": "query",
+            "description": "Only JSON is supported. Other formats return 422 VALIDATION_FAILED.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "json"
               ],
               "default": "json"
             }
@@ -12977,11 +13005,11 @@
                       "status": "active",
                       "rentPrice": 3500000,
                       "depositAmount": 7000000,
-                      "contractCode": "Ví dụ",
-                      "roomName": "Ví dụ",
-                      "buildingName": "Ví dụ",
-                      "startDate": "2026-09-23T11:55:00.000Z",
-                      "endDate": "2026-09-23T11:55:00.000Z"
+                      "contractCode": "HD-3fa85f",
+                      "roomName": "P.201",
+                      "buildingName": "Building A",
+                      "startDate": "2026-09-01",
+                      "endDate": "2027-08-31"
                     }
                   ],
                   "pagination": {
@@ -12993,24 +13021,6 @@
                     "hasNextPage": false,
                     "hasPreviousPage": false
                   }
-                }
-              },
-              "text/csv": {
-                "schema": {
-                  "type": "string",
-                  "format": "binary"
-                }
-              },
-              "application/pdf": {
-                "schema": {
-                  "type": "string",
-                  "format": "binary"
-                }
-              },
-              "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": {
-                "schema": {
-                  "type": "string",
-                  "format": "binary"
                 }
               }
             }
@@ -13025,10 +13035,34 @@
             "$ref": "#/components/responses/ForbiddenError"
           },
           "422": {
-            "$ref": "#/components/responses/ValidationError"
-          },
-          "429": {
-            "$ref": "#/components/responses/TooManyRequestsError"
+            "description": "Invalid filters, pagination, sort, order, format or unsupported query fields.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        422
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "VALIDATION_FAILED",
+                        "INVALID_UUID"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
@@ -13523,7 +13557,7 @@
           }
         ],
         "summary": "Get contract details",
-        "description": "Landlord hoặc tenant, yêu cầu JWT hợp lệ và tài khoản không bị khóa.\nLandlord chỉ xem hợp đồng có landlordId = user.id; tenant chỉ xem hợp đồng có tenantId = user.id.\nNgười gọi không liên quan trả 403 FORBIDDEN. Hợp đồng không tồn tại hoặc đã xóa mềm trả 404 RESOURCE_NOT_FOUND.\ncontractId không phải UUID trả 400 BAD_REQUEST theo ParseUUIDPipe.\nResponse phản ánh entity hiện tại, gồm vehicleCount và description; chưa trả signedContractMediaId.\nService chưa có rate limiter.\n\n```mermaid\nsequenceDiagram\n    autonumber\n    participant GW as API Gateway\n    participant TEN as Tenancy\n    participant DB as Tenancy DB\n\n    GW->>TEN: GET /api/v1/contracts/{contractId} + Bearer token\n    TEN->>TEN: Verify JWT, landlord/tenant role, active account and UUID\n    TEN->>DB: SELECT contract WHERE id = contractId AND is_deleted = false\n    DB-->>TEN: Contract or null\n    alt Missing or deleted contract\n        TEN-->>GW: 404 RESOURCE_NOT_FOUND\n    else Contract exists\n        TEN->>TEN: Match landlordId for landlord or tenantId for tenant\n        alt Caller is not the owner or linked tenant\n            TEN-->>GW: 403 FORBIDDEN\n        else Authorized caller\n            TEN->>TEN: Map ContractDetailResponseDto\n            TEN-->>GW: 200 CONTRACT_FETCHED\n        end\n    end\n```\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-11-02 | 🔴 BREAKING | the `data/depositAmount` response's property `type` was widened from `integer` to `number` for status `200` | [#34](https://github.com/pbl6-home-renter/api-doc/pull/34) |\n| 2026-11-02 | 🔴 BREAKING | the `data/rentPrice` response's property `type` was widened from `integer` to `number` for status `200` | [#34](https://github.com/pbl6-home-renter/api-doc/pull/34) |\n| 2026-11-02 | 🔴 BREAKING | removed the required property `data/signedContractMediaId` from the response with the `200` status | [#34](https://github.com/pbl6-home-renter/api-doc/pull/34) |\n| 2026-11-02 | 🟢 NON_BREAKING | Bỏ response lỗi HTTP 429. | [#34](https://github.com/pbl6-home-renter/api-doc/pull/34) |\n| 2026-11-02 | 🟢 NON_BREAKING | added the required property `data/description` to the response with the `200` status | [#34](https://github.com/pbl6-home-renter/api-doc/pull/34) |\n| 2026-11-02 | 🟢 NON_BREAKING | added the required property `data/vehicleCount` to the response with the `200` status | [#34](https://github.com/pbl6-home-renter/api-doc/pull/34) |\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
+        "description": "Landlord hoặc tenant, yêu cầu JWT hợp lệ và tài khoản không bị khóa.\nLandlord chỉ xem hợp đồng có landlordId = user.id.\nTenant xem được khi tenantId = user.id hoặc là member chưa rời của hợp đồng:\nmember có tenant_id = user.id, is_deleted = false và left_at IS NULL hoặc left_at > hôm nay (UTC).\nMember rời hôm nay hoặc trước đó không được cấp quyền qua membership.\nQuyền tenant dùng cùng phạm vi với GET /me/contracts và danh sách member.\nNgười gọi không liên quan trả 403 FORBIDDEN. Hợp đồng không tồn tại hoặc đã xóa mềm trả 404 RESOURCE_NOT_FOUND.\ncontractId không phải UUID trả 400 BAD_REQUEST theo ParseUUIDPipe.\nResponse phản ánh entity hiện tại, gồm vehicleCount và description; chưa trả signedContractMediaId.\nService chưa có rate limiter.\n\n```mermaid\nsequenceDiagram\n    autonumber\n    participant GW as API Gateway\n    participant TEN as Tenancy\n    participant DB as Tenancy DB\n\n    GW->>TEN: GET /api/v1/contracts/{contractId} + Bearer token\n    TEN->>TEN: Verify JWT, landlord/tenant role, active account and UUID\n    TEN->>DB: SELECT contract WHERE id = contractId AND is_deleted = false\n    DB-->>TEN: Contract or null\n    alt Missing or deleted contract\n        TEN-->>GW: 404 RESOURCE_NOT_FOUND\n    else Contract exists\n        TEN->>TEN: Match landlordId for landlord or tenantId for tenant\n        opt Tenant is not the named tenant\n            TEN->>DB: EXISTS member WHERE contract_id and tenant_id match, not deleted, left_at IS NULL or after today (UTC)\n            DB-->>TEN: Membership access\n        end\n        alt Caller is not the owner, named tenant or member who has not left\n            TEN-->>GW: 403 FORBIDDEN\n        else Authorized caller\n            TEN->>TEN: Map ContractDetailResponseDto\n            TEN-->>GW: 200 CONTRACT_FETCHED\n        end\n    end\n```\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-11-02 | 🔴 BREAKING | the `data/depositAmount` response's property `type` was widened from `integer` to `number` for status `200` | [#34](https://github.com/pbl6-home-renter/api-doc/pull/34) |\n| 2026-11-02 | 🔴 BREAKING | the `data/rentPrice` response's property `type` was widened from `integer` to `number` for status `200` | [#34](https://github.com/pbl6-home-renter/api-doc/pull/34) |\n| 2026-11-02 | 🔴 BREAKING | removed the required property `data/signedContractMediaId` from the response with the `200` status | [#34](https://github.com/pbl6-home-renter/api-doc/pull/34) |\n| 2026-11-02 | 🟢 NON_BREAKING | Bỏ response lỗi HTTP 429. | [#34](https://github.com/pbl6-home-renter/api-doc/pull/34) |\n| 2026-11-02 | 🟢 NON_BREAKING | added the required property `data/description` to the response with the `200` status | [#34](https://github.com/pbl6-home-renter/api-doc/pull/34) |\n| 2026-11-02 | 🟢 NON_BREAKING | added the required property `data/vehicleCount` to the response with the `200` status | [#34](https://github.com/pbl6-home-renter/api-doc/pull/34) |\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "parameters": [
           {
             "name": "contractId",
@@ -13619,8 +13653,8 @@
             "BearerAuth": []
           }
         ],
-        "summary": "Update draft contract",
-        "description": "Landlord. Chỉ sửa description của hợp đồng thuộc user.id lấy từ JWT và còn trạng thái draft.\ndescription bắt buộc xuất hiện; null để xóa ghi chú, chuỗi phải dài 1–500 ký tự và không chỉ chứa khoảng trắng.\nHợp đồng không tồn tại hoặc đã xóa mềm trả 404 RESOURCE_NOT_FOUND; khác chủ trả 403 FORBIDDEN;\nkhông còn draft trả 409 CONTRACT_NOT_DRAFT. contractId không phải UUID trả 400 BAD_REQUEST.\nField ngoài DTO trả 422 UNEXPECTED_FIELD; giá trị không hợp lệ trả 422 VALIDATION_FAILED.\nContract và outbox contract.updated được lưu trong cùng transaction; relay publish sau commit.\nService chưa có rate limiter.\n\n```mermaid\nsequenceDiagram\n    autonumber\n    participant GW as API Gateway\n    participant TEN as Tenancy\n    participant DB as Tenancy DB\n    participant RELAY as Outbox Relay\n    participant MQ as RabbitMQ\n\n    GW->>TEN: PATCH /api/v1/contracts/{contractId} + Bearer token\n    TEN->>TEN: Verify JWT, landlord role, active account, UUID and body\n    TEN->>DB: BEGIN\n    TEN->>DB: SELECT contract WHERE id = contractId AND is_deleted = false FOR UPDATE\n    DB-->>TEN: Contract or null\n    TEN->>TEN: Check existence, ownership, draft status and description\n    alt Missing contract, wrong owner, non-draft or invalid description\n        TEN->>DB: ROLLBACK\n        TEN-->>GW: 404 / 403 / 409 / 422 with matching error code\n    else Valid update\n        TEN->>DB: UPDATE description and updated_at\n        TEN->>DB: INSERT outbox_messages (contract.updated)\n        alt Storage operation fails\n            TEN->>DB: ROLLBACK\n            TEN-->>GW: Error response; neither change is committed\n        else Commit succeeds\n            TEN->>DB: COMMIT\n            TEN-->>GW: 200 CONTRACT_UPDATED\n            RELAY->>DB: Claim committed outbox event\n            RELAY->>MQ: Publish contract.updated\n            MQ-->>RELAY: Publisher confirm\n            RELAY->>DB: Mark outbox PUBLISHED\n        end\n    end\n```\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-11-02 | 🔴 BREAKING | added the pattern `\\S` to the request property `description` | [#34](https://github.com/pbl6-home-renter/api-doc/pull/34) |\n| 2026-11-02 | 🔴 BREAKING | added the new `UNEXPECTED_FIELD` enum value to the `code` response property for the response status `422` | [#34](https://github.com/pbl6-home-renter/api-doc/pull/34) |\n| 2026-11-02 | 🟢 NON_BREAKING | Bỏ response lỗi HTTP 429. | [#34](https://github.com/pbl6-home-renter/api-doc/pull/34) |\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
+        "summary": "Update draft or active contract",
+        "description": "Landlord. Update a contract owned by user.id from the verified JWT.\nDraft contracts retain the existing description-only update flow; description is required and vehicleCount is rejected.\nActive contracts accept vehicleCount and/or description. An empty update is invalid.\nvehicleCount must be null or an integer between 0 and 2147483647. Omitted fields keep their existing value.\ndescription may be null to clear the note; otherwise it must contain 1-500 characters and not be whitespace-only.\nVehicle-count changes are used when pending invoices are regenerated; issued invoice snapshots remain unchanged.\nHợp đồng không tồn tại hoặc đã xóa mềm trả 404 RESOURCE_NOT_FOUND; khác chủ trả 403 FORBIDDEN;\nstatuses other than draft/active return 409 CONTRACT_NOT_DRAFT. A draft vehicleCount update also returns this conflict.\ncontractId không phải UUID trả 400 BAD_REQUEST.\nField ngoài DTO trả 422 UNEXPECTED_FIELD; giá trị không hợp lệ trả 422 VALIDATION_FAILED.\nContract và outbox contract.updated được lưu trong cùng transaction; relay publish sau commit.\nService chưa có rate limiter.\n\n```mermaid\nsequenceDiagram\n    autonumber\n    participant GW as API Gateway\n    participant TEN as Tenancy\n    participant DB as Tenancy DB\n    participant RELAY as Outbox Relay\n    participant MQ as RabbitMQ\n\n    GW->>TEN: PATCH /api/v1/contracts/{contractId} + Bearer token\n    TEN->>TEN: Verify JWT, landlord role, active account, UUID and body\n    TEN->>DB: BEGIN\n    TEN->>DB: SELECT contract WHERE id = contractId AND is_deleted = false FOR UPDATE\n    DB-->>TEN: Contract or null\n    TEN->>TEN: Check existence, ownership, draft/active state and allowed updates\n    alt Missing contract, wrong owner, unsupported state or invalid update\n        TEN->>DB: ROLLBACK\n        TEN-->>GW: 404 / 403 / 409 / 422 with matching error code\n    else Valid update\n        TEN->>DB: UPDATE supplied description / active vehicle_count and updated_at\n        TEN->>DB: INSERT outbox_messages (contract.updated)\n        alt Storage operation fails\n            TEN->>DB: ROLLBACK\n            TEN-->>GW: Error response; neither change is committed\n        else Commit succeeds\n            TEN->>DB: COMMIT\n            TEN-->>GW: 200 CONTRACT_UPDATED\n            RELAY->>DB: Claim committed outbox event\n            RELAY->>MQ: Publish contract.updated\n            MQ-->>RELAY: Publisher confirm\n            RELAY->>DB: Mark outbox PUBLISHED\n        end\n    end\n```\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-11-02 | 🔴 BREAKING | added the pattern `\\S` to the request property `description` | [#34](https://github.com/pbl6-home-renter/api-doc/pull/34) |\n| 2026-11-02 | 🔴 BREAKING | added the new `UNEXPECTED_FIELD` enum value to the `code` response property for the response status `422` | [#34](https://github.com/pbl6-home-renter/api-doc/pull/34) |\n| 2026-11-02 | 🟢 NON_BREAKING | Bỏ response lỗi HTTP 429. | [#34](https://github.com/pbl6-home-renter/api-doc/pull/34) |\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "parameters": [
           {
             "name": "contractId",
@@ -13647,7 +13681,7 @@
         },
         "responses": {
           "200": {
-            "description": "Thành công: Sửa hợp đồng nháp.",
+            "description": "Contract updated successfully.",
             "content": {
               "application/json": {
                 "schema": {
@@ -13741,7 +13775,7 @@
             }
           },
           "422": {
-            "description": "description không hợp lệ hoặc body chứa field ngoài DTO.",
+            "description": "Invalid description/vehicleCount, an empty update, or fields outside the DTO.",
             "content": {
               "application/json": {
                 "schema": {
@@ -14190,7 +14224,7 @@
           }
         ],
         "summary": "Activate signed contract",
-        "description": "Landlord, yêu cầu JWT hợp lệ và tài khoản không bị khóa. Body chỉ gồm signedContractMediaId.\ncontractId sai định dạng UUID trả 400 BAD_REQUEST theo ParseUUIDPipe.\nThiếu hoặc null signedContractMediaId trả 422 VALIDATION_FAILED; UUID của file không hợp lệ trả\n422 INVALID_UUID; field ngoài DTO trả 422 UNEXPECTED_FIELD.\n\nTenancy kiểm tra media trước khi mở transaction, qua GET /internal/media/{signedContractMediaId}\ncủa Identity bằng service token. Adapter yêu cầu phần data của response envelope gồm\nid, ownerType, ownerId, purpose và status. Chỉ chấp nhận id khớp signedContractMediaId,\nownerType = contract, ownerId = contractId, purpose = contract_signed và status = uploaded.\nIdentity timeout, không kết nối được, lỗi 5xx hoặc từ chối service token trả 503 SERVICE_UNAVAILABLE.\nCác lỗi 4xx khác từ Identity được truyền nguyên trạng. Chưa xác minh được file thì không kích hoạt.\n\nSau khi media hợp lệ, trong cùng transaction: khóa hợp đồng, kiểm tra hợp đồng chưa bị xóa\nvà landlordId = user.id, khóa phòng, kích hoạt hợp đồng và chuyển phòng sang occupied.\nHợp đồng hoặc phòng không tồn tại/đã xóa trả 404 RESOURCE_NOT_FOUND; khác landlord trả 403 FORBIDDEN.\nVi phạm unique index UQ_contracts_room_active trả 409 ACTIVE_CONTRACT_EXISTS.\nVì media được kiểm tra trước, media không hợp lệ có thể trả 409 trước khi kiểm tra 404/403 của hợp đồng.\n\n**Điều kiện lỗi theo Contract**\n\n- `409 SIGNED_FILE_MISSING`: xảy ra khi có ít nhất một điều kiện:\n  media không tồn tại (Identity trả 404 hoặc response không có dữ liệu media);\n  `media.id` khác `signedContractMediaId`;\n  `ownerType` khác `contract`;\n  `ownerId` khác `contractId` trên URL;\n  `purpose` khác `contract_signed`;\n  hoặc file chưa upload xong (`status` khác `uploaded`). Không mở transaction ở nhánh này.\n- `409 CONTRACT_NOT_READY`: hợp đồng không ở `draft` hoặc `signed`,\n  hoặc phòng không ở `available` (đang `maintenance` hoặc đã `occupied`).\n  Transaction rollback, không lưu thay đổi hợp đồng, phòng hoặc outbox.\n  Hợp đồng/phòng không tồn tại hoặc đã xóa được xử lý riêng bằng `404 RESOURCE_NOT_FOUND`.\n\nThành công trả 200 CONTRACT_ACTIVATED với id, status = active và activatedAt dạng ISO 8601 UTC.\nactivatedAt được lưu ở contracts.activated_at. Hợp đồng, phòng và hai outbox message\ncontract.activated, room.status_changed được ghi cùng transaction; lỗi ghi dữ liệu sẽ rollback.\nOutbox relay publish sau khi commit. Không kiểm tra startDate so với ngày hiện tại; không dùng OTP/PIN.\nService chưa có rate limiter.\n\n**Giới hạn tích hợp hiện tại:** Identity-Service local chưa triển khai GET /internal/media/{id};\nresponse public complete-upload cũng chưa có field status. Dữ liệu ở trên là contract nội bộ\nadapter đang yêu cầu, chưa phải endpoint media đã được triển khai. Nếu Identity trả 404 cho route\nchưa có, Tenancy hiện trả 409 SIGNED_FILE_MISSING. signedContractMediaId được xác minh để kích hoạt,\nnhưng hiện chưa được lưu trên Contract hoặc đưa vào event contract.activated.\nHandler so sánh UUID theo chuỗi, chưa chuẩn hóa hoa/thường; giữ nguyên UUID do API trả về\nđể tránh bị từ chối nhầm bằng SIGNED_FILE_MISSING.\n\n```mermaid\nsequenceDiagram\n    autonumber\n    participant GW as API Gateway\n    participant TEN as Tenancy\n    participant ID as Identity\n    participant DB as Tenancy DB\n    participant RELAY as Outbox Relay\n    participant MQ as RabbitMQ\n\n    GW->>TEN: POST /api/v1/contracts/{contractId}/activate-contract + Bearer token<br/>{signedContractMediaId}\n    TEN->>TEN: Verify JWT, landlord role, active account and request\n    TEN->>ID: GET /internal/media/{signedContractMediaId} + service token\n    alt Identity unavailable, timeout, 5xx or service-token rejection\n        TEN-->>GW: 503 SERVICE_UNAVAILABLE; no transaction\n    else Identity responds\n        ID-->>TEN: Response envelope containing media data, or 404\n        TEN->>TEN: Check id, ownerType, ownerId, purpose and uploaded status\n        alt Media missing, Identity 404 or media does not match\n            TEN-->>GW: 409 SIGNED_FILE_MISSING; no transaction\n        else Valid signed media\n            Note over TEN,DB: One transaction for contract + room + outbox\n            TEN->>DB: BEGIN; lock non-deleted contract FOR UPDATE\n            DB-->>TEN: Contract or null\n            TEN->>TEN: Require contract exists and landlordId = JWT user.id\n            alt Contract missing/deleted or wrong landlord\n                TEN->>DB: ROLLBACK\n                TEN-->>GW: 404 RESOURCE_NOT_FOUND / 403 FORBIDDEN\n            else Authorized contract\n                TEN->>DB: Lock non-deleted room FOR UPDATE\n                DB-->>TEN: Room or null\n                TEN->>TEN: Require contract draft/signed and room available<br/>Maintenance or occupied room is not ready\n                alt Room missing/deleted or contract/room not ready\n                    TEN->>DB: ROLLBACK\n                    TEN-->>GW: 404 RESOURCE_NOT_FOUND / 409 CONTRACT_NOT_READY\n                else Ready for activation\n                    TEN->>DB: Save contract active + activated_at; save room occupied<br/>Append contract.activated and room.status_changed to outbox\n                    alt Active-room unique violation or persistence failure\n                        TEN->>DB: ROLLBACK\n                        TEN-->>GW: 409 ACTIVE_CONTRACT_EXISTS / 500 INTERNAL_SERVER_ERROR\n                    else Transaction succeeds\n                        TEN->>DB: COMMIT\n                        TEN-->>GW: 200 CONTRACT_ACTIVATED {id, status: active, activatedAt}\n                        RELAY->>DB: Claim committed outbox messages\n                        DB-->>RELAY: Committed contract.activated and room.status_changed\n                        RELAY-)MQ: Publish contract.activated and room.status_changed\n                    end\n                end\n            end\n        end\n    end\n```\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-11-02 | 🔴 BREAKING | added the new `ACTIVE_CONTRACT_EXISTS` enum value to the `code` response property for the response status `409` | [#34](https://github.com/pbl6-home-renter/api-doc/pull/34) |\n| 2026-11-02 | 🔴 BREAKING | added the new `INVALID_UUID` enum value to the `code` response property for the response status `422` | [#34](https://github.com/pbl6-home-renter/api-doc/pull/34) |\n| 2026-11-02 | 🔴 BREAKING | added the new `SERVICE_UNAVAILABLE` enum value to the `code` response property for the response status `503` | [#34](https://github.com/pbl6-home-renter/api-doc/pull/34) |\n| 2026-11-02 | 🔴 BREAKING | added the new `UNEXPECTED_FIELD` enum value to the `code` response property for the response status `422` | [#34](https://github.com/pbl6-home-renter/api-doc/pull/34) |\n| 2026-11-02 | 🟢 NON_BREAKING | Bỏ response lỗi HTTP 429. | [#34](https://github.com/pbl6-home-renter/api-doc/pull/34) |\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
+        "description": "Landlord, yêu cầu JWT hợp lệ và tài khoản không bị khóa. Body chỉ gồm signedContractMediaId.\ncontractId sai định dạng UUID trả 400 BAD_REQUEST theo ParseUUIDPipe.\nThiếu hoặc null signedContractMediaId trả 422 VALIDATION_FAILED; UUID của file không hợp lệ trả\n422 INVALID_UUID; field ngoài DTO trả 422 UNEXPECTED_FIELD.\n\nTenancy kiểm tra media trước khi mở transaction, qua GET /internal/media/{signedContractMediaId}\ncủa Identity bằng service token. Adapter yêu cầu phần data của response envelope gồm\nid, ownerType, ownerId, purpose và status. Chỉ chấp nhận id khớp signedContractMediaId,\nownerType = contract, ownerId = contractId, purpose = contract_signed và status = uploaded.\nIdentity timeout, không kết nối được, lỗi 5xx hoặc từ chối service token trả 503 SERVICE_UNAVAILABLE.\nCác lỗi 4xx khác từ Identity được truyền nguyên trạng. Chưa xác minh được file thì không kích hoạt.\n\nSau khi media hợp lệ, trong cùng transaction: khóa hợp đồng, kiểm tra hợp đồng chưa bị xóa\nvà landlordId = user.id, khóa phòng, kích hoạt hợp đồng, tự thêm đại diện vào contract_members với joined_at = start_date\nvà chuyển phòng sang occupied. Member giữ tenant_id/name/phone từ hợp đồng, không có cờ đại diện.\nHợp đồng hoặc phòng không tồn tại/đã xóa trả 404 RESOURCE_NOT_FOUND; khác landlord trả 403 FORBIDDEN.\nVi phạm unique index UQ_contracts_room_active trả 409 ACTIVE_CONTRACT_EXISTS.\nVì media được kiểm tra trước, media không hợp lệ có thể trả 409 trước khi kiểm tra 404/403 của hợp đồng.\n\n**Điều kiện lỗi theo Contract**\n\n- `409 SIGNED_FILE_MISSING`: xảy ra khi có ít nhất một điều kiện:\n  media không tồn tại (Identity trả 404 hoặc response không có dữ liệu media);\n  `media.id` khác `signedContractMediaId`;\n  `ownerType` khác `contract`;\n  `ownerId` khác `contractId` trên URL;\n  `purpose` khác `contract_signed`;\n  hoặc file chưa upload xong (`status` khác `uploaded`). Không mở transaction ở nhánh này.\n- `409 CONTRACT_NOT_READY`: hợp đồng không ở `draft` hoặc `signed`,\n  hoặc phòng không ở `available` (đang `maintenance` hoặc đã `occupied`).\n  Transaction rollback, không lưu thay đổi hợp đồng, phòng hoặc outbox.\n  Hợp đồng/phòng không tồn tại hoặc đã xóa được xử lý riêng bằng `404 RESOURCE_NOT_FOUND`.\n\nThành công trả 200 CONTRACT_ACTIVATED với id, status = active và activatedAt dạng ISO 8601 UTC.\nactivatedAt được lưu ở contracts.activated_at. Hợp đồng, member đại diện, phòng và ba outbox message\ncontract.activated, contract_member.added, room.status_changed được ghi cùng transaction; lỗi ghi dữ liệu sẽ rollback.\nOutbox relay publish sau khi commit. Không kiểm tra startDate so với ngày hiện tại; không dùng OTP/PIN.\nService chưa có rate limiter.\n\n**Giới hạn tích hợp hiện tại:** Identity-Service local chưa triển khai GET /internal/media/{id};\nresponse public complete-upload cũng chưa có field status. Dữ liệu ở trên là contract nội bộ\nadapter đang yêu cầu, chưa phải endpoint media đã được triển khai. Nếu Identity trả 404 cho route\nchưa có, Tenancy hiện trả 409 SIGNED_FILE_MISSING. signedContractMediaId được xác minh để kích hoạt,\nnhưng hiện chưa được lưu trên Contract hoặc đưa vào event contract.activated.\nHandler so sánh UUID theo chuỗi, chưa chuẩn hóa hoa/thường; giữ nguyên UUID do API trả về\nđể tránh bị từ chối nhầm bằng SIGNED_FILE_MISSING.\n\n```mermaid\nsequenceDiagram\n    autonumber\n    participant GW as API Gateway\n    participant TEN as Tenancy\n    participant ID as Identity\n    participant DB as Tenancy DB\n    participant RELAY as Outbox Relay\n    participant MQ as RabbitMQ\n\n    GW->>TEN: POST /api/v1/contracts/{contractId}/activate-contract + Bearer token<br/>{signedContractMediaId}\n    TEN->>TEN: Verify JWT, landlord role, active account and request\n    TEN->>ID: GET /internal/media/{signedContractMediaId} + service token\n    alt Identity unavailable, timeout, 5xx or service-token rejection\n        TEN-->>GW: 503 SERVICE_UNAVAILABLE; no transaction\n    else Identity responds\n        ID-->>TEN: Response envelope containing media data, or 404\n        TEN->>TEN: Check id, ownerType, ownerId, purpose and uploaded status\n        alt Media missing, Identity 404 or media does not match\n            TEN-->>GW: 409 SIGNED_FILE_MISSING; no transaction\n        else Valid signed media\n            Note over TEN,DB: One transaction for contract + representative member + room + outbox\n            TEN->>DB: BEGIN; lock non-deleted contract FOR UPDATE\n            DB-->>TEN: Contract or null\n            TEN->>TEN: Require contract exists and landlordId = JWT user.id\n            alt Contract missing/deleted or wrong landlord\n                TEN->>DB: ROLLBACK\n                TEN-->>GW: 404 RESOURCE_NOT_FOUND / 403 FORBIDDEN\n            else Authorized contract\n                TEN->>DB: Lock non-deleted room FOR UPDATE\n                DB-->>TEN: Room or null\n                TEN->>TEN: Require contract draft/signed and room available<br/>Maintenance or occupied room is not ready\n                alt Room missing/deleted or contract/room not ready\n                    TEN->>DB: ROLLBACK\n                    TEN-->>GW: 404 RESOURCE_NOT_FOUND / 409 CONTRACT_NOT_READY\n                else Ready for activation\n                    TEN->>DB: Insert representative member with joined_at = contract.start_date<br/>Save contract active + activated_at; save room occupied<br/>Append contract.activated, contract_member.added and room.status_changed to outbox\n                    alt Active-room unique violation or persistence failure\n                        TEN->>DB: ROLLBACK\n                        TEN-->>GW: 409 ACTIVE_CONTRACT_EXISTS / 500 INTERNAL_SERVER_ERROR\n                    else Transaction succeeds\n                        TEN->>DB: COMMIT\n                        TEN-->>GW: 200 CONTRACT_ACTIVATED {id, status: active, activatedAt}\n                        RELAY->>DB: Claim committed outbox messages\n                        DB-->>RELAY: Committed contract.activated and room.status_changed\n                        RELAY-)MQ: Publish contract.activated and room.status_changed\n                    end\n                end\n            end\n        end\n    end\n```\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-11-02 | 🔴 BREAKING | added the new `ACTIVE_CONTRACT_EXISTS` enum value to the `code` response property for the response status `409` | [#34](https://github.com/pbl6-home-renter/api-doc/pull/34) |\n| 2026-11-02 | 🔴 BREAKING | added the new `INVALID_UUID` enum value to the `code` response property for the response status `422` | [#34](https://github.com/pbl6-home-renter/api-doc/pull/34) |\n| 2026-11-02 | 🔴 BREAKING | added the new `SERVICE_UNAVAILABLE` enum value to the `code` response property for the response status `503` | [#34](https://github.com/pbl6-home-renter/api-doc/pull/34) |\n| 2026-11-02 | 🔴 BREAKING | added the new `UNEXPECTED_FIELD` enum value to the `code` response property for the response status `422` | [#34](https://github.com/pbl6-home-renter/api-doc/pull/34) |\n| 2026-11-02 | 🟢 NON_BREAKING | Bỏ response lỗi HTTP 429. | [#34](https://github.com/pbl6-home-renter/api-doc/pull/34) |\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "parameters": [
           {
             "name": "contractId",
@@ -14448,7 +14482,7 @@
           }
         ],
         "summary": "Complete checkout",
-        "description": "landlord. Hoàn tất trả phòng và kết thúc hợp đồng. Sau khi checkout thành công, phòng sẽ tự động chuyển sang trạng thái chờ dọn dẹp và chuẩn bị cho thuê mới (Room.status = pending_cleanup). Sau khi chủ trọ nghiệm thu dọn dẹp xong, gọi POST /rooms/{roomId}/mark-ready để đưa phòng về available. Lỗi nghiệp vụ: 409 CONTRACT NOT ACTIVE · 403 FORBIDDEN · 422 SETTLEMENT NOT READY. NOT READY.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
+        "description": "Landlord. Requires a valid JWT and an active account. Only the contract owner may complete checkout.\nThe contract must be active, otherwise 409 CONTRACT_NOT_ACTIVE.\ncompletedOn is a YYYY-MM-DD date between the contract start date and today (UTC), inclusive.\nInvalid format or a date outside the contract start date to today range returns 422 VALIDATION_FAILED.\ncompletedOn must also be on or after joinedAt for every member who has not left;\na violation returns 422 LEFT_DATE_INVALID, the same domain error used by leave-contract.\nCheckout may take place after the contract end date; the end-date restriction belongs to leave-contract only.\nThe invoice period is completedOn sliced to YYYY-MM. At least one non-deleted invoice for that contract/period\nmust be issued, and none may be pending; otherwise 409 SETTLEMENT_NOT_READY. Voided invoices do not satisfy readiness.\nIn one transaction, lock the contract, check invoices, set remaining members' left_at to completedOn,\nterminate the contract, move the room from occupied to maintenance, and persist all corresponding outbox events.\nA member has not left when left_at IS NULL or after today (UTC). A future scheduled leave is replaced by completedOn;\nprevious departures and soft-deleted members are preserved. A room already in maintenance stays there.\nThe response echoes completedOn; no completed_on or terminated_at column is added to contracts.\nNo deposit settlement, early termination fee or automatic checkout-date prorating is performed.\nCall POST /rooms/{roomId}/mark-ready after cleaning to make the room available again.\nField outside the request DTO returns 422 UNEXPECTED_FIELD, matching existing project validation.\nThe invoices table is supplied by P6-02g1. The service does not currently apply rate limiting.\n\n```mermaid\nsequenceDiagram\n    autonumber\n    participant GW as API Gateway\n    participant TEN as Tenancy\n    participant DB as Tenancy DB\n    participant RELAY as Outbox Relay\n    participant MQ as RabbitMQ\n\n    GW->>TEN: POST /api/v1/contracts/{contractId}/complete-checkout { completedOn }\n    TEN->>TEN: Verify JWT, landlord role, active account, UUID and body\n    TEN->>DB: BEGIN\n    TEN->>DB: SELECT contract WHERE id matches AND not deleted FOR UPDATE\n    TEN->>TEN: Check existence, ownership, active status and completedOn\n    TEN->>DB: Check issued invoice exists and no pending invoice for contract and completedOn period\n    TEN->>DB: SELECT non-deleted members WHERE left_at IS NULL OR after today (UTC)\n    TEN->>TEN: Validate completedOn against each joinedAt and record member departures\n    TEN->>DB: SELECT room FOR UPDATE\n    TEN->>TEN: Transition room to maintenance\n    alt Invalid state, date, owner or invoice readiness\n        TEN->>DB: ROLLBACK\n        TEN-->>GW: 403 / 404 / 409 / 422 with matching error code\n    else Valid checkout\n        TEN->>DB: UPDATE contract status to terminated\n        TEN->>DB: UPDATE remaining members left_at\n        TEN->>DB: UPDATE room status to maintenance\n        TEN->>DB: INSERT outbox contract.terminated, contract_member.left, room.status_changed\n        alt Storage operation fails\n            TEN->>DB: ROLLBACK\n            TEN-->>GW: Error response; all changes roll back\n        else Commit succeeds\n            TEN->>DB: COMMIT\n            TEN-->>GW: 200 CONTRACT_CHECKOUT_COMPLETED { id, status: terminated, completedOn }\n            RELAY->>DB: Claim committed outbox events\n            RELAY->>MQ: Publish events\n            MQ-->>RELAY: Publisher confirm\n            RELAY->>DB: Mark outbox PUBLISHED\n        end\n    end\n```\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "parameters": [
           {
             "name": "contractId",
@@ -14509,7 +14543,7 @@
                   "code": "CONTRACT_CHECKOUT_COMPLETED",
                   "data": {
                     "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-                    "status": "expired",
+                    "status": "terminated",
                     "completedOn": "2026-09-30"
                   }
                 }
@@ -14550,9 +14584,11 @@
                     "code": {
                       "type": "string",
                       "enum": [
-                        "CONTRACT_NOT_ACTIVE"
+                        "CONTRACT_NOT_ACTIVE",
+                        "SETTLEMENT_NOT_READY",
+                        "INVALID_ROOM_TRANSITION"
                       ],
-                      "description": "- CONTRACT_NOT_ACTIVE: Hợp đồng không ở trạng thái đang hiệu lực."
+                      "description": "- CONTRACT_NOT_ACTIVE: Hợp đồng không ở trạng thái đang hiệu lực.\n- SETTLEMENT_NOT_READY: The checkout period has no issued invoice or still has a pending invoice.\n- INVALID_ROOM_TRANSITION: The room is neither occupied nor in maintenance."
                     }
                   }
                 },
@@ -14562,6 +14598,13 @@
                     "value": {
                       "statusCode": 409,
                       "code": "CONTRACT_NOT_ACTIVE"
+                    }
+                  },
+                  "settlement_not_ready": {
+                    "summary": "Checkout period is not ready",
+                    "value": {
+                      "statusCode": 409,
+                      "code": "SETTLEMENT_NOT_READY"
                     }
                   }
                 }
@@ -14590,19 +14633,20 @@
                     "code": {
                       "type": "string",
                       "enum": [
-                        "SETTLEMENT_NOT_READY",
-                        "VALIDATION_FAILED"
+                        "VALIDATION_FAILED",
+                        "LEFT_DATE_INVALID",
+                        "UNEXPECTED_FIELD"
                       ],
-                      "description": "- SETTLEMENT_NOT_READY: Hợp đồng chưa đủ điều kiện để quyết toán.\n- VALIDATION_FAILED: Dữ liệu vi phạm ràng buộc schema hoặc quy tắc nghiệp vụ khác chưa có mã riêng."
+                      "description": "- VALIDATION_FAILED: Dữ liệu vi phạm ràng buộc schema hoặc quy tắc nghiệp vụ khác chưa có mã riêng.\n- LEFT_DATE_INVALID: completedOn is before joinedAt of a remaining member.\n- UNEXPECTED_FIELD: The request contains fields outside the DTO."
                     }
                   }
                 },
                 "examples": {
-                  "settlement_not_ready": {
-                    "summary": "SETTLEMENT_NOT_READY — Hợp đồng chưa đủ điều kiện để quyết toán.",
+                  "left_date_invalid": {
+                    "summary": "Checkout date is before a remaining member joined",
                     "value": {
                       "statusCode": 422,
-                      "code": "SETTLEMENT_NOT_READY"
+                      "code": "LEFT_DATE_INVALID"
                     }
                   },
                   "validation_failed": {
@@ -14615,9 +14659,6 @@
                 }
               }
             }
-          },
-          "429": {
-            "$ref": "#/components/responses/TooManyRequestsError"
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
@@ -14854,7 +14895,7 @@
           "Contract"
         ],
         "x-apidog-folder": "ContractMember",
-        "x-apidog-status": "designing",
+        "x-apidog-status": "released",
         "operationId": "postContractMembers",
         "security": [
           {
@@ -14862,7 +14903,7 @@
           }
         ],
         "summary": "Add contract member",
-        "description": "landlord. Thêm một thành viên vào hợp đồng. Lỗi nghiệp vụ: 409 MEMBER ALREADY EXISTS · 403 FORBIDDEN · 422 TENANT IDENTITY INVALID.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
+        "description": "Landlord only. The contract must exist, belong to the JWT user, and be active.\nOnly contractId, tenantId?, tenantName, tenantPhone?, joinedAt are accepted; unknown fields return\n422 VALIDATION_FAILED. tenantId is linked explicitly, with no Identity lookup or phone auto-linking.\nWithout tenantId, tenantName and tenantPhone are required (422 TENANT_IDENTITY_INVALID).\njoinedAt is an inclusive date in [startDate, endDate] (422 VALIDATION_FAILED).\n\nAfter locking the contract, reject an active member matching tenantId or tenantPhone\n(ignore null fields) with 409 MEMBER_ALREADY_EXISTS. Active means leftAt is null or after today\nin UTC, including scheduled future departures. Non-active contract: 409 CONTRACT_NOT_ACTIVE.\nSave the member and contract_member.added outbox event in one transaction. Return 201\nCONTRACT_MEMBER_ADDED and Location: /api/v1/contract-members/{contractMemberId}.\n\n```mermaid\nsequenceDiagram\n    participant GW as API Gateway\n    participant TEN as Tenancy\n    participant DB as Tenancy DB\n    GW->>TEN: POST /contract-members\n    TEN->>TEN: Verify JWT, landlord role, active account and request\n    TEN->>DB: BEGIN; lock contract FOR UPDATE (before locking member)\n    TEN->>TEN: Require owner, active contract, valid dates/identity; check active duplicates\n    alt Missing record / forbidden / business validation failure\n        TEN->>DB: ROLLBACK\n        TEN-->>GW: 404 / 403 / 409 / 422\n    else Valid operation\n        TEN->>DB: INSERT contract_members; INSERT contract_member.added into outbox\n        TEN->>DB: COMMIT\n        TEN-->>GW: 201 CONTRACT_MEMBER_ADDED + Location\n    end\n```\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "requestBody": {
           "required": true,
           "content": {
@@ -14943,6 +14984,9 @@
           "403": {
             "$ref": "#/components/responses/ForbiddenError"
           },
+          "404": {
+            "$ref": "#/components/responses/NotFoundError"
+          },
           "409": {
             "x-apidog-name": "Conflict",
             "description": "Yêu cầu xung đột với trạng thái hiện tại hoặc dữ liệu đã tồn tại.",
@@ -14965,6 +15009,7 @@
                     "code": {
                       "type": "string",
                       "enum": [
+                        "CONTRACT_NOT_ACTIVE",
                         "MEMBER_ALREADY_EXISTS"
                       ],
                       "description": "- MEMBER_ALREADY_EXISTS: Người này đã là thành viên của hợp đồng."
@@ -15047,7 +15092,7 @@
           "Contract"
         ],
         "x-apidog-folder": "ContractMember",
-        "x-apidog-status": "designing",
+        "x-apidog-status": "released",
         "operationId": "getContractMembers",
         "security": [
           {
@@ -15055,7 +15100,7 @@
           }
         ],
         "summary": "List contract members",
-        "description": "landlord, tenant. Liệt kê thành viên hoặc xuất dữ liệu. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 CONTRACT ID REQUIRED · 404 NOT FOUND.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
+        "description": "Landlord owning the contract, or tenant who is the contract representative or an active member.\nMissing filter[contractId] returns 422 CONTRACT_ID_REQUIRED; unknown/deleted contract returns\n404 RESOURCE_NOT_FOUND; other users receive 403 FORBIDDEN. An active member has leftAt null\nor after today in UTC. Past and current-day departures do not grant access.\n\nOnly format=json is supported (other formats: 422 VALIDATION_FAILED). Offset pagination,\ndefault pageNo=1, pageSize=20 (maximum 100), sort=joinedAt, order=asc, id ascending tie breaker.\nItems include id, contractId, tenantId, tenantName, tenantPhone, joinedAt, leftAt and derived\nstatus (active | left). No representative flag, identity card fields or temporary-absence status.\n\n```mermaid\nsequenceDiagram\n    participant GW as API Gateway\n    participant TEN as Tenancy\n    participant DB as Tenancy DB\n    GW->>TEN: GET /contract-members?filter[contractId]=UUID\n    TEN->>TEN: Verify JWT, landlord/tenant role, active account and query\n    TEN->>DB: Read non-deleted contract\n    TEN->>DB: If tenant is not representative, read active contract members\n    TEN->>TEN: Require owner or representative or active member\n    alt Missing filter / unknown contract / unauthorized\n        TEN-->>GW: 422 CONTRACT_ID_REQUIRED / 404 RESOURCE_NOT_FOUND / 403 FORBIDDEN\n    else Authorized\n        TEN->>DB: Count and page non-deleted members ORDER BY joined_at, id\n        TEN-->>GW: 200 CONTRACT_MEMBERS_FETCHED + offset pagination\n    end\n```\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "parameters": [
           {
             "name": "filter",
@@ -15100,16 +15145,36 @@
           {
             "name": "format",
             "in": "query",
-            "description": "json trả envelope; định dạng khác trả file stream.",
+            "description": "Only json is supported; other formats return 422 VALIDATION_FAILED.",
             "schema": {
               "type": "string",
               "enum": [
-                "json",
-                "xlsx",
-                "csv",
-                "pdf"
+                "json"
               ],
               "default": "json"
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "joinedAt"
+              ],
+              "default": "joinedAt"
+            }
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ],
+              "default": "asc"
             }
           }
         ],
@@ -15202,8 +15267,9 @@
                       "tenantName": "Trần Văn B",
                       "joinedAt": "2026-09-01",
                       "leftAt": null,
-                      "isRepresentative": false,
-                      "status": "ACTIVE"
+                      "tenantId": null,
+                      "tenantPhone": "0921234567",
+                      "status": "active"
                     }
                   ],
                   "pagination": {
@@ -15215,24 +15281,6 @@
                     "hasNextPage": false,
                     "hasPreviousPage": false
                   }
-                }
-              },
-              "text/csv": {
-                "schema": {
-                  "type": "string",
-                  "format": "binary"
-                }
-              },
-              "application/pdf": {
-                "schema": {
-                  "type": "string",
-                  "format": "binary"
-                }
-              },
-              "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": {
-                "schema": {
-                  "type": "string",
-                  "format": "binary"
                 }
               }
             }
@@ -15309,24 +15357,24 @@
         }
       }
     },
-    "/contract-members/{contractMemberId}": {
+    "/contract-members/{tenantId}": {
       "patch": {
         "tags": [
           "Contract"
         ],
         "x-apidog-folder": "ContractMember",
-        "x-apidog-status": "designing",
-        "operationId": "patchContractMembersContractmemberid",
+        "x-apidog-status": "released",
+        "operationId": "patchContractMembersTenantid",
         "security": [
           {
             "BearerAuth": []
           }
         ],
         "summary": "Update contract member",
-        "description": "landlord. Cập nhật thành viên. Lỗi nghiệp vụ: 403 FORBIDDEN · 409 MEMBER LEFT · 422 VALIDATION FAILED.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
+        "description": "Identify the membership by tenantId (tenant account UUID in the URL) and required contractId in the body.\nMembers with tenant_id = null cannot use this endpoint. Update tenantPhone (Vietnamese phone number)\nonly in the selected contract, owned by the requesting landlord. The response id is the membership record ID.\nJoin contract_members with contracts using both IDs, excluding soft-deleted rows.\nPrefer the current membership if the tenant has left and rejoined the same contract.\nLock the contract before the member. A departed member (leftAt <= today, UTC)\nreturns 409 MEMBER_LEFT. A matching tenantId or new phone on another active member returns\n409 MEMBER_ALREADY_EXISTS. Unknown member/contract: 404 RESOURCE_NOT_FOUND; other landlord: 403 FORBIDDEN.\nNo requirement that the contract is active for this phone-only update. The record is never deleted.\n\n```mermaid\nsequenceDiagram\n    participant GW as API Gateway\n    participant TEN as Tenancy\n    participant DB as Tenancy DB\n    GW->>TEN: PATCH /contract-members/{tenantId} {contractId, tenantPhone}\n    TEN->>TEN: Verify JWT, landlord role, active account and request\n    TEN->>DB: BEGIN; lock body.contractId FOR UPDATE\n    TEN->>TEN: Require contract owner\n    TEN->>DB: JOIN contract_members with contracts WHERE tenant_id = path.tenantId AND contract_id = body.contractId<br/>Exclude deleted rows; prefer current membership; lock member FOR UPDATE\n    TEN->>TEN: Require owner; lock member; reject departed member and duplicates\n    alt Missing record / forbidden / business validation failure\n        TEN->>DB: ROLLBACK\n        TEN-->>GW: 404 / 403 / 409 / 422\n    else Valid operation\n        TEN->>DB: UPDATE contract_members.tenant_phone\n        TEN->>DB: COMMIT\n        TEN-->>GW: 200 CONTRACT_MEMBER_UPDATED\n    end\n```",
         "parameters": [
           {
-            "name": "contractMemberId",
+            "name": "tenantId",
             "in": "path",
             "required": true,
             "schema": {
@@ -15343,6 +15391,7 @@
                 "$ref": "#/components/schemas/ContractMemberUpdateRequestDto"
               },
               "example": {
+                "contractId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
                 "tenantPhone": "0921234567"
               }
             }
@@ -15424,7 +15473,8 @@
                     "code": {
                       "type": "string",
                       "enum": [
-                        "MEMBER_LEFT"
+                        "MEMBER_LEFT",
+                        "MEMBER_ALREADY_EXISTS"
                       ],
                       "description": "- MEMBER_LEFT: Thành viên đã rời hợp đồng."
                     }
@@ -15457,24 +15507,24 @@
         }
       }
     },
-    "/contract-members/{contractMemberId}/leave-contract": {
+    "/contract-members/{tenantId}/leave-contract": {
       "post": {
         "tags": [
           "Contract"
         ],
         "x-apidog-folder": "ContractMember",
-        "x-apidog-status": "designing",
-        "operationId": "postContractMembersContractmemberidLeaveContract",
+        "x-apidog-status": "released",
+        "operationId": "postContractMembersTenantidLeaveContract",
         "security": [
           {
             "BearerAuth": []
           }
         ],
         "summary": "Record contract member leave",
-        "description": "landlord. Ghi nhận thành viên rời đi. Lỗi nghiệp vụ: 403 FORBIDDEN · 409 MEMBER ALREADY LEFT · 422 LEFT DATE INVALID.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
+        "description": "Identify the membership by tenantId (the tenant account UUID in the URL) and contractId (required in the body).\ntenantId is not the contract_members record ID. Members with tenant_id = null cannot use this endpoint.\nLandlord must own the selected contract; it must be active (409 CONTRACT_NOT_ACTIVE).\nLock the contract before locking the member. Join contract_members with contracts and match both IDs,\nexcluding soft-deleted rows. Prefer a membership without a departure, then the latest departure\nwhen the tenant has left and rejoined. The response id remains the contract_members record ID. An already recorded departure returns\n409 MEMBER_ALREADY_LEFT, including a scheduled departure. leftOn must be >= joinedAt and\n<= contract endDate (422 LEFT_DATE_INVALID). leftOn = joinedAt is allowed.\nUnknown member/contract: 404 RESOURCE_NOT_FOUND; other landlord: 403 FORBIDDEN.\nSet left_at without deleting the record, and append contract_member.left in the same transaction.\nThe upper endDate limit belongs to this handler; the shared domain leave method permits checkout\nafter endDate (P6-D71 addendum). Response uses leftAt; request uses leftOn.\n\n```mermaid\nsequenceDiagram\n    participant GW as API Gateway\n    participant TEN as Tenancy\n    participant DB as Tenancy DB\n    GW->>TEN: POST /contract-members/{tenantId}/leave-contract {contractId, leftOn}\n    TEN->>TEN: Verify JWT, landlord role, active account and request\n    TEN->>DB: BEGIN; lock body.contractId FOR UPDATE\n    TEN->>TEN: Require contract owner and active status\n    TEN->>DB: JOIN contract_members with contracts WHERE tenant_id = path.tenantId AND contract_id = body.contractId<br/>Exclude deleted rows; prefer current membership; lock member FOR UPDATE\n    TEN->>TEN: Require owner and active contract; lock member; validate departure and dates\n    alt Missing record / forbidden / business validation failure\n        TEN->>DB: ROLLBACK\n        TEN-->>GW: 404 / 403 / 409 / 422\n    else Valid operation\n        TEN->>DB: UPDATE contract_members.left_at; INSERT contract_member.left into outbox\n        TEN->>DB: COMMIT\n        TEN-->>GW: 200 CONTRACT_MEMBER_LEFT\n    end\n```",
         "parameters": [
           {
-            "name": "contractMemberId",
+            "name": "tenantId",
             "in": "path",
             "required": true,
             "schema": {
@@ -15491,6 +15541,7 @@
                 "$ref": "#/components/schemas/ContractMemberLeaveRequestDto"
               },
               "example": {
+                "contractId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
                 "leftOn": "2026-10-01"
               }
             }
@@ -15572,6 +15623,7 @@
                     "code": {
                       "type": "string",
                       "enum": [
+                        "CONTRACT_NOT_ACTIVE",
                         "MEMBER_ALREADY_LEFT"
                       ],
                       "description": "- MEMBER_ALREADY_LEFT: Thành viên đã rời hợp đồng."
@@ -27229,8 +27281,9 @@
         "type": "object",
         "x-apidog-folder": "Contract/Request",
         "title": "ContractUpdateRequestDto",
-        "description": "Dữ liệu cập nhật hợp đồng nháp",
+        "description": "Draft updates require description. Active contracts accept description and/or vehicleCount. Other fields are rejected by the existing DTO whitelist.",
         "additionalProperties": false,
+        "minProperties": 1,
         "properties": {
           "description": {
             "type": "string",
@@ -27239,11 +27292,15 @@
             "maxLength": 500,
             "pattern": "\\S",
             "description": "Ghi chú mới, không được chỉ chứa khoảng trắng; null để xóa ghi chú."
+          },
+          "vehicleCount": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 2147483647,
+            "nullable": true,
+            "description": "Active contracts only. Number of vehicles; null clears the value. Issued invoice snapshots are unchanged."
           }
-        },
-        "required": [
-          "description"
-        ]
+        }
       },
       "ContractApplyTemplateRequestDto": {
         "type": "object",
@@ -27304,7 +27361,8 @@
           "completedOn": {
             "type": "string",
             "format": "date",
-            "description": "Ngày hoàn tất trả phòng (YYYY-MM-DD)."
+            "pattern": "^(?!0000)\\d{4}-\\d{2}-\\d{2}$",
+            "description": "Checkout date between contract startDate and today (UTC), on or after each remaining member joinedAt. May exceed endDate."
           }
         },
         "required": [
@@ -27324,7 +27382,8 @@
           },
           "contractCode": {
             "type": "string",
-            "description": "Mã hợp đồng (VD: HD-2026-0012)."
+            "example": "HD-3fa85f",
+            "description": "HD- followed by the first six characters of the contract ID."
           },
           "roomId": {
             "type": "string",
@@ -27350,14 +27409,6 @@
               "terminated"
             ],
             "description": "Trạng thái hợp đồng."
-          },
-          "rentalType": {
-            "type": "string",
-            "enum": [
-              "MONTHLY",
-              "DAILY"
-            ],
-            "description": "Hình thức thuê dài hạn hoặc ngắn hạn theo ngày."
           },
           "rentPrice": {
             "type": "integer",
@@ -27694,7 +27745,7 @@
         "type": "object",
         "x-apidog-folder": "Contract/Response",
         "title": "ContractUpdateResponseDto",
-        "description": "Phản hồi khi cập nhật hợp đồng nháp",
+        "description": "Response after updating a draft or active contract",
         "properties": {
           "id": {
             "type": "string",
@@ -27704,10 +27755,11 @@
           "status": {
             "type": "string",
             "enum": [
-              "draft"
+              "draft",
+              "active"
             ],
-            "example": "draft",
-            "description": "Trạng thái hiện tại của tài nguyên trong quy trình nghiệp vụ."
+            "example": "active",
+            "description": "Current contract status."
           },
           "description": {
             "type": "string",
@@ -27831,10 +27883,10 @@
           "status": {
             "type": "string",
             "enum": [
-              "expired"
+              "terminated"
             ],
-            "example": "expired",
-            "description": "Trạng thái hiện tại của tài nguyên trong quy trình nghiệp vụ."
+            "example": "terminated",
+            "description": "Contract status after checkout."
           },
           "completedOn": {
             "type": "string",
@@ -30999,7 +31051,7 @@
             "type": "string",
             "format": "uuid",
             "nullable": true,
-            "description": "ID người dùng trên hệ thống nếu đã có tài khoản",
+            "description": "Optional explicit account ID. Web sends null; no automatic linking by phone or Identity lookup.",
             "example": null
           },
           "tenantName": {
@@ -31015,45 +31067,13 @@
             "minLength": 10,
             "maxLength": 12,
             "pattern": "^(0[0-9]{9}|\\+84[0-9]{9})$",
-            "description": "Số điện thoại thành viên",
+            "description": "Vietnamese phone number; required when tenantId is null.",
             "example": "0912345678"
-          },
-          "identityCardNumber": {
-            "type": "string",
-            "nullable": true,
-            "minLength": 9,
-            "maxLength": 12,
-            "description": "Số CCCD/CMND để đối chiếu thông tin người ở ghép",
-            "example": "048195009876"
-          },
-          "dateOfBirth": {
-            "type": "string",
-            "format": "date",
-            "nullable": true,
-            "description": "Ngày tháng năm sinh của thành viên",
-            "example": "2002-05-15"
-          },
-          "gender": {
-            "type": "string",
-            "enum": [
-              "male",
-              "female",
-              "other"
-            ],
-            "nullable": true,
-            "description": "Giới tính của thành viên",
-            "example": "male"
-          },
-          "isRepresentative": {
-            "type": "boolean",
-            "nullable": true,
-            "description": "Đánh dấu thành viên có phải là đại diện đứng tên hợp đồng không (mặc định false)",
-            "example": false
           },
           "joinedAt": {
             "type": "string",
             "format": "date",
-            "description": "Ngày thành viên bắt đầu vào ở",
+            "description": "YYYY-MM-DD within the inclusive contract startDate/endDate range.",
             "example": "2026-10-01"
           }
         },
@@ -31070,6 +31090,11 @@
         "description": "Dữ liệu cập nhật số điện thoại thành viên hợp đồng",
         "additionalProperties": false,
         "properties": {
+          "contractId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Hợp đồng chứa member cần cập nhật; bắt buộc để xác định đúng landlord và tenant."
+          },
           "tenantPhone": {
             "type": "string",
             "minLength": 10,
@@ -31079,6 +31104,7 @@
           }
         },
         "required": [
+          "contractId",
           "tenantPhone"
         ]
       },
@@ -31089,13 +31115,19 @@
         "description": "Dữ liệu ghi nhận thành viên rời hợp đồng",
         "additionalProperties": false,
         "properties": {
+          "contractId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Hợp đồng của tenant cần ghi nhận rời đi; bắt buộc để xác định đúng landlord và member."
+          },
           "leftOn": {
             "type": "string",
             "format": "date",
-            "description": "Ngày thành viên rời hợp đồng (YYYY-MM-DD)."
+            "description": "Ngày rời (YYYY-MM-DD), ≥ joinedAt và ≤ endDate. Checkout áp dụng giới hạn riêng (P6-D71)."
           }
         },
         "required": [
+          "contractId",
           "leftOn"
         ]
       },
@@ -31211,31 +31243,22 @@
           },
           "tenantName": {
             "type": "string",
-            "description": "Họ và tên thành viên cư trú."
+            "description": "Họ và tên thành viên cư trú.",
+            "nullable": true
           },
           "tenantPhone": {
             "type": "string",
             "nullable": true,
             "description": "Số điện thoại thành viên."
           },
-          "identityCardNumber": {
-            "type": "string",
-            "nullable": true,
-            "description": "Số CCCD/CMND của thành viên để chủ nhà đối chiếu nhân thân."
-          },
-          "isRepresentative": {
-            "type": "boolean",
-            "description": "Là người đại diện đứng tên ký hợp đồng chính hay không."
-          },
           "status": {
             "type": "string",
             "enum": [
-              "ACTIVE",
-              "TEMPORARY_ABSENT",
-              "LEFT"
+              "active",
+              "left"
             ],
-            "description": "Trạng thái cư trú: ACTIVE (đang ở), TEMPORARY_ABSENT (tạm vắng), LEFT (đã chuyển đi).",
-            "example": "ACTIVE"
+            "description": "Derived: active when leftAt is null or after today (UTC); otherwise left.",
+            "example": "active"
           },
           "joinedAt": {
             "type": "string",
@@ -31252,10 +31275,12 @@
         "required": [
           "id",
           "contractId",
+          "tenantId",
           "tenantName",
-          "isRepresentative",
-          "status",
-          "joinedAt"
+          "tenantPhone",
+          "joinedAt",
+          "leftAt",
+          "status"
         ]
       },
       "MatchRequestCreateRequestDto": {

@@ -4,5 +4,5 @@ title: ContractCompleteCheckoutRequestDto
 description: Dữ liệu hoàn tất trả phòng
 additionalProperties: false
 properties:
-  completedOn: { type: string, format: date , description: "Ngày hoàn tất trả phòng (YYYY-MM-DD)." }
+  completedOn: { type: string, format: date, pattern: '^(?!0000)\d{4}-\d{2}-\d{2}$', description: "Checkout date between contract startDate and today (UTC), on or after each remaining member joinedAt. May exceed endDate." }
 required: [completedOn]
