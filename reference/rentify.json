@@ -33726,15 +33726,14 @@
                 "example": "2026-09"
               },
               "rentAmount": {
-                "type": "number",
-                "minimum": 0,
-                "description": "Tiền thuê phòng (đã tính prorate nếu có)",
-                "example": 3500000
+                "type": "string",
+                "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]{1,4})?$",
+                "description": "Tiền thuê phòng sau prorate, decimal string làm tròn half-up tới 4 chữ số thập phân (P6-D65/D72)",
+                "example": "3500000.0000"
               },
               "breakdown": {
                 "type": "array",
-                "nullable": true,
-                "description": "Snapshot bất biến chi tiết các khoản điện, nước, phí dịch vụ",
+                "description": "Snapshot điện, nước và phí dịch vụ; decimal lưu dạng string, tiền từng dòng làm tròn half-up 4 chữ số thập phân (P6-D65/D72)",
                 "items": {
                   "type": "object",
                   "properties": {
@@ -33748,27 +33747,32 @@
                       "type": "string"
                     },
                     "unitPrice": {
-                      "type": "number"
+                      "type": "string",
+                      "nullable": true,
+                      "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]+)?$"
                     },
                     "quantity": {
-                      "type": "number"
+                      "type": "string",
+                      "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]+)?$"
                     },
                     "unit": {
                       "type": "string"
                     },
                     "serviceStart": {
                       "type": "string",
-                      "format": "date-time"
+                      "format": "date"
                     },
                     "serviceEnd": {
                       "type": "string",
-                      "format": "date-time"
+                      "format": "date"
                     },
                     "prorateRatio": {
-                      "type": "number"
+                      "type": "string",
+                      "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]+)?$"
                     },
                     "amount": {
-                      "type": "number"
+                      "type": "string",
+                      "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]{1,4})?$"
                     },
                     "tierDetail": {
                       "type": "array",
@@ -33781,7 +33785,6 @@
               },
               "otherFees": {
                 "type": "array",
-                "nullable": true,
                 "description": "Phí phát sinh một lần hoặc giảm trừ/miễn giảm (D33 cho phép amount âm)",
                 "items": {
                   "type": "object",
@@ -33790,7 +33793,8 @@
                       "type": "string"
                     },
                     "amount": {
-                      "type": "number"
+                      "type": "string",
+                      "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]{1,4})?$"
                     }
                   },
                   "required": [
@@ -33800,10 +33804,10 @@
                 }
               },
               "totalAmount": {
-                "type": "number",
-                "minimum": 0,
-                "description": "Tổng số tiền phải thanh toán của hóa đơn",
-                "example": 4610000
+                "type": "string",
+                "pattern": "^(0|[1-9][0-9]*)$",
+                "description": "Tổng tiền làm tròn half-up về số nguyên đồng của các dòng đã làm tròn 4 chữ số (P6-D72)",
+                "example": "4610000"
               },
               "status": {
                 "type": "string",
@@ -33829,6 +33833,13 @@
                 "nullable": true,
                 "description": "ID hóa đơn cũ bị thay thế nếu hóa đơn này là bản sửa đổi (D37)",
                 "example": null
+              },
+              "voidReason": {
+                "type": "string",
+                "nullable": true,
+                "minLength": 1,
+                "maxLength": 500,
+                "description": "Lý do hủy hóa đơn, lưu khi chuyển trạng thái sang void (P6-D72)"
               },
               "note": {
                 "type": "string",
