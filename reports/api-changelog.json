@@ -41532,6 +41532,3137 @@
           }
         }
       }
+    },
+    {
+      "id": "fde08f4bd9ad00a19e8b784f71350012d8fd2f45ce057d822c0c478377206e80",
+      "label": "Thay đổi contract từ Git",
+      "classification": "BREAKING",
+      "contractId": "rentify-public",
+      "repository": "https://github.com/pbl6-home-renter/api-doc",
+      "baseHash": "34aff9e28e9c0889de6eb729abce844c7f7d7d742d9509bd633baf9215581fcf",
+      "headHash": "0f560b9e25b66fb3a3a40ebbda5698c00e3c47dadbc30d0916477d59674d408e",
+      "baseSource": "src/openapi.yaml",
+      "headSource": "src/openapi.yaml",
+      "detectedAt": "2026-11-06T02:28:53.444Z",
+      "committedAt": "2026-11-06T09:28:36+07:00",
+      "baseCommit": "9fda384ea0ce49ca2d6e4dd58b20c68368ff5535",
+      "headCommit": "151811ce913c9f812e54e93651fa15e794d91608",
+      "prUrl": "https://github.com/pbl6-home-renter/api-doc/pull/50",
+      "commitUrl": "https://github.com/pbl6-home-renter/api-doc/commit/151811ce913c9f812e54e93651fa15e794d91608",
+      "metadataKind": "Git revision thực tế",
+      "reason": "CHƯA CUNG CẤP — tác giả PR phải bổ sung lý do nghiệp vụ; không thể suy ra từ OpenAPI diff.",
+      "tools": {
+        "redocly": "2.64.1",
+        "oasdiff": "1.34.1"
+      },
+      "changes": [
+        {
+          "id": "request-parameter-enum-value-removed",
+          "text": "removed the enum value `csv` from the `query` request parameter `format`",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getContractMembers",
+          "path": "/contract-members",
+          "section": "paths",
+          "fingerprint": "459397f214bb",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu enum trong DTO/validation và nhánh switch/when; xử lý giá trị chưa biết, kiểm thử dữ liệu cũ và mới; phối hợp BE trước khi phát hành."
+        },
+        {
+          "id": "request-parameter-enum-value-removed",
+          "text": "removed the enum value `pdf` from the `query` request parameter `format`",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getContractMembers",
+          "path": "/contract-members",
+          "section": "paths",
+          "fingerprint": "d2562161f17a",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu enum trong DTO/validation và nhánh switch/when; xử lý giá trị chưa biết, kiểm thử dữ liệu cũ và mới; phối hợp BE trước khi phát hành."
+        },
+        {
+          "id": "request-parameter-enum-value-removed",
+          "text": "removed the enum value `xlsx` from the `query` request parameter `format`",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getContractMembers",
+          "path": "/contract-members",
+          "section": "paths",
+          "fingerprint": "1179efa7b4c2",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu enum trong DTO/validation và nhánh switch/when; xử lý giá trị chưa biết, kiểm thử dữ liệu cũ và mới; phối hợp BE trước khi phát hành."
+        },
+        {
+          "id": "response-media-type-removed",
+          "text": "removed the media type `application/pdf` for the response with the status `200`",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getContractMembers",
+          "path": "/contract-members",
+          "section": "paths",
+          "fingerprint": "501b567bc89d",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "response-media-type-removed",
+          "text": "removed the media type `application/vnd.openxmlformats-officedocument.spreadsheetml.sheet` for the response with the status `200`",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getContractMembers",
+          "path": "/contract-members",
+          "section": "paths",
+          "fingerprint": "68f272878904",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "response-media-type-removed",
+          "text": "removed the media type `text/csv` for the response with the status `200`",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getContractMembers",
+          "path": "/contract-members",
+          "section": "paths",
+          "fingerprint": "e327694c67da",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "response-property-became-nullable",
+          "text": "the response property `data/items/tenantName` became nullable for the status `200`",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getContractMembers",
+          "path": "/contract-members",
+          "section": "paths",
+          "fingerprint": "edbe72f89a64",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu vị trí và thay đổi trước/sau trong entry này với API adapter, DTO, parser và validation; cùng BE xác nhận phương án tương thích trước merge/phát hành."
+        },
+        {
+          "id": "response-property-enum-value-added",
+          "text": "added the new `active` enum value to the `data/items/status` response property for the response status `200`",
+          "comment": "The server may now return a value the previous contract excluded, so a client written against it may not handle the response. If the value set is meant to grow, declare it with x-extensible-enum.",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getContractMembers",
+          "path": "/contract-members",
+          "section": "paths",
+          "fingerprint": "9e6074388361",
+          "classification": "BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới active; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-property-enum-value-added",
+          "text": "added the new `left` enum value to the `data/items/status` response property for the response status `200`",
+          "comment": "The server may now return a value the previous contract excluded, so a client written against it may not handle the response. If the value set is meant to grow, declare it with x-extensible-enum.",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getContractMembers",
+          "path": "/contract-members",
+          "section": "paths",
+          "fingerprint": "5713abd053ff",
+          "classification": "BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới left; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-required-property-removed",
+          "text": "removed the required property `data/items/isRepresentative` from the response with the `200` status",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getContractMembers",
+          "path": "/contract-members",
+          "section": "paths",
+          "fingerprint": "8f9cfc382589",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "response-property-enum-value-added",
+          "text": "added the new `CONTRACT_NOT_ACTIVE` enum value to the `code` response property for the response status `409`",
+          "comment": "The server may now return a value the previous contract excluded, so a client written against it may not handle the response. If the value set is meant to grow, declare it with x-extensible-enum.",
+          "level": 3,
+          "operation": "POST",
+          "operationId": "postContractMembers",
+          "path": "/contract-members",
+          "section": "paths",
+          "fingerprint": "65bf16a84a91",
+          "classification": "BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới CONTRACT_NOT_ACTIVE; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "new-required-request-property",
+          "text": "added the new required request property `contractId`",
+          "level": 3,
+          "operation": "PATCH",
+          "operationId": "patchContractMembersTenantid",
+          "path": "/contract-members/{contractMemberId}",
+          "section": "paths",
+          "fingerprint": "84d9bc605d65",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu vị trí và thay đổi trước/sau trong entry này với API adapter, DTO, parser và validation; cùng BE xác nhận phương án tương thích trước merge/phát hành."
+        },
+        {
+          "id": "response-property-enum-value-added",
+          "text": "added the new `MEMBER_ALREADY_EXISTS` enum value to the `code` response property for the response status `409`",
+          "comment": "The server may now return a value the previous contract excluded, so a client written against it may not handle the response. If the value set is meant to grow, declare it with x-extensible-enum.",
+          "level": 3,
+          "operation": "PATCH",
+          "operationId": "patchContractMembersTenantid",
+          "path": "/contract-members/{contractMemberId}",
+          "section": "paths",
+          "fingerprint": "ff4c4eec45cf",
+          "classification": "BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới MEMBER_ALREADY_EXISTS; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "new-required-request-property",
+          "text": "added the new required request property `contractId`",
+          "level": 3,
+          "operation": "POST",
+          "operationId": "postContractMembersTenantidLeaveContract",
+          "path": "/contract-members/{contractMemberId}/leave-contract",
+          "section": "paths",
+          "fingerprint": "0af7bfb06e1b",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu vị trí và thay đổi trước/sau trong entry này với API adapter, DTO, parser và validation; cùng BE xác nhận phương án tương thích trước merge/phát hành."
+        },
+        {
+          "id": "response-property-enum-value-added",
+          "text": "added the new `CONTRACT_NOT_ACTIVE` enum value to the `code` response property for the response status `409`",
+          "comment": "The server may now return a value the previous contract excluded, so a client written against it may not handle the response. If the value set is meant to grow, declare it with x-extensible-enum.",
+          "level": 3,
+          "operation": "POST",
+          "operationId": "postContractMembersTenantidLeaveContract",
+          "path": "/contract-members/{contractMemberId}/leave-contract",
+          "section": "paths",
+          "fingerprint": "0865bd4846dc",
+          "classification": "BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới CONTRACT_NOT_ACTIVE; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "request-body-min-properties-set",
+          "text": "the request's body minProperties was set to `1`",
+          "comment": "Setting a bound rejects values the previous contract accepted. If your clients are known to stay within the new limit, lower this check with --severity-levels.",
+          "level": 3,
+          "operation": "PATCH",
+          "operationId": "patchContractsContractid",
+          "path": "/contracts/{contractId}",
+          "section": "paths",
+          "fingerprint": "15dad86f138d",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu vị trí và thay đổi trước/sau trong entry này với API adapter, DTO, parser và validation; cùng BE xác nhận phương án tương thích trước merge/phát hành."
+        },
+        {
+          "id": "response-property-enum-value-added",
+          "text": "added the new `active` enum value to the `data/status` response property for the response status `200`",
+          "comment": "The server may now return a value the previous contract excluded, so a client written against it may not handle the response. If the value set is meant to grow, declare it with x-extensible-enum.",
+          "level": 3,
+          "operation": "PATCH",
+          "operationId": "patchContractsContractid",
+          "path": "/contracts/{contractId}",
+          "section": "paths",
+          "fingerprint": "77400a86dc20",
+          "classification": "BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới active; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "request-property-pattern-added",
+          "text": "added the pattern `^(?!0000)\\d{4}-\\d{2}-\\d{2}$` to the request property `completedOn`",
+          "comment": "This is a breaking change because adding a pattern restriction to a previously unrestricted parameter will reject values that were previously accepted, breaking existing clients",
+          "level": 3,
+          "operation": "POST",
+          "operationId": "postContractsContractidCompleteCheckout",
+          "path": "/contracts/{contractId}/complete-checkout",
+          "section": "paths",
+          "fingerprint": "96466d022fa1",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu vị trí và thay đổi trước/sau trong entry này với API adapter, DTO, parser và validation; cùng BE xác nhận phương án tương thích trước merge/phát hành."
+        },
+        {
+          "id": "response-property-enum-value-added",
+          "text": "added the new `INVALID_ROOM_TRANSITION` enum value to the `code` response property for the response status `409`",
+          "comment": "The server may now return a value the previous contract excluded, so a client written against it may not handle the response. If the value set is meant to grow, declare it with x-extensible-enum.",
+          "level": 3,
+          "operation": "POST",
+          "operationId": "postContractsContractidCompleteCheckout",
+          "path": "/contracts/{contractId}/complete-checkout",
+          "section": "paths",
+          "fingerprint": "3aeb6e92fef3",
+          "classification": "BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới INVALID_ROOM_TRANSITION; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-property-enum-value-added",
+          "text": "added the new `LEFT_DATE_INVALID` enum value to the `code` response property for the response status `422`",
+          "comment": "The server may now return a value the previous contract excluded, so a client written against it may not handle the response. If the value set is meant to grow, declare it with x-extensible-enum.",
+          "level": 3,
+          "operation": "POST",
+          "operationId": "postContractsContractidCompleteCheckout",
+          "path": "/contracts/{contractId}/complete-checkout",
+          "section": "paths",
+          "fingerprint": "d56e38b6b62b",
+          "classification": "BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới LEFT_DATE_INVALID; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-property-enum-value-added",
+          "text": "added the new `SETTLEMENT_NOT_READY` enum value to the `code` response property for the response status `409`",
+          "comment": "The server may now return a value the previous contract excluded, so a client written against it may not handle the response. If the value set is meant to grow, declare it with x-extensible-enum.",
+          "level": 3,
+          "operation": "POST",
+          "operationId": "postContractsContractidCompleteCheckout",
+          "path": "/contracts/{contractId}/complete-checkout",
+          "section": "paths",
+          "fingerprint": "96a93094a9e0",
+          "classification": "BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới SETTLEMENT_NOT_READY; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-property-enum-value-added",
+          "text": "added the new `UNEXPECTED_FIELD` enum value to the `code` response property for the response status `422`",
+          "comment": "The server may now return a value the previous contract excluded, so a client written against it may not handle the response. If the value set is meant to grow, declare it with x-extensible-enum.",
+          "level": 3,
+          "operation": "POST",
+          "operationId": "postContractsContractidCompleteCheckout",
+          "path": "/contracts/{contractId}/complete-checkout",
+          "section": "paths",
+          "fingerprint": "62833a1cced4",
+          "classification": "BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới UNEXPECTED_FIELD; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-property-enum-value-added",
+          "text": "added the new `terminated` enum value to the `data/status` response property for the response status `200`",
+          "comment": "The server may now return a value the previous contract excluded, so a client written against it may not handle the response. If the value set is meant to grow, declare it with x-extensible-enum.",
+          "level": 3,
+          "operation": "POST",
+          "operationId": "postContractsContractidCompleteCheckout",
+          "path": "/contracts/{contractId}/complete-checkout",
+          "section": "paths",
+          "fingerprint": "fb471e095c89",
+          "classification": "BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới terminated; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "request-parameter-enum-value-removed",
+          "text": "removed the enum value `csv` from the `query` request parameter `format`",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getMeContracts",
+          "path": "/me/contracts",
+          "section": "paths",
+          "fingerprint": "90a87f132a4c",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu enum trong DTO/validation và nhánh switch/when; xử lý giá trị chưa biết, kiểm thử dữ liệu cũ và mới; phối hợp BE trước khi phát hành."
+        },
+        {
+          "id": "request-parameter-enum-value-removed",
+          "text": "removed the enum value `pdf` from the `query` request parameter `format`",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getMeContracts",
+          "path": "/me/contracts",
+          "section": "paths",
+          "fingerprint": "91943f0be21c",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu enum trong DTO/validation và nhánh switch/when; xử lý giá trị chưa biết, kiểm thử dữ liệu cũ và mới; phối hợp BE trước khi phát hành."
+        },
+        {
+          "id": "request-parameter-enum-value-removed",
+          "text": "removed the enum value `xlsx` from the `query` request parameter `format`",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getMeContracts",
+          "path": "/me/contracts",
+          "section": "paths",
+          "fingerprint": "2a25adfd0d24",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu enum trong DTO/validation và nhánh switch/when; xử lý giá trị chưa biết, kiểm thử dữ liệu cũ và mới; phối hợp BE trước khi phát hành."
+        },
+        {
+          "id": "response-media-type-removed",
+          "text": "removed the media type `application/pdf` for the response with the status `200`",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getMeContracts",
+          "path": "/me/contracts",
+          "section": "paths",
+          "fingerprint": "db1462399a6a",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "response-media-type-removed",
+          "text": "removed the media type `application/vnd.openxmlformats-officedocument.spreadsheetml.sheet` for the response with the status `200`",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getMeContracts",
+          "path": "/me/contracts",
+          "section": "paths",
+          "fingerprint": "e49a95a6382f",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "response-media-type-removed",
+          "text": "removed the media type `text/csv` for the response with the status `200`",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getMeContracts",
+          "path": "/me/contracts",
+          "section": "paths",
+          "fingerprint": "beef2fd9be14",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "response-property-enum-value-added",
+          "text": "added the new `INVALID_UUID` enum value to the `code` response property for the response status `422`",
+          "comment": "The server may now return a value the previous contract excluded, so a client written against it may not handle the response. If the value set is meant to grow, declare it with x-extensible-enum.",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getMeContracts",
+          "path": "/me/contracts",
+          "section": "paths",
+          "fingerprint": "9ffdac327020",
+          "classification": "BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới INVALID_UUID; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "request-property-removed",
+          "text": "removed the request property `dateOfBirth`",
+          "level": 2,
+          "operation": "POST",
+          "operationId": "postContractMembers",
+          "path": "/contract-members",
+          "section": "paths",
+          "fingerprint": "0db278e171ed",
+          "classification": "NEEDS_REVIEW",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "request-property-removed",
+          "text": "removed the request property `gender`",
+          "level": 2,
+          "operation": "POST",
+          "operationId": "postContractMembers",
+          "path": "/contract-members",
+          "section": "paths",
+          "fingerprint": "ac75306aa0e4",
+          "classification": "NEEDS_REVIEW",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "request-property-removed",
+          "text": "removed the request property `identityCardNumber`",
+          "level": 2,
+          "operation": "POST",
+          "operationId": "postContractMembers",
+          "path": "/contract-members",
+          "section": "paths",
+          "fingerprint": "18a9c9411a36",
+          "classification": "NEEDS_REVIEW",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "request-property-removed",
+          "text": "removed the request property `isRepresentative`",
+          "level": 2,
+          "operation": "POST",
+          "operationId": "postContractMembers",
+          "path": "/contract-members",
+          "section": "paths",
+          "fingerprint": "671bf60e26c6",
+          "classification": "NEEDS_REVIEW",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "api-version-not-bumped",
+          "text": "a breaking change was detected but the version is still `1.0.0`",
+          "level": 1,
+          "section": "info",
+          "fingerprint": "d3f96cd643c1",
+          "classification": "NON_BREAKING",
+          "clientImpact": "BE: xem lại quy ước version trước khi chấp nhận breaking change. FE/Mobile: theo kế hoạch chuyển đổi của entry này; version trong OpenAPI chưa chứng minh backend đã triển khai."
+        },
+        {
+          "id": "new-optional-request-parameter",
+          "text": "added the new optional `query` request parameter `order`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getContractMembers",
+          "path": "/contract-members",
+          "section": "paths",
+          "fingerprint": "bcf42bae607d",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        },
+        {
+          "id": "new-optional-request-parameter",
+          "text": "added the new optional `query` request parameter `sort`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getContractMembers",
+          "path": "/contract-members",
+          "section": "paths",
+          "fingerprint": "ef349dfe981b",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        },
+        {
+          "id": "response-optional-property-removed",
+          "text": "removed the optional property `data/items/identityCardNumber` from the response with the `200` status",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getContractMembers",
+          "path": "/contract-members",
+          "section": "paths",
+          "fingerprint": "933f23441154",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "response-property-became-required",
+          "text": "the response property `data/items/leftAt` became required for the status `200`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getContractMembers",
+          "path": "/contract-members",
+          "section": "paths",
+          "fingerprint": "046d4b6f95d6",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        },
+        {
+          "id": "response-property-became-required",
+          "text": "the response property `data/items/tenantId` became required for the status `200`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getContractMembers",
+          "path": "/contract-members",
+          "section": "paths",
+          "fingerprint": "cfeabf4d6fe9",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        },
+        {
+          "id": "response-property-became-required",
+          "text": "the response property `data/items/tenantPhone` became required for the status `200`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getContractMembers",
+          "path": "/contract-members",
+          "section": "paths",
+          "fingerprint": "5b3d859239d9",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        },
+        {
+          "id": "response-property-enum-value-removed",
+          "text": "removed the `ACTIVE` enum value from the `data/items/status` response property for the response status `200`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getContractMembers",
+          "path": "/contract-members",
+          "section": "paths",
+          "fingerprint": "5eaef4c39d5f",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu enum trong DTO/validation và nhánh switch/when; xử lý giá trị chưa biết, kiểm thử dữ liệu cũ và mới; phối hợp BE trước khi phát hành."
+        },
+        {
+          "id": "response-property-enum-value-removed",
+          "text": "removed the `LEFT` enum value from the `data/items/status` response property for the response status `200`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getContractMembers",
+          "path": "/contract-members",
+          "section": "paths",
+          "fingerprint": "1c309b3bcaa3",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu enum trong DTO/validation và nhánh switch/when; xử lý giá trị chưa biết, kiểm thử dữ liệu cũ và mới; phối hợp BE trước khi phát hành."
+        },
+        {
+          "id": "response-property-enum-value-removed",
+          "text": "removed the `TEMPORARY_ABSENT` enum value from the `data/items/status` response property for the response status `200`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getContractMembers",
+          "path": "/contract-members",
+          "section": "paths",
+          "fingerprint": "ce7281804e83",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu enum trong DTO/validation và nhánh switch/when; xử lý giá trị chưa biết, kiểm thử dữ liệu cũ và mới; phối hợp BE trước khi phát hành."
+        },
+        {
+          "id": "response-non-success-status-added",
+          "text": "added the non-success response with the status `404`",
+          "level": 1,
+          "operation": "POST",
+          "operationId": "postContractMembers",
+          "path": "/contract-members",
+          "section": "paths",
+          "fingerprint": "bd64f0c51bd4",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        },
+        {
+          "id": "api-operation-id-removed",
+          "text": "api operation id `patchContractMembersContractmemberid` removed and replaced with `patchContractMembersTenantid`",
+          "level": 1,
+          "operation": "PATCH",
+          "operationId": "patchContractMembersContractmemberid",
+          "path": "/contract-members/{contractMemberId}",
+          "section": "paths",
+          "fingerprint": "cbd331f8d293",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "api-operation-id-removed",
+          "text": "api operation id `postContractMembersContractmemberidLeaveContract` removed and replaced with `postContractMembersTenantidLeaveContract`",
+          "level": 1,
+          "operation": "POST",
+          "operationId": "postContractMembersContractmemberidLeaveContract",
+          "path": "/contract-members/{contractMemberId}/leave-contract",
+          "section": "paths",
+          "fingerprint": "e9c9b187bbf7",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "new-optional-request-property",
+          "text": "added the new optional request property `vehicleCount`",
+          "level": 1,
+          "operation": "PATCH",
+          "operationId": "patchContractsContractid",
+          "path": "/contracts/{contractId}",
+          "section": "paths",
+          "fingerprint": "f4d146283ea9",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        },
+        {
+          "id": "request-property-became-optional",
+          "text": "the request property `description` became optional",
+          "level": 1,
+          "operation": "PATCH",
+          "operationId": "patchContractsContractid",
+          "path": "/contracts/{contractId}",
+          "section": "paths",
+          "fingerprint": "3c9d65fa9c17",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        },
+        {
+          "id": "response-non-success-status-removed",
+          "text": "removed the non-success response with the status `429`",
+          "level": 1,
+          "operation": "POST",
+          "operationId": "postContractsContractidCompleteCheckout",
+          "path": "/contracts/{contractId}/complete-checkout",
+          "section": "paths",
+          "fingerprint": "7a841ec5b3f5",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "response-property-enum-value-removed",
+          "text": "removed the `SETTLEMENT_NOT_READY` enum value from the `code` response property for the response status `422`",
+          "level": 1,
+          "operation": "POST",
+          "operationId": "postContractsContractidCompleteCheckout",
+          "path": "/contracts/{contractId}/complete-checkout",
+          "section": "paths",
+          "fingerprint": "7cf2f66bf375",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu enum trong DTO/validation và nhánh switch/when; xử lý giá trị chưa biết, kiểm thử dữ liệu cũ và mới; phối hợp BE trước khi phát hành."
+        },
+        {
+          "id": "response-property-enum-value-removed",
+          "text": "removed the `expired` enum value from the `data/status` response property for the response status `200`",
+          "level": 1,
+          "operation": "POST",
+          "operationId": "postContractsContractidCompleteCheckout",
+          "path": "/contracts/{contractId}/complete-checkout",
+          "section": "paths",
+          "fingerprint": "6c718ad4a495",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu enum trong DTO/validation và nhánh switch/when; xử lý giá trị chưa biết, kiểm thử dữ liệu cũ và mới; phối hợp BE trước khi phát hành."
+        },
+        {
+          "id": "new-optional-request-parameter",
+          "text": "added the new optional `query` request parameter `order`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getMeContracts",
+          "path": "/me/contracts",
+          "section": "paths",
+          "fingerprint": "e09a8638f5c9",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        },
+        {
+          "id": "new-optional-request-parameter",
+          "text": "added the new optional `query` request parameter `sort`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getMeContracts",
+          "path": "/me/contracts",
+          "section": "paths",
+          "fingerprint": "10f38302db79",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        },
+        {
+          "id": "request-parameter-property-enum-value-added",
+          "text": "added the enum value `active` to the property `status` of the `query` request parameter `filter`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getMeContracts",
+          "path": "/me/contracts",
+          "section": "paths",
+          "fingerprint": "0abc60ee5180",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu enum trong DTO/validation và nhánh switch/when; xử lý giá trị chưa biết, kiểm thử dữ liệu cũ và mới; phối hợp BE trước khi phát hành."
+        },
+        {
+          "id": "request-parameter-property-enum-value-added",
+          "text": "added the enum value `draft` to the property `status` of the `query` request parameter `filter`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getMeContracts",
+          "path": "/me/contracts",
+          "section": "paths",
+          "fingerprint": "bb8c1a4656ea",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu enum trong DTO/validation và nhánh switch/when; xử lý giá trị chưa biết, kiểm thử dữ liệu cũ và mới; phối hợp BE trước khi phát hành."
+        },
+        {
+          "id": "request-parameter-property-enum-value-added",
+          "text": "added the enum value `expired` to the property `status` of the `query` request parameter `filter`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getMeContracts",
+          "path": "/me/contracts",
+          "section": "paths",
+          "fingerprint": "96affec19c2f",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu enum trong DTO/validation và nhánh switch/when; xử lý giá trị chưa biết, kiểm thử dữ liệu cũ và mới; phối hợp BE trước khi phát hành."
+        },
+        {
+          "id": "request-parameter-property-enum-value-added",
+          "text": "added the enum value `signed` to the property `status` of the `query` request parameter `filter`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getMeContracts",
+          "path": "/me/contracts",
+          "section": "paths",
+          "fingerprint": "f7810ded8062",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu enum trong DTO/validation và nhánh switch/when; xử lý giá trị chưa biết, kiểm thử dữ liệu cũ và mới; phối hợp BE trước khi phát hành."
+        },
+        {
+          "id": "request-parameter-property-enum-value-added",
+          "text": "added the enum value `suspended` to the property `status` of the `query` request parameter `filter`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getMeContracts",
+          "path": "/me/contracts",
+          "section": "paths",
+          "fingerprint": "c43978186046",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu enum trong DTO/validation và nhánh switch/when; xử lý giá trị chưa biết, kiểm thử dữ liệu cũ và mới; phối hợp BE trước khi phát hành."
+        },
+        {
+          "id": "request-parameter-property-enum-value-added",
+          "text": "added the enum value `terminated` to the property `status` of the `query` request parameter `filter`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getMeContracts",
+          "path": "/me/contracts",
+          "section": "paths",
+          "fingerprint": "4b7c70c61118",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu enum trong DTO/validation và nhánh switch/when; xử lý giá trị chưa biết, kiểm thử dữ liệu cũ và mới; phối hợp BE trước khi phát hành."
+        },
+        {
+          "id": "response-non-success-status-removed",
+          "text": "removed the non-success response with the status `429`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getMeContracts",
+          "path": "/me/contracts",
+          "section": "paths",
+          "fingerprint": "27a6960ed0df",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "response-optional-property-removed",
+          "text": "removed the optional property `data/items/rentalType` from the response with the `200` status",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getMeContracts",
+          "path": "/me/contracts",
+          "section": "paths",
+          "fingerprint": "7a7d3230d7fa",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        }
+      ],
+      "locations": [
+        {
+          "pointer": "/components/schemas/ContractCompleteCheckoutRequestDto/properties/completedOn/description",
+          "before": "Ngày hoàn tất trả phòng (YYYY-MM-DD).",
+          "after": "Checkout date between contract startDate and today (UTC), on or after each remaining member joinedAt. May exceed endDate."
+        },
+        {
+          "pointer": "/components/schemas/ContractCompleteCheckoutRequestDto/properties/completedOn/pattern",
+          "before": null,
+          "after": "^(?!0000)\\d{4}-\\d{2}-\\d{2}$"
+        },
+        {
+          "pointer": "/components/schemas/ContractCompleteCheckoutResponseDto/properties/status/description",
+          "before": "Trạng thái hiện tại của tài nguyên trong quy trình nghiệp vụ.",
+          "after": "Contract status after checkout."
+        },
+        {
+          "pointer": "/components/schemas/ContractCompleteCheckoutResponseDto/properties/status/enum",
+          "before": [
+            "expired"
+          ],
+          "after": [
+            "terminated"
+          ]
+        },
+        {
+          "pointer": "/components/schemas/ContractCompleteCheckoutResponseDto/properties/status/example",
+          "before": "expired",
+          "after": "terminated"
+        },
+        {
+          "pointer": "/components/schemas/ContractMemberAddRequestDto/properties/dateOfBirth",
+          "before": {
+            "type": "string",
+            "format": "date",
+            "nullable": true,
+            "description": "Ngày tháng năm sinh của thành viên",
+            "example": "2002-05-15"
+          },
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/ContractMemberAddRequestDto/properties/gender",
+          "before": {
+            "type": "string",
+            "enum": [
+              "male",
+              "female",
+              "other"
+            ],
+            "nullable": true,
+            "description": "Giới tính của thành viên",
+            "example": "male"
+          },
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/ContractMemberAddRequestDto/properties/identityCardNumber",
+          "before": {
+            "type": "string",
+            "nullable": true,
+            "minLength": 9,
+            "maxLength": 12,
+            "description": "Số CCCD/CMND để đối chiếu thông tin người ở ghép",
+            "example": "048195009876"
+          },
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/ContractMemberAddRequestDto/properties/isRepresentative",
+          "before": {
+            "type": "boolean",
+            "nullable": true,
+            "description": "Đánh dấu thành viên có phải là đại diện đứng tên hợp đồng không (mặc định false)",
+            "example": false
+          },
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/ContractMemberAddRequestDto/properties/joinedAt/description",
+          "before": "Ngày thành viên bắt đầu vào ở",
+          "after": "YYYY-MM-DD within the inclusive contract startDate/endDate range."
+        },
+        {
+          "pointer": "/components/schemas/ContractMemberAddRequestDto/properties/tenantId/description",
+          "before": "ID người dùng trên hệ thống nếu đã có tài khoản",
+          "after": "Optional explicit account ID. Web sends null; no automatic linking by phone or Identity lookup."
+        },
+        {
+          "pointer": "/components/schemas/ContractMemberAddRequestDto/properties/tenantPhone/description",
+          "before": "Số điện thoại thành viên",
+          "after": "Vietnamese phone number; required when tenantId is null."
+        },
+        {
+          "pointer": "/components/schemas/ContractMemberLeaveRequestDto/properties/contractId",
+          "before": null,
+          "after": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Hợp đồng của tenant cần ghi nhận rời đi; bắt buộc để xác định đúng landlord và member."
+          }
+        },
+        {
+          "pointer": "/components/schemas/ContractMemberLeaveRequestDto/properties/leftOn/description",
+          "before": "Ngày thành viên rời hợp đồng (YYYY-MM-DD).",
+          "after": "Ngày rời (YYYY-MM-DD), ≥ joinedAt và ≤ endDate. Checkout áp dụng giới hạn riêng (P6-D71)."
+        },
+        {
+          "pointer": "/components/schemas/ContractMemberLeaveRequestDto/required",
+          "before": [
+            "leftOn"
+          ],
+          "after": [
+            "contractId",
+            "leftOn"
+          ]
+        },
+        {
+          "pointer": "/components/schemas/ContractMemberListResponseDto/properties/identityCardNumber",
+          "before": {
+            "type": "string",
+            "nullable": true,
+            "description": "Số CCCD/CMND của thành viên để chủ nhà đối chiếu nhân thân."
+          },
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/ContractMemberListResponseDto/properties/isRepresentative",
+          "before": {
+            "type": "boolean",
+            "description": "Là người đại diện đứng tên ký hợp đồng chính hay không."
+          },
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/ContractMemberListResponseDto/properties/status/description",
+          "before": "Trạng thái cư trú: ACTIVE (đang ở), TEMPORARY_ABSENT (tạm vắng), LEFT (đã chuyển đi).",
+          "after": "Derived: active when leftAt is null or after today (UTC); otherwise left."
+        },
+        {
+          "pointer": "/components/schemas/ContractMemberListResponseDto/properties/status/enum",
+          "before": [
+            "ACTIVE",
+            "TEMPORARY_ABSENT",
+            "LEFT"
+          ],
+          "after": [
+            "active",
+            "left"
+          ]
+        },
+        {
+          "pointer": "/components/schemas/ContractMemberListResponseDto/properties/status/example",
+          "before": "ACTIVE",
+          "after": "active"
+        },
+        {
+          "pointer": "/components/schemas/ContractMemberListResponseDto/properties/tenantName/nullable",
+          "before": null,
+          "after": true
+        },
+        {
+          "pointer": "/components/schemas/ContractMemberListResponseDto/required",
+          "before": [
+            "id",
+            "contractId",
+            "tenantName",
+            "isRepresentative",
+            "status",
+            "joinedAt"
+          ],
+          "after": [
+            "id",
+            "contractId",
+            "tenantId",
+            "tenantName",
+            "tenantPhone",
+            "joinedAt",
+            "leftAt",
+            "status"
+          ]
+        },
+        {
+          "pointer": "/components/schemas/ContractMemberUpdateRequestDto/properties/contractId",
+          "before": null,
+          "after": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Hợp đồng chứa member cần cập nhật; bắt buộc để xác định đúng landlord và tenant."
+          }
+        },
+        {
+          "pointer": "/components/schemas/ContractMemberUpdateRequestDto/required",
+          "before": [
+            "tenantPhone"
+          ],
+          "after": [
+            "contractId",
+            "tenantPhone"
+          ]
+        },
+        {
+          "pointer": "/components/schemas/ContractMyListResponseDto/properties/contractCode/description",
+          "before": "Mã hợp đồng (VD: HD-2026-0012).",
+          "after": "HD- followed by the first six characters of the contract ID."
+        },
+        {
+          "pointer": "/components/schemas/ContractMyListResponseDto/properties/contractCode/example",
+          "before": null,
+          "after": "HD-3fa85f"
+        },
+        {
+          "pointer": "/components/schemas/ContractMyListResponseDto/properties/rentalType",
+          "before": {
+            "type": "string",
+            "enum": [
+              "MONTHLY",
+              "DAILY"
+            ],
+            "description": "Hình thức thuê dài hạn hoặc ngắn hạn theo ngày."
+          },
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/ContractUpdateRequestDto/description",
+          "before": "Dữ liệu cập nhật hợp đồng nháp",
+          "after": "Draft updates require description. Active contracts accept description and/or vehicleCount. Other fields are rejected by the existing DTO whitelist."
+        },
+        {
+          "pointer": "/components/schemas/ContractUpdateRequestDto/minProperties",
+          "before": null,
+          "after": 1
+        },
+        {
+          "pointer": "/components/schemas/ContractUpdateRequestDto/properties/vehicleCount",
+          "before": null,
+          "after": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 2147483647,
+            "nullable": true,
+            "description": "Active contracts only. Number of vehicles; null clears the value. Issued invoice snapshots are unchanged."
+          }
+        },
+        {
+          "pointer": "/components/schemas/ContractUpdateRequestDto/required",
+          "before": [
+            "description"
+          ],
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/ContractUpdateResponseDto/description",
+          "before": "Phản hồi khi cập nhật hợp đồng nháp",
+          "after": "Response after updating a draft or active contract"
+        },
+        {
+          "pointer": "/components/schemas/ContractUpdateResponseDto/properties/status/description",
+          "before": "Trạng thái hiện tại của tài nguyên trong quy trình nghiệp vụ.",
+          "after": "Current contract status."
+        },
+        {
+          "pointer": "/components/schemas/ContractUpdateResponseDto/properties/status/enum",
+          "before": [
+            "draft"
+          ],
+          "after": [
+            "draft",
+            "active"
+          ]
+        },
+        {
+          "pointer": "/components/schemas/ContractUpdateResponseDto/properties/status/example",
+          "before": "draft",
+          "after": "active"
+        },
+        {
+          "pointer": "/paths/~1contract-members/get/description",
+          "before": "landlord, tenant. Liệt kê thành viên hoặc xuất dữ liệu. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 CONTRACT ID REQUIRED · 404 NOT FOUND.",
+          "after": "Landlord owning the contract, or tenant who is the contract representative or an active member.\nMissing filter[contractId] returns 422 CONTRACT_ID_REQUIRED; unknown/deleted contract returns\n404 RESOURCE_NOT_FOUND; other users receive 403 FORBIDDEN. An active member has leftAt null\nor after today in UTC. Past and current-day departures do not grant access.\n\nOnly format=json is supported (other formats: 422 VALIDATION_FAILED). Offset pagination,\ndefault pageNo=1, pageSize=20 (maximum 100), sort=joinedAt, order=asc, id ascending tie breaker.\nItems include id, contractId, tenantId, tenantName, tenantPhone, joinedAt, leftAt and derived\nstatus (active | left). No representative flag, identity card fields or temporary-absence status.\n\n```mermaid\nsequenceDiagram\n    participant GW as API Gateway\n    participant TEN as Tenancy\n    participant DB as Tenancy DB\n    GW->>TEN: GET /contract-members?filter[contractId]=UUID\n    TEN->>TEN: Verify JWT, landlord/tenant role, active account and query\n    TEN->>DB: Read non-deleted contract\n    TEN->>DB: If tenant is not representative, read active contract members\n    TEN->>TEN: Require owner or representative or active member\n    alt Missing filter / unknown contract / unauthorized\n        TEN-->>GW: 422 CONTRACT_ID_REQUIRED / 404 RESOURCE_NOT_FOUND / 403 FORBIDDEN\n    else Authorized\n        TEN->>DB: Count and page non-deleted members ORDER BY joined_at, id\n        TEN-->>GW: 200 CONTRACT_MEMBERS_FETCHED + offset pagination\n    end\n```"
+        },
+        {
+          "pointer": "/paths/~1contract-members/get/parameters",
+          "before": [
+            {
+              "name": "filter",
+              "in": "query",
+              "required": true,
+              "style": "deepObject",
+              "explode": true,
+              "description": "Bộ lọc được endpoint hỗ trợ.",
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "contractId": {
+                    "type": "string",
+                    "format": "uuid"
+                  }
+                },
+                "required": [
+                  "contractId"
+                ]
+              }
+            },
+            {
+              "name": "pageSize",
+              "in": "query",
+              "schema": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 100,
+                "default": 20
+              }
+            },
+            {
+              "name": "pageNo",
+              "in": "query",
+              "schema": {
+                "type": "integer",
+                "minimum": 1,
+                "default": 1
+              }
+            },
+            {
+              "name": "format",
+              "in": "query",
+              "description": "json trả envelope; định dạng khác trả file stream.",
+              "schema": {
+                "type": "string",
+                "enum": [
+                  "json",
+                  "xlsx",
+                  "csv",
+                  "pdf"
+                ],
+                "default": "json"
+              }
+            }
+          ],
+          "after": [
+            {
+              "name": "filter",
+              "in": "query",
+              "required": true,
+              "style": "deepObject",
+              "explode": true,
+              "description": "Bộ lọc được endpoint hỗ trợ.",
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "contractId": {
+                    "type": "string",
+                    "format": "uuid"
+                  }
+                },
+                "required": [
+                  "contractId"
+                ]
+              }
+            },
+            {
+              "name": "pageSize",
+              "in": "query",
+              "schema": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 100,
+                "default": 20
+              }
+            },
+            {
+              "name": "pageNo",
+              "in": "query",
+              "schema": {
+                "type": "integer",
+                "minimum": 1,
+                "default": 1
+              }
+            },
+            {
+              "name": "format",
+              "in": "query",
+              "description": "Only json is supported; other formats return 422 VALIDATION_FAILED.",
+              "schema": {
+                "type": "string",
+                "enum": [
+                  "json"
+                ],
+                "default": "json"
+              }
+            },
+            {
+              "name": "sort",
+              "in": "query",
+              "schema": {
+                "type": "string",
+                "enum": [
+                  "joinedAt"
+                ],
+                "default": "joinedAt"
+              }
+            },
+            {
+              "name": "order",
+              "in": "query",
+              "schema": {
+                "type": "string",
+                "enum": [
+                  "asc",
+                  "desc"
+                ],
+                "default": "asc"
+              }
+            }
+          ]
+        },
+        {
+          "pointer": "/paths/~1contract-members/get/responses/200/content/application~1json/example/data",
+          "before": [
+            {
+              "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+              "contractId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+              "tenantName": "Trần Văn B",
+              "joinedAt": "2026-09-01",
+              "leftAt": null,
+              "isRepresentative": false,
+              "status": "ACTIVE"
+            }
+          ],
+          "after": [
+            {
+              "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+              "contractId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+              "tenantName": "Trần Văn B",
+              "joinedAt": "2026-09-01",
+              "leftAt": null,
+              "tenantId": null,
+              "tenantPhone": "0921234567",
+              "status": "active"
+            }
+          ]
+        },
+        {
+          "pointer": "/paths/~1contract-members/get/responses/200/content/application~1pdf",
+          "before": {
+            "schema": {
+              "type": "string",
+              "format": "binary"
+            }
+          },
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1contract-members/get/responses/200/content/application~1vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+          "before": {
+            "schema": {
+              "type": "string",
+              "format": "binary"
+            }
+          },
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1contract-members/get/responses/200/content/text~1csv",
+          "before": {
+            "schema": {
+              "type": "string",
+              "format": "binary"
+            }
+          },
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1contract-members/get/x-apidog-status",
+          "before": "designing",
+          "after": "released"
+        },
+        {
+          "pointer": "/paths/~1contract-members/post/description",
+          "before": "landlord. Thêm một thành viên vào hợp đồng. Lỗi nghiệp vụ: 409 MEMBER ALREADY EXISTS · 403 FORBIDDEN · 422 TENANT IDENTITY INVALID.",
+          "after": "Landlord only. The contract must exist, belong to the JWT user, and be active.\nOnly contractId, tenantId?, tenantName, tenantPhone?, joinedAt are accepted; unknown fields return\n422 VALIDATION_FAILED. tenantId is linked explicitly, with no Identity lookup or phone auto-linking.\nWithout tenantId, tenantName and tenantPhone are required (422 TENANT_IDENTITY_INVALID).\njoinedAt is an inclusive date in [startDate, endDate] (422 VALIDATION_FAILED).\n\nAfter locking the contract, reject an active member matching tenantId or tenantPhone\n(ignore null fields) with 409 MEMBER_ALREADY_EXISTS. Active means leftAt is null or after today\nin UTC, including scheduled future departures. Non-active contract: 409 CONTRACT_NOT_ACTIVE.\nSave the member and contract_member.added outbox event in one transaction. Return 201\nCONTRACT_MEMBER_ADDED and Location: /api/v1/contract-members/{contractMemberId}.\n\n```mermaid\nsequenceDiagram\n    participant GW as API Gateway\n    participant TEN as Tenancy\n    participant DB as Tenancy DB\n    GW->>TEN: POST /contract-members\n    TEN->>TEN: Verify JWT, landlord role, active account and request\n    TEN->>DB: BEGIN; lock contract FOR UPDATE (before locking member)\n    TEN->>TEN: Require owner, active contract, valid dates/identity; check active duplicates\n    alt Missing record / forbidden / business validation failure\n        TEN->>DB: ROLLBACK\n        TEN-->>GW: 404 / 403 / 409 / 422\n    else Valid operation\n        TEN->>DB: INSERT contract_members; INSERT contract_member.added into outbox\n        TEN->>DB: COMMIT\n        TEN-->>GW: 201 CONTRACT_MEMBER_ADDED + Location\n    end\n```"
+        },
+        {
+          "pointer": "/paths/~1contract-members/post/responses/404",
+          "before": null,
+          "after": {
+            "$ref": "#/components/responses/NotFoundError"
+          }
+        },
+        {
+          "pointer": "/paths/~1contract-members/post/responses/409/content/application~1json/schema/properties/code/enum",
+          "before": [
+            "MEMBER_ALREADY_EXISTS"
+          ],
+          "after": [
+            "CONTRACT_NOT_ACTIVE",
+            "MEMBER_ALREADY_EXISTS"
+          ]
+        },
+        {
+          "pointer": "/paths/~1contract-members/post/x-apidog-status",
+          "before": "designing",
+          "after": "released"
+        },
+        {
+          "pointer": "/paths/~1contract-members~1{contractMemberId}",
+          "before": {
+            "patch": {
+              "tags": [
+                "Contract"
+              ],
+              "x-apidog-folder": "ContractMember",
+              "x-apidog-status": "designing",
+              "operationId": "patchContractMembersContractmemberid",
+              "security": [
+                {
+                  "BearerAuth": []
+                }
+              ],
+              "summary": "Update contract member",
+              "description": "landlord. Cập nhật thành viên. Lỗi nghiệp vụ: 403 FORBIDDEN · 409 MEMBER LEFT · 422 VALIDATION FAILED.",
+              "parameters": [
+                {
+                  "name": "contractMemberId",
+                  "in": "path",
+                  "required": true,
+                  "schema": {
+                    "type": "string",
+                    "format": "uuid"
+                  }
+                }
+              ],
+              "requestBody": {
+                "required": true,
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "$ref": "#/components/schemas/ContractMemberUpdateRequestDto"
+                    },
+                    "example": {
+                      "tenantPhone": "0921234567"
+                    }
+                  }
+                }
+              },
+              "responses": {
+                "200": {
+                  "description": "Thành công: Cập nhật thành viên.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "required": [
+                          "statusCode",
+                          "code",
+                          "data"
+                        ],
+                        "properties": {
+                          "statusCode": {
+                            "type": "integer",
+                            "enum": [
+                              200
+                            ]
+                          },
+                          "code": {
+                            "type": "string",
+                            "enum": [
+                              "CONTRACT_MEMBER_UPDATED"
+                            ]
+                          },
+                          "data": {
+                            "$ref": "#/components/schemas/ContractMemberUpdateResponseDto"
+                          }
+                        }
+                      },
+                      "example": {
+                        "statusCode": 200,
+                        "code": "CONTRACT_MEMBER_UPDATED",
+                        "data": {
+                          "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                          "tenantPhone": "0921234567"
+                        }
+                      }
+                    }
+                  }
+                },
+                "400": {
+                  "$ref": "#/components/responses/BadRequestBodyPathError"
+                },
+                "401": {
+                  "$ref": "#/components/responses/UnauthorizedError"
+                },
+                "403": {
+                  "$ref": "#/components/responses/ForbiddenError"
+                },
+                "404": {
+                  "$ref": "#/components/responses/NotFoundError"
+                },
+                "409": {
+                  "x-apidog-name": "Conflict",
+                  "description": "Yêu cầu xung đột với trạng thái hiện tại hoặc dữ liệu đã tồn tại.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "required": [
+                          "statusCode",
+                          "code"
+                        ],
+                        "properties": {
+                          "statusCode": {
+                            "type": "integer",
+                            "enum": [
+                              409
+                            ]
+                          },
+                          "code": {
+                            "type": "string",
+                            "enum": [
+                              "MEMBER_LEFT"
+                            ],
+                            "description": "- MEMBER_LEFT: Thành viên đã rời hợp đồng."
+                          }
+                        }
+                      },
+                      "examples": {
+                        "member_left": {
+                          "summary": "MEMBER_LEFT — Thành viên đã rời hợp đồng.",
+                          "value": {
+                            "statusCode": 409,
+                            "code": "MEMBER_LEFT"
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "422": {
+                  "$ref": "#/components/responses/ValidationError"
+                },
+                "429": {
+                  "$ref": "#/components/responses/TooManyRequestsError"
+                },
+                "500": {
+                  "$ref": "#/components/responses/InternalServerError"
+                },
+                "503": {
+                  "$ref": "#/components/responses/AuthUnavailableError"
+                }
+              }
+            }
+          },
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1contract-members~1{contractMemberId}~1leave-contract",
+          "before": {
+            "post": {
+              "tags": [
+                "Contract"
+              ],
+              "x-apidog-folder": "ContractMember",
+              "x-apidog-status": "designing",
+              "operationId": "postContractMembersContractmemberidLeaveContract",
+              "security": [
+                {
+                  "BearerAuth": []
+                }
+              ],
+              "summary": "Record contract member leave",
+              "description": "landlord. Ghi nhận thành viên rời đi. Lỗi nghiệp vụ: 403 FORBIDDEN · 409 MEMBER ALREADY LEFT · 422 LEFT DATE INVALID.",
+              "parameters": [
+                {
+                  "name": "contractMemberId",
+                  "in": "path",
+                  "required": true,
+                  "schema": {
+                    "type": "string",
+                    "format": "uuid"
+                  }
+                }
+              ],
+              "requestBody": {
+                "required": true,
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "$ref": "#/components/schemas/ContractMemberLeaveRequestDto"
+                    },
+                    "example": {
+                      "leftOn": "2026-10-01"
+                    }
+                  }
+                }
+              },
+              "responses": {
+                "200": {
+                  "description": "Thành công: Ghi nhận thành viên rời đi.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "required": [
+                          "statusCode",
+                          "code",
+                          "data"
+                        ],
+                        "properties": {
+                          "statusCode": {
+                            "type": "integer",
+                            "enum": [
+                              200
+                            ]
+                          },
+                          "code": {
+                            "type": "string",
+                            "enum": [
+                              "CONTRACT_MEMBER_LEFT"
+                            ]
+                          },
+                          "data": {
+                            "$ref": "#/components/schemas/ContractMemberLeaveResponseDto"
+                          }
+                        }
+                      },
+                      "example": {
+                        "statusCode": 200,
+                        "code": "CONTRACT_MEMBER_LEFT",
+                        "data": {
+                          "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                          "leftAt": "2026-10-01"
+                        }
+                      }
+                    }
+                  }
+                },
+                "400": {
+                  "$ref": "#/components/responses/BadRequestBodyPathError"
+                },
+                "401": {
+                  "$ref": "#/components/responses/UnauthorizedError"
+                },
+                "403": {
+                  "$ref": "#/components/responses/ForbiddenError"
+                },
+                "404": {
+                  "$ref": "#/components/responses/NotFoundError"
+                },
+                "409": {
+                  "x-apidog-name": "Conflict",
+                  "description": "Yêu cầu xung đột với trạng thái hiện tại hoặc dữ liệu đã tồn tại.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "required": [
+                          "statusCode",
+                          "code"
+                        ],
+                        "properties": {
+                          "statusCode": {
+                            "type": "integer",
+                            "enum": [
+                              409
+                            ]
+                          },
+                          "code": {
+                            "type": "string",
+                            "enum": [
+                              "MEMBER_ALREADY_LEFT"
+                            ],
+                            "description": "- MEMBER_ALREADY_LEFT: Thành viên đã rời hợp đồng."
+                          }
+                        }
+                      },
+                      "examples": {
+                        "member_already_left": {
+                          "summary": "MEMBER_ALREADY_LEFT — Thành viên đã rời hợp đồng.",
+                          "value": {
+                            "statusCode": 409,
+                            "code": "MEMBER_ALREADY_LEFT"
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "422": {
+                  "x-apidog-name": "Unprocessable Entity",
+                  "description": "Dữ liệu hợp lệ về cấu trúc nhưng vi phạm ràng buộc trường hoặc quy tắc nghiệp vụ.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "required": [
+                          "statusCode",
+                          "code"
+                        ],
+                        "properties": {
+                          "statusCode": {
+                            "type": "integer",
+                            "enum": [
+                              422
+                            ]
+                          },
+                          "code": {
+                            "type": "string",
+                            "enum": [
+                              "LEFT_DATE_INVALID",
+                              "VALIDATION_FAILED"
+                            ],
+                            "description": "- LEFT_DATE_INVALID: Ngày rời hợp đồng không hợp lệ.\n- VALIDATION_FAILED: Dữ liệu vi phạm ràng buộc schema hoặc quy tắc nghiệp vụ khác chưa có mã riêng."
+                          }
+                        }
+                      },
+                      "examples": {
+                        "left_date_invalid": {
+                          "summary": "LEFT_DATE_INVALID — Ngày rời hợp đồng không hợp lệ.",
+                          "value": {
+                            "statusCode": 422,
+                            "code": "LEFT_DATE_INVALID"
+                          }
+                        },
+                        "validation_failed": {
+                          "summary": "VALIDATION_FAILED — Dữ liệu vi phạm ràng buộc schema hoặc quy tắc nghiệp vụ khác chưa có mã riêng.",
+                          "value": {
+                            "statusCode": 422,
+                            "code": "VALIDATION_FAILED"
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "429": {
+                  "$ref": "#/components/responses/TooManyRequestsError"
+                },
+                "500": {
+                  "$ref": "#/components/responses/InternalServerError"
+                },
+                "503": {
+                  "$ref": "#/components/responses/AuthUnavailableError"
+                }
+              }
+            }
+          },
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1contract-members~1{tenantId}",
+          "before": null,
+          "after": {
+            "patch": {
+              "tags": [
+                "Contract"
+              ],
+              "x-apidog-folder": "ContractMember",
+              "x-apidog-status": "released",
+              "operationId": "patchContractMembersTenantid",
+              "security": [
+                {
+                  "BearerAuth": []
+                }
+              ],
+              "summary": "Update contract member",
+              "description": "Identify the membership by tenantId (tenant account UUID in the URL) and required contractId in the body.\nMembers with tenant_id = null cannot use this endpoint. Update tenantPhone (Vietnamese phone number)\nonly in the selected contract, owned by the requesting landlord. The response id is the membership record ID.\nJoin contract_members with contracts using both IDs, excluding soft-deleted rows.\nPrefer the current membership if the tenant has left and rejoined the same contract.\nLock the contract before the member. A departed member (leftAt <= today, UTC)\nreturns 409 MEMBER_LEFT. A matching tenantId or new phone on another active member returns\n409 MEMBER_ALREADY_EXISTS. Unknown member/contract: 404 RESOURCE_NOT_FOUND; other landlord: 403 FORBIDDEN.\nNo requirement that the contract is active for this phone-only update. The record is never deleted.\n\n```mermaid\nsequenceDiagram\n    participant GW as API Gateway\n    participant TEN as Tenancy\n    participant DB as Tenancy DB\n    GW->>TEN: PATCH /contract-members/{tenantId} {contractId, tenantPhone}\n    TEN->>TEN: Verify JWT, landlord role, active account and request\n    TEN->>DB: BEGIN; lock body.contractId FOR UPDATE\n    TEN->>TEN: Require contract owner\n    TEN->>DB: JOIN contract_members with contracts WHERE tenant_id = path.tenantId AND contract_id = body.contractId<br/>Exclude deleted rows; prefer current membership; lock member FOR UPDATE\n    TEN->>TEN: Require owner; lock member; reject departed member and duplicates\n    alt Missing record / forbidden / business validation failure\n        TEN->>DB: ROLLBACK\n        TEN-->>GW: 404 / 403 / 409 / 422\n    else Valid operation\n        TEN->>DB: UPDATE contract_members.tenant_phone\n        TEN->>DB: COMMIT\n        TEN-->>GW: 200 CONTRACT_MEMBER_UPDATED\n    end\n```",
+              "parameters": [
+                {
+                  "name": "tenantId",
+                  "in": "path",
+                  "required": true,
+                  "schema": {
+                    "type": "string",
+                    "format": "uuid"
+                  }
+                }
+              ],
+              "requestBody": {
+                "required": true,
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "$ref": "#/components/schemas/ContractMemberUpdateRequestDto"
+                    },
+                    "example": {
+                      "contractId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                      "tenantPhone": "0921234567"
+                    }
+                  }
+                }
+              },
+              "responses": {
+                "200": {
+                  "description": "Thành công: Cập nhật thành viên.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "required": [
+                          "statusCode",
+                          "code",
+                          "data"
+                        ],
+                        "properties": {
+                          "statusCode": {
+                            "type": "integer",
+                            "enum": [
+                              200
+                            ]
+                          },
+                          "code": {
+                            "type": "string",
+                            "enum": [
+                              "CONTRACT_MEMBER_UPDATED"
+                            ]
+                          },
+                          "data": {
+                            "$ref": "#/components/schemas/ContractMemberUpdateResponseDto"
+                          }
+                        }
+                      },
+                      "example": {
+                        "statusCode": 200,
+                        "code": "CONTRACT_MEMBER_UPDATED",
+                        "data": {
+                          "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                          "tenantPhone": "0921234567"
+                        }
+                      }
+                    }
+                  }
+                },
+                "400": {
+                  "$ref": "#/components/responses/BadRequestBodyPathError"
+                },
+                "401": {
+                  "$ref": "#/components/responses/UnauthorizedError"
+                },
+                "403": {
+                  "$ref": "#/components/responses/ForbiddenError"
+                },
+                "404": {
+                  "$ref": "#/components/responses/NotFoundError"
+                },
+                "409": {
+                  "x-apidog-name": "Conflict",
+                  "description": "Yêu cầu xung đột với trạng thái hiện tại hoặc dữ liệu đã tồn tại.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "required": [
+                          "statusCode",
+                          "code"
+                        ],
+                        "properties": {
+                          "statusCode": {
+                            "type": "integer",
+                            "enum": [
+                              409
+                            ]
+                          },
+                          "code": {
+                            "type": "string",
+                            "enum": [
+                              "MEMBER_LEFT",
+                              "MEMBER_ALREADY_EXISTS"
+                            ],
+                            "description": "- MEMBER_LEFT: Thành viên đã rời hợp đồng."
+                          }
+                        }
+                      },
+                      "examples": {
+                        "member_left": {
+                          "summary": "MEMBER_LEFT — Thành viên đã rời hợp đồng.",
+                          "value": {
+                            "statusCode": 409,
+                            "code": "MEMBER_LEFT"
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "422": {
+                  "$ref": "#/components/responses/ValidationError"
+                },
+                "429": {
+                  "$ref": "#/components/responses/TooManyRequestsError"
+                },
+                "500": {
+                  "$ref": "#/components/responses/InternalServerError"
+                },
+                "503": {
+                  "$ref": "#/components/responses/AuthUnavailableError"
+                }
+              }
+            }
+          }
+        },
+        {
+          "pointer": "/paths/~1contract-members~1{tenantId}~1leave-contract",
+          "before": null,
+          "after": {
+            "post": {
+              "tags": [
+                "Contract"
+              ],
+              "x-apidog-folder": "ContractMember",
+              "x-apidog-status": "released",
+              "operationId": "postContractMembersTenantidLeaveContract",
+              "security": [
+                {
+                  "BearerAuth": []
+                }
+              ],
+              "summary": "Record contract member leave",
+              "description": "Identify the membership by tenantId (the tenant account UUID in the URL) and contractId (required in the body).\ntenantId is not the contract_members record ID. Members with tenant_id = null cannot use this endpoint.\nLandlord must own the selected contract; it must be active (409 CONTRACT_NOT_ACTIVE).\nLock the contract before locking the member. Join contract_members with contracts and match both IDs,\nexcluding soft-deleted rows. Prefer a membership without a departure, then the latest departure\nwhen the tenant has left and rejoined. The response id remains the contract_members record ID. An already recorded departure returns\n409 MEMBER_ALREADY_LEFT, including a scheduled departure. leftOn must be >= joinedAt and\n<= contract endDate (422 LEFT_DATE_INVALID). leftOn = joinedAt is allowed.\nUnknown member/contract: 404 RESOURCE_NOT_FOUND; other landlord: 403 FORBIDDEN.\nSet left_at without deleting the record, and append contract_member.left in the same transaction.\nThe upper endDate limit belongs to this handler; the shared domain leave method permits checkout\nafter endDate (P6-D71 addendum). Response uses leftAt; request uses leftOn.\n\n```mermaid\nsequenceDiagram\n    participant GW as API Gateway\n    participant TEN as Tenancy\n    participant DB as Tenancy DB\n    GW->>TEN: POST /contract-members/{tenantId}/leave-contract {contractId, leftOn}\n    TEN->>TEN: Verify JWT, landlord role, active account and request\n    TEN->>DB: BEGIN; lock body.contractId FOR UPDATE\n    TEN->>TEN: Require contract owner and active status\n    TEN->>DB: JOIN contract_members with contracts WHERE tenant_id = path.tenantId AND contract_id = body.contractId<br/>Exclude deleted rows; prefer current membership; lock member FOR UPDATE\n    TEN->>TEN: Require owner and active contract; lock member; validate departure and dates\n    alt Missing record / forbidden / business validation failure\n        TEN->>DB: ROLLBACK\n        TEN-->>GW: 404 / 403 / 409 / 422\n    else Valid operation\n        TEN->>DB: UPDATE contract_members.left_at; INSERT contract_member.left into outbox\n        TEN->>DB: COMMIT\n        TEN-->>GW: 200 CONTRACT_MEMBER_LEFT\n    end\n```",
+              "parameters": [
+                {
+                  "name": "tenantId",
+                  "in": "path",
+                  "required": true,
+                  "schema": {
+                    "type": "string",
+                    "format": "uuid"
+                  }
+                }
+              ],
+              "requestBody": {
+                "required": true,
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "$ref": "#/components/schemas/ContractMemberLeaveRequestDto"
+                    },
+                    "example": {
+                      "contractId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                      "leftOn": "2026-10-01"
+                    }
+                  }
+                }
+              },
+              "responses": {
+                "200": {
+                  "description": "Thành công: Ghi nhận thành viên rời đi.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "required": [
+                          "statusCode",
+                          "code",
+                          "data"
+                        ],
+                        "properties": {
+                          "statusCode": {
+                            "type": "integer",
+                            "enum": [
+                              200
+                            ]
+                          },
+                          "code": {
+                            "type": "string",
+                            "enum": [
+                              "CONTRACT_MEMBER_LEFT"
+                            ]
+                          },
+                          "data": {
+                            "$ref": "#/components/schemas/ContractMemberLeaveResponseDto"
+                          }
+                        }
+                      },
+                      "example": {
+                        "statusCode": 200,
+                        "code": "CONTRACT_MEMBER_LEFT",
+                        "data": {
+                          "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                          "leftAt": "2026-10-01"
+                        }
+                      }
+                    }
+                  }
+                },
+                "400": {
+                  "$ref": "#/components/responses/BadRequestBodyPathError"
+                },
+                "401": {
+                  "$ref": "#/components/responses/UnauthorizedError"
+                },
+                "403": {
+                  "$ref": "#/components/responses/ForbiddenError"
+                },
+                "404": {
+                  "$ref": "#/components/responses/NotFoundError"
+                },
+                "409": {
+                  "x-apidog-name": "Conflict",
+                  "description": "Yêu cầu xung đột với trạng thái hiện tại hoặc dữ liệu đã tồn tại.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "required": [
+                          "statusCode",
+                          "code"
+                        ],
+                        "properties": {
+                          "statusCode": {
+                            "type": "integer",
+                            "enum": [
+                              409
+                            ]
+                          },
+                          "code": {
+                            "type": "string",
+                            "enum": [
+                              "CONTRACT_NOT_ACTIVE",
+                              "MEMBER_ALREADY_LEFT"
+                            ],
+                            "description": "- MEMBER_ALREADY_LEFT: Thành viên đã rời hợp đồng."
+                          }
+                        }
+                      },
+                      "examples": {
+                        "member_already_left": {
+                          "summary": "MEMBER_ALREADY_LEFT — Thành viên đã rời hợp đồng.",
+                          "value": {
+                            "statusCode": 409,
+                            "code": "MEMBER_ALREADY_LEFT"
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "422": {
+                  "x-apidog-name": "Unprocessable Entity",
+                  "description": "Dữ liệu hợp lệ về cấu trúc nhưng vi phạm ràng buộc trường hoặc quy tắc nghiệp vụ.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "required": [
+                          "statusCode",
+                          "code"
+                        ],
+                        "properties": {
+                          "statusCode": {
+                            "type": "integer",
+                            "enum": [
+                              422
+                            ]
+                          },
+                          "code": {
+                            "type": "string",
+                            "enum": [
+                              "LEFT_DATE_INVALID",
+                              "VALIDATION_FAILED"
+                            ],
+                            "description": "- LEFT_DATE_INVALID: Ngày rời hợp đồng không hợp lệ.\n- VALIDATION_FAILED: Dữ liệu vi phạm ràng buộc schema hoặc quy tắc nghiệp vụ khác chưa có mã riêng."
+                          }
+                        }
+                      },
+                      "examples": {
+                        "left_date_invalid": {
+                          "summary": "LEFT_DATE_INVALID — Ngày rời hợp đồng không hợp lệ.",
+                          "value": {
+                            "statusCode": 422,
+                            "code": "LEFT_DATE_INVALID"
+                          }
+                        },
+                        "validation_failed": {
+                          "summary": "VALIDATION_FAILED — Dữ liệu vi phạm ràng buộc schema hoặc quy tắc nghiệp vụ khác chưa có mã riêng.",
+                          "value": {
+                            "statusCode": 422,
+                            "code": "VALIDATION_FAILED"
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "429": {
+                  "$ref": "#/components/responses/TooManyRequestsError"
+                },
+                "500": {
+                  "$ref": "#/components/responses/InternalServerError"
+                },
+                "503": {
+                  "$ref": "#/components/responses/AuthUnavailableError"
+                }
+              }
+            }
+          }
+        },
+        {
+          "pointer": "/paths/~1contracts~1{contractId}/get/description",
+          "before": "Landlord hoặc tenant, yêu cầu JWT hợp lệ và tài khoản không bị khóa.\nLandlord chỉ xem hợp đồng có landlordId = user.id; tenant chỉ xem hợp đồng có tenantId = user.id.\nNgười gọi không liên quan trả 403 FORBIDDEN. Hợp đồng không tồn tại hoặc đã xóa mềm trả 404 RESOURCE_NOT_FOUND.\ncontractId không phải UUID trả 400 BAD_REQUEST theo ParseUUIDPipe.\nResponse phản ánh entity hiện tại, gồm vehicleCount và description; chưa trả signedContractMediaId.\nService chưa có rate limiter.\n\n```mermaid\nsequenceDiagram\n    autonumber\n    participant GW as API Gateway\n    participant TEN as Tenancy\n    participant DB as Tenancy DB\n\n    GW->>TEN: GET /api/v1/contracts/{contractId} + Bearer token\n    TEN->>TEN: Verify JWT, landlord/tenant role, active account and UUID\n    TEN->>DB: SELECT contract WHERE id = contractId AND is_deleted = false\n    DB-->>TEN: Contract or null\n    alt Missing or deleted contract\n        TEN-->>GW: 404 RESOURCE_NOT_FOUND\n    else Contract exists\n        TEN->>TEN: Match landlordId for landlord or tenantId for tenant\n        alt Caller is not the owner or linked tenant\n            TEN-->>GW: 403 FORBIDDEN\n        else Authorized caller\n            TEN->>TEN: Map ContractDetailResponseDto\n            TEN-->>GW: 200 CONTRACT_FETCHED\n        end\n    end\n```",
+          "after": "Landlord hoặc tenant, yêu cầu JWT hợp lệ và tài khoản không bị khóa.\nLandlord chỉ xem hợp đồng có landlordId = user.id.\nTenant xem được khi tenantId = user.id hoặc là member chưa rời của hợp đồng:\nmember có tenant_id = user.id, is_deleted = false và left_at IS NULL hoặc left_at > hôm nay (UTC).\nMember rời hôm nay hoặc trước đó không được cấp quyền qua membership.\nQuyền tenant dùng cùng phạm vi với GET /me/contracts và danh sách member.\nNgười gọi không liên quan trả 403 FORBIDDEN. Hợp đồng không tồn tại hoặc đã xóa mềm trả 404 RESOURCE_NOT_FOUND.\ncontractId không phải UUID trả 400 BAD_REQUEST theo ParseUUIDPipe.\nResponse phản ánh entity hiện tại, gồm vehicleCount và description; chưa trả signedContractMediaId.\nService chưa có rate limiter.\n\n```mermaid\nsequenceDiagram\n    autonumber\n    participant GW as API Gateway\n    participant TEN as Tenancy\n    participant DB as Tenancy DB\n\n    GW->>TEN: GET /api/v1/contracts/{contractId} + Bearer token\n    TEN->>TEN: Verify JWT, landlord/tenant role, active account and UUID\n    TEN->>DB: SELECT contract WHERE id = contractId AND is_deleted = false\n    DB-->>TEN: Contract or null\n    alt Missing or deleted contract\n        TEN-->>GW: 404 RESOURCE_NOT_FOUND\n    else Contract exists\n        TEN->>TEN: Match landlordId for landlord or tenantId for tenant\n        opt Tenant is not the named tenant\n            TEN->>DB: EXISTS member WHERE contract_id and tenant_id match, not deleted, left_at IS NULL or after today (UTC)\n            DB-->>TEN: Membership access\n        end\n        alt Caller is not the owner, named tenant or member who has not left\n            TEN-->>GW: 403 FORBIDDEN\n        else Authorized caller\n            TEN->>TEN: Map ContractDetailResponseDto\n            TEN-->>GW: 200 CONTRACT_FETCHED\n        end\n    end\n```"
+        },
+        {
+          "pointer": "/paths/~1contracts~1{contractId}/patch/description",
+          "before": "Landlord. Chỉ sửa description của hợp đồng thuộc user.id lấy từ JWT và còn trạng thái draft.\ndescription bắt buộc xuất hiện; null để xóa ghi chú, chuỗi phải dài 1–500 ký tự và không chỉ chứa khoảng trắng.\nHợp đồng không tồn tại hoặc đã xóa mềm trả 404 RESOURCE_NOT_FOUND; khác chủ trả 403 FORBIDDEN;\nkhông còn draft trả 409 CONTRACT_NOT_DRAFT. contractId không phải UUID trả 400 BAD_REQUEST.\nField ngoài DTO trả 422 UNEXPECTED_FIELD; giá trị không hợp lệ trả 422 VALIDATION_FAILED.\nContract và outbox contract.updated được lưu trong cùng transaction; relay publish sau commit.\nService chưa có rate limiter.\n\n```mermaid\nsequenceDiagram\n    autonumber\n    participant GW as API Gateway\n    participant TEN as Tenancy\n    participant DB as Tenancy DB\n    participant RELAY as Outbox Relay\n    participant MQ as RabbitMQ\n\n    GW->>TEN: PATCH /api/v1/contracts/{contractId} + Bearer token\n    TEN->>TEN: Verify JWT, landlord role, active account, UUID and body\n    TEN->>DB: BEGIN\n    TEN->>DB: SELECT contract WHERE id = contractId AND is_deleted = false FOR UPDATE\n    DB-->>TEN: Contract or null\n    TEN->>TEN: Check existence, ownership, draft status and description\n    alt Missing contract, wrong owner, non-draft or invalid description\n        TEN->>DB: ROLLBACK\n        TEN-->>GW: 404 / 403 / 409 / 422 with matching error code\n    else Valid update\n        TEN->>DB: UPDATE description and updated_at\n        TEN->>DB: INSERT outbox_messages (contract.updated)\n        alt Storage operation fails\n            TEN->>DB: ROLLBACK\n            TEN-->>GW: Error response; neither change is committed\n        else Commit succeeds\n            TEN->>DB: COMMIT\n            TEN-->>GW: 200 CONTRACT_UPDATED\n            RELAY->>DB: Claim committed outbox event\n            RELAY->>MQ: Publish contract.updated\n            MQ-->>RELAY: Publisher confirm\n            RELAY->>DB: Mark outbox PUBLISHED\n        end\n    end\n```",
+          "after": "Landlord. Update a contract owned by user.id from the verified JWT.\nDraft contracts retain the existing description-only update flow; description is required and vehicleCount is rejected.\nActive contracts accept vehicleCount and/or description. An empty update is invalid.\nvehicleCount must be null or an integer between 0 and 2147483647. Omitted fields keep their existing value.\ndescription may be null to clear the note; otherwise it must contain 1-500 characters and not be whitespace-only.\nVehicle-count changes are used when pending invoices are regenerated; issued invoice snapshots remain unchanged.\nHợp đồng không tồn tại hoặc đã xóa mềm trả 404 RESOURCE_NOT_FOUND; khác chủ trả 403 FORBIDDEN;\nstatuses other than draft/active return 409 CONTRACT_NOT_DRAFT. A draft vehicleCount update also returns this conflict.\ncontractId không phải UUID trả 400 BAD_REQUEST.\nField ngoài DTO trả 422 UNEXPECTED_FIELD; giá trị không hợp lệ trả 422 VALIDATION_FAILED.\nContract và outbox contract.updated được lưu trong cùng transaction; relay publish sau commit.\nService chưa có rate limiter.\n\n```mermaid\nsequenceDiagram\n    autonumber\n    participant GW as API Gateway\n    participant TEN as Tenancy\n    participant DB as Tenancy DB\n    participant RELAY as Outbox Relay\n    participant MQ as RabbitMQ\n\n    GW->>TEN: PATCH /api/v1/contracts/{contractId} + Bearer token\n    TEN->>TEN: Verify JWT, landlord role, active account, UUID and body\n    TEN->>DB: BEGIN\n    TEN->>DB: SELECT contract WHERE id = contractId AND is_deleted = false FOR UPDATE\n    DB-->>TEN: Contract or null\n    TEN->>TEN: Check existence, ownership, draft/active state and allowed updates\n    alt Missing contract, wrong owner, unsupported state or invalid update\n        TEN->>DB: ROLLBACK\n        TEN-->>GW: 404 / 403 / 409 / 422 with matching error code\n    else Valid update\n        TEN->>DB: UPDATE supplied description / active vehicle_count and updated_at\n        TEN->>DB: INSERT outbox_messages (contract.updated)\n        alt Storage operation fails\n            TEN->>DB: ROLLBACK\n            TEN-->>GW: Error response; neither change is committed\n        else Commit succeeds\n            TEN->>DB: COMMIT\n            TEN-->>GW: 200 CONTRACT_UPDATED\n            RELAY->>DB: Claim committed outbox event\n            RELAY->>MQ: Publish contract.updated\n            MQ-->>RELAY: Publisher confirm\n            RELAY->>DB: Mark outbox PUBLISHED\n        end\n    end\n```"
+        },
+        {
+          "pointer": "/paths/~1contracts~1{contractId}/patch/responses/200/description",
+          "before": "Thành công: Sửa hợp đồng nháp.",
+          "after": "Contract updated successfully."
+        },
+        {
+          "pointer": "/paths/~1contracts~1{contractId}/patch/responses/422/description",
+          "before": "description không hợp lệ hoặc body chứa field ngoài DTO.",
+          "after": "Invalid description/vehicleCount, an empty update, or fields outside the DTO."
+        },
+        {
+          "pointer": "/paths/~1contracts~1{contractId}/patch/summary",
+          "before": "Update draft contract",
+          "after": "Update draft or active contract"
+        },
+        {
+          "pointer": "/paths/~1contracts~1{contractId}~1activate-contract/post/description",
+          "before": "Landlord, yêu cầu JWT hợp lệ và tài khoản không bị khóa. Body chỉ gồm signedContractMediaId.\ncontractId sai định dạng UUID trả 400 BAD_REQUEST theo ParseUUIDPipe.\nThiếu hoặc null signedContractMediaId trả 422 VALIDATION_FAILED; UUID của file không hợp lệ trả\n422 INVALID_UUID; field ngoài DTO trả 422 UNEXPECTED_FIELD.\n\nTenancy kiểm tra media trước khi mở transaction, qua GET /internal/media/{signedContractMediaId}\ncủa Identity bằng service token. Adapter yêu cầu phần data của response envelope gồm\nid, ownerType, ownerId, purpose và status. Chỉ chấp nhận id khớp signedContractMediaId,\nownerType = contract, ownerId = contractId, purpose = contract_signed và status = uploaded.\nIdentity timeout, không kết nối được, lỗi 5xx hoặc từ chối service token trả 503 SERVICE_UNAVAILABLE.\nCác lỗi 4xx khác từ Identity được truyền nguyên trạng. Chưa xác minh được file thì không kích hoạt.\n\nSau khi media hợp lệ, trong cùng transaction: khóa hợp đồng, kiểm tra hợp đồng chưa bị xóa\nvà landlordId = user.id, khóa phòng, kích hoạt hợp đồng và chuyển phòng sang occupied.\nHợp đồng hoặc phòng không tồn tại/đã xóa trả 404 RESOURCE_NOT_FOUND; khác landlord trả 403 FORBIDDEN.\nVi phạm unique index UQ_contracts_room_active trả 409 ACTIVE_CONTRACT_EXISTS.\nVì media được kiểm tra trước, media không hợp lệ có thể trả 409 trước khi kiểm tra 404/403 của hợp đồng.\n\n**Điều kiện lỗi theo Contract**\n\n- `409 SIGNED_FILE_MISSING`: xảy ra khi có ít nhất một điều kiện:\n  media không tồn tại (Identity trả 404 hoặc response không có dữ liệu media);\n  `media.id` khác `signedContractMediaId`;\n  `ownerType` khác `contract`;\n  `ownerId` khác `contractId` trên URL;\n  `purpose` khác `contract_signed`;\n  hoặc file chưa upload xong (`status` khác `uploaded`). Không mở transaction ở nhánh này.\n- `409 CONTRACT_NOT_READY`: hợp đồng không ở `draft` hoặc `signed`,\n  hoặc phòng không ở `available` (đang `maintenance` hoặc đã `occupied`).\n  Transaction rollback, không lưu thay đổi hợp đồng, phòng hoặc outbox.\n  Hợp đồng/phòng không tồn tại hoặc đã xóa được xử lý riêng bằng `404 RESOURCE_NOT_FOUND`.\n\nThành công trả 200 CONTRACT_ACTIVATED với id, status = active và activatedAt dạng ISO 8601 UTC.\nactivatedAt được lưu ở contracts.activated_at. Hợp đồng, phòng và hai outbox message\ncontract.activated, room.status_changed được ghi cùng transaction; lỗi ghi dữ liệu sẽ rollback.\nOutbox relay publish sau khi commit. Không kiểm tra startDate so với ngày hiện tại; không dùng OTP/PIN.\nService chưa có rate limiter.\n\n**Giới hạn tích hợp hiện tại:** Identity-Service local chưa triển khai GET /internal/media/{id};\nresponse public complete-upload cũng chưa có field status. Dữ liệu ở trên là contract nội bộ\nadapter đang yêu cầu, chưa phải endpoint media đã được triển khai. Nếu Identity trả 404 cho route\nchưa có, Tenancy hiện trả 409 SIGNED_FILE_MISSING. signedContractMediaId được xác minh để kích hoạt,\nnhưng hiện chưa được lưu trên Contract hoặc đưa vào event contract.activated.\nHandler so sánh UUID theo chuỗi, chưa chuẩn hóa hoa/thường; giữ nguyên UUID do API trả về\nđể tránh bị từ chối nhầm bằng SIGNED_FILE_MISSING.\n\n```mermaid\nsequenceDiagram\n    autonumber\n    participant GW as API Gateway\n    participant TEN as Tenancy\n    participant ID as Identity\n    participant DB as Tenancy DB\n    participant RELAY as Outbox Relay\n    participant MQ as RabbitMQ\n\n    GW->>TEN: POST /api/v1/contracts/{contractId}/activate-contract + Bearer token<br/>{signedContractMediaId}\n    TEN->>TEN: Verify JWT, landlord role, active account and request\n    TEN->>ID: GET /internal/media/{signedContractMediaId} + service token\n    alt Identity unavailable, timeout, 5xx or service-token rejection\n        TEN-->>GW: 503 SERVICE_UNAVAILABLE; no transaction\n    else Identity responds\n        ID-->>TEN: Response envelope containing media data, or 404\n        TEN->>TEN: Check id, ownerType, ownerId, purpose and uploaded status\n        alt Media missing, Identity 404 or media does not match\n            TEN-->>GW: 409 SIGNED_FILE_MISSING; no transaction\n        else Valid signed media\n            Note over TEN,DB: One transaction for contract + room + outbox\n            TEN->>DB: BEGIN; lock non-deleted contract FOR UPDATE\n            DB-->>TEN: Contract or null\n            TEN->>TEN: Require contract exists and landlordId = JWT user.id\n            alt Contract missing/deleted or wrong landlord\n                TEN->>DB: ROLLBACK\n                TEN-->>GW: 404 RESOURCE_NOT_FOUND / 403 FORBIDDEN\n            else Authorized contract\n                TEN->>DB: Lock non-deleted room FOR UPDATE\n                DB-->>TEN: Room or null\n                TEN->>TEN: Require contract draft/signed and room available<br/>Maintenance or occupied room is not ready\n                alt Room missing/deleted or contract/room not ready\n                    TEN->>DB: ROLLBACK\n                    TEN-->>GW: 404 RESOURCE_NOT_FOUND / 409 CONTRACT_NOT_READY\n                else Ready for activation\n                    TEN->>DB: Save contract active + activated_at; save room occupied<br/>Append contract.activated and room.status_changed to outbox\n                    alt Active-room unique violation or persistence failure\n                        TEN->>DB: ROLLBACK\n                        TEN-->>GW: 409 ACTIVE_CONTRACT_EXISTS / 500 INTERNAL_SERVER_ERROR\n                    else Transaction succeeds\n                        TEN->>DB: COMMIT\n                        TEN-->>GW: 200 CONTRACT_ACTIVATED {id, status: active, activatedAt}\n                        RELAY->>DB: Claim committed outbox messages\n                        DB-->>RELAY: Committed contract.activated and room.status_changed\n                        RELAY-)MQ: Publish contract.activated and room.status_changed\n                    end\n                end\n            end\n        end\n    end\n```",
+          "after": "Landlord, yêu cầu JWT hợp lệ và tài khoản không bị khóa. Body chỉ gồm signedContractMediaId.\ncontractId sai định dạng UUID trả 400 BAD_REQUEST theo ParseUUIDPipe.\nThiếu hoặc null signedContractMediaId trả 422 VALIDATION_FAILED; UUID của file không hợp lệ trả\n422 INVALID_UUID; field ngoài DTO trả 422 UNEXPECTED_FIELD.\n\nTenancy kiểm tra media trước khi mở transaction, qua GET /internal/media/{signedContractMediaId}\ncủa Identity bằng service token. Adapter yêu cầu phần data của response envelope gồm\nid, ownerType, ownerId, purpose và status. Chỉ chấp nhận id khớp signedContractMediaId,\nownerType = contract, ownerId = contractId, purpose = contract_signed và status = uploaded.\nIdentity timeout, không kết nối được, lỗi 5xx hoặc từ chối service token trả 503 SERVICE_UNAVAILABLE.\nCác lỗi 4xx khác từ Identity được truyền nguyên trạng. Chưa xác minh được file thì không kích hoạt.\n\nSau khi media hợp lệ, trong cùng transaction: khóa hợp đồng, kiểm tra hợp đồng chưa bị xóa\nvà landlordId = user.id, khóa phòng, kích hoạt hợp đồng, tự thêm đại diện vào contract_members với joined_at = start_date\nvà chuyển phòng sang occupied. Member giữ tenant_id/name/phone từ hợp đồng, không có cờ đại diện.\nHợp đồng hoặc phòng không tồn tại/đã xóa trả 404 RESOURCE_NOT_FOUND; khác landlord trả 403 FORBIDDEN.\nVi phạm unique index UQ_contracts_room_active trả 409 ACTIVE_CONTRACT_EXISTS.\nVì media được kiểm tra trước, media không hợp lệ có thể trả 409 trước khi kiểm tra 404/403 của hợp đồng.\n\n**Điều kiện lỗi theo Contract**\n\n- `409 SIGNED_FILE_MISSING`: xảy ra khi có ít nhất một điều kiện:\n  media không tồn tại (Identity trả 404 hoặc response không có dữ liệu media);\n  `media.id` khác `signedContractMediaId`;\n  `ownerType` khác `contract`;\n  `ownerId` khác `contractId` trên URL;\n  `purpose` khác `contract_signed`;\n  hoặc file chưa upload xong (`status` khác `uploaded`). Không mở transaction ở nhánh này.\n- `409 CONTRACT_NOT_READY`: hợp đồng không ở `draft` hoặc `signed`,\n  hoặc phòng không ở `available` (đang `maintenance` hoặc đã `occupied`).\n  Transaction rollback, không lưu thay đổi hợp đồng, phòng hoặc outbox.\n  Hợp đồng/phòng không tồn tại hoặc đã xóa được xử lý riêng bằng `404 RESOURCE_NOT_FOUND`.\n\nThành công trả 200 CONTRACT_ACTIVATED với id, status = active và activatedAt dạng ISO 8601 UTC.\nactivatedAt được lưu ở contracts.activated_at. Hợp đồng, member đại diện, phòng và ba outbox message\ncontract.activated, contract_member.added, room.status_changed được ghi cùng transaction; lỗi ghi dữ liệu sẽ rollback.\nOutbox relay publish sau khi commit. Không kiểm tra startDate so với ngày hiện tại; không dùng OTP/PIN.\nService chưa có rate limiter.\n\n**Giới hạn tích hợp hiện tại:** Identity-Service local chưa triển khai GET /internal/media/{id};\nresponse public complete-upload cũng chưa có field status. Dữ liệu ở trên là contract nội bộ\nadapter đang yêu cầu, chưa phải endpoint media đã được triển khai. Nếu Identity trả 404 cho route\nchưa có, Tenancy hiện trả 409 SIGNED_FILE_MISSING. signedContractMediaId được xác minh để kích hoạt,\nnhưng hiện chưa được lưu trên Contract hoặc đưa vào event contract.activated.\nHandler so sánh UUID theo chuỗi, chưa chuẩn hóa hoa/thường; giữ nguyên UUID do API trả về\nđể tránh bị từ chối nhầm bằng SIGNED_FILE_MISSING.\n\n```mermaid\nsequenceDiagram\n    autonumber\n    participant GW as API Gateway\n    participant TEN as Tenancy\n    participant ID as Identity\n    participant DB as Tenancy DB\n    participant RELAY as Outbox Relay\n    participant MQ as RabbitMQ\n\n    GW->>TEN: POST /api/v1/contracts/{contractId}/activate-contract + Bearer token<br/>{signedContractMediaId}\n    TEN->>TEN: Verify JWT, landlord role, active account and request\n    TEN->>ID: GET /internal/media/{signedContractMediaId} + service token\n    alt Identity unavailable, timeout, 5xx or service-token rejection\n        TEN-->>GW: 503 SERVICE_UNAVAILABLE; no transaction\n    else Identity responds\n        ID-->>TEN: Response envelope containing media data, or 404\n        TEN->>TEN: Check id, ownerType, ownerId, purpose and uploaded status\n        alt Media missing, Identity 404 or media does not match\n            TEN-->>GW: 409 SIGNED_FILE_MISSING; no transaction\n        else Valid signed media\n            Note over TEN,DB: One transaction for contract + representative member + room + outbox\n            TEN->>DB: BEGIN; lock non-deleted contract FOR UPDATE\n            DB-->>TEN: Contract or null\n            TEN->>TEN: Require contract exists and landlordId = JWT user.id\n            alt Contract missing/deleted or wrong landlord\n                TEN->>DB: ROLLBACK\n                TEN-->>GW: 404 RESOURCE_NOT_FOUND / 403 FORBIDDEN\n            else Authorized contract\n                TEN->>DB: Lock non-deleted room FOR UPDATE\n                DB-->>TEN: Room or null\n                TEN->>TEN: Require contract draft/signed and room available<br/>Maintenance or occupied room is not ready\n                alt Room missing/deleted or contract/room not ready\n                    TEN->>DB: ROLLBACK\n                    TEN-->>GW: 404 RESOURCE_NOT_FOUND / 409 CONTRACT_NOT_READY\n                else Ready for activation\n                    TEN->>DB: Insert representative member with joined_at = contract.start_date<br/>Save contract active + activated_at; save room occupied<br/>Append contract.activated, contract_member.added and room.status_changed to outbox\n                    alt Active-room unique violation or persistence failure\n                        TEN->>DB: ROLLBACK\n                        TEN-->>GW: 409 ACTIVE_CONTRACT_EXISTS / 500 INTERNAL_SERVER_ERROR\n                    else Transaction succeeds\n                        TEN->>DB: COMMIT\n                        TEN-->>GW: 200 CONTRACT_ACTIVATED {id, status: active, activatedAt}\n                        RELAY->>DB: Claim committed outbox messages\n                        DB-->>RELAY: Committed contract.activated and room.status_changed\n                        RELAY-)MQ: Publish contract.activated and room.status_changed\n                    end\n                end\n            end\n        end\n    end\n```"
+        },
+        {
+          "pointer": "/paths/~1contracts~1{contractId}~1complete-checkout/post/description",
+          "before": "landlord. Hoàn tất trả phòng và kết thúc hợp đồng. Sau khi checkout thành công, phòng sẽ tự động chuyển sang trạng thái chờ dọn dẹp và chuẩn bị cho thuê mới (Room.status = pending_cleanup). Sau khi chủ trọ nghiệm thu dọn dẹp xong, gọi POST /rooms/{roomId}/mark-ready để đưa phòng về available. Lỗi nghiệp vụ: 409 CONTRACT NOT ACTIVE · 403 FORBIDDEN · 422 SETTLEMENT NOT READY. NOT READY.",
+          "after": "Landlord. Requires a valid JWT and an active account. Only the contract owner may complete checkout.\nThe contract must be active, otherwise 409 CONTRACT_NOT_ACTIVE.\ncompletedOn is a YYYY-MM-DD date between the contract start date and today (UTC), inclusive.\nInvalid format or a date outside the contract start date to today range returns 422 VALIDATION_FAILED.\ncompletedOn must also be on or after joinedAt for every member who has not left;\na violation returns 422 LEFT_DATE_INVALID, the same domain error used by leave-contract.\nCheckout may take place after the contract end date; the end-date restriction belongs to leave-contract only.\nThe invoice period is completedOn sliced to YYYY-MM. At least one non-deleted invoice for that contract/period\nmust be issued, and none may be pending; otherwise 409 SETTLEMENT_NOT_READY. Voided invoices do not satisfy readiness.\nIn one transaction, lock the contract, check invoices, set remaining members' left_at to completedOn,\nterminate the contract, move the room from occupied to maintenance, and persist all corresponding outbox events.\nA member has not left when left_at IS NULL or after today (UTC). A future scheduled leave is replaced by completedOn;\nprevious departures and soft-deleted members are preserved. A room already in maintenance stays there.\nThe response echoes completedOn; no completed_on or terminated_at column is added to contracts.\nNo deposit settlement, early termination fee or automatic checkout-date prorating is performed.\nCall POST /rooms/{roomId}/mark-ready after cleaning to make the room available again.\nField outside the request DTO returns 422 UNEXPECTED_FIELD, matching existing project validation.\nThe invoices table is supplied by P6-02g1. The service does not currently apply rate limiting.\n\n```mermaid\nsequenceDiagram\n    autonumber\n    participant GW as API Gateway\n    participant TEN as Tenancy\n    participant DB as Tenancy DB\n    participant RELAY as Outbox Relay\n    participant MQ as RabbitMQ\n\n    GW->>TEN: POST /api/v1/contracts/{contractId}/complete-checkout { completedOn }\n    TEN->>TEN: Verify JWT, landlord role, active account, UUID and body\n    TEN->>DB: BEGIN\n    TEN->>DB: SELECT contract WHERE id matches AND not deleted FOR UPDATE\n    TEN->>TEN: Check existence, ownership, active status and completedOn\n    TEN->>DB: Check issued invoice exists and no pending invoice for contract and completedOn period\n    TEN->>DB: SELECT non-deleted members WHERE left_at IS NULL OR after today (UTC)\n    TEN->>TEN: Validate completedOn against each joinedAt and record member departures\n    TEN->>DB: SELECT room FOR UPDATE\n    TEN->>TEN: Transition room to maintenance\n    alt Invalid state, date, owner or invoice readiness\n        TEN->>DB: ROLLBACK\n        TEN-->>GW: 403 / 404 / 409 / 422 with matching error code\n    else Valid checkout\n        TEN->>DB: UPDATE contract status to terminated\n        TEN->>DB: UPDATE remaining members left_at\n        TEN->>DB: UPDATE room status to maintenance\n        TEN->>DB: INSERT outbox contract.terminated, contract_member.left, room.status_changed\n        alt Storage operation fails\n            TEN->>DB: ROLLBACK\n            TEN-->>GW: Error response; all changes roll back\n        else Commit succeeds\n            TEN->>DB: COMMIT\n            TEN-->>GW: 200 CONTRACT_CHECKOUT_COMPLETED { id, status: terminated, completedOn }\n            RELAY->>DB: Claim committed outbox events\n            RELAY->>MQ: Publish events\n            MQ-->>RELAY: Publisher confirm\n            RELAY->>DB: Mark outbox PUBLISHED\n        end\n    end\n```"
+        },
+        {
+          "pointer": "/paths/~1contracts~1{contractId}~1complete-checkout/post/responses/200/content/application~1json/example/data/status",
+          "before": "expired",
+          "after": "terminated"
+        },
+        {
+          "pointer": "/paths/~1contracts~1{contractId}~1complete-checkout/post/responses/409/content/application~1json/examples/settlement_not_ready",
+          "before": null,
+          "after": {
+            "summary": "Checkout period is not ready",
+            "value": {
+              "statusCode": 409,
+              "code": "SETTLEMENT_NOT_READY"
+            }
+          }
+        },
+        {
+          "pointer": "/paths/~1contracts~1{contractId}~1complete-checkout/post/responses/409/content/application~1json/schema/properties/code/description",
+          "before": "- CONTRACT_NOT_ACTIVE: Hợp đồng không ở trạng thái đang hiệu lực.",
+          "after": "- CONTRACT_NOT_ACTIVE: Hợp đồng không ở trạng thái đang hiệu lực.\n- SETTLEMENT_NOT_READY: The checkout period has no issued invoice or still has a pending invoice.\n- INVALID_ROOM_TRANSITION: The room is neither occupied nor in maintenance."
+        },
+        {
+          "pointer": "/paths/~1contracts~1{contractId}~1complete-checkout/post/responses/409/content/application~1json/schema/properties/code/enum",
+          "before": [
+            "CONTRACT_NOT_ACTIVE"
+          ],
+          "after": [
+            "CONTRACT_NOT_ACTIVE",
+            "SETTLEMENT_NOT_READY",
+            "INVALID_ROOM_TRANSITION"
+          ]
+        },
+        {
+          "pointer": "/paths/~1contracts~1{contractId}~1complete-checkout/post/responses/422/content/application~1json/examples/left_date_invalid",
+          "before": null,
+          "after": {
+            "summary": "Checkout date is before a remaining member joined",
+            "value": {
+              "statusCode": 422,
+              "code": "LEFT_DATE_INVALID"
+            }
+          }
+        },
+        {
+          "pointer": "/paths/~1contracts~1{contractId}~1complete-checkout/post/responses/422/content/application~1json/examples/settlement_not_ready",
+          "before": {
+            "summary": "SETTLEMENT_NOT_READY — Hợp đồng chưa đủ điều kiện để quyết toán.",
+            "value": {
+              "statusCode": 422,
+              "code": "SETTLEMENT_NOT_READY"
+            }
+          },
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1contracts~1{contractId}~1complete-checkout/post/responses/422/content/application~1json/schema/properties/code/description",
+          "before": "- SETTLEMENT_NOT_READY: Hợp đồng chưa đủ điều kiện để quyết toán.\n- VALIDATION_FAILED: Dữ liệu vi phạm ràng buộc schema hoặc quy tắc nghiệp vụ khác chưa có mã riêng.",
+          "after": "- VALIDATION_FAILED: Dữ liệu vi phạm ràng buộc schema hoặc quy tắc nghiệp vụ khác chưa có mã riêng.\n- LEFT_DATE_INVALID: completedOn is before joinedAt of a remaining member.\n- UNEXPECTED_FIELD: The request contains fields outside the DTO."
+        },
+        {
+          "pointer": "/paths/~1contracts~1{contractId}~1complete-checkout/post/responses/422/content/application~1json/schema/properties/code/enum",
+          "before": [
+            "SETTLEMENT_NOT_READY",
+            "VALIDATION_FAILED"
+          ],
+          "after": [
+            "VALIDATION_FAILED",
+            "LEFT_DATE_INVALID",
+            "UNEXPECTED_FIELD"
+          ]
+        },
+        {
+          "pointer": "/paths/~1contracts~1{contractId}~1complete-checkout/post/responses/429",
+          "before": {
+            "$ref": "#/components/responses/TooManyRequestsError"
+          },
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1me~1contracts/get/description",
+          "before": "tenant. Hợp đồng của tôi. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 VALIDATION FAILED.",
+          "after": "Tenant. Requires a valid JWT and an active account.\nReturns contracts where the caller is the named tenant (contracts.tenant_id) or a member who has not left.\nA member has not left when is_deleted = false and left_at IS NULL or left_at is after today (UTC),\nmatching the contract-member status definition. Leaving today or earlier does not grant member access.\nSoft-deleted contracts are excluded. Being both the named tenant and a member returns one item.\nEach item includes roomName, buildingName and contractCode (HD- followed by the first six ID characters).\nrentalType is not part of Contract. Money fields use the same numeric representation as GET /contracts.\nSupports filter[status], filter[roomId] and offset pagination. Defaults to startDate descending, then id ascending.\nsort only accepts startDate; order accepts asc or desc. Only format=json is supported.\nInvalid query values or unsupported fields return 422 VALIDATION_FAILED.\nAn invalid filter[roomId] returns 422 INVALID_UUID, matching the existing project UUID validator.\nOther roles return 403 FORBIDDEN.\nContracts returned here can also be opened through GET /contracts/{contractId} while access remains valid.\nThe service does not currently apply rate limiting.\n\n```mermaid\nsequenceDiagram\n    autonumber\n    participant GW as API Gateway\n    participant TEN as Tenancy\n    participant DB as Tenancy DB\n\n    GW->>TEN: GET /api/v1/me/contracts + Bearer token\n    TEN->>TEN: Verify JWT, tenant role, active account and query\n    TEN->>DB: COUNT contracts JOIN rooms JOIN buildings WHERE not deleted AND (named tenant OR EXISTS active membership)\n    DB-->>TEN: Total matching contracts\n    TEN->>DB: SELECT same scope and filters ORDER BY start_date DESC, id ASC LIMIT pageSize OFFSET offset\n    DB-->>TEN: Contracts with room and building names\n    TEN->>TEN: Map ContractMyListResponseDto and offset pagination\n    TEN-->>GW: 200 CONTRACTS_MY_FETCHED\n```"
+        },
+        {
+          "pointer": "/paths/~1me~1contracts/get/parameters",
+          "before": [
+            {
+              "name": "filter",
+              "in": "query",
+              "required": false,
+              "style": "deepObject",
+              "explode": true,
+              "description": "Bộ lọc được endpoint hỗ trợ.",
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "status": {
+                    "type": "string"
+                  },
+                  "roomId": {
+                    "type": "string",
+                    "format": "uuid"
+                  }
+                }
+              }
+            },
+            {
+              "name": "pageSize",
+              "in": "query",
+              "schema": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 100,
+                "default": 20
+              }
+            },
+            {
+              "name": "pageNo",
+              "in": "query",
+              "schema": {
+                "type": "integer",
+                "minimum": 1,
+                "default": 1
+              }
+            },
+            {
+              "name": "format",
+              "in": "query",
+              "description": "json trả envelope; định dạng khác trả file stream.",
+              "schema": {
+                "type": "string",
+                "enum": [
+                  "json",
+                  "xlsx",
+                  "csv",
+                  "pdf"
+                ],
+                "default": "json"
+              }
+            }
+          ],
+          "after": [
+            {
+              "name": "filter",
+              "in": "query",
+              "required": false,
+              "style": "deepObject",
+              "explode": true,
+              "description": "Bộ lọc được endpoint hỗ trợ.",
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "status": {
+                    "type": "string",
+                    "enum": [
+                      "draft",
+                      "signed",
+                      "active",
+                      "suspended",
+                      "expired",
+                      "terminated"
+                    ]
+                  },
+                  "roomId": {
+                    "type": "string",
+                    "format": "uuid"
+                  }
+                }
+              }
+            },
+            {
+              "name": "pageSize",
+              "in": "query",
+              "schema": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 100,
+                "default": 20
+              }
+            },
+            {
+              "name": "pageNo",
+              "in": "query",
+              "schema": {
+                "type": "integer",
+                "minimum": 1,
+                "default": 1
+              }
+            },
+            {
+              "name": "sort",
+              "in": "query",
+              "schema": {
+                "type": "string",
+                "enum": [
+                  "startDate"
+                ],
+                "default": "startDate"
+              }
+            },
+            {
+              "name": "order",
+              "in": "query",
+              "schema": {
+                "type": "string",
+                "enum": [
+                  "asc",
+                  "desc"
+                ],
+                "default": "desc"
+              }
+            },
+            {
+              "name": "format",
+              "in": "query",
+              "description": "Only JSON is supported. Other formats return 422 VALIDATION_FAILED.",
+              "schema": {
+                "type": "string",
+                "enum": [
+                  "json"
+                ],
+                "default": "json"
+              }
+            }
+          ]
+        },
+        {
+          "pointer": "/paths/~1me~1contracts/get/responses/200/content/application~1json/example/data",
+          "before": [
+            {
+              "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+              "roomId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+              "status": "active",
+              "rentPrice": 3500000,
+              "depositAmount": 7000000,
+              "contractCode": "Ví dụ",
+              "roomName": "Ví dụ",
+              "buildingName": "Ví dụ",
+              "startDate": "2026-09-23T11:55:00.000Z",
+              "endDate": "2026-09-23T11:55:00.000Z"
+            }
+          ],
+          "after": [
+            {
+              "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+              "roomId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+              "status": "active",
+              "rentPrice": 3500000,
+              "depositAmount": 7000000,
+              "contractCode": "HD-3fa85f",
+              "roomName": "P.201",
+              "buildingName": "Building A",
+              "startDate": "2026-09-01",
+              "endDate": "2027-08-31"
+            }
+          ]
+        },
+        {
+          "pointer": "/paths/~1me~1contracts/get/responses/200/content/application~1pdf",
+          "before": {
+            "schema": {
+              "type": "string",
+              "format": "binary"
+            }
+          },
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1me~1contracts/get/responses/200/content/application~1vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+          "before": {
+            "schema": {
+              "type": "string",
+              "format": "binary"
+            }
+          },
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1me~1contracts/get/responses/200/content/text~1csv",
+          "before": {
+            "schema": {
+              "type": "string",
+              "format": "binary"
+            }
+          },
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1me~1contracts/get/responses/422/$ref",
+          "before": "#/components/responses/ValidationError",
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1me~1contracts/get/responses/422/content",
+          "before": null,
+          "after": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "statusCode",
+                  "code"
+                ],
+                "properties": {
+                  "statusCode": {
+                    "type": "integer",
+                    "enum": [
+                      422
+                    ]
+                  },
+                  "code": {
+                    "type": "string",
+                    "enum": [
+                      "VALIDATION_FAILED",
+                      "INVALID_UUID"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "pointer": "/paths/~1me~1contracts/get/responses/422/description",
+          "before": null,
+          "after": "Invalid filters, pagination, sort, order, format or unsupported query fields."
+        },
+        {
+          "pointer": "/paths/~1me~1contracts/get/responses/429",
+          "before": {
+            "$ref": "#/components/responses/TooManyRequestsError"
+          },
+          "after": null
+        }
+      ],
+      "semanticDiff": {
+        "paths": {
+          "modified": {
+            "/contract-members": {
+              "operations": {
+                "modified": {
+                  "GET": {
+                    "extensions": {
+                      "modified": {
+                        "x-apidog-status": [
+                          {
+                            "oldValue": "designing",
+                            "value": "released",
+                            "op": "replace",
+                            "from": "",
+                            "path": ""
+                          }
+                        ]
+                      }
+                    },
+                    "parameters": {
+                      "added": {
+                        "query": [
+                          "sort",
+                          "order"
+                        ]
+                      },
+                      "modified": {
+                        "query": {
+                          "format": {
+                            "schema": {
+                              "enum": {
+                                "deleted": [
+                                  "xlsx",
+                                  "csv",
+                                  "pdf"
+                                ]
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "responses": {
+                      "modified": {
+                        "200": {
+                          "content": {
+                            "deleted": [
+                              "application/pdf",
+                              "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                              "text/csv"
+                            ],
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "properties": {
+                                    "modified": {
+                                      "data": {
+                                        "items": {
+                                          "required": {
+                                            "added": [
+                                              "tenantPhone",
+                                              "leftAt",
+                                              "tenantId"
+                                            ],
+                                            "deleted": [
+                                              "isRepresentative"
+                                            ]
+                                          },
+                                          "properties": {
+                                            "deleted": [
+                                              "identityCardNumber",
+                                              "isRepresentative"
+                                            ],
+                                            "modified": {
+                                              "status": {
+                                                "enum": {
+                                                  "added": [
+                                                    "active",
+                                                    "left"
+                                                  ],
+                                                  "deleted": [
+                                                    "ACTIVE",
+                                                    "TEMPORARY_ABSENT",
+                                                    "LEFT"
+                                                  ]
+                                                }
+                                              },
+                                              "tenantName": {
+                                                "nullable": {
+                                                  "from": false,
+                                                  "to": true
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "POST": {
+                    "extensions": {
+                      "modified": {
+                        "x-apidog-status": [
+                          {
+                            "oldValue": "designing",
+                            "value": "released",
+                            "op": "replace",
+                            "from": "",
+                            "path": ""
+                          }
+                        ]
+                      }
+                    },
+                    "requestBody": {
+                      "content": {
+                        "modified": {
+                          "application/json": {
+                            "schema": {
+                              "properties": {
+                                "deleted": [
+                                  "isRepresentative",
+                                  "identityCardNumber",
+                                  "dateOfBirth",
+                                  "gender"
+                                ]
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "responses": {
+                      "added": [
+                        "404"
+                      ],
+                      "modified": {
+                        "409": {
+                          "content": {
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "properties": {
+                                    "modified": {
+                                      "code": {
+                                        "enum": {
+                                          "added": [
+                                            "CONTRACT_NOT_ACTIVE"
+                                          ]
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "/contract-members/{contractMemberId}": {
+              "operations": {
+                "modified": {
+                  "PATCH": {
+                    "extensions": {
+                      "modified": {
+                        "x-apidog-status": [
+                          {
+                            "oldValue": "designing",
+                            "value": "released",
+                            "op": "replace",
+                            "from": "",
+                            "path": ""
+                          }
+                        ]
+                      }
+                    },
+                    "operationID": {
+                      "from": "patchContractMembersContractmemberid",
+                      "to": "patchContractMembersTenantid"
+                    },
+                    "parameters": {
+                      "modified": {
+                        "path": {
+                          "contractMemberId": {
+                            "name": {
+                              "from": "contractMemberId",
+                              "to": "tenantId"
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "requestBody": {
+                      "content": {
+                        "modified": {
+                          "application/json": {
+                            "schema": {
+                              "required": {
+                                "added": [
+                                  "contractId"
+                                ]
+                              },
+                              "properties": {
+                                "added": [
+                                  "contractId"
+                                ]
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "responses": {
+                      "modified": {
+                        "409": {
+                          "content": {
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "properties": {
+                                    "modified": {
+                                      "code": {
+                                        "enum": {
+                                          "added": [
+                                            "MEMBER_ALREADY_EXISTS"
+                                          ]
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "/contract-members/{contractMemberId}/leave-contract": {
+              "operations": {
+                "modified": {
+                  "POST": {
+                    "extensions": {
+                      "modified": {
+                        "x-apidog-status": [
+                          {
+                            "oldValue": "designing",
+                            "value": "released",
+                            "op": "replace",
+                            "from": "",
+                            "path": ""
+                          }
+                        ]
+                      }
+                    },
+                    "operationID": {
+                      "from": "postContractMembersContractmemberidLeaveContract",
+                      "to": "postContractMembersTenantidLeaveContract"
+                    },
+                    "parameters": {
+                      "modified": {
+                        "path": {
+                          "contractMemberId": {
+                            "name": {
+                              "from": "contractMemberId",
+                              "to": "tenantId"
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "requestBody": {
+                      "content": {
+                        "modified": {
+                          "application/json": {
+                            "schema": {
+                              "required": {
+                                "added": [
+                                  "contractId"
+                                ]
+                              },
+                              "properties": {
+                                "added": [
+                                  "contractId"
+                                ]
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "responses": {
+                      "modified": {
+                        "409": {
+                          "content": {
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "properties": {
+                                    "modified": {
+                                      "code": {
+                                        "enum": {
+                                          "added": [
+                                            "CONTRACT_NOT_ACTIVE"
+                                          ]
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "/contracts/{contractId}": {
+              "operations": {
+                "modified": {
+                  "PATCH": {
+                    "requestBody": {
+                      "content": {
+                        "modified": {
+                          "application/json": {
+                            "schema": {
+                              "required": {
+                                "deleted": [
+                                  "description"
+                                ]
+                              },
+                              "properties": {
+                                "added": [
+                                  "vehicleCount"
+                                ]
+                              },
+                              "minProps": {
+                                "from": 0,
+                                "to": 1
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "responses": {
+                      "modified": {
+                        "200": {
+                          "content": {
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "properties": {
+                                    "modified": {
+                                      "data": {
+                                        "properties": {
+                                          "modified": {
+                                            "status": {
+                                              "enum": {
+                                                "added": [
+                                                  "active"
+                                                ]
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "/contracts/{contractId}/complete-checkout": {
+              "operations": {
+                "modified": {
+                  "POST": {
+                    "requestBody": {
+                      "content": {
+                        "modified": {
+                          "application/json": {
+                            "schema": {
+                              "properties": {
+                                "modified": {
+                                  "completedOn": {
+                                    "pattern": {
+                                      "from": "",
+                                      "to": "^(?!0000)\\d{4}-\\d{2}-\\d{2}$"
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "responses": {
+                      "deleted": [
+                        "429"
+                      ],
+                      "modified": {
+                        "200": {
+                          "content": {
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "properties": {
+                                    "modified": {
+                                      "data": {
+                                        "properties": {
+                                          "modified": {
+                                            "status": {
+                                              "enum": {
+                                                "added": [
+                                                  "terminated"
+                                                ],
+                                                "deleted": [
+                                                  "expired"
+                                                ]
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "409": {
+                          "content": {
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "properties": {
+                                    "modified": {
+                                      "code": {
+                                        "enum": {
+                                          "added": [
+                                            "SETTLEMENT_NOT_READY",
+                                            "INVALID_ROOM_TRANSITION"
+                                          ]
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "422": {
+                          "content": {
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "properties": {
+                                    "modified": {
+                                      "code": {
+                                        "enum": {
+                                          "added": [
+                                            "LEFT_DATE_INVALID",
+                                            "UNEXPECTED_FIELD"
+                                          ],
+                                          "deleted": [
+                                            "SETTLEMENT_NOT_READY"
+                                          ]
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "/me/contracts": {
+              "operations": {
+                "modified": {
+                  "GET": {
+                    "parameters": {
+                      "added": {
+                        "query": [
+                          "sort",
+                          "order"
+                        ]
+                      },
+                      "modified": {
+                        "query": {
+                          "filter": {
+                            "schema": {
+                              "properties": {
+                                "modified": {
+                                  "status": {
+                                    "enum": {
+                                      "enumAdded": true,
+                                      "added": [
+                                        "draft",
+                                        "signed",
+                                        "active",
+                                        "suspended",
+                                        "expired",
+                                        "terminated"
+                                      ]
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          },
+                          "format": {
+                            "schema": {
+                              "enum": {
+                                "deleted": [
+                                  "xlsx",
+                                  "csv",
+                                  "pdf"
+                                ]
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "responses": {
+                      "deleted": [
+                        "429"
+                      ],
+                      "modified": {
+                        "200": {
+                          "content": {
+                            "deleted": [
+                              "application/pdf",
+                              "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                              "text/csv"
+                            ],
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "properties": {
+                                    "modified": {
+                                      "data": {
+                                        "items": {
+                                          "properties": {
+                                            "deleted": [
+                                              "rentalType"
+                                            ]
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "422": {
+                          "extensions": {
+                            "deleted": [
+                              "x-apidog-name"
+                            ]
+                          },
+                          "content": {
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "properties": {
+                                    "modified": {
+                                      "code": {
+                                        "enum": {
+                                          "added": [
+                                            "INVALID_UUID"
+                                          ]
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "components": {
+          "schemas": {
+            "modified": {
+              "ContractCompleteCheckoutRequestDto": {
+                "properties": {
+                  "modified": {
+                    "completedOn": {
+                      "pattern": {
+                        "from": "",
+                        "to": "^(?!0000)\\d{4}-\\d{2}-\\d{2}$"
+                      }
+                    }
+                  }
+                }
+              },
+              "ContractCompleteCheckoutResponseDto": {
+                "properties": {
+                  "modified": {
+                    "status": {
+                      "enum": {
+                        "added": [
+                          "terminated"
+                        ],
+                        "deleted": [
+                          "expired"
+                        ]
+                      }
+                    }
+                  }
+                }
+              },
+              "ContractMemberAddRequestDto": {
+                "properties": {
+                  "deleted": [
+                    "isRepresentative",
+                    "identityCardNumber",
+                    "dateOfBirth",
+                    "gender"
+                  ]
+                }
+              },
+              "ContractMemberLeaveRequestDto": {
+                "required": {
+                  "added": [
+                    "contractId"
+                  ]
+                },
+                "properties": {
+                  "added": [
+                    "contractId"
+                  ]
+                }
+              },
+              "ContractMemberListResponseDto": {
+                "required": {
+                  "added": [
+                    "tenantId",
+                    "tenantPhone",
+                    "leftAt"
+                  ],
+                  "deleted": [
+                    "isRepresentative"
+                  ]
+                },
+                "properties": {
+                  "deleted": [
+                    "isRepresentative",
+                    "identityCardNumber"
+                  ],
+                  "modified": {
+                    "status": {
+                      "enum": {
+                        "added": [
+                          "active",
+                          "left"
+                        ],
+                        "deleted": [
+                          "ACTIVE",
+                          "TEMPORARY_ABSENT",
+                          "LEFT"
+                        ]
+                      }
+                    },
+                    "tenantName": {
+                      "nullable": {
+                        "from": false,
+                        "to": true
+                      }
+                    }
+                  }
+                }
+              },
+              "ContractMemberUpdateRequestDto": {
+                "required": {
+                  "added": [
+                    "contractId"
+                  ]
+                },
+                "properties": {
+                  "added": [
+                    "contractId"
+                  ]
+                }
+              },
+              "ContractMyListResponseDto": {
+                "properties": {
+                  "deleted": [
+                    "rentalType"
+                  ]
+                }
+              },
+              "ContractUpdateRequestDto": {
+                "required": {
+                  "deleted": [
+                    "description"
+                  ]
+                },
+                "properties": {
+                  "added": [
+                    "vehicleCount"
+                  ]
+                },
+                "minProps": {
+                  "from": 0,
+                  "to": 1
+                }
+              },
+              "ContractUpdateResponseDto": {
+                "properties": {
+                  "modified": {
+                    "status": {
+                      "enum": {
+                        "added": [
+                          "active"
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   ]
 }
