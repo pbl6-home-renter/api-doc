@@ -1,0 +1,59 @@
+get:
+  tags:
+    - Operation
+  x-apidog-folder: Media
+  x-apidog-status: developing
+  operationId: getMediaDownloadUrl
+  security:
+    - BearerAuth: []
+  summary: Get a signed download URL for chat media
+  description: |-
+    Returns a short-lived R2 GET URL for a completed `chat_attachment` or `conversation_avatar`. Identity applies the same read authorization as `GET /media/{mediaId}` before signing the URL. Community verifies message visibility for chat attachments and active membership for conversation avatars. Other media purposes return `404 RESOURCE_NOT_FOUND`.
+
+    Browser clients must first call this API with a Bearer token, then download the returned URL directly without Authorization. Do not follow the `GET /media/{mediaId}` redirect with XHR: redirecting from the API origin to R2 can send `Origin: null` and fail bucket CORS. The signed URL expires after `MEDIA_DOWNLOAD_URL_TTL_SECONDS` (default 300 seconds); request a new one for a later download. Do not log or persist signed URLs. The API response uses `Cache-Control: private, no-store`.
+  parameters:
+    - name: mediaId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+  responses:
+    '200':
+      description: Signed URL issued.
+      headers:
+        Cache-Control:
+          schema:
+            type: string
+            example: private, no-store
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code, data]
+            properties:
+              statusCode:
+                type: integer
+                enum: [200]
+              code:
+                type: string
+                enum: [MEDIA_DOWNLOAD_URL_ISSUED]
+              data:
+                $ref: ../../openapi.yaml#/components/schemas/MediaDownloadUrlResponseDto
+    '400':
+      $ref: ../../openapi.yaml#/components/responses/BadRequestPathError
+    '401':
+      $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
+    '403':
+      $ref: ../../openapi.yaml#/components/responses/ForbiddenError
+    '404':
+      $ref: ../../openapi.yaml#/components/responses/NotFoundError
+    '410':
+      description: Media has been deleted.
+    '429':
+      $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
+    '500':
+      $ref: ../../openapi.yaml#/components/responses/InternalServerError
+    '503':
+      description: Storage or owning service is unavailable.
