@@ -5,11 +5,38 @@
 
 Báo cáo lưu lịch sử các entry đã phát hiện, mới nhất ở trên. `NO_CHANGE` không xóa entry cũ; exit code chỉ phản ánh lần chạy hiện tại.
 
-Công cụ: Redocly 2.64.1; oasdiff 1.34.1. Số entry: **35**.
+Công cụ: Redocly 2.64.1; oasdiff 1.34.1. Số entry: **36**.
 
 Phân loại: **BREAKING** = client cũ có thể hỏng; **NON_BREAKING** = tương thích theo contract; **NEEDS_REVIEW** = chưa đủ bằng chứng.
 
 Các vị trí dùng JSON Pointer trên bundle tạm (`~1` là `/`). JSON đi kèm giữ toàn bộ semantic diff, fingerprint và hash phục vụ truy vết.
+
+## Thay đổi contract từ Git — NON_BREAKING
+
+- ID: `b04c653f9e5c627559ac14bc5051fea428bb2079dbaf4eca826ff522217ad752`
+- Contract: rentify-public; repository: https://github.com/pbl6-home-renter/api-doc
+- Nguồn: `src/openapi.yaml` → `src/openapi.yaml`
+- Phát hiện (UTC): 2026-11-07T14:31:07.975Z; commit time: 2026-11-07T21:30:55+07:00
+- Commit nền: fb26e34b2f095bb98ecac490b5387f0553bb2859
+- Commit đích/bối cảnh: [1f7e640db2439d33db5c8135d2b954965721ffee](https://github.com/pbl6-home-renter/api-doc/commit/1f7e640db2439d33db5c8135d2b954965721ffee)
+- PR: [https://github.com/pbl6-home-renter/api-doc/pull/53](https://github.com/pbl6-home-renter/api-doc/pull/53)
+- Loại metadata: Git revision thực tế
+- Lý do: CHƯA CUNG CẤP — tác giả PR phải bổ sung lý do nghiệp vụ; không thể suy ra từ OpenAPI diff.
+
+| Mức ảnh hưởng | Endpoint / vùng | Thay đổi | Hành động FE / Mobile |
+|---|---|---|---|
+| NON_BREAKING | GET /media/{mediaId}/download-url | Thêm endpoint mới. (`endpoint-added`) | FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI. |
+
+### Vị trí và giá trị trước/sau
+
+| Path / schema / field (JSON Pointer) | Trước | Sau |
+|---|---|---|
+| `/components/schemas/MediaCompleteUploadResponseDto/properties/url/description` | "URL đọc file. Purpose public (`avatar`, `cover_photo`, `gallery_photo`): URL tuyệt đối cố định trên R2 public bucket, dùng trực tiếp trong `&lt;img src&gt;`. Purpose private (còn lại): đường dẫn API tương đối `/api/v1/media/{mediaId}`, phải gọi `GET` kèm Bearer token." | "URL đọc file. Purpose public (`avatar`, `cover_photo`, `gallery_photo`): URL tuyệt đối cố định trên R2 public bucket, dùng trực tiếp trong `&lt;img src&gt;`. Purpose private (còn lại): đường dẫn API tương đối `/api/v1/media/{mediaId}`; ảnh chat/avatar nhóm trên web dùng `GET /media/{mediaId}/download-url` để lấy URL R2 có ký sau khi xác thực." |
+| `/components/schemas/MediaDownloadUrlResponseDto` | null | {"type":"object","x-apidog-folder":"Media/Response","title":"MediaDownloadUrlResponseDto","description":"Short-lived direct download URL for authorized chat media.","additionalProperties":false,"required":["url"],"properties":{"url":{"type":"string","format":"uri","description":"Presigned R2 GET URL. Fetch directly without an Authorization header and request a fresh URL for each later download."}}} |
+| `/paths/~1media~1{mediaId}/get/description` | "Stream completed media as before. For chat_attachment and conversation_avatar, authorize the caller and redirect to a URL for direct storage access. Private chat media uses a signed R2 GET URL that expires after MEDIA_DOWNLOAD_URL_TTL_SECONDS (default 300 seconds); call this endpoint again to obtain a fresh URL.\n\nPrivate chat media requires a Bearer token. Web and mobile clients follow the redirect and download bytes directly from R2. Other private media keeps the API streaming response.\nFor chat_attachment, Community confirms the media is attached to a message in the conversation. Active members may read it; read-only members may read only messages with sequence less than or equal to leftSequence. For conversation_avatar, only active conversation members may read. Admin and uploader read bypasses do not apply.\n\nBusiness errors: 401 UNAUTHORIZED, 403 FORBIDDEN, 404 RESOURCE_NOT_FOUND, 410 MEDIA_DELETED, 503 SERVICE_UNAVAILABLE." | "Stream completed media as before. For chat_attachment and conversation_avatar, authorize the caller and redirect to a URL for direct storage access. Private chat media uses a signed R2 GET URL that expires after MEDIA_DOWNLOAD_URL_TTL_SECONDS (default 300 seconds); call this endpoint again to obtain a fresh URL.\n\nPrivate chat media requires a Bearer token. Browser clients should use `GET /media/{mediaId}/download-url` and fetch its returned R2 URL directly, avoiding a cross-origin XHR redirect. Other private media keeps the API streaming response.\nFor chat_attachment, Community confirms the media is attached to a message in the conversation. Active members may read it; read-only members may read only messages with sequence less than or equal to leftSequence. For conversation_avatar, only active conversation members may read. Admin and uploader read bypasses do not apply.\n\nBusiness errors: 401 UNAUTHORIZED, 403 FORBIDDEN, 404 RESOURCE_NOT_FOUND, 410 MEDIA_DELETED, 503 SERVICE_UNAVAILABLE." |
+| `/paths/~1media~1{mediaId}~1download-url` | null | {"get":{"tags":["Operation"],"x-apidog-folder":"Media","x-apidog-status":"developing","operationId":"getMediaDownloadUrl","security":[{"BearerAuth":[]}],"summary":"Get a signed download URL for chat media","description":"Returns a short-lived R2 GET URL for a completed `chat_attachment` or `conversation_avatar`. Identity applies the same read authorization as `GET /media/{mediaId}` before signing the URL. Community verifies message visibility for chat attachments and active membership for conversation avatars. Other media purposes return `404 RESOURCE_NOT_FOUND`.\n\nBrowser clients must first call this API with a Bearer token, then download the returned URL directly without Authorization. Do not follow the `GET /media/{mediaId}` redirect with XHR: redirecting from the API origin to R2 can send `Origin: null` and fail bucket CORS. The signed URL expires after `MEDIA_DOWNLOAD_URL_TTL_SECONDS` (default 300 seconds); request a new one for a later download. Do not log or persist signed URLs. The API response uses `Cache-Control: private, no-store`.","parameters":[{"name":"mediaId","in":"path","required":true,"schema":{"type":"string","format":"uuid"}}],"responses":{"200":{"description":"Signed URL issued.","headers":{"Cache-Control":{"schema":{"type":"string","example":"private, no-store"}}},"content":{"application/json":{"schema":{"type":"object","additionalProperties":false,"required":["statusCode","code","data"],"properties":{"statusCode":{"type":"integer","enum":[200]},"code":{"type":"string","enum":["MEDIA_DOWNLOAD_URL_ISSUED"]},"data":{"$ref":"#/components/schemas/MediaDownloadUrlResponseDto"}}}}}},"400":{"$ref":"#/components/responses/BadRequestPathError"},"401":{"$ref":"#/components/responses/UnauthorizedError"},"403":{"$ref":"#/components/responses/ForbiddenError"},"404":{"$ref":"#/components/responses/NotFoundError"},"410":{"description":"Media has been deleted."},"429":{"$ref":"#/components/responses/TooManyRequestsError"},"500":{"$ref":"#/components/responses/InternalServerError"},"503":{"description":"Storage or owning service is unavailable."}}}} |
+
+**Kiểm tra thủ công:** BE xác nhận lý do, endpoint dùng schema chung, thay đổi role/ownership mô tả bằng văn bản và thời điểm triển khai. FE/Mobile xác nhận tác động với parser và phiên bản client đang hỗ trợ.
 
 ## Thay đổi contract từ Git — NEEDS_REVIEW
 

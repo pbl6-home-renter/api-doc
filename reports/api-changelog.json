@@ -45175,6 +45175,192 @@
           }
         }
       }
+    },
+    {
+      "id": "b04c653f9e5c627559ac14bc5051fea428bb2079dbaf4eca826ff522217ad752",
+      "label": "Thay đổi contract từ Git",
+      "classification": "NON_BREAKING",
+      "contractId": "rentify-public",
+      "repository": "https://github.com/pbl6-home-renter/api-doc",
+      "baseHash": "5149cfe54cc9585a8886cdc1a030f88c07f50042302e455912bd0050eeaef806",
+      "headHash": "c3bc4774d9812d37293694e06a3843d863b92f8810d0c2f776fb8e05f7a32adc",
+      "baseSource": "src/openapi.yaml",
+      "headSource": "src/openapi.yaml",
+      "detectedAt": "2026-11-07T14:31:07.975Z",
+      "committedAt": "2026-11-07T21:30:55+07:00",
+      "baseCommit": "fb26e34b2f095bb98ecac490b5387f0553bb2859",
+      "headCommit": "1f7e640db2439d33db5c8135d2b954965721ffee",
+      "prUrl": "https://github.com/pbl6-home-renter/api-doc/pull/53",
+      "commitUrl": "https://github.com/pbl6-home-renter/api-doc/commit/1f7e640db2439d33db5c8135d2b954965721ffee",
+      "metadataKind": "Git revision thực tế",
+      "reason": "CHƯA CUNG CẤP — tác giả PR phải bổ sung lý do nghiệp vụ; không thể suy ra từ OpenAPI diff.",
+      "tools": {
+        "redocly": "2.64.1",
+        "oasdiff": "1.34.1"
+      },
+      "changes": [
+        {
+          "id": "endpoint-added",
+          "text": "endpoint added",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getMediaDownloadUrl",
+          "path": "/media/{mediaId}/download-url",
+          "section": "paths",
+          "revisionSource": {
+            "file": "/tmp/rentify-contract-RnFYaE/head-0.json"
+          },
+          "fingerprint": "5cafdf17c429",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        }
+      ],
+      "locations": [
+        {
+          "pointer": "/components/schemas/MediaCompleteUploadResponseDto/properties/url/description",
+          "before": "URL đọc file. Purpose public (`avatar`, `cover_photo`, `gallery_photo`): URL tuyệt đối cố định trên R2 public bucket, dùng trực tiếp trong `<img src>`. Purpose private (còn lại): đường dẫn API tương đối `/api/v1/media/{mediaId}`, phải gọi `GET` kèm Bearer token.",
+          "after": "URL đọc file. Purpose public (`avatar`, `cover_photo`, `gallery_photo`): URL tuyệt đối cố định trên R2 public bucket, dùng trực tiếp trong `<img src>`. Purpose private (còn lại): đường dẫn API tương đối `/api/v1/media/{mediaId}`; ảnh chat/avatar nhóm trên web dùng `GET /media/{mediaId}/download-url` để lấy URL R2 có ký sau khi xác thực."
+        },
+        {
+          "pointer": "/components/schemas/MediaDownloadUrlResponseDto",
+          "before": null,
+          "after": {
+            "type": "object",
+            "x-apidog-folder": "Media/Response",
+            "title": "MediaDownloadUrlResponseDto",
+            "description": "Short-lived direct download URL for authorized chat media.",
+            "additionalProperties": false,
+            "required": [
+              "url"
+            ],
+            "properties": {
+              "url": {
+                "type": "string",
+                "format": "uri",
+                "description": "Presigned R2 GET URL. Fetch directly without an Authorization header and request a fresh URL for each later download."
+              }
+            }
+          }
+        },
+        {
+          "pointer": "/paths/~1media~1{mediaId}/get/description",
+          "before": "Stream completed media as before. For chat_attachment and conversation_avatar, authorize the caller and redirect to a URL for direct storage access. Private chat media uses a signed R2 GET URL that expires after MEDIA_DOWNLOAD_URL_TTL_SECONDS (default 300 seconds); call this endpoint again to obtain a fresh URL.\n\nPrivate chat media requires a Bearer token. Web and mobile clients follow the redirect and download bytes directly from R2. Other private media keeps the API streaming response.\nFor chat_attachment, Community confirms the media is attached to a message in the conversation. Active members may read it; read-only members may read only messages with sequence less than or equal to leftSequence. For conversation_avatar, only active conversation members may read. Admin and uploader read bypasses do not apply.\n\nBusiness errors: 401 UNAUTHORIZED, 403 FORBIDDEN, 404 RESOURCE_NOT_FOUND, 410 MEDIA_DELETED, 503 SERVICE_UNAVAILABLE.",
+          "after": "Stream completed media as before. For chat_attachment and conversation_avatar, authorize the caller and redirect to a URL for direct storage access. Private chat media uses a signed R2 GET URL that expires after MEDIA_DOWNLOAD_URL_TTL_SECONDS (default 300 seconds); call this endpoint again to obtain a fresh URL.\n\nPrivate chat media requires a Bearer token. Browser clients should use `GET /media/{mediaId}/download-url` and fetch its returned R2 URL directly, avoiding a cross-origin XHR redirect. Other private media keeps the API streaming response.\nFor chat_attachment, Community confirms the media is attached to a message in the conversation. Active members may read it; read-only members may read only messages with sequence less than or equal to leftSequence. For conversation_avatar, only active conversation members may read. Admin and uploader read bypasses do not apply.\n\nBusiness errors: 401 UNAUTHORIZED, 403 FORBIDDEN, 404 RESOURCE_NOT_FOUND, 410 MEDIA_DELETED, 503 SERVICE_UNAVAILABLE."
+        },
+        {
+          "pointer": "/paths/~1media~1{mediaId}~1download-url",
+          "before": null,
+          "after": {
+            "get": {
+              "tags": [
+                "Operation"
+              ],
+              "x-apidog-folder": "Media",
+              "x-apidog-status": "developing",
+              "operationId": "getMediaDownloadUrl",
+              "security": [
+                {
+                  "BearerAuth": []
+                }
+              ],
+              "summary": "Get a signed download URL for chat media",
+              "description": "Returns a short-lived R2 GET URL for a completed `chat_attachment` or `conversation_avatar`. Identity applies the same read authorization as `GET /media/{mediaId}` before signing the URL. Community verifies message visibility for chat attachments and active membership for conversation avatars. Other media purposes return `404 RESOURCE_NOT_FOUND`.\n\nBrowser clients must first call this API with a Bearer token, then download the returned URL directly without Authorization. Do not follow the `GET /media/{mediaId}` redirect with XHR: redirecting from the API origin to R2 can send `Origin: null` and fail bucket CORS. The signed URL expires after `MEDIA_DOWNLOAD_URL_TTL_SECONDS` (default 300 seconds); request a new one for a later download. Do not log or persist signed URLs. The API response uses `Cache-Control: private, no-store`.",
+              "parameters": [
+                {
+                  "name": "mediaId",
+                  "in": "path",
+                  "required": true,
+                  "schema": {
+                    "type": "string",
+                    "format": "uuid"
+                  }
+                }
+              ],
+              "responses": {
+                "200": {
+                  "description": "Signed URL issued.",
+                  "headers": {
+                    "Cache-Control": {
+                      "schema": {
+                        "type": "string",
+                        "example": "private, no-store"
+                      }
+                    }
+                  },
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "required": [
+                          "statusCode",
+                          "code",
+                          "data"
+                        ],
+                        "properties": {
+                          "statusCode": {
+                            "type": "integer",
+                            "enum": [
+                              200
+                            ]
+                          },
+                          "code": {
+                            "type": "string",
+                            "enum": [
+                              "MEDIA_DOWNLOAD_URL_ISSUED"
+                            ]
+                          },
+                          "data": {
+                            "$ref": "#/components/schemas/MediaDownloadUrlResponseDto"
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "400": {
+                  "$ref": "#/components/responses/BadRequestPathError"
+                },
+                "401": {
+                  "$ref": "#/components/responses/UnauthorizedError"
+                },
+                "403": {
+                  "$ref": "#/components/responses/ForbiddenError"
+                },
+                "404": {
+                  "$ref": "#/components/responses/NotFoundError"
+                },
+                "410": {
+                  "description": "Media has been deleted."
+                },
+                "429": {
+                  "$ref": "#/components/responses/TooManyRequestsError"
+                },
+                "500": {
+                  "$ref": "#/components/responses/InternalServerError"
+                },
+                "503": {
+                  "description": "Storage or owning service is unavailable."
+                }
+              }
+            }
+          }
+        }
+      ],
+      "semanticDiff": {
+        "paths": {
+          "added": [
+            "/media/{mediaId}/download-url"
+          ]
+        },
+        "components": {
+          "schemas": {
+            "added": [
+              "MediaDownloadUrlResponseDto"
+            ]
+          }
+        }
+      }
     }
   ]
 }
