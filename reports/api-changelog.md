@@ -5,11 +5,35 @@
 
 Báo cáo lưu lịch sử các entry đã phát hiện, mới nhất ở trên. `NO_CHANGE` không xóa entry cũ; exit code chỉ phản ánh lần chạy hiện tại.
 
-Công cụ: Redocly 2.64.1; oasdiff 1.34.1. Số entry: **34**.
+Công cụ: Redocly 2.64.1; oasdiff 1.34.1. Số entry: **35**.
 
 Phân loại: **BREAKING** = client cũ có thể hỏng; **NON_BREAKING** = tương thích theo contract; **NEEDS_REVIEW** = chưa đủ bằng chứng.
 
 Các vị trí dùng JSON Pointer trên bundle tạm (`~1` là `/`). JSON đi kèm giữ toàn bộ semantic diff, fingerprint và hash phục vụ truy vết.
+
+## Thay đổi contract từ Git — NEEDS_REVIEW
+
+- ID: `1ec303f3107b402f3a484bc692929df71004dc39735bd5c9c6717dbda0a32c13`
+- Contract: rentify-public; repository: https://github.com/pbl6-home-renter/api-doc
+- Nguồn: `src/openapi.yaml` → `src/openapi.yaml`
+- Phát hiện (UTC): 2026-11-07T01:58:35.100Z; commit time: 2026-11-07T08:58:23+07:00
+- Commit nền: 77498340f3b0273a7b1d80812426f9814c612ad7
+- Commit đích/bối cảnh: [319b15004459fa9c05116787dddbd14b9d7b2eb5](https://github.com/pbl6-home-renter/api-doc/commit/319b15004459fa9c05116787dddbd14b9d7b2eb5)
+- PR: [https://github.com/pbl6-home-renter/api-doc/pull/52](https://github.com/pbl6-home-renter/api-doc/pull/52)
+- Loại metadata: Git revision thực tế
+- Lý do: CHƯA CUNG CẤP — tác giả PR phải bổ sung lý do nghiệp vụ; không thể suy ra từ OpenAPI diff.
+
+| Mức ảnh hưởng | Endpoint / vùng | Thay đổi | Hành động FE / Mobile |
+|---|---|---|---|
+| NEEDS_REVIEW | specification | Có khác biệt cấu trúc/metadata nhưng engine không phân loại tác động; xem bảng trước/sau. (`unclassified-diff`) | FE và Mobile: đối chiếu vị trí và thay đổi trước/sau trong entry này với API adapter, DTO, parser và validation; cùng BE xác nhận phương án tương thích trước merge/phát hành. |
+
+### Vị trí và giá trị trước/sau
+
+| Path / schema / field (JSON Pointer) | Trước | Sau |
+|---|---|---|
+| `/components/schemas/Invoice/allOf` | [{"$ref":"#/components/schemas/BaseEntity"},{"type":"object","properties":{"contractId":{"type":"string","format":"uuid","description":"ID hợp đồng thuê phòng","example":"3fa85f64-5717-4562-b3fc-2c963f66afa6"},"code":{"type":"string","minLength":1,"maxLength":32,"description":"Mã nhận diện duy nhất nhúng trong VietQR để đối soát","example":"INV-202609-8F2K"},"period":{"type":"string","minLength":7,"maxLength":7,"pattern":"^[0-9]{4}-(0[1-9]\|1[0-2])$","description":"Kỳ tính tiền (YYYY-MM)","example":"2026-09"},"rentAmount":{"type":"number","minimum":0,"description":"Tiền thuê phòng (đã tính prorate nếu có)","example":3500000},"breakdown":{"type":"array","nullable":true,"description":"Snapshot bất biến chi tiết các khoản điện, nước, phí dịch vụ","items":{"type":"object","properties":{"type":{"type":"string"},"name":{"type":"string"},"rateKind":{"type":"string"},"unitPrice":{"type":"number"},"quantity":{"type":"number"},"unit":{"type":"string"},"serviceStart":{"type":"string","format":"date-time"},"serviceEnd":{"type":"string","format":"date-time"},"prorateRatio":{"type":"number"},"amount":{"type":"number"},"tierDetail":{"type":"array","items":{"type":"object"}}}}},"otherFees":{"type":"array","nullable":true,"description":"Phí phát sinh một lần hoặc giảm trừ/miễn giảm (D33 cho phép amount âm)","items":{"type":"object","properties":{"name":{"type":"string"},"amount":{"type":"number"}},"required":["name","amount"]}},"totalAmount":{"type":"number","minimum":0,"description":"Tổng số tiền phải thanh toán của hóa đơn","example":4610000},"status":{"type":"string","enum":["pending","issued","void"],"default":"pending","description":"Trạng thái hóa đơn (D39 bỏ overdue; hủy hóa đơn chuyển thành void)","example":"pending"},"issuedAt":{"type":"string","format":"date-time","nullable":true,"description":"Thời điểm hóa đơn được phát hành","example":"2026-09-30T20:15:00Z"},"voidedInvoiceId":{"type":"string","format":"uuid","nullable":true,"description":"ID hóa đơn cũ bị thay thế nếu hóa đơn này là bản sửa đổi (D37)","example":null},"note":{"type":"string","nullable":true,"description":"Ghi chú hóa đơn (vd lý do prorate)","example":"Tháng nhập cư, prorate từ 15/09"}},"required":["contractId","code","period","rentAmount","totalAmount","status"]}] | [{"$ref":"#/components/schemas/BaseEntity"},{"type":"object","properties":{"contractId":{"type":"string","format":"uuid","description":"ID hợp đồng thuê phòng","example":"3fa85f64-5717-4562-b3fc-2c963f66afa6"},"code":{"type":"string","minLength":1,"maxLength":32,"description":"Mã nhận diện duy nhất nhúng trong VietQR để đối soát","example":"INV-202609-8F2K"},"period":{"type":"string","minLength":7,"maxLength":7,"pattern":"^[0-9]{4}-(0[1-9]\|1[0-2])$","description":"Kỳ tính tiền (YYYY-MM)","example":"2026-09"},"rentAmount":{"type":"string","pattern":"^(0\|[1-9][0-9]*)(\\.[0-9]{1,4})?$","description":"Tiền thuê phòng sau prorate, decimal string làm tròn half-up tới 4 chữ số thập phân (P6-D65/D72)","example":"3500000.0000"},"breakdown":{"type":"array","description":"Snapshot điện, nước và phí dịch vụ; decimal lưu dạng string, tiền từng dòng làm tròn half-up 4 chữ số thập phân (P6-D65/D72)","items":{"type":"object","properties":{"type":{"type":"string"},"name":{"type":"string"},"rateKind":{"type":"string"},"unitPrice":{"type":"string","nullable":true,"pattern":"^(0\|[1-9][0-9]*)(\\.[0-9]+)?$"},"quantity":{"type":"string","pattern":"^(0\|[1-9][0-9]*)(\\.[0-9]+)?$"},"unit":{"type":"string"},"serviceStart":{"type":"string","format":"date"},"serviceEnd":{"type":"string","format":"date"},"prorateRatio":{"type":"string","pattern":"^(0\|[1-9][0-9]*)(\\.[0-9]+)?$"},"amount":{"type":"string","pattern":"^(0\|[1-9][0-9]*)(\\.[0-9]{1,4})?$"},"tierDetail":{"type":"array","items":{"type":"object"}}}}},"otherFees":{"type":"array","description":"Phí phát sinh một lần hoặc giảm trừ/miễn giảm (D33 cho phép amount âm)","items":{"type":"object","properties":{"name":{"type":"string"},"amount":{"type":"string","pattern":"^-?(0\|[1-9][0-9]*)(\\.[0-9]{1,4})?$"}},"required":["name","amount"]}},"totalAmount":{"type":"string","pattern":"^(0\|[1-9][0-9]*)$","description":"Tổng tiền làm tròn half-up về số nguyên đồng của các dòng đã làm tròn 4 chữ số (P6-D72)","example":"4610000"},"status":{"type":"string","enum":["pending","issued","void"],"default":"pending","description":"Trạng thái hóa đơn (D39 bỏ overdue; hủy hóa đơn chuyển thành void)","example":"pending"},"issuedAt":{"type":"string","format":"date-time","nullable":true,"description":"Thời điểm hóa đơn được phát hành","example":"2026-09-30T20:15:00Z"},"voidedInvoiceId":{"type":"string","format":"uuid","nullable":true,"description":"ID hóa đơn cũ bị thay thế nếu hóa đơn này là bản sửa đổi (D37)","example":null},"voidReason":{"type":"string","nullable":true,"minLength":1,"maxLength":500,"description":"Lý do hủy hóa đơn, lưu khi chuyển trạng thái sang void (P6-D72)"},"note":{"type":"string","nullable":true,"description":"Ghi chú hóa đơn (vd lý do prorate)","example":"Tháng nhập cư, prorate từ 15/09"}},"required":["contractId","code","period","rentAmount","totalAmount","status"]}] |
+
+**Kiểm tra thủ công:** BE xác nhận lý do, endpoint dùng schema chung, thay đổi role/ownership mô tả bằng văn bản và thời điểm triển khai. FE/Mobile xác nhận tác động với parser và phiên bản client đang hỗ trợ.
 
 ## Thay đổi contract từ Git — BREAKING
 
