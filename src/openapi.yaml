@@ -74,6 +74,8 @@ paths:
     $ref: './paths/media/media-presign-upload.yaml'
   /media/{mediaId}/complete-upload:
     $ref: './paths/media/media-mediaId-complete-upload.yaml'
+  /media/{mediaId}/download-url:
+    $ref: './paths/media/media-mediaId-download-url.yaml'
   /media/{mediaId}:
     $ref: './paths/media/media-mediaId.yaml'
   /buildings:
@@ -664,6 +666,8 @@ components:
       $ref: './responses/dtos/operations/media-upload-presign-response-dto.yaml'
     MediaCompleteUploadResponseDto:
       $ref: './responses/dtos/operations/media-upload-complete-response-dto.yaml'
+    MediaDownloadUrlResponseDto:
+      $ref: './responses/dtos/operations/media-download-url-response-dto.yaml'
 
     # Domain: Chat
     Conversation:

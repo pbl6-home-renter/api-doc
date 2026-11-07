@@ -1,0 +1,12 @@
+type: object
+x-apidog-folder: "Media/Response"
+title: MediaDownloadUrlResponseDto
+description: Short-lived direct download URL for authorized chat media.
+additionalProperties: false
+required:
+  - url
+properties:
+  url:
+    type: string
+    format: uri
+    description: Presigned R2 GET URL. Fetch directly without an Authorization header and request a fresh URL for each later download.
