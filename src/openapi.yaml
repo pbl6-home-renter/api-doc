@@ -166,22 +166,22 @@ paths:
     $ref: './paths/billing/meter-readings.yaml'
   /meter-readings/bulk:
     $ref: './paths/billing/meter-readings-bulk.yaml'
-  /meter-readings/preview-ocr-result:
-    $ref: './paths/billing/meter-readings-preview-ocr-result.yaml'
-  /invoices/tenant:
-    $ref: './paths/invoices/invoices-tenant.yaml'
+  /meter-readings/{meterReadingId}:
+    $ref: './paths/billing/meter-readings-meterReadingId.yaml'
+  /meter-readings/{readingId}/evidence:
+    $ref: './paths/billing/meter-readings-readingId-evidence.yaml'
+  /me/invoices:
+    $ref: './paths/invoices/me-invoices.yaml'
   /invoices:
     $ref: './paths/invoices/invoices.yaml'
-  /invoices/overdue-debts:
-    $ref: './paths/invoices/invoices-overdue-debts.yaml'
+  /invoices/generate:
+    $ref: './paths/invoices/invoices-generate.yaml'
   /invoices/{invoiceId}:
     $ref: './paths/invoices/invoices-invoiceId.yaml'
   /invoices/issue-invoice:
     $ref: './paths/invoices/invoices-issue-invoice.yaml'
   /invoices/{invoiceId}/cancel-invoice:
     $ref: './paths/invoices/invoices-invoiceId-cancel-invoice.yaml'
-  /invoices/send-reminder:
-    $ref: './paths/invoices/invoices-send-reminder.yaml'
   /me/payments:
     $ref: './paths/payments/me-payments.yaml'
   /payments:
@@ -456,49 +456,45 @@ components:
     ContractCompleteCheckoutResponseDto:
       $ref: './responses/dtos/contracts/contract-checkout-complete-response-dto.yaml'
     # MeterReading DTOs
-    MeterReadingPreviewOcrRequestDto:
-      $ref: './requests/rooms/ocr-meter-reading-preview-request-dto.yaml'
     MeterReadingCreateRequestDto:
       $ref: './requests/rooms/meter-reading-create-request-dto.yaml'
+    MeterReadingUpdateRequestDto:
+      $ref: './requests/rooms/meter-reading-update-request-dto.yaml'
+    MeterReadingEvidenceAttachRequestDto:
+      $ref: './requests/rooms/meter-reading-evidence-attach-request-dto.yaml'
     BulkMeterReadingCreateRequestDto:
       $ref: './requests/rooms/bulk-meter-reading-create-request-dto.yaml'
     MeterReadingListResponseDto:
       $ref: './responses/dtos/rooms/meter-reading-list-response-dto.yaml'
-    MeterReadingPreviewOcrResponseDto:
-      $ref: './responses/dtos/rooms/ocr-meter-reading-preview-response-dto.yaml'
     MeterReadingCreateResponseDto:
       $ref: './responses/dtos/rooms/meter-reading-create-response-dto.yaml'
     BulkMeterReadingResponseDto:
       $ref: './responses/dtos/rooms/bulk-meter-reading-response-dto.yaml'
     # Invoice DTOs
-    InvoiceCreateSettlementRequestDto:
-      $ref: './requests/invoices/settlement-invoice-create-request-dto.yaml'
+    InvoiceGenerateRequestDto:
+      $ref: './requests/invoices/invoice-generate-request-dto.yaml'
     InvoiceUpdateRequestDto:
       $ref: './requests/invoices/invoice-update-request-dto.yaml'
     InvoiceIssueRequestDto:
       $ref: './requests/invoices/invoices-issue-request-dto.yaml'
     InvoiceCancelRequestDto:
       $ref: './requests/invoices/invoice-cancel-request-dto.yaml'
-    InvoiceSendRemindersRequestDto:
-      $ref: './requests/invoices/invoice-reminders-send-request-dto.yaml'
     InvoiceMyListResponseDto:
       $ref: './responses/dtos/invoices/my-invoice-list-response-dto.yaml'
     InvoiceListResponseDto:
       $ref: './responses/dtos/invoices/invoice-list-response-dto.yaml'
-    OverdueDebtListResponseDto:
-      $ref: './responses/dtos/invoices/overdue-debt-list-response-dto.yaml'
-    InvoiceCreateSettlementResponseDto:
-      $ref: './responses/dtos/invoices/settlement-invoice-create-response-dto.yaml'
+    InvoiceGenerateResponseDto:
+      $ref: './responses/dtos/invoices/invoice-generate-response-dto.yaml'
     InvoiceDetailResponseDto:
       $ref: './responses/dtos/invoices/invoice-detail-response-dto.yaml'
+    InvoiceTenantDetailResponseDto:
+      $ref: './responses/dtos/invoices/invoice-tenant-detail-response-dto.yaml'
     InvoiceUpdateResponseDto:
       $ref: './responses/dtos/invoices/invoice-update-response-dto.yaml'
     InvoiceIssueResponseDto:
       $ref: './responses/dtos/invoices/invoices-issue-response-dto.yaml'
     InvoiceCancelResponseDto:
       $ref: './responses/dtos/invoices/invoice-cancel-response-dto.yaml'
-    InvoiceSendRemindersResponseDto:
-      $ref: './responses/dtos/invoices/invoice-reminders-send-response-dto.yaml'
     # Payment DTOs
     PaymentCreateIntentRequestDto:
       $ref: './requests/payments/payment-intent-create-request-dto.yaml'

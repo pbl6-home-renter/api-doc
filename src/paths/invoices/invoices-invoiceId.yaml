@@ -2,22 +2,22 @@ get:
   tags:
   - Billing
   x-apidog-folder: Invoice
-  x-apidog-status: designing
+  x-apidog-status: developing
   operationId: getInvoicesInvoiceid
   security:
-    - BearerAuth: []
-  summary: Get invoice details
-  description: 'landlord, tenant. Đọc hóa đơn kèm tổng hợp thanh toán. Lỗi nghiệp vụ: 403 FORBIDDEN · 404 NOT FOUND.'
+  - BearerAuth: []
+  summary: Get invoice detail
+  description: "Landlords can view their own invoices in any status. Tenants can view only issued invoices from a contract where they are the representative or a linked member who has not left. For tenants, missing, pending, void, foreign-contract and departed-member invoices all return 404 INVOICE_NOT_FOUND. Tenant detail omits voidReason; neither role receives QR/payment fields.\n\nSequence diagram\n\n```mermaid\nsequenceDiagram\n    actor User\n    participant API as Tenancy-Service\n    User->>API: GET /invoices/{invoiceId}\n    API->>API: Apply role-specific ownership and issued filter\n    API-->>User: 200 detail or 404 for hidden tenant invoice\n```"
   parameters:
   - name: invoiceId
     in: path
     required: true
-    schema:
+    schema: &id001
       type: string
       format: uuid
   responses:
     '200':
-      description: 'Thành công: Đọc hóa đơn kèm tổng hợp thanh toán.'
+      description: INVOICE_FETCHED
       content:
         application/json:
           schema:
@@ -37,76 +37,63 @@ get:
                 enum:
                 - INVOICE_FETCHED
               data:
-                $ref: ../../openapi.yaml#/components/schemas/InvoiceDetailResponseDto
-          example:
-            statusCode: 200
-            code: INVOICE_FETCHED
-            data:
-              id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
-              code: INV-202609-8F2K
-              period: 2026-09
-              rentAmount: 3500000
-              breakdown:
-              - type: electricity
-                name: Điện EVN
-                amount: 720000
-              otherFees: []
-              totalAmount: 4220000
-              invoiceStatus: pending
-              issuedAt: null
-              paidAmount: 0
-              remainingAmount: 4220000
-              contractId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
-              roomName: Ví dụ
-              tenantName: Ví dụ
-              services: []
-              dueDate: '2026-09-23T11:55:00.000Z'
-    '400':
-      $ref: ../../openapi.yaml#/components/responses/BadRequestPathError
-    '401':
-      $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
-    '503':
-      $ref: ../../openapi.yaml#/components/responses/AuthUnavailableError
-    '403':
-      $ref: ../../openapi.yaml#/components/responses/ForbiddenError
+                anyOf:
+                - $ref: ../../openapi.yaml#/components/schemas/InvoiceDetailResponseDto
+                - $ref: ../../openapi.yaml#/components/schemas/InvoiceTenantDetailResponseDto
     '404':
-      $ref: ../../openapi.yaml#/components/responses/NotFoundError
-    '429':
+      description: INVOICE_NOT_FOUND
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+            - statusCode
+            - code
+            properties:
+              statusCode:
+                type: integer
+                enum:
+                - 404
+              code:
+                type: string
+                enum:
+                - INVOICE_NOT_FOUND
+    '400': &id002
+      $ref: ../../openapi.yaml#/components/responses/BadRequestBodyError
+    '401': &id003
+      $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
+    '403': &id004
+      $ref: ../../openapi.yaml#/components/responses/ForbiddenError
+    '429': &id005
       $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
-    '500':
+    '500': &id006
       $ref: ../../openapi.yaml#/components/responses/InternalServerError
+    '503': &id007
+      $ref: ../../openapi.yaml#/components/responses/AuthUnavailableError
 patch:
   tags:
   - Billing
   x-apidog-folder: Invoice
-  x-apidog-status: designing
+  x-apidog-status: developing
   operationId: patchInvoicesInvoiceid
   security:
-    - BearerAuth: []
-  summary: Update pending invoice
-  description: 'landlord. Sửa hóa đơn đang chờ. Lỗi nghiệp vụ: 409 INVOICE ALREADY ISSUED · 422 TOTAL AMOUNT INVALID
-    · 403 FORBIDDEN.'
+  - BearerAuth: []
+  summary: Update pending invoice extras
+  description: "Landlord-only update of a pending invoice. Omitted fields are unchanged; [] clears otherFees; note: null clears note. An empty object or otherFees: null returns 422 VALIDATION_FAILED. Fees: at most 20 rows, signed decimal input with at most two fractional digits.\n\nSequence diagram\n\n```mermaid\nsequenceDiagram\n    actor User\n    participant API as Tenancy-Service\n    User->>API: PATCH /invoices/{invoiceId}\n    API->>API: Lock invoice, check landlord and pending status\n    API->>API: Replace fees or note and recalculate total\n    API->>API: Save invoice and domain event\n    API-->>User: 200 INVOICE_UPDATED\n```"
   parameters:
   - name: invoiceId
     in: path
     required: true
-    schema:
-      type: string
-      format: uuid
+    schema: *id001
   requestBody:
     required: true
     content:
       application/json:
         schema:
           $ref: ../../openapi.yaml#/components/schemas/InvoiceUpdateRequestDto
-        example:
-          otherFees:
-          - name: Giảm trừ
-            amount: -100000
-          note: Adjustment approved
   responses:
     '200':
-      description: 'Thành công: Sửa hóa đơn đang chờ.'
+      description: INVOICE_UPDATED
       content:
         application/json:
           schema:
@@ -127,83 +114,64 @@ patch:
                 - INVOICE_UPDATED
               data:
                 $ref: ../../openapi.yaml#/components/schemas/InvoiceUpdateResponseDto
-          example:
-            statusCode: 200
-            code: INVOICE_UPDATED
-            data:
-              id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
-              otherFees:
-              - name: Giảm trừ
-                amount: -100000
-              totalAmount: 4120000
-    '400':
-      $ref: ../../openapi.yaml#/components/responses/BadRequestBodyPathError
-    '401':
-      $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
-    '503':
-      $ref: ../../openapi.yaml#/components/responses/AuthUnavailableError
-    '403':
-      $ref: ../../openapi.yaml#/components/responses/ForbiddenError
     '404':
-      $ref: ../../openapi.yaml#/components/responses/NotFoundError
+      description: INVOICE_NOT_FOUND
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+            - statusCode
+            - code
+            properties:
+              statusCode:
+                type: integer
+                enum:
+                - 404
+              code:
+                type: string
+                enum:
+                - INVOICE_NOT_FOUND
     '409':
-      x-apidog-name: Conflict
-      description: Yêu cầu xung đột với trạng thái hiện tại hoặc dữ liệu đã tồn tại.
+      description: INVOICE_ALREADY_ISSUED
       content:
         application/json:
           schema:
             type: object
-            additionalProperties: false
-            required: [statusCode, code]
+            required:
+            - statusCode
+            - code
             properties:
               statusCode:
                 type: integer
-                enum: [409]
+                enum:
+                - 409
               code:
                 type: string
                 enum:
-                  - INVOICE_ALREADY_ISSUED
-                description: |-
-                  - INVOICE_ALREADY_ISSUED: Hóa đơn đã được phát hành.
-          examples:
-            invoice_already_issued:
-              summary: INVOICE_ALREADY_ISSUED — Hóa đơn đã được phát hành.
-              value:
-                statusCode: 409
-                code: INVOICE_ALREADY_ISSUED
+                - INVOICE_ALREADY_ISSUED
     '422':
-      x-apidog-name: Unprocessable Entity
-      description: Dữ liệu hợp lệ về cấu trúc nhưng vi phạm ràng buộc trường hoặc quy tắc nghiệp vụ.
+      description: TOTAL_NEGATIVE, VALIDATION_FAILED
       content:
         application/json:
           schema:
             type: object
-            additionalProperties: false
-            required: [statusCode, code]
+            required:
+            - statusCode
+            - code
             properties:
               statusCode:
                 type: integer
-                enum: [422]
+                enum:
+                - 422
               code:
                 type: string
                 enum:
-                  - TOTAL_AMOUNT_INVALID
-                  - VALIDATION_FAILED
-                description: |-
-                  - TOTAL_AMOUNT_INVALID: Tổng tiền không hợp lệ.
-                  - VALIDATION_FAILED: Dữ liệu vi phạm ràng buộc schema hoặc quy tắc nghiệp vụ khác chưa có mã riêng.
-          examples:
-            total_amount_invalid:
-              summary: TOTAL_AMOUNT_INVALID — Tổng tiền không hợp lệ.
-              value:
-                statusCode: 422
-                code: TOTAL_AMOUNT_INVALID
-            validation_failed:
-              summary: VALIDATION_FAILED — Dữ liệu vi phạm ràng buộc schema hoặc quy tắc nghiệp vụ khác chưa có mã riêng.
-              value:
-                statusCode: 422
-                code: VALIDATION_FAILED
-    '429':
-      $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
-    '500':
-      $ref: ../../openapi.yaml#/components/responses/InternalServerError
+                - TOTAL_NEGATIVE
+                - VALIDATION_FAILED
+    '400': *id002
+    '401': *id003
+    '403': *id004
+    '429': *id005
+    '500': *id006
+    '503': *id007

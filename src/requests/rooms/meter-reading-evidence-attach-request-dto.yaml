@@ -1,0 +1,13 @@
+type: object
+title: MeterReadingEvidenceAttachRequestDto
+additionalProperties: false
+properties:
+  evidenceMediaIds:
+    type: array
+    minItems: 1
+    items:
+      type: string
+      format: uuid
+description: Attach previously uploaded image evidence.
+required:
+- evidenceMediaIds

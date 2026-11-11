@@ -1,0 +1,114 @@
+patch:
+  tags:
+  - Billing
+  x-apidog-folder: MeterReading
+  x-apidog-status: developing
+  operationId: patchMeterReading
+  security:
+  - BearerAuth: []
+  summary: Update latest meter reading
+  description: "Sequence diagram\n\n```mermaid\nsequenceDiagram\n    actor User\n    participant API as Tenancy-Service\n    User->>API: PATCH /meter-readings/{meterReadingId}\n    API->>API: Check landlord, latest reading and issued-period lock\n    API->>API: Update value or attach evidence in a transaction\n    API-->>User: 200 METER_READING_UPDATED\n```"
+  parameters:
+  - name: meterReadingId
+    in: path
+    required: true
+    schema:
+      type: string
+      format: uuid
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: ../../openapi.yaml#/components/schemas/MeterReadingUpdateRequestDto
+  responses:
+    '200':
+      description: METER_READING_UPDATED
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required:
+            - statusCode
+            - code
+            - data
+            properties:
+              statusCode:
+                type: integer
+                enum:
+                - 200
+              code:
+                type: string
+                enum:
+                - METER_READING_UPDATED
+              data:
+                $ref: ../../openapi.yaml#/components/schemas/MeterReadingCreateResponseDto
+    '404':
+      description: METER_READING_NOT_FOUND
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+            - statusCode
+            - code
+            properties:
+              statusCode:
+                type: integer
+                enum:
+                - 404
+              code:
+                type: string
+                enum:
+                - METER_READING_NOT_FOUND
+    '409':
+      description: PERIOD_ALREADY_INVOICED, METER_READING_NOT_LATEST
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+            - statusCode
+            - code
+            properties:
+              statusCode:
+                type: integer
+                enum:
+                - 409
+              code:
+                type: string
+                enum:
+                - PERIOD_ALREADY_INVOICED
+                - METER_READING_NOT_LATEST
+    '422':
+      description: CURRENT_READING_INVALID, VALIDATION_FAILED
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+            - statusCode
+            - code
+            properties:
+              statusCode:
+                type: integer
+                enum:
+                - 422
+              code:
+                type: string
+                enum:
+                - CURRENT_READING_INVALID
+                - VALIDATION_FAILED
+    '400':
+      $ref: ../../openapi.yaml#/components/responses/BadRequestBodyError
+    '401':
+      $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
+    '403':
+      $ref: ../../openapi.yaml#/components/responses/ForbiddenError
+    '429':
+      $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
+    '500':
+      $ref: ../../openapi.yaml#/components/responses/InternalServerError
+    '503':
+      $ref: ../../openapi.yaml#/components/responses/AuthUnavailableError

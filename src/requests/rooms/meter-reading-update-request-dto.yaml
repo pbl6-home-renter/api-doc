@@ -1,0 +1,11 @@
+type: object
+title: MeterReadingUpdateRequestDto
+additionalProperties: false
+properties:
+  currentReading:
+    type: string
+    pattern: ^(0|[1-9]\d*)(\.\d{1,2})?$
+  evidenceMediaId:
+    type: string
+    format: uuid
+description: Provide at least one field. Only the latest reading can change, and an issued invoice locks its period.

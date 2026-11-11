@@ -1,7 +1,5 @@
 type: object
-x-apidog-folder: "MeterReading/Request"
 title: MeterReadingCreateRequestDto
-description: Xác nhận chỉ số công tơ có ảnh chứng cứ. Baseline lấy từ OCR; người dùng chỉ sửa tay để hiệu chỉnh kết quả OCR.
 additionalProperties: false
 properties:
   roomId:
@@ -9,28 +7,22 @@ properties:
     format: uuid
   type:
     type: string
-    enum: [electricity, water]
+    enum:
+    - electricity
+    - water
   period:
     type: string
-    pattern: '^[0-9]{4}-(0[1-9]|1[0-2])$'
-  currentReading:
+    pattern: ^\d{4}-(0[1-9]|1[0-2])$
+  currentReading: &id001
     type: string
-    pattern: '^(0|[1-9][0-9]*)(\.[0-9]+)?$'
-    description: Giá trị đã xác nhận; baseline phải có nguồn OCR và có thể được hiệu chỉnh tay.
-  previousReading:
-    type: string
-    pattern: '^(0|[1-9][0-9]*)(\.[0-9]+)?$'
-    description: Baseline cho phép landlord gửi 0 hoặc chỉ số đầu kỳ thực tế. Baseline đầu tiên nếu bỏ trống thì server dùng 0; baseline về sau bắt buộc gửi. Kỳ thường không gửi trường này; server lấy currentReading của bản ghi trước.
-  readingDate:
-    type: string
-    format: date
-    nullable: true
+    pattern: ^(0|[1-9]\d*)(\.\d{1,2})?$
+  previousReading: *id001
   isBaseline:
     type: boolean
-    default: false
-    description: Baseline lúc bàn giao hoặc sau này (ví dụ thay đồng hồ); previousReading có thể bằng 0 hoặc chỉ số đầu kỳ thực tế.
-  evidenceMediaId:
-    type: string
-    format: uuid
-    description: Ảnh công tơ bắt buộc cho cả baseline và kỳ thường.
-required: [roomId, type, period, currentReading, isBaseline, evidenceMediaId]
+description: For an initial baseline, previousReading may be supplied; ordinary readings derive it from the previous reading or same-period baseline. Upload evidence after creation.
+required:
+- roomId
+- type
+- period
+- currentReading
+- isBaseline

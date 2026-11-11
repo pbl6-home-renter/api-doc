@@ -1,14 +1,48 @@
 type: object
-x-apidog-folder: "MeterReading/Response"
 title: MeterReadingListResponseDto
-description: Danh sách chỉ số công tơ
+additionalProperties: false
 properties:
-  id: { type: string, format: uuid , description: "Định danh duy nhất của tài nguyên." }
-  roomId: { type: string, format: uuid , description: "Định danh duy nhất của phòng liên quan." }
-  type: { type: string, enum: [electricity, water] , description: "Thông tin type của tài nguyên trong ngữ cảnh DTO." }
-  period: { type: string, minLength: 7, maxLength: 7, pattern: '^[0-9]{4}-(0[1-9]|1[0-2])$', description: "Kỳ ghi chỉ số theo định dạng YYYY-MM." }
-  previousReading: { type: string , description: "Thông tin previous reading của tài nguyên trong ngữ cảnh DTO." }
-  currentReading: { type: string , description: "Thông tin current reading của tài nguyên trong ngữ cảnh DTO." }
-  readingDate: { type: string, format: date, nullable: true , description: "Thông tin reading date của tài nguyên trong ngữ cảnh DTO." }
-  isBaseline: { type: boolean , description: "Thông tin is baseline của tài nguyên trong ngữ cảnh DTO." }
-required: [id, roomId, type, period, previousReading, currentReading, readingDate, isBaseline]
+  id: &id001
+    type: string
+    format: uuid
+  roomId: *id001
+  buildingId: *id001
+  type:
+    type: string
+    enum:
+    - electricity
+    - water
+  period:
+    type: string
+    pattern: ^\d{4}-(0[1-9]|1[0-2])$
+  previousReading: &id002
+    type: string
+    pattern: ^(0|[1-9]\d*)(\.\d{1,2})?$
+  currentReading: *id002
+  consumption: *id002
+  isBaseline:
+    type: boolean
+  evidenceMediaIds:
+    type: array
+    items: *id001
+  evidenceMediaUrls:
+    type: array
+    items:
+      type: string
+  createdAt:
+    type: string
+    format: date-time
+description: Manual meter reading. Evidence images can be attached after creation; an empty image list does not prevent invoice generation.
+required:
+- id
+- roomId
+- buildingId
+- type
+- period
+- previousReading
+- currentReading
+- consumption
+- isBaseline
+- evidenceMediaIds
+- evidenceMediaUrls
+- createdAt

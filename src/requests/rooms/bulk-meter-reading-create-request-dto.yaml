@@ -1,55 +1,37 @@
 type: object
-x-apidog-folder: "MeterReading/Request"
 title: BulkMeterReadingCreateRequestDto
-description: Dữ liệu ghi chỉ số điện hoặc nước kỳ thường cho một tập phòng bất kỳ trong cùng tòa nhà. Mỗi phòng và loại công tơ được gửi phải có baseline trước đó; toàn bộ request được ghi hoặc rollback cùng nhau.
 additionalProperties: false
-
 properties:
-  buildingId:
+  buildingId: &id001
     type: string
     format: uuid
-    description: Định danh duy nhất của tòa nhà cần chốt chỉ số
-    example: "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d"
   recordedMonth:
     type: string
-    pattern: '^[0-9]{4}-(0[1-9]|1[0-2])$'
-    description: Kỳ chốt chỉ số theo định dạng YYYY-MM
-    example: "2026-09"
+    pattern: ^\d{4}-(0[1-9]|1[0-2])$
   readings:
     type: array
     minItems: 1
     maxItems: 200
-    description: Từ 1 đến 200 chỉ số kỳ thường; có thể gửi chỉ điện, chỉ nước hoặc cả hai cho từng phòng trong tòa. previousReading do server lấy từ currentReading bản ghi trước.
     items:
       type: object
+      title: BulkMeterReadingItem
       additionalProperties: false
       properties:
-        roomId:
-          type: string
-          format: uuid
-          description: Định danh duy nhất của phòng trọ
-          example: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+        roomId: *id001
         type:
           type: string
-          enum: [electricity, water]
-          description: Loại công tơ dịch vụ (điện hoặc nước)
-          example: "electricity"
+          enum:
+          - electricity
+          - water
         currentReading:
           type: string
-          description: Chỉ số mới ghi nhận được
-          example: "1380.5"
-        evidenceMediaId:
-          type: string
-          format: uuid
-          description: Định danh ảnh chụp công tơ bắt buộc để đối chiếu
-          example: "48fae08f-e1a5-48b4-9c02-e2513470ff42"
+          pattern: ^(0|[1-9]\d*)(\.\d{1,2})?$
       required:
-        - roomId
-        - type
-        - currentReading
-        - evidenceMediaId
-
+      - roomId
+      - type
+      - currentReading
+description: 'Atomic batch: one invalid reading or missing baseline rolls back the entire request. Images are attached later.'
 required:
-  - buildingId
-  - recordedMonth
-  - readings
+- buildingId
+- recordedMonth
+- readings
