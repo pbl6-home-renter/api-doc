@@ -8,7 +8,6 @@ post:
     - BearerAuth: []
   summary: Record contract member leave
   description: |-
-    Identify the membership by tenantId (the tenant account UUID in the URL) and contractId (required in the body).
     tenantId is not the contract_members record ID. Members with tenant_id = null cannot use this endpoint.
     Landlord must own the selected contract; it must be active (409 CONTRACT_NOT_ACTIVE).
     Lock the contract before locking the member. Join contract_members with contracts and match both IDs,
@@ -20,26 +19,32 @@ post:
     Set left_at without deleting the record, and append contract_member.left in the same transaction.
     The upper endDate limit belongs to this handler; the shared domain leave method permits checkout
     after endDate (P6-D71 addendum). Response uses leftAt; request uses leftOn.
-
+    
+    **Sequence diagram**
+    
     ```mermaid
     sequenceDiagram
+        autonumber
+        actor Client
         participant GW as API Gateway
-        participant TEN as Tenancy
-        participant DB as Tenancy DB
-        GW->>TEN: POST /contract-members/{tenantId}/leave-contract {contractId, leftOn}
-        TEN->>TEN: Verify JWT, landlord role, active account and request
-        TEN->>DB: BEGIN; lock body.contractId FOR UPDATE
-        TEN->>TEN: Require contract owner and active status
-        TEN->>DB: JOIN contract_members with contracts WHERE tenant_id = path.tenantId AND contract_id = body.contractId<br/>Exclude deleted rows; prefer current membership; lock member FOR UPDATE
-        TEN->>TEN: Require owner and active contract; lock member; validate departure and dates
-        alt Missing record / forbidden / business validation failure
-            TEN->>DB: ROLLBACK
-            TEN-->>GW: 404 / 403 / 409 / 422
-        else Valid operation
-            TEN->>DB: UPDATE contract_members.left_at; INSERT contract_member.left into outbox
-            TEN->>DB: COMMIT
-            TEN-->>GW: 200 CONTRACT_MEMBER_LEFT
-        end
+        participant S as Tenancy-Service
+        participant Guard as JWT/access guards
+        participant C as ContractMemberController
+        participant Bus as CQRS CommandBus
+        participant H as Application handler
+        Client->>GW: POST /api/v1/contract-members/{tenantId}/leave-contract
+        GW->>GW: Validate bearer token for protected route
+        GW->>S: Proxy original HTTP request
+        S->>Guard: Validate JWT, account state and route access
+        Guard-->>C: Continue with authenticated context
+        S->>C: Invoke postContractMembersTenantidLeaveContract
+        C->>Bus: Execute command for postContractMembersTenantidLeaveContract
+        Bus->>H: Dispatch command handler
+        H-->>Bus: Return use-case result
+        Bus-->>C: Result
+        C-->>S: Return documented response
+        S-->>GW: HTTP status and response body
+        GW-->>Client: Forward HTTP response
     ```
   parameters:
   - name: tenantId

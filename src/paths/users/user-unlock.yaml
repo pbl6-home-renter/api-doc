@@ -8,34 +8,35 @@ post:
   - BearerAuth: []
   summary: Unlock user
   description: |-
-    Chỉ admin. Chuyển locked sang active, trả lockedAt: null.
-
     **Lưu ý**
-
+    
     - Token cấp trước khi mở khóa còn mang `status=locked` tối đa 15 phút.
-
+    
+    **Sequence diagram**
+    
     ```mermaid
     sequenceDiagram
         autonumber
+        actor Client
         participant GW as API Gateway
-        participant ID as Identity
-        participant DB as Identity DB
-        participant MQ as RabbitMQ
-        participant TEN as Tenancy
-        participant COM as Community
-
-        GW->>ID: POST /users/{userId}/unlock
-        ID->>DB: Đọc user
-        alt Không tìm thấy
-            ID-->>GW: 404 USER_NOT_FOUND
-        else Chưa bị khóa
-            ID-->>GW: 409 USER_UNLOCK_NOT_LOCKED
-        end
-        ID->>DB: [Transaction] Update users (status=active, lockReason=null, lockedAt=null)<br/>+ outbox user.unlocked
-        ID-->>GW: 200 USER_ACCOUNT_UNLOCKED {userId, status, lockedAt: null}
-        ID-)MQ: user.unlocked {userId, status}
-        MQ-)TEN: Nếu role=landlord: hiện lại BĐS, khôi phục HĐ đang tạm ngưng
-        MQ-)COM: Xử lý dữ liệu liên quan (nếu có)
+        participant S as Identity-Service
+        participant Guard as JWT/access guards
+        participant C as UserAdminController
+        participant Bus as CQRS CommandBus
+        participant H as Application handler
+        Client->>GW: POST /api/v1/users/{userId}/unlock
+        GW->>GW: Validate bearer token for protected route
+        GW->>S: Proxy original HTTP request
+        S->>Guard: Validate JWT, account state and route access
+        Guard-->>C: Continue with authenticated context
+        S->>C: Invoke unlockUser
+        C->>Bus: Execute command for unlockUser
+        Bus->>H: Dispatch command handler
+        H-->>Bus: Return use-case result
+        Bus-->>C: Result
+        C-->>S: Return documented response
+        S-->>GW: HTTP status and response body
+        GW-->>Client: Forward HTTP response
     ```
   parameters:
   - name: userId

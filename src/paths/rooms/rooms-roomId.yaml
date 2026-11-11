@@ -2,10 +2,32 @@ get:
   tags:
   - Property
   x-apidog-folder: Room
-  x-apidog-status: designing
+  x-apidog-status: released
   operationId: getRoomsRoomid
   summary: Get room details
-  description: 'public, landlord, tenant, admin. Đọc một phòng. Lỗi nghiệp vụ: 404 NOT FOUND · 403 FORBIDDEN.'
+  description: |-
+    **Sequence diagram**
+    
+    ```mermaid
+    sequenceDiagram
+        autonumber
+        actor Client
+        participant GW as API Gateway
+        participant S as Tenancy-Service
+        participant C as RoomController
+        participant Bus as CQRS QueryBus
+        participant H as Application handler
+        Client->>GW: GET /api/v1/rooms/{roomId}
+        GW->>S: Proxy original HTTP request
+        S->>C: Invoke getRoomsRoomid
+        C->>Bus: Execute query for getRoomsRoomid
+        Bus->>H: Dispatch query handler
+        H-->>Bus: Return use-case result
+        Bus-->>C: Result
+        C-->>S: Return documented response
+        S-->>GW: HTTP status and response body
+        GW-->>Client: Forward HTTP response
+    ```
   security: []
   parameters:
   - name: roomId
@@ -71,38 +93,40 @@ patch:
   tags:
   - Property
   x-apidog-folder: Room
-  x-apidog-status: designing
+  x-apidog-status: released
   operationId: patchRoomsRoomid
   security:
     - BearerAuth: []
   summary: Update room
   description: |-
-    landlord. Cập nhật một phần thông tin phòng.
-
+    Lỗi nghiệp vụ: 404 NOT FOUND · 403 FORBIDDEN · 422 VALIDATION FAILED.
+    
+    **Sequence diagram**
+    
     ```mermaid
     sequenceDiagram
         autonumber
+        actor Client
         participant GW as API Gateway
-        participant TEN as Tenancy
-        participant DB as Tenancy DB
-        participant OB as Outbox
-
-        GW->>TEN: PATCH /rooms/{roomId} (access token, updates)
-        TEN->>TEN: Xác thực role landlord
-        TEN->>DB: [Transaction] SELECT room FOR UPDATE
-        alt Không tìm thấy hoặc đã xóa
-            TEN-->>GW: 404 RESOURCE_NOT_FOUND
-        else Room thuộc landlord khác
-            TEN-->>GW: 403 FORBIDDEN
-        else Room thuộc landlord hiện tại
-            TEN->>TEN: room.update(updates)
-            TEN->>DB: [Transaction] UPDATE rooms
-            TEN->>OB: [Transaction] INSERT room.updated
-            TEN-->>GW: 200 ROOM_UPDATED {id, editable Room fields}
-        end
+        participant S as Tenancy-Service
+        participant Guard as JWT/access guards
+        participant C as RoomController
+        participant Bus as CQRS CommandBus
+        participant H as Application handler
+        Client->>GW: PATCH /api/v1/rooms/{roomId}
+        GW->>GW: Validate bearer token for protected route
+        GW->>S: Proxy original HTTP request
+        S->>Guard: Validate JWT, account state and route access
+        Guard-->>C: Continue with authenticated context
+        S->>C: Invoke patchRoomsRoomid
+        C->>Bus: Execute command for patchRoomsRoomid
+        Bus->>H: Dispatch command handler
+        H-->>Bus: Return use-case result
+        Bus-->>C: Result
+        C-->>S: Return documented response
+        S-->>GW: HTTP status and response body
+        GW-->>Client: Forward HTTP response
     ```
-
-    Lỗi nghiệp vụ: 404 NOT FOUND · 403 FORBIDDEN · 422 VALIDATION FAILED.
   parameters:
   - name: roomId
     in: path
@@ -182,38 +206,40 @@ delete:
   tags:
   - Property
   x-apidog-folder: Room
-  x-apidog-status: designing
+  x-apidog-status: released
   operationId: deleteRoomsRoomid
   security:
     - BearerAuth: []
   summary: Delete room
   description: |-
-    landlord. Xóa mềm phòng. Kiểm tra hợp đồng đang hiệu lực chưa được thực hiện vì domain Contract chưa tồn tại.
-
+    Lỗi nghiệp vụ: 404 NOT FOUND · 403 FORBIDDEN.
+    
+    **Sequence diagram**
+    
     ```mermaid
     sequenceDiagram
         autonumber
+        actor Client
         participant GW as API Gateway
-        participant TEN as Tenancy
-        participant DB as Tenancy DB
-        participant OB as Outbox
-
-        GW->>TEN: DELETE /rooms/{roomId} (access token)
-        TEN->>TEN: Xác thực role landlord
-        TEN->>DB: [Transaction] SELECT room FOR UPDATE
-        alt Không tìm thấy hoặc đã xóa
-            TEN-->>GW: 404 RESOURCE_NOT_FOUND
-        else Room thuộc landlord khác
-            TEN-->>GW: 403 FORBIDDEN
-        else Room thuộc landlord hiện tại
-            TEN->>TEN: room.delete()
-            TEN->>DB: [Transaction] UPDATE rooms SET is_deleted = true
-            TEN->>OB: [Transaction] INSERT room.deleted
-            TEN-->>GW: 204 No Content
-        end
+        participant S as Tenancy-Service
+        participant Guard as JWT/access guards
+        participant C as RoomController
+        participant Bus as CQRS CommandBus
+        participant H as Application handler
+        Client->>GW: DELETE /api/v1/rooms/{roomId}
+        GW->>GW: Validate bearer token for protected route
+        GW->>S: Proxy original HTTP request
+        S->>Guard: Validate JWT, account state and route access
+        Guard-->>C: Continue with authenticated context
+        S->>C: Invoke deleteRoomsRoomid
+        C->>Bus: Execute command for deleteRoomsRoomid
+        Bus->>H: Dispatch command handler
+        H-->>Bus: Return use-case result
+        Bus-->>C: Result
+        C-->>S: Return documented response
+        S-->>GW: HTTP status and response body
+        GW-->>Client: Forward HTTP response
     ```
-
-    Lỗi nghiệp vụ: 404 NOT FOUND · 403 FORBIDDEN.
   parameters:
   - name: roomId
     in: path

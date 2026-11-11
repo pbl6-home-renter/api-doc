@@ -8,27 +8,33 @@ get:
     - BearerAuth: []
   summary: Get my building details
   description: |-
-    landlord. Đọc tòa nhà của tôi (chế độ quản trị). Lỗi nghiệp vụ: 404 NOT FOUND · 403 FORBIDDEN.
     Building không tồn tại, đã xóa hoặc thuộc landlord khác đều trả 404 RESOURCE_NOT_FOUND.
-
+    
+    **Sequence diagram**
+    
     ```mermaid
     sequenceDiagram
         autonumber
+        actor Client
         participant GW as API Gateway
-        participant TEN as Tenancy
-        participant DB as Tenancy DB
-
-        GW->>TEN: GET /me/buildings/{buildingId}
-        TEN->>TEN: Verify JWT, role landlord và validate buildingId
-        TEN->>DB: SELECT building WHERE id=buildingId<br/>AND landlord_id=user.id AND is_deleted=false
-        DB-->>TEN: Building hoặc null
-        alt Không có Building thuộc người gọi
-            TEN-->>GW: 404 RESOURCE_NOT_FOUND
-        else Tìm thấy Building
-            TEN->>TEN: Map detail DTO, note thành reviewNote
-            TEN-->>GW: 200 BUILDING_MY_FETCHED {data}
-        end
-        Note over TEN,DB: Ownership được lọc ngay trong query; không lộ Building của landlord khác
+        participant S as Tenancy-Service
+        participant Guard as JWT/access guards
+        participant C as MyBuildingController
+        participant Bus as CQRS QueryBus
+        participant H as Application handler
+        Client->>GW: GET /api/v1/me/buildings/{buildingId}
+        GW->>GW: Validate bearer token for protected route
+        GW->>S: Proxy original HTTP request
+        S->>Guard: Validate JWT, account state and route access
+        Guard-->>C: Continue with authenticated context
+        S->>C: Invoke getMeBuildingsBuildingid
+        C->>Bus: Execute query for getMeBuildingsBuildingid
+        Bus->>H: Dispatch query handler
+        H-->>Bus: Return use-case result
+        Bus-->>C: Result
+        C-->>S: Return documented response
+        S-->>GW: HTTP status and response body
+        GW-->>Client: Forward HTTP response
     ```
   parameters:
   - name: buildingId

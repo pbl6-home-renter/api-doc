@@ -2,14 +2,40 @@ post:
   tags:
   - Billing
   x-apidog-folder: RatePolicy
-  x-apidog-status: designing
+  x-apidog-status: released
   operationId: postBuildingRatePoliciesBatch
   security:
     - BearerAuth: []
   summary: Save building rate set
   description: |-
-    Chưa triển khai trong Tenancy-Service hiện tại; endpoint được giữ trong tài liệu thiết kế.
     landlord. Thiết lập một bộ đơn giá cấp building (bước 3/3 wizard). buildingId chỉ lấy từ path. Lỗi nghiệp vụ: 404 BUILDING_NOT_FOUND · 403 FORBIDDEN · 422 INVALID_RATE_KIND/TIER_CONFIG_INVALID/VALIDATION_FAILED.
+    
+    **Sequence diagram**
+    
+    ```mermaid
+    sequenceDiagram
+        autonumber
+        actor Client
+        participant GW as API Gateway
+        participant S as Tenancy-Service
+        participant Guard as JWT/access guards
+        participant C as BuildingRatePolicyController
+        participant Bus as CQRS CommandBus
+        participant H as Application handler
+        Client->>GW: POST /api/v1/buildings/{buildingId}/rate-policies/batch
+        GW->>GW: Validate bearer token for protected route
+        GW->>S: Proxy original HTTP request
+        S->>Guard: Validate JWT, account state and route access
+        Guard-->>C: Continue with authenticated context
+        S->>C: Invoke postBuildingRatePoliciesBatch
+        C->>Bus: Execute command for postBuildingRatePoliciesBatch
+        Bus->>H: Dispatch command handler
+        H-->>Bus: Return use-case result
+        Bus-->>C: Result
+        C-->>S: Return documented response
+        S-->>GW: HTTP status and response body
+        GW-->>Client: Forward HTTP response
+    ```
   parameters:
   - name: buildingId
     in: path

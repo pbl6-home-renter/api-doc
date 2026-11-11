@@ -2,98 +2,29 @@ post:
   tags:
   - Contract
   x-apidog-folder: Contract
-  x-apidog-status: released
+  x-apidog-status: designing
   operationId: postContractsContractidGenerateDraftDocument
   security:
     - BearerAuth: []
   summary: Generate draft contract document
   description: |-
-    Landlord. Đặc tả sinh PDF nháp để in và ký tay.
-
     **Trạng thái triển khai:** endpoint chưa được triển khai trong Tenancy-Service và đang tạm hoãn.
     Hiện mới có renderer PDF; chưa có handler lấy dữ liệu hệ thống, liên kết tài liệu với Contract
     hoặc adapter upload media. Identity-Service cũng chưa có internal endpoint upload/complete cho luồng này.
-    Nhãn released là trạng thái phát hành đặc tả; không xác nhận endpoint đã sẵn sàng chạy.
-    Sequence diagram dưới đây là luồng dự kiến; tên và contract của internal API cần người làm P6-04 chốt.
+    This API remains in designing until its controller and handler are implemented.
+    No implementation sequence is published because this endpoint is not implemented.
     Internal API sẽ được gọi trực tiếp từ Tenancy sang Identity bằng service token, không public qua gateway.
-
+    
     Biến lấy từ Contract, Room, Building và BillingSetting; paymentDueDay lấy từ BillingSetting,
     không tự thêm vào Contract. landlordName lấy qua internal user lookup; nếu không có thì để trống và log warning.
     Renderer kiểm tra requiredVariables trước khi tạo PDF; thiếu hoặc rỗng trả 422 TEMPLATE_DATA_INVALID,
     số 0 vẫn hợp lệ. tenantCccd chưa được điền tự động; mẫu hiện tại để chỗ trống để đối chiếu khi ký.
-
+    
     Chuẩn bị upload, PUT PDF lên R2 và complete upload đều nằm ngoài UoW transaction ghi Contract.
     Sau upload phải lock và kiểm tra lại hợp đồng còn draft, còn tồn tại và thuộc landlord trước khi lưu liên kết
     media cùng outbox. File upload xong nhưng transaction thất bại có thể chưa được gắn vào Contract;
     cơ chế xử lý file chưa gắn cần chốt cùng P6-04.
-
-    ```mermaid
-    sequenceDiagram
-        autonumber
-        participant GW as API Gateway
-        participant TEN as Tenancy
-        participant DB as Tenancy DB
-        participant ID as Identity Media
-        participant R2 as Cloudflare R2
-        participant RELAY as Outbox Relay
-        participant MQ as RabbitMQ
-
-        Note over TEN,R2: Planned flow; upload API and document association storage are not implemented
-        GW->>TEN: POST /api/v1/contracts/{contractId}/generate-draft-document + Bearer token
-        TEN->>TEN: Verify JWT, landlord role, active account, UUID and body
-        TEN->>DB: Read contract, room, building, billing setting and active template
-        DB-->>TEN: Data snapshot
-        TEN->>TEN: Check contract exists, belongs to caller and is draft
-        TEN->>ID: GET /internal/users for landlord display name
-        ID-->>TEN: User data or lookup failure
-        TEN->>TEN: Use blank optional landlordName and warn when unavailable
-        TEN->>TEN: Validate requiredVariables and render Vietnamese PDF
-        alt Missing or invalid required variables
-            TEN-->>GW: 422 TEMPLATE_DATA_INVALID
-        else PDF rendered
-            Note over TEN,R2: No Contract write transaction is open during these upload steps
-            TEN->>ID: Prepare server upload for contract_template (internal API to be agreed)
-            ID-->>TEN: Preparation result
-            alt Preparation fails
-                TEN-->>GW: Error response; no Contract update or outbox append
-            else mediaId and uploadUrl obtained
-                TEN->>R2: PUT PDF buffer to uploadUrl
-                R2-->>TEN: Upload result
-                alt Upload fails
-                    TEN-->>GW: Error response; no Contract update or outbox append
-                else Object stored
-                    TEN->>ID: Complete server upload (internal API to be agreed)
-                    ID-->>TEN: Completion result
-                    alt Completion fails
-                        TEN-->>GW: Error response; no Contract update or outbox append
-                    else Media ready
-                        TEN->>DB: BEGIN
-                        TEN->>DB: SELECT contract WHERE id = contractId AND is_deleted = false FOR UPDATE
-                        DB-->>TEN: Current contract or null
-                        TEN->>TEN: Recheck existence, JWT ownership and draft status
-                        alt Contract changed, missing or unauthorized
-                            TEN->>DB: ROLLBACK
-                            TEN-->>GW: 404 / 403 / 409; uploaded file remains unassociated
-                        else Valid draft
-                            TEN->>DB: Persist draft media association using the agreed storage mechanism
-                            TEN->>DB: Append contract change to outbox_messages
-                            alt Persistence fails
-                                TEN->>DB: ROLLBACK
-                                TEN-->>GW: Error response; uploaded file remains unassociated
-                            else Commit succeeds
-                                TEN->>DB: COMMIT
-                                TEN-->>GW: 201 CONTRACT_DRAFT_GENERATED with contractId, mediaId and purpose
-                                RELAY->>DB: Claim committed outbox event
-                                RELAY->>MQ: Publish contract change
-                                MQ-->>RELAY: Publisher confirm
-                                RELAY->>DB: Mark outbox PUBLISHED
-                            end
-                        end
-                    end
-                end
-            end
-        end
-    ```
+    
   parameters:
   - name: contractId
     in: path

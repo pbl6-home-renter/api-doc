@@ -1,15 +1,41 @@
 post:
   tags: [Notification]
   x-apidog-folder: PushDevice
-  x-apidog-status: designing
+  x-apidog-status: released
   operationId: postMePushDevices
   security:
     - BearerAuth: []
   summary: Register or refresh Android push device
-  description: >-
-    Đăng ký FCM token Android của user đang đăng nhập. Gửi lại cùng token cập nhật
+  description: |-
     lastSeenAt, kích hoạt lại token đã thu hồi và trả cùng device ID. Token đang
     thuộc user khác được chuyển quyền sở hữu atomically; không tạo bản ghi trùng.
+    
+    **Sequence diagram**
+    
+    ```mermaid
+    sequenceDiagram
+        autonumber
+        actor Client
+        participant GW as API Gateway
+        participant S as community-service
+        participant Guard as JWT/access guards
+        participant C as PushDeviceController
+        participant Bus as CQRS CommandBus
+        participant H as Application handler
+        Client->>GW: POST /api/v1/me/push-devices
+        GW->>GW: Validate bearer token for protected route
+        GW->>S: Proxy original HTTP request
+        S->>Guard: Validate JWT, account state and route access
+        Guard-->>C: Continue with authenticated context
+        S->>C: Invoke postMePushDevices
+        C->>Bus: Execute command for postMePushDevices
+        Bus->>H: Dispatch command handler
+        H-->>Bus: Return use-case result
+        Bus-->>C: Result
+        C-->>S: Return documented response
+        S-->>GW: HTTP status and response body
+        GW-->>Client: Forward HTTP response
+    ```
   requestBody:
     required: true
     content:

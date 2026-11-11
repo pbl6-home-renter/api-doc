@@ -2,13 +2,12 @@ get:
   tags:
   - Contract
   x-apidog-folder: Contract
-  x-apidog-status: designing
+  x-apidog-status: released
   operationId: getContracts
   security:
     - BearerAuth: []
   summary: List contracts
   description: |-
-    Landlord. Chỉ liệt kê hợp đồng thuộc user.id lấy từ JWT và chưa xóa mềm.
     Hỗ trợ filter[roomId], filter[buildingId], filter[status], filter[tenantId];
     roomName lấy bằng join rooms, contractCode suy ra theo HD-<6 ký tự đầu id>.
     Thông tin tenant có thể null khi hợp đồng liên kết tài khoản nhưng chưa lưu thông tin liên hệ.
@@ -16,26 +15,32 @@ get:
     Chỉ hỗ trợ format=json; xlsx/csv/pdf trả 422 VALIDATION_FAILED.
     UUID filter không hợp lệ trả 422 INVALID_UUID; field ngoài DTO trả 422 UNEXPECTED_FIELD.
     Service chưa có rate limiter.
-
+    
+    **Sequence diagram**
+    
     ```mermaid
     sequenceDiagram
         autonumber
+        actor Client
         participant GW as API Gateway
-        participant TEN as Tenancy
-        participant DB as Tenancy DB
-
-        GW->>TEN: GET /api/v1/contracts + Bearer token
-        TEN->>TEN: Verify JWT, landlord role, active account and query
-        alt Invalid query
-            TEN-->>GW: 422 VALIDATION_FAILED / INVALID_UUID / UNEXPECTED_FIELD
-        else Valid query
-            TEN->>DB: COUNT contracts JOIN rooms<br/>WHERE landlord_id = JWT user.id AND is_deleted = false<br/>with room, building, status and tenant filters
-            DB-->>TEN: totalItems
-            TEN->>DB: SELECT with the same joins and conditions<br/>ORDER BY created_at and id; OFFSET / LIMIT
-            DB-->>TEN: Contract rows with roomName
-            TEN->>TEN: Map response and derive contractCode from id
-            TEN-->>GW: 200 CONTRACTS_FETCHED + offset pagination
-        end
+        participant S as Tenancy-Service
+        participant Guard as JWT/access guards
+        participant C as ContractController
+        participant Bus as CQRS QueryBus
+        participant H as Application handler
+        Client->>GW: GET /api/v1/contracts
+        GW->>GW: Validate bearer token for protected route
+        GW->>S: Proxy original HTTP request
+        S->>Guard: Validate JWT, account state and route access
+        Guard-->>C: Continue with authenticated context
+        S->>C: Invoke getContracts
+        C->>Bus: Execute query for getContracts
+        Bus->>H: Dispatch query handler
+        H-->>Bus: Return use-case result
+        Bus-->>C: Result
+        C-->>S: Return documented response
+        S-->>GW: HTTP status and response body
+        GW-->>Client: Forward HTTP response
     ```
   parameters:
   - name: filter
@@ -204,13 +209,12 @@ post:
   tags:
   - Contract
   x-apidog-folder: Contract
-  x-apidog-status: designing
+  x-apidog-status: released
   operationId: postContracts
   security:
     - BearerAuth: []
   summary: Create draft contract
   description: |-
-    Landlord. Tạo hợp đồng ở trạng thái draft; landlordId luôn lấy từ JWT.
     Room không tồn tại hoặc đã xóa trả 404 RESOURCE_NOT_FOUND; Room thuộc landlord khác trả 403 FORBIDDEN.
     Room đã có hợp đồng active trả 409 ACTIVE_CONTRACT_EXISTS. Điều kiện active không loại hợp đồng đã xóa mềm,
     theo partial unique index hiện tại. Tạo draft không đổi trạng thái Room.
@@ -222,53 +226,32 @@ post:
     ngày theo YYYY-MM-DD và startDate phải trước endDate.
     Contract và outbox contract.created được lưu trong cùng transaction; relay publish sau commit.
     Service chưa có rate limiter.
-
+    
+    **Sequence diagram**
+    
     ```mermaid
     sequenceDiagram
         autonumber
+        actor Client
         participant GW as API Gateway
-        participant TEN as Tenancy
-        participant DB as Tenancy DB
-        participant RELAY as Outbox Relay
-        participant MQ as RabbitMQ
-
-        GW->>TEN: POST /api/v1/contracts + Bearer token
-        TEN->>TEN: Verify JWT, landlord role, active account and body
-        TEN->>DB: BEGIN
-        TEN->>DB: SELECT room WHERE id = roomId AND is_deleted = false FOR UPDATE
-        DB-->>TEN: Room or null
-        TEN->>TEN: Check room exists and landlordId equals JWT user.id
-        alt Missing room or wrong owner
-            TEN->>DB: ROLLBACK
-            TEN-->>GW: 404 RESOURCE_NOT_FOUND / 403 FORBIDDEN
-        else Owned room
-            TEN->>DB: Check contract WHERE room_id = roomId AND status = active
-            DB-->>TEN: Whether an active contract exists
-            alt Active contract exists
-                TEN->>DB: ROLLBACK
-                TEN-->>GW: 409 ACTIVE_CONTRACT_EXISTS
-            else No active contract
-                TEN->>TEN: Validate domain and create draft aggregate
-                alt Invalid domain
-                    TEN->>DB: ROLLBACK
-                    TEN-->>GW: 422 TENANT_IDENTITY_INVALID / VALIDATION_FAILED
-                else Valid draft
-                    TEN->>DB: INSERT contracts (draft, landlord_id from JWT)
-                    TEN->>DB: INSERT outbox_messages (contract.created)
-                    alt Storage operation fails
-                        TEN->>DB: ROLLBACK
-                        TEN-->>GW: Error response; neither row is committed
-                    else Commit succeeds
-                        TEN->>DB: COMMIT
-                        TEN-->>GW: 201 CONTRACT_CREATED
-                        RELAY->>DB: Claim committed outbox event
-                        RELAY->>MQ: Publish contract.created
-                        MQ-->>RELAY: Publisher confirm
-                        RELAY->>DB: Mark outbox PUBLISHED
-                    end
-                end
-            end
-        end
+        participant S as Tenancy-Service
+        participant Guard as JWT/access guards
+        participant C as ContractController
+        participant Bus as CQRS CommandBus
+        participant H as Application handler
+        Client->>GW: POST /api/v1/contracts
+        GW->>GW: Validate bearer token for protected route
+        GW->>S: Proxy original HTTP request
+        S->>Guard: Validate JWT, account state and route access
+        Guard-->>C: Continue with authenticated context
+        S->>C: Invoke postContracts
+        C->>Bus: Execute command for postContracts
+        Bus->>H: Dispatch command handler
+        H-->>Bus: Return use-case result
+        Bus-->>C: Result
+        C-->>S: Return documented response
+        S-->>GW: HTTP status and response body
+        GW-->>Client: Forward HTTP response
     ```
   requestBody:
     required: true

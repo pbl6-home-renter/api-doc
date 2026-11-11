@@ -33,23 +33,23 @@ Contract Socket.IO cho Community Chat: [docs/community-socket-v1.md](docs/commun
 
 Repository này (GitHub: `be`, thư mục local: `api-docs`) lưu **đặc tả API OpenAPI 3.0.3** của Rentify — hệ thống quản lý nhà trọ và tìm bạn ở ghép. Đặc tả được viết bằng YAML module hóa trong `src/`, bundle thành [`reference/rentify.json`](reference/rentify.json) và đồng bộ với dự án **`rentify`** trên Apidog. FE (React) và mobile (Android) build theo contract này; backend service phải khớp với nó.
 
-Hiện contract gồm **93 path / 118 operation**, chia theo 10 tag:
+Hiện contract gồm **100 path / 128 operation**, chia theo 10 tag:
 
 | Tag | Phạm vi | Operation |
 |---|---|---:|
 | `Auth` | Đăng ký, đăng nhập, refresh, logout, reset mật khẩu, JWKS | 7 |
-| `User` | Hồ sơ cá nhân, đổi mật khẩu, quản trị user (lock/unlock) | 9 |
+| `User` | Hồ sơ cá nhân, đổi mật khẩu, quản trị user (lock/unlock) | 10 |
 | `Property` | Tòa nhà, phòng, phòng yêu thích | 23 |
 | `Contract` | Hợp đồng thuê, thành viên ở cùng, template hợp đồng | 16 |
 | `Billing` | Chính sách giá, cài đặt billing, chỉ số công tơ, hóa đơn, thanh toán | 26 |
-| `Operation` | Báo cáo sự cố, media, audit log, dashboard | 13 |
-| `Chat` | Hội thoại theo phòng/tòa nhà, tin nhắn | 6 |
+| `Operation` | Báo cáo sự cố, media, audit log, dashboard | 14 |
+| `Chat` | Hội thoại theo phòng/tòa nhà, tin nhắn | 14 |
 | `Matching` | Hồ sơ roommate, yêu cầu ghép phòng | 9 |
 | `Notification` | Thông báo, tùy chọn thông báo, thiết bị push FCM | 7 |
 | `Administrative Units` | Danh mục tỉnh/thành và phường/xã (public) | 2 |
 
 > [!NOTE]
-> Mỗi operation có `x-apidog-status`: `released` (đã khớp với service đang chạy) hoặc `designing` (mới ở mức thiết kế). Phần lớn endpoint vẫn ở `designing`; chỉ dựa vào endpoint `released` khi tích hợp thật.
+> Mỗi operation có `x-apidog-status`: `released` (đã có endpoint tương ứng trong service), `developing` (đang triển khai), hoặc `designing` (mới ở mức thiết kế). Trạng thái `released` trong API contract không tự xác nhận môi trường triển khai đã được smoke test.
 
 ## Tính năng nổi bật
 

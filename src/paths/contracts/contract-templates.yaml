@@ -8,26 +8,35 @@ get:
     - BearerAuth: []
   summary: List contract templates
   description: |-
-    Landlord. Endpoint đã triển khai trong Tenancy-Service.
     Chỉ trả mẫu isActive = true và chưa xóa mềm, phân trang offset với pageNo mặc định 1,
     pageSize mặc định 20 và tối đa 100. Không trả body HTML của mẫu.
     Query không hợp lệ trả 422 VALIDATION_FAILED; field ngoài DTO trả 422 UNEXPECTED_FIELD.
-
+    
+    **Sequence diagram**
+    
     ```mermaid
     sequenceDiagram
         autonumber
+        actor Client
         participant GW as API Gateway
-        participant TEN as Tenancy
-        participant DB as Tenancy DB
-
-        GW->>TEN: GET /api/v1/contract-templates + Bearer token
-        TEN->>TEN: Verify JWT, landlord role, active account and pagination
-        TEN->>DB: SELECT contract_templates WHERE is_active = true AND is_deleted = false<br/>ORDER BY created_at DESC, id ASC; OFFSET / LIMIT
-        DB-->>TEN: Active template rows
-        TEN->>DB: COUNT with the same visibility conditions when required by paginator
-        DB-->>TEN: totalItems
-        TEN->>TEN: Map templateKey, title, version and offset pagination
-        TEN-->>GW: 200 CONTRACT_TEMPLATES_FETCHED
+        participant S as Tenancy-Service
+        participant Guard as JWT/access guards
+        participant C as ContractTemplateController
+        participant Bus as CQRS QueryBus
+        participant H as Application handler
+        Client->>GW: GET /api/v1/contract-templates
+        GW->>GW: Validate bearer token for protected route
+        GW->>S: Proxy original HTTP request
+        S->>Guard: Validate JWT, account state and route access
+        Guard-->>C: Continue with authenticated context
+        S->>C: Invoke getContractTemplates
+        C->>Bus: Execute query for getContractTemplates
+        Bus->>H: Dispatch query handler
+        H-->>Bus: Return use-case result
+        Bus-->>C: Result
+        C-->>S: Return documented response
+        S-->>GW: HTTP status and response body
+        GW-->>Client: Forward HTTP response
     ```
   parameters:
   - name: pageSize

@@ -8,7 +8,6 @@ patch:
     - BearerAuth: []
   summary: Update contract member
   description: |-
-    Identify the membership by tenantId (tenant account UUID in the URL) and required contractId in the body.
     Members with tenant_id = null cannot use this endpoint. Update tenantPhone (Vietnamese phone number)
     only in the selected contract, owned by the requesting landlord. The response id is the membership record ID.
     Join contract_members with contracts using both IDs, excluding soft-deleted rows.
@@ -17,26 +16,32 @@ patch:
     returns 409 MEMBER_LEFT. A matching tenantId or new phone on another active member returns
     409 MEMBER_ALREADY_EXISTS. Unknown member/contract: 404 RESOURCE_NOT_FOUND; other landlord: 403 FORBIDDEN.
     No requirement that the contract is active for this phone-only update. The record is never deleted.
-
+    
+    **Sequence diagram**
+    
     ```mermaid
     sequenceDiagram
+        autonumber
+        actor Client
         participant GW as API Gateway
-        participant TEN as Tenancy
-        participant DB as Tenancy DB
-        GW->>TEN: PATCH /contract-members/{tenantId} {contractId, tenantPhone}
-        TEN->>TEN: Verify JWT, landlord role, active account and request
-        TEN->>DB: BEGIN; lock body.contractId FOR UPDATE
-        TEN->>TEN: Require contract owner
-        TEN->>DB: JOIN contract_members with contracts WHERE tenant_id = path.tenantId AND contract_id = body.contractId<br/>Exclude deleted rows; prefer current membership; lock member FOR UPDATE
-        TEN->>TEN: Require owner; lock member; reject departed member and duplicates
-        alt Missing record / forbidden / business validation failure
-            TEN->>DB: ROLLBACK
-            TEN-->>GW: 404 / 403 / 409 / 422
-        else Valid operation
-            TEN->>DB: UPDATE contract_members.tenant_phone
-            TEN->>DB: COMMIT
-            TEN-->>GW: 200 CONTRACT_MEMBER_UPDATED
-        end
+        participant S as Tenancy-Service
+        participant Guard as JWT/access guards
+        participant C as ContractMemberController
+        participant Bus as CQRS CommandBus
+        participant H as Application handler
+        Client->>GW: PATCH /api/v1/contract-members/{tenantId}
+        GW->>GW: Validate bearer token for protected route
+        GW->>S: Proxy original HTTP request
+        S->>Guard: Validate JWT, account state and route access
+        Guard-->>C: Continue with authenticated context
+        S->>C: Invoke patchContractMembersTenantid
+        C->>Bus: Execute command for patchContractMembersTenantid
+        Bus->>H: Dispatch command handler
+        H-->>Bus: Return use-case result
+        Bus-->>C: Result
+        C-->>S: Return documented response
+        S-->>GW: HTTP status and response body
+        GW-->>Client: Forward HTTP response
     ```
   parameters:
   - name: tenantId

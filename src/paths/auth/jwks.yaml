@@ -7,23 +7,30 @@ get:
   security: []
   summary: Get JWKS
   description: |-
-    Public. Trả public key RS256 để API Gateway và các service verify access token.
-
     **Lưu ý**
-
+    
     - Response là JWK Set chuẩn RFC 7517, **không** bọc `{statusCode, code, data}`, để `jose` (`createRemoteJWKSet`) đọc được `keys` ở cấp ngoài cùng.
     - API Gateway cache key; khi xoay key, giữ key cũ trong JWKS tới khi mọi access token ký bằng key cũ hết hạn.
-
+    
+    **Sequence diagram**
+    
     ```mermaid
     sequenceDiagram
         autonumber
+        actor Client
         participant GW as API Gateway
-        participant ID as Identity
-
-        Note over GW: Lúc khởi động, khi cache hết hạn<br/>hoặc gặp kid lạ
-        GW->>ID: GET /.well-known/jwks.json
-        ID-->>GW: 200 {keys: [{kty, n, e, use: sig, alg: RS256, kid}]}
-        GW->>GW: Cache public key để verify JWT
+        participant S as Identity-Service
+        participant C as JwksController
+        participant Config as JwtConfigService
+        Client->>GW: GET /api/v1/.well-known/jwks.json
+        GW->>S: Proxy original HTTP request
+        S->>C: Invoke getJwks
+        C->>Config: Read configured public key and key ID
+        Config-->>C: RSA public key and key ID
+        C->>C: Export public key as JWK and build JWK Set
+        C-->>S: Return bare JWK Set
+        S-->>GW: HTTP status and response body
+        GW-->>Client: Forward HTTP response
     ```
   responses:
     '200':

@@ -8,12 +8,37 @@ get:
     - BearerAuth: []
   summary: Get or stream media
   description: |-
-    Stream completed media as before. For chat_attachment and conversation_avatar, authorize the caller and redirect to a URL for direct storage access. Private chat media uses a signed R2 GET URL that expires after MEDIA_DOWNLOAD_URL_TTL_SECONDS (default 300 seconds); call this endpoint again to obtain a fresh URL.
-
     Private chat media requires a Bearer token. Browser clients should use `GET /media/{mediaId}/download-url` and fetch its returned R2 URL directly, avoiding a cross-origin XHR redirect. Other private media keeps the API streaming response.
     For chat_attachment, Community confirms the media is attached to a message in the conversation. Active members may read it; read-only members may read only messages with sequence less than or equal to leftSequence. For conversation_avatar, only active conversation members may read. Admin and uploader read bypasses do not apply.
-
+    
     Business errors: 401 UNAUTHORIZED, 403 FORBIDDEN, 404 RESOURCE_NOT_FOUND, 410 MEDIA_DELETED, 503 SERVICE_UNAVAILABLE.
+    
+    **Sequence diagram**
+    
+    ```mermaid
+    sequenceDiagram
+        autonumber
+        actor Client
+        participant GW as API Gateway
+        participant S as Identity-Service
+        participant Guard as JWT/access guards
+        participant C as MediaController
+        participant Bus as CQRS QueryBus
+        participant H as Application handler
+        Client->>GW: GET /api/v1/media/{mediaId}
+        GW->>GW: Verify required Bearer token for this gateway route
+        GW->>S: Proxy original HTTP request
+        S->>Guard: Apply @Public behavior; validate supplied token only if present
+        Guard-->>C: Continue with optional user context
+        S->>C: Invoke getMediaMediaid
+        C->>Bus: Execute query for getMediaMediaid
+        Bus->>H: Dispatch query handler
+        H-->>Bus: Return use-case result
+        Bus-->>C: Result
+        C-->>S: Return file stream or redirect response
+        S-->>GW: HTTP status and response body
+        GW-->>Client: Forward HTTP response
+    ```
   parameters:
   - name: mediaId
     in: path
@@ -114,12 +139,37 @@ delete:
     - BearerAuth: []
   summary: Delete media
   description: |-
-    tenant, landlord, admin. Xóa mềm Media và xóa object trên storage. Chỉ người upload hoặc admin được xóa.
-
     - `ownership_proof` của building đã `approved` và `contract_signed` của HĐ đã có hiệu lực là bằng chứng, không xóa được (`409 CANNOT_DELETE`).
     - Với `avatar`/`cover_photo` không cần xóa file cũ trước khi upload file mới: complete file mới tự thay file cũ.
-
+    
     Lỗi nghiệp vụ: 403 FORBIDDEN · 404 RESOURCE_NOT_FOUND · 409 CANNOT_DELETE · 410 MEDIA_DELETED (đã xóa trước đó).
+    
+    **Sequence diagram**
+    
+    ```mermaid
+    sequenceDiagram
+        autonumber
+        actor Client
+        participant GW as API Gateway
+        participant S as Identity-Service
+        participant Guard as JWT/access guards
+        participant C as MediaController
+        participant Bus as CQRS CommandBus
+        participant H as Application handler
+        Client->>GW: DELETE /api/v1/media/{mediaId}
+        GW->>GW: Validate bearer token for protected route
+        GW->>S: Proxy original HTTP request
+        S->>Guard: Validate JWT, account state and route access
+        Guard-->>C: Continue with authenticated context
+        S->>C: Invoke deleteMediaMediaid
+        C->>Bus: Execute command for deleteMediaMediaid
+        Bus->>H: Dispatch command handler
+        H-->>Bus: Return use-case result
+        Bus-->>C: Result
+        C-->>S: Return documented response
+        S-->>GW: HTTP status and response body
+        GW-->>Client: Forward HTTP response
+    ```
   parameters:
   - name: mediaId
     in: path

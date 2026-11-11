@@ -2,12 +2,38 @@ patch:
   tags:
   - Billing
   x-apidog-folder: RatePolicy
-  x-apidog-status: designing
+  x-apidog-status: released
   operationId: patchRatePoliciesRatepolicyid
   security:
     - BearerAuth: []
   summary: Update rate policy
-  description: 'landlord. Cập nhật bộ đơn giá tại chỗ hoặc bật/tắt bộ. Hóa đơn đã phát hành giữ snapshot cũ. Lỗi: 403 FORBIDDEN · 422 INVALID_RATE_KIND/TIER_CONFIG_INVALID/VALIDATION_FAILED.'
+  description: |-
+    **Sequence diagram**
+    
+    ```mermaid
+    sequenceDiagram
+        autonumber
+        actor Client
+        participant GW as API Gateway
+        participant S as Tenancy-Service
+        participant Guard as JWT/access guards
+        participant C as RatePolicyController
+        participant Bus as CQRS CommandBus
+        participant H as Application handler
+        Client->>GW: PATCH /api/v1/rate-policies/{ratePolicyId}
+        GW->>GW: Validate bearer token for protected route
+        GW->>S: Proxy original HTTP request
+        S->>Guard: Validate JWT, account state and route access
+        Guard-->>C: Continue with authenticated context
+        S->>C: Invoke patchRatePoliciesRatepolicyid
+        C->>Bus: Execute command for patchRatePoliciesRatepolicyid
+        Bus->>H: Dispatch command handler
+        H-->>Bus: Return use-case result
+        Bus-->>C: Result
+        C-->>S: Return documented response
+        S-->>GW: HTTP status and response body
+        GW-->>Client: Forward HTTP response
+    ```
   parameters:
   - name: ratePolicyId
     in: path

@@ -2,10 +2,32 @@ get:
   tags:
   - Property
   x-apidog-folder: Room
-  x-apidog-status: designing
+  x-apidog-status: released
   operationId: getRooms
   summary: Search public rooms
-  description: 'public. Tìm phòng trên sàn công khai. Lỗi nghiệp vụ: 422 VALIDATION FAILED · 429 RATE LIMIT EXCEEDED.'
+  description: |-
+    **Sequence diagram**
+    
+    ```mermaid
+    sequenceDiagram
+        autonumber
+        actor Client
+        participant GW as API Gateway
+        participant S as Tenancy-Service
+        participant C as RoomController
+        participant Bus as CQRS QueryBus
+        participant H as Application handler
+        Client->>GW: GET /api/v1/rooms
+        GW->>S: Proxy original HTTP request
+        S->>C: Invoke getRooms
+        C->>Bus: Execute query for getRooms
+        Bus->>H: Dispatch query handler
+        H-->>Bus: Return use-case result
+        Bus-->>C: Result
+        C-->>S: Return documented response
+        S-->>GW: HTTP status and response body
+        GW-->>Client: Forward HTTP response
+    ```
   security: []
   parameters:
   - name: filter
@@ -177,13 +199,38 @@ post:
   tags:
   - Property
   x-apidog-folder: Room
-  x-apidog-status: designing
+  x-apidog-status: released
   operationId: postRooms
   security:
     - BearerAuth: []
   summary: Create room
-  description: 'landlord. Tạo phòng trong một tòa nhà. Lỗi nghiệp vụ: 403 FORBIDDEN · 409 DUPLICATE ROOM · 422 BUILDING
-    NOT APPROVED.'
+  description: |-
+    **Sequence diagram**
+    
+    ```mermaid
+    sequenceDiagram
+        autonumber
+        actor Client
+        participant GW as API Gateway
+        participant S as Tenancy-Service
+        participant Guard as JWT/access guards
+        participant C as RoomController
+        participant Bus as CQRS CommandBus
+        participant H as Application handler
+        Client->>GW: POST /api/v1/rooms
+        GW->>GW: Validate bearer token for protected route
+        GW->>S: Proxy original HTTP request
+        S->>Guard: Validate JWT, account state and route access
+        Guard-->>C: Continue with authenticated context
+        S->>C: Invoke postRooms
+        C->>Bus: Execute command for postRooms
+        Bus->>H: Dispatch command handler
+        H-->>Bus: Return use-case result
+        Bus-->>C: Result
+        C-->>S: Return documented response
+        S-->>GW: HTTP status and response body
+        GW-->>Client: Forward HTTP response
+    ```
   requestBody:
     required: true
     content:

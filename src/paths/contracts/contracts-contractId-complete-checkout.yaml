@@ -2,13 +2,12 @@ post:
   tags:
   - Contract
   x-apidog-folder: Contract
-  x-apidog-status: designing
+  x-apidog-status: released
   operationId: postContractsContractidCompleteCheckout
   security:
     - BearerAuth: []
   summary: Complete checkout
   description: |-
-    Landlord. Requires a valid JWT and an active account. Only the contract owner may complete checkout.
     The contract must be active, otherwise 409 CONTRACT_NOT_ACTIVE.
     completedOn is a YYYY-MM-DD date between the contract start date and today (UTC), inclusive.
     Invalid format or a date outside the contract start date to today range returns 422 VALIDATION_FAILED.
@@ -26,46 +25,32 @@ post:
     Call POST /rooms/{roomId}/mark-ready after cleaning to make the room available again.
     Field outside the request DTO returns 422 UNEXPECTED_FIELD, matching existing project validation.
     The invoices table is supplied by P6-02g1. The service does not currently apply rate limiting.
-
+    
+    **Sequence diagram**
+    
     ```mermaid
     sequenceDiagram
         autonumber
+        actor Client
         participant GW as API Gateway
-        participant TEN as Tenancy
-        participant DB as Tenancy DB
-        participant RELAY as Outbox Relay
-        participant MQ as RabbitMQ
-
-        GW->>TEN: POST /api/v1/contracts/{contractId}/complete-checkout { completedOn }
-        TEN->>TEN: Verify JWT, landlord role, active account, UUID and body
-        TEN->>DB: BEGIN
-        TEN->>DB: SELECT contract WHERE id matches AND not deleted FOR UPDATE
-        TEN->>TEN: Check existence, ownership, active status and completedOn
-        TEN->>DB: Check issued invoice exists and no pending invoice for contract and completedOn period
-        TEN->>DB: SELECT non-deleted members WHERE left_at IS NULL OR after today (UTC)
-        TEN->>TEN: Validate completedOn against each joinedAt and record member departures
-        TEN->>DB: SELECT room FOR UPDATE
-        TEN->>TEN: Transition room to maintenance
-        alt Invalid state, date, owner or invoice readiness
-            TEN->>DB: ROLLBACK
-            TEN-->>GW: 403 / 404 / 409 / 422 with matching error code
-        else Valid checkout
-            TEN->>DB: UPDATE contract status to terminated
-            TEN->>DB: UPDATE remaining members left_at
-            TEN->>DB: UPDATE room status to maintenance
-            TEN->>DB: INSERT outbox contract.terminated, contract_member.left, room.status_changed
-            alt Storage operation fails
-                TEN->>DB: ROLLBACK
-                TEN-->>GW: Error response; all changes roll back
-            else Commit succeeds
-                TEN->>DB: COMMIT
-                TEN-->>GW: 200 CONTRACT_CHECKOUT_COMPLETED { id, status: terminated, completedOn }
-                RELAY->>DB: Claim committed outbox events
-                RELAY->>MQ: Publish events
-                MQ-->>RELAY: Publisher confirm
-                RELAY->>DB: Mark outbox PUBLISHED
-            end
-        end
+        participant S as Tenancy-Service
+        participant Guard as JWT/access guards
+        participant C as ContractController
+        participant Bus as CQRS CommandBus
+        participant H as Application handler
+        Client->>GW: POST /api/v1/contracts/{contractId}/complete-checkout
+        GW->>GW: Validate bearer token for protected route
+        GW->>S: Proxy original HTTP request
+        S->>Guard: Validate JWT, account state and route access
+        Guard-->>C: Continue with authenticated context
+        S->>C: Invoke postContractsContractidCompleteCheckout
+        C->>Bus: Execute command for postContractsContractidCompleteCheckout
+        Bus->>H: Dispatch command handler
+        H-->>Bus: Return use-case result
+        Bus-->>C: Result
+        C-->>S: Return documented response
+        S-->>GW: HTTP status and response body
+        GW-->>Client: Forward HTTP response
     ```
   parameters:
   - name: contractId

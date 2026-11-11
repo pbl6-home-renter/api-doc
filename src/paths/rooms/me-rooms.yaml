@@ -2,29 +2,40 @@ get:
   tags:
   - Property
   x-apidog-folder: Room
-  x-apidog-status: designing
+  x-apidog-status: released
   operationId: getMeRooms
   security:
     - BearerAuth: []
   summary: List my rooms
   description: |-
-    landlord. Liệt kê phòng của tôi bằng offset pagination, filter theo `buildingId` / `status` và sort theo một field được hỗ trợ.
-
+    Lỗi nghiệp vụ: 403 FORBIDDEN · 422 VALIDATION FAILED.
+    
+    **Sequence diagram**
+    
     ```mermaid
     sequenceDiagram
         autonumber
+        actor Client
         participant GW as API Gateway
-        participant TEN as Tenancy
-        participant DB as Tenancy DB
-
-        GW->>TEN: GET /me/rooms (access token, filter, sort, page)
-        TEN->>TEN: Xác thực role landlord
-        TEN->>DB: SELECT rooms WHERE landlord_id = currentUser.id AND is_deleted = false<br/>+ filters + offset pagination
-        DB-->>TEN: Danh sách phòng và total count
-        TEN-->>GW: 200 ROOMS_MY_FETCHED {data, pagination}
+        participant S as Tenancy-Service
+        participant Guard as JWT/access guards
+        participant C as RoomController
+        participant Bus as CQRS QueryBus
+        participant H as Application handler
+        Client->>GW: GET /api/v1/me/rooms
+        GW->>GW: Validate bearer token for protected route
+        GW->>S: Proxy original HTTP request
+        S->>Guard: Validate JWT, account state and route access
+        Guard-->>C: Continue with authenticated context
+        S->>C: Invoke getMeRooms
+        C->>Bus: Execute query for getMeRooms
+        Bus->>H: Dispatch query handler
+        H-->>Bus: Return use-case result
+        Bus-->>C: Result
+        C-->>S: Return documented response
+        S-->>GW: HTTP status and response body
+        GW-->>Client: Forward HTTP response
     ```
-
-    Lỗi nghiệp vụ: 403 FORBIDDEN · 422 VALIDATION FAILED.
   parameters:
   - name: filter
     in: query

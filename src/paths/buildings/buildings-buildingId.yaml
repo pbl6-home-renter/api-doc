@@ -6,32 +6,31 @@ get:
   operationId: getBuildingsBuildingid
   summary: Get public building details
   description: |-
-    Public; không cần token. Chỉ trả Building `approved` và chưa xóa, kể cả khi người gọi là landlord/admin.
     Không tồn tại, pending, rejected hoặc đã xóa đều trả `404 RESOURCE_NOT_FOUND`.
     Response chỉ gồm id, name, province, ward, address và status (`approved`).
     buildingId không phải UUID trả `400 BAD_REQUEST` theo ParseUUIDPipe hiện có.
-
+    
+    **Sequence diagram**
+    
     ```mermaid
     sequenceDiagram
         autonumber
+        actor Client
         participant GW as API Gateway
-        participant TEN as Tenancy
-        participant DB as Tenancy DB
-
-        GW->>TEN: GET /api/v1/buildings/{buildingId} (no token required)
-        TEN->>TEN: Validate UUID; public access without authentication
-        alt Invalid UUID
-            TEN-->>GW: 400 BAD_REQUEST
-        else Valid UUID
-            TEN->>DB: SELECT building WHERE id = buildingId AND status = approved AND is_deleted = false
-            DB-->>TEN: Approved building or null
-            alt No public building
-                TEN-->>GW: 404 RESOURCE_NOT_FOUND
-            else Found
-                TEN->>TEN: Map only id, name, province, ward, address, status
-                TEN-->>GW: 200 BUILDING_FETCHED
-            end
-        end
+        participant S as Tenancy-Service
+        participant C as BuildingController
+        participant Bus as CQRS QueryBus
+        participant H as Application handler
+        Client->>GW: GET /api/v1/buildings/{buildingId}
+        GW->>S: Proxy original HTTP request
+        S->>C: Invoke getBuildingsBuildingid
+        C->>Bus: Execute query for getBuildingsBuildingid
+        Bus->>H: Dispatch query handler
+        H-->>Bus: Return use-case result
+        Bus-->>C: Result
+        C-->>S: Return documented response
+        S-->>GW: HTTP status and response body
+        GW-->>Client: Forward HTTP response
     ```
   security: []
   parameters:
@@ -103,7 +102,6 @@ patch:
     - BearerAuth: []
   summary: Update building
   description: |-
-    landlord. Cập nhật name/address của Building chưa được duyệt.
     Building không tồn tại hoặc đã xóa trả 404 RESOURCE_NOT_FOUND.
     Building thuộc landlord khác trả 403 FORBIDDEN.
     Building approved trả 409 APPROVED_BUILDING_LOCKED.
@@ -114,52 +112,32 @@ patch:
     rollback transaction và không ghi Building/outbox.
     Body rỗng {} được chấp nhận: Building chưa duyệt thuộc người gọi vẫn phát BuildingUpdated
     và trả 200. Trường ngoài name/address trả 422 UNEXPECTED_FIELD.
-
+    
+    **Sequence diagram**
+    
     ```mermaid
     sequenceDiagram
         autonumber
+        actor Client
         participant GW as API Gateway
-        participant TEN as Tenancy
-        participant GEO as TrackAsia
-        participant DB as Tenancy DB
-        participant RELAY as Outbox Relay
-        participant MQ as RabbitMQ
-
-        GW->>TEN: PATCH /buildings/{buildingId} {name?, address?}
-        TEN->>TEN: Verify JWT, role landlord và validate request
-        TEN->>DB: UoW BEGIN; SELECT building FOR UPDATE
-        DB-->>TEN: Building hiện tại hoặc null
-        alt Không tồn tại hoặc đã xóa
-            TEN->>DB: ROLLBACK
-            TEN-->>GW: 404 RESOURCE_NOT_FOUND
-        else Building thuộc landlord khác
-            TEN->>DB: ROLLBACK
-            TEN-->>GW: 403 FORBIDDEN
-        else Building đã approved
-            TEN->>DB: ROLLBACK
-            TEN-->>GW: 409 APPROVED_BUILDING_LOCKED
-        else Building có thể sửa
-            opt Có address trong request
-                Note over TEN,DB: Giữ row lock trong lúc gọi geocoding
-                TEN->>GEO: Geocode address mới + ward + province hiện tại
-                GEO-->>TEN: latitude/longitude hoặc lỗi
-                break Geocoding thất bại hoặc tạm thời không khả dụng
-                    TEN->>DB: ROLLBACK
-                    TEN-->>GW: 422 GEOCODING_FAILED / 503 GEOCODING_UNAVAILABLE
-                end
-            end
-            TEN->>TEN: building.update(name, address, latitude, longitude)
-            TEN->>DB: [Cùng transaction] UPDATE buildings<br/>+ INSERT outbox_messages (building.updated)
-            DB-->>TEN: COMMIT
-            TEN-->>GW: 200 BUILDING_UPDATED {id, name, address, status}
-            RELAY->>DB: Claim outbox đã commit
-            DB-->>RELAY: building.updated
-            RELAY-)MQ: Publish building.updated
-            MQ-->>RELAY: Publisher confirm
-            RELAY->>DB: Đánh dấu outbox PUBLISHED
-        end
-        Note over TEN,DB: Lỗi ghi Building hoặc outbox rollback cả transaction
-        Note over RELAY,MQ: Publish bất đồng bộ sau commit, delivery at-least-once
+        participant S as Tenancy-Service
+        participant Guard as JWT/access guards
+        participant C as BuildingController
+        participant Bus as CQRS CommandBus
+        participant H as Application handler
+        Client->>GW: PATCH /api/v1/buildings/{buildingId}
+        GW->>GW: Validate bearer token for protected route
+        GW->>S: Proxy original HTTP request
+        S->>Guard: Validate JWT, account state and route access
+        Guard-->>C: Continue with authenticated context
+        S->>C: Invoke patchBuildingsBuildingid
+        C->>Bus: Execute command for patchBuildingsBuildingid
+        Bus->>H: Dispatch command handler
+        H-->>Bus: Return use-case result
+        Bus-->>C: Result
+        C-->>S: Return documented response
+        S-->>GW: HTTP status and response body
+        GW-->>Client: Forward HTTP response
     ```
   parameters:
   - name: buildingId
@@ -326,44 +304,35 @@ delete:
     - BearerAuth: []
   summary: Delete building
   description: |-
-    landlord. Xóa mềm tòa nhà. Building không tồn tại hoặc đã xóa trả 404 RESOURCE_NOT_FOUND.
     Building thuộc landlord khác trả 403 FORBIDDEN. Xóa thành công trả 204, không có response body.
     BUILDING_HAS_ACTIVE_CONTRACT là mã lỗi dành cho bước tích hợp Contract; hiện chưa kiểm tra
     hợp đồng hiệu lực khi module Contract chưa có.
-
+    
+    **Sequence diagram**
+    
     ```mermaid
     sequenceDiagram
         autonumber
+        actor Client
         participant GW as API Gateway
-        participant TEN as Tenancy
-        participant DB as Tenancy DB
-        participant RELAY as Outbox Relay
-        participant MQ as RabbitMQ
-
-        GW->>TEN: DELETE /buildings/{buildingId}
-        TEN->>TEN: Verify JWT, role landlord và validate buildingId
-        TEN->>DB: UoW BEGIN; SELECT building FOR UPDATE<br/>WHERE id=buildingId AND is_deleted=false
-        DB-->>TEN: Building hiện tại hoặc null
-        alt Không tồn tại hoặc đã xóa
-            TEN->>DB: ROLLBACK
-            TEN-->>GW: 404 RESOURCE_NOT_FOUND
-        else Building thuộc landlord khác
-            TEN->>DB: ROLLBACK
-            TEN-->>GW: 403 FORBIDDEN
-        else Building thuộc người gọi
-            Note over TEN: TODO(contract) kiểm tra hợp đồng hiệu lực khi có module Contract
-            TEN->>TEN: building.delete() phát BuildingDeleted
-            TEN->>DB: [Cùng transaction] UPDATE buildings SET is_deleted=true<br/>+ INSERT outbox_messages (building.deleted)
-            DB-->>TEN: COMMIT
-            TEN-->>GW: 204 No Content
-            RELAY->>DB: Claim outbox đã commit
-            DB-->>RELAY: building.deleted
-            RELAY-)MQ: Publish building.deleted
-            MQ-->>RELAY: Publisher confirm
-            RELAY->>DB: Đánh dấu outbox PUBLISHED
-        end
-        Note over TEN,DB: Lỗi ghi Building hoặc outbox rollback cả transaction; xóa lần hai trả 404
-        Note over RELAY,MQ: Publish bất đồng bộ sau commit, delivery at-least-once
+        participant S as Tenancy-Service
+        participant Guard as JWT/access guards
+        participant C as BuildingController
+        participant Bus as CQRS CommandBus
+        participant H as Application handler
+        Client->>GW: DELETE /api/v1/buildings/{buildingId}
+        GW->>GW: Validate bearer token for protected route
+        GW->>S: Proxy original HTTP request
+        S->>Guard: Validate JWT, account state and route access
+        Guard-->>C: Continue with authenticated context
+        S->>C: Invoke deleteBuildingsBuildingid
+        C->>Bus: Execute command for deleteBuildingsBuildingid
+        Bus->>H: Dispatch command handler
+        H-->>Bus: Return use-case result
+        Bus-->>C: Result
+        C-->>S: Return documented response
+        S-->>GW: HTTP status and response body
+        GW-->>Client: Forward HTTP response
     ```
   parameters:
   - name: buildingId

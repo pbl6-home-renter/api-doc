@@ -2,28 +2,41 @@ get:
   tags:
   - Chat
   x-apidog-folder: Conversation
-  x-apidog-status: designing
+  x-apidog-status: released
   operationId: getConversationsUnreadSummary
   security:
   - BearerAuth: []
   summary: Get total unread messages
-  description: |
-    Tổng số **tin nhắn** chưa đọc của user hiện tại trên **mọi** hội thoại user được phép đọc (member `active` hoặc `read_only`, mọi `kind`, có hoặc không có context). FE dùng để khởi tạo và đồng bộ lại badge Chat khi mở ứng dụng, reconnect Socket hoặc nhận `conversation:read-updated`; không cộng `unreadCount` của một trang `GET /conversations` để suy ra tổng. `userId` lấy từ JWT, không nhận từ client.
-
+  description: |-
     **Quy tắc unread chung** (giống `unreadCount` của `GET /conversations`, `GET /conversations/{conversationId}`, response `POST /messages/mark-read` và Socket `conversation:read-updated`): đếm message chưa xóa có `type` thuộc `text`, `image`, `bot`; `sequence > lastReadSequence` của member; người gửi khác chính member đó. Message `system` vẫn có trong lịch sử nhưng không bao giờ được đếm. Member `read_only` chỉ đếm tới `leftSequence`.
-
+    
     Route tĩnh `/conversations/unread-summary` được khai báo trước `/conversations/{conversationId}`; `conversationId` luôn là UUID nên `unread-summary` không bị hiểu là ID.
-
+    
+    **Sequence diagram**
+    
     ```mermaid
     sequenceDiagram
-        participant C as Client
-        participant COM as Community
-        participant DB as Community DB
-        C->>COM: GET /conversations/unread-summary
-        COM->>COM: Verify JWT
-        COM->>DB: SUM unread over readable memberships of caller
-        DB-->>COM: totalUnreadCount
-        COM-->>C: 200 CONVERSATION_UNREAD_SUMMARY_FETCHED
+        autonumber
+        actor Client
+        participant GW as API Gateway
+        participant S as community-service
+        participant Guard as JWT/access guards
+        participant C as ConversationController
+        participant Bus as CQRS QueryBus
+        participant H as Application handler
+        Client->>GW: GET /api/v1/conversations/unread-summary
+        GW->>GW: Validate bearer token for protected route
+        GW->>S: Proxy original HTTP request
+        S->>Guard: Validate JWT, account state and route access
+        Guard-->>C: Continue with authenticated context
+        S->>C: Invoke getConversationsUnreadSummary
+        C->>Bus: Execute query for getConversationsUnreadSummary
+        Bus->>H: Dispatch query handler
+        H-->>Bus: Return use-case result
+        Bus-->>C: Result
+        C-->>S: Return documented response
+        S-->>GW: HTTP status and response body
+        GW-->>Client: Forward HTTP response
     ```
   responses:
     '200':

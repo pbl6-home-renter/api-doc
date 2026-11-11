@@ -5,6 +5,7 @@ parameters:
     schema: { type: string, format: uuid }
 post:
   tags: [Chat]
+  x-apidog-status: designing
   operationId: sendBotReminder
   security: [{ BearerAuth: [] }]
   summary: Gửi bot reminder theo mẫu

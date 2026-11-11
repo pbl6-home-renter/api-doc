@@ -2,10 +2,33 @@ get:
   tags:
     - Administrative Units
   x-apidog-folder: Administrative Units
-  x-apidog-status: designing
+  x-apidog-status: released
   operationId: getAdministrativeProvinces
   summary: List Vietnamese provinces
-  description: Public local reference map served by Tenancy-Service. It does not geocode addresses or query a runtime provider.
+  description: |-
+    **Sequence diagram**
+    
+    ```mermaid
+    sequenceDiagram
+        autonumber
+        actor Client
+        participant GW as API Gateway
+        participant S as Tenancy-Service
+        participant C as AdministrativeUnitController
+        participant App as AdministrativeUnitService
+        participant Catalog as Local catalog
+        Client->>GW: GET /api/v1/administrative-units/provinces
+        GW->>S: Proxy original HTTP request
+        S->>C: Invoke getAdministrativeProvinces
+        C->>App: listProvinces()
+        App->>Catalog: listProvinces()
+        Catalog-->>App: Province records
+        App-->>C: Province records
+        C->>C: Map to response DTO
+        C-->>S: Return documented response
+        S-->>GW: HTTP status and response body
+        GW-->>Client: Forward HTTP response
+    ```
   security: []
   responses:
     '200':

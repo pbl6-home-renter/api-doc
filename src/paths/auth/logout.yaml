@@ -2,31 +2,43 @@ post:
   tags:
   - Auth
   x-apidog-folder: Auth
-  x-apidog-status: designing
+  x-apidog-status: released
   operationId: logoutSession
   security:
   - BearerAuth: []
   summary: Logout
   description: |-
-    Dành cho tenant, landlord và admin. Thu hồi refresh token family của phiên hiện tại. Thành công trả 204, không có body.
-
     **Lưu ý**
-
+    
     - Access token hiện tại vẫn dùng được tới khi hết hạn (tối đa 15 phút); client tự xóa token.
     - Refresh token gửi trong body JSON. Token không tồn tại hoặc không thuộc user hiện tại thì bỏ qua, vẫn trả 204.
     - Tài khoản bị khóa vẫn logout được.
-
+    
+    **Sequence diagram**
+    
     ```mermaid
     sequenceDiagram
         autonumber
+        actor Client
         participant GW as API Gateway
-        participant ID as Identity
-        participant DB as Identity DB
-
-        GW->>ID: POST /auth/logout {refreshToken} + Authorization
-        ID->>ID: Verify access token (JWKS / public key)
-        ID->>DB: Revoke refresh token family của phiên hiện tại
-        ID-->>GW: 204
+        participant S as Identity-Service
+        participant Guard as JWT/access guards
+        participant C as AuthController
+        participant Bus as CQRS CommandBus
+        participant H as Application handler
+        Client->>GW: POST /api/v1/auth/logout
+        GW->>GW: Validate bearer token for protected route
+        GW->>S: Proxy original HTTP request
+        S->>Guard: Validate JWT, account state and route access
+        Guard-->>C: Continue with authenticated context
+        S->>C: Invoke logoutSession
+        C->>Bus: Execute command for logoutSession
+        Bus->>H: Dispatch command handler
+        H-->>Bus: Return use-case result
+        Bus-->>C: Result
+        C-->>S: Return documented response
+        S-->>GW: HTTP status and response body
+        GW-->>Client: Forward HTTP response
     ```
   requestBody:
     required: true

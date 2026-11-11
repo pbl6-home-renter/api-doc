@@ -2,15 +2,40 @@ get:
   tags:
     - Operation
   x-apidog-folder: Media
-  x-apidog-status: developing
+  x-apidog-status: released
   operationId: getMediaDownloadUrl
   security:
     - BearerAuth: []
   summary: Get a signed download URL for chat media
   description: |-
-    Returns a short-lived R2 GET URL for a completed `chat_attachment` or `conversation_avatar`. Identity applies the same read authorization as `GET /media/{mediaId}` before signing the URL. Community verifies message visibility for chat attachments and active membership for conversation avatars. Other media purposes return `404 RESOURCE_NOT_FOUND`.
-
     Browser clients must first call this API with a Bearer token, then download the returned URL directly without Authorization. Do not follow the `GET /media/{mediaId}` redirect with XHR: redirecting from the API origin to R2 can send `Origin: null` and fail bucket CORS. The signed URL expires after `MEDIA_DOWNLOAD_URL_TTL_SECONDS` (default 300 seconds); request a new one for a later download. Do not log or persist signed URLs. The API response uses `Cache-Control: private, no-store`.
+    
+    **Sequence diagram**
+    
+    ```mermaid
+    sequenceDiagram
+        autonumber
+        actor Client
+        participant GW as API Gateway
+        participant S as Identity-Service
+        participant Guard as JWT/access guards
+        participant C as MediaController
+        participant Bus as CQRS QueryBus
+        participant H as Application handler
+        Client->>GW: GET /api/v1/media/{mediaId}/download-url
+        GW->>GW: Validate bearer token for protected route
+        GW->>S: Proxy original HTTP request
+        S->>Guard: Validate JWT, account state and route access
+        Guard-->>C: Continue with authenticated context
+        S->>C: Invoke getMediaDownloadUrl
+        C->>Bus: Execute query for getMediaDownloadUrl
+        Bus->>H: Dispatch query handler
+        H-->>Bus: Return use-case result
+        Bus-->>C: Result
+        C-->>S: Return documented response
+        S-->>GW: HTTP status and response body
+        GW-->>Client: Forward HTTP response
+    ```
   parameters:
     - name: mediaId
       in: path

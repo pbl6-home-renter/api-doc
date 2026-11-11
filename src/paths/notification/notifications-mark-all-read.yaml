@@ -2,13 +2,38 @@ post:
   tags:
   - Notification
   x-apidog-folder: Notification
-  x-apidog-status: designing
+  x-apidog-status: released
   operationId: postNotificationsMarkAllRead
   security:
     - BearerAuth: []
   summary: Mark all notifications as read
-  description: 'tenant, landlord, admin. Đánh dấu đã đọc toàn bộ thông báo chưa đọc. Lỗi nghiệp vụ: 401 INVALID
-    TOKEN.'
+  description: |-
+    **Sequence diagram**
+    
+    ```mermaid
+    sequenceDiagram
+        autonumber
+        actor Client
+        participant GW as API Gateway
+        participant S as community-service
+        participant Guard as JWT/access guards
+        participant C as NotificationController
+        participant Bus as CQRS CommandBus
+        participant H as Application handler
+        Client->>GW: POST /api/v1/notifications/mark-all-read
+        GW->>GW: Validate bearer token for protected route
+        GW->>S: Proxy original HTTP request
+        S->>Guard: Validate JWT, account state and route access
+        Guard-->>C: Continue with authenticated context
+        S->>C: Invoke postNotificationsMarkAllRead
+        C->>Bus: Execute command for postNotificationsMarkAllRead
+        Bus->>H: Dispatch command handler
+        H-->>Bus: Return use-case result
+        Bus-->>C: Result
+        C-->>S: Return documented response
+        S-->>GW: HTTP status and response body
+        GW-->>Client: Forward HTTP response
+    ```
   responses:
     '200':
       description: 'Thành công: Đánh dấu đã đọc toàn bộ thông báo chưa đọc.'

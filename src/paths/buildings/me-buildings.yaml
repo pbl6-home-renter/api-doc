@@ -8,28 +8,36 @@ get:
     - BearerAuth: []
   summary: List my buildings
   description: |-
-    landlord. Liệt kê tòa nhà của tôi. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 VALIDATION FAILED.
     Repository chỉ đọc Building có landlordId của người gọi và isDeleted=false.
     Mặc định sort=createdAt, order=desc; pageNo bắt đầu từ 1, pageSize từ 1 đến 100.
     Chỉ hỗ trợ format=json (hoặc bỏ format); xlsx/csv/pdf trả 422 VALIDATION_FAILED.
     Query hoặc filter chứa trường không được hỗ trợ trả 422 UNEXPECTED_FIELD.
-
+    
+    **Sequence diagram**
+    
     ```mermaid
     sequenceDiagram
         autonumber
+        actor Client
         participant GW as API Gateway
-        participant TEN as Tenancy
-        participant DB as Tenancy DB
-
-        GW->>TEN: GET /me/buildings?filter[status]&sort&order&pageNo&pageSize
-        TEN->>TEN: Verify JWT, role landlord và validate query
-        TEN->>DB: SELECT buildings WHERE landlord_id=user.id AND is_deleted=false<br/>+ filter status + sort whitelist + LIMIT/OFFSET
-        DB-->>TEN: Buildings thuộc landlord hiện tại
-        TEN->>DB: COUNT buildings với cùng điều kiện lọc
-        DB-->>TEN: totalItems
-        TEN->>TEN: Map response DTO và tính pagination
-        TEN-->>GW: 200 BUILDINGS_MY_FETCHED {data, pagination}
-        Note over TEN,DB: Query chỉ đọc, không ghi outbox hoặc phát event
+        participant S as Tenancy-Service
+        participant Guard as JWT/access guards
+        participant C as MyBuildingController
+        participant Bus as CQRS QueryBus
+        participant H as Application handler
+        Client->>GW: GET /api/v1/me/buildings
+        GW->>GW: Validate bearer token for protected route
+        GW->>S: Proxy original HTTP request
+        S->>Guard: Validate JWT, account state and route access
+        Guard-->>C: Continue with authenticated context
+        S->>C: Invoke getMeBuildings
+        C->>Bus: Execute query for getMeBuildings
+        Bus->>H: Dispatch query handler
+        H-->>Bus: Return use-case result
+        Bus-->>C: Result
+        C-->>S: Return documented response
+        S-->>GW: HTTP status and response body
+        GW-->>Client: Forward HTTP response
     ```
   parameters:
   - name: filter

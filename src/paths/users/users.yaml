@@ -8,18 +8,31 @@ get:
   - BearerAuth: []
   summary: List users
   description: |-
-    Chỉ admin. Danh sách JSON và phân trang offset. Lọc bằng role, status ở query cấp ngoài; q tìm theo tên/email/điện thoại. Không hỗ trợ filter object hoặc format xuất tệp.
-
+    **Sequence diagram**
+    
     ```mermaid
     sequenceDiagram
         autonumber
+        actor Client
         participant GW as API Gateway
-        participant ID as Identity
-        participant DB as Identity DB
-
-        GW->>ID: GET /users?pageNo&pageSize&sort&role&status&q
-        ID->>DB: Query users chưa bị xóa (filter role/status, q theo name/email/phone, sort, offset)<br/>+ count tổng
-        ID-->>GW: 200 USER_LIST_FETCHED [{id, name, email, phone, role, status}] + pagination
+        participant S as Identity-Service
+        participant Guard as JWT/access guards
+        participant C as UserAdminController
+        participant Bus as CQRS QueryBus
+        participant H as Application handler
+        Client->>GW: GET /api/v1/users
+        GW->>GW: Validate bearer token for protected route
+        GW->>S: Proxy original HTTP request
+        S->>Guard: Validate JWT, account state and route access
+        Guard-->>C: Continue with authenticated context
+        S->>C: Invoke getUsersAdmin
+        C->>Bus: Execute query for getUsersAdmin
+        Bus->>H: Dispatch query handler
+        H-->>Bus: Return use-case result
+        Bus-->>C: Result
+        C-->>S: Return documented response
+        S-->>GW: HTTP status and response body
+        GW-->>Client: Forward HTTP response
     ```
   parameters:
   - name: sort

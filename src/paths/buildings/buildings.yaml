@@ -6,33 +6,34 @@ get:
   operationId: getBuildings
   summary: Search public buildings
   description: |-
-    Public; không cần token. Chỉ trả Building `approved` và chưa xóa, kể cả khi người gọi là landlord/admin.
     `filter[province]` và `filter[ward]` so khớp chính xác; `filter[q]` tìm không phân biệt hoa/thường
     trong name hoặc address. Mỗi filter dài tối đa 100 ký tự. Điều kiện visibility nằm trong SQL trước
     khi đếm và phân trang. Sort chỉ nhận `createdAt` hoặc `name`, mặc định `createdAt desc`.
     Chỉ hỗ trợ `format=json`; xlsx/csv/pdf chưa triển khai. Rate limiting thuộc phạm vi gateway.
     Query không hợp lệ trả `422 VALIDATION_FAILED`; field ngoài contract trả `422 UNEXPECTED_FIELD`
     theo validation chung của service.
-
+    
+    **Sequence diagram**
+    
     ```mermaid
     sequenceDiagram
         autonumber
+        actor Client
         participant GW as API Gateway
-        participant TEN as Tenancy
-        participant DB as Tenancy DB
-
-        GW->>TEN: GET /api/v1/buildings (filter, sort, order, pageNo, pageSize; no token required)
-        TEN->>TEN: Validate query; public access without authentication
-        alt Invalid query
-            TEN-->>GW: 422 VALIDATION_FAILED / UNEXPECTED_FIELD
-        else Valid query
-            TEN->>DB: SELECT buildings WHERE is_deleted = false AND status = approved<br/>AND province/ward filters AND (LOWER(name) LIKE q OR LOWER(address) LIKE q)<br/>ORDER BY whitelisted field; OFFSET / LIMIT
-            DB-->>TEN: Public buildings
-            TEN->>DB: COUNT with the same visibility and filter conditions (when needed by paginator)
-            DB-->>TEN: totalItems
-            TEN->>TEN: Map only id, name, province, ward, address
-            TEN-->>GW: 200 BUILDINGS_FETCHED + pagination
-        end
+        participant S as Tenancy-Service
+        participant C as BuildingController
+        participant Bus as CQRS QueryBus
+        participant H as Application handler
+        Client->>GW: GET /api/v1/buildings
+        GW->>S: Proxy original HTTP request
+        S->>C: Invoke getBuildings
+        C->>Bus: Execute query for getBuildings
+        Bus->>H: Dispatch query handler
+        H-->>Bus: Return use-case result
+        Bus-->>C: Result
+        C-->>S: Return documented response
+        S-->>GW: HTTP status and response body
+        GW-->>Client: Forward HTTP response
     ```
   security: []
   parameters:
@@ -194,50 +195,41 @@ post:
     - BearerAuth: []
   summary: Create building for approval
   description: |-
-    Landlord. Tạo tòa nhà ở trạng thái `pending`; `landlordId` lấy từ JWT đã xác thực.
     Client không gửi `landlordId`, `status`, `district`, `latitude` hoặc `longitude`.
     Backend geocode từ `address` + `ward` + `province` qua TrackAsia trước transaction, không ghi đè địa chỉ.
     Geocode lỗi thì không tạo Building. Building và outbox `building.created` được ghi trong cùng transaction;
     relay publish sau khi commit. Trả `201 BUILDING_CREATED`.
-
+    
     Body chỉ gồm `name`, `province`, `ward`, `address`; trường ngoài contract trả `422 UNEXPECTED_FIELD`.
     Lỗi: `401 UNAUTHORIZED`, `403 FORBIDDEN` / `ACCOUNT_LOCKED`,
     `422 VALIDATION_FAILED` / `UNEXPECTED_FIELD` / `GEOCODING_FAILED`,
     `503 AUTH_UNAVAILABLE` / `GEOCODING_UNAVAILABLE`.
-
+    
+    **Sequence diagram**
+    
     ```mermaid
     sequenceDiagram
         autonumber
+        actor Client
         participant GW as API Gateway
-        participant TEN as Tenancy
-        participant GEO as TrackAsia
-        participant DB as Tenancy DB
-        participant RELAY as Outbox Relay
-        participant MQ as RabbitMQ
-
-        GW->>TEN: POST /api/v1/buildings + Bearer token
-        TEN->>TEN: Verify JWT, landlord role and request
-        TEN->>GEO: Geocode address, ward, province
-        alt Geocoding failed or unavailable
-            GEO-->>TEN: No matching address / provider error
-            TEN-->>GW: 422 GEOCODING_FAILED / 503 GEOCODING_UNAVAILABLE
-        else Coordinates found
-            GEO-->>TEN: Latitude, longitude
-            TEN->>DB: BEGIN
-            TEN->>DB: INSERT buildings (pending, landlord from JWT)
-            TEN->>DB: INSERT outbox_messages (building.created)
-            alt Database operation fails
-                TEN->>DB: ROLLBACK
-                TEN-->>GW: 500 INTERNAL_SERVER_ERROR
-            else Commit succeeds
-                TEN->>DB: COMMIT
-                TEN-->>GW: 201 BUILDING_CREATED
-                RELAY->>DB: Claim committed outbox event
-                RELAY->>MQ: Publish building.created
-                MQ-->>RELAY: Publisher confirm
-                RELAY->>DB: Mark outbox PUBLISHED
-            end
-        end
+        participant S as Tenancy-Service
+        participant Guard as JWT/access guards
+        participant C as BuildingController
+        participant Bus as CQRS CommandBus
+        participant H as Application handler
+        Client->>GW: POST /api/v1/buildings
+        GW->>GW: Validate bearer token for protected route
+        GW->>S: Proxy original HTTP request
+        S->>Guard: Validate JWT, account state and route access
+        Guard-->>C: Continue with authenticated context
+        S->>C: Invoke postBuildings
+        C->>Bus: Execute command for postBuildings
+        Bus->>H: Dispatch command handler
+        H-->>Bus: Return use-case result
+        Bus-->>C: Result
+        C-->>S: Return documented response
+        S-->>GW: HTTP status and response body
+        GW-->>Client: Forward HTTP response
     ```
   requestBody:
     required: true

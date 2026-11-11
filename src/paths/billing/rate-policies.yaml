@@ -2,13 +2,38 @@ get:
   tags:
   - Billing
   x-apidog-folder: RatePolicy
-  x-apidog-status: designing
+  x-apidog-status: released
   operationId: getRatePolicies
   security:
     - BearerAuth: []
   summary: List rate policies
-  description: 'landlord. Liệt kê chính sách đơn giá và phí định kỳ. Lỗi nghiệp vụ: 422 VALIDATION FAILED · 403
-    FORBIDDEN.'
+  description: |-
+    **Sequence diagram**
+    
+    ```mermaid
+    sequenceDiagram
+        autonumber
+        actor Client
+        participant GW as API Gateway
+        participant S as Tenancy-Service
+        participant Guard as JWT/access guards
+        participant C as RatePolicyController
+        participant Bus as CQRS QueryBus
+        participant H as Application handler
+        Client->>GW: GET /api/v1/rate-policies
+        GW->>GW: Validate bearer token for protected route
+        GW->>S: Proxy original HTTP request
+        S->>Guard: Validate JWT, account state and route access
+        Guard-->>C: Continue with authenticated context
+        S->>C: Invoke getRatePolicies
+        C->>Bus: Execute query for getRatePolicies
+        Bus->>H: Dispatch query handler
+        H-->>Bus: Return use-case result
+        Bus-->>C: Result
+        C-->>S: Return documented response
+        S-->>GW: HTTP status and response body
+        GW-->>Client: Forward HTTP response
+    ```
   parameters:
   - name: filter
     in: query
@@ -162,12 +187,38 @@ post:
   tags:
   - Billing
   x-apidog-folder: RatePolicy
-  x-apidog-status: designing
+  x-apidog-status: released
   operationId: postRatePolicies
   security:
     - BearerAuth: []
   summary: Create rate policy
-  description: 'landlord. Tạo một bộ đơn giá cho building hoặc room. Một scope chỉ có một bộ; nếu đã tồn tại, cập nhật bằng PATCH. Lỗi: 409 ACTIVE_POLICY_EXISTS · 422 INVALID_RATE_KIND/TIER_CONFIG_INVALID/VALIDATION_FAILED · 403 FORBIDDEN.'
+  description: |-
+    **Sequence diagram**
+    
+    ```mermaid
+    sequenceDiagram
+        autonumber
+        actor Client
+        participant GW as API Gateway
+        participant S as Tenancy-Service
+        participant Guard as JWT/access guards
+        participant C as RatePolicyController
+        participant Bus as CQRS CommandBus
+        participant H as Application handler
+        Client->>GW: POST /api/v1/rate-policies
+        GW->>GW: Validate bearer token for protected route
+        GW->>S: Proxy original HTTP request
+        S->>Guard: Validate JWT, account state and route access
+        Guard-->>C: Continue with authenticated context
+        S->>C: Invoke postRatePolicies
+        C->>Bus: Execute command for postRatePolicies
+        Bus->>H: Dispatch command handler
+        H-->>Bus: Return use-case result
+        Bus-->>C: Result
+        C-->>S: Return documented response
+        S-->>GW: HTTP status and response body
+        GW-->>Client: Forward HTTP response
+    ```
   requestBody:
     required: true
     content:

@@ -2,21 +2,19 @@ get:
   tags:
   - Chat
   x-apidog-folder: Conversation
-  x-apidog-status: designing
+  x-apidog-status: released
   operationId: getConversations
   security:
     - BearerAuth: []
   summary: List conversations
-  description: |
-    Liệt kê các hội thoại mà user hiện tại là thành viên `active` hoặc `read_only`. Mọi bộ lọc, `totalItems` và phân trang đều chạy trên DB trước khi cắt trang. Kết quả sắp xếp theo thời điểm tin nhắn gần nhất giảm dần (hội thoại chưa có tin dùng thời điểm tạo), tie-break `id` giảm dần. `lastMessage.senderName` lấy từ snapshot trên message, `displayName` lấy từ snapshot trên membership; không gọi Identity khi đọc danh sách.
-
+  description: |-
     **Hiển thị mặc định (áp dụng cho mọi chế độ, kể cả lookup):**
     - Direct chưa có message nào mà người xem được đọc thì **không** xuất hiện với cả hai người (kể cả khi `POST /conversations` đã tạo/khôi phục nhưng gửi tin đầu lỗi).
     - Group vừa tạo chưa có message vẫn xuất hiện.
     - Không truyền bộ lọc nào: trả cả chat tự do lẫn chat có context.
-
+    
     **Bộ lọc** (kết hợp bằng AND):
-
+    
     | Tham số | Ý nghĩa |
     |---|---|
     | `kind` | `direct` hoặc `group`. |
@@ -24,25 +22,38 @@ get:
     | `contextType` + `contextId` | Tra cứu hội thoại context đã được tạo bởi event nguồn; phải đi cùng nhau. |
     | `q` | 1–100 ký tự sau khi trim; khớp một phần, không phân biệt hoa/thường và dấu tiếng Việt. Group: so với `title` đã lưu. Direct: so với `displayName` snapshot của **người còn lại** trên `ConversationMember`. Không tìm theo tên của chính người xem hay nội dung message. |
     | `kind=direct&otherUserId=<uuid>` | Lookup chỉ đọc: trả 0 hoặc 1 direct giữa caller và `otherUserId` đã có message mà caller được đọc. Không tạo conversation, không khôi phục/kích hoạt lại membership. Nếu chưa có history thì `data=[]`; khi gửi tin đầu, client gọi `POST /conversations` để resolve lại ID. |
-
+    
     **Kết hợp không hợp lệ → 422 `VALIDATION_FAILED`:** `otherUserId` thiếu `kind=direct`; `otherUserId` đi cùng `q`, `hasContext`, `contextType` hoặc `contextId`; `otherUserId` bằng chính caller; chỉ có một trong `contextType`/`contextId`; `hasContext=false` đi cùng `contextType`/`contextId`; `q` rỗng sau khi trim hoặc dài hơn 100 ký tự. Tham số lạ → 422 `UNEXPECTED_FIELD`. `hasContext` chỉ nhận `true`/`false`; `otherUserId`/`contextId` phải là UUID.
-
+    
     Mọi sequence/cursor trong response đều là chuỗi thập phân. `lastMessage.payload` trả payload có discriminator khi message là system để client dựng preview đã bản địa hóa; các message khác trả `null`.
-
+    
     Tìm không dấu dùng hàm `translate()` sẵn có của PostgreSQL, không cần extension; phần tìm tên không dùng index.
-
+    
+    **Sequence diagram**
+    
     ```mermaid
     sequenceDiagram
-        participant C as Client
-        participant COM as Community
-        participant DB as Community DB
-        C->>COM: GET /conversations?kind&hasContext&q&otherUserId&contextType&contextId&pageNo&pageSize
-        COM->>COM: Verify JWT and validate query combination
-        COM->>DB: Page conversations joined to caller membership,<br/>hide empty direct, apply filters + count
-        DB-->>COM: Conversations, viewer displayName and pagination count
-        COM->>DB: Load latest readable message and unread count per conversation (one query)
-        DB-->>COM: Message snapshot and unread projections
-        COM-->>C: 200 CONVERSATIONS_FETCHED
+        autonumber
+        actor Client
+        participant GW as API Gateway
+        participant S as community-service
+        participant Guard as JWT/access guards
+        participant C as ConversationController
+        participant Bus as CQRS QueryBus
+        participant H as Application handler
+        Client->>GW: GET /api/v1/conversations
+        GW->>GW: Validate bearer token for protected route
+        GW->>S: Proxy original HTTP request
+        S->>Guard: Validate JWT, account state and route access
+        Guard-->>C: Continue with authenticated context
+        S->>C: Invoke getConversations
+        C->>Bus: Execute query for getConversations
+        Bus->>H: Dispatch query handler
+        H-->>Bus: Return use-case result
+        Bus-->>C: Result
+        C-->>S: Return documented response
+        S-->>GW: HTTP status and response body
+        GW-->>Client: Forward HTTP response
     ```
   parameters:
   - name: contextType
@@ -204,36 +215,45 @@ get:
 
 post:
   tags: [Chat]
+  x-apidog-status: released
   operationId: createConversation
   security: [{ BearerAuth: [] }]
   summary: Tạo chat trực tiếp hoặc nhóm
-  description: |
-    Chat trực tiếp dùng lại hội thoại duy nhất của cặp user; chat nhóm tạo mới và caller trở thành admin. Tạo group chưa gắn ảnh đại diện; sau khi tạo, client upload ảnh theo conversationId rồi cập nhật qua PATCH /conversations/{conversationId}.
-
+  description: |-
     **Direct:** vẫn tạo/khôi phục conversation và membership cho cả hai người ngay, nhưng direct chưa có message không xuất hiện trong `GET /conversations` (xem mô tả GET). Web Chat v1 chỉ gọi khi gửi tin đầu tiên, rồi gọi `POST /messages`.
-
+    
     **Group tự do:**
     - `memberUserIds` bắt buộc, phải có **ít nhất 2 user khác caller** (nhóm tối thiểu 3 người kể cả caller). UUID trùng (không phân biệt hoa/thường) và chính caller không được tính. Thiếu → 422 `GROUP_MEMBERS_INSUFFICIENT`.
     - Mọi user phải tồn tại và chưa bị xóa theo Identity; nếu không → 422 `VALIDATION_FAILED`. Identity lỗi → 503, không tạo gì.
     - Caller là `admin`, thành viên khác là `member`.
     - `title` tùy chọn. Bỏ trống, `null` hoặc chỉ khoảng trắng → server lưu **tên mặc định**: `displayName` snapshot của caller rồi các thành viên theo thứ tự trong `memberUserIds` (đã bỏ trùng/caller), nối bằng `", "`. Tên trùng vẫn giữ nguyên từng người. Nếu dài hơn 255 ký tự thì cắt còn 254 ký tự, bỏ dấu phẩy/khoảng trắng cuối và thêm `…`. Tên được lưu một lần khi tạo, không tính lại khi thêm/xóa thành viên hay đổi tên hồ sơ.
     - Group xuất hiện ngay trong `GET /conversations` của mọi thành viên dù chưa có tin.
-
+    
+    **Sequence diagram**
+    
     ```mermaid
     sequenceDiagram
-        participant C as Client
-        participant COM as Community
-        participant ID as Identity
-        participant DB as Community DB
-        C->>COM: POST /conversations
-        COM->>COM: Verify JWT and validate request
-        opt Có recipient/memberUserIds
-            COM->>ID: GET /internal/users?ids=... (X-Service-Token)
-            ID-->>COM: Users with id and isDeleted
-        end
-        COM->>DB: Transaction: create/reopen conversation and save members
-        DB-->>COM: Conversation and membership records
-        COM-->>C: 201 CONVERSATION_CREATED or CONVERSATION_REOPENED
+        autonumber
+        actor Client
+        participant GW as API Gateway
+        participant S as community-service
+        participant Guard as JWT/access guards
+        participant C as ConversationController
+        participant Bus as CQRS CommandBus
+        participant H as Application handler
+        Client->>GW: POST /api/v1/conversations
+        GW->>GW: Validate bearer token for protected route
+        GW->>S: Proxy original HTTP request
+        S->>Guard: Validate JWT, account state and route access
+        Guard-->>C: Continue with authenticated context
+        S->>C: Invoke createConversation
+        C->>Bus: Execute command for createConversation
+        Bus->>H: Dispatch command handler
+        H-->>Bus: Return use-case result
+        Bus-->>C: Result
+        C-->>S: Return documented response
+        S-->>GW: HTTP status and response body
+        GW-->>Client: Forward HTTP response
     ```
   requestBody:
     required: true

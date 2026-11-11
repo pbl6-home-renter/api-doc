@@ -8,23 +8,34 @@ get:
   operationId: listConversationMembers
   security: [{ BearerAuth: [] }]
   x-apidog-folder: ConversationMember
-  x-apidog-status: designing
+  x-apidog-status: released
   summary: Xem thành viên hội thoại
-  description: |
-    Thành viên active hoặc read_only được xem danh sách member của conversation nếu còn quyền đọc. Member đã rời chỉ đọc được tới leftSequence khi lấy lịch sử message; response này trả membership hiện có để hiển thị trạng thái thành viên.
-
+  description: |-
+    **Sequence diagram**
+    
     ```mermaid
     sequenceDiagram
-        participant C as Client
-        participant COM as Community
-        participant DB as Community DB
-        C->>COM: GET /conversations/{conversationId}/members
-        COM->>COM: Verify JWT and conversationId
-        COM->>DB: Check conversation and caller membership
-        DB-->>COM: Conversation and active/read_only access
-        COM->>DB: Load non-deleted members ordered by joinedAt
-        DB-->>COM: Member snapshots
-        COM-->>C: 200 CONVERSATION_MEMBERS_FETCHED
+        autonumber
+        actor Client
+        participant GW as API Gateway
+        participant S as community-service
+        participant Guard as JWT/access guards
+        participant C as ConversationController
+        participant Bus as CQRS QueryBus
+        participant H as Application handler
+        Client->>GW: GET /api/v1/conversations/{conversationId}/members
+        GW->>GW: Validate bearer token for protected route
+        GW->>S: Proxy original HTTP request
+        S->>Guard: Validate JWT, account state and route access
+        Guard-->>C: Continue with authenticated context
+        S->>C: Invoke listConversationMembers
+        C->>Bus: Execute query for listConversationMembers
+        Bus->>H: Dispatch query handler
+        H-->>Bus: Return use-case result
+        Bus-->>C: Result
+        C-->>S: Return documented response
+        S-->>GW: HTTP status and response body
+        GW-->>Client: Forward HTTP response
     ```
   responses:
     '200':
@@ -55,25 +66,34 @@ post:
   operationId: addConversationMembers
   security: [{ BearerAuth: [] }]
   x-apidog-folder: ConversationMember
-  x-apidog-status: designing
+  x-apidog-status: released
   summary: Thêm thành viên nhóm
-  description: |
-    Chỉ admin group được thêm member. Membership read_only được kích hoạt lại; member mới hoặc được kích hoạt lại xem toàn bộ lịch sử. Toàn bộ userIds phải hợp lệ và chưa active; nếu một user không hợp lệ hoặc đã active thì không thay đổi member nào. Thao tác ghi system message action=members_added trong cùng transaction. `payload` gồm `action`, `actorUserId`, snapshot `actorDisplayName` và `members` (mỗi phần tử có `userId`, `displayName`).
-
+  description: |-
+    **Sequence diagram**
+    
     ```mermaid
     sequenceDiagram
-        participant C as Client
-        participant COM as Community
-        participant ID as Identity
-        participant DB as Community DB
-        C->>COM: POST /conversations/{conversationId}/members
-        COM->>DB: Verify group and caller admin
-        COM->>ID: Batch lookup names for userIds
-        ID-->>COM: User IDs and display names
-        COM->>DB: Begin transaction and lock conversation
-        COM->>DB: Add/reactivate members and save members_added system message
-        DB-->>COM: Commit member records and message atomically
-        COM-->>C: 200 CONVERSATION_MEMBERS_ADDED with members
+        autonumber
+        actor Client
+        participant GW as API Gateway
+        participant S as community-service
+        participant Guard as JWT/access guards
+        participant C as ConversationController
+        participant Bus as CQRS CommandBus
+        participant H as Application handler
+        Client->>GW: POST /api/v1/conversations/{conversationId}/members
+        GW->>GW: Validate bearer token for protected route
+        GW->>S: Proxy original HTTP request
+        S->>Guard: Validate JWT, account state and route access
+        Guard-->>C: Continue with authenticated context
+        S->>C: Invoke addConversationMembers
+        C->>Bus: Execute command for addConversationMembers
+        Bus->>H: Dispatch command handler
+        H-->>Bus: Return use-case result
+        Bus-->>C: Result
+        C-->>S: Return documented response
+        S-->>GW: HTTP status and response body
+        GW-->>Client: Forward HTTP response
     ```
   requestBody:
     required: true

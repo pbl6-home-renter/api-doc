@@ -47,6 +47,12 @@ properties:
       - locked
     example: "active"
 
+  avatarUrl:
+    type: string
+    format: uri
+    nullable: true
+    description: URL công khai của avatar đã upload; null nếu user chưa có avatar.
+
   payoutAccount:
     type: object
     nullable: true
@@ -86,4 +92,5 @@ required:
   - phone
   - role
   - status
+  - avatarUrl
   - payoutAccount

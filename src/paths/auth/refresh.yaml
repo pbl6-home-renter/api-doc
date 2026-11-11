@@ -2,42 +2,39 @@ post:
   tags:
   - Auth
   x-apidog-folder: Auth
-  x-apidog-status: designing
+  x-apidog-status: released
   operationId: refreshSession
   security: []
   summary: Refresh token
   description: |-
-    Public, xác thực bằng refresh token trong body. Xoay vòng refresh token và cấp access token mới; token cũ bị vô hiệu ngay khi dùng.
-
     **Lưu ý**
-
+    
     - Refresh token rotation: dùng lại token đã revoke thì revoke cả family (`401 TOKEN_REUSED`).
     - `status` đọc lại từ DB khi ký token mới, nên trạng thái khóa/mở khóa được cập nhật sau lần refresh.
     - Refresh token gửi trong body JSON cho cả web và mobile (không dùng cookie).
     - Refresh token mới giữ nguyên thời hạn phiên ban đầu (7 ngày nếu `rememberMe`, 1 ngày nếu không).
-
+    
+    **Sequence diagram**
+    
     ```mermaid
     sequenceDiagram
         autonumber
+        actor Client
         participant GW as API Gateway
-        participant ID as Identity
-        participant DB as Identity DB
-
-        GW->>ID: POST /auth/refresh {refreshToken}
-        ID->>DB: Tìm refresh_tokens theo tokenHash
-        alt Không tồn tại / hết hạn
-            ID-->>GW: 401 INVALID_REFRESH_TOKEN
-        else Token đã bị revoke (dùng lại token cũ)
-            ID->>DB: Revoke toàn bộ token cùng family
-            ID-->>GW: 401 TOKEN_REUSED
-        end
-        ID->>DB: Tìm user chưa bị xóa của token
-        alt User đã bị xóa
-            ID-->>GW: 401 INVALID_REFRESH_TOKEN
-        end
-        ID->>DB: [Transaction] Revoke token cũ + insert token mới (cùng family)
-        ID->>ID: Ký access token RS256 mới {sub, role, status} (status đọc lại từ DB)
-        ID-->>GW: 200 {accessToken, refreshToken}
+        participant S as Identity-Service
+        participant C as AuthController
+        participant Bus as CQRS CommandBus
+        participant H as Application handler
+        Client->>GW: POST /api/v1/auth/refresh
+        GW->>S: Proxy original HTTP request
+        S->>C: Invoke refreshSession
+        C->>Bus: Execute command for refreshSession
+        Bus->>H: Dispatch command handler
+        H-->>Bus: Return use-case result
+        Bus-->>C: Result
+        C-->>S: Return documented response
+        S-->>GW: HTTP status and response body
+        GW-->>Client: Forward HTTP response
     ```
   requestBody:
     required: true

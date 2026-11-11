@@ -8,15 +8,40 @@ post:
     - BearerAuth: []
   summary: Complete media upload
   description: |-
-    tenant, landlord, admin. Bước 3/3 của luồng upload: gọi sau khi PUT file lên `uploadUrl` thành công. Không có body.
-
     - Chỉ người đã presign mới được complete. Với `chat_attachment`, Community xác nhận caller vẫn là active member của conversation.
     - Server `HEAD` object trên storage; kích thước và `Content-Type` thật phải khớp đúng `size`/`contentType` lúc presign, nếu lệch thì object bị xóa và trả `422 MEDIA_TYPE_NOT_ALLOWED` (phải presign lại).
     - Idempotent: gọi lại trên Media đã complete trả lại cùng kết quả `200`.
     - Với `avatar`/`cover_photo` (1 file/owner), file cũ cùng owner + purpose bị xóa mềm khi file mới complete.
     - `url`: purpose public trả URL tuyệt đối trên R2; purpose private trả `/api/v1/media/{mediaId}`.
-
+    
     Lỗi nghiệp vụ: 403 FORBIDDEN (không phải người upload) · 404 RESOURCE_NOT_FOUND · 409 UPLOAD_NOT_COMPLETED (chưa thấy file trên storage) · 410 TICKET_EXPIRED · 410 MEDIA_DELETED · 422 MEDIA_TYPE_NOT_ALLOWED.
+    
+    **Sequence diagram**
+    
+    ```mermaid
+    sequenceDiagram
+        autonumber
+        actor Client
+        participant GW as API Gateway
+        participant S as Identity-Service
+        participant Guard as JWT/access guards
+        participant C as MediaController
+        participant Bus as CQRS CommandBus
+        participant H as Application handler
+        Client->>GW: POST /api/v1/media/{mediaId}/complete-upload
+        GW->>GW: Validate bearer token for protected route
+        GW->>S: Proxy original HTTP request
+        S->>Guard: Validate JWT, account state and route access
+        Guard-->>C: Continue with authenticated context
+        S->>C: Invoke postMediaMediaidCompleteUpload
+        C->>Bus: Execute command for postMediaMediaidCompleteUpload
+        Bus->>H: Dispatch command handler
+        H-->>Bus: Return use-case result
+        Bus-->>C: Result
+        C-->>S: Return documented response
+        S-->>GW: HTTP status and response body
+        GW-->>Client: Forward HTTP response
+    ```
   parameters:
   - name: mediaId
     in: path

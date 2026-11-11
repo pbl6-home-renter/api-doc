@@ -2,32 +2,44 @@ get:
   tags:
   - User
   x-apidog-folder: User
-  x-apidog-status: designing
+  x-apidog-status: released
   operationId: getUsersDirectory
   security:
   - BearerAuth: []
   summary: Search user directory
   description: |-
-    Landlord/Tenant đang hoạt động tìm Landlord/Tenant khác theo tên để mở chat 1:1 hoặc tạo nhóm (Web Chat v1). Endpoint tách khỏi `GET /users` nên không nới quyền danh sách quản trị của Admin.
-
     - Người gọi: chỉ `landlord`, `tenant` có `status=active`. Admin nhận 403 `FORBIDDEN`; tài khoản bị khóa nhận 403 `ACCOUNT_LOCKED`.
     - Kết quả: chỉ user `landlord`/`tenant`, `status=active`, chưa bị xóa; luôn loại chính người gọi.
     - `q` tùy chọn; bỏ trống hoặc chỉ có khoảng trắng thì trả danh sách phân trang. Khi có từ khóa, server trim rồi khớp một phần tên không phân biệt chữ hoa/thường và dấu tiếng Việt. Ký tự %, _ và backslash trong q được hiểu theo nghĩa đen.
     - Lọc, đếm `totalItems` và phân trang đều chạy trên DB trước khi cắt trang. Sắp xếp cố định theo `name` tăng dần rồi `id` tăng dần.
     - Mỗi phần tử chỉ có `id`, `name`; không trả email, phone, role, status hoặc avatar. Hai người trùng tên được trả thành hai phần tử khác `id`.
     - Không cần PostgreSQL extension: Identity chuẩn hóa dấu bằng hàm `translate()` sẵn có trên cả cột `name` và `q`. Truy vấn quét theo điều kiện role/status/is_deleted, không dùng index cho phần tìm tên.
-
+    
+    **Sequence diagram**
+    
     ```mermaid
     sequenceDiagram
         autonumber
+        actor Client
         participant GW as API Gateway
-        participant ID as Identity
-        participant DB as Identity DB
-
-        GW->>ID: GET /users/directory?pageNo&pageSize[&q]
-        ID->>ID: Verify JWT, role landlord/tenant, account active
-        ID->>DB: Users active landlord/tenant, not deleted, id != caller,<br/>optional name filter, ORDER BY name, id + count
-        ID-->>GW: 200 USER_DIRECTORY_FETCHED [{id, name}] + pagination
+        participant S as Identity-Service
+        participant Guard as JWT/access guards
+        participant C as UserDirectoryController
+        participant Bus as CQRS QueryBus
+        participant H as Application handler
+        Client->>GW: GET /api/v1/users/directory
+        GW->>GW: Validate bearer token for protected route
+        GW->>S: Proxy original HTTP request
+        S->>Guard: Validate JWT, account state and route access
+        Guard-->>C: Continue with authenticated context
+        S->>C: Invoke getUsersDirectory
+        C->>Bus: Execute query for getUsersDirectory
+        Bus->>H: Dispatch query handler
+        H-->>Bus: Return use-case result
+        Bus-->>C: Result
+        C-->>S: Return documented response
+        S-->>GW: HTTP status and response body
+        GW-->>Client: Forward HTTP response
     ```
   parameters:
   - name: q

@@ -2,13 +2,12 @@ get:
   tags:
   - Contract
   x-apidog-folder: Contract
-  x-apidog-status: designing
+  x-apidog-status: released
   operationId: getContractsContractid
   security:
     - BearerAuth: []
   summary: Get contract details
   description: |-
-    Landlord hoặc tenant, yêu cầu JWT hợp lệ và tài khoản không bị khóa.
     Landlord chỉ xem hợp đồng có landlordId = user.id.
     Tenant xem được khi tenantId = user.id hoặc là member chưa rời của hợp đồng:
     member có tenant_id = user.id, is_deleted = false và left_at IS NULL hoặc left_at > hôm nay (UTC).
@@ -18,33 +17,32 @@ get:
     contractId không phải UUID trả 400 BAD_REQUEST theo ParseUUIDPipe.
     Response phản ánh entity hiện tại, gồm vehicleCount và description; chưa trả signedContractMediaId.
     Service chưa có rate limiter.
-
+    
+    **Sequence diagram**
+    
     ```mermaid
     sequenceDiagram
         autonumber
+        actor Client
         participant GW as API Gateway
-        participant TEN as Tenancy
-        participant DB as Tenancy DB
-
-        GW->>TEN: GET /api/v1/contracts/{contractId} + Bearer token
-        TEN->>TEN: Verify JWT, landlord/tenant role, active account and UUID
-        TEN->>DB: SELECT contract WHERE id = contractId AND is_deleted = false
-        DB-->>TEN: Contract or null
-        alt Missing or deleted contract
-            TEN-->>GW: 404 RESOURCE_NOT_FOUND
-        else Contract exists
-            TEN->>TEN: Match landlordId for landlord or tenantId for tenant
-            opt Tenant is not the named tenant
-                TEN->>DB: EXISTS member WHERE contract_id and tenant_id match, not deleted, left_at IS NULL or after today (UTC)
-                DB-->>TEN: Membership access
-            end
-            alt Caller is not the owner, named tenant or member who has not left
-                TEN-->>GW: 403 FORBIDDEN
-            else Authorized caller
-                TEN->>TEN: Map ContractDetailResponseDto
-                TEN-->>GW: 200 CONTRACT_FETCHED
-            end
-        end
+        participant S as Tenancy-Service
+        participant Guard as JWT/access guards
+        participant C as ContractController
+        participant Bus as CQRS QueryBus
+        participant H as Application handler
+        Client->>GW: GET /api/v1/contracts/{contractId}
+        GW->>GW: Validate bearer token for protected route
+        GW->>S: Proxy original HTTP request
+        S->>Guard: Validate JWT, account state and route access
+        Guard-->>C: Continue with authenticated context
+        S->>C: Invoke getContractsContractid
+        C->>Bus: Execute query for getContractsContractid
+        Bus->>H: Dispatch query handler
+        H-->>Bus: Return use-case result
+        Bus-->>C: Result
+        C-->>S: Return documented response
+        S-->>GW: HTTP status and response body
+        GW-->>Client: Forward HTTP response
     ```
   parameters:
   - name: contractId
@@ -108,13 +106,12 @@ patch:
   tags:
   - Contract
   x-apidog-folder: Contract
-  x-apidog-status: designing
+  x-apidog-status: released
   operationId: patchContractsContractid
   security:
     - BearerAuth: []
   summary: Update draft or active contract
   description: |-
-    Landlord. Update a contract owned by user.id from the verified JWT.
     Draft contracts retain the existing description-only update flow; description is required and vehicleCount is rejected.
     Active contracts accept vehicleCount and/or description. An empty update is invalid.
     vehicleCount must be null or an integer between 0 and 2147483647. Omitted fields keep their existing value.
@@ -126,40 +123,32 @@ patch:
     Field ngoài DTO trả 422 UNEXPECTED_FIELD; giá trị không hợp lệ trả 422 VALIDATION_FAILED.
     Contract và outbox contract.updated được lưu trong cùng transaction; relay publish sau commit.
     Service chưa có rate limiter.
-
+    
+    **Sequence diagram**
+    
     ```mermaid
     sequenceDiagram
         autonumber
+        actor Client
         participant GW as API Gateway
-        participant TEN as Tenancy
-        participant DB as Tenancy DB
-        participant RELAY as Outbox Relay
-        participant MQ as RabbitMQ
-
-        GW->>TEN: PATCH /api/v1/contracts/{contractId} + Bearer token
-        TEN->>TEN: Verify JWT, landlord role, active account, UUID and body
-        TEN->>DB: BEGIN
-        TEN->>DB: SELECT contract WHERE id = contractId AND is_deleted = false FOR UPDATE
-        DB-->>TEN: Contract or null
-        TEN->>TEN: Check existence, ownership, draft/active state and allowed updates
-        alt Missing contract, wrong owner, unsupported state or invalid update
-            TEN->>DB: ROLLBACK
-            TEN-->>GW: 404 / 403 / 409 / 422 with matching error code
-        else Valid update
-            TEN->>DB: UPDATE supplied description / active vehicle_count and updated_at
-            TEN->>DB: INSERT outbox_messages (contract.updated)
-            alt Storage operation fails
-                TEN->>DB: ROLLBACK
-                TEN-->>GW: Error response; neither change is committed
-            else Commit succeeds
-                TEN->>DB: COMMIT
-                TEN-->>GW: 200 CONTRACT_UPDATED
-                RELAY->>DB: Claim committed outbox event
-                RELAY->>MQ: Publish contract.updated
-                MQ-->>RELAY: Publisher confirm
-                RELAY->>DB: Mark outbox PUBLISHED
-            end
-        end
+        participant S as Tenancy-Service
+        participant Guard as JWT/access guards
+        participant C as ContractController
+        participant Bus as CQRS CommandBus
+        participant H as Application handler
+        Client->>GW: PATCH /api/v1/contracts/{contractId}
+        GW->>GW: Validate bearer token for protected route
+        GW->>S: Proxy original HTTP request
+        S->>Guard: Validate JWT, account state and route access
+        Guard-->>C: Continue with authenticated context
+        S->>C: Invoke patchContractsContractid
+        C->>Bus: Execute command for patchContractsContractid
+        Bus->>H: Dispatch command handler
+        H-->>Bus: Return use-case result
+        Bus-->>C: Result
+        C-->>S: Return documented response
+        S-->>GW: HTTP status and response body
+        GW-->>Client: Forward HTTP response
     ```
   parameters:
   - name: contractId

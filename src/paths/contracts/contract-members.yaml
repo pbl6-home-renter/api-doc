@@ -8,35 +8,42 @@ post:
     - BearerAuth: []
   summary: Add contract member
   description: |-
-    Landlord only. The contract must exist, belong to the JWT user, and be active.
     Only contractId, tenantId?, tenantName, tenantPhone?, joinedAt are accepted; unknown fields return
     422 VALIDATION_FAILED. tenantId is linked explicitly, with no Identity lookup or phone auto-linking.
     Without tenantId, tenantName and tenantPhone are required (422 TENANT_IDENTITY_INVALID).
     joinedAt is an inclusive date in [startDate, endDate] (422 VALIDATION_FAILED).
-
+    
     After locking the contract, reject an active member matching tenantId or tenantPhone
     (ignore null fields) with 409 MEMBER_ALREADY_EXISTS. Active means leftAt is null or after today
     in UTC, including scheduled future departures. Non-active contract: 409 CONTRACT_NOT_ACTIVE.
     Save the member and contract_member.added outbox event in one transaction. Return 201
     CONTRACT_MEMBER_ADDED and Location: /api/v1/contract-members/{contractMemberId}.
-
+    
+    **Sequence diagram**
+    
     ```mermaid
     sequenceDiagram
+        autonumber
+        actor Client
         participant GW as API Gateway
-        participant TEN as Tenancy
-        participant DB as Tenancy DB
-        GW->>TEN: POST /contract-members
-        TEN->>TEN: Verify JWT, landlord role, active account and request
-        TEN->>DB: BEGIN; lock contract FOR UPDATE (before locking member)
-        TEN->>TEN: Require owner, active contract, valid dates/identity; check active duplicates
-        alt Missing record / forbidden / business validation failure
-            TEN->>DB: ROLLBACK
-            TEN-->>GW: 404 / 403 / 409 / 422
-        else Valid operation
-            TEN->>DB: INSERT contract_members; INSERT contract_member.added into outbox
-            TEN->>DB: COMMIT
-            TEN-->>GW: 201 CONTRACT_MEMBER_ADDED + Location
-        end
+        participant S as Tenancy-Service
+        participant Guard as JWT/access guards
+        participant C as ContractMemberController
+        participant Bus as CQRS CommandBus
+        participant H as Application handler
+        Client->>GW: POST /api/v1/contract-members
+        GW->>GW: Validate bearer token for protected route
+        GW->>S: Proxy original HTTP request
+        S->>Guard: Validate JWT, account state and route access
+        Guard-->>C: Continue with authenticated context
+        S->>C: Invoke postContractMembers
+        C->>Bus: Execute command for postContractMembers
+        Bus->>H: Dispatch command handler
+        H-->>Bus: Return use-case result
+        Bus-->>C: Result
+        C-->>S: Return documented response
+        S-->>GW: HTTP status and response body
+        GW-->>Client: Forward HTTP response
     ```
   requestBody:
     required: true
@@ -170,32 +177,40 @@ get:
     - BearerAuth: []
   summary: List contract members
   description: |-
-    Landlord owning the contract, or tenant who is the contract representative or an active member.
     Missing filter[contractId] returns 422 CONTRACT_ID_REQUIRED; unknown/deleted contract returns
     404 RESOURCE_NOT_FOUND; other users receive 403 FORBIDDEN. An active member has leftAt null
     or after today in UTC. Past and current-day departures do not grant access.
-
+    
     Only format=json is supported (other formats: 422 VALIDATION_FAILED). Offset pagination,
     default pageNo=1, pageSize=20 (maximum 100), sort=joinedAt, order=asc, id ascending tie breaker.
     Items include id, contractId, tenantId, tenantName, tenantPhone, joinedAt, leftAt and derived
     status (active | left). No representative flag, identity card fields or temporary-absence status.
-
+    
+    **Sequence diagram**
+    
     ```mermaid
     sequenceDiagram
+        autonumber
+        actor Client
         participant GW as API Gateway
-        participant TEN as Tenancy
-        participant DB as Tenancy DB
-        GW->>TEN: GET /contract-members?filter[contractId]=UUID
-        TEN->>TEN: Verify JWT, landlord/tenant role, active account and query
-        TEN->>DB: Read non-deleted contract
-        TEN->>DB: If tenant is not representative, read active contract members
-        TEN->>TEN: Require owner or representative or active member
-        alt Missing filter / unknown contract / unauthorized
-            TEN-->>GW: 422 CONTRACT_ID_REQUIRED / 404 RESOURCE_NOT_FOUND / 403 FORBIDDEN
-        else Authorized
-            TEN->>DB: Count and page non-deleted members ORDER BY joined_at, id
-            TEN-->>GW: 200 CONTRACT_MEMBERS_FETCHED + offset pagination
-        end
+        participant S as Tenancy-Service
+        participant Guard as JWT/access guards
+        participant C as ContractMemberController
+        participant Bus as CQRS QueryBus
+        participant H as Application handler
+        Client->>GW: GET /api/v1/contract-members
+        GW->>GW: Validate bearer token for protected route
+        GW->>S: Proxy original HTTP request
+        S->>Guard: Validate JWT, account state and route access
+        Guard-->>C: Continue with authenticated context
+        S->>C: Invoke getContractMembers
+        C->>Bus: Execute query for getContractMembers
+        Bus->>H: Dispatch query handler
+        H-->>Bus: Return use-case result
+        Bus-->>C: Result
+        C-->>S: Return documented response
+        S-->>GW: HTTP status and response body
+        GW-->>Client: Forward HTTP response
     ```
   parameters:
   - name: filter

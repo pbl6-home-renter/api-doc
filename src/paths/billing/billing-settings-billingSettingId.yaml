@@ -2,12 +2,38 @@ patch:
   tags:
   - Billing
   x-apidog-folder: BillingSetting
-  x-apidog-status: designing
+  x-apidog-status: released
   operationId: patchBillingSettingsBillingsettingid
   security:
     - BearerAuth: []
   summary: Update billing setting
-  description: 'landlord. Cập nhật hoặc bật lại setting đã có theo billingSettingId; không gửi lại scope, buildingId hay roomId. Hai ngày được chọn độc lập trong khoảng 1–28; không sinh overdue. Lỗi: 403 FORBIDDEN · 422 VALIDATION_FAILED.'
+  description: |-
+    **Sequence diagram**
+    
+    ```mermaid
+    sequenceDiagram
+        autonumber
+        actor Client
+        participant GW as API Gateway
+        participant S as Tenancy-Service
+        participant Guard as JWT/access guards
+        participant C as BillingSettingController
+        participant Bus as CQRS CommandBus
+        participant H as Application handler
+        Client->>GW: PATCH /api/v1/billing-settings/{billingSettingId}
+        GW->>GW: Validate bearer token for protected route
+        GW->>S: Proxy original HTTP request
+        S->>Guard: Validate JWT, account state and route access
+        Guard-->>C: Continue with authenticated context
+        S->>C: Invoke patchBillingSettingsBillingsettingid
+        C->>Bus: Execute command for patchBillingSettingsBillingsettingid
+        Bus->>H: Dispatch command handler
+        H-->>Bus: Return use-case result
+        Bus-->>C: Result
+        C-->>S: Return documented response
+        S-->>GW: HTTP status and response body
+        GW-->>Client: Forward HTTP response
+    ```
   parameters:
   - name: billingSettingId
     in: path

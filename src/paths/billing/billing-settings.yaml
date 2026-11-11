@@ -2,12 +2,38 @@ get:
   tags:
   - Billing
   x-apidog-folder: BillingSetting
-  x-apidog-status: designing
+  x-apidog-status: released
   operationId: getBillingSettings
   security:
     - BearerAuth: []
   summary: List billing settings
-  description: 'landlord. Liệt kê cài đặt thanh toán và nhắc hóa đơn của chủ trọ; setting cấp phòng trả cả roomId và buildingId của phòng. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 VALIDATION FAILED.'
+  description: |-
+    **Sequence diagram**
+    
+    ```mermaid
+    sequenceDiagram
+        autonumber
+        actor Client
+        participant GW as API Gateway
+        participant S as Tenancy-Service
+        participant Guard as JWT/access guards
+        participant C as BillingSettingController
+        participant Bus as CQRS QueryBus
+        participant H as Application handler
+        Client->>GW: GET /api/v1/billing-settings
+        GW->>GW: Validate bearer token for protected route
+        GW->>S: Proxy original HTTP request
+        S->>Guard: Validate JWT, account state and route access
+        Guard-->>C: Continue with authenticated context
+        S->>C: Invoke getBillingSettings
+        C->>Bus: Execute query for getBillingSettings
+        Bus->>H: Dispatch query handler
+        H-->>Bus: Return use-case result
+        Bus-->>C: Result
+        C-->>S: Return documented response
+        S-->>GW: HTTP status and response body
+        GW-->>Client: Forward HTTP response
+    ```
   parameters:
   - name: filter
     in: query
@@ -140,12 +166,38 @@ post:
   tags:
   - Billing
   x-apidog-folder: BillingSetting
-  x-apidog-status: designing
+  x-apidog-status: released
   operationId: postBillingSettings
   security:
     - BearerAuth: []
   summary: Create billing setting
-  description: 'landlord. Tạo cấu hình ngày thu dự kiến và ngày nhắc độc lập trong khoảng 1–28; không sinh overdue. Cấp phòng chỉ gửi roomId, server lấy buildingId từ Room. Mỗi tòa/phòng chỉ có một setting chưa xóa mềm, kể cả khi tắt; dùng PATCH để sửa hoặc bật lại. Lỗi: 409 ACTIVE_SETTING_EXISTS · 422 VALIDATION_FAILED · 403 FORBIDDEN.'
+  description: |-
+    **Sequence diagram**
+    
+    ```mermaid
+    sequenceDiagram
+        autonumber
+        actor Client
+        participant GW as API Gateway
+        participant S as Tenancy-Service
+        participant Guard as JWT/access guards
+        participant C as BillingSettingController
+        participant Bus as CQRS CommandBus
+        participant H as Application handler
+        Client->>GW: POST /api/v1/billing-settings
+        GW->>GW: Validate bearer token for protected route
+        GW->>S: Proxy original HTTP request
+        S->>Guard: Validate JWT, account state and route access
+        Guard-->>C: Continue with authenticated context
+        S->>C: Invoke postBillingSettings
+        C->>Bus: Execute command for postBillingSettings
+        Bus->>H: Dispatch command handler
+        H-->>Bus: Return use-case result
+        Bus-->>C: Result
+        C-->>S: Return documented response
+        S-->>GW: HTTP status and response body
+        GW-->>Client: Forward HTTP response
+    ```
   requestBody:
     required: true
     content:

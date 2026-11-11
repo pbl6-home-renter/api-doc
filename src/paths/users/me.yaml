@@ -6,23 +6,36 @@ get:
   operationId: getCurrentUser
   summary: Get current user
   description: |-
-    Lấy hồ sơ người dùng hiện tại. Yêu cầu Bearer access token.
-
     **Lưu ý**
-
+    
     - `payoutAccount.accountNumber` luôn bị che (`**xxxxx`).
-
+    - `avatarUrl` là URL công khai của media có `ownerType = user`, `ownerId = id` hiện tại và `purpose = avatar`; trả `null` nếu chưa upload avatar.
+    
+    **Sequence diagram**
+    
     ```mermaid
     sequenceDiagram
         autonumber
+        actor Client
         participant GW as API Gateway
-        participant ID as Identity
-        participant DB as Identity DB
-
-        GW->>ID: GET /me + Authorization
-        ID->>DB: Đọc users + landlord_profiles theo userId
-        ID->>ID: Che accountNumber thành "**xxxxx"
-        ID-->>GW: 200 CURRENT_USER_PROFILE_FETCHED {id, name, email, phone, role, status, payoutAccount}
+        participant S as Identity-Service
+        participant Guard as JWT/access guards
+        participant C as UserController
+        participant Bus as CQRS QueryBus
+        participant H as Application handler
+        Client->>GW: GET /api/v1/me
+        GW->>GW: Validate bearer token for protected route
+        GW->>S: Proxy original HTTP request
+        S->>Guard: Validate JWT, account state and route access
+        Guard-->>C: Continue with authenticated context
+        S->>C: Invoke getCurrentUser
+        C->>Bus: Execute query for getCurrentUser
+        Bus->>H: Dispatch query handler
+        H-->>Bus: Return use-case result
+        Bus-->>C: Result
+        C-->>S: Return documented response
+        S-->>GW: HTTP status and response body
+        GW-->>Client: Forward HTTP response
     ```
   security:
   - BearerAuth: []
@@ -59,6 +72,7 @@ get:
               phone: '0901234567'
               role: tenant
               status: active
+              avatarUrl: null
               payoutAccount: null
     '400':
       description: Yêu cầu không hợp lệ.
@@ -177,44 +191,37 @@ patch:
   - BearerAuth: []
   summary: Update current user
   description: |-
-    Cập nhật hồ sơ hiện tại. Bắt buộc name, phone, payoutAccount (có thể null). Chỉ landlord được gửi object payoutAccount. Số tài khoản trả về được mask; phone đổi từ +84 sang 0.
-
     **Lưu ý**
-
+    
     - Ngữ nghĩa thay toàn bộ: bắt buộc gửi `name`, `phone`, `payoutAccount`; gửi `payoutAccount: null` để xóa.
     - Chỉ landlord được có `payoutAccount`.
     - `landlord.payout_account_updated` chỉ mang `userId` (không gửi số tài khoản).
-
+    
+    **Sequence diagram**
+    
     ```mermaid
     sequenceDiagram
         autonumber
+        actor Client
         participant GW as API Gateway
-        participant ID as Identity
-        participant DB as Identity DB
-        participant MQ as RabbitMQ
-        participant TEN as Tenancy
-        participant COM as Community
-        participant PAY as Payment
-
-        GW->>ID: PATCH /me {name, phone, payoutAccount} + Authorization
-        alt payoutAccount khác null nhưng role không phải landlord
-            ID-->>GW: 422 USER_UPDATE_PAYOUT_NOT_ALLOWED
-        end
-        ID->>DB: Kiểm tra phone trùng với user khác
-        alt Trùng phone
-            ID-->>GW: 409 DUPLICATE_PHONE
-        end
-        ID->>DB: [Transaction] Update users (name, phone)<br/>+ upsert landlord_profiles (bankCode, accountNumber, accountName)<br/>+ outbox user.updated (nếu name/phone đổi)<br/>+ outbox landlord.payout_account_updated (nếu payoutAccount đổi)
-        ID-->>GW: 200 CURRENT_USER_PROFILE_UPDATED {id, name, phone, payoutAccount}
-        opt name/phone đổi
-            ID-)MQ: user.updated {userId, name, phone}
-            MQ-)TEN: Cập nhật user snapshot
-            MQ-)COM: Cập nhật user snapshot
-        end
-        opt payoutAccount đổi
-            ID-)MQ: landlord.payout_account_updated {userId}
-            MQ-)PAY: Xóa cache payout của landlord
-        end
+        participant S as Identity-Service
+        participant Guard as JWT/access guards
+        participant C as UserController
+        participant Bus as CQRS CommandBus
+        participant H as Application handler
+        Client->>GW: PATCH /api/v1/me
+        GW->>GW: Validate bearer token for protected route
+        GW->>S: Proxy original HTTP request
+        S->>Guard: Validate JWT, account state and route access
+        Guard-->>C: Continue with authenticated context
+        S->>C: Invoke updateCurrentUser
+        C->>Bus: Execute command for updateCurrentUser
+        Bus->>H: Dispatch command handler
+        H-->>Bus: Return use-case result
+        Bus-->>C: Result
+        C-->>S: Return documented response
+        S-->>GW: HTTP status and response body
+        GW-->>Client: Forward HTTP response
     ```
   requestBody:
     required: true

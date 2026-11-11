@@ -6,31 +6,33 @@ post:
   operationId: loginAccount
   summary: Login
   description: |-
-    Public. Đăng nhập bằng email hoặc số điện thoại. Trả accessToken, refreshToken và user trong JSON; không đặt cookie. rememberMe=true: refresh token 7 ngày; false: 1 ngày.
-
     **Lưu ý**
-
+    
     - User bị khóa **vẫn đăng nhập được**; access token mang claim `status` để Tenancy/Community chặn chức năng.
     - User đã xóa mềm được coi như không tồn tại, trả `401`.
     - Đang cân nhắc: refresh token hiện trả trong JSON, `api-conventions.md` §4 muốn dùng HttpOnly cookie.
-
+    
+    **Sequence diagram**
+    
     ```mermaid
     sequenceDiagram
         autonumber
+        actor Client
         participant GW as API Gateway
-        participant ID as Identity
-        participant DB as Identity DB
-
-        GW->>ID: POST /auth/login {identifier, password, rememberMe}
-        ID->>DB: Tìm user chưa bị xóa theo email hoặc phone
-        ID->>ID: bcrypt compare password
-        alt Không tìm thấy hoặc sai mật khẩu
-            ID-->>GW: 401 AUTH_LOGIN_INVALID_CREDENTIALS
-        end
-        Note over ID: status=locked vẫn được cấp token
-        ID->>DB: Insert refresh_tokens (tokenHash, expiresAt 7 ngày nếu rememberMe, ngược lại 1 ngày)
-        ID->>ID: Ký access token RS256 {sub, role, status} (15 phút)
-        ID-->>GW: 200 SESSION_STARTED {accessToken, refreshToken, user}
+        participant S as Identity-Service
+        participant C as AuthController
+        participant Bus as CQRS CommandBus
+        participant H as Application handler
+        Client->>GW: POST /api/v1/auth/login
+        GW->>S: Proxy original HTTP request
+        S->>C: Invoke loginAccount
+        C->>Bus: Execute command for loginAccount
+        Bus->>H: Dispatch command handler
+        H-->>Bus: Return use-case result
+        Bus-->>C: Result
+        C-->>S: Return documented response
+        S-->>GW: HTTP status and response body
+        GW-->>Client: Forward HTTP response
     ```
   security: []
   requestBody:

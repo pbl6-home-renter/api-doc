@@ -2,14 +2,38 @@ post:
   tags:
   - Chat
   x-apidog-folder: Message
-  x-apidog-status: designing
+  x-apidog-status: released
   operationId: postMessagesMarkRead
   security:
     - BearerAuth: []
   summary: Mark messages as read
-  description: 'tenant, landlord. Đánh dấu đã đọc một hội thoại. `lastReadSequence` là chuỗi bigint thập phân. `unreadCount` trả về và trong Socket `conversation:read-updated`
-    dùng chung quy tắc unread với `GET /conversations/unread-summary`: chỉ đếm `text`/`image`/`bot` của người khác, không đếm `system`,
-    read-only chỉ tới `leftSequence`. Lỗi nghiệp vụ: 403 FORBIDDEN · 404 MESSAGE NOT FOUND · 422 READ CURSOR INVALID · điều kiện migration cho con trỏ.'
+  description: |-
+    **Sequence diagram**
+    
+    ```mermaid
+    sequenceDiagram
+        autonumber
+        actor Client
+        participant GW as API Gateway
+        participant S as community-service
+        participant Guard as JWT/access guards
+        participant C as MessageController
+        participant Bus as CQRS CommandBus
+        participant H as Application handler
+        Client->>GW: POST /api/v1/messages/mark-read
+        GW->>GW: Validate bearer token for protected route
+        GW->>S: Proxy original HTTP request
+        S->>Guard: Validate JWT, account state and route access
+        Guard-->>C: Continue with authenticated context
+        S->>C: Invoke postMessagesMarkRead
+        C->>Bus: Execute command for postMessagesMarkRead
+        Bus->>H: Dispatch command handler
+        H-->>Bus: Return use-case result
+        Bus-->>C: Result
+        C-->>S: Return documented response
+        S-->>GW: HTTP status and response body
+        GW-->>Client: Forward HTTP response
+    ```
   requestBody:
     required: true
     content:

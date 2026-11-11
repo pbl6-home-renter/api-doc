@@ -2,12 +2,38 @@ delete:
   tags:
   - Notification
   x-apidog-folder: PushDevice
-  x-apidog-status: designing
+  x-apidog-status: released
   operationId: deleteMePushDevicesDeviceid
   security:
     - BearerAuth: []
   summary: Unregister push device
-  description: 'tenant, landlord, admin. Gỡ device token. Lỗi nghiệp vụ: 404 NOT FOUND.'
+  description: |-
+    **Sequence diagram**
+    
+    ```mermaid
+    sequenceDiagram
+        autonumber
+        actor Client
+        participant GW as API Gateway
+        participant S as community-service
+        participant Guard as JWT/access guards
+        participant C as PushDeviceController
+        participant Bus as CQRS CommandBus
+        participant H as Application handler
+        Client->>GW: DELETE /api/v1/me/push-devices/{deviceId}
+        GW->>GW: Validate bearer token for protected route
+        GW->>S: Proxy original HTTP request
+        S->>Guard: Validate JWT, account state and route access
+        Guard-->>C: Continue with authenticated context
+        S->>C: Invoke deleteMePushDevicesDeviceid
+        C->>Bus: Execute command for deleteMePushDevicesDeviceid
+        Bus->>H: Dispatch command handler
+        H-->>Bus: Return use-case result
+        Bus-->>C: Result
+        C-->>S: Return documented response
+        S-->>GW: HTTP status and response body
+        GW-->>Client: Forward HTTP response
+    ```
   parameters:
   - name: deviceId
     in: path

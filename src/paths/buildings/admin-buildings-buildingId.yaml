@@ -8,33 +8,34 @@ get:
     - BearerAuth: []
   summary: Get building details for approval
   description: |-
-    admin. Xem chi tiết Building chưa bị xóa ở mọi trạng thái, kèm thông tin chủ nhà từ Identity.
     Không tồn tại hoặc đã bị xóa trả 404 RESOURCE_NOT_FOUND. Nếu Identity unavailable, name/phone là chuỗi rỗng, email và cccdNumber là null.
     Tạm thời ownershipDocuments=[], occupancyRate="0%", submittedAt=createdAt; CCCD chưa có trong internal lookup.
-
+    
+    **Sequence diagram**
+    
     ```mermaid
     sequenceDiagram
         autonumber
+        actor Client
         participant GW as API Gateway
-        participant TEN as Tenancy
-        participant DB as Tenancy DB
-        participant ID as Identity
-
-        GW->>TEN: GET /admin/buildings/{buildingId}
-        TEN->>TEN: Verify JWT, role admin và validate UUID
-        TEN->>DB: SELECT building WHERE id=buildingId AND is_deleted=false
-        alt Không tìm thấy
-            TEN-->>GW: 404 RESOURCE_NOT_FOUND
-        else Tìm thấy
-            DB-->>TEN: Building
-            TEN->>ID: GET /internal/users?ids=landlordId (X-Service-Token)
-            alt Identity trả lời
-                ID-->>TEN: data [{id, name, phone, email, ...}]
-            else Identity unavailable
-                TEN->>TEN: Log warn, dùng thông tin liên hệ rỗng
-            end
-            TEN-->>GW: 200 BUILDING_ADMIN_FETCHED {building, landlord, ownershipDocuments}
-        end
+        participant S as Tenancy-Service
+        participant Guard as JWT/access guards
+        participant C as AdminBuildingController
+        participant Bus as CQRS QueryBus
+        participant H as Application handler
+        Client->>GW: GET /api/v1/admin/buildings/{buildingId}
+        GW->>GW: Validate bearer token for protected route
+        GW->>S: Proxy original HTTP request
+        S->>Guard: Validate JWT, account state and route access
+        Guard-->>C: Continue with authenticated context
+        S->>C: Invoke getAdminBuildingsBuildingid
+        C->>Bus: Execute query for getAdminBuildingsBuildingid
+        Bus->>H: Dispatch query handler
+        H-->>Bus: Return use-case result
+        Bus-->>C: Result
+        C-->>S: Return documented response
+        S-->>GW: HTTP status and response body
+        GW-->>Client: Forward HTTP response
     ```
   parameters:
   - name: buildingId

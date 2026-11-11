@@ -2,12 +2,38 @@ get:
   tags:
   - Notification
   x-apidog-folder: NotificationPreference
-  x-apidog-status: designing
+  x-apidog-status: released
   operationId: getMeNotificationPreference
   security:
     - BearerAuth: []
   summary: Get notification preferences
-  description: 'tenant, landlord, admin. Đọc tuỳ biến thông báo. Lỗi nghiệp vụ: 401 INVALID TOKEN.'
+  description: |-
+    **Sequence diagram**
+    
+    ```mermaid
+    sequenceDiagram
+        autonumber
+        actor Client
+        participant GW as API Gateway
+        participant S as community-service
+        participant Guard as JWT/access guards
+        participant C as NotificationPreferenceController
+        participant Bus as CQRS QueryBus
+        participant H as Application handler
+        Client->>GW: GET /api/v1/me/notification-preference
+        GW->>GW: Validate bearer token for protected route
+        GW->>S: Proxy original HTTP request
+        S->>Guard: Validate JWT, account state and route access
+        Guard-->>C: Continue with authenticated context
+        S->>C: Invoke getMeNotificationPreference
+        C->>Bus: Execute query for getMeNotificationPreference
+        Bus->>H: Dispatch query handler
+        H-->>Bus: Return use-case result
+        Bus-->>C: Result
+        C-->>S: Return documented response
+        S-->>GW: HTTP status and response body
+        GW-->>Client: Forward HTTP response
+    ```
   responses:
     '200':
       description: 'Thành công: Đọc tuỳ biến thông báo.'
@@ -57,13 +83,38 @@ put:
   tags:
   - Notification
   x-apidog-folder: NotificationPreference
-  x-apidog-status: designing
+  x-apidog-status: released
   operationId: putMeNotificationPreference
   security:
     - BearerAuth: []
   summary: Update notification preferences
-  description: 'tenant, landlord, admin. Thay toàn bộ tuỳ biến thông báo. Lỗi nghiệp vụ: 422 INVALID NOTIFICATION
-    TYPE · 422 VALIDATION FAILED.'
+  description: |-
+    **Sequence diagram**
+    
+    ```mermaid
+    sequenceDiagram
+        autonumber
+        actor Client
+        participant GW as API Gateway
+        participant S as community-service
+        participant Guard as JWT/access guards
+        participant C as NotificationPreferenceController
+        participant Bus as CQRS CommandBus
+        participant H as Application handler
+        Client->>GW: PUT /api/v1/me/notification-preference
+        GW->>GW: Validate bearer token for protected route
+        GW->>S: Proxy original HTTP request
+        S->>Guard: Validate JWT, account state and route access
+        Guard-->>C: Continue with authenticated context
+        S->>C: Invoke putMeNotificationPreference
+        C->>Bus: Execute command for putMeNotificationPreference
+        Bus->>H: Dispatch command handler
+        H-->>Bus: Return use-case result
+        Bus-->>C: Result
+        C-->>S: Return documented response
+        S-->>GW: HTTP status and response body
+        GW-->>Client: Forward HTTP response
+    ```
   requestBody:
     required: true
     content:

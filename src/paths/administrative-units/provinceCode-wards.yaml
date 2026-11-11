@@ -2,10 +2,39 @@ get:
   tags:
     - Administrative Units
   x-apidog-folder: Administrative Units
-  x-apidog-status: designing
+  x-apidog-status: released
   operationId: getAdministrativeWards
   summary: List wards by province
-  description: Public local reference map. Province code accepts one or two digits and is normalized to a two-digit code.
+  description: |-
+    **Sequence diagram**
+    
+    ```mermaid
+    sequenceDiagram
+        autonumber
+        actor Client
+        participant GW as API Gateway
+        participant S as Tenancy-Service
+        participant C as AdministrativeUnitController
+        participant App as AdministrativeUnitService
+        participant Catalog as Local catalog
+        Client->>GW: GET /api/v1/administrative-units/provinces/{provinceCode}/wards
+        GW->>S: Proxy original HTTP request
+        S->>C: Invoke getAdministrativeWards
+        C->>App: listWardsByProvince(provinceCode)
+        App->>App: Normalize and validate province code
+        App->>Catalog: hasProvince(code)
+        alt Province exists
+            App->>Catalog: listWardsByProvince(code)
+            Catalog-->>App: Ward records
+            App-->>C: Ward records
+        else Invalid code or unknown province
+            App-->>C: INVALID_PROVINCE_CODE or PROVINCE_NOT_FOUND
+        end
+        C->>C: Map to response DTO
+        C-->>S: Return documented response
+        S-->>GW: HTTP status and response body
+        GW-->>Client: Forward HTTP response
+    ```
   security: []
   parameters:
     - name: provinceCode
