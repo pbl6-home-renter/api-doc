@@ -1,17 +1,28 @@
 type: object
-x-apidog-folder: "Invoice/Request"
 title: InvoiceUpdateRequestDto
-description: Dữ liệu cập nhật hóa đơn đang pending
 additionalProperties: false
 properties:
   otherFees:
     type: array
-    description: Thông tin other fees của tài nguyên trong ngữ cảnh DTO.
-    nullable: true
+    maxItems: 20
     items:
       type: object
+      title: InvoiceFeeInput
+      additionalProperties: false
       properties:
-        name: { type: string , description: "Thông tin name của tài nguyên trong ngữ cảnh DTO." }
-        amount: { type: integer , description: "Thông tin amount của tài nguyên trong ngữ cảnh DTO." }
-      required: [name, amount]
-  note: { type: string, nullable: true , description: "Thông tin note của tài nguyên trong ngữ cảnh DTO." }
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+        amount:
+          type: string
+          pattern: ^-?(0|[1-9]\d*)(\.\d{1,2})?$
+      required:
+      - name
+      - amount
+  note:
+    type: string
+    nullable: true
+    maxLength: 500
+description: 'At least one field is required. Omitted fields remain unchanged; [] clears fees; null clears note. otherFees: null and {} are invalid.'
+minProperties: 1

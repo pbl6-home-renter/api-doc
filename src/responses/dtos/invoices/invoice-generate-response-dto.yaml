@@ -1,0 +1,63 @@
+type: object
+title: InvoiceGenerateResponseDto
+additionalProperties: false
+properties:
+  buildingId: &id001
+    type: string
+    format: uuid
+  period:
+    type: string
+    pattern: ^\d{4}-(0[1-9]|1[0-2])$
+  generated:
+    type: array
+    items: &id002
+      type: object
+      title: InvoiceGeneratedItem
+      additionalProperties: false
+      properties:
+        invoiceId: *id001
+        code:
+          type: string
+        contractId: *id001
+        roomId: *id001
+        totalAmount:
+          type: string
+          pattern: ^(0|[1-9]\d*)(\.\d{1,4})?$
+      required:
+      - invoiceId
+      - code
+      - contractId
+      - roomId
+      - totalAmount
+  recalculated:
+    type: array
+    items: *id002
+  blocked:
+    type: array
+    items:
+      type: object
+      title: InvoiceBlockedItem
+      additionalProperties: false
+      properties:
+        roomId: *id001
+        contractId: *id001
+        reasonCode:
+          type: string
+          enum:
+          - READING_MISSING
+          - RATE_MISSING
+          - TIER_CONFIG_INVALID
+          - AREA_MISSING
+          - HEADCOUNT_ZERO
+          - VEHICLE_COUNT_MISSING
+          - TOTAL_NEGATIVE
+      required:
+      - roomId
+      - contractId
+      - reasonCode
+required:
+- buildingId
+- period
+- generated
+- recalculated
+- blocked

@@ -1,0 +1,135 @@
+get:
+  tags:
+  - Billing
+  x-apidog-folder: Invoice
+  x-apidog-status: developing
+  operationId: getMeInvoices
+  security:
+  - BearerAuth: []
+  summary: List my issued invoices
+  description: "Tenant-only paginated list of issued invoices. An accessible contract has contracts.tenant_id = current user or a linked, non-deleted contract member with left_at absent or later than today. A foreign contractId filter returns an empty list. The Tenancy endpoint is merged; gateway ownership/routing is tracked separately.\n\nSequence diagram\n\n```mermaid\nsequenceDiagram\n    actor User\n    participant API as Tenancy-Service\n    User->>API: GET /me/invoices\n    API->>API: Resolve current tenant from JWT\n    API->>API: Apply shared my-contracts predicate and issued-only filter\n    API-->>User: 200 INVOICES_MY_FETCHED\n```"
+  parameters:
+  - name: filter
+    in: query
+    style: deepObject
+    explode: true
+    schema:
+      type: object
+      additionalProperties: false
+      properties:
+        period:
+          type: string
+          pattern: ^\d{4}-(0[1-9]|1[0-2])$
+        contractId:
+          type: string
+          format: uuid
+  - name: pageNo
+    in: query
+    schema:
+      type: integer
+      minimum: 1
+      default: 1
+  - name: pageSize
+    in: query
+    schema:
+      type: integer
+      minimum: 1
+      maximum: 100
+      default: 20
+  - name: sort
+    in: query
+    schema:
+      type: string
+      enum:
+      - period
+  - name: order
+    in: query
+    schema:
+      type: string
+      enum:
+      - asc
+      - desc
+  responses:
+    '200':
+      description: INVOICES_MY_FETCHED
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required:
+            - statusCode
+            - code
+            - data
+            - pagination
+            properties:
+              statusCode:
+                type: integer
+                enum:
+                - 200
+              code:
+                type: string
+                enum:
+                - INVOICES_MY_FETCHED
+              data:
+                type: array
+                items:
+                  $ref: ../../openapi.yaml#/components/schemas/InvoiceMyListResponseDto
+              pagination:
+                type: object
+                additionalProperties: false
+                properties:
+                  type:
+                    type: string
+                    enum:
+                    - offset
+                  pageNo:
+                    type: integer
+                  pageSize:
+                    type: integer
+                  totalItems:
+                    type: integer
+                  totalPages:
+                    type: integer
+                  hasNextPage:
+                    type: boolean
+                  hasPreviousPage:
+                    type: boolean
+                required:
+                - type
+                - pageNo
+                - pageSize
+                - totalItems
+                - totalPages
+                - hasNextPage
+                - hasPreviousPage
+    '422':
+      description: VALIDATION_FAILED
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+            - statusCode
+            - code
+            properties:
+              statusCode:
+                type: integer
+                enum:
+                - 422
+              code:
+                type: string
+                enum:
+                - VALIDATION_FAILED
+    '400':
+      $ref: ../../openapi.yaml#/components/responses/BadRequestBodyError
+    '401':
+      $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
+    '403':
+      $ref: ../../openapi.yaml#/components/responses/ForbiddenError
+    '429':
+      $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
+    '500':
+      $ref: ../../openapi.yaml#/components/responses/InternalServerError
+    '503':
+      $ref: ../../openapi.yaml#/components/responses/AuthUnavailableError

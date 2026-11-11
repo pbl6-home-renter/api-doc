@@ -1,8 +1,10 @@
 type: object
-x-apidog-folder: "Invoice/Request"
 title: InvoiceCancelRequestDto
-description: Lý do hủy hóa đơn
 additionalProperties: false
 properties:
-  reason: { type: string , description: "Thông tin reason của tài nguyên trong ngữ cảnh DTO." }
-required: [reason]
+  reason:
+    type: string
+    minLength: 1
+    maxLength: 500
+required:
+- reason

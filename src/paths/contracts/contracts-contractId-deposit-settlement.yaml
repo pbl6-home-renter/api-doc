@@ -2,12 +2,13 @@ post:
   tags:
   - Contract
   x-apidog-folder: Contract
-  x-apidog-status: designing
+  x-apidog-status: deprecated
+  deprecated: true
   operationId: postContractDepositSettlement
   security:
     - BearerAuth: []
   summary: Create deposit settlement for checkout
-  description: "landlord. Quyết toán tiền cọc, cấn trừ các khoản nợ / hư hại tài sản và xác nhận số tiền hoàn trả cho người thuê khi kết thúc hợp đồng. Lỗi nghiệp vụ: 404 CONTRACT NOT FOUND · 403 FORBIDDEN · 422 SETTLEMENT INVALID."
+  description: "Deferred beyond the Phase 6 MVP by P6-D61 because deposit settlement depends on Payment. This operation is not implemented."
   parameters:
   - name: contractId
     in: path

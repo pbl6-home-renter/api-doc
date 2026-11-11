@@ -1,0 +1,94 @@
+patch:
+  tags:
+  - Billing
+  x-apidog-folder: MeterReading
+  x-apidog-status: developing
+  operationId: patchMeterReadingEvidence
+  security:
+  - BearerAuth: []
+  summary: Attach uploaded image evidence
+  description: Landlord attaches one or more uploaded images to an existing reading.
+  parameters:
+  - name: readingId
+    in: path
+    required: true
+    schema:
+      type: string
+      format: uuid
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: ../../openapi.yaml#/components/schemas/MeterReadingEvidenceAttachRequestDto
+  responses:
+    '200':
+      description: METER_READING_UPDATED
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required:
+            - statusCode
+            - code
+            - data
+            properties:
+              statusCode:
+                type: integer
+                enum:
+                - 200
+              code:
+                type: string
+                enum:
+                - METER_READING_UPDATED
+              data:
+                $ref: ../../openapi.yaml#/components/schemas/MeterReadingCreateResponseDto
+    '404':
+      description: METER_READING_NOT_FOUND
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+            - statusCode
+            - code
+            properties:
+              statusCode:
+                type: integer
+                enum:
+                - 404
+              code:
+                type: string
+                enum:
+                - METER_READING_NOT_FOUND
+    '422':
+      description: VALIDATION_FAILED
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+            - statusCode
+            - code
+            properties:
+              statusCode:
+                type: integer
+                enum:
+                - 422
+              code:
+                type: string
+                enum:
+                - VALIDATION_FAILED
+    '400':
+      $ref: ../../openapi.yaml#/components/responses/BadRequestBodyError
+    '401':
+      $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
+    '403':
+      $ref: ../../openapi.yaml#/components/responses/ForbiddenError
+    '429':
+      $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
+    '500':
+      $ref: ../../openapi.yaml#/components/responses/InternalServerError
+    '503':
+      $ref: ../../openapi.yaml#/components/responses/AuthUnavailableError

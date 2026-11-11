@@ -5,11 +5,13 @@ get:
   x-apidog-status: released
   operationId: getMeterReadings
   security:
-    - BearerAuth: []
+  - BearerAuth: []
   summary: List meter readings
-  description: |-
+  description: |
+    Landlord-only manual meter readings. Images are optional evidence. The first-period non-baseline reading uses the baseline in the same period. No OCR fields are accepted.
+
     **Sequence diagram**
-    
+
     ```mermaid
     sequenceDiagram
         autonumber
@@ -28,6 +30,7 @@ get:
         S->>C: Invoke getMeterReadings
         C->>Bus: Execute query for getMeterReadings
         Bus->>H: Dispatch query handler
+        H->>H: Filter landlord readings by room, type and period
         H-->>Bus: Return use-case result
         Bus-->>C: Result
         C-->>S: Return documented response
@@ -129,14 +132,19 @@ get:
             statusCode: 200
             code: METER_READINGS_FETCHED
             data:
-            - id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+            - &id001
+              id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
               roomId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+              buildingId: 9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d
               type: electricity
               period: 2026-09
               previousReading: '1200'
-              currentReading: '1380'
-              readingDate: '2026-09-30'
+              currentReading: '1260'
+              consumption: '60'
               isBaseline: false
+              evidenceMediaIds: []
+              evidenceMediaUrls: []
+              createdAt: '2026-09-30T20:15:00Z'
             pagination:
               type: offset
               pageNo: 1
@@ -154,7 +162,25 @@ get:
     '403':
       $ref: ../../openapi.yaml#/components/responses/ForbiddenError
     '422':
-      $ref: ../../openapi.yaml#/components/responses/ValidationError
+      description: BASELINE_REQUIRED, CURRENT_READING_INVALID, VALIDATION_FAILED
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+            - statusCode
+            - code
+            properties:
+              statusCode:
+                type: integer
+                enum:
+                - 422
+              code:
+                type: string
+                enum:
+                - BASELINE_REQUIRED
+                - CURRENT_READING_INVALID
+                - VALIDATION_FAILED
     '429':
       $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
     '500':
@@ -166,11 +192,13 @@ post:
   x-apidog-status: released
   operationId: postMeterReadings
   security:
-    - BearerAuth: []
+  - BearerAuth: []
   summary: Create meter reading
-  description: |-
+  description: |
+    Landlord-only manual meter readings. Images are optional evidence. The first-period non-baseline reading uses the baseline in the same period. No OCR fields are accepted.
+
     **Sequence diagram**
-    
+
     ```mermaid
     sequenceDiagram
         autonumber
@@ -189,6 +217,8 @@ post:
         S->>C: Invoke postMeterReadings
         C->>Bus: Execute command for postMeterReadings
         Bus->>H: Dispatch command handler
+        H->>H: Validate manual value and same-period baseline
+        H->>H: Persist reading; image evidence may be attached later
         H-->>Bus: Return use-case result
         Bus-->>C: Result
         C-->>S: Return documented response
@@ -205,10 +235,8 @@ post:
           roomId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
           type: electricity
           period: 2026-09
-          currentReading: '12850.5'
-          readingDate: '2026-09-30'
+          currentReading: '1260'
           isBaseline: false
-          evidenceMediaId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
   responses:
     '201':
       description: 'Thành công: Tạo một chỉ số đã xác nhận.'
@@ -235,12 +263,7 @@ post:
           example:
             statusCode: 201
             code: METER_READING_CREATED
-            data:
-              id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
-              roomId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
-              type: electricity
-              period: 2026-09
-              currentReading: '12850.5'
+            data: *id001
       headers:
         Location:
           description: Đường dẫn tài nguyên được tạo.
@@ -256,69 +279,44 @@ post:
     '403':
       $ref: ../../openapi.yaml#/components/responses/ForbiddenError
     '409':
-      x-apidog-name: Conflict
-      description: Yêu cầu xung đột với trạng thái hiện tại hoặc dữ liệu đã tồn tại.
+      description: DUPLICATE_METER_READING, PERIOD_ALREADY_INVOICED
       content:
         application/json:
           schema:
             type: object
-            additionalProperties: false
-            required: [statusCode, code]
+            required:
+            - statusCode
+            - code
             properties:
               statusCode:
                 type: integer
-                enum: [409]
+                enum:
+                - 409
               code:
                 type: string
                 enum:
-                  - DUPLICATE_METER_READING
-                description: |-
-                  - DUPLICATE_METER_READING: Chỉ số cho phòng, loại đồng hồ và kỳ này đã tồn tại.
-          examples:
-            duplicate_meter_reading:
-              summary: DUPLICATE_METER_READING — Chỉ số cho phòng, loại đồng hồ và kỳ này đã tồn tại.
-              value:
-                statusCode: 409
-                code: DUPLICATE_METER_READING
+                - DUPLICATE_METER_READING
+                - PERIOD_ALREADY_INVOICED
     '422':
-      x-apidog-name: Unprocessable Entity
-      description: Dữ liệu hợp lệ về cấu trúc nhưng vi phạm ràng buộc trường hoặc quy tắc nghiệp vụ.
+      description: BASELINE_REQUIRED, CURRENT_READING_INVALID, VALIDATION_FAILED
       content:
         application/json:
           schema:
             type: object
-            additionalProperties: false
-            required: [statusCode, code]
+            required:
+            - statusCode
+            - code
             properties:
               statusCode:
                 type: integer
-                enum: [422]
+                enum:
+                - 422
               code:
                 type: string
                 enum:
-                  - CURRENT_READING_INVALID
-                  - EVIDENCE_REQUIRED
-                  - VALIDATION_FAILED
-                description: |-
-                  - CURRENT_READING_INVALID: Chỉ số đồng hồ hiện tại không hợp lệ.
-                  - EVIDENCE_REQUIRED: Thiếu bằng chứng bắt buộc.
-                  - VALIDATION_FAILED: Dữ liệu vi phạm ràng buộc schema hoặc quy tắc nghiệp vụ khác chưa có mã riêng.
-          examples:
-            current_reading_invalid:
-              summary: CURRENT_READING_INVALID — Chỉ số đồng hồ hiện tại không hợp lệ.
-              value:
-                statusCode: 422
-                code: CURRENT_READING_INVALID
-            evidence_required:
-              summary: EVIDENCE_REQUIRED — Thiếu bằng chứng bắt buộc.
-              value:
-                statusCode: 422
-                code: EVIDENCE_REQUIRED
-            validation_failed:
-              summary: VALIDATION_FAILED — Dữ liệu vi phạm ràng buộc schema hoặc quy tắc nghiệp vụ khác chưa có mã riêng.
-              value:
-                statusCode: 422
-                code: VALIDATION_FAILED
+                - BASELINE_REQUIRED
+                - CURRENT_READING_INVALID
+                - VALIDATION_FAILED
     '429':
       $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
     '500':

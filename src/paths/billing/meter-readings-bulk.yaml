@@ -5,11 +5,13 @@ post:
   x-apidog-status: released
   operationId: postBulkMeterReadings
   security:
-    - BearerAuth: []
+  - BearerAuth: []
   summary: Bulk create meter readings
-  description: |-
+  description: |
+    Landlord-only atomic bulk create, 1–200 readings. Missing baseline returns 422 BASELINE_REQUIRED and rolls back all rows. Successful results contain only SUCCESS. Attach image evidence later.
+
     **Sequence diagram**
-    
+
     ```mermaid
     sequenceDiagram
         autonumber
@@ -28,6 +30,8 @@ post:
         S->>C: Invoke postBulkMeterReadings
         C->>Bus: Execute command for postBulkMeterReadings
         Bus->>H: Dispatch command handler
+        H->>H: Validate every reading and required baseline
+        H->>H: Persist all readings atomically or roll back the batch
         H-->>Bus: Return use-case result
         Bus-->>C: Result
         C-->>S: Return documented response
@@ -42,15 +46,14 @@ post:
           $ref: ../../openapi.yaml#/components/schemas/BulkMeterReadingCreateRequestDto
         example:
           buildingId: 9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d
-          recordedMonth: "2026-09"
+          recordedMonth: 2026-09
           readings:
           - roomId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
             type: electricity
-            currentReading: "1380.0"
-            evidenceMediaId: 48fae08f-e1a5-48b4-9c02-e2513470ff42
+            currentReading: '1380.0'
   responses:
-    "201":
-      description: "Thành công: Ghi chỉ số hàng loạt."
+    '201':
+      description: 'Thành công: Ghi chỉ số hàng loạt.'
       content:
         application/json:
           schema:
@@ -71,55 +74,36 @@ post:
                 - METER_READINGS_BULK_RECORDED
               data:
                 $ref: ../../openapi.yaml#/components/schemas/BulkMeterReadingResponseDto
-    "400":
+    '400':
       $ref: ../../openapi.yaml#/components/responses/BadRequestBodyError
-    "401":
+    '401':
       $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
-    "503":
+    '503':
       $ref: ../../openapi.yaml#/components/responses/AuthUnavailableError
-    "403":
+    '403':
       $ref: ../../openapi.yaml#/components/responses/ForbiddenError
-    "404":
+    '404':
       $ref: ../../openapi.yaml#/components/responses/NotFoundError
     '422':
-      x-apidog-name: Unprocessable Entity
-      description: Dữ liệu hợp lệ về cấu trúc nhưng vi phạm quy tắc của endpoint.
+      description: BASELINE_REQUIRED, CURRENT_READING_INVALID, VALIDATION_FAILED
       content:
         application/json:
           schema:
             type: object
-            additionalProperties: false
-            required: [statusCode, code]
+            required:
+            - statusCode
+            - code
             properties:
               statusCode:
                 type: integer
-                enum: [422]
+                enum:
+                - 422
               code:
                 type: string
                 enum:
-                  - CURRENT_READING_INVALID
-                  - EVIDENCE_REQUIRED
-                  - VALIDATION_FAILED
-                description: |-
-                  - CURRENT_READING_INVALID: Chỉ số hiện tại nhỏ hơn chỉ số trước đó trong ít nhất một bản ghi.
-                  - EVIDENCE_REQUIRED: Thiếu ảnh chứng cứ của ít nhất một chỉ số cần chốt.
-                  - VALIDATION_FAILED: Danh sách chỉ số hoặc kỳ ghi số vi phạm ràng buộc khác.
-          examples:
-            current_reading_invalid:
-              summary: CURRENT_READING_INVALID — Chỉ số hiện tại nhỏ hơn chỉ số trước đó trong ít nhất một bản ghi.
-              value:
-                statusCode: 422
-                code: CURRENT_READING_INVALID
-            evidence_required:
-              summary: EVIDENCE_REQUIRED — Thiếu ảnh chứng cứ của ít nhất một chỉ số cần chốt.
-              value:
-                statusCode: 422
-                code: EVIDENCE_REQUIRED
-            validation_failed:
-              summary: VALIDATION_FAILED — Danh sách chỉ số hoặc kỳ ghi số vi phạm ràng buộc khác.
-              value:
-                statusCode: 422
-                code: VALIDATION_FAILED
+                - BASELINE_REQUIRED
+                - CURRENT_READING_INVALID
+                - VALIDATION_FAILED
     '409':
       x-apidog-name: Conflict
       description: Yêu cầu xung đột với trạng thái hiện tại hoặc dữ liệu đã tồn tại.
@@ -136,7 +120,7 @@ post:
               code:
                 type: string
                 enum:
-                  - DUPLICATE_READING
+                - DUPLICATE_READING
                 description: |-
                   - DUPLICATE_READING: Chỉ số ghi hàng loạt bị trùng.
           examples:

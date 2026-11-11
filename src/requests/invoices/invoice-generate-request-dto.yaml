@@ -1,0 +1,13 @@
+type: object
+title: InvoiceGenerateRequestDto
+additionalProperties: false
+properties:
+  buildingId:
+    type: string
+    format: uuid
+  period:
+    type: string
+    pattern: ^\d{4}-(0[1-9]|1[0-2])$
+required:
+- buildingId
+- period
