@@ -8,7 +8,7 @@
 
 ### 1. Cơ sở Request / Response
 
-- `docs/phase-2/discovery/api-spec.md §27.1 #1–#6` là contract cho register, login, refresh, logout, password-reset request và password reset.
+- `docs/phase-2/discovery/api-spec.md §27.1 #1–#6, #112–#113` là contract cho auth, xác minh email và gửi lại link xác minh.
 - `docs/phase-2/discovery/api-conventions.md §1, §3, §4, §5, §6, §10` là nguồn cho response wrapper, error/auth behavior, validation, naming và null fields.
 - Các DTO đã triển khai trong `api-doc/src/requests/auth/` và `api-doc/src/responses/dtos/auth/` theo đúng contract từng endpoint.
 
@@ -23,14 +23,17 @@ Kết luận:
 
 ### 2. Giải thích các điểm khó hiểu
 
-- Register response chỉ trả `id`, `role`, `status`; refresh cookie không phải JSON field.
+- Register trả `id`, `email`, `role`, `status=pending_verification`, `verificationRequired=true`; chưa cấp token phiên đến khi email được xác minh.
 - Login/refresh response trả access token và `expiresIn: 900`, còn refresh token được quản lý qua cookie.
+- Link xác minh hết hạn sau 24 giờ; frontend cần người dùng bấm xác nhận trước khi gửi token tới Identity để tránh link scanner tự kích hoạt tài khoản.
+- Khi kích hoạt thành công, Identity phát `user.email_verified`; Tenancy dùng event này để tiếp tục liên kết hợp đồng theo số điện thoại.
+- Gửi lại email xác minh luôn trả cùng `202` để không tiết lộ email có tài khoản đang pending hay không.
 - Admin không được tự đăng ký; role trong RegisterRequest chỉ gồm `tenant` và `landlord`.
 - Password, refresh token và reset token là dữ liệu nhạy cảm; không được expose trong response DTO.
 
-### 3. Lưu ý cần xác nhận với leader
+### 3. Decision
 
-- `201 Created` của register hiện ghi `Location: /api/v1/me`, là resource hiện tại thay vì URI theo id. Cần xác nhận có chủ ý dùng `/me` hay cần URI resource cụ thể trước khi freeze contract. Không thay đổi path trong task này.
+- P2-D51 chốt xác minh email trước khi kích hoạt tài khoản; register không cấp token phiên. API contract và response DTO đã cập nhật theo quyết định này.
 
 ## User
 

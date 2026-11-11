@@ -87,6 +87,7 @@ get:
     schema:
       type: string
       enum:
+      - pending_verification
       - active
       - locked
   - name: q
@@ -250,7 +251,7 @@ get:
                 - 'sort must be one of: createdAt, name, role, status'
                 - order must be either asc or desc
                 - 'role must be one of the following values: landlord, tenant, admin'
-                - 'status must be one of the following values: active, locked'
+                - 'status must be one of the following values: pending_verification, active, locked'
                 - q must be a string
           examples:
             error_1:
@@ -309,10 +310,10 @@ get:
                 statusCode: 422
                 code: 'role must be one of the following values: landlord, tenant, admin'
             error_12:
-              summary: 'status must be one of the following values: active, locked'
+              summary: 'status must be one of the following values: pending_verification, active, locked'
               value:
                 statusCode: 422
-                code: 'status must be one of the following values: active, locked'
+                code: 'status must be one of the following values: pending_verification, active, locked'
             error_13:
               summary: q must be a string
               value:

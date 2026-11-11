@@ -1,0 +1,14 @@
+type: object
+x-apidog-folder: "Auth/Response"
+title: AuthRequestEmailVerificationResponseDto
+description: Response confirming the verification email request was accepted
+properties:
+  accepted:
+    type: boolean
+    enum:
+      - true
+    description: The system accepted the request for processing
+    example: true
+required:
+  - accepted
+additionalProperties: false

@@ -1,0 +1,74 @@
+post:
+  tags:
+    - Auth
+  x-apidog-folder: Auth
+  x-apidog-status: released
+  operationId: verifyRegisteredEmail
+  summary: Verify registered email
+  description: >-
+    Validates the single-use email verification token. Tokens expire after 24
+    hours. The web confirmation page calls this endpoint after the user confirms.
+  security: []
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          type: object
+          additionalProperties: false
+          required: [token]
+          properties:
+            token:
+              type: string
+              minLength: 1
+              maxLength: 128
+  responses:
+    '204':
+      description: Email verified and account activated.
+    '400':
+      description: Invalid or already used email verification token, or malformed request body.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code]
+            properties:
+              statusCode:
+                type: integer
+                enum: [400]
+              code:
+                type: string
+                enum: [INVALID_EMAIL_VERIFICATION_TOKEN, INVALID_JSON, INVALID_REQUEST_BODY, BAD_REQUEST]
+    '409':
+      description: Email verification token has expired.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code]
+            properties:
+              statusCode:
+                type: integer
+                enum: [409]
+              code:
+                type: string
+                enum: [EMAIL_VERIFICATION_TOKEN_EXPIRED]
+    '422':
+      description: Request validation failed.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code]
+            properties:
+              statusCode:
+                type: integer
+                enum: [422]
+              code:
+                type: string
+                enum: [EMAIL_VERIFICATION_TOKEN_REQUIRED, UNEXPECTED_FIELD, VALIDATION_FAILED]
+    '500':
+      $ref: ../../openapi.yaml#/components/responses/InternalServerError

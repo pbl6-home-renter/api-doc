@@ -10,6 +10,8 @@ post:
     
     - Chỉ `tenant`/`landlord` được tự đăng ký; admin được seed sẵn. Role không đổi được sau khi đăng ký.
     - `user.registered` được ghi outbox cùng transaction tạo user; relay publish sau khi commit.
+    - Tài khoản ở trạng thái `pending_verification`; Identity gửi link xác minh qua Community. Link dùng một lần, hết hạn sau 24 giờ. Chỉ đăng nhập được sau khi xác minh.
+    - Khi xác minh thành công, Identity phát `user.email_verified` để Tenancy liên kết hợp đồng theo số điện thoại.
     
     **Sequence diagram**
     
@@ -49,12 +51,6 @@ post:
   responses:
     '201':
       description: Đăng ký tài khoản thành công
-      headers:
-        Location:
-          description: Đường dẫn đến hồ sơ của tài khoản vừa tạo
-          schema:
-            type: string
-            example: /api/v1/me
       content:
         application/json:
           schema:
@@ -79,14 +75,11 @@ post:
             statusCode: 201
             code: USER_REGISTERED
             data:
-              accessToken: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
-              refreshToken: m7Qp2vN8rT4xK9sL3wY6cB1hF5jD0uE_gAqZkRoUiVs
-              user:
-                id: '3fa85f64-5717-4562-b3fc-2c963f66afa6'
-                name: Lê Văn An
-                email: lan@example.com
-                phone: '0901234567'
-                role: tenant
+              id: '3fa85f64-5717-4562-b3fc-2c963f66afa6'
+              email: lan@example.com
+              role: tenant
+              status: pending_verification
+              verificationRequired: true
     '400':
       description: Yêu cầu không hợp lệ.
       content:
