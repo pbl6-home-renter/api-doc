@@ -39,6 +39,10 @@ tags:
 paths:
   /auth/register:
     $ref: './paths/auth/register.yaml'
+  /auth/email-verifications:
+    $ref: './paths/auth/email-verifications.yaml'
+  /auth/email-verification-requests:
+    $ref: './paths/auth/email-verification-requests.yaml'
   /auth/login:
     $ref: './paths/auth/login.yaml'
   /auth/password-reset-requests:
@@ -268,6 +272,12 @@ components:
 
     AuthRequestPasswordResetResponseDto:
       $ref: './responses/dtos/auth/request-password-reset-response-dto.yaml'
+
+    AuthRequestEmailVerificationRequestDto:
+      $ref: './requests/auth/request-email-verification-request-dto.yaml'
+
+    AuthRequestEmailVerificationResponseDto:
+      $ref: './responses/dtos/auth/request-email-verification-response-dto.yaml'
 
     AuthResetPasswordRequestDto:
       $ref: './requests/auth/password-reset-request-dto.yaml'

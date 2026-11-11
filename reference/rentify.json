@@ -68,7 +68,7 @@
         "x-apidog-status": "released",
         "operationId": "registerAccount",
         "summary": "Register",
-        "description": "**Lưu ý**\n\n- Chỉ `tenant`/`landlord` được tự đăng ký; admin được seed sẵn. Role không đổi được sau khi đăng ký.\n- `user.registered` được ghi outbox cùng transaction tạo user; relay publish sau khi commit.\n\n**Sequence diagram**\n\n```mermaid\nsequenceDiagram\n    autonumber\n    actor Client\n    participant GW as API Gateway\n    participant S as Identity-Service\n    participant C as AuthController\n    participant Bus as CQRS CommandBus\n    participant H as Application handler\n    Client->>GW: POST /api/v1/auth/register\n    GW->>S: Proxy original HTTP request\n    S->>C: Invoke registerAccount\n    C->>Bus: Execute command for registerAccount\n    Bus->>H: Dispatch command handler\n    H-->>Bus: Return use-case result\n    Bus-->>C: Result\n    C-->>S: Return documented response\n    S-->>GW: HTTP status and response body\n    GW-->>Client: Forward HTTP response\n```",
+        "description": "**Lưu ý**\n\n- Chỉ `tenant`/`landlord` được tự đăng ký; admin được seed sẵn. Role không đổi được sau khi đăng ký.\n- `user.registered` được ghi outbox cùng transaction tạo user; relay publish sau khi commit.\n- User bắt đầu ở trạng thái `pending_verification`; Identity gửi link xác minh dùng một lần, hết hạn sau 24 giờ. Chưa cấp token phiên trước khi xác minh.\n- Khi x?c minh th?nh c?ng, Identity ph?t user.email_verified ?? Tenancy li?n k?t h?p ??ng theo s? ?i?n tho?i.\n\n**Sequence diagram**\n\n```mermaid\nsequenceDiagram\n    autonumber\n    actor Client\n    participant GW as API Gateway\n    participant S as Identity-Service\n    participant C as AuthController\n    participant Bus as CQRS CommandBus\n    participant H as Application handler\n    Client->>GW: POST /api/v1/auth/register\n    GW->>S: Proxy original HTTP request\n    S->>C: Invoke registerAccount\n    C->>Bus: Execute command for registerAccount\n    Bus->>H: Dispatch command handler\n    H-->>Bus: Return use-case result\n    Bus-->>C: Result\n    C-->>S: Return documented response\n    S-->>GW: HTTP status and response body\n    GW-->>Client: Forward HTTP response\n```",
         "security": [],
         "requestBody": {
           "required": true,
@@ -89,16 +89,7 @@
         },
         "responses": {
           "201": {
-            "description": "Đăng ký tài khoản thành công",
-            "headers": {
-              "Location": {
-                "description": "Đường dẫn đến hồ sơ của tài khoản vừa tạo",
-                "schema": {
-                  "type": "string",
-                  "example": "/api/v1/me"
-                }
-              }
-            },
+            "description": "Tài khoản được tạo; cần xác minh email trước khi đăng nhập",
             "content": {
               "application/json": {
                 "schema": {
@@ -131,15 +122,11 @@
                   "statusCode": 201,
                   "code": "USER_REGISTERED",
                   "data": {
-                    "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-                    "refreshToken": "m7Qp2vN8rT4xK9sL3wY6cB1hF5jD0uE_gAqZkRoUiVs",
-                    "user": {
-                      "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-                      "name": "Lê Văn An",
-                      "email": "lan@example.com",
-                      "phone": "0901234567",
-                      "role": "tenant"
-                    }
+                    "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                    "email": "lan@example.com",
+                    "role": "tenant",
+                    "status": "pending_verification",
+                    "verificationRequired": true
                   }
                 }
               }
@@ -471,6 +458,241 @@
         ]
       }
     },
+    "/auth/email-verifications": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "x-apidog-folder": "Auth",
+        "x-apidog-status": "released",
+        "operationId": "verifyRegisteredEmail",
+        "summary": "Verify registered email",
+        "description": "Validates the single-use email verification token. Tokens expire after 24 hours. The web confirmation page calls this endpoint after the user confirms.",
+        "security": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "token"
+                ],
+                "properties": {
+                  "token": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 128
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Email verified and account activated."
+          },
+          "400": {
+            "description": "Invalid or already used email verification token, or malformed request body.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        400
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "INVALID_EMAIL_VERIFICATION_TOKEN",
+                        "INVALID_JSON",
+                        "INVALID_REQUEST_BODY",
+                        "BAD_REQUEST"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Email verification token has expired."
+          },
+          "422": {
+            "description": "Request validation failed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        422
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "EMAIL_VERIFICATION_TOKEN_REQUIRED",
+                        "UNEXPECTED_FIELD",
+                        "VALIDATION_FAILED"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
+    "/auth/email-verification-requests": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "x-apidog-folder": "Auth",
+        "x-apidog-status": "released",
+        "operationId": "requestEmailVerification",
+        "summary": "Request another verification email",
+        "description": "Requests a new verification email for a pending account. The response is identical whether the email exists, is already verified, or is unknown.",
+        "security": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AuthRequestEmailVerificationRequestDto"
+              },
+              "example": {
+                "email": "lan@example.com"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Request accepted; if verification is still required, a new email will be sent.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code",
+                    "data"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        202
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "EMAIL_VERIFICATION_REQUESTED"
+                      ]
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/AuthRequestEmailVerificationResponseDto"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Request body is malformed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        400
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "INVALID_JSON",
+                        "INVALID_REQUEST_BODY",
+                        "BAD_REQUEST"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Email validation failed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        422
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "EMAIL_REQUIRED",
+                        "INVALID_EMAIL",
+                        "UNEXPECTED_FIELD",
+                        "VALIDATION_FAILED"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
     "/auth/login": {
       "post": {
         "tags": [
@@ -480,7 +702,7 @@
         "x-apidog-status": "released",
         "operationId": "loginAccount",
         "summary": "Login",
-        "description": "**Lưu ý**\n\n- User bị khóa **vẫn đăng nhập được**; access token mang claim `status` để Tenancy/Community chặn chức năng.\n- User đã xóa mềm được coi như không tồn tại, trả `401`.\n- Đang cân nhắc: refresh token hiện trả trong JSON, `api-conventions.md` §4 muốn dùng HttpOnly cookie.\n\n**Sequence diagram**\n\n```mermaid\nsequenceDiagram\n    autonumber\n    actor Client\n    participant GW as API Gateway\n    participant S as Identity-Service\n    participant C as AuthController\n    participant Bus as CQRS CommandBus\n    participant H as Application handler\n    Client->>GW: POST /api/v1/auth/login\n    GW->>S: Proxy original HTTP request\n    S->>C: Invoke loginAccount\n    C->>Bus: Execute command for loginAccount\n    Bus->>H: Dispatch command handler\n    H-->>Bus: Return use-case result\n    Bus-->>C: Result\n    C-->>S: Return documented response\n    S-->>GW: HTTP status and response body\n    GW-->>Client: Forward HTTP response\n```",
+        "description": "**Lưu ý**\n\n- User bị khóa **vẫn đăng nhập được**; access token mang claim `status` để Tenancy/Community chặn chức năng.\n- Tài khoản mới phải xác minh email trước; chưa xác minh trả `403 EMAIL_NOT_VERIFIED`.\n- Tài khoản mới phải xác minh email trước; chưa xác minh trả `403 EMAIL_NOT_VERIFIED`.\n- Tài khoản mới phải xác minh email trước; chưa xác minh trả `403 EMAIL_NOT_VERIFIED`.\n- User đã xóa mềm được coi như không tồn tại, trả `401`.\n- Đang cân nhắc: refresh token hiện trả trong JSON, `api-conventions.md` §4 muốn dùng HttpOnly cookie.\n\n**Sequence diagram**\n\n```mermaid\nsequenceDiagram\n    autonumber\n    actor Client\n    participant GW as API Gateway\n    participant S as Identity-Service\n    participant C as AuthController\n    participant Bus as CQRS CommandBus\n    participant H as Application handler\n    Client->>GW: POST /api/v1/auth/login\n    GW->>S: Proxy original HTTP request\n    S->>C: Invoke loginAccount\n    C->>Bus: Execute command for loginAccount\n    Bus->>H: Dispatch command handler\n    H-->>Bus: Return use-case result\n    Bus-->>C: Result\n    C-->>S: Return documented response\n    S-->>GW: HTTP status and response body\n    GW-->>Client: Forward HTTP response\n```",
         "security": [],
         "requestBody": {
           "required": true,
@@ -632,6 +854,35 @@
                     "value": {
                       "statusCode": 401,
                       "code": "AUTH_LOGIN_INVALID_CREDENTIALS"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Email đăng ký chưa được xác minh.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        403
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "EMAIL_NOT_VERIFIED"
+                      ]
                     }
                   }
                 }
@@ -2912,6 +3163,7 @@
             "schema": {
               "type": "string",
               "enum": [
+                "pending_verification",
                 "active",
                 "locked"
               ]
@@ -3138,7 +3390,7 @@
                         "sort must be one of: createdAt, name, role, status",
                         "order must be either asc or desc",
                         "role must be one of the following values: landlord, tenant, admin",
-                        "status must be one of the following values: active, locked",
+                        "status must be one of the following values: pending_verification, active, locked",
                         "q must be a string"
                       ]
                     }
@@ -3223,10 +3475,10 @@
                     }
                   },
                   "error_12": {
-                    "summary": "status must be one of the following values: active, locked",
+                    "summary": "status must be one of the following values: pending_verification, active, locked",
                     "value": {
                       "statusCode": 422,
-                      "code": "status must be one of the following values: active, locked"
+                      "code": "status must be one of the following values: pending_verification, active, locked"
                     }
                   },
                   "error_13": {
@@ -23932,58 +24184,43 @@
         "type": "object",
         "x-apidog-folder": "Auth/Response",
         "title": "AuthRegisterResponseDto",
-        "description": "Phản hồi khi đăng ký tài khoản thành công",
+        "description": "Phản hồi khi tạo tài khoản và gửi email xác minh",
         "properties": {
-          "accessToken": {
+          "id": {
             "type": "string",
-            "minLength": 1,
-            "description": "JWT access token, thời hạn 15 phút."
+            "format": "uuid"
           },
-          "refreshToken": {
+          "email": {
             "type": "string",
-            "minLength": 1,
-            "description": "Token opaque Base64URL từ 32 byte ngẫu nhiên, được trả trong JSON."
+            "format": "email"
           },
-          "user": {
-            "type": "object",
-            "additionalProperties": false,
-            "properties": {
-              "id": {
-                "type": "string",
-                "format": "uuid"
-              },
-              "name": {
-                "type": "string"
-              },
-              "email": {
-                "type": "string",
-                "format": "email"
-              },
-              "phone": {
-                "type": "string"
-              },
-              "role": {
-                "type": "string",
-                "enum": [
-                  "landlord",
-                  "tenant",
-                  "admin"
-                ]
-              }
-            },
-            "required": [
-              "id",
-              "name",
-              "email",
-              "phone",
-              "role"
+          "role": {
+            "type": "string",
+            "enum": [
+              "landlord",
+              "tenant"
             ]
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pending_verification"
+            ]
+          },
+          "verificationRequired": {
+            "type": "boolean",
+            "enum": [
+              true
+            ],
+            "example": true
           }
         },
         "required": [
-          "accessToken",
-          "refreshToken",
-          "user"
+          "id",
+          "email",
+          "role",
+          "status",
+          "verificationRequired"
         ],
         "additionalProperties": false
       },
@@ -24475,6 +24712,7 @@
             "type": "string",
             "description": "Trạng thái hiện tại của tài nguyên trong quy trình nghiệp vụ.",
             "enum": [
+              "pending_verification",
               "active",
               "locked"
             ],
@@ -24633,6 +24871,7 @@
           "status": {
             "type": "string",
             "enum": [
+              "pending_verification",
               "active",
               "locked"
             ],
@@ -24713,6 +24952,7 @@
           "status": {
             "type": "string",
             "enum": [
+              "pending_verification",
               "active",
               "locked"
             ],
@@ -24818,6 +25058,7 @@
             "type": "string",
             "description": "Trạng thái hiện tại của tài nguyên trong quy trình nghiệp vụ.",
             "enum": [
+              "pending_verification",
               "active",
               "locked"
             ],
@@ -35581,6 +35822,45 @@
           "data",
           "pagination"
         ]
+      },
+      "AuthRequestEmailVerificationRequestDto": {
+        "type": "object",
+        "title": "AuthRequestEmailVerificationRequestDto",
+        "description": "Email address for requesting another verification link",
+        "additionalProperties": false,
+        "required": [
+          "email"
+        ],
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email",
+            "minLength": 5,
+            "maxLength": 254,
+            "pattern": "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$",
+            "description": "Email address of the account to verify",
+            "example": "lan@example.com"
+          }
+        }
+      },
+      "AuthRequestEmailVerificationResponseDto": {
+        "type": "object",
+        "title": "AuthRequestEmailVerificationResponseDto",
+        "description": "Response confirming the verification email request was accepted",
+        "additionalProperties": false,
+        "required": [
+          "accepted"
+        ],
+        "properties": {
+          "accepted": {
+            "type": "boolean",
+            "enum": [
+              true
+            ],
+            "description": "The system accepted the request for processing",
+            "example": true
+          }
+        }
       }
     },
     "responses": {

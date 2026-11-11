@@ -1,44 +1,28 @@
 type: object
 x-apidog-folder: Auth/Response
 title: AuthRegisterResponseDto
-description: Phản hồi khi đăng ký tài khoản thành công
+description: Phản hồi khi tạo tài khoản và gửi email xác minh
 properties:
-  accessToken:
+  id:
     type: string
-    minLength: 1
-    description: JWT access token, thời hạn 15 phút.
-  refreshToken:
+    format: uuid
+  email:
     type: string
-    minLength: 1
-    description: Token opaque Base64URL từ 32 byte ngẫu nhiên, được trả trong JSON.
-  user:
-    type: object
-    additionalProperties: false
-    properties:
-      id:
-        type: string
-        format: uuid
-      name:
-        type: string
-      email:
-        type: string
-        format: email
-      phone:
-        type: string
-      role:
-        type: string
-        enum:
-        - landlord
-        - tenant
-        - admin
-    required:
-    - id
-    - name
-    - email
-    - phone
-    - role
+    format: email
+  role:
+    type: string
+    enum: [landlord, tenant]
+  status:
+    type: string
+    enum: [pending_verification]
+  verificationRequired:
+    type: boolean
+    enum: [true]
+    example: true
 required:
-- accessToken
-- refreshToken
-- user
+- id
+- email
+- role
+- status
+- verificationRequired
 additionalProperties: false

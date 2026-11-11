@@ -1,0 +1,16 @@
+type: object
+x-apidog-folder: "Auth/Request"
+title: AuthRequestEmailVerificationRequestDto
+description: Email address for requesting another verification link
+additionalProperties: false
+properties:
+  email:
+    type: string
+    format: email
+    minLength: 5
+    maxLength: 254
+    pattern: '^[^\s@]+@[^\s@]+\.[^\s@]+$'
+    description: Email address of the account to verify
+    example: "lan@example.com"
+required:
+  - email

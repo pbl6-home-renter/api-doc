@@ -1,0 +1,69 @@
+post:
+  tags:
+    - Auth
+  x-apidog-folder: Auth
+  x-apidog-status: released
+  operationId: requestEmailVerification
+  summary: Request another verification email
+  description: >-
+    Requests a new verification email for a pending account. The response is
+    identical whether the email exists, is already verified, or is unknown.
+  security: []
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: ../../openapi.yaml#/components/schemas/AuthRequestEmailVerificationRequestDto
+        example:
+          email: lan@example.com
+  responses:
+    '202':
+      description: Request accepted; if verification is still required, a new email will be sent.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code, data]
+            properties:
+              statusCode:
+                type: integer
+                enum: [202]
+              code:
+                type: string
+                enum: [EMAIL_VERIFICATION_REQUESTED]
+              data:
+                $ref: ../../openapi.yaml#/components/schemas/AuthRequestEmailVerificationResponseDto
+    '400':
+      description: Request body is malformed.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code]
+            properties:
+              statusCode:
+                type: integer
+                enum: [400]
+              code:
+                type: string
+                enum: [INVALID_JSON, INVALID_REQUEST_BODY, BAD_REQUEST]
+    '422':
+      description: Email validation failed.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code]
+            properties:
+              statusCode:
+                type: integer
+                enum: [422]
+              code:
+                type: string
+                enum: [EMAIL_REQUIRED, INVALID_EMAIL, UNEXPECTED_FIELD, VALIDATION_FAILED]
+    '500':
+      $ref: ../../openapi.yaml#/components/responses/InternalServerError

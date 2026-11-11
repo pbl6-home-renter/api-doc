@@ -9,6 +9,7 @@ post:
     **Lưu ý**
     
     - User bị khóa **vẫn đăng nhập được**; access token mang claim `status` để Tenancy/Community chặn chức năng.
+    - Tài khoản mới phải xác minh email trước khi đăng nhập; nếu chưa xác minh, trả `403 EMAIL_NOT_VERIFIED`.
     - User đã xóa mềm được coi như không tồn tại, trả `401`.
     - Đang cân nhắc: refresh token hiện trả trong JSON, `api-conventions.md` §4 muốn dùng HttpOnly cookie.
     
@@ -142,6 +143,21 @@ post:
               value:
                 statusCode: 401
                 code: AUTH_LOGIN_INVALID_CREDENTIALS
+    '403':
+      description: Email đăng ký chưa được xác minh.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code]
+            properties:
+              statusCode:
+                type: integer
+                enum: [403]
+              code:
+                type: string
+                enum: [EMAIL_NOT_VERIFIED]
     '422':
       description: Vi phạm ràng buộc dữ liệu; trả mã của lỗi đầu tiên.
       content:

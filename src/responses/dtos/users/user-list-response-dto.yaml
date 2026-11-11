@@ -30,9 +30,10 @@ properties:
   status:
     type: string
     enum:
+    - pending_verification
     - active
     - locked
-    description: 'Trạng thái tài khoản (active: bình thường, locked: bị khóa bởi admin).'
+    description: 'Trạng thái tài khoản (pending_verification: chưa xác minh email, active: bình thường, locked: bị khóa bởi admin).'
     example: active
 required:
 - id

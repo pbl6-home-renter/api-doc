@@ -33,11 +33,11 @@ Contract Socket.IO cho Community Chat: [docs/community-socket-v1.md](docs/commun
 
 Repository này (GitHub: `be`, thư mục local: `api-docs`) lưu **đặc tả API OpenAPI 3.0.3** của Rentify — hệ thống quản lý nhà trọ và tìm bạn ở ghép. Đặc tả được viết bằng YAML module hóa trong `src/`, bundle thành [`reference/rentify.json`](reference/rentify.json) và đồng bộ với dự án **`rentify`** trên Apidog. FE (React) và mobile (Android) build theo contract này; backend service phải khớp với nó.
 
-Hiện contract gồm **100 path / 128 operation**, chia theo 10 tag:
+Hiện contract gồm **102 path / 130 operation**, chia theo 10 tag:
 
 | Tag | Phạm vi | Operation |
 |---|---|---:|
-| `Auth` | Đăng ký, đăng nhập, refresh, logout, reset mật khẩu, JWKS | 7 |
+| `Auth` | Đăng ký, xác minh email, đăng nhập, refresh, logout, reset mật khẩu, JWKS | 9 |
 | `User` | Hồ sơ cá nhân, đổi mật khẩu, quản trị user (lock/unlock) | 10 |
 | `Property` | Tòa nhà, phòng, phòng yêu thích | 23 |
 | `Contract` | Hợp đồng thuê, thành viên ở cùng, template hợp đồng | 16 |
