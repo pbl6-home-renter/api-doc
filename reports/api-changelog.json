@@ -47249,6 +47249,1655 @@
           }
         }
       }
+    },
+    {
+      "id": "30adec6aad6ebff95781ae79a24da0025949a01d00419eafec666c15b742e050",
+      "label": "Thay đổi contract từ Git",
+      "classification": "BREAKING",
+      "contractId": "rentify-public",
+      "repository": "https://github.com/pbl6-home-renter/api-doc",
+      "baseHash": "65f3de49900341219b50d230e04a58538a8886113f0fb080cf35be9a9cac9915",
+      "headHash": "5a933e6dcd220927fbeabeeab8decc13bd90403ffe9d7dbfcd272ce2252d713e",
+      "baseSource": "src/openapi.yaml",
+      "headSource": "src/openapi.yaml",
+      "detectedAt": "2026-11-11T08:40:49.641Z",
+      "committedAt": "2026-11-11T15:40:37+07:00",
+      "baseCommit": "87ae644e351ca6adec2b63c4f3c814bb6d65067c",
+      "headCommit": "1be375b7da5c23959dca15bc00f9f4fad81e4e74",
+      "prUrl": "https://github.com/pbl6-home-renter/api-doc/pull/54",
+      "commitUrl": "https://github.com/pbl6-home-renter/api-doc/commit/1be375b7da5c23959dca15bc00f9f4fad81e4e74",
+      "metadataKind": "Git revision thực tế",
+      "reason": "CHƯA CUNG CẤP — tác giả PR phải bổ sung lý do nghiệp vụ; không thể suy ra từ OpenAPI diff.",
+      "tools": {
+        "redocly": "2.64.1",
+        "oasdiff": "1.34.1"
+      },
+      "changes": [
+        {
+          "id": "response-required-property-removed",
+          "text": "removed the required property `data/accessToken` from the response with the `201` status",
+          "level": 3,
+          "operation": "POST",
+          "operationId": "registerAccount",
+          "path": "/auth/register",
+          "section": "paths",
+          "fingerprint": "9256d30ee762",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "response-required-property-removed",
+          "text": "removed the required property `data/refreshToken` from the response with the `201` status",
+          "level": 3,
+          "operation": "POST",
+          "operationId": "registerAccount",
+          "path": "/auth/register",
+          "section": "paths",
+          "fingerprint": "0fbbc41c9e40",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "response-required-property-removed",
+          "text": "removed the required property `data/user` from the response with the `201` status",
+          "level": 3,
+          "operation": "POST",
+          "operationId": "registerAccount",
+          "path": "/auth/register",
+          "section": "paths",
+          "fingerprint": "e0369452041f",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "response-property-enum-value-added",
+          "text": "added the new `pending_verification` enum value to the `data/status` response property for the response status `200`",
+          "comment": "The server may now return a value the previous contract excluded, so a client written against it may not handle the response. If the value set is meant to grow, declare it with x-extensible-enum.",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getCurrentUser",
+          "path": "/me",
+          "section": "paths",
+          "fingerprint": "301eb8f46caf",
+          "classification": "BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới pending_verification; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-property-enum-value-added",
+          "text": "added the new `pending_verification` enum value to the `data/items/status` response property for the response status `200`",
+          "comment": "The server may now return a value the previous contract excluded, so a client written against it may not handle the response. If the value set is meant to grow, declare it with x-extensible-enum.",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getUsersAdmin",
+          "path": "/users",
+          "section": "paths",
+          "fingerprint": "a51e0472721b",
+          "classification": "BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới pending_verification; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-property-enum-value-added",
+          "text": "added the new `status must be one of the following values: pending_verification, active, locked` enum value to the `code` response property for the response status `422`",
+          "comment": "The server may now return a value the previous contract excluded, so a client written against it may not handle the response. If the value set is meant to grow, declare it with x-extensible-enum.",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getUsersAdmin",
+          "path": "/users",
+          "section": "paths",
+          "fingerprint": "9f9cdf940fdf",
+          "classification": "BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới status must be one of the following values: pending_verification, active, locked; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-property-enum-value-added",
+          "text": "added the new `pending_verification` enum value to the `data/status` response property for the response status `200`",
+          "comment": "The server may now return a value the previous contract excluded, so a client written against it may not handle the response. If the value set is meant to grow, declare it with x-extensible-enum.",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getUserById",
+          "path": "/users/{userId}",
+          "section": "paths",
+          "fingerprint": "41015a45d0bc",
+          "classification": "BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới pending_verification; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-property-enum-value-added",
+          "text": "added the new `pending_verification` enum value to the `data/status` response property for the response status `200`",
+          "comment": "The server may now return a value the previous contract excluded, so a client written against it may not handle the response. If the value set is meant to grow, declare it with x-extensible-enum.",
+          "level": 3,
+          "operation": "PATCH",
+          "operationId": "updateUserById",
+          "path": "/users/{userId}",
+          "section": "paths",
+          "fingerprint": "05d9dd0693f6",
+          "classification": "BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới pending_verification; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "api-version-not-bumped",
+          "text": "a breaking change was detected but the version is still `1.0.0`",
+          "level": 1,
+          "section": "info",
+          "fingerprint": "d3f96cd643c1",
+          "classification": "NON_BREAKING",
+          "clientImpact": "BE: xem lại quy ước version trước khi chấp nhận breaking change. FE/Mobile: theo kế hoạch chuyển đổi của entry này; version trong OpenAPI chưa chứng minh backend đã triển khai."
+        },
+        {
+          "id": "endpoint-added",
+          "text": "endpoint added",
+          "level": 1,
+          "operation": "POST",
+          "operationId": "requestEmailVerification",
+          "path": "/auth/email-verification-requests",
+          "section": "paths",
+          "revisionSource": {
+            "file": "/tmp/rentify-contract-ZHaXAJ/head-0.json"
+          },
+          "fingerprint": "5d8efd469cf9",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        },
+        {
+          "id": "endpoint-added",
+          "text": "endpoint added",
+          "level": 1,
+          "operation": "POST",
+          "operationId": "verifyRegisteredEmail",
+          "path": "/auth/email-verifications",
+          "section": "paths",
+          "revisionSource": {
+            "file": "/tmp/rentify-contract-ZHaXAJ/head-0.json"
+          },
+          "fingerprint": "11b676816744",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        },
+        {
+          "id": "response-non-success-status-added",
+          "text": "added the non-success response with the status `403`",
+          "level": 1,
+          "operation": "POST",
+          "operationId": "loginAccount",
+          "path": "/auth/login",
+          "section": "paths",
+          "fingerprint": "8f25e8e24c21",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        },
+        {
+          "id": "optional-response-header-removed",
+          "text": "the optional response header `location` removed for the status `201`",
+          "level": 1,
+          "operation": "POST",
+          "operationId": "registerAccount",
+          "path": "/auth/register",
+          "section": "paths",
+          "baseSource": {
+            "file": "/tmp/rentify-contract-ZHaXAJ/base-0.json"
+          },
+          "fingerprint": "8d5d36ecea33",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "response-required-property-added",
+          "text": "added the required property `data/email` to the response with the `201` status",
+          "level": 1,
+          "operation": "POST",
+          "operationId": "registerAccount",
+          "path": "/auth/register",
+          "section": "paths",
+          "fingerprint": "d59c41c13b38",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/email; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-required-property-added",
+          "text": "added the required property `data/id` to the response with the `201` status",
+          "level": 1,
+          "operation": "POST",
+          "operationId": "registerAccount",
+          "path": "/auth/register",
+          "section": "paths",
+          "fingerprint": "89208ab8f195",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/id; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-required-property-added",
+          "text": "added the required property `data/role` to the response with the `201` status",
+          "level": 1,
+          "operation": "POST",
+          "operationId": "registerAccount",
+          "path": "/auth/register",
+          "section": "paths",
+          "fingerprint": "725773873972",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/role; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-required-property-added",
+          "text": "added the required property `data/status` to the response with the `201` status",
+          "level": 1,
+          "operation": "POST",
+          "operationId": "registerAccount",
+          "path": "/auth/register",
+          "section": "paths",
+          "fingerprint": "9b2cb7736e30",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/status; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-required-property-added",
+          "text": "added the required property `data/verificationRequired` to the response with the `201` status",
+          "level": 1,
+          "operation": "POST",
+          "operationId": "registerAccount",
+          "path": "/auth/register",
+          "section": "paths",
+          "fingerprint": "0c6d88ebef17",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/verificationRequired; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "request-parameter-enum-value-added",
+          "text": "added the new enum value `pending_verification` to the `query` request parameter `status`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getUsersAdmin",
+          "path": "/users",
+          "section": "paths",
+          "fingerprint": "43a311383317",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu enum trong DTO/validation và nhánh switch/when; xử lý giá trị chưa biết, kiểm thử dữ liệu cũ và mới; phối hợp BE trước khi phát hành."
+        },
+        {
+          "id": "response-property-enum-value-removed",
+          "text": "removed the `status must be one of the following values: active, locked` enum value from the `code` response property for the response status `422`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getUsersAdmin",
+          "path": "/users",
+          "section": "paths",
+          "fingerprint": "f06bfe4a24dc",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu enum trong DTO/validation và nhánh switch/when; xử lý giá trị chưa biết, kiểm thử dữ liệu cũ và mới; phối hợp BE trước khi phát hành."
+        }
+      ],
+      "locations": [
+        {
+          "pointer": "/components/schemas/AuthRegisterResponseDto/description",
+          "before": "Phản hồi khi đăng ký tài khoản thành công",
+          "after": "Phản hồi khi tạo tài khoản và gửi email xác minh"
+        },
+        {
+          "pointer": "/components/schemas/AuthRegisterResponseDto/properties/accessToken",
+          "before": {
+            "type": "string",
+            "minLength": 1,
+            "description": "JWT access token, thời hạn 15 phút."
+          },
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/AuthRegisterResponseDto/properties/email",
+          "before": null,
+          "after": {
+            "type": "string",
+            "format": "email"
+          }
+        },
+        {
+          "pointer": "/components/schemas/AuthRegisterResponseDto/properties/id",
+          "before": null,
+          "after": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        {
+          "pointer": "/components/schemas/AuthRegisterResponseDto/properties/refreshToken",
+          "before": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Token opaque Base64URL từ 32 byte ngẫu nhiên, được trả trong JSON."
+          },
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/AuthRegisterResponseDto/properties/role",
+          "before": null,
+          "after": {
+            "type": "string",
+            "enum": [
+              "landlord",
+              "tenant"
+            ]
+          }
+        },
+        {
+          "pointer": "/components/schemas/AuthRegisterResponseDto/properties/status",
+          "before": null,
+          "after": {
+            "type": "string",
+            "enum": [
+              "pending_verification"
+            ]
+          }
+        },
+        {
+          "pointer": "/components/schemas/AuthRegisterResponseDto/properties/user",
+          "before": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "id": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "name": {
+                "type": "string"
+              },
+              "email": {
+                "type": "string",
+                "format": "email"
+              },
+              "phone": {
+                "type": "string"
+              },
+              "role": {
+                "type": "string",
+                "enum": [
+                  "landlord",
+                  "tenant",
+                  "admin"
+                ]
+              }
+            },
+            "required": [
+              "id",
+              "name",
+              "email",
+              "phone",
+              "role"
+            ]
+          },
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/AuthRegisterResponseDto/properties/verificationRequired",
+          "before": null,
+          "after": {
+            "type": "boolean",
+            "enum": [
+              true
+            ],
+            "example": true
+          }
+        },
+        {
+          "pointer": "/components/schemas/AuthRegisterResponseDto/required",
+          "before": [
+            "accessToken",
+            "refreshToken",
+            "user"
+          ],
+          "after": [
+            "id",
+            "email",
+            "role",
+            "status",
+            "verificationRequired"
+          ]
+        },
+        {
+          "pointer": "/components/schemas/AuthRequestEmailVerificationRequestDto",
+          "before": null,
+          "after": {
+            "type": "object",
+            "x-apidog-folder": "Auth/Request",
+            "title": "AuthRequestEmailVerificationRequestDto",
+            "description": "Email address for requesting another verification link",
+            "additionalProperties": false,
+            "properties": {
+              "email": {
+                "type": "string",
+                "format": "email",
+                "minLength": 5,
+                "maxLength": 254,
+                "pattern": "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$",
+                "description": "Email address of the account to verify",
+                "example": "lan@example.com"
+              }
+            },
+            "required": [
+              "email"
+            ]
+          }
+        },
+        {
+          "pointer": "/components/schemas/AuthRequestEmailVerificationResponseDto",
+          "before": null,
+          "after": {
+            "type": "object",
+            "x-apidog-folder": "Auth/Response",
+            "title": "AuthRequestEmailVerificationResponseDto",
+            "description": "Response confirming the verification email request was accepted",
+            "properties": {
+              "accepted": {
+                "type": "boolean",
+                "enum": [
+                  true
+                ],
+                "description": "The system accepted the request for processing",
+                "example": true
+              }
+            },
+            "required": [
+              "accepted"
+            ],
+            "additionalProperties": false
+          }
+        },
+        {
+          "pointer": "/components/schemas/User/allOf",
+          "before": [
+            {
+              "$ref": "#/components/schemas/BaseEntity"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "phone": {
+                  "type": "string",
+                  "minLength": 10,
+                  "maxLength": 12,
+                  "pattern": "^0[0-9]{9}$|^\\+84[0-9]{9}$",
+                  "description": "Số điện thoại định danh chính (VN)",
+                  "example": "0901234567"
+                },
+                "email": {
+                  "type": "string",
+                  "format": "email",
+                  "minLength": 5,
+                  "maxLength": 254,
+                  "pattern": "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$",
+                  "description": "Email người dùng",
+                  "example": "lan@example.com"
+                },
+                "password": {
+                  "type": "string",
+                  "minLength": 60,
+                  "maxLength": 255,
+                  "description": "Mật khẩu đã băm (BCrypt/Argon2)",
+                  "example": "$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcFl7p92ldGxad68LJZdL17lhWy"
+                },
+                "name": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 254,
+                  "description": "Họ và tên",
+                  "example": "Lê Văn An"
+                },
+                "role": {
+                  "type": "string",
+                  "enum": [
+                    "landlord",
+                    "tenant",
+                    "admin"
+                  ],
+                  "description": "Vai trò người dùng (bất biến)",
+                  "example": "landlord"
+                },
+                "status": {
+                  "type": "string",
+                  "enum": [
+                    "active",
+                    "locked"
+                  ],
+                  "default": "active",
+                  "description": "Trạng thái tài khoản",
+                  "example": "active"
+                },
+                "lockReason": {
+                  "type": "string",
+                  "nullable": true,
+                  "minLength": 1,
+                  "maxLength": 500,
+                  "description": "Lý do admin khóa tài khoản",
+                  "example": null
+                },
+                "lockedAt": {
+                  "type": "string",
+                  "format": "date-time",
+                  "nullable": true,
+                  "description": "Thời điểm bị khóa",
+                  "example": null
+                }
+              },
+              "required": [
+                "phone",
+                "email",
+                "password",
+                "name",
+                "role",
+                "status"
+              ]
+            }
+          ],
+          "after": [
+            {
+              "$ref": "#/components/schemas/BaseEntity"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "phone": {
+                  "type": "string",
+                  "minLength": 10,
+                  "maxLength": 12,
+                  "pattern": "^0[0-9]{9}$|^\\+84[0-9]{9}$",
+                  "description": "Số điện thoại định danh chính (VN)",
+                  "example": "0901234567"
+                },
+                "email": {
+                  "type": "string",
+                  "format": "email",
+                  "minLength": 5,
+                  "maxLength": 254,
+                  "pattern": "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$",
+                  "description": "Email người dùng",
+                  "example": "lan@example.com"
+                },
+                "password": {
+                  "type": "string",
+                  "minLength": 60,
+                  "maxLength": 255,
+                  "description": "Mật khẩu đã băm (BCrypt/Argon2)",
+                  "example": "$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcFl7p92ldGxad68LJZdL17lhWy"
+                },
+                "name": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 254,
+                  "description": "Họ và tên",
+                  "example": "Lê Văn An"
+                },
+                "role": {
+                  "type": "string",
+                  "enum": [
+                    "landlord",
+                    "tenant",
+                    "admin"
+                  ],
+                  "description": "Vai trò người dùng (bất biến)",
+                  "example": "landlord"
+                },
+                "status": {
+                  "type": "string",
+                  "enum": [
+                    "pending_verification",
+                    "active",
+                    "locked"
+                  ],
+                  "default": "active",
+                  "description": "Trạng thái tài khoản",
+                  "example": "active"
+                },
+                "lockReason": {
+                  "type": "string",
+                  "nullable": true,
+                  "minLength": 1,
+                  "maxLength": 500,
+                  "description": "Lý do admin khóa tài khoản",
+                  "example": null
+                },
+                "lockedAt": {
+                  "type": "string",
+                  "format": "date-time",
+                  "nullable": true,
+                  "description": "Thời điểm bị khóa",
+                  "example": null
+                }
+              },
+              "required": [
+                "phone",
+                "email",
+                "password",
+                "name",
+                "role",
+                "status"
+              ]
+            }
+          ]
+        },
+        {
+          "pointer": "/components/schemas/UserCurrentResponseDto/properties/status/enum",
+          "before": [
+            "active",
+            "locked"
+          ],
+          "after": [
+            "pending_verification",
+            "active",
+            "locked"
+          ]
+        },
+        {
+          "pointer": "/components/schemas/UserDetailResponseDto/properties/status/enum",
+          "before": [
+            "active",
+            "locked"
+          ],
+          "after": [
+            "pending_verification",
+            "active",
+            "locked"
+          ]
+        },
+        {
+          "pointer": "/components/schemas/UserListResponseDto/properties/status/description",
+          "before": "Trạng thái tài khoản (active: bình thường, locked: bị khóa bởi admin).",
+          "after": "Trạng thái tài khoản (pending_verification: chưa xác minh email, active: bình thường, locked: bị khóa bởi admin)."
+        },
+        {
+          "pointer": "/components/schemas/UserListResponseDto/properties/status/enum",
+          "before": [
+            "active",
+            "locked"
+          ],
+          "after": [
+            "pending_verification",
+            "active",
+            "locked"
+          ]
+        },
+        {
+          "pointer": "/components/schemas/UserUpdateResponseDto/properties/status/enum",
+          "before": [
+            "active",
+            "locked"
+          ],
+          "after": [
+            "pending_verification",
+            "active",
+            "locked"
+          ]
+        },
+        {
+          "pointer": "/paths/~1auth~1email-verification-requests",
+          "before": null,
+          "after": {
+            "post": {
+              "tags": [
+                "Auth"
+              ],
+              "x-apidog-folder": "Auth",
+              "x-apidog-status": "released",
+              "operationId": "requestEmailVerification",
+              "summary": "Request another verification email",
+              "description": "Requests a new verification email for a pending account. The response is identical whether the email exists, is already verified, or is unknown.",
+              "security": [],
+              "requestBody": {
+                "required": true,
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "$ref": "#/components/schemas/AuthRequestEmailVerificationRequestDto"
+                    },
+                    "example": {
+                      "email": "lan@example.com"
+                    }
+                  }
+                }
+              },
+              "responses": {
+                "202": {
+                  "description": "Request accepted; if verification is still required, a new email will be sent.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "required": [
+                          "statusCode",
+                          "code",
+                          "data"
+                        ],
+                        "properties": {
+                          "statusCode": {
+                            "type": "integer",
+                            "enum": [
+                              202
+                            ]
+                          },
+                          "code": {
+                            "type": "string",
+                            "enum": [
+                              "EMAIL_VERIFICATION_REQUESTED"
+                            ]
+                          },
+                          "data": {
+                            "$ref": "#/components/schemas/AuthRequestEmailVerificationResponseDto"
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "400": {
+                  "description": "Request body is malformed.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "required": [
+                          "statusCode",
+                          "code"
+                        ],
+                        "properties": {
+                          "statusCode": {
+                            "type": "integer",
+                            "enum": [
+                              400
+                            ]
+                          },
+                          "code": {
+                            "type": "string",
+                            "enum": [
+                              "INVALID_JSON",
+                              "INVALID_REQUEST_BODY",
+                              "BAD_REQUEST"
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "422": {
+                  "description": "Email validation failed.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "required": [
+                          "statusCode",
+                          "code"
+                        ],
+                        "properties": {
+                          "statusCode": {
+                            "type": "integer",
+                            "enum": [
+                              422
+                            ]
+                          },
+                          "code": {
+                            "type": "string",
+                            "enum": [
+                              "EMAIL_REQUIRED",
+                              "INVALID_EMAIL",
+                              "UNEXPECTED_FIELD",
+                              "VALIDATION_FAILED"
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "500": {
+                  "$ref": "#/components/responses/InternalServerError"
+                }
+              }
+            }
+          }
+        },
+        {
+          "pointer": "/paths/~1auth~1email-verifications",
+          "before": null,
+          "after": {
+            "post": {
+              "tags": [
+                "Auth"
+              ],
+              "x-apidog-folder": "Auth",
+              "x-apidog-status": "released",
+              "operationId": "verifyRegisteredEmail",
+              "summary": "Verify registered email",
+              "description": "Validates the single-use email verification token. Tokens expire after 24 hours. The web confirmation page calls this endpoint after the user confirms.",
+              "security": [],
+              "requestBody": {
+                "required": true,
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "required": [
+                        "token"
+                      ],
+                      "properties": {
+                        "token": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 128
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "responses": {
+                "204": {
+                  "description": "Email verified and account activated."
+                },
+                "400": {
+                  "description": "Invalid or already used email verification token, or malformed request body.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "required": [
+                          "statusCode",
+                          "code"
+                        ],
+                        "properties": {
+                          "statusCode": {
+                            "type": "integer",
+                            "enum": [
+                              400
+                            ]
+                          },
+                          "code": {
+                            "type": "string",
+                            "enum": [
+                              "INVALID_EMAIL_VERIFICATION_TOKEN",
+                              "INVALID_JSON",
+                              "INVALID_REQUEST_BODY",
+                              "BAD_REQUEST"
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "409": {
+                  "description": "Email verification token has expired.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "required": [
+                          "statusCode",
+                          "code"
+                        ],
+                        "properties": {
+                          "statusCode": {
+                            "type": "integer",
+                            "enum": [
+                              409
+                            ]
+                          },
+                          "code": {
+                            "type": "string",
+                            "enum": [
+                              "EMAIL_VERIFICATION_TOKEN_EXPIRED"
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "422": {
+                  "description": "Request validation failed.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "required": [
+                          "statusCode",
+                          "code"
+                        ],
+                        "properties": {
+                          "statusCode": {
+                            "type": "integer",
+                            "enum": [
+                              422
+                            ]
+                          },
+                          "code": {
+                            "type": "string",
+                            "enum": [
+                              "EMAIL_VERIFICATION_TOKEN_REQUIRED",
+                              "UNEXPECTED_FIELD",
+                              "VALIDATION_FAILED"
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "500": {
+                  "$ref": "#/components/responses/InternalServerError"
+                }
+              }
+            }
+          }
+        },
+        {
+          "pointer": "/paths/~1auth~1login/post/description",
+          "before": "**Lưu ý**\n\n- User bị khóa **vẫn đăng nhập được**; access token mang claim `status` để Tenancy/Community chặn chức năng.\n- User đã xóa mềm được coi như không tồn tại, trả `401`.\n- Đang cân nhắc: refresh token hiện trả trong JSON, `api-conventions.md` §4 muốn dùng HttpOnly cookie.\n\n**Sequence diagram**\n\n```mermaid\nsequenceDiagram\n    autonumber\n    actor Client\n    participant GW as API Gateway\n    participant S as Identity-Service\n    participant C as AuthController\n    participant Bus as CQRS CommandBus\n    participant H as Application handler\n    Client->>GW: POST /api/v1/auth/login\n    GW->>S: Proxy original HTTP request\n    S->>C: Invoke loginAccount\n    C->>Bus: Execute command for loginAccount\n    Bus->>H: Dispatch command handler\n    H-->>Bus: Return use-case result\n    Bus-->>C: Result\n    C-->>S: Return documented response\n    S-->>GW: HTTP status and response body\n    GW-->>Client: Forward HTTP response\n```",
+          "after": "**Lưu ý**\n\n- User bị khóa **vẫn đăng nhập được**; access token mang claim `status` để Tenancy/Community chặn chức năng.\n- Tài khoản mới phải xác minh email trước khi đăng nhập; nếu chưa xác minh, trả `403 EMAIL_NOT_VERIFIED`.\n- User đã xóa mềm được coi như không tồn tại, trả `401`.\n- Đang cân nhắc: refresh token hiện trả trong JSON, `api-conventions.md` §4 muốn dùng HttpOnly cookie.\n\n**Sequence diagram**\n\n```mermaid\nsequenceDiagram\n    autonumber\n    actor Client\n    participant GW as API Gateway\n    participant S as Identity-Service\n    participant C as AuthController\n    participant Bus as CQRS CommandBus\n    participant H as Application handler\n    Client->>GW: POST /api/v1/auth/login\n    GW->>S: Proxy original HTTP request\n    S->>C: Invoke loginAccount\n    C->>Bus: Execute command for loginAccount\n    Bus->>H: Dispatch command handler\n    H-->>Bus: Return use-case result\n    Bus-->>C: Result\n    C-->>S: Return documented response\n    S-->>GW: HTTP status and response body\n    GW-->>Client: Forward HTTP response\n```"
+        },
+        {
+          "pointer": "/paths/~1auth~1login/post/responses/403",
+          "before": null,
+          "after": {
+            "description": "Email đăng ký chưa được xác minh.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        403
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "EMAIL_NOT_VERIFIED"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "pointer": "/paths/~1auth~1register/post/description",
+          "before": "**Lưu ý**\n\n- Chỉ `tenant`/`landlord` được tự đăng ký; admin được seed sẵn. Role không đổi được sau khi đăng ký.\n- `user.registered` được ghi outbox cùng transaction tạo user; relay publish sau khi commit.\n\n**Sequence diagram**\n\n```mermaid\nsequenceDiagram\n    autonumber\n    actor Client\n    participant GW as API Gateway\n    participant S as Identity-Service\n    participant C as AuthController\n    participant Bus as CQRS CommandBus\n    participant H as Application handler\n    Client->>GW: POST /api/v1/auth/register\n    GW->>S: Proxy original HTTP request\n    S->>C: Invoke registerAccount\n    C->>Bus: Execute command for registerAccount\n    Bus->>H: Dispatch command handler\n    H-->>Bus: Return use-case result\n    Bus-->>C: Result\n    C-->>S: Return documented response\n    S-->>GW: HTTP status and response body\n    GW-->>Client: Forward HTTP response\n```",
+          "after": "**Lưu ý**\n\n- Chỉ `tenant`/`landlord` được tự đăng ký; admin được seed sẵn. Role không đổi được sau khi đăng ký.\n- `user.registered` được ghi outbox cùng transaction tạo user; relay publish sau khi commit.\n- Tài khoản ở trạng thái `pending_verification`; Identity gửi link xác minh qua Community. Link dùng một lần, hết hạn sau 24 giờ. Chỉ đăng nhập được sau khi xác minh.\n- Khi xác minh thành công, Identity phát `user.email_verified` để Tenancy liên kết hợp đồng theo số điện thoại.\n\n**Sequence diagram**\n\n```mermaid\nsequenceDiagram\n    autonumber\n    actor Client\n    participant GW as API Gateway\n    participant S as Identity-Service\n    participant C as AuthController\n    participant Bus as CQRS CommandBus\n    participant H as Application handler\n    Client->>GW: POST /api/v1/auth/register\n    GW->>S: Proxy original HTTP request\n    S->>C: Invoke registerAccount\n    C->>Bus: Execute command for registerAccount\n    Bus->>H: Dispatch command handler\n    H-->>Bus: Return use-case result\n    Bus-->>C: Result\n    C-->>S: Return documented response\n    S-->>GW: HTTP status and response body\n    GW-->>Client: Forward HTTP response\n```"
+        },
+        {
+          "pointer": "/paths/~1auth~1register/post/responses/201/content/application~1json/example/data/accessToken",
+          "before": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1auth~1register/post/responses/201/content/application~1json/example/data/email",
+          "before": null,
+          "after": "lan@example.com"
+        },
+        {
+          "pointer": "/paths/~1auth~1register/post/responses/201/content/application~1json/example/data/id",
+          "before": null,
+          "after": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+        },
+        {
+          "pointer": "/paths/~1auth~1register/post/responses/201/content/application~1json/example/data/refreshToken",
+          "before": "m7Qp2vN8rT4xK9sL3wY6cB1hF5jD0uE_gAqZkRoUiVs",
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1auth~1register/post/responses/201/content/application~1json/example/data/role",
+          "before": null,
+          "after": "tenant"
+        },
+        {
+          "pointer": "/paths/~1auth~1register/post/responses/201/content/application~1json/example/data/status",
+          "before": null,
+          "after": "pending_verification"
+        },
+        {
+          "pointer": "/paths/~1auth~1register/post/responses/201/content/application~1json/example/data/user",
+          "before": {
+            "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+            "name": "Lê Văn An",
+            "email": "lan@example.com",
+            "phone": "0901234567",
+            "role": "tenant"
+          },
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1auth~1register/post/responses/201/content/application~1json/example/data/verificationRequired",
+          "before": null,
+          "after": true
+        },
+        {
+          "pointer": "/paths/~1auth~1register/post/responses/201/headers",
+          "before": {
+            "Location": {
+              "description": "Đường dẫn đến hồ sơ của tài khoản vừa tạo",
+              "schema": {
+                "type": "string",
+                "example": "/api/v1/me"
+              }
+            }
+          },
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1users/get/parameters",
+          "before": [
+            {
+              "name": "sort",
+              "in": "query",
+              "description": "Một trường sắp xếp; mặc định createdAt.",
+              "schema": {
+                "type": "string",
+                "enum": [
+                  "createdAt",
+                  "name",
+                  "role",
+                  "status"
+                ],
+                "default": "createdAt"
+              }
+            },
+            {
+              "name": "order",
+              "in": "query",
+              "description": "Chiều sắp xếp; mặc định desc.",
+              "schema": {
+                "type": "string",
+                "enum": [
+                  "asc",
+                  "desc"
+                ],
+                "default": "desc"
+              }
+            },
+            {
+              "name": "pageNo",
+              "in": "query",
+              "description": "Số trang offset, bắt đầu từ 1.",
+              "schema": {
+                "type": "integer",
+                "minimum": 1,
+                "default": 1
+              }
+            },
+            {
+              "name": "pageSize",
+              "in": "query",
+              "description": "Số bản ghi mỗi trang.",
+              "schema": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 100,
+                "default": 20
+              }
+            },
+            {
+              "name": "role",
+              "in": "query",
+              "required": false,
+              "description": "Lọc theo vai trò.",
+              "schema": {
+                "type": "string",
+                "enum": [
+                  "landlord",
+                  "tenant",
+                  "admin"
+                ]
+              }
+            },
+            {
+              "name": "status",
+              "in": "query",
+              "required": false,
+              "description": "Lọc theo trạng thái.",
+              "schema": {
+                "type": "string",
+                "enum": [
+                  "active",
+                  "locked"
+                ]
+              }
+            },
+            {
+              "name": "q",
+              "in": "query",
+              "required": false,
+              "description": "Tìm theo tên, email hoặc số điện thoại.",
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "after": [
+            {
+              "name": "sort",
+              "in": "query",
+              "description": "Một trường sắp xếp; mặc định createdAt.",
+              "schema": {
+                "type": "string",
+                "enum": [
+                  "createdAt",
+                  "name",
+                  "role",
+                  "status"
+                ],
+                "default": "createdAt"
+              }
+            },
+            {
+              "name": "order",
+              "in": "query",
+              "description": "Chiều sắp xếp; mặc định desc.",
+              "schema": {
+                "type": "string",
+                "enum": [
+                  "asc",
+                  "desc"
+                ],
+                "default": "desc"
+              }
+            },
+            {
+              "name": "pageNo",
+              "in": "query",
+              "description": "Số trang offset, bắt đầu từ 1.",
+              "schema": {
+                "type": "integer",
+                "minimum": 1,
+                "default": 1
+              }
+            },
+            {
+              "name": "pageSize",
+              "in": "query",
+              "description": "Số bản ghi mỗi trang.",
+              "schema": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 100,
+                "default": 20
+              }
+            },
+            {
+              "name": "role",
+              "in": "query",
+              "required": false,
+              "description": "Lọc theo vai trò.",
+              "schema": {
+                "type": "string",
+                "enum": [
+                  "landlord",
+                  "tenant",
+                  "admin"
+                ]
+              }
+            },
+            {
+              "name": "status",
+              "in": "query",
+              "required": false,
+              "description": "Lọc theo trạng thái.",
+              "schema": {
+                "type": "string",
+                "enum": [
+                  "pending_verification",
+                  "active",
+                  "locked"
+                ]
+              }
+            },
+            {
+              "name": "q",
+              "in": "query",
+              "required": false,
+              "description": "Tìm theo tên, email hoặc số điện thoại.",
+              "schema": {
+                "type": "string"
+              }
+            }
+          ]
+        },
+        {
+          "pointer": "/paths/~1users/get/responses/422/content/application~1json/examples/error_12/summary",
+          "before": "status must be one of the following values: active, locked",
+          "after": "status must be one of the following values: pending_verification, active, locked"
+        },
+        {
+          "pointer": "/paths/~1users/get/responses/422/content/application~1json/examples/error_12/value/code",
+          "before": "status must be one of the following values: active, locked",
+          "after": "status must be one of the following values: pending_verification, active, locked"
+        },
+        {
+          "pointer": "/paths/~1users/get/responses/422/content/application~1json/schema/properties/code/enum",
+          "before": [
+            "UNEXPECTED_FIELD",
+            "VALIDATION_FAILED",
+            "pageNo must not be less than 1",
+            "pageNo must be an integer number",
+            "pageSize must not be less than 1",
+            "pageSize must not be greater than 100",
+            "pageSize must be an integer number",
+            "sort must be a string",
+            "sort must be one of: createdAt, name, role, status",
+            "order must be either asc or desc",
+            "role must be one of the following values: landlord, tenant, admin",
+            "status must be one of the following values: active, locked",
+            "q must be a string"
+          ],
+          "after": [
+            "UNEXPECTED_FIELD",
+            "VALIDATION_FAILED",
+            "pageNo must not be less than 1",
+            "pageNo must be an integer number",
+            "pageSize must not be less than 1",
+            "pageSize must not be greater than 100",
+            "pageSize must be an integer number",
+            "sort must be a string",
+            "sort must be one of: createdAt, name, role, status",
+            "order must be either asc or desc",
+            "role must be one of the following values: landlord, tenant, admin",
+            "status must be one of the following values: pending_verification, active, locked",
+            "q must be a string"
+          ]
+        }
+      ],
+      "semanticDiff": {
+        "paths": {
+          "added": [
+            "/auth/email-verifications",
+            "/auth/email-verification-requests"
+          ],
+          "modified": {
+            "/auth/login": {
+              "operations": {
+                "modified": {
+                  "POST": {
+                    "responses": {
+                      "added": [
+                        "403"
+                      ]
+                    }
+                  }
+                }
+              }
+            },
+            "/auth/register": {
+              "operations": {
+                "modified": {
+                  "POST": {
+                    "responses": {
+                      "modified": {
+                        "201": {
+                          "headers": {
+                            "deleted": [
+                              "location"
+                            ]
+                          },
+                          "content": {
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "properties": {
+                                    "modified": {
+                                      "data": {
+                                        "required": {
+                                          "added": [
+                                            "role",
+                                            "status",
+                                            "verificationRequired",
+                                            "id",
+                                            "email"
+                                          ],
+                                          "deleted": [
+                                            "accessToken",
+                                            "refreshToken",
+                                            "user"
+                                          ]
+                                        },
+                                        "properties": {
+                                          "added": [
+                                            "id",
+                                            "email",
+                                            "role",
+                                            "status",
+                                            "verificationRequired"
+                                          ],
+                                          "deleted": [
+                                            "accessToken",
+                                            "refreshToken",
+                                            "user"
+                                          ]
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "/me": {
+              "operations": {
+                "modified": {
+                  "GET": {
+                    "responses": {
+                      "modified": {
+                        "200": {
+                          "content": {
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "properties": {
+                                    "modified": {
+                                      "data": {
+                                        "properties": {
+                                          "modified": {
+                                            "status": {
+                                              "enum": {
+                                                "added": [
+                                                  "pending_verification"
+                                                ]
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "/users": {
+              "operations": {
+                "modified": {
+                  "GET": {
+                    "parameters": {
+                      "modified": {
+                        "query": {
+                          "status": {
+                            "schema": {
+                              "enum": {
+                                "added": [
+                                  "pending_verification"
+                                ]
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "responses": {
+                      "modified": {
+                        "200": {
+                          "content": {
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "properties": {
+                                    "modified": {
+                                      "data": {
+                                        "items": {
+                                          "properties": {
+                                            "modified": {
+                                              "status": {
+                                                "enum": {
+                                                  "added": [
+                                                    "pending_verification"
+                                                  ]
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "422": {
+                          "content": {
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "properties": {
+                                    "modified": {
+                                      "code": {
+                                        "enum": {
+                                          "added": [
+                                            "status must be one of the following values: pending_verification, active, locked"
+                                          ],
+                                          "deleted": [
+                                            "status must be one of the following values: active, locked"
+                                          ]
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "/users/{userId}": {
+              "operations": {
+                "modified": {
+                  "GET": {
+                    "responses": {
+                      "modified": {
+                        "200": {
+                          "content": {
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "properties": {
+                                    "modified": {
+                                      "data": {
+                                        "properties": {
+                                          "modified": {
+                                            "status": {
+                                              "enum": {
+                                                "added": [
+                                                  "pending_verification"
+                                                ]
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "PATCH": {
+                    "responses": {
+                      "modified": {
+                        "200": {
+                          "content": {
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "properties": {
+                                    "modified": {
+                                      "data": {
+                                        "properties": {
+                                          "modified": {
+                                            "status": {
+                                              "enum": {
+                                                "added": [
+                                                  "pending_verification"
+                                                ]
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "components": {
+          "schemas": {
+            "added": [
+              "AuthRequestEmailVerificationRequestDto",
+              "AuthRequestEmailVerificationResponseDto"
+            ],
+            "modified": {
+              "AuthRegisterResponseDto": {
+                "required": {
+                  "added": [
+                    "id",
+                    "email",
+                    "role",
+                    "status",
+                    "verificationRequired"
+                  ],
+                  "deleted": [
+                    "accessToken",
+                    "refreshToken",
+                    "user"
+                  ]
+                },
+                "properties": {
+                  "added": [
+                    "email",
+                    "role",
+                    "status",
+                    "verificationRequired",
+                    "id"
+                  ],
+                  "deleted": [
+                    "user",
+                    "accessToken",
+                    "refreshToken"
+                  ]
+                }
+              },
+              "User": {
+                "properties": {
+                  "modified": {
+                    "status": {
+                      "enum": {
+                        "added": [
+                          "pending_verification"
+                        ]
+                      }
+                    }
+                  }
+                }
+              },
+              "UserCurrentResponseDto": {
+                "properties": {
+                  "modified": {
+                    "status": {
+                      "enum": {
+                        "added": [
+                          "pending_verification"
+                        ]
+                      }
+                    }
+                  }
+                }
+              },
+              "UserDetailResponseDto": {
+                "properties": {
+                  "modified": {
+                    "status": {
+                      "enum": {
+                        "added": [
+                          "pending_verification"
+                        ]
+                      }
+                    }
+                  }
+                }
+              },
+              "UserListResponseDto": {
+                "properties": {
+                  "modified": {
+                    "status": {
+                      "enum": {
+                        "added": [
+                          "pending_verification"
+                        ]
+                      }
+                    }
+                  }
+                }
+              },
+              "UserUpdateResponseDto": {
+                "properties": {
+                  "modified": {
+                    "status": {
+                      "enum": {
+                        "added": [
+                          "pending_verification"
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   ]
 }

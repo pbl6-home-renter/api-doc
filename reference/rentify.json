@@ -68,7 +68,7 @@
         "x-apidog-status": "released",
         "operationId": "registerAccount",
         "summary": "Register",
-        "description": "**Lưu ý**\n\n- Chỉ `tenant`/`landlord` được tự đăng ký; admin được seed sẵn. Role không đổi được sau khi đăng ký.\n- `user.registered` được ghi outbox cùng transaction tạo user; relay publish sau khi commit.\n- User bắt đầu ở trạng thái `pending_verification`; Identity gửi link xác minh dùng một lần, hết hạn sau 24 giờ. Chưa cấp token phiên trước khi xác minh.\n- Khi x?c minh th?nh c?ng, Identity ph?t user.email_verified ?? Tenancy li?n k?t h?p ??ng theo s? ?i?n tho?i.\n\n**Sequence diagram**\n\n```mermaid\nsequenceDiagram\n    autonumber\n    actor Client\n    participant GW as API Gateway\n    participant S as Identity-Service\n    participant C as AuthController\n    participant Bus as CQRS CommandBus\n    participant H as Application handler\n    Client->>GW: POST /api/v1/auth/register\n    GW->>S: Proxy original HTTP request\n    S->>C: Invoke registerAccount\n    C->>Bus: Execute command for registerAccount\n    Bus->>H: Dispatch command handler\n    H-->>Bus: Return use-case result\n    Bus-->>C: Result\n    C-->>S: Return documented response\n    S-->>GW: HTTP status and response body\n    GW-->>Client: Forward HTTP response\n```",
+        "description": "**Lưu ý**\n\n- Chỉ `tenant`/`landlord` được tự đăng ký; admin được seed sẵn. Role không đổi được sau khi đăng ký.\n- `user.registered` được ghi outbox cùng transaction tạo user; relay publish sau khi commit.\n- Tài khoản ở trạng thái `pending_verification`; Identity gửi link xác minh qua Community. Link dùng một lần, hết hạn sau 24 giờ. Chỉ đăng nhập được sau khi xác minh.\n- Khi xác minh thành công, Identity phát `user.email_verified` để Tenancy liên kết hợp đồng theo số điện thoại.\n\n**Sequence diagram**\n\n```mermaid\nsequenceDiagram\n    autonumber\n    actor Client\n    participant GW as API Gateway\n    participant S as Identity-Service\n    participant C as AuthController\n    participant Bus as CQRS CommandBus\n    participant H as Application handler\n    Client->>GW: POST /api/v1/auth/register\n    GW->>S: Proxy original HTTP request\n    S->>C: Invoke registerAccount\n    C->>Bus: Execute command for registerAccount\n    Bus->>H: Dispatch command handler\n    H-->>Bus: Return use-case result\n    Bus-->>C: Result\n    C-->>S: Return documented response\n    S-->>GW: HTTP status and response body\n    GW-->>Client: Forward HTTP response\n```\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-11-11 | 🔴 BREAKING | removed the required property `data/accessToken` from the response with the `201` status | [#54](https://github.com/pbl6-home-renter/api-doc/pull/54) |\n| 2026-11-11 | 🔴 BREAKING | removed the required property `data/refreshToken` from the response with the `201` status | [#54](https://github.com/pbl6-home-renter/api-doc/pull/54) |\n| 2026-11-11 | 🔴 BREAKING | removed the required property `data/user` from the response with the `201` status | [#54](https://github.com/pbl6-home-renter/api-doc/pull/54) |\n| 2026-11-11 | 🟢 NON_BREAKING | the optional response header `location` removed for the status `201` | [#54](https://github.com/pbl6-home-renter/api-doc/pull/54) |\n| 2026-11-11 | 🟢 NON_BREAKING | added the required property `data/email` to the response with the `201` status | [#54](https://github.com/pbl6-home-renter/api-doc/pull/54) |\n| 2026-11-11 | 🟢 NON_BREAKING | added the required property `data/id` to the response with the `201` status | [#54](https://github.com/pbl6-home-renter/api-doc/pull/54) |\n| 2026-11-11 | 🟢 NON_BREAKING | added the required property `data/role` to the response with the `201` status | [#54](https://github.com/pbl6-home-renter/api-doc/pull/54) |\n| 2026-11-11 | 🟢 NON_BREAKING | added the required property `data/status` to the response with the `201` status | [#54](https://github.com/pbl6-home-renter/api-doc/pull/54) |\n| 2026-11-11 | 🟢 NON_BREAKING | added the required property `data/verificationRequired` to the response with the `201` status | [#54](https://github.com/pbl6-home-renter/api-doc/pull/54) |\n",
         "security": [],
         "requestBody": {
           "required": true,
@@ -89,7 +89,7 @@
         },
         "responses": {
           "201": {
-            "description": "Tài khoản được tạo; cần xác minh email trước khi đăng nhập",
+            "description": "Đăng ký tài khoản thành công",
             "content": {
               "application/json": {
                 "schema": {
@@ -467,7 +467,7 @@
         "x-apidog-status": "released",
         "operationId": "verifyRegisteredEmail",
         "summary": "Verify registered email",
-        "description": "Validates the single-use email verification token. Tokens expire after 24 hours. The web confirmation page calls this endpoint after the user confirms.",
+        "description": "Validates the single-use email verification token. Tokens expire after 24 hours. The web confirmation page calls this endpoint after the user confirms.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-11-11 | 🟢 NON_BREAKING | Thêm endpoint mới. | [#54](https://github.com/pbl6-home-renter/api-doc/pull/54) |\n",
         "security": [],
         "requestBody": {
           "required": true,
@@ -527,7 +527,33 @@
             }
           },
           "409": {
-            "description": "Email verification token has expired."
+            "description": "Email verification token has expired.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        409
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "EMAIL_VERIFICATION_TOKEN_EXPIRED"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "422": {
             "description": "Request validation failed.",
@@ -575,7 +601,7 @@
         "x-apidog-status": "released",
         "operationId": "requestEmailVerification",
         "summary": "Request another verification email",
-        "description": "Requests a new verification email for a pending account. The response is identical whether the email exists, is already verified, or is unknown.",
+        "description": "Requests a new verification email for a pending account. The response is identical whether the email exists, is already verified, or is unknown.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-11-11 | 🟢 NON_BREAKING | Thêm endpoint mới. | [#54](https://github.com/pbl6-home-renter/api-doc/pull/54) |\n",
         "security": [],
         "requestBody": {
           "required": true,
@@ -702,7 +728,7 @@
         "x-apidog-status": "released",
         "operationId": "loginAccount",
         "summary": "Login",
-        "description": "**Lưu ý**\n\n- User bị khóa **vẫn đăng nhập được**; access token mang claim `status` để Tenancy/Community chặn chức năng.\n- Tài khoản mới phải xác minh email trước; chưa xác minh trả `403 EMAIL_NOT_VERIFIED`.\n- Tài khoản mới phải xác minh email trước; chưa xác minh trả `403 EMAIL_NOT_VERIFIED`.\n- Tài khoản mới phải xác minh email trước; chưa xác minh trả `403 EMAIL_NOT_VERIFIED`.\n- User đã xóa mềm được coi như không tồn tại, trả `401`.\n- Đang cân nhắc: refresh token hiện trả trong JSON, `api-conventions.md` §4 muốn dùng HttpOnly cookie.\n\n**Sequence diagram**\n\n```mermaid\nsequenceDiagram\n    autonumber\n    actor Client\n    participant GW as API Gateway\n    participant S as Identity-Service\n    participant C as AuthController\n    participant Bus as CQRS CommandBus\n    participant H as Application handler\n    Client->>GW: POST /api/v1/auth/login\n    GW->>S: Proxy original HTTP request\n    S->>C: Invoke loginAccount\n    C->>Bus: Execute command for loginAccount\n    Bus->>H: Dispatch command handler\n    H-->>Bus: Return use-case result\n    Bus-->>C: Result\n    C-->>S: Return documented response\n    S-->>GW: HTTP status and response body\n    GW-->>Client: Forward HTTP response\n```",
+        "description": "**Lưu ý**\n\n- User bị khóa **vẫn đăng nhập được**; access token mang claim `status` để Tenancy/Community chặn chức năng.\n- Tài khoản mới phải xác minh email trước khi đăng nhập; nếu chưa xác minh, trả `403 EMAIL_NOT_VERIFIED`.\n- User đã xóa mềm được coi như không tồn tại, trả `401`.\n- Đang cân nhắc: refresh token hiện trả trong JSON, `api-conventions.md` §4 muốn dùng HttpOnly cookie.\n\n**Sequence diagram**\n\n```mermaid\nsequenceDiagram\n    autonumber\n    actor Client\n    participant GW as API Gateway\n    participant S as Identity-Service\n    participant C as AuthController\n    participant Bus as CQRS CommandBus\n    participant H as Application handler\n    Client->>GW: POST /api/v1/auth/login\n    GW->>S: Proxy original HTTP request\n    S->>C: Invoke loginAccount\n    C->>Bus: Execute command for loginAccount\n    Bus->>H: Dispatch command handler\n    H-->>Bus: Return use-case result\n    Bus-->>C: Result\n    C-->>S: Return documented response\n    S-->>GW: HTTP status and response body\n    GW-->>Client: Forward HTTP response\n```\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-11-11 | 🟢 NON_BREAKING | added the non-success response with the status `403` | [#54](https://github.com/pbl6-home-renter/api-doc/pull/54) |\n",
         "security": [],
         "requestBody": {
           "required": true,
@@ -1973,7 +1999,7 @@
         "x-apidog-status": "released",
         "operationId": "getCurrentUser",
         "summary": "Get current user",
-        "description": "**Lưu ý**\n\n- `payoutAccount.accountNumber` luôn bị che (`**xxxxx`).\n- `avatarUrl` là URL công khai của media có `ownerType = user`, `ownerId = id` hiện tại và `purpose = avatar`; trả `null` nếu chưa upload avatar.\n\n**Sequence diagram**\n\n```mermaid\nsequenceDiagram\n    autonumber\n    actor Client\n    participant GW as API Gateway\n    participant S as Identity-Service\n    participant Guard as JWT/access guards\n    participant C as UserController\n    participant Bus as CQRS QueryBus\n    participant H as Application handler\n    Client->>GW: GET /api/v1/me\n    GW->>GW: Validate bearer token for protected route\n    GW->>S: Proxy original HTTP request\n    S->>Guard: Validate JWT, account state and route access\n    Guard-->>C: Continue with authenticated context\n    S->>C: Invoke getCurrentUser\n    C->>Bus: Execute query for getCurrentUser\n    Bus->>H: Dispatch query handler\n    H-->>Bus: Return use-case result\n    Bus-->>C: Result\n    C-->>S: Return documented response\n    S-->>GW: HTTP status and response body\n    GW-->>Client: Forward HTTP response\n```\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-11-11 | 🟢 NON_BREAKING | added the required property `data/avatarUrl` to the response with the `200` status | [7375f1f](https://github.com/pbl6-home-renter/api-doc/commit/7375f1fc96b5e1795cb7e374d0ecba6c0f7cfc4c) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
+        "description": "**Lưu ý**\n\n- `payoutAccount.accountNumber` luôn bị che (`**xxxxx`).\n- `avatarUrl` là URL công khai của media có `ownerType = user`, `ownerId = id` hiện tại và `purpose = avatar`; trả `null` nếu chưa upload avatar.\n\n**Sequence diagram**\n\n```mermaid\nsequenceDiagram\n    autonumber\n    actor Client\n    participant GW as API Gateway\n    participant S as Identity-Service\n    participant Guard as JWT/access guards\n    participant C as UserController\n    participant Bus as CQRS QueryBus\n    participant H as Application handler\n    Client->>GW: GET /api/v1/me\n    GW->>GW: Validate bearer token for protected route\n    GW->>S: Proxy original HTTP request\n    S->>Guard: Validate JWT, account state and route access\n    Guard-->>C: Continue with authenticated context\n    S->>C: Invoke getCurrentUser\n    C->>Bus: Execute query for getCurrentUser\n    Bus->>H: Dispatch query handler\n    H-->>Bus: Return use-case result\n    Bus-->>C: Result\n    C-->>S: Return documented response\n    S-->>GW: HTTP status and response body\n    GW-->>Client: Forward HTTP response\n```\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-11-11 | 🔴 BREAKING | added the new `pending_verification` enum value to the `data/status` response property for the response status `200` | [#54](https://github.com/pbl6-home-renter/api-doc/pull/54) |\n| 2026-11-11 | 🟢 NON_BREAKING | added the required property `data/avatarUrl` to the response with the `200` status | [7375f1f](https://github.com/pbl6-home-renter/api-doc/commit/7375f1fc96b5e1795cb7e374d0ecba6c0f7cfc4c) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "security": [
           {
             "BearerAuth": []
@@ -3090,7 +3116,7 @@
           }
         ],
         "summary": "List users",
-        "description": "**Sequence diagram**\n\n```mermaid\nsequenceDiagram\n    autonumber\n    actor Client\n    participant GW as API Gateway\n    participant S as Identity-Service\n    participant Guard as JWT/access guards\n    participant C as UserAdminController\n    participant Bus as CQRS QueryBus\n    participant H as Application handler\n    Client->>GW: GET /api/v1/users\n    GW->>GW: Validate bearer token for protected route\n    GW->>S: Proxy original HTTP request\n    S->>Guard: Validate JWT, account state and route access\n    Guard-->>C: Continue with authenticated context\n    S->>C: Invoke getUsersAdmin\n    C->>Bus: Execute query for getUsersAdmin\n    Bus->>H: Dispatch query handler\n    H-->>Bus: Return use-case result\n    Bus-->>C: Result\n    C-->>S: Return documented response\n    S-->>GW: HTTP status and response body\n    GW-->>Client: Forward HTTP response\n```\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
+        "description": "**Sequence diagram**\n\n```mermaid\nsequenceDiagram\n    autonumber\n    actor Client\n    participant GW as API Gateway\n    participant S as Identity-Service\n    participant Guard as JWT/access guards\n    participant C as UserAdminController\n    participant Bus as CQRS QueryBus\n    participant H as Application handler\n    Client->>GW: GET /api/v1/users\n    GW->>GW: Validate bearer token for protected route\n    GW->>S: Proxy original HTTP request\n    S->>Guard: Validate JWT, account state and route access\n    Guard-->>C: Continue with authenticated context\n    S->>C: Invoke getUsersAdmin\n    C->>Bus: Execute query for getUsersAdmin\n    Bus->>H: Dispatch query handler\n    H-->>Bus: Return use-case result\n    Bus-->>C: Result\n    C-->>S: Return documented response\n    S-->>GW: HTTP status and response body\n    GW-->>Client: Forward HTTP response\n```\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-11-11 | 🔴 BREAKING | added the new `pending_verification` enum value to the `data/items/status` response property for the response status `200` | [#54](https://github.com/pbl6-home-renter/api-doc/pull/54) |\n| 2026-11-11 | 🔴 BREAKING | added the new `status must be one of the following values: pending_verification, active, locked` enum value to the `code` response property for the response status `422` | [#54](https://github.com/pbl6-home-renter/api-doc/pull/54) |\n| 2026-11-11 | 🟢 NON_BREAKING | added the new enum value `pending_verification` to the `query` request parameter `status` | [#54](https://github.com/pbl6-home-renter/api-doc/pull/54) |\n| 2026-11-11 | 🟢 NON_BREAKING | removed the `status must be one of the following values: active, locked` enum value from the `code` response property for the response status `422` | [#54](https://github.com/pbl6-home-renter/api-doc/pull/54) |\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "parameters": [
           {
             "name": "sort",
@@ -3727,7 +3753,7 @@
           }
         ],
         "summary": "Get user",
-        "description": "**Lưu ý**\n\n- `buildingCount`, `activeContractCount` lấy từ Tenancy qua HTTP nội bộ; Tenancy lỗi hoặc timeout thì trả `null`.\n- Identity đã gọi Tenancy; Tenancy chưa build `GET /internal/users/{userId}/stats` nên hiện 2 field luôn là `null`.\n\n**Sequence diagram**\n\n```mermaid\nsequenceDiagram\n    autonumber\n    actor Client\n    participant GW as API Gateway\n    participant S as Identity-Service\n    participant Guard as JWT/access guards\n    participant C as UserAdminController\n    participant Bus as CQRS QueryBus\n    participant H as Application handler\n    Client->>GW: GET /api/v1/users/{userId}\n    GW->>GW: Validate bearer token for protected route\n    GW->>S: Proxy original HTTP request\n    S->>Guard: Validate JWT, account state and route access\n    Guard-->>C: Continue with authenticated context\n    S->>C: Invoke getUserById\n    C->>Bus: Execute query for getUserById\n    Bus->>H: Dispatch query handler\n    H-->>Bus: Return use-case result\n    Bus-->>C: Result\n    C-->>S: Return documented response\n    S-->>GW: HTTP status and response body\n    GW-->>Client: Forward HTTP response\n```\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-26 | 🔴 BREAKING | the response property `data/activeContractCount` became nullable for the status `200` | [#18](https://github.com/pbl6-home-renter/api-doc/pull/18) |\n| 2026-10-26 | 🔴 BREAKING | the response property `data/buildingCount` became nullable for the status `200` | [#18](https://github.com/pbl6-home-renter/api-doc/pull/18) |\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
+        "description": "**Lưu ý**\n\n- `buildingCount`, `activeContractCount` lấy từ Tenancy qua HTTP nội bộ; Tenancy lỗi hoặc timeout thì trả `null`.\n- Identity đã gọi Tenancy; Tenancy chưa build `GET /internal/users/{userId}/stats` nên hiện 2 field luôn là `null`.\n\n**Sequence diagram**\n\n```mermaid\nsequenceDiagram\n    autonumber\n    actor Client\n    participant GW as API Gateway\n    participant S as Identity-Service\n    participant Guard as JWT/access guards\n    participant C as UserAdminController\n    participant Bus as CQRS QueryBus\n    participant H as Application handler\n    Client->>GW: GET /api/v1/users/{userId}\n    GW->>GW: Validate bearer token for protected route\n    GW->>S: Proxy original HTTP request\n    S->>Guard: Validate JWT, account state and route access\n    Guard-->>C: Continue with authenticated context\n    S->>C: Invoke getUserById\n    C->>Bus: Execute query for getUserById\n    Bus->>H: Dispatch query handler\n    H-->>Bus: Return use-case result\n    Bus-->>C: Result\n    C-->>S: Return documented response\n    S-->>GW: HTTP status and response body\n    GW-->>Client: Forward HTTP response\n```\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-11-11 | 🔴 BREAKING | added the new `pending_verification` enum value to the `data/status` response property for the response status `200` | [#54](https://github.com/pbl6-home-renter/api-doc/pull/54) |\n| 2026-10-26 | 🔴 BREAKING | the response property `data/activeContractCount` became nullable for the status `200` | [#18](https://github.com/pbl6-home-renter/api-doc/pull/18) |\n| 2026-10-26 | 🔴 BREAKING | the response property `data/buildingCount` became nullable for the status `200` | [#18](https://github.com/pbl6-home-renter/api-doc/pull/18) |\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "parameters": [
           {
             "name": "userId",
@@ -3935,7 +3961,7 @@
           }
         ],
         "summary": "Update user",
-        "description": "**Lưu ý**\n\n- Không đổi được `email`, `role`, `status` qua API này; khóa/mở khóa dùng API lock/unlock.\n\n**Sequence diagram**\n\n```mermaid\nsequenceDiagram\n    autonumber\n    actor Client\n    participant GW as API Gateway\n    participant S as Identity-Service\n    participant Guard as JWT/access guards\n    participant C as UserAdminController\n    participant Bus as CQRS CommandBus\n    participant H as Application handler\n    Client->>GW: PATCH /api/v1/users/{userId}\n    GW->>GW: Validate bearer token for protected route\n    GW->>S: Proxy original HTTP request\n    S->>Guard: Validate JWT, account state and route access\n    Guard-->>C: Continue with authenticated context\n    S->>C: Invoke updateUserById\n    C->>Bus: Execute command for updateUserById\n    Bus->>H: Dispatch command handler\n    H-->>Bus: Return use-case result\n    Bus-->>C: Result\n    C-->>S: Return documented response\n    S-->>GW: HTTP status and response body\n    GW-->>Client: Forward HTTP response\n```\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
+        "description": "**Lưu ý**\n\n- Không đổi được `email`, `role`, `status` qua API này; khóa/mở khóa dùng API lock/unlock.\n\n**Sequence diagram**\n\n```mermaid\nsequenceDiagram\n    autonumber\n    actor Client\n    participant GW as API Gateway\n    participant S as Identity-Service\n    participant Guard as JWT/access guards\n    participant C as UserAdminController\n    participant Bus as CQRS CommandBus\n    participant H as Application handler\n    Client->>GW: PATCH /api/v1/users/{userId}\n    GW->>GW: Validate bearer token for protected route\n    GW->>S: Proxy original HTTP request\n    S->>Guard: Validate JWT, account state and route access\n    Guard-->>C: Continue with authenticated context\n    S->>C: Invoke updateUserById\n    C->>Bus: Execute command for updateUserById\n    Bus->>H: Dispatch command handler\n    H-->>Bus: Return use-case result\n    Bus-->>C: Result\n    C-->>S: Return documented response\n    S-->>GW: HTTP status and response body\n    GW-->>Client: Forward HTTP response\n```\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-11-11 | 🔴 BREAKING | added the new `pending_verification` enum value to the `data/status` response property for the response status `200` | [#54](https://github.com/pbl6-home-renter/api-doc/pull/54) |\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "parameters": [
           {
             "name": "userId",
@@ -24355,6 +24381,47 @@
           "accepted"
         ]
       },
+      "AuthRequestEmailVerificationRequestDto": {
+        "type": "object",
+        "x-apidog-folder": "Auth/Request",
+        "title": "AuthRequestEmailVerificationRequestDto",
+        "description": "Email address for requesting another verification link",
+        "additionalProperties": false,
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email",
+            "minLength": 5,
+            "maxLength": 254,
+            "pattern": "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$",
+            "description": "Email address of the account to verify",
+            "example": "lan@example.com"
+          }
+        },
+        "required": [
+          "email"
+        ]
+      },
+      "AuthRequestEmailVerificationResponseDto": {
+        "type": "object",
+        "x-apidog-folder": "Auth/Response",
+        "title": "AuthRequestEmailVerificationResponseDto",
+        "description": "Response confirming the verification email request was accepted",
+        "properties": {
+          "accepted": {
+            "type": "boolean",
+            "enum": [
+              true
+            ],
+            "description": "The system accepted the request for processing",
+            "example": true
+          }
+        },
+        "required": [
+          "accepted"
+        ],
+        "additionalProperties": false
+      },
       "AuthResetPasswordRequestDto": {
         "type": "object",
         "x-apidog-folder": "Auth/Request",
@@ -24875,7 +24942,7 @@
               "active",
               "locked"
             ],
-            "description": "Trạng thái tài khoản (active: bình thường, locked: bị khóa bởi admin).",
+            "description": "Trạng thái tài khoản (pending_verification: chưa xác minh email, active: bình thường, locked: bị khóa bởi admin).",
             "example": "active"
           }
         },
@@ -25251,6 +25318,7 @@
               "status": {
                 "type": "string",
                 "enum": [
+                  "pending_verification",
                   "active",
                   "locked"
                 ],
@@ -35822,45 +35890,6 @@
           "data",
           "pagination"
         ]
-      },
-      "AuthRequestEmailVerificationRequestDto": {
-        "type": "object",
-        "title": "AuthRequestEmailVerificationRequestDto",
-        "description": "Email address for requesting another verification link",
-        "additionalProperties": false,
-        "required": [
-          "email"
-        ],
-        "properties": {
-          "email": {
-            "type": "string",
-            "format": "email",
-            "minLength": 5,
-            "maxLength": 254,
-            "pattern": "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$",
-            "description": "Email address of the account to verify",
-            "example": "lan@example.com"
-          }
-        }
-      },
-      "AuthRequestEmailVerificationResponseDto": {
-        "type": "object",
-        "title": "AuthRequestEmailVerificationResponseDto",
-        "description": "Response confirming the verification email request was accepted",
-        "additionalProperties": false,
-        "required": [
-          "accepted"
-        ],
-        "properties": {
-          "accepted": {
-            "type": "boolean",
-            "enum": [
-              true
-            ],
-            "description": "The system accepted the request for processing",
-            "example": true
-          }
-        }
       }
     },
     "responses": {
