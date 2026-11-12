@@ -10,6 +10,11 @@ properties:
     type: string
     format: uuid
     description: ID tin gốc.
+  sequence:
+    type: string
+    nullable: true
+    pattern: '^[0-9]+$'
+    description: Sequence của tin gốc để mở lại lịch sử; `null` khi tin không còn khả dụng.
   senderName:
     type: string
     nullable: true
@@ -28,9 +33,10 @@ properties:
   isUnavailable:
     type: boolean
     description: '`true` khi tin gốc đã bị xóa sau khi trả lời.'
-required: [id, senderName, type, contentPreview, isUnavailable]
+required: [id, sequence, senderName, type, contentPreview, isUnavailable]
 example:
   id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+  sequence: '42'
   senderName: Nguyễn Văn A
   type: text
   contentPreview: Dạ thợ mấy giờ qua kiểm được ạ
