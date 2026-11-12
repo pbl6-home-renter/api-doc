@@ -1,0 +1,13 @@
+type: object
+x-apidog-folder: "Message/Response"
+title: MessageSearchResponseDto
+description: Một tin khớp từ khóa tìm kiếm trong hội thoại.
+additionalProperties: false
+properties:
+  id: { type: string, format: uuid, description: "ID tin nhắn; dùng để tô sáng sau khi mở bằng `GET /messages?maxSequence=`." }
+  sequence: { type: string, pattern: '^\d+$', example: '42', description: Bigint sequence dưới dạng chuỗi thập phân; truyền vào `maxSequence` để mở tin. }
+  senderName: { type: string, maxLength: 254, description: Snapshot tên người gửi. }
+  type: { type: string, enum: [text, image, bot] }
+  contentPreview: { type: string, maxLength: 120, description: "Nội dung text/bot hoặc caption ảnh, tối đa 120 ký tự (cắt 117 + `...`)." }
+  createdAt: { type: string, format: date-time }
+required: [id, sequence, senderName, type, contentPreview, createdAt]

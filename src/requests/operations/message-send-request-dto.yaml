@@ -32,6 +32,14 @@ properties:
     nullable: true
     description: ID ảnh đã upload nếu type là image.
     example: null
+  replyToMessageId:
+    type: string
+    format: uuid
+    nullable: true
+    description: |-
+      (Chat v2, tùy chọn) ID tin được trả lời. Tin gốc phải cùng hội thoại, chưa xóa và là `text`/`image`/`bot`; sai thì `422 MESSAGE_REPLY_TARGET_INVALID`.
+      Retry cùng `clientMessageId` trả tin đã lưu, không kiểm tra lại tin gốc.
+    example: null
 
 required:
   - conversationId

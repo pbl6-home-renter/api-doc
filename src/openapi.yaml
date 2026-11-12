@@ -222,6 +222,8 @@ paths:
     $ref: './paths/chat/conversation-bot-reminders.yaml'
   /messages:
     $ref: './paths/chat/messages.yaml'
+  /messages/search:
+    $ref: './paths/chat/messages-search.yaml'
   /messages/mark-read:
     $ref: './paths/chat/messages-mark-read.yaml'
   /notifications:
@@ -561,6 +563,8 @@ components:
       $ref: './responses/dtos/operations/message-list-response-dto.yaml'
     MessageSendResponseDto:
       $ref: './responses/dtos/operations/message-send-response-dto.yaml'
+    MessageSearchResponseDto:
+      $ref: './responses/dtos/operations/message-search-response-dto.yaml'
     MessageMarkReadResponseDto:
       $ref: './responses/dtos/operations/messages-read-mark-response-dto.yaml'
     # Notification DTOs
@@ -696,6 +700,8 @@ components:
       $ref: './schemas/chat/conversation-avatar-changed-payload.yaml'
     Message:
       $ref: './schemas/chat/message.yaml'
+    MessageReplyReference:
+      $ref: './schemas/chat/message-reply-reference.yaml'
 
     # Domain: Matching
     MatchRequest:

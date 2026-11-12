@@ -11,6 +11,12 @@ properties:
   mediaId: { type: string, format: uuid, nullable: true }
   sequence: { type: string, pattern: '^\d+$', example: '43', description: Bigint sequence dưới dạng chuỗi thập phân. }
   clientMessageId: { type: string, format: uuid }
+  replyTo:
+    type: object
+    nullable: true
+    description: Trích dẫn tin gốc nếu request có `replyToMessageId`; `null` nếu không.
+    allOf:
+      - $ref: ../../../openapi.yaml#/components/schemas/MessageReplyReference
   createdAt: { type: string, format: date-time , description: "Thời điểm bản ghi được tạo, theo định dạng ngày giờ ISO 8601." }
 
 required:
@@ -21,4 +27,5 @@ required:
   - content
   - sequence
   - clientMessageId
+  - replyTo
   - createdAt

@@ -1,0 +1,37 @@
+type: object
+x-apidog-folder: "Message"
+title: MessageReplyReference
+description: |-
+  Trích dẫn tin gốc của một tin trả lời (Chat v2). Server tính theo trạng thái **hiện tại** của tin gốc.
+  Khi tin gốc không còn khả dụng (đã xóa), giữ `id`, `isUnavailable=true` và trả `null` cho `senderName`, `type`, `contentPreview` để FE hiện placeholder mà không lộ nội dung.
+additionalProperties: false
+properties:
+  id:
+    type: string
+    format: uuid
+    description: ID tin gốc.
+  senderName:
+    type: string
+    nullable: true
+    maxLength: 254
+    description: Snapshot tên người gửi tin gốc; `null` khi `isUnavailable=true`.
+  type:
+    type: string
+    nullable: true
+    enum: [text, image, bot, null]
+    description: Loại tin gốc; `null` khi `isUnavailable=true`.
+  contentPreview:
+    type: string
+    nullable: true
+    maxLength: 120
+    description: Nội dung text/bot hoặc caption ảnh, tối đa 120 ký tự (cắt 117 + `...`). Ảnh không caption là `""`; FE gắn nhãn theo `type`. `null` khi `isUnavailable=true`.
+  isUnavailable:
+    type: boolean
+    description: '`true` khi tin gốc đã bị xóa sau khi trả lời.'
+required: [id, senderName, type, contentPreview, isUnavailable]
+example:
+  id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+  senderName: Nguyễn Văn A
+  type: text
+  contentPreview: Dạ thợ mấy giờ qua kiểm được ạ
+  isUnavailable: false
