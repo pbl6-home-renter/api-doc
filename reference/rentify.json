@@ -21910,6 +21910,17 @@
               "maximum": 100,
               "default": 30
             }
+          },
+          {
+            "name": "maxSequence",
+            "in": "query",
+            "required": false,
+            "description": "(Chat v2, tùy chọn) Chỉ trả tin có `sequence <= maxSequence` — dùng để mở một tin tìm được hoặc tin gốc của trích dẫn.\nTrang tiếp theo dùng `cursor` như bình thường (có thể gửi lại `maxSequence`, kết quả không đổi). Không vượt `leftSequence` của thành viên `read_only`.",
+            "schema": {
+              "type": "string",
+              "pattern": "^[1-9]\\d{0,17}$",
+              "example": "42"
+            }
           }
         ],
         "responses": {
@@ -21993,6 +22004,13 @@
                       "content": "Dạ em gửi ảnh vòi xịt ạ",
                       "mediaId": null,
                       "payload": null,
+                      "replyTo": {
+                        "id": "7c9e6679-7425-40de-944b-e07fc1f90ae7",
+                        "senderName": "Trần Thị B",
+                        "type": "image",
+                        "contentPreview": "Vòi xịt nhà tắm bị rỉ",
+                        "isUnavailable": false
+                      },
                       "createdAt": "2026-09-23T11:30:00.000Z"
                     }
                   ],
@@ -22140,7 +22158,8 @@
                 "clientMessageId": "a95a1d13-f91c-4c71-9c61-24b498d0fd0e",
                 "type": "text",
                 "content": "Dạ thợ mấy giờ qua kiểm được ạ",
-                "mediaId": null
+                "mediaId": null,
+                "replyToMessageId": "7c9e6679-7425-40de-944b-e07fc1f90ae7"
               }
             }
           }
@@ -22185,8 +22204,16 @@
                     "senderName": "Nguyễn Văn A",
                     "type": "text",
                     "content": "Dạ thợ mấy giờ qua kiểm được ạ",
+                    "mediaId": null,
                     "sequence": "43",
                     "clientMessageId": "a95a1d13-f91c-4c71-9c61-24b498d0fd0e",
+                    "replyTo": {
+                      "id": "7c9e6679-7425-40de-944b-e07fc1f90ae7",
+                      "senderName": "Trần Thị B",
+                      "type": "image",
+                      "contentPreview": "Vòi xịt nhà tắm bị rỉ",
+                      "isUnavailable": false
+                    },
                     "createdAt": "2026-09-23T11:38:00.000Z"
                   }
                 }
@@ -22234,9 +22261,10 @@
                       "type": "string",
                       "enum": [
                         "MESSAGE_CONTENT_INVALID",
+                        "MESSAGE_REPLY_TARGET_INVALID",
                         "VALIDATION_FAILED"
                       ],
-                      "description": "- MESSAGE_CONTENT_INVALID: Nội dung tin nhắn không hợp lệ.\n- VALIDATION_FAILED: Dữ liệu vi phạm ràng buộc schema hoặc quy tắc nghiệp vụ khác chưa có mã riêng."
+                      "description": "- MESSAGE_CONTENT_INVALID: Nội dung tin nhắn không hợp lệ.\n- MESSAGE_REPLY_TARGET_INVALID: Tin được trả lời không tồn tại, khác hội thoại, đã xóa hoặc là tin system.\n- VALIDATION_FAILED: Dữ liệu vi phạm ràng buộc schema hoặc quy tắc nghiệp vụ khác chưa có mã riêng."
                     }
                   }
                 },
@@ -22248,8 +22276,276 @@
                       "code": "MESSAGE_CONTENT_INVALID"
                     }
                   },
+                  "message_reply_target_invalid": {
+                    "summary": "MESSAGE_REPLY_TARGET_INVALID — Tin được trả lời không hợp lệ.",
+                    "value": {
+                      "statusCode": 422,
+                      "code": "MESSAGE_REPLY_TARGET_INVALID"
+                    }
+                  },
                   "validation_failed": {
                     "summary": "VALIDATION_FAILED — Dữ liệu vi phạm ràng buộc schema hoặc quy tắc nghiệp vụ khác chưa có mã riêng.",
+                    "value": {
+                      "statusCode": 422,
+                      "code": "VALIDATION_FAILED"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "429": {
+            "$ref": "#/components/responses/TooManyRequestsError"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          },
+          "503": {
+            "$ref": "#/components/responses/AuthUnavailableError"
+          }
+        }
+      }
+    },
+    "/messages/search": {
+      "get": {
+        "tags": [
+          "Chat"
+        ],
+        "x-apidog-folder": "Message",
+        "x-apidog-status": "designing",
+        "operationId": "getMessagesSearch",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "Search messages in a conversation",
+        "description": "(Chat v2) Tìm tin trong **một** hội thoại theo nội dung, mới nhất trước.\n\n- Tìm trên `content` của tin `text`/`bot` và caption của tin `image`; không phân biệt hoa/thường hoặc dấu tiếng Việt (`nha` khớp `Nhà`). `%`, `_`, `\\` trong `q` được hiểu theo nghĩa đen.\n- Bỏ tin `system` và tin đã xóa.\n- Quyền giống `GET /messages`: phải là thành viên hội thoại; thành viên `read_only` chỉ thấy tin có `sequence <= leftSequence`.\n- Mở tin tìm được: gọi `GET /messages?conversationId=...&maxSequence=<sequence>` rồi tô sáng theo `id`.\n\n**Sequence diagram**\n\n```mermaid\nsequenceDiagram\n    autonumber\n    actor Client\n    participant GW as API Gateway\n    participant S as community-service\n    participant Guard as JWT/access guards\n    participant C as MessageController\n    participant H as MessageSearchQueryHandler\n    participant DB as PostgreSQL\n    Client->>GW: GET /api/v1/messages/search?conversationId&q\n    GW->>S: Proxy original HTTP request\n    S->>Guard: Validate JWT, account state and route access\n    Guard-->>C: Continue with authenticated context\n    C->>H: MessageSearchQuery\n    H->>DB: Load conversation and caller membership\n    alt Conversation missing\n        H-->>C: 404 CONVERSATION_NOT_FOUND\n    else Caller is not a member\n        H-->>C: 403 FORBIDDEN\n    else Member\n        H->>DB: Folded LIKE on content, visible range, cursor by sequence desc\n        DB-->>H: Matching messages\n        H-->>C: Cursor page\n    end\n    C-->>GW: 200 MESSAGES_SEARCHED\n    GW-->>Client: Forward HTTP response\n```",
+        "parameters": [
+          {
+            "name": "conversationId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "required": true,
+            "description": "Từ khóa; server chuẩn hóa NFC và trim, sau trim phải dài 2–100 ký tự.",
+            "schema": {
+              "type": "string",
+              "minLength": 2,
+              "maxLength": 100,
+              "example": "vòi xịt"
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "description": "Cursor opaque từ trang trước; bỏ qua ở trang đầu.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 30
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Thành công: Danh sách tin khớp từ khóa.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code",
+                    "data",
+                    "pagination"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        200
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "MESSAGES_SEARCHED"
+                      ]
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/MessageSearchResponseDto"
+                      }
+                    },
+                    "pagination": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "required": [
+                        "type",
+                        "pageSize",
+                        "nextCursor",
+                        "hasNextPage"
+                      ],
+                      "properties": {
+                        "type": {
+                          "type": "string",
+                          "enum": [
+                            "cursor"
+                          ]
+                        },
+                        "pageSize": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 100
+                        },
+                        "nextCursor": {
+                          "type": "string",
+                          "nullable": true
+                        },
+                        "hasNextPage": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "statusCode": 200,
+                  "code": "MESSAGES_SEARCHED",
+                  "data": [
+                    {
+                      "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                      "sequence": "42",
+                      "senderName": "Nguyễn Văn A",
+                      "type": "text",
+                      "contentPreview": "Dạ em gửi ảnh vòi xịt ạ",
+                      "createdAt": "2026-09-23T11:30:00.000Z"
+                    },
+                    {
+                      "id": "7c9e6679-7425-40de-944b-e07fc1f90ae7",
+                      "sequence": "40",
+                      "senderName": "Trần Thị B",
+                      "type": "image",
+                      "contentPreview": "Vòi xịt nhà tắm bị rỉ",
+                      "createdAt": "2026-09-23T11:20:00.000Z"
+                    }
+                  ],
+                  "pagination": {
+                    "type": "cursor",
+                    "pageSize": 30,
+                    "nextCursor": null,
+                    "hasNextPage": false
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequestQueryError"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "403": {
+            "$ref": "#/components/responses/ForbiddenError"
+          },
+          "404": {
+            "x-apidog-name": "Not Found",
+            "description": "Không tìm thấy tài nguyên được yêu cầu.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        404
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "CONVERSATION_NOT_FOUND"
+                      ],
+                      "description": "- CONVERSATION_NOT_FOUND: Không tìm thấy hội thoại."
+                    }
+                  }
+                },
+                "examples": {
+                  "conversation_not_found": {
+                    "summary": "CONVERSATION_NOT_FOUND — Không tìm thấy hội thoại.",
+                    "value": {
+                      "statusCode": 404,
+                      "code": "CONVERSATION_NOT_FOUND"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "422": {
+            "x-apidog-name": "Unprocessable Entity",
+            "description": "Dữ liệu hợp lệ về cấu trúc nhưng vi phạm ràng buộc trường hoặc quy tắc nghiệp vụ.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        422
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "INVALID_CURSOR",
+                        "VALIDATION_FAILED"
+                      ],
+                      "description": "- INVALID_CURSOR: Con trỏ phân trang không hợp lệ.\n- VALIDATION_FAILED: Thiếu `q`, hoặc `q` sau trim ngắn hơn 2 / dài hơn 100 ký tự, hoặc tham số khác sai ràng buộc."
+                    }
+                  }
+                },
+                "examples": {
+                  "invalid_cursor": {
+                    "summary": "INVALID_CURSOR — Con trỏ phân trang không hợp lệ.",
+                    "value": {
+                      "statusCode": 422,
+                      "code": "INVALID_CURSOR"
+                    }
+                  },
+                  "validation_failed": {
+                    "summary": "VALIDATION_FAILED — Từ khóa không hợp lệ.",
                     "value": {
                       "statusCode": 422,
                       "code": "VALIDATION_FAILED"
@@ -31299,6 +31595,13 @@
             "nullable": true,
             "description": "ID ảnh đã upload nếu type là image.",
             "example": null
+          },
+          "replyToMessageId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true,
+            "description": "(Chat v2, tùy chọn) ID tin được trả lời. Tin gốc phải cùng hội thoại, chưa xóa và là `text`/`image`/`bot`; sai thì `422 MESSAGE_REPLY_TARGET_INVALID`.\nRetry cùng `clientMessageId` trả tin đã lưu, không kiểm tra lại tin gốc.",
+            "example": null
           }
         },
         "required": [
@@ -31420,6 +31723,16 @@
               "propertyName": "action"
             }
           },
+          "replyTo": {
+            "type": "object",
+            "nullable": true,
+            "description": "Trích dẫn tin gốc nếu đây là tin trả lời; `null` nếu không.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/MessageReplyReference"
+              }
+            ]
+          },
           "createdAt": {
             "type": "string",
             "format": "date-time",
@@ -31438,6 +31751,7 @@
           "content",
           "mediaId",
           "payload",
+          "replyTo",
           "createdAt"
         ]
       },
@@ -31490,6 +31804,16 @@
             "type": "string",
             "format": "uuid"
           },
+          "replyTo": {
+            "type": "object",
+            "nullable": true,
+            "description": "Trích dẫn tin gốc nếu request có `replyToMessageId`; `null` nếu không.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/MessageReplyReference"
+              }
+            ]
+          },
           "createdAt": {
             "type": "string",
             "format": "date-time",
@@ -31504,6 +31828,57 @@
           "content",
           "sequence",
           "clientMessageId",
+          "replyTo",
+          "createdAt"
+        ]
+      },
+      "MessageSearchResponseDto": {
+        "type": "object",
+        "x-apidog-folder": "Message/Response",
+        "title": "MessageSearchResponseDto",
+        "description": "Một tin khớp từ khóa tìm kiếm trong hội thoại.",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "ID tin nhắn; dùng để tô sáng sau khi mở bằng `GET /messages?maxSequence=`."
+          },
+          "sequence": {
+            "type": "string",
+            "pattern": "^\\d+$",
+            "example": "42",
+            "description": "Bigint sequence dưới dạng chuỗi thập phân; truyền vào `maxSequence` để mở tin."
+          },
+          "senderName": {
+            "type": "string",
+            "maxLength": 254,
+            "description": "Snapshot tên người gửi."
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "text",
+              "image",
+              "bot"
+            ]
+          },
+          "contentPreview": {
+            "type": "string",
+            "maxLength": 120,
+            "description": "Nội dung text/bot hoặc caption ảnh, tối đa 120 ký tự (cắt 117 + `...`)."
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "sequence",
+          "senderName",
+          "type",
+          "contentPreview",
           "createdAt"
         ]
       },
@@ -34949,6 +35324,61 @@
             ]
           }
         ]
+      },
+      "MessageReplyReference": {
+        "type": "object",
+        "x-apidog-folder": "Message",
+        "title": "MessageReplyReference",
+        "description": "Trích dẫn tin gốc của một tin trả lời (Chat v2). Server tính theo trạng thái **hiện tại** của tin gốc.\nKhi tin gốc không còn khả dụng (đã xóa), giữ `id`, `isUnavailable=true` và trả `null` cho `senderName`, `type`, `contentPreview` để FE hiện placeholder mà không lộ nội dung.",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "ID tin gốc."
+          },
+          "senderName": {
+            "type": "string",
+            "nullable": true,
+            "maxLength": 254,
+            "description": "Snapshot tên người gửi tin gốc; `null` khi `isUnavailable=true`."
+          },
+          "type": {
+            "type": "string",
+            "nullable": true,
+            "enum": [
+              "text",
+              "image",
+              "bot",
+              null
+            ],
+            "description": "Loại tin gốc; `null` khi `isUnavailable=true`."
+          },
+          "contentPreview": {
+            "type": "string",
+            "nullable": true,
+            "maxLength": 120,
+            "description": "Nội dung text/bot hoặc caption ảnh, tối đa 120 ký tự (cắt 117 + `...`). Ảnh không caption là `\"\"`; FE gắn nhãn theo `type`. `null` khi `isUnavailable=true`."
+          },
+          "isUnavailable": {
+            "type": "boolean",
+            "description": "`true` khi tin gốc đã bị xóa sau khi trả lời."
+          }
+        },
+        "required": [
+          "id",
+          "senderName",
+          "type",
+          "contentPreview",
+          "isUnavailable"
+        ],
+        "example": {
+          "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+          "senderName": "Nguyễn Văn A",
+          "type": "text",
+          "contentPreview": "Dạ thợ mấy giờ qua kiểm được ạ",
+          "isUnavailable": false
+        }
       },
       "MatchRequest": {
         "type": "object",

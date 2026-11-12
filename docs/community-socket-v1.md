@@ -29,13 +29,16 @@ socket.on('session:ready', () => {
 |---|---|---|---|
 | `conversation:join` | `{ conversationId: uuid }` | `{ ok: true, code: "JOINED", conversationId }` hoặc `{ ok: false, code: "UNAUTHORIZED" \| "INVALID_CONVERSATION_ID" \| "FORBIDDEN" }` | Chỉ member `active` được vào room. Member `read_only` đọc lịch sử qua REST trong giới hạn đã chốt. |
 | `conversation:leave` | `{ conversationId: uuid }` | `{ ok: true, code: "LEFT", conversationId }` hoặc lỗi như trên | Chỉ rời room Socket, không thay đổi membership trong DB. |
+| `conversation:typing` | `{ conversationId: uuid, isTyping: boolean }` | (tùy chọn) `{ ok: true, code: "SENT", conversationId }` hoặc `{ ok: false, code: "UNAUTHORIZED" \| "INVALID_CONVERSATION_ID" \| "INVALID_PAYLOAD" \| "FORBIDDEN" }` | Chat v2. Socket phải đã join room **và** user vẫn là member `active` (server kiểm tra lại DB mỗi lần); không thì `FORBIDDEN`. `isTyping` không phải boolean → `INVALID_PAYLOAD`. Không lưu DB, không gửi nội dung đang gõ. Chi tiết ở [Đang nhập](#đang-nhập-chat-v2). |
 
 ## Server → client
 
 | Event | Payload | Người nhận |
 |---|---|---|
-| `message:created` | `{ id, conversationId, senderUserId, senderName, senderType, sequence, clientMessageId, type, content, mediaId, payload, createdAt }` | Mọi session đã join conversation; `senderUserId=null` và `senderType=system` cho system message. Shape tương ứng với message REST. |
+| `message:created` | `{ id, conversationId, senderUserId, senderName, senderType, sequence, clientMessageId, type, content, mediaId, payload, replyTo, createdAt }` | Mọi session đã join conversation; `senderUserId=null` và `senderType=system` cho system message. Shape tương ứng với message REST. `replyTo` (Chat v2) là `MessageReplyReference` hoặc `null`; system message luôn `null`. |
 | `conversation:read-updated` | `{ conversationId, unreadCount, lastReadSequence }` | Mọi session của user vừa mark-read. |
+| `conversation:member-read` | `{ conversationId, userId, lastReadSequence }` | Chat v2. Mọi session đã join conversation (kể cả người đọc). Chi tiết ở [Đã xem](#đã-xem-chat-v2). |
+| `conversation:typing` | `{ conversationId, userId, isTyping }` | Chat v2. Các socket **khác** trong room conversation (tab khác của chính user vẫn nhận; FE bỏ qua `userId` của mình). |
 | `conversation:access-revoked` | `{ conversationId }` | Mọi session của user vừa leave/bị kick; server cũng loại các session khỏi room. |
 | `conversation:available` | `{ conversationId }` | Mọi session của user khi conversation được tạo/mở lại hoặc khi được thêm/kích hoạt lại; client có thể gọi REST rồi join. |
 | `chat:message-received` | `{ messageId, conversationId, sequence, senderUserId, senderName, conversationName, type, contentPreview, createdAt }` | User room của mọi member **user** đang `active` trong conversation, **kể cả người gửi** (để tab khác của người gửi cập nhật list). Chỉ cho message `text`, `image`, `bot`; không phát cho `system`. Chi tiết ở mục [Tin mới trên user room](#tin-mới-trên-user-room). |
@@ -72,6 +75,30 @@ Quy tắc:
 - Tin đầu tiên của direct: cả hai người nhận event. Nếu `conversationId` chưa có trong cache list, FE refetch `GET /conversations` thay vì tự dựng hàng. `conversation:available` của direct chưa có message không làm hiện chat trống (REST list vẫn ẩn).
 - Chống trùng với `message:created`: một message có thể đến qua cả conversation room lẫn user room. FE khử trùng theo `messageId`. Nếu user đang mở đúng conversation đó và tab đang hiển thị, `chat:message-received` **không** tạo toast; việc hiển thị và mark-read do màn chat quyết định. Mỗi `messageId` tạo tối đa một toast.
 - Best-effort như các event khác: không replay; REST là nguồn phục hồi.
+
+## Đã xem (Chat v2)
+
+- Sau khi `POST /messages/mark-read` commit **và** cursor thực sự tăng, server phát `conversation:member-read` tới room conversation, ngoài `conversation:read-updated` tới user room như cũ. Mark-read không làm tăng cursor thì không phát.
+- Chỉ member `active` được tính: mark-read của member `read_only` không phát event này.
+- `lastReadSequence` là chuỗi thập phân. FE khởi tạo từ `GET /conversations/{conversationId}` (`members[].lastReadSequence`), chỉ nhận giá trị lớn hơn giá trị đang giữ cho cùng `userId`, và tải lại detail sau reconnect vì event có thể mất.
+- Tin có `sequence <= lastReadSequence` của một member là đã được member đó xem. Không có trạng thái “Đã nhận”.
+
+```json
+{ "conversationId": "3fa85f64-5717-4562-b3fc-2c963f66afa6", "userId": "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d", "lastReadSequence": "43" }
+```
+
+## Đang nhập (Chat v2)
+
+```ts
+socket.emit('conversation:typing', { conversationId, isTyping: true }, (ack) => {
+  // ack: { ok: true, code: 'SENT', conversationId }
+});
+socket.on('conversation:typing', ({ conversationId, userId, isTyping }) => { /* ... */ });
+```
+
+- Server chuyển tiếp `{ conversationId, userId, isTyping }` cho các socket khác trong room, không lưu trạng thái. `userId` lấy từ JWT của socket, không lấy từ payload.
+- Member bị kick/rời bị đưa khỏi room (`conversation:access-revoked`) và bị kiểm tra lại DB nên không gửi được typing nữa.
+- FE gửi `isTyping: true` tối đa mỗi 2 giây khi đang gõ, gửi `false` khi gửi tin/xóa hết/rời hội thoại; phía nhận tự ẩn sau 4 giây nếu không có tín hiệu mới và xóa trạng thái khi đổi hội thoại hoặc reconnect. Server không phát `isTyping: false` khi socket ngắt.
 
 ## Mất kết nối và đồng bộ
 

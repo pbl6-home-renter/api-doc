@@ -25,5 +25,11 @@ properties:
       - $ref: ../../../openapi.yaml#/components/schemas/ConversationMemberRoleChangedPayload
     discriminator:
       propertyName: action
+  replyTo:
+    type: object
+    nullable: true
+    description: Trích dẫn tin gốc nếu đây là tin trả lời; `null` nếu không.
+    allOf:
+      - $ref: ../../../openapi.yaml#/components/schemas/MessageReplyReference
   createdAt: { type: string, format: date-time , description: "Thời điểm bản ghi được tạo, theo định dạng ngày giờ ISO 8601." }
-required: [id, conversationId, senderUserId, senderName, senderType, sequence, clientMessageId, type, content, mediaId, payload, createdAt]
+required: [id, conversationId, senderUserId, senderName, senderType, sequence, clientMessageId, type, content, mediaId, payload, replyTo, createdAt]

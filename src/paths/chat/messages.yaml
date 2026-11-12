@@ -51,6 +51,16 @@ get:
       minimum: 1
       maximum: 100
       default: 30
+  - name: maxSequence
+    in: query
+    required: false
+    description: |-
+      (Chat v2, tùy chọn) Chỉ trả tin có `sequence <= maxSequence` — dùng để mở một tin tìm được hoặc tin gốc của trích dẫn.
+      Trang tiếp theo dùng `cursor` như bình thường (có thể gửi lại `maxSequence`, kết quả không đổi). Không vượt `leftSequence` của thành viên `read_only`.
+    schema:
+      type: string
+      pattern: '^[1-9]\d{0,17}$'
+      example: '42'
   responses:
     '200':
       description: 'Thành công: Liệt kê tin nhắn trong một hội thoại.'
@@ -114,6 +124,12 @@ get:
               content: Dạ em gửi ảnh vòi xịt ạ
               mediaId: null
               payload: null
+              replyTo:
+                id: 7c9e6679-7425-40de-944b-e07fc1f90ae7
+                senderName: Trần Thị B
+                type: image
+                contentPreview: Vòi xịt nhà tắm bị rỉ
+                isUnavailable: false
               createdAt: '2026-09-23T11:30:00.000Z'
             pagination:
               type: cursor
@@ -237,6 +253,7 @@ post:
           type: text
           content: Dạ thợ mấy giờ qua kiểm được ạ
           mediaId: null
+          replyToMessageId: 7c9e6679-7425-40de-944b-e07fc1f90ae7
   responses:
     '201':
       description: 'Thành công: Gửi tin nhắn.'
@@ -269,8 +286,15 @@ post:
               senderName: Nguyễn Văn A
               type: text
               content: Dạ thợ mấy giờ qua kiểm được ạ
+              mediaId: null
               sequence: '43'
               clientMessageId: a95a1d13-f91c-4c71-9c61-24b498d0fd0e
+              replyTo:
+                id: 7c9e6679-7425-40de-944b-e07fc1f90ae7
+                senderName: Trần Thị B
+                type: image
+                contentPreview: Vòi xịt nhà tắm bị rỉ
+                isUnavailable: false
               createdAt: '2026-09-23T11:38:00.000Z'
       headers:
         Location:
@@ -303,9 +327,11 @@ post:
                 type: string
                 enum:
                   - MESSAGE_CONTENT_INVALID
+                  - MESSAGE_REPLY_TARGET_INVALID
                   - VALIDATION_FAILED
                 description: |-
                   - MESSAGE_CONTENT_INVALID: Nội dung tin nhắn không hợp lệ.
+                  - MESSAGE_REPLY_TARGET_INVALID: Tin được trả lời không tồn tại, khác hội thoại, đã xóa hoặc là tin system.
                   - VALIDATION_FAILED: Dữ liệu vi phạm ràng buộc schema hoặc quy tắc nghiệp vụ khác chưa có mã riêng.
           examples:
             message_content_invalid:
@@ -313,6 +339,11 @@ post:
               value:
                 statusCode: 422
                 code: MESSAGE_CONTENT_INVALID
+            message_reply_target_invalid:
+              summary: MESSAGE_REPLY_TARGET_INVALID — Tin được trả lời không hợp lệ.
+              value:
+                statusCode: 422
+                code: MESSAGE_REPLY_TARGET_INVALID
             validation_failed:
               summary: VALIDATION_FAILED — Dữ liệu vi phạm ràng buộc schema hoặc quy tắc nghiệp vụ khác chưa có mã riêng.
               value:

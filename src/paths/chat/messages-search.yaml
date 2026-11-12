@@ -1,0 +1,211 @@
+get:
+  tags:
+  - Chat
+  x-apidog-folder: Message
+  x-apidog-status: designing
+  operationId: getMessagesSearch
+  security:
+    - BearerAuth: []
+  summary: Search messages in a conversation
+  description: |-
+    (Chat v2) Tìm tin trong **một** hội thoại theo nội dung, mới nhất trước.
+
+    - Tìm trên `content` của tin `text`/`bot` và caption của tin `image`; không phân biệt hoa/thường hoặc dấu tiếng Việt (`nha` khớp `Nhà`). `%`, `_`, `\` trong `q` được hiểu theo nghĩa đen.
+    - Bỏ tin `system` và tin đã xóa.
+    - Quyền giống `GET /messages`: phải là thành viên hội thoại; thành viên `read_only` chỉ thấy tin có `sequence <= leftSequence`.
+    - Mở tin tìm được: gọi `GET /messages?conversationId=...&maxSequence=<sequence>` rồi tô sáng theo `id`.
+
+    **Sequence diagram**
+
+    ```mermaid
+    sequenceDiagram
+        autonumber
+        actor Client
+        participant GW as API Gateway
+        participant S as community-service
+        participant Guard as JWT/access guards
+        participant C as MessageController
+        participant H as MessageSearchQueryHandler
+        participant DB as PostgreSQL
+        Client->>GW: GET /api/v1/messages/search?conversationId&q
+        GW->>S: Proxy original HTTP request
+        S->>Guard: Validate JWT, account state and route access
+        Guard-->>C: Continue with authenticated context
+        C->>H: MessageSearchQuery
+        H->>DB: Load conversation and caller membership
+        alt Conversation missing
+            H-->>C: 404 CONVERSATION_NOT_FOUND
+        else Caller is not a member
+            H-->>C: 403 FORBIDDEN
+        else Member
+            H->>DB: Folded LIKE on content, visible range, cursor by sequence desc
+            DB-->>H: Matching messages
+            H-->>C: Cursor page
+        end
+        C-->>GW: 200 MESSAGES_SEARCHED
+        GW-->>Client: Forward HTTP response
+    ```
+  parameters:
+  - name: conversationId
+    in: query
+    required: true
+    schema: { type: string, format: uuid }
+  - name: q
+    in: query
+    required: true
+    description: Từ khóa; server chuẩn hóa NFC và trim, sau trim phải dài 2–100 ký tự.
+    schema:
+      type: string
+      minLength: 2
+      maxLength: 100
+      example: vòi xịt
+  - name: cursor
+    in: query
+    description: Cursor opaque từ trang trước; bỏ qua ở trang đầu.
+    schema:
+      type: string
+  - name: pageSize
+    in: query
+    schema:
+      type: integer
+      minimum: 1
+      maximum: 100
+      default: 30
+  responses:
+    '200':
+      description: 'Thành công: Danh sách tin khớp từ khóa.'
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required:
+            - statusCode
+            - code
+            - data
+            - pagination
+            properties:
+              statusCode:
+                type: integer
+                enum:
+                - 200
+              code:
+                type: string
+                enum:
+                - MESSAGES_SEARCHED
+              data:
+                type: array
+                items:
+                  $ref: ../../openapi.yaml#/components/schemas/MessageSearchResponseDto
+              pagination:
+                type: object
+                additionalProperties: false
+                required:
+                - type
+                - pageSize
+                - nextCursor
+                - hasNextPage
+                properties:
+                  type:
+                    type: string
+                    enum:
+                    - cursor
+                  pageSize:
+                    type: integer
+                    minimum: 1
+                    maximum: 100
+                  nextCursor:
+                    type: string
+                    nullable: true
+                  hasNextPage:
+                    type: boolean
+          example:
+            statusCode: 200
+            code: MESSAGES_SEARCHED
+            data:
+            - id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+              sequence: '42'
+              senderName: Nguyễn Văn A
+              type: text
+              contentPreview: Dạ em gửi ảnh vòi xịt ạ
+              createdAt: '2026-09-23T11:30:00.000Z'
+            - id: 7c9e6679-7425-40de-944b-e07fc1f90ae7
+              sequence: '40'
+              senderName: Trần Thị B
+              type: image
+              contentPreview: Vòi xịt nhà tắm bị rỉ
+              createdAt: '2026-09-23T11:20:00.000Z'
+            pagination:
+              type: cursor
+              pageSize: 30
+              nextCursor: null
+              hasNextPage: false
+    '400':
+      $ref: ../../openapi.yaml#/components/responses/BadRequestQueryError
+    '401':
+      $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
+    '503':
+      $ref: ../../openapi.yaml#/components/responses/AuthUnavailableError
+    '403':
+      $ref: ../../openapi.yaml#/components/responses/ForbiddenError
+    '404':
+      x-apidog-name: Not Found
+      description: Không tìm thấy tài nguyên được yêu cầu.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code]
+            properties:
+              statusCode:
+                type: integer
+                enum: [404]
+              code:
+                type: string
+                enum:
+                  - CONVERSATION_NOT_FOUND
+                description: |-
+                  - CONVERSATION_NOT_FOUND: Không tìm thấy hội thoại.
+          examples:
+            conversation_not_found:
+              summary: CONVERSATION_NOT_FOUND — Không tìm thấy hội thoại.
+              value:
+                statusCode: 404
+                code: CONVERSATION_NOT_FOUND
+    '422':
+      x-apidog-name: Unprocessable Entity
+      description: Dữ liệu hợp lệ về cấu trúc nhưng vi phạm ràng buộc trường hoặc quy tắc nghiệp vụ.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code]
+            properties:
+              statusCode:
+                type: integer
+                enum: [422]
+              code:
+                type: string
+                enum:
+                  - INVALID_CURSOR
+                  - VALIDATION_FAILED
+                description: |-
+                  - INVALID_CURSOR: Con trỏ phân trang không hợp lệ.
+                  - VALIDATION_FAILED: Thiếu `q`, hoặc `q` sau trim ngắn hơn 2 / dài hơn 100 ký tự, hoặc tham số khác sai ràng buộc.
+          examples:
+            invalid_cursor:
+              summary: INVALID_CURSOR — Con trỏ phân trang không hợp lệ.
+              value:
+                statusCode: 422
+                code: INVALID_CURSOR
+            validation_failed:
+              summary: VALIDATION_FAILED — Từ khóa không hợp lệ.
+              value:
+                statusCode: 422
+                code: VALIDATION_FAILED
+    '429':
+      $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
+    '500':
+      $ref: ../../openapi.yaml#/components/responses/InternalServerError
