@@ -35,7 +35,7 @@ socket.on('session:ready', () => {
 
 | Event | Payload | Người nhận |
 |---|---|---|
-| `message:created` | `{ id, conversationId, senderUserId, senderName, senderType, sequence, clientMessageId, type, content, mediaId, payload, replyTo, createdAt }` | Mọi session đã join conversation; `senderUserId=null` và `senderType=system` cho system message. Shape tương ứng với message REST. `replyTo` (Chat v2) là `MessageReplyReference` hoặc `null`; system message luôn `null`. |
+| `message:created` | `{ id, conversationId, senderUserId, senderName, senderType, sequence, clientMessageId, type, content, mediaId, payload, replyTo, createdAt }` | Mọi session đã join conversation; `senderUserId=null` và `senderType=system` cho system message. Shape tương ứng với message REST. `replyTo` (Chat v2) là `MessageReplyReference` hoặc `null`; reference có `sequence` để mở tin gốc từ lịch sử, `null` khi tin gốc không khả dụng. System message luôn `null`. |
 | `conversation:read-updated` | `{ conversationId, unreadCount, lastReadSequence }` | Mọi session của user vừa mark-read. |
 | `conversation:member-read` | `{ conversationId, userId, lastReadSequence }` | Chat v2. Mọi session đã join conversation (kể cả người đọc). Chi tiết ở [Đã xem](#đã-xem-chat-v2). |
 | `conversation:typing` | `{ conversationId, userId, isTyping }` | Chat v2. Các socket **khác** trong room conversation (tab khác của chính user vẫn nhận; FE bỏ qua `userId` của mình). |
