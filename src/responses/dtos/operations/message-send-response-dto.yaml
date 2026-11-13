@@ -6,7 +6,7 @@ properties:
   id: { type: string, format: uuid , description: "Định danh duy nhất của tài nguyên." }
   conversationId: { type: string, format: uuid , description: "Thông tin conversation id của tài nguyên trong ngữ cảnh DTO." }
   senderName: { type: string, maxLength: 254 }
-  type: { type: string, enum: [text, image, system, bot] }
+  type: { type: string, enum: [text, image, video, file, system, bot] }
   content: { type: string, nullable: true , description: "Thông tin content của tài nguyên trong ngữ cảnh DTO." }
   mediaId: { type: string, format: uuid, nullable: true }
   sequence: { type: string, pattern: '^\d+$', example: '43', description: Bigint sequence dưới dạng chuỗi thập phân. }

@@ -10,7 +10,7 @@ properties:
   senderType: { type: string, enum: [user, system] }
   sequence: { type: string, pattern: '^\d+$', example: '42', description: Bigint sequence dưới dạng chuỗi thập phân. }
   clientMessageId: { type: string, format: uuid, nullable: true, description: "ID retry do client tạo; null với system message." }
-  type: { type: string, enum: [text, image, system, bot] }
+  type: { type: string, enum: [text, image, video, file, system, bot] }
   content: { type: string, nullable: true , description: "Thông tin content của tài nguyên trong ngữ cảnh DTO." }
   mediaId: { type: string, format: uuid, nullable: true }
   payload:

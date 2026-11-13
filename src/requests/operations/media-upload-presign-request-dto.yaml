@@ -48,7 +48,7 @@ properties:
     type: string
     minLength: 1
     maxLength: 255
-    description: "Tên file do client cung cấp. Đuôi file (không phân biệt hoa thường) phải khớp `contentType`: `image/jpeg` → `.jpg`/`.jpeg`, `image/png` → `.png`, `image/webp` → `.webp`, `application/pdf` → `.pdf`; sai thì trả `422 MEDIA_TYPE_NOT_ALLOWED`."
+    description: "Tên file do client cung cấp. Đuôi file (không phân biệt hoa thường) phải khớp `contentType`: `image/jpeg` → `.jpg`/`.jpeg`, `image/png` → `.png`, `image/webp` → `.webp`, `application/pdf` → `.pdf`, `video/mp4` → `.mp4`, `video/webm` → `.webm`; sai thì trả `422 MEDIA_TYPE_NOT_ALLOWED`."
     example: p201.jpg
 
   contentType:
@@ -58,6 +58,8 @@ properties:
       - image/png
       - image/webp
       - application/pdf
+      - video/mp4
+      - video/webm
     description: "MIME type của file; phải nằm trong danh sách MIME cho phép của `purpose` (xem mô tả endpoint), nếu không trả `422 MEDIA_TYPE_NOT_ALLOWED`. Đây cũng là giá trị header `Content-Type` client phải gửi khi PUT lên storage."
     example: image/jpeg
 

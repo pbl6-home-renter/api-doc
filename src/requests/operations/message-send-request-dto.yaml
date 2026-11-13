@@ -2,7 +2,7 @@
 type: object
 x-apidog-folder: "Message/Request"
 title: MessageSendRequestDto
-description: Dữ liệu gửi một tin nhắn text hoặc một ảnh vào hội thoại.
+description: Dữ liệu gửi một tin nhắn văn bản hoặc một tệp đính kèm vào hội thoại.
 additionalProperties: false
 
 properties:
@@ -17,7 +17,7 @@ properties:
     description: ID duy nhất do client tạo để retry an toàn.
   type:
     type: string
-    enum: [text, image]
+    enum: [text, image, video, file]
     description: Phân loại nội dung tin nhắn.
     example: "text"
   content:
@@ -30,14 +30,14 @@ properties:
     type: string
     format: uuid
     nullable: true
-    description: ID ảnh đã upload nếu type là image.
+    description: ID tệp đã upload nếu type là image, video hoặc file; loại tệp phải khớp với type.
     example: null
   replyToMessageId:
     type: string
     format: uuid
     nullable: true
     description: |-
-      (Chat v2, tùy chọn) ID tin được trả lời. Tin gốc phải cùng hội thoại, chưa xóa và là `text`/`image`/`bot`; sai thì `422 MESSAGE_REPLY_TARGET_INVALID`.
+      (Chat v2, tùy chọn) ID tin được trả lời. Tin gốc phải cùng hội thoại, chưa xóa và là `text`/`image`/`video`/`file`/`bot`; sai thì `422 MESSAGE_REPLY_TARGET_INVALID`.
       Retry cùng `clientMessageId` trả tin đã lưu, không kiểm tra lại tin gốc.
     example: null
 

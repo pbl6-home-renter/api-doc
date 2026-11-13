@@ -29,10 +29,10 @@ post:
     | `contract_signed` | `contract` | jpeg, png, webp, pdf | private | landlord sở hữu | không xóa được khi HĐ `signed/active/suspended/expired/terminated` |
     | `meter_reading_evidence` | `meter_reading` | jpeg, png, webp | private | landlord sở hữu; tenant của HĐ chỉ với `captureSource = camera_direct` | |
     | `issue_photo` | `issue_report` | jpeg, png, webp | private | người trong HĐ, landlord sở hữu | chưa hỗ trợ (503) |
-    | `chat_attachment` | `conversation` | jpeg, png, webp | private | upload: active member; download: member allowed to read the message that references the media | Community verifies active membership on upload and message linkage on read |
+    | `chat_attachment` | `conversation` | jpeg, png, webp, pdf, mp4, webm | private | upload: active member; download: member allowed to read the message that references the media | Community verifies active membership on upload and message linkage on read |
     | `conversation_avatar` | `conversation` | jpeg, png, webp | private | active member may upload | Community validates active group admin and media ownership on metadata update; old media remains valid so uploading a replacement cannot break the current avatar before the metadata update commits |
     
-    Kích thước tối đa 10 MiB cho mọi purpose. Không hỗ trợ SVG/HTML/video.
+    Kích thước tối đa 10 MiB cho mọi purpose. Chỉ chat_attachment hỗ trợ video MP4/WebM; không hỗ trợ SVG/HTML.
     
     Lỗi nghiệp vụ: 403 FORBIDDEN (không có quyền với thực thể cha, hoặc thực thể cha không tồn tại) · 422 INVALID_PURPOSE (`purpose` không hợp lệ với `ownerType`) · 422 MEDIA_TYPE_NOT_ALLOWED (MIME, đuôi file hoặc kích thước không hợp lệ) · 503 SERVICE_UNAVAILABLE.
     
