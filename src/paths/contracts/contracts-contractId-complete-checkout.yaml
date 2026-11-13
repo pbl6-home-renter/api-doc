@@ -18,8 +18,14 @@ post:
     must be issued, and none may be pending; otherwise 409 SETTLEMENT_NOT_READY. Voided invoices do not satisfy readiness.
     In one transaction, lock the contract, check invoices, set remaining members' left_at to completedOn,
     terminate the contract, move the room from occupied to maintenance, and persist all corresponding outbox events.
+    Each member marked left produces a contract_member.left outbox event in that transaction.
+    After Community consumes the event, it retains the contract conversation and membership but
+    changes that member to read_only: sending stops and REST history is limited to leftSequence,
+    the last message sequence at or before the event envelope's occurredAt. The domain leftAt
+    remains a date. Broker delivery delay can delay access revocation.
     A member has not left when left_at IS NULL or after today (UTC). A future scheduled leave is replaced by completedOn;
     previous departures and soft-deleted members are preserved. A room already in maintenance stays there.
+    This endpoint does not schedule a future chat access change; P9-04 only applies delivered leave events.
     The response echoes completedOn; no completed_on or terminated_at column is added to contracts.
     No deposit settlement, early termination fee or automatic checkout-date prorating is performed.
     Call POST /rooms/{roomId}/mark-ready after cleaning to make the room available again.

@@ -8,6 +8,9 @@ get:
     - BearerAuth: []
   summary: List messages
   description: |-
+    Contract members who have left individually or through checkout remain read_only. They can
+    list only messages through leftSequence, computed from contract_member.left occurredAt.
+
     **Sequence diagram**
     
     ```mermaid
@@ -216,6 +219,9 @@ post:
     - BearerAuth: []
   summary: Send message
   description: |-
+    Only active conversation members may send. After a contract_member.left event is applied for
+    an individual departure or checkout, that member is read_only and cannot send new messages.
+
     **Sequence diagram**
     
     ```mermaid

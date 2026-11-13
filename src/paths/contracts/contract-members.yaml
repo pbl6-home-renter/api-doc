@@ -9,7 +9,11 @@ post:
   summary: Add contract member
   description: |-
     Only contractId, tenantId?, tenantName, tenantPhone?, joinedAt are accepted; unknown fields return
-    422 VALIDATION_FAILED. tenantId is linked explicitly, with no Identity lookup or phone auto-linking.
+    422 VALIDATION_FAILED. An explicit tenantId is used as supplied. The current add handler does
+    not yet auto-link by phone. P9-02 will match a normalized tenantPhone exactly against Tenancy's
+    local Identity-event projection only when tenantId is absent; no match leaves tenantId null for
+    later reconciliation. This operation does not call Identity synchronously, and events sent to
+    Community contain IDs/context rather than phone.
     Without tenantId, tenantName and tenantPhone are required (422 TENANT_IDENTITY_INVALID).
     joinedAt is an inclusive date in [startDate, endDate] (422 VALIDATION_FAILED).
     
