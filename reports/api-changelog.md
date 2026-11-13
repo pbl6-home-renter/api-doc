@@ -5,11 +5,35 @@
 
 Báo cáo lưu lịch sử các entry đã phát hiện, mới nhất ở trên. `NO_CHANGE` không xóa entry cũ; exit code chỉ phản ánh lần chạy hiện tại.
 
-Công cụ: Redocly 2.64.1; oasdiff 1.34.1. Số entry: **40**.
+Công cụ: Redocly 2.64.1; oasdiff 1.34.1. Số entry: **41**.
 
 Phân loại: **BREAKING** = client cũ có thể hỏng; **NON_BREAKING** = tương thích theo contract; **NEEDS_REVIEW** = chưa đủ bằng chứng.
 
 Các vị trí dùng JSON Pointer trên bundle tạm (`~1` là `/`). JSON đi kèm giữ toàn bộ semantic diff, fingerprint và hash phục vụ truy vết.
+
+## Thay đổi contract từ Git — NON_BREAKING
+
+- ID: `52059559a82e763ca308e7b8fa0387788f95c1485eb0b4497340ed3a0e838ee5`
+- Contract: rentify-public; repository: https://github.com/pbl6-home-renter/api-doc
+- Nguồn: `src/openapi.yaml` → `src/openapi.yaml`
+- Phát hiện (UTC): 2026-11-13T13:06:38.412Z; commit time: 2026-11-13T20:06:27+07:00
+- Commit nền: b6508815989c9dce60f67c4ae833182f8fe4b399
+- Commit đích/bối cảnh: [2859fa71c5698add36d3b5cbcac9421a241dd50a](https://github.com/pbl6-home-renter/api-doc/commit/2859fa71c5698add36d3b5cbcac9421a241dd50a)
+- PR: [https://github.com/pbl6-home-renter/api-doc/pull/58](https://github.com/pbl6-home-renter/api-doc/pull/58)
+- Loại metadata: Git revision thực tế
+- Lý do: CHƯA CUNG CẤP — tác giả PR phải bổ sung lý do nghiệp vụ; không thể suy ra từ OpenAPI diff.
+
+| Mức ảnh hưởng | Endpoint / vùng | Thay đổi | Hành động FE / Mobile |
+|---|---|---|---|
+| NON_BREAKING | GET /messages | added the new optional `query` request parameter `afterSequence` (`new-optional-request-parameter`) | FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI. |
+
+### Vị trí và giá trị trước/sau
+
+| Path / schema / field (JSON Pointer) | Trước | Sau |
+|---|---|---|
+| `/paths/~1messages/get/parameters` | [{"name":"conversationId","in":"query","required":true,"schema":{"type":"string","format":"uuid"}},{"name":"cursor","in":"query","description":"Cursor opaque từ trang trước; bỏ qua ở trang đầu.","schema":{"type":"string"}},{"name":"pageSize","in":"query","schema":{"type":"integer","minimum":1,"maximum":100,"default":30}},{"name":"maxSequence","in":"query","required":false,"description":"(Chat v2, tùy chọn) Chỉ trả tin có `sequence &lt;= maxSequence` — dùng để mở một tin tìm được hoặc tin gốc của trích dẫn.\nTrang tiếp theo dùng `cursor` như bình thường (có thể gửi lại `maxSequence`, kết quả không đổi). Không vượt `leftSequence` của thành viên `read_only`.","schema":{"type":"string","pattern":"^[1-9]\\d{0,17}$","example":"42"}}] | [{"name":"conversationId","in":"query","required":true,"schema":{"type":"string","format":"uuid"}},{"name":"cursor","in":"query","description":"Cursor opaque từ trang trước; bỏ qua ở trang đầu.","schema":{"type":"string"}},{"name":"pageSize","in":"query","schema":{"type":"integer","minimum":1,"maximum":100,"default":30}},{"name":"maxSequence","in":"query","required":false,"description":"(Chat v2, tùy chọn) Chỉ trả tin có `sequence &lt;= maxSequence` — dùng để mở một tin tìm được hoặc tin gốc của trích dẫn.\nTrang tiếp theo dùng `cursor` như bình thường (có thể gửi lại `maxSequence`, kết quả không đổi). Không vượt `leftSequence` của thành viên `read_only`.","schema":{"type":"string","pattern":"^[1-9]\\d{0,17}$","example":"42"}},{"name":"afterSequence","in":"query","required":false,"description":"(Chat v2, tùy chọn) Chỉ trả tin có `sequence &gt; afterSequence`, **sắp `sequence` tăng dần** — dùng để tải tin mới hơn khi đang xem một tin cũ (mở bằng `maxSequence`).\nFE gọi lại với `afterSequence` = sequence lớn nhất đã tải cho tới khi `hasNextPage=false` (đã tới tin mới nhất). Cursor của trang tăng dần chỉ dùng được với request có `afterSequence`. Vẫn áp giới hạn `leftSequence` của thành viên `read_only`.","schema":{"type":"string","pattern":"^(0\|[1-9]\\d{0,17})$","example":"42"}}] |
+
+**Kiểm tra thủ công:** BE xác nhận lý do, endpoint dùng schema chung, thay đổi role/ownership mô tả bằng văn bản và thời điểm triển khai. FE/Mobile xác nhận tác động với parser và phiên bản client đang hỗ trợ.
 
 ## Thay đổi contract từ Git — BREAKING
 
