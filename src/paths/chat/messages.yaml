@@ -61,6 +61,16 @@ get:
       type: string
       pattern: '^[1-9]\d{0,17}$'
       example: '42'
+  - name: afterSequence
+    in: query
+    required: false
+    description: |-
+      (Chat v2, tùy chọn) Chỉ trả tin có `sequence > afterSequence`, **sắp `sequence` tăng dần** — dùng để tải tin mới hơn khi đang xem một tin cũ (mở bằng `maxSequence`).
+      FE gọi lại với `afterSequence` = sequence lớn nhất đã tải cho tới khi `hasNextPage=false` (đã tới tin mới nhất). Cursor của trang tăng dần chỉ dùng được với request có `afterSequence`. Vẫn áp giới hạn `leftSequence` của thành viên `read_only`.
+    schema:
+      type: string
+      pattern: '^(0|[1-9]\d{0,17})$'
+      example: '42'
   responses:
     '200':
       description: 'Thành công: Liệt kê tin nhắn trong một hội thoại.'
