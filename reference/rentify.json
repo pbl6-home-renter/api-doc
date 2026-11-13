@@ -5332,7 +5332,7 @@
           }
         ],
         "summary": "Request presigned upload URL",
-        "description": "**Luồng upload**\n\n1. `POST /media/presign-upload` → nhận `id`, `uploadUrl`, `requiredHeaders`, `expiresIn`.\n2. `PUT {uploadUrl}` với body là file (binary) và đúng `requiredHeaders` (không gửi `Authorization`).\n3. `POST /media/{id}/complete-upload` → server kiểm tra object trên storage và trả `url` để đọc.\n\nLiên kết file với thực thể cha được xác định ngay lúc presign qua `ownerType` + `ownerId` + `purpose`; không có bước \"gắn\" riêng. Các API nghiệp vụ khác (ví dụ `photoMediaIds` khi tạo phòng) nhận `id` của Media đã complete.\n\n**Quy tắc theo `purpose`** (admin luôn được upload; người upload luôn đọc được file của mình)\n\n| purpose | ownerType hợp lệ | MIME cho phép | Hiển thị | Ai được upload | Ghi chú |\n|---|---|---|---|---|---|\n| `avatar` | `user` | jpeg, png, webp | public | chính user đó | 1 file/owner, file mới thay file cũ |\n| `cover_photo` | `building`, `room` | jpeg, png, webp | public | landlord sở hữu | 1 file/owner, file mới thay file cũ |\n| `gallery_photo` | `building`, `room` | jpeg, png, webp | public | landlord sở hữu | |\n| `ownership_proof` | `building` | jpeg, png, webp, pdf | private | landlord sở hữu | không xóa được khi building `approved` |\n| `cccd_front`, `cccd_back` | `user`, `contract_member` | jpeg, png, webp | private | chính user, thành viên HĐ, landlord sở hữu | |\n| `contract_template` | `contract` | pdf | private | landlord sở hữu | |\n| `contract_signed` | `contract` | jpeg, png, webp, pdf | private | landlord sở hữu | không xóa được khi HĐ `signed/active/suspended/expired/terminated` |\n| `meter_reading_evidence` | `meter_reading` | jpeg, png, webp | private | landlord sở hữu; tenant của HĐ chỉ với `captureSource = camera_direct` | |\n| `issue_photo` | `issue_report` | jpeg, png, webp | private | người trong HĐ, landlord sở hữu | chưa hỗ trợ (503) |\n| `chat_attachment` | `conversation` | jpeg, png, webp | private | upload: active member; download: member allowed to read the message that references the media | Community verifies active membership on upload and message linkage on read |\n| `conversation_avatar` | `conversation` | jpeg, png, webp | private | active member may upload | Community validates active group admin and media ownership on metadata update; old media remains valid so uploading a replacement cannot break the current avatar before the metadata update commits |\n\nKích thước tối đa 10 MiB cho mọi purpose. Không hỗ trợ SVG/HTML/video.\n\nLỗi nghiệp vụ: 403 FORBIDDEN (không có quyền với thực thể cha, hoặc thực thể cha không tồn tại) · 422 INVALID_PURPOSE (`purpose` không hợp lệ với `ownerType`) · 422 MEDIA_TYPE_NOT_ALLOWED (MIME, đuôi file hoặc kích thước không hợp lệ) · 503 SERVICE_UNAVAILABLE.\n\n**Sequence diagram**\n\n```mermaid\nsequenceDiagram\n    autonumber\n    actor Client\n    participant GW as API Gateway\n    participant S as Identity-Service\n    participant Guard as JWT/access guards\n    participant C as MediaController\n    participant Bus as CQRS CommandBus\n    participant H as Application handler\n    Client->>GW: POST /api/v1/media/presign-upload\n    GW->>GW: Validate bearer token for protected route\n    GW->>S: Proxy original HTTP request\n    S->>Guard: Validate JWT, account state and route access\n    Guard-->>C: Continue with authenticated context\n    S->>C: Invoke postMediaPresignUpload\n    C->>Bus: Execute command for postMediaPresignUpload\n    Bus->>H: Dispatch command handler\n    H-->>Bus: Return use-case result\n    Bus-->>C: Result\n    C-->>S: Return documented response\n    S-->>GW: HTTP status and response body\n    GW-->>Client: Forward HTTP response\n```\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-11-02 | 🟢 NON_BREAKING | added the new `conversation_avatar` enum value to the request property `purpose` | [#44](https://github.com/pbl6-home-renter/api-doc/pull/44) |\n| 2026-11-02 | 🟢 NON_BREAKING | added the new `conversation` enum value to the request property `ownerType` | [#36](https://github.com/pbl6-home-renter/api-doc/pull/36) |\n| 2026-10-30 | 🔴 BREAKING | the `fileName` request property's maxLength was set to `255` | [#27](https://github.com/pbl6-home-renter/api-doc/pull/27) |\n| 2026-10-30 | 🔴 BREAKING | the `size` request property's max was set to `10485760.00` | [#27](https://github.com/pbl6-home-renter/api-doc/pull/27) |\n| 2026-10-30 | 🔴 BREAKING | the `fileName` request property's minLength was set to `1` | [#27](https://github.com/pbl6-home-renter/api-doc/pull/27) |\n| 2026-10-30 | 🔴 BREAKING | the `size` request property's min was set to `1.00` | [#27](https://github.com/pbl6-home-renter/api-doc/pull/27) |\n| 2026-10-30 | 🔴 BREAKING | removed the enum constraint from the `data/expiresIn` response property for the response status `201` | [#27](https://github.com/pbl6-home-renter/api-doc/pull/27) |\n| 2026-10-30 | 🔴 BREAKING | added the new `SERVICE_UNAVAILABLE` enum value to the `code` response property for the response status `503` | [#27](https://github.com/pbl6-home-renter/api-doc/pull/27) |\n| 2026-10-30 | 🔴 BREAKING | added the new `UNEXPECTED_FIELD` enum value to the `code` response property for the response status `422` | [#27](https://github.com/pbl6-home-renter/api-doc/pull/27) |\n| 2026-10-30 | 🟢 NON_BREAKING | the `data/expiresIn` response property's min was set to `1.00` for the response status `201` | [#27](https://github.com/pbl6-home-renter/api-doc/pull/27) |\n| 2026-10-30 | 🟢 NON_BREAKING | the `data/uploadUrl` response's property `format` was narrowed from `none` to `uri` for status `201` | [#27](https://github.com/pbl6-home-renter/api-doc/pull/27) |\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
+        "description": "**Luồng upload**\n\n1. `POST /media/presign-upload` → nhận `id`, `uploadUrl`, `requiredHeaders`, `expiresIn`.\n2. `PUT {uploadUrl}` với body là file (binary) và đúng `requiredHeaders` (không gửi `Authorization`).\n3. `POST /media/{id}/complete-upload` → server kiểm tra object trên storage và trả `url` để đọc.\n\nLiên kết file với thực thể cha được xác định ngay lúc presign qua `ownerType` + `ownerId` + `purpose`; không có bước \"gắn\" riêng. Các API nghiệp vụ khác (ví dụ `photoMediaIds` khi tạo phòng) nhận `id` của Media đã complete.\n\n**Quy tắc theo `purpose`** (admin luôn được upload; người upload luôn đọc được file của mình)\n\n| purpose | ownerType hợp lệ | MIME cho phép | Hiển thị | Ai được upload | Ghi chú |\n|---|---|---|---|---|---|\n| `avatar` | `user` | jpeg, png, webp | public | chính user đó | 1 file/owner, file mới thay file cũ |\n| `cover_photo` | `building`, `room` | jpeg, png, webp | public | landlord sở hữu | 1 file/owner, file mới thay file cũ |\n| `gallery_photo` | `building`, `room` | jpeg, png, webp | public | landlord sở hữu | |\n| `ownership_proof` | `building` | jpeg, png, webp, pdf | private | landlord sở hữu | không xóa được khi building `approved` |\n| `cccd_front`, `cccd_back` | `user`, `contract_member` | jpeg, png, webp | private | chính user, thành viên HĐ, landlord sở hữu | |\n| `contract_template` | `contract` | pdf | private | landlord sở hữu | |\n| `contract_signed` | `contract` | jpeg, png, webp, pdf | private | landlord sở hữu | không xóa được khi HĐ `signed/active/suspended/expired/terminated` |\n| `meter_reading_evidence` | `meter_reading` | jpeg, png, webp | private | landlord sở hữu; tenant của HĐ chỉ với `captureSource = camera_direct` | |\n| `issue_photo` | `issue_report` | jpeg, png, webp | private | người trong HĐ, landlord sở hữu | chưa hỗ trợ (503) |\n| `chat_attachment` | `conversation` | jpeg, png, webp, pdf, mp4, webm | private | upload: active member; download: member allowed to read the message that references the media | Community verifies active membership on upload and message linkage on read |\n| `conversation_avatar` | `conversation` | jpeg, png, webp | private | active member may upload | Community validates active group admin and media ownership on metadata update; old media remains valid so uploading a replacement cannot break the current avatar before the metadata update commits |\n\nKích thước tối đa 10 MiB cho mọi purpose. Chỉ chat_attachment hỗ trợ video MP4/WebM; không hỗ trợ SVG/HTML.\n\nLỗi nghiệp vụ: 403 FORBIDDEN (không có quyền với thực thể cha, hoặc thực thể cha không tồn tại) · 422 INVALID_PURPOSE (`purpose` không hợp lệ với `ownerType`) · 422 MEDIA_TYPE_NOT_ALLOWED (MIME, đuôi file hoặc kích thước không hợp lệ) · 503 SERVICE_UNAVAILABLE.\n\n**Sequence diagram**\n\n```mermaid\nsequenceDiagram\n    autonumber\n    actor Client\n    participant GW as API Gateway\n    participant S as Identity-Service\n    participant Guard as JWT/access guards\n    participant C as MediaController\n    participant Bus as CQRS CommandBus\n    participant H as Application handler\n    Client->>GW: POST /api/v1/media/presign-upload\n    GW->>GW: Validate bearer token for protected route\n    GW->>S: Proxy original HTTP request\n    S->>Guard: Validate JWT, account state and route access\n    Guard-->>C: Continue with authenticated context\n    S->>C: Invoke postMediaPresignUpload\n    C->>Bus: Execute command for postMediaPresignUpload\n    Bus->>H: Dispatch command handler\n    H-->>Bus: Return use-case result\n    Bus-->>C: Result\n    C-->>S: Return documented response\n    S-->>GW: HTTP status and response body\n    GW-->>Client: Forward HTTP response\n```\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-11-02 | 🟢 NON_BREAKING | added the new `conversation_avatar` enum value to the request property `purpose` | [#44](https://github.com/pbl6-home-renter/api-doc/pull/44) |\n| 2026-11-02 | 🟢 NON_BREAKING | added the new `conversation` enum value to the request property `ownerType` | [#36](https://github.com/pbl6-home-renter/api-doc/pull/36) |\n| 2026-10-30 | 🔴 BREAKING | the `fileName` request property's maxLength was set to `255` | [#27](https://github.com/pbl6-home-renter/api-doc/pull/27) |\n| 2026-10-30 | 🔴 BREAKING | the `size` request property's max was set to `10485760.00` | [#27](https://github.com/pbl6-home-renter/api-doc/pull/27) |\n| 2026-10-30 | 🔴 BREAKING | the `fileName` request property's minLength was set to `1` | [#27](https://github.com/pbl6-home-renter/api-doc/pull/27) |\n| 2026-10-30 | 🔴 BREAKING | the `size` request property's min was set to `1.00` | [#27](https://github.com/pbl6-home-renter/api-doc/pull/27) |\n| 2026-10-30 | 🔴 BREAKING | removed the enum constraint from the `data/expiresIn` response property for the response status `201` | [#27](https://github.com/pbl6-home-renter/api-doc/pull/27) |\n| 2026-10-30 | 🔴 BREAKING | added the new `SERVICE_UNAVAILABLE` enum value to the `code` response property for the response status `503` | [#27](https://github.com/pbl6-home-renter/api-doc/pull/27) |\n| 2026-10-30 | 🔴 BREAKING | added the new `UNEXPECTED_FIELD` enum value to the `code` response property for the response status `422` | [#27](https://github.com/pbl6-home-renter/api-doc/pull/27) |\n| 2026-10-30 | 🟢 NON_BREAKING | the `data/expiresIn` response property's min was set to `1.00` for the response status `201` | [#27](https://github.com/pbl6-home-renter/api-doc/pull/27) |\n| 2026-10-30 | 🟢 NON_BREAKING | the `data/uploadUrl` response's property `format` was narrowed from `none` to `uri` for status `201` | [#27](https://github.com/pbl6-home-renter/api-doc/pull/27) |\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "requestBody": {
           "required": true,
           "content": {
@@ -20829,7 +20829,7 @@
           }
         ],
         "summary": "Get total unread messages",
-        "description": "**Quy tắc unread chung** (giống `unreadCount` của `GET /conversations`, `GET /conversations/{conversationId}`, response `POST /messages/mark-read` và Socket `conversation:read-updated`): đếm message chưa xóa có `type` thuộc `text`, `image`, `bot`; `sequence > lastReadSequence` của member; người gửi khác chính member đó. Message `system` vẫn có trong lịch sử nhưng không bao giờ được đếm. Member `read_only` chỉ đếm tới `leftSequence`.\n\nRoute tĩnh `/conversations/unread-summary` được khai báo trước `/conversations/{conversationId}`; `conversationId` luôn là UUID nên `unread-summary` không bị hiểu là ID.\n\n**Sequence diagram**\n\n```mermaid\nsequenceDiagram\n    autonumber\n    actor Client\n    participant GW as API Gateway\n    participant S as community-service\n    participant Guard as JWT/access guards\n    participant C as ConversationController\n    participant Bus as CQRS QueryBus\n    participant H as Application handler\n    Client->>GW: GET /api/v1/conversations/unread-summary\n    GW->>GW: Validate bearer token for protected route\n    GW->>S: Proxy original HTTP request\n    S->>Guard: Validate JWT, account state and route access\n    Guard-->>C: Continue with authenticated context\n    S->>C: Invoke getConversationsUnreadSummary\n    C->>Bus: Execute query for getConversationsUnreadSummary\n    Bus->>H: Dispatch query handler\n    H-->>Bus: Return use-case result\n    Bus-->>C: Result\n    C-->>S: Return documented response\n    S-->>GW: HTTP status and response body\n    GW-->>Client: Forward HTTP response\n```\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-11-04 | 🟢 NON_BREAKING | Thêm endpoint mới. | [#49](https://github.com/pbl6-home-renter/api-doc/pull/49) |\n",
+        "description": "**Quy tắc unread chung** (giống `unreadCount` của `GET /conversations`, `GET /conversations/{conversationId}`, response `POST /messages/mark-read` và Socket `conversation:read-updated`): đếm message chưa xóa có `type` thuộc `text`, `image`, `video`, `file`, `bot`; `sequence > lastReadSequence` của member; người gửi khác chính member đó. Message `system` vẫn có trong lịch sử nhưng không bao giờ được đếm. Member `read_only` chỉ đếm tới `leftSequence`.\n\nRoute tĩnh `/conversations/unread-summary` được khai báo trước `/conversations/{conversationId}`; `conversationId` luôn là UUID nên `unread-summary` không bị hiểu là ID.\n\n**Sequence diagram**\n\n```mermaid\nsequenceDiagram\n    autonumber\n    actor Client\n    participant GW as API Gateway\n    participant S as community-service\n    participant Guard as JWT/access guards\n    participant C as ConversationController\n    participant Bus as CQRS QueryBus\n    participant H as Application handler\n    Client->>GW: GET /api/v1/conversations/unread-summary\n    GW->>GW: Validate bearer token for protected route\n    GW->>S: Proxy original HTTP request\n    S->>Guard: Validate JWT, account state and route access\n    Guard-->>C: Continue with authenticated context\n    S->>C: Invoke getConversationsUnreadSummary\n    C->>Bus: Execute query for getConversationsUnreadSummary\n    Bus->>H: Dispatch query handler\n    H-->>Bus: Return use-case result\n    Bus-->>C: Result\n    C-->>S: Return documented response\n    S-->>GW: HTTP status and response body\n    GW-->>Client: Forward HTTP response\n```\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-11-04 | 🟢 NON_BREAKING | Thêm endpoint mới. | [#49](https://github.com/pbl6-home-renter/api-doc/pull/49) |\n",
         "responses": {
           "200": {
             "description": "Thành công: Tổng số tin nhắn chưa đọc của người gọi.",
@@ -31290,7 +31290,7 @@
           "unreadCount": {
             "type": "integer",
             "minimum": 0,
-            "description": "Số tin text/image/bot chưa đọc của người khác gửi; không tính system, read-only chỉ tới leftSequence."
+            "description": "Số tin text/image/video/file/bot chưa đọc của người khác gửi; không tính system, read-only chỉ tới leftSequence."
           },
           "lastMessage": {
             "type": "object",
@@ -31321,6 +31321,8 @@
                 "enum": [
                   "text",
                   "image",
+                  "video",
+                  "file",
                   "system",
                   "bot"
                 ]
@@ -31428,7 +31430,7 @@
           "unreadCount": {
             "type": "integer",
             "minimum": 0,
-            "description": "Số tin text/image/bot chưa đọc của người khác gửi; không tính system, read-only chỉ tới leftSequence."
+            "description": "Số tin text/image/video/file/bot chưa đọc của người khác gửi; không tính system, read-only chỉ tới leftSequence."
           },
           "members": {
             "type": "array",
@@ -31572,7 +31574,7 @@
         "type": "object",
         "x-apidog-folder": "Message/Request",
         "title": "MessageSendRequestDto",
-        "description": "Dữ liệu gửi một tin nhắn text hoặc một ảnh vào hội thoại.",
+        "description": "Dữ liệu gửi một tin nhắn văn bản hoặc một tệp đính kèm vào hội thoại.",
         "additionalProperties": false,
         "properties": {
           "conversationId": {
@@ -31590,7 +31592,9 @@
             "type": "string",
             "enum": [
               "text",
-              "image"
+              "image",
+              "video",
+              "file"
             ],
             "description": "Phân loại nội dung tin nhắn.",
             "example": "text"
@@ -31606,14 +31610,14 @@
             "type": "string",
             "format": "uuid",
             "nullable": true,
-            "description": "ID ảnh đã upload nếu type là image.",
+            "description": "ID tệp đã upload nếu type là image, video hoặc file; loại tệp phải khớp với type.",
             "example": null
           },
           "replyToMessageId": {
             "type": "string",
             "format": "uuid",
             "nullable": true,
-            "description": "(Chat v2, tùy chọn) ID tin được trả lời. Tin gốc phải cùng hội thoại, chưa xóa và là `text`/`image`/`bot`; sai thì `422 MESSAGE_REPLY_TARGET_INVALID`.\nRetry cùng `clientMessageId` trả tin đã lưu, không kiểm tra lại tin gốc.",
+            "description": "(Chat v2, tùy chọn) ID tin được trả lời. Tin gốc phải cùng hội thoại, chưa xóa và là `text`/`image`/`video`/`file`/`bot`; sai thì `422 MESSAGE_REPLY_TARGET_INVALID`.\nRetry cùng `clientMessageId` trả tin đã lưu, không kiểm tra lại tin gốc.",
             "example": null
           }
         },
@@ -31697,6 +31701,8 @@
             "enum": [
               "text",
               "image",
+              "video",
+              "file",
               "system",
               "bot"
             ]
@@ -31793,6 +31799,8 @@
             "enum": [
               "text",
               "image",
+              "video",
+              "file",
               "system",
               "bot"
             ]
@@ -31873,6 +31881,8 @@
             "enum": [
               "text",
               "image",
+              "video",
+              "file",
               "bot"
             ]
           },
@@ -34490,7 +34500,7 @@
             "type": "string",
             "minLength": 1,
             "maxLength": 255,
-            "description": "Tên file do client cung cấp. Đuôi file (không phân biệt hoa thường) phải khớp `contentType`: `image/jpeg` → `.jpg`/`.jpeg`, `image/png` → `.png`, `image/webp` → `.webp`, `application/pdf` → `.pdf`; sai thì trả `422 MEDIA_TYPE_NOT_ALLOWED`.",
+            "description": "Tên file do client cung cấp. Đuôi file (không phân biệt hoa thường) phải khớp `contentType`: `image/jpeg` → `.jpg`/`.jpeg`, `image/png` → `.png`, `image/webp` → `.webp`, `application/pdf` → `.pdf`, `video/mp4` → `.mp4`, `video/webm` → `.webm`; sai thì trả `422 MEDIA_TYPE_NOT_ALLOWED`.",
             "example": "p201.jpg"
           },
           "contentType": {
@@ -34499,7 +34509,9 @@
               "image/jpeg",
               "image/png",
               "image/webp",
-              "application/pdf"
+              "application/pdf",
+              "video/mp4",
+              "video/webm"
             ],
             "description": "MIME type của file; phải nằm trong danh sách MIME cho phép của `purpose` (xem mô tả endpoint), nếu không trả `422 MEDIA_TYPE_NOT_ALLOWED`. Đây cũng là giá trị header `Content-Type` client phải gửi khi PUT lên storage.",
             "example": "image/jpeg"
@@ -34598,7 +34610,9 @@
                   "image/jpeg",
                   "image/png",
                   "image/webp",
-                  "application/pdf"
+                  "application/pdf",
+                  "video/mp4",
+                  "video/webm"
                 ],
                 "description": "MIME type phải gửi khi upload",
                 "example": "image/jpeg"
@@ -34710,13 +34724,23 @@
         "description": "Short-lived direct download URL for authorized chat media.",
         "additionalProperties": false,
         "required": [
-          "url"
+          "url",
+          "fileName",
+          "contentType"
         ],
         "properties": {
           "url": {
             "type": "string",
             "format": "uri",
             "description": "Presigned R2 GET URL. Fetch directly without an Authorization header and request a fresh URL for each later download."
+          },
+          "fileName": {
+            "type": "string",
+            "description": "Original file name."
+          },
+          "contentType": {
+            "type": "string",
+            "description": "MIME type of the file."
           }
         }
       },
@@ -35249,6 +35273,8 @@
                 "enum": [
                   "text",
                   "image",
+                  "video",
+                  "file",
                   "system",
                   "bot"
                 ],
@@ -35368,6 +35394,8 @@
             "enum": [
               "text",
               "image",
+              "video",
+              "file",
               "bot",
               null
             ],

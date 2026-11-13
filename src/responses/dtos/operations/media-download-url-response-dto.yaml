@@ -5,8 +5,16 @@ description: Short-lived direct download URL for authorized chat media.
 additionalProperties: false
 required:
   - url
+  - fileName
+  - contentType
 properties:
   url:
     type: string
     format: uri
     description: Presigned R2 GET URL. Fetch directly without an Authorization header and request a fresh URL for each later download.
+  fileName:
+    type: string
+    description: Original file name.
+  contentType:
+    type: string
+    description: MIME type of the file.
