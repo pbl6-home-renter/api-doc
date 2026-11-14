@@ -1,0 +1,10 @@
+type: object
+title: BotReminderPayload
+x-apidog-folder: Chat/Bot Message
+additionalProperties: false
+properties:
+  action: { type: string, enum: [bot_reminder] }
+  actorUserId: { type: string, format: uuid }
+  templateType: { type: string, enum: [invoice, contract_expiring] }
+  resourceId: { type: string, format: uuid }
+required: [action, actorUserId, templateType, resourceId]

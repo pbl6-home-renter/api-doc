@@ -9,7 +9,22 @@ post:
   operationId: sendBotReminder
   security: [{ BearerAuth: [] }]
   summary: Gửi bot reminder theo mẫu
-  description: Landlord chọn mẫu và chủ động gửi; không có lịch tự động. Community kiểm tra quyền với tài nguyên, dựng nội dung bot message, lưu history, phát Socket và gửi push chat theo preference.
+  description: |-
+    Landlord chủ động gửi trong hội thoại có context hợp đồng. Người gửi phải là thành viên active và có quyền sở hữu resource theo Tenancy; ID hợp đồng của resource phải khớp context. Chỉ nhận hóa đơn `issued` hoặc hợp đồng `active`; thông báo hóa đơn không khẳng định trạng thái thanh toán. OCR chưa được hỗ trợ. `clientMessageId` dùng lại cho cùng yêu cầu sẽ trả tin đã lưu; dùng lại với nội dung khác bị từ chối. Khi Tenancy lỗi không tạo tin mới. Lưu history trước Socket và push theo cài đặt chat; không có scheduler.
+
+    ```mermaid
+    sequenceDiagram
+      actor Landlord
+      participant C as Community
+      participant T as Tenancy
+      Landlord->>C: POST /conversations/{id}/bot-reminders
+      C->>C: Kiểm tra role và thành viên active
+      C->>T: GET /api/v1/invoices/{id} hoặc /api/v1/contracts/{id} (Bearer)
+      T-->>C: Resource đã kiểm tra quyền sở hữu
+      C->>C: Kiểm tra context, lưu snapshot và idempotency
+      C-->>Landlord: Socket và push theo preference
+      C-->>Landlord: 201 BOT_REMINDER_SENT
+    ```
   requestBody:
     required: true
     content:
@@ -21,12 +36,12 @@ post:
           properties:
             templateType:
               type: string
-              enum: [ocr_result, invoice, contract_expiring]
+              enum: [invoice, contract_expiring]
               description: Mẫu nội dung cần đăng.
             resourceId:
               type: string
               format: uuid
-              description: ID OCR result, invoice hoặc contract tương ứng với templateType.
+              description: ID invoice hoặc contract tương ứng với templateType.
             clientMessageId:
               type: string
               format: uuid
@@ -52,3 +67,13 @@ post:
     '404': { $ref: ../../openapi.yaml#/components/responses/NotFoundError }
     '422': { $ref: ../../openapi.yaml#/components/responses/ValidationError }
     '500': { $ref: ../../openapi.yaml#/components/responses/InternalServerError }
+    '503':
+      description: SERVICE_UNAVAILABLE — Tenancy không thể đáp ứng, không tạo tin mới.
+      content:
+        application/json:
+          schema:
+            type: object
+            required: [statusCode, code]
+            properties:
+              statusCode: { type: integer, enum: [503] }
+              code: { type: string, enum: [SERVICE_UNAVAILABLE] }

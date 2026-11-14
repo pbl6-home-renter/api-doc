@@ -51,7 +51,7 @@ allOf:
       payload:
         type: object
         nullable: true
-        description: Payload is a discriminated union for implemented system actions.
+        description: Payload for system actions or manual bot reminders.
         oneOf:
           - $ref: '../../openapi.yaml#/components/schemas/ConversationMembersAddedPayload'
           - $ref: '../../openapi.yaml#/components/schemas/ConversationMemberKickedPayload'
@@ -60,6 +60,7 @@ allOf:
           - $ref: '../../openapi.yaml#/components/schemas/ConversationMemberRoleChangedPayload'
           - $ref: '../../openapi.yaml#/components/schemas/ConversationTitleChangedPayload'
           - $ref: '../../openapi.yaml#/components/schemas/ConversationAvatarChangedPayload'
+          - $ref: '../../openapi.yaml#/components/schemas/BotReminderPayload'
         discriminator:
           propertyName: action
           mapping:
@@ -70,6 +71,7 @@ allOf:
             member_role_changed: '../../openapi.yaml#/components/schemas/ConversationMemberRoleChangedPayload'
             conversation_title_changed: '../../openapi.yaml#/components/schemas/ConversationTitleChangedPayload'
             conversation_avatar_changed: '../../openapi.yaml#/components/schemas/ConversationAvatarChangedPayload'
+            bot_reminder: '../../openapi.yaml#/components/schemas/BotReminderPayload'
         example:
           action: members_added
           actorUserId: 9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d
