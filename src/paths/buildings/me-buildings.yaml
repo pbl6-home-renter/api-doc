@@ -12,6 +12,8 @@ get:
     Mặc định sort=createdAt, order=desc; pageNo bắt đầu từ 1, pageSize từ 1 đến 100.
     Chỉ hỗ trợ format=json (hoặc bỏ format); xlsx/csv/pdf trả 422 VALIDATION_FAILED.
     Query hoặc filter chứa trường không được hỗ trợ trả 422 UNEXPECTED_FIELD.
+    filter[search] tìm chuỗi con không phân biệt hoa thường trong tên hoặc địa chỉ;
+    khoảng trắng đầu/cuối được loại bỏ, chuỗi rỗng bỏ qua; %, _ và \ được coi là ký tự thường.
     
     **Sequence diagram**
     
@@ -53,6 +55,14 @@ get:
         status:
           type: string
           enum: [pending, approved, rejected]
+        search:
+          type: string
+          maxLength: 100
+          example: An Bình
+          description: Tìm theo tên hoặc địa chỉ tòa nhà.
+    example:
+      status: approved
+      search: An Bình
   - name: sort
     in: query
     description: Chỉ nhận một trong các trường createdAt, name hoặc status.
