@@ -61802,6 +61802,1157 @@
           }
         }
       }
+    },
+    {
+      "id": "a70f2a886e35c4213308c6490a0835eec5ec022ed3fc3fc243b1b7e5ac752f89",
+      "label": "Thay đổi contract từ Git",
+      "classification": "NON_BREAKING",
+      "contractId": "rentify-public",
+      "repository": "https://github.com/pbl6-home-renter/api-doc",
+      "baseHash": "ee8740efaf2be1b34a76a04b9dc2ee0029431298099be0e16d6ecc440448c042",
+      "headHash": "940f1a10bbd838ae0db224ef5ad2ff3de28c6dd561b6581eb0792aef5eec8b3f",
+      "baseSource": "src/openapi.yaml",
+      "headSource": "src/openapi.yaml",
+      "detectedAt": "2026-11-14T01:08:01.088Z",
+      "committedAt": "2026-11-14T08:07:39+07:00",
+      "baseCommit": "b90ef8fc3388fa007ff8f91f0c59c92cd8fa29b2",
+      "headCommit": "8fbba792442abec0b61261041f58cf8878074e47",
+      "prUrl": "https://github.com/pbl6-home-renter/api-doc/pull/60",
+      "commitUrl": "https://github.com/pbl6-home-renter/api-doc/commit/8fbba792442abec0b61261041f58cf8878074e47",
+      "metadataKind": "Git revision thực tế",
+      "reason": "CHƯA CUNG CẤP — tác giả PR phải bổ sung lý do nghiệp vụ; không thể suy ra từ OpenAPI diff.",
+      "tools": {
+        "redocly": "2.64.1",
+        "oasdiff": "1.34.1"
+      },
+      "changes": [
+        {
+          "id": "response-required-property-added",
+          "text": "added the required property `data/items/tenantAvatarUrl` to the response with the `200` status",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getContractMembers",
+          "path": "/contract-members",
+          "section": "paths",
+          "fingerprint": "5a3f448c9f58",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/items/tenantAvatarUrl; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-optional-property-added",
+          "text": "added the optional property `data/items/avatarUrl` to the response with the `200` status",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getConversations",
+          "path": "/conversations",
+          "section": "paths",
+          "fingerprint": "2e60f101dde1",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/items/avatarUrl; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-optional-property-added",
+          "text": "added the optional property `data/avatarUrl` to the response with the `201` status",
+          "level": 1,
+          "operation": "POST",
+          "operationId": "createConversation",
+          "path": "/conversations",
+          "section": "paths",
+          "fingerprint": "e50e9775ef3f",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/avatarUrl; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-optional-property-added",
+          "text": "added the optional property `data/members/items/avatarUrl` to the response with the `201` status",
+          "level": 1,
+          "operation": "POST",
+          "operationId": "createConversation",
+          "path": "/conversations",
+          "section": "paths",
+          "fingerprint": "82c2c9f60c56",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/members/items/avatarUrl; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-optional-property-added",
+          "text": "added the optional property `data/avatarUrl` to the response with the `200` status",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getConversationsConversationid",
+          "path": "/conversations/{conversationId}",
+          "section": "paths",
+          "fingerprint": "67ca63d28273",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/avatarUrl; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-optional-property-added",
+          "text": "added the optional property `data/members/items/avatarUrl` to the response with the `200` status",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getConversationsConversationid",
+          "path": "/conversations/{conversationId}",
+          "section": "paths",
+          "fingerprint": "1d6e93bb4579",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/members/items/avatarUrl; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-optional-property-added",
+          "text": "added the optional property `data/items/avatarUrl` to the response with the `200` status",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "listConversationMembers",
+          "path": "/conversations/{conversationId}/members",
+          "section": "paths",
+          "fingerprint": "8e72bcacb23d",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/items/avatarUrl; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-optional-property-added",
+          "text": "added the optional property `data/items/avatarUrl` to the response with the `200` status",
+          "level": 1,
+          "operation": "POST",
+          "operationId": "addConversationMembers",
+          "path": "/conversations/{conversationId}/members",
+          "section": "paths",
+          "fingerprint": "d918b06d1378",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/items/avatarUrl; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-required-property-added",
+          "text": "added the required property `data/items/senderAvatarUrl` to the response with the `200` status",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getMessages",
+          "path": "/messages",
+          "section": "paths",
+          "fingerprint": "00bbed77f92d",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/items/senderAvatarUrl; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-required-property-added",
+          "text": "added the required property `data/items/avatarUrl` to the response with the `200` status",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getUsersAdmin",
+          "path": "/users",
+          "section": "paths",
+          "fingerprint": "aeb2d65d6602",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/items/avatarUrl; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-required-property-added",
+          "text": "added the required property `data/items/avatarUrl` to the response with the `200` status",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getUsersDirectory",
+          "path": "/users/directory",
+          "section": "paths",
+          "fingerprint": "7cbb2f6f94e3",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/items/avatarUrl; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-required-property-added",
+          "text": "added the required property `data/avatarUrl` to the response with the `200` status",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getUserById",
+          "path": "/users/{userId}",
+          "section": "paths",
+          "fingerprint": "26557cf2f3b7",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/avatarUrl; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        }
+      ],
+      "locations": [
+        {
+          "pointer": "/components/schemas/ContractMemberListResponseDto/properties/tenantAvatarUrl",
+          "before": null,
+          "after": {
+            "type": "string",
+            "nullable": true,
+            "description": "URL công khai avatar hiện tại của tenant (Identity); `null` nếu không có tài khoản, chưa có avatar hoặc Identity không phản hồi (best effort)."
+          }
+        },
+        {
+          "pointer": "/components/schemas/ContractMemberListResponseDto/required",
+          "before": [
+            "id",
+            "contractId",
+            "tenantId",
+            "tenantName",
+            "tenantPhone",
+            "joinedAt",
+            "leftAt",
+            "status"
+          ],
+          "after": [
+            "id",
+            "contractId",
+            "tenantId",
+            "tenantName",
+            "tenantPhone",
+            "tenantAvatarUrl",
+            "joinedAt",
+            "leftAt",
+            "status"
+          ]
+        },
+        {
+          "pointer": "/components/schemas/ConversationDetailResponseDto/properties/avatarUrl",
+          "before": null,
+          "after": {
+            "type": "string",
+            "nullable": true,
+            "description": "Ảnh để hiển thị theo người đang xem. Group: `/api/v1/media/{avatarMediaId}` (private, FE tải qua `GET /media/{mediaId}/download-url`), `null` nếu nhóm chưa có ảnh. Direct: URL công khai avatar hiện tại của người còn lại, `null` nếu người đó chưa có avatar hoặc Identity không phản hồi (best effort)."
+          }
+        },
+        {
+          "pointer": "/components/schemas/ConversationListResponseDto/properties/avatarUrl",
+          "before": null,
+          "after": {
+            "type": "string",
+            "nullable": true,
+            "description": "Ảnh để hiển thị theo người đang xem. Group: `/api/v1/media/{avatarMediaId}` (private, FE tải qua `GET /media/{mediaId}/download-url`), `null` nếu nhóm chưa có ảnh. Direct: URL công khai avatar hiện tại của người còn lại, `null` nếu người đó chưa có avatar hoặc Identity không phản hồi (best effort)."
+          }
+        },
+        {
+          "pointer": "/components/schemas/ConversationMember/allOf",
+          "before": [
+            {
+              "$ref": "#/components/schemas/BaseEntity"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "conversationId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "description": "ID cuộc hội thoại",
+                  "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                },
+                "userId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "nullable": true,
+                  "description": "ID người dùng tham gia",
+                  "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                },
+                "displayName": {
+                  "type": "string",
+                  "maxLength": 254,
+                  "description": "Tên hiển thị được snapshot khi thêm thành viên."
+                },
+                "participantType": {
+                  "type": "string",
+                  "enum": [
+                    "user",
+                    "system"
+                  ],
+                  "description": "Phân biệt user với participant hệ thống như bot."
+                },
+                "role": {
+                  "type": "string",
+                  "enum": [
+                    "admin",
+                    "member",
+                    "system"
+                  ]
+                },
+                "status": {
+                  "type": "string",
+                  "enum": [
+                    "active",
+                    "read_only"
+                  ]
+                },
+                "joinedAt": {
+                  "type": "string",
+                  "format": "date-time",
+                  "description": "Thời điểm bắt đầu tham gia nhóm chat",
+                  "example": "2026-09-01T10:05:00Z"
+                },
+                "leftAt": {
+                  "type": "string",
+                  "format": "date-time",
+                  "nullable": true,
+                  "description": "Thời điểm rời hoặc bị xóa khỏi hội thoại.",
+                  "example": null
+                },
+                "leftSequence": {
+                  "type": "string",
+                  "pattern": "^\\d+$",
+                  "nullable": true,
+                  "description": "Tin cuối được phép đọc khi membership ở trạng thái read_only."
+                },
+                "lastReadSequence": {
+                  "type": "string",
+                  "pattern": "^\\d+$",
+                  "example": "12",
+                  "description": "Sequence cuối đã đọc; unread tính từ sequence kế tiếp."
+                }
+              },
+              "required": [
+                "conversationId",
+                "displayName",
+                "participantType",
+                "role",
+                "status",
+                "joinedAt"
+              ]
+            }
+          ],
+          "after": [
+            {
+              "$ref": "#/components/schemas/BaseEntity"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "conversationId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "description": "ID cuộc hội thoại",
+                  "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                },
+                "userId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "nullable": true,
+                  "description": "ID người dùng tham gia",
+                  "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                },
+                "displayName": {
+                  "type": "string",
+                  "maxLength": 254,
+                  "description": "Tên hiển thị được snapshot khi thêm thành viên."
+                },
+                "avatarUrl": {
+                  "type": "string",
+                  "nullable": true,
+                  "description": "URL công khai avatar hiện tại của user (lấy từ Identity lúc đọc, không snapshot); `null` nếu chưa có avatar, là participant hệ thống hoặc Identity không phản hồi (best effort)."
+                },
+                "participantType": {
+                  "type": "string",
+                  "enum": [
+                    "user",
+                    "system"
+                  ],
+                  "description": "Phân biệt user với participant hệ thống như bot."
+                },
+                "role": {
+                  "type": "string",
+                  "enum": [
+                    "admin",
+                    "member",
+                    "system"
+                  ]
+                },
+                "status": {
+                  "type": "string",
+                  "enum": [
+                    "active",
+                    "read_only"
+                  ]
+                },
+                "joinedAt": {
+                  "type": "string",
+                  "format": "date-time",
+                  "description": "Thời điểm bắt đầu tham gia nhóm chat",
+                  "example": "2026-09-01T10:05:00Z"
+                },
+                "leftAt": {
+                  "type": "string",
+                  "format": "date-time",
+                  "nullable": true,
+                  "description": "Thời điểm rời hoặc bị xóa khỏi hội thoại.",
+                  "example": null
+                },
+                "leftSequence": {
+                  "type": "string",
+                  "pattern": "^\\d+$",
+                  "nullable": true,
+                  "description": "Tin cuối được phép đọc khi membership ở trạng thái read_only."
+                },
+                "lastReadSequence": {
+                  "type": "string",
+                  "pattern": "^\\d+$",
+                  "example": "12",
+                  "description": "Sequence cuối đã đọc; unread tính từ sequence kế tiếp."
+                }
+              },
+              "required": [
+                "conversationId",
+                "displayName",
+                "participantType",
+                "role",
+                "status",
+                "joinedAt"
+              ]
+            }
+          ]
+        },
+        {
+          "pointer": "/components/schemas/MessageListResponseDto/properties/senderAvatarUrl",
+          "before": null,
+          "after": {
+            "type": "string",
+            "nullable": true,
+            "description": "URL công khai avatar hiện tại của người gửi (lấy từ Identity lúc đọc); `null` với system message, user chưa có avatar hoặc khi Identity không phản hồi (best effort)."
+          }
+        },
+        {
+          "pointer": "/components/schemas/MessageListResponseDto/required",
+          "before": [
+            "id",
+            "conversationId",
+            "senderUserId",
+            "senderName",
+            "senderType",
+            "sequence",
+            "clientMessageId",
+            "type",
+            "content",
+            "mediaId",
+            "payload",
+            "replyTo",
+            "createdAt"
+          ],
+          "after": [
+            "id",
+            "conversationId",
+            "senderUserId",
+            "senderName",
+            "senderAvatarUrl",
+            "senderType",
+            "sequence",
+            "clientMessageId",
+            "type",
+            "content",
+            "mediaId",
+            "payload",
+            "replyTo",
+            "createdAt"
+          ]
+        },
+        {
+          "pointer": "/components/schemas/UserDetailResponseDto/properties/avatarUrl",
+          "before": null,
+          "after": {
+            "type": "string",
+            "nullable": true,
+            "description": "URL công khai của avatar hiện tại (Identity, media `purpose=avatar`); `null` nếu user chưa có avatar.",
+            "example": "https://media.example.com/avatars/3fa85f64.jpg"
+          }
+        },
+        {
+          "pointer": "/components/schemas/UserDetailResponseDto/required",
+          "before": [
+            "id",
+            "name",
+            "email",
+            "phone",
+            "role",
+            "status",
+            "lockReason",
+            "lockedAt",
+            "payoutAccount",
+            "buildingCount",
+            "activeContractCount"
+          ],
+          "after": [
+            "id",
+            "name",
+            "email",
+            "phone",
+            "role",
+            "status",
+            "lockReason",
+            "lockedAt",
+            "payoutAccount",
+            "buildingCount",
+            "activeContractCount",
+            "avatarUrl"
+          ]
+        },
+        {
+          "pointer": "/components/schemas/UserDirectoryResponseDto/description",
+          "before": "Một Landlord/Tenant đang hoạt động trong kết quả tìm người để chat; chỉ lộ ID và tên.",
+          "after": "Một Landlord/Tenant đang hoạt động trong kết quả tìm người để chat; chỉ lộ ID, tên và avatar."
+        },
+        {
+          "pointer": "/components/schemas/UserDirectoryResponseDto/properties/avatarUrl",
+          "before": null,
+          "after": {
+            "type": "string",
+            "nullable": true,
+            "description": "URL công khai của avatar hiện tại (Identity, media `purpose=avatar`); `null` nếu user chưa có avatar.",
+            "example": "https://media.example.com/avatars/3fa85f64.jpg"
+          }
+        },
+        {
+          "pointer": "/components/schemas/UserDirectoryResponseDto/required",
+          "before": [
+            "id",
+            "name"
+          ],
+          "after": [
+            "id",
+            "name",
+            "avatarUrl"
+          ]
+        },
+        {
+          "pointer": "/components/schemas/UserListResponseDto/properties/avatarUrl",
+          "before": null,
+          "after": {
+            "type": "string",
+            "nullable": true,
+            "description": "URL công khai của avatar hiện tại (Identity, media `purpose=avatar`); `null` nếu user chưa có avatar.",
+            "example": "https://media.example.com/avatars/3fa85f64.jpg"
+          }
+        },
+        {
+          "pointer": "/components/schemas/UserListResponseDto/required",
+          "before": [
+            "id",
+            "name",
+            "email",
+            "phone",
+            "role",
+            "status"
+          ],
+          "after": [
+            "id",
+            "name",
+            "email",
+            "phone",
+            "role",
+            "status",
+            "avatarUrl"
+          ]
+        },
+        {
+          "pointer": "/paths/~1contract-members/get/responses/200/content/application~1json/example/data",
+          "before": [
+            {
+              "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+              "contractId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+              "tenantName": "Trần Văn B",
+              "joinedAt": "2026-09-01",
+              "leftAt": null,
+              "tenantId": null,
+              "tenantPhone": "0921234567",
+              "status": "active"
+            }
+          ],
+          "after": [
+            {
+              "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+              "contractId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+              "tenantName": "Trần Văn B",
+              "joinedAt": "2026-09-01",
+              "leftAt": null,
+              "tenantId": null,
+              "tenantPhone": "0921234567",
+              "tenantAvatarUrl": null,
+              "status": "active"
+            }
+          ]
+        },
+        {
+          "pointer": "/paths/~1messages/get/responses/200/content/application~1json/example/data",
+          "before": [
+            {
+              "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+              "conversationId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+              "senderUserId": "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d",
+              "senderName": "Nguyễn Văn A",
+              "senderType": "user",
+              "sequence": "42",
+              "clientMessageId": "a95a1d13-f91c-4c71-9c61-24b498d0fd0e",
+              "type": "text",
+              "content": "Dạ em gửi ảnh vòi xịt ạ",
+              "mediaId": null,
+              "payload": null,
+              "replyTo": {
+                "id": "7c9e6679-7425-40de-944b-e07fc1f90ae7",
+                "sequence": "41",
+                "senderName": "Trần Thị B",
+                "type": "image",
+                "contentPreview": "Vòi xịt nhà tắm bị rỉ",
+                "isUnavailable": false
+              },
+              "createdAt": "2026-09-23T11:30:00.000Z"
+            }
+          ],
+          "after": [
+            {
+              "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+              "conversationId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+              "senderUserId": "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d",
+              "senderName": "Nguyễn Văn A",
+              "senderAvatarUrl": "https://media.example.com/avatars/9b1deb4d.jpg",
+              "senderType": "user",
+              "sequence": "42",
+              "clientMessageId": "a95a1d13-f91c-4c71-9c61-24b498d0fd0e",
+              "type": "text",
+              "content": "Dạ em gửi ảnh vòi xịt ạ",
+              "mediaId": null,
+              "payload": null,
+              "replyTo": {
+                "id": "7c9e6679-7425-40de-944b-e07fc1f90ae7",
+                "sequence": "41",
+                "senderName": "Trần Thị B",
+                "type": "image",
+                "contentPreview": "Vòi xịt nhà tắm bị rỉ",
+                "isUnavailable": false
+              },
+              "createdAt": "2026-09-23T11:30:00.000Z"
+            }
+          ]
+        },
+        {
+          "pointer": "/paths/~1users/get/responses/200/content/application~1json/example/data",
+          "before": [
+            {
+              "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+              "name": "Lê Văn An",
+              "phone": "0901234567",
+              "email": "lan@example.com",
+              "role": "tenant",
+              "status": "active"
+            }
+          ],
+          "after": [
+            {
+              "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+              "name": "Lê Văn An",
+              "phone": "0901234567",
+              "email": "lan@example.com",
+              "role": "tenant",
+              "status": "active",
+              "avatarUrl": null
+            }
+          ]
+        },
+        {
+          "pointer": "/paths/~1users~1directory/get/description",
+          "before": "- Người gọi: chỉ `landlord`, `tenant` có `status=active`. Admin nhận 403 `FORBIDDEN`; tài khoản bị khóa nhận 403 `ACCOUNT_LOCKED`.\n- Kết quả: chỉ user `landlord`/`tenant`, `status=active`, chưa bị xóa; luôn loại chính người gọi.\n- `q` tùy chọn; bỏ trống hoặc chỉ có khoảng trắng thì trả danh sách phân trang. Khi có từ khóa, server trim rồi khớp một phần tên không phân biệt chữ hoa/thường và dấu tiếng Việt. Ký tự %, _ và backslash trong q được hiểu theo nghĩa đen.\n- Lọc, đếm `totalItems` và phân trang đều chạy trên DB trước khi cắt trang. Sắp xếp cố định theo `name` tăng dần rồi `id` tăng dần.\n- Mỗi phần tử chỉ có `id`, `name`; không trả email, phone, role, status hoặc avatar. Hai người trùng tên được trả thành hai phần tử khác `id`.\n- Không cần PostgreSQL extension: Identity chuẩn hóa dấu bằng hàm `translate()` sẵn có trên cả cột `name` và `q`. Truy vấn quét theo điều kiện role/status/is_deleted, không dùng index cho phần tìm tên.\n\n**Sequence diagram**\n\n```mermaid\nsequenceDiagram\n    autonumber\n    actor Client\n    participant GW as API Gateway\n    participant S as Identity-Service\n    participant Guard as JWT/access guards\n    participant C as UserDirectoryController\n    participant Bus as CQRS QueryBus\n    participant H as Application handler\n    Client->>GW: GET /api/v1/users/directory\n    GW->>GW: Validate bearer token for protected route\n    GW->>S: Proxy original HTTP request\n    S->>Guard: Validate JWT, account state and route access\n    Guard-->>C: Continue with authenticated context\n    S->>C: Invoke getUsersDirectory\n    C->>Bus: Execute query for getUsersDirectory\n    Bus->>H: Dispatch query handler\n    H-->>Bus: Return use-case result\n    Bus-->>C: Result\n    C-->>S: Return documented response\n    S-->>GW: HTTP status and response body\n    GW-->>Client: Forward HTTP response\n```",
+          "after": "- Người gọi: chỉ `landlord`, `tenant` có `status=active`. Admin nhận 403 `FORBIDDEN`; tài khoản bị khóa nhận 403 `ACCOUNT_LOCKED`.\n- Kết quả: chỉ user `landlord`/`tenant`, `status=active`, chưa bị xóa; luôn loại chính người gọi.\n- `q` tùy chọn; bỏ trống hoặc chỉ có khoảng trắng thì trả danh sách phân trang. Khi có từ khóa, server trim rồi khớp một phần tên không phân biệt chữ hoa/thường và dấu tiếng Việt. Ký tự %, _ và backslash trong q được hiểu theo nghĩa đen.\n- Lọc, đếm `totalItems` và phân trang đều chạy trên DB trước khi cắt trang. Sắp xếp cố định theo `name` tăng dần rồi `id` tăng dần.\n- Mỗi phần tử chỉ có `id`, `name`, `avatarUrl` (URL công khai, `null` nếu chưa có avatar); không trả email, phone, role, status. Hai người trùng tên được trả thành hai phần tử khác `id`.\n- Không cần PostgreSQL extension: Identity chuẩn hóa dấu bằng hàm `translate()` sẵn có trên cả cột `name` và `q`. Truy vấn quét theo điều kiện role/status/is_deleted, không dùng index cho phần tìm tên.\n\n**Sequence diagram**\n\n```mermaid\nsequenceDiagram\n    autonumber\n    actor Client\n    participant GW as API Gateway\n    participant S as Identity-Service\n    participant Guard as JWT/access guards\n    participant C as UserDirectoryController\n    participant Bus as CQRS QueryBus\n    participant H as Application handler\n    Client->>GW: GET /api/v1/users/directory\n    GW->>GW: Validate bearer token for protected route\n    GW->>S: Proxy original HTTP request\n    S->>Guard: Validate JWT, account state and route access\n    Guard-->>C: Continue with authenticated context\n    S->>C: Invoke getUsersDirectory\n    C->>Bus: Execute query for getUsersDirectory\n    Bus->>H: Dispatch query handler\n    H-->>Bus: Return use-case result\n    Bus-->>C: Result\n    C-->>S: Return documented response\n    S-->>GW: HTTP status and response body\n    GW-->>Client: Forward HTTP response\n```"
+        },
+        {
+          "pointer": "/paths/~1users~1directory/get/responses/200/content/application~1json/example/data",
+          "before": [
+            {
+              "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+              "name": "Nguyễn Văn An"
+            }
+          ],
+          "after": [
+            {
+              "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+              "name": "Nguyễn Văn An",
+              "avatarUrl": "https://media.example.com/avatars/3fa85f64.jpg"
+            }
+          ]
+        },
+        {
+          "pointer": "/paths/~1users~1{userId}/get/responses/200/content/application~1json/example/data/avatarUrl",
+          "before": null,
+          "after": null
+        }
+      ],
+      "semanticDiff": {
+        "paths": {
+          "modified": {
+            "/contract-members": {
+              "operations": {
+                "modified": {
+                  "GET": {
+                    "responses": {
+                      "modified": {
+                        "200": {
+                          "content": {
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "properties": {
+                                    "modified": {
+                                      "data": {
+                                        "items": {
+                                          "required": {
+                                            "added": [
+                                              "tenantAvatarUrl"
+                                            ]
+                                          },
+                                          "properties": {
+                                            "added": [
+                                              "tenantAvatarUrl"
+                                            ]
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "/conversations": {
+              "operations": {
+                "modified": {
+                  "GET": {
+                    "responses": {
+                      "modified": {
+                        "200": {
+                          "content": {
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "properties": {
+                                    "modified": {
+                                      "data": {
+                                        "items": {
+                                          "properties": {
+                                            "added": [
+                                              "avatarUrl"
+                                            ]
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "POST": {
+                    "responses": {
+                      "modified": {
+                        "201": {
+                          "content": {
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "properties": {
+                                    "modified": {
+                                      "data": {
+                                        "properties": {
+                                          "added": [
+                                            "avatarUrl"
+                                          ],
+                                          "modified": {
+                                            "members": {
+                                              "items": {
+                                                "properties": {
+                                                  "added": [
+                                                    "avatarUrl"
+                                                  ]
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "/conversations/{conversationId}": {
+              "operations": {
+                "modified": {
+                  "GET": {
+                    "responses": {
+                      "modified": {
+                        "200": {
+                          "content": {
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "properties": {
+                                    "modified": {
+                                      "data": {
+                                        "properties": {
+                                          "added": [
+                                            "avatarUrl"
+                                          ],
+                                          "modified": {
+                                            "members": {
+                                              "items": {
+                                                "properties": {
+                                                  "added": [
+                                                    "avatarUrl"
+                                                  ]
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "/conversations/{conversationId}/members": {
+              "operations": {
+                "modified": {
+                  "GET": {
+                    "responses": {
+                      "modified": {
+                        "200": {
+                          "content": {
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "properties": {
+                                    "modified": {
+                                      "data": {
+                                        "items": {
+                                          "properties": {
+                                            "added": [
+                                              "avatarUrl"
+                                            ]
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "POST": {
+                    "responses": {
+                      "modified": {
+                        "200": {
+                          "content": {
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "properties": {
+                                    "modified": {
+                                      "data": {
+                                        "items": {
+                                          "properties": {
+                                            "added": [
+                                              "avatarUrl"
+                                            ]
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "/messages": {
+              "operations": {
+                "modified": {
+                  "GET": {
+                    "responses": {
+                      "modified": {
+                        "200": {
+                          "content": {
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "properties": {
+                                    "modified": {
+                                      "data": {
+                                        "items": {
+                                          "required": {
+                                            "added": [
+                                              "senderAvatarUrl"
+                                            ]
+                                          },
+                                          "properties": {
+                                            "added": [
+                                              "senderAvatarUrl"
+                                            ]
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "/users": {
+              "operations": {
+                "modified": {
+                  "GET": {
+                    "responses": {
+                      "modified": {
+                        "200": {
+                          "content": {
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "properties": {
+                                    "modified": {
+                                      "data": {
+                                        "items": {
+                                          "required": {
+                                            "added": [
+                                              "avatarUrl"
+                                            ]
+                                          },
+                                          "properties": {
+                                            "added": [
+                                              "avatarUrl"
+                                            ]
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "/users/directory": {
+              "operations": {
+                "modified": {
+                  "GET": {
+                    "responses": {
+                      "modified": {
+                        "200": {
+                          "content": {
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "properties": {
+                                    "modified": {
+                                      "data": {
+                                        "items": {
+                                          "required": {
+                                            "added": [
+                                              "avatarUrl"
+                                            ]
+                                          },
+                                          "properties": {
+                                            "added": [
+                                              "avatarUrl"
+                                            ]
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "/users/{userId}": {
+              "operations": {
+                "modified": {
+                  "GET": {
+                    "responses": {
+                      "modified": {
+                        "200": {
+                          "content": {
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "properties": {
+                                    "modified": {
+                                      "data": {
+                                        "required": {
+                                          "added": [
+                                            "avatarUrl"
+                                          ]
+                                        },
+                                        "properties": {
+                                          "added": [
+                                            "avatarUrl"
+                                          ]
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "components": {
+          "schemas": {
+            "modified": {
+              "ContractMemberListResponseDto": {
+                "required": {
+                  "added": [
+                    "tenantAvatarUrl"
+                  ]
+                },
+                "properties": {
+                  "added": [
+                    "tenantAvatarUrl"
+                  ]
+                }
+              },
+              "ConversationDetailResponseDto": {
+                "properties": {
+                  "added": [
+                    "avatarUrl"
+                  ],
+                  "modified": {
+                    "members": {
+                      "items": {
+                        "properties": {
+                          "added": [
+                            "avatarUrl"
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "ConversationListResponseDto": {
+                "properties": {
+                  "added": [
+                    "avatarUrl"
+                  ]
+                }
+              },
+              "ConversationMember": {
+                "properties": {
+                  "added": [
+                    "avatarUrl"
+                  ]
+                }
+              },
+              "MessageListResponseDto": {
+                "required": {
+                  "added": [
+                    "senderAvatarUrl"
+                  ]
+                },
+                "properties": {
+                  "added": [
+                    "senderAvatarUrl"
+                  ]
+                }
+              },
+              "UserDetailResponseDto": {
+                "required": {
+                  "added": [
+                    "avatarUrl"
+                  ]
+                },
+                "properties": {
+                  "added": [
+                    "avatarUrl"
+                  ]
+                }
+              },
+              "UserDirectoryResponseDto": {
+                "required": {
+                  "added": [
+                    "avatarUrl"
+                  ]
+                },
+                "properties": {
+                  "added": [
+                    "avatarUrl"
+                  ]
+                }
+              },
+              "UserListResponseDto": {
+                "required": {
+                  "added": [
+                    "avatarUrl"
+                  ]
+                },
+                "properties": {
+                  "added": [
+                    "avatarUrl"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
     }
   ]
 }
