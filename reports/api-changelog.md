@@ -5,11 +5,55 @@
 
 Báo cáo lưu lịch sử các entry đã phát hiện, mới nhất ở trên. `NO_CHANGE` không xóa entry cũ; exit code chỉ phản ánh lần chạy hiện tại.
 
-Công cụ: Redocly 2.64.1; oasdiff 1.34.1. Số entry: **46**.
+Công cụ: Redocly 2.64.1; oasdiff 1.34.1. Số entry: **47**.
 
 Phân loại: **BREAKING** = client cũ có thể hỏng; **NON_BREAKING** = tương thích theo contract; **NEEDS_REVIEW** = chưa đủ bằng chứng.
 
 Các vị trí dùng JSON Pointer trên bundle tạm (`~1` là `/`). JSON đi kèm giữ toàn bộ semantic diff, fingerprint và hash phục vụ truy vết.
+
+## Thay đổi contract từ Git — NON_BREAKING
+
+- ID: `58dc7272f9864ca4b64a20ab5cf3616c1f6b7fd98596a56e9401258f93103386`
+- Contract: rentify-public; repository: https://github.com/pbl6-home-renter/api-doc
+- Nguồn: `src/openapi.yaml` → `src/openapi.yaml`
+- Phát hiện (UTC): 2026-11-14T09:28:07.354Z; commit time: 2026-11-14T16:27:56+07:00
+- Commit nền: 42310dc11423dc2cd0a065cc5a06541f03270be5
+- Commit đích/bối cảnh: [d947bc95d090e3e84073c5b247b77da39a87de46](https://github.com/pbl6-home-renter/api-doc/commit/d947bc95d090e3e84073c5b247b77da39a87de46)
+- PR: [https://github.com/pbl6-home-renter/api-doc/pull/63](https://github.com/pbl6-home-renter/api-doc/pull/63)
+- Loại metadata: Git revision thực tế
+- Lý do: Landlord và admin cần số liệu phòng thực tế để đánh giá tình trạng lấp đầy của tòa nhà.
+
+| Mức ảnh hưởng | Endpoint / vùng | Thay đổi | Hành động FE / Mobile |
+|---|---|---|---|
+| NON_BREAKING | GET /me/buildings | added the required property `data/items/totalRooms` to the response with the `200` status (`response-required-property-added`) | FE: có thể bỏ qua field mới data/items/totalRooms; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại. |
+| NON_BREAKING | GET /me/buildings/{buildingId} | added the required property `data/totalRooms` to the response with the `200` status (`response-required-property-added`) | FE: có thể bỏ qua field mới data/totalRooms; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại. |
+
+### Vị trí và giá trị trước/sau
+
+| Path / schema / field (JSON Pointer) | Trước | Sau |
+|---|---|---|
+| `/components/schemas/BuildingAdminDetailResponseDto/properties/occupancyRate/description` | "Tỷ lệ lấp đầy phòng; hiện tạm trả '0%'." | "Tỷ lệ phòng occupied trên tổng số phòng chưa xóa; 0 phòng trả 0%." |
+| `/components/schemas/BuildingAdminDetailResponseDto/properties/occupancyRate/example` | "0%" | "50%" |
+| `/components/schemas/BuildingMyDetailResponseDto/properties/occupancyRate/description` | "Tỷ lệ lấp đầy; hiện tạm trả '0%' khi chưa tích hợp thống kê occupancy." | "Tỷ lệ occupied trên tổng số phòng chưa xóa, làm tròn tối đa một chữ số thập phân; 0 phòng trả 0%." |
+| `/components/schemas/BuildingMyDetailResponseDto/properties/occupancyRate/example` | "0%" | "50%" |
+| `/components/schemas/BuildingMyDetailResponseDto/properties/occupiedRooms/description` | "Số phòng đang có khách thuê; hiện tạm trả 0 khi chưa tích hợp thống kê occupancy." | "Số phòng chưa xóa có trạng thái occupied." |
+| `/components/schemas/BuildingMyDetailResponseDto/properties/occupiedRooms/example` | null | 2 |
+| `/components/schemas/BuildingMyDetailResponseDto/properties/totalRooms` | null | {"type":"integer","minimum":0,"example":4,"description":"Tổng số phòng chưa xóa."} |
+| `/components/schemas/BuildingMyDetailResponseDto/required` | ["id","name","province","ward","address","status","occupiedRooms","occupancyRate","vietQrConfigured","reviewNote","amenities","ownershipCertificateUrls","ratePolicies","createdAt"] | ["id","name","province","ward","address","status","occupiedRooms","totalRooms","occupancyRate","vietQrConfigured","reviewNote","amenities","ownershipCertificateUrls","ratePolicies","createdAt"] |
+| `/components/schemas/BuildingMyListResponseDto/properties/occupancyRate/description` | "Tỷ lệ lấp đầy; hiện tạm trả '0%' khi chưa tích hợp thống kê occupancy." | "Tỷ lệ occupied trên tổng số phòng chưa xóa, làm tròn tối đa một chữ số thập phân; 0 phòng trả 0%." |
+| `/components/schemas/BuildingMyListResponseDto/properties/occupancyRate/example` | "0%" | "50%" |
+| `/components/schemas/BuildingMyListResponseDto/properties/occupiedRooms/description` | "Số lượng phòng đang có khách thuê; hiện tạm trả 0 khi chưa tích hợp thống kê occupancy." | "Số phòng chưa xóa có trạng thái occupied." |
+| `/components/schemas/BuildingMyListResponseDto/properties/occupiedRooms/example` | null | 2 |
+| `/components/schemas/BuildingMyListResponseDto/properties/totalRooms` | null | {"type":"integer","minimum":0,"example":4,"description":"Tổng số phòng chưa xóa."} |
+| `/components/schemas/BuildingMyListResponseDto/required` | ["id","name","status","occupiedRooms","occupancyRate","address","createdAt"] | ["id","name","status","occupiedRooms","totalRooms","occupancyRate","address","createdAt"] |
+| `/paths/~1admin~1buildings~1{buildingId}/get/description` | "Không tồn tại hoặc đã bị xóa trả 404 RESOURCE_NOT_FOUND. Nếu Identity unavailable, name/phone là chuỗi rỗng, email và cccdNumber là null.\nTạm thời ownershipDocuments=[], occupancyRate=\"0%\", submittedAt=createdAt; CCCD chưa có trong internal lookup.\n\n**Sequence diagram**\n\n```mermaid\nsequenceDiagram\n    autonumber\n    actor Client\n    participant GW as API Gateway\n    participant S as Tenancy-Service\n    participant Guard as JWT/access guards\n    participant C as AdminBuildingController\n    participant Bus as CQRS QueryBus\n    participant H as Application handler\n    Client-&gt;&gt;GW: GET /api/v1/admin/buildings/{buildingId}\n    GW-&gt;&gt;GW: Validate bearer token for protected route\n    GW-&gt;&gt;S: Proxy original HTTP request\n    S-&gt;&gt;Guard: Validate JWT, account state and route access\n    Guard--&gt;&gt;C: Continue with authenticated context\n    S-&gt;&gt;C: Invoke getAdminBuildingsBuildingid\n    C-&gt;&gt;Bus: Execute query for getAdminBuildingsBuildingid\n    Bus-&gt;&gt;H: Dispatch query handler\n    H--&gt;&gt;Bus: Return use-case result\n    Bus--&gt;&gt;C: Result\n    C--&gt;&gt;S: Return documented response\n    S--&gt;&gt;GW: HTTP status and response body\n    GW--&gt;&gt;Client: Forward HTTP response\n```" | "Không tồn tại hoặc đã bị xóa trả 404 RESOURCE_NOT_FOUND. Nếu Identity unavailable, name/phone là chuỗi rỗng, email và cccdNumber là null.\nTạm thời ownershipDocuments=[], submittedAt=createdAt; CCCD chưa có trong internal lookup.\n\n**Sequence diagram**\n\n```mermaid\nsequenceDiagram\n    autonumber\n    actor Client\n    participant GW as API Gateway\n    participant S as Tenancy-Service\n    participant Guard as JWT/access guards\n    participant C as AdminBuildingController\n    participant Bus as CQRS QueryBus\n    participant H as Application handler\n    Client-&gt;&gt;GW: GET /api/v1/admin/buildings/{buildingId}\n    GW-&gt;&gt;GW: Validate bearer token for protected route\n    GW-&gt;&gt;S: Proxy original HTTP request\n    S-&gt;&gt;Guard: Validate JWT, account state and route access\n    Guard--&gt;&gt;C: Continue with authenticated context\n    S-&gt;&gt;C: Invoke getAdminBuildingsBuildingid\n    C-&gt;&gt;Bus: Execute query for getAdminBuildingsBuildingid\n    Bus-&gt;&gt;H: Dispatch query handler\n    H--&gt;&gt;Bus: Return use-case result\n    Bus--&gt;&gt;C: Result\n    C--&gt;&gt;S: Return documented response\n    S--&gt;&gt;GW: HTTP status and response body\n    GW--&gt;&gt;Client: Forward HTTP response\n```" |
+| `/paths/~1admin~1buildings~1{buildingId}/get/responses/200/content/application~1json/example/data/occupancyRate` | "0%" | "50%" |
+| `/paths/~1me~1buildings/get/responses/200/content/application~1json/example/data` | [{"id":"3fa85f64-5717-4562-b3fc-2c963f66afa6","name":"Tòa nhà Rentify Central Park","address":"12 Nguyễn Trãi","status":"approved","occupancyRate":"0%","occupiedRooms":0,"createdAt":"2026-09-20T08:00:00.000Z"}] | [{"id":"3fa85f64-5717-4562-b3fc-2c963f66afa6","name":"Tòa nhà Rentify Central Park","address":"12 Nguyễn Trãi","status":"approved","occupancyRate":"50%","occupiedRooms":2,"totalRooms":4,"createdAt":"2026-09-20T08:00:00.000Z"}] |
+| `/paths/~1me~1buildings~1{buildingId}/get/responses/200/content/application~1json/example/data/occupancyRate` | "0%" | "50%" |
+| `/paths/~1me~1buildings~1{buildingId}/get/responses/200/content/application~1json/example/data/occupiedRooms` | 0 | 2 |
+| `/paths/~1me~1buildings~1{buildingId}/get/responses/200/content/application~1json/example/data/totalRooms` | null | 4 |
+
+**Kiểm tra thủ công:** BE xác nhận lý do, endpoint dùng schema chung, thay đổi role/ownership mô tả bằng văn bản và thời điểm triển khai. FE/Mobile xác nhận tác động với parser và phiên bản client đang hỗ trợ.
 
 ## Thay đổi contract từ Git — BREAKING
 
