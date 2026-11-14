@@ -63690,6 +63690,380 @@
           }
         }
       }
+    },
+    {
+      "id": "7498bd45dfe4495ef0e5b35e874ba35badb77f9f25848d0b5ff3b2cb793cb3f3",
+      "label": "Thay đổi contract từ Git",
+      "classification": "BREAKING",
+      "contractId": "rentify-public",
+      "repository": "https://github.com/pbl6-home-renter/api-doc",
+      "baseHash": "79709f9db7e97bb273dd8a79e7794a1d5d7de512d19898978d7847e9d02925b1",
+      "headHash": "425d2f393738d203c2b5ce36bed7d80f21c7c3a488f31a8b2c68aafba95ff14a",
+      "baseSource": "src/openapi.yaml",
+      "headSource": "src/openapi.yaml",
+      "detectedAt": "2026-11-14T09:27:29.575Z",
+      "committedAt": "2026-11-14T16:27:18+07:00",
+      "baseCommit": "710cb62b838ed423db55b5a67a19522209e51086",
+      "headCommit": "3cfe88068399d839b33451ae74096935ce107822",
+      "prUrl": "https://github.com/pbl6-home-renter/api-doc/pull/65",
+      "commitUrl": "https://github.com/pbl6-home-renter/api-doc/commit/3cfe88068399d839b33451ae74096935ce107822",
+      "metadataKind": "Git revision thực tế",
+      "reason": "Theo quyết định D5, tài liệu nháp được tải trực tiếp thay vì lưu Media.",
+      "tools": {
+        "redocly": "2.64.1",
+        "oasdiff": "1.34.1"
+      },
+      "changes": [
+        {
+          "id": "request-body-removed",
+          "text": "removed the request body",
+          "level": 3,
+          "operation": "POST",
+          "operationId": "postContractsContractidGenerateDraftDocument",
+          "path": "/contracts/{contractId}/generate-draft-document",
+          "section": "paths",
+          "fingerprint": "3dbd9c778ae6",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "response-property-enum-value-added",
+          "text": "added the new `CONTRACT_NOT_FOUND` enum value to the `code` response property for the response status `404`",
+          "comment": "The server may now return a value the previous contract excluded, so a client written against it may not handle the response. If the value set is meant to grow, declare it with x-extensible-enum.",
+          "level": 3,
+          "operation": "POST",
+          "operationId": "postContractsContractidGenerateDraftDocument",
+          "path": "/contracts/{contractId}/generate-draft-document",
+          "section": "paths",
+          "fingerprint": "751f1ab1971b",
+          "classification": "BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới CONTRACT_NOT_FOUND; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-property-enum-value-added",
+          "text": "added the new `CONTRACT_TEMPLATE_NOT_APPLIED` enum value to the `code` response property for the response status `409`",
+          "comment": "The server may now return a value the previous contract excluded, so a client written against it may not handle the response. If the value set is meant to grow, declare it with x-extensible-enum.",
+          "level": 3,
+          "operation": "POST",
+          "operationId": "postContractsContractidGenerateDraftDocument",
+          "path": "/contracts/{contractId}/generate-draft-document",
+          "section": "paths",
+          "fingerprint": "91474b9994ad",
+          "classification": "BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới CONTRACT_TEMPLATE_NOT_APPLIED; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-property-enum-value-added",
+          "text": "added the new `TEMPLATE_NOT_FOUND` enum value to the `code` response property for the response status `404`",
+          "comment": "The server may now return a value the previous contract excluded, so a client written against it may not handle the response. If the value set is meant to grow, declare it with x-extensible-enum.",
+          "level": 3,
+          "operation": "POST",
+          "operationId": "postContractsContractidGenerateDraftDocument",
+          "path": "/contracts/{contractId}/generate-draft-document",
+          "section": "paths",
+          "fingerprint": "d2127f1b2cda",
+          "classification": "BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới TEMPLATE_NOT_FOUND; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-success-status-removed",
+          "text": "removed the success response with the status `201`",
+          "level": 3,
+          "operation": "POST",
+          "operationId": "postContractsContractidGenerateDraftDocument",
+          "path": "/contracts/{contractId}/generate-draft-document",
+          "section": "paths",
+          "fingerprint": "e62627498272",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "api-version-not-bumped",
+          "text": "a breaking change was detected but the version is still `1.0.0`",
+          "level": 1,
+          "section": "info",
+          "fingerprint": "d3f96cd643c1",
+          "classification": "NON_BREAKING",
+          "clientImpact": "BE: xem lại quy ước version trước khi chấp nhận breaking change. FE/Mobile: theo kế hoạch chuyển đổi của entry này; version trong OpenAPI chưa chứng minh backend đã triển khai."
+        },
+        {
+          "id": "response-property-enum-value-removed",
+          "text": "removed the `RESOURCE_NOT_FOUND` enum value from the `code` response property for the response status `404`",
+          "level": 1,
+          "operation": "POST",
+          "operationId": "postContractsContractidGenerateDraftDocument",
+          "path": "/contracts/{contractId}/generate-draft-document",
+          "section": "paths",
+          "fingerprint": "d1f9ccb204de",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu enum trong DTO/validation và nhánh switch/when; xử lý giá trị chưa biết, kiểm thử dữ liệu cũ và mới; phối hợp BE trước khi phát hành."
+        },
+        {
+          "id": "response-success-status-added",
+          "text": "added the success response with the status `200`",
+          "level": 1,
+          "operation": "POST",
+          "operationId": "postContractsContractidGenerateDraftDocument",
+          "path": "/contracts/{contractId}/generate-draft-document",
+          "section": "paths",
+          "fingerprint": "b465b8a3c3da",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        }
+      ],
+      "locations": [
+        {
+          "pointer": "/paths/~1contracts~1{contractId}~1generate-draft-document/post/description",
+          "before": "**Trạng thái triển khai:** endpoint chưa được triển khai trong Tenancy-Service và đang tạm hoãn.\nHiện mới có renderer PDF; chưa có handler lấy dữ liệu hệ thống, liên kết tài liệu với Contract\nhoặc adapter upload media. Identity-Service cũng chưa có internal endpoint upload/complete cho luồng này.\nThis API remains in designing until its controller and handler are implemented.\nNo implementation sequence is published because this endpoint is not implemented.\nInternal API sẽ được gọi trực tiếp từ Tenancy sang Identity bằng service token, không public qua gateway.\n\nBiến lấy từ Contract, Room, Building và BillingSetting; paymentDueDay lấy từ BillingSetting,\nkhông tự thêm vào Contract. landlordName lấy qua internal user lookup; nếu không có thì để trống và log warning.\nRenderer kiểm tra requiredVariables trước khi tạo PDF; thiếu hoặc rỗng trả 422 TEMPLATE_DATA_INVALID,\nsố 0 vẫn hợp lệ. tenantCccd chưa được điền tự động; mẫu hiện tại để chỗ trống để đối chiếu khi ký.\n\nChuẩn bị upload, PUT PDF lên R2 và complete upload đều nằm ngoài UoW transaction ghi Contract.\nSau upload phải lock và kiểm tra lại hợp đồng còn draft, còn tồn tại và thuộc landlord trước khi lưu liên kết\nmedia cùng outbox. File upload xong nhưng transaction thất bại có thể chưa được gắn vào Contract;\ncơ chế xử lý file chưa gắn cần chốt cùng P6-04.",
+          "after": "Sinh PDF nh?p t? m?u ?? ?p d?ng v? d? li?u h?p ??ng, ph?ng, t?a nh? v? c?u h?nh thanh to?n hi?n c?.\nCh? ch? h?p ??ng nh?p ???c ph?p th?c hi?n. Kh?ng l?u t?i li?u v?o Media.\nThi?u m?u ?? ?p d?ng tr? 409 CONTRACT_TEMPLATE_NOT_APPLIED; d? li?u m?u b?t bu?c b? thi?u tr? 422 TEMPLATE_DATA_INVALID."
+        },
+        {
+          "pointer": "/paths/~1contracts~1{contractId}~1generate-draft-document/post/requestBody",
+          "before": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ContractGenerateDraftRequestDto"
+                },
+                "example": {
+                  "templateKey": "standard-room-lease-v1"
+                }
+              }
+            }
+          },
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1contracts~1{contractId}~1generate-draft-document/post/responses/200",
+          "before": null,
+          "after": {
+            "description": "PDF h?p ??ng nh?p.",
+            "headers": {
+              "Content-Disposition": {
+                "description": "T?n file PDF g?i ?.",
+                "schema": {
+                  "type": "string",
+                  "example": "attachment; filename=\"contract-HD-3fa85f-draft.pdf\""
+                }
+              }
+            },
+            "content": {
+              "application/pdf": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          }
+        },
+        {
+          "pointer": "/paths/~1contracts~1{contractId}~1generate-draft-document/post/responses/201",
+          "before": {
+            "description": "Thành công: Sinh tài liệu nháp.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code",
+                    "data"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        201
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "CONTRACT_DRAFT_GENERATED"
+                      ]
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/ContractGenerateDraftResponseDto"
+                    }
+                  }
+                },
+                "example": {
+                  "statusCode": 201,
+                  "code": "CONTRACT_DRAFT_GENERATED",
+                  "data": {
+                    "contractId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                    "mediaId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                    "purpose": "contract_template"
+                  }
+                }
+              }
+            },
+            "headers": {
+              "Location": {
+                "description": "Đường dẫn tài nguyên được tạo.",
+                "schema": {
+                  "type": "string",
+                  "example": "/api/v1/media/{mediaId}"
+                }
+              }
+            }
+          },
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1contracts~1{contractId}~1generate-draft-document/post/responses/404/$ref",
+          "before": "#/components/responses/NotFoundError",
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1contracts~1{contractId}~1generate-draft-document/post/responses/404/content",
+          "before": null,
+          "after": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "statusCode",
+                  "code"
+                ],
+                "properties": {
+                  "statusCode": {
+                    "type": "integer",
+                    "enum": [
+                      404
+                    ]
+                  },
+                  "code": {
+                    "type": "string",
+                    "enum": [
+                      "CONTRACT_NOT_FOUND",
+                      "TEMPLATE_NOT_FOUND"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "pointer": "/paths/~1contracts~1{contractId}~1generate-draft-document/post/responses/404/description",
+          "before": null,
+          "after": "Kh?ng t?m th?y h?p ??ng ho?c m?u ?? ?p d?ng."
+        },
+        {
+          "pointer": "/paths/~1contracts~1{contractId}~1generate-draft-document/post/responses/409/content/application~1json/schema/properties/code/enum",
+          "before": [
+            "CONTRACT_NOT_DRAFT"
+          ],
+          "after": [
+            "CONTRACT_NOT_DRAFT",
+            "CONTRACT_TEMPLATE_NOT_APPLIED"
+          ]
+        },
+        {
+          "pointer": "/paths/~1contracts~1{contractId}~1generate-draft-document/post/x-apidog-status",
+          "before": "designing",
+          "after": "developing"
+        }
+      ],
+      "semanticDiff": {
+        "paths": {
+          "modified": {
+            "/contracts/{contractId}/generate-draft-document": {
+              "operations": {
+                "modified": {
+                  "POST": {
+                    "extensions": {
+                      "modified": {
+                        "x-apidog-status": [
+                          {
+                            "oldValue": "designing",
+                            "value": "developing",
+                            "op": "replace",
+                            "from": "",
+                            "path": ""
+                          }
+                        ]
+                      }
+                    },
+                    "requestBody": {
+                      "deleted": true
+                    },
+                    "responses": {
+                      "added": [
+                        "200"
+                      ],
+                      "deleted": [
+                        "201"
+                      ],
+                      "modified": {
+                        "404": {
+                          "extensions": {
+                            "deleted": [
+                              "x-apidog-name"
+                            ]
+                          },
+                          "content": {
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "additionalPropertiesAllowed": {
+                                    "from": false,
+                                    "to": null
+                                  },
+                                  "properties": {
+                                    "modified": {
+                                      "code": {
+                                        "enum": {
+                                          "added": [
+                                            "CONTRACT_NOT_FOUND",
+                                            "TEMPLATE_NOT_FOUND"
+                                          ],
+                                          "deleted": [
+                                            "RESOURCE_NOT_FOUND"
+                                          ]
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "409": {
+                          "content": {
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "properties": {
+                                    "modified": {
+                                      "code": {
+                                        "enum": {
+                                          "added": [
+                                            "CONTRACT_TEMPLATE_NOT_APPLIED"
+                                          ]
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   ]
 }

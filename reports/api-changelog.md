@@ -5,11 +5,50 @@
 
 Báo cáo lưu lịch sử các entry đã phát hiện, mới nhất ở trên. `NO_CHANGE` không xóa entry cũ; exit code chỉ phản ánh lần chạy hiện tại.
 
-Công cụ: Redocly 2.64.1; oasdiff 1.34.1. Số entry: **45**.
+Công cụ: Redocly 2.64.1; oasdiff 1.34.1. Số entry: **46**.
 
 Phân loại: **BREAKING** = client cũ có thể hỏng; **NON_BREAKING** = tương thích theo contract; **NEEDS_REVIEW** = chưa đủ bằng chứng.
 
 Các vị trí dùng JSON Pointer trên bundle tạm (`~1` là `/`). JSON đi kèm giữ toàn bộ semantic diff, fingerprint và hash phục vụ truy vết.
+
+## Thay đổi contract từ Git — BREAKING
+
+- ID: `7498bd45dfe4495ef0e5b35e874ba35badb77f9f25848d0b5ff3b2cb793cb3f3`
+- Contract: rentify-public; repository: https://github.com/pbl6-home-renter/api-doc
+- Nguồn: `src/openapi.yaml` → `src/openapi.yaml`
+- Phát hiện (UTC): 2026-11-14T09:27:29.575Z; commit time: 2026-11-14T16:27:18+07:00
+- Commit nền: 710cb62b838ed423db55b5a67a19522209e51086
+- Commit đích/bối cảnh: [3cfe88068399d839b33451ae74096935ce107822](https://github.com/pbl6-home-renter/api-doc/commit/3cfe88068399d839b33451ae74096935ce107822)
+- PR: [https://github.com/pbl6-home-renter/api-doc/pull/65](https://github.com/pbl6-home-renter/api-doc/pull/65)
+- Loại metadata: Git revision thực tế
+- Lý do: Theo quyết định D5, tài liệu nháp được tải trực tiếp thay vì lưu Media.
+
+| Mức ảnh hưởng | Endpoint / vùng | Thay đổi | Hành động FE / Mobile |
+|---|---|---|---|
+| BREAKING | POST /contracts/{contractId}/generate-draft-document | removed the request body (`request-body-removed`) | FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ. |
+| BREAKING | POST /contracts/{contractId}/generate-draft-document | added the new `CONTRACT_NOT_FOUND` enum value to the `code` response property for the response status `404` (`response-property-enum-value-added`) | FE: có thể bỏ qua field mới CONTRACT_NOT_FOUND; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại. |
+| BREAKING | POST /contracts/{contractId}/generate-draft-document | added the new `CONTRACT_TEMPLATE_NOT_APPLIED` enum value to the `code` response property for the response status `409` (`response-property-enum-value-added`) | FE: có thể bỏ qua field mới CONTRACT_TEMPLATE_NOT_APPLIED; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại. |
+| BREAKING | POST /contracts/{contractId}/generate-draft-document | added the new `TEMPLATE_NOT_FOUND` enum value to the `code` response property for the response status `404` (`response-property-enum-value-added`) | FE: có thể bỏ qua field mới TEMPLATE_NOT_FOUND; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại. |
+| BREAKING | POST /contracts/{contractId}/generate-draft-document | removed the success response with the status `201` (`response-success-status-removed`) | FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ. |
+| NON_BREAKING | info | Đã phát hiện breaking change nhưng info.version vẫn là `1.0.0`. (`api-version-not-bumped`) | BE: xem lại quy ước version trước khi chấp nhận breaking change. FE/Mobile: theo kế hoạch chuyển đổi của entry này; version trong OpenAPI chưa chứng minh backend đã triển khai. |
+| NON_BREAKING | POST /contracts/{contractId}/generate-draft-document | removed the `RESOURCE_NOT_FOUND` enum value from the `code` response property for the response status `404` (`response-property-enum-value-removed`) | FE và Mobile: đối chiếu enum trong DTO/validation và nhánh switch/when; xử lý giá trị chưa biết, kiểm thử dữ liệu cũ và mới; phối hợp BE trước khi phát hành. |
+| NON_BREAKING | POST /contracts/{contractId}/generate-draft-document | added the success response with the status `200` (`response-success-status-added`) | FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI. |
+
+### Vị trí và giá trị trước/sau
+
+| Path / schema / field (JSON Pointer) | Trước | Sau |
+|---|---|---|
+| `/paths/~1contracts~1{contractId}~1generate-draft-document/post/description` | "**Trạng thái triển khai:** endpoint chưa được triển khai trong Tenancy-Service và đang tạm hoãn.\nHiện mới có renderer PDF; chưa có handler lấy dữ liệu hệ thống, liên kết tài liệu với Contract\nhoặc adapter upload media. Identity-Service cũng chưa có internal endpoint upload/complete cho luồng này.\nThis API remains in designing until its controller and handler are implemented.\nNo implementation sequence is published because this endpoint is not implemented.\nInternal API sẽ được gọi trực tiếp từ Tenancy sang Identity bằng service token, không public qua gateway.\n\nBiến lấy từ Contract, Room, Building và BillingSetting; paymentDueDay lấy từ BillingSetting,\nkhông tự thêm vào Contract. landlordName lấy qua internal user lookup; nếu không có thì để trống và log warning.\nRenderer kiểm tra requiredVariables trước khi tạo PDF; thiếu hoặc rỗng trả 422 TEMPLATE_DATA_INVALID,\nsố 0 vẫn hợp lệ. tenantCccd chưa được điền tự động; mẫu hiện tại để chỗ trống để đối chiếu khi ký.\n\nChuẩn bị upload, PUT PDF lên R2 và complete upload đều nằm ngoài UoW transaction ghi Contract.\nSau upload phải lock và kiểm tra lại hợp đồng còn draft, còn tồn tại và thuộc landlord trước khi lưu liên kết\nmedia cùng outbox. File upload xong nhưng transaction thất bại có thể chưa được gắn vào Contract;\ncơ chế xử lý file chưa gắn cần chốt cùng P6-04." | "Sinh PDF nh?p t? m?u ?? ?p d?ng v? d? li?u h?p ??ng, ph?ng, t?a nh? v? c?u h?nh thanh to?n hi?n c?.\nCh? ch? h?p ??ng nh?p ???c ph?p th?c hi?n. Kh?ng l?u t?i li?u v?o Media.\nThi?u m?u ?? ?p d?ng tr? 409 CONTRACT_TEMPLATE_NOT_APPLIED; d? li?u m?u b?t bu?c b? thi?u tr? 422 TEMPLATE_DATA_INVALID." |
+| `/paths/~1contracts~1{contractId}~1generate-draft-document/post/requestBody` | {"required":true,"content":{"application/json":{"schema":{"$ref":"#/components/schemas/ContractGenerateDraftRequestDto"},"example":{"templateKey":"standard-room-lease-v1"}}}} | null |
+| `/paths/~1contracts~1{contractId}~1generate-draft-document/post/responses/200` | null | {"description":"PDF h?p ??ng nh?p.","headers":{"Content-Disposition":{"description":"T?n file PDF g?i ?.","schema":{"type":"string","example":"attachment; filename=\"contract-HD-3fa85f-draft.pdf\""}}},"content":{"application/pdf":{"schema":{"type":"string","format":"binary"}}}} |
+| `/paths/~1contracts~1{contractId}~1generate-draft-document/post/responses/201` | {"description":"Thành công: Sinh tài liệu nháp.","content":{"application/json":{"schema":{"type":"object","additionalProperties":false,"required":["statusCode","code","data"],"properties":{"statusCode":{"type":"integer","enum":[201]},"code":{"type":"string","enum":["CONTRACT_DRAFT_GENERATED"]},"data":{"$ref":"#/components/schemas/ContractGenerateDraftResponseDto"}}},"example":{"statusCode":201,"code":"CONTRACT_DRAFT_GENERATED","data":{"contractId":"3fa85f64-5717-4562-b3fc-2c963f66afa6","mediaId":"3fa85f64-5717-4562-b3fc-2c963f66afa6","purpose":"contract_template"}}}},"headers":{"Location":{"description":"Đường dẫn tài nguyên được tạo.","schema":{"type":"string","example":"/api/v1/media/{mediaId}"}}}} | null |
+| `/paths/~1contracts~1{contractId}~1generate-draft-document/post/responses/404/$ref` | "#/components/responses/NotFoundError" | null |
+| `/paths/~1contracts~1{contractId}~1generate-draft-document/post/responses/404/content` | null | {"application/json":{"schema":{"type":"object","required":["statusCode","code"],"properties":{"statusCode":{"type":"integer","enum":[404]},"code":{"type":"string","enum":["CONTRACT_NOT_FOUND","TEMPLATE_NOT_FOUND"]}}}}} |
+| `/paths/~1contracts~1{contractId}~1generate-draft-document/post/responses/404/description` | null | "Kh?ng t?m th?y h?p ??ng ho?c m?u ?? ?p d?ng." |
+| `/paths/~1contracts~1{contractId}~1generate-draft-document/post/responses/409/content/application~1json/schema/properties/code/enum` | ["CONTRACT_NOT_DRAFT"] | ["CONTRACT_NOT_DRAFT","CONTRACT_TEMPLATE_NOT_APPLIED"] |
+| `/paths/~1contracts~1{contractId}~1generate-draft-document/post/x-apidog-status` | "designing" | "developing" |
+
+**Kiểm tra thủ công:** BE xác nhận lý do, endpoint dùng schema chung, thay đổi role/ownership mô tả bằng văn bản và thời điểm triển khai. FE/Mobile xác nhận tác động với parser và phiên bản client đang hỗ trợ.
 
 ## Thay đổi contract từ Git — BREAKING
 
