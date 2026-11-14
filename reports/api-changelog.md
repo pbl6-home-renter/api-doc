@@ -5,11 +5,39 @@
 
 Báo cáo lưu lịch sử các entry đã phát hiện, mới nhất ở trên. `NO_CHANGE` không xóa entry cũ; exit code chỉ phản ánh lần chạy hiện tại.
 
-Công cụ: Redocly 2.64.1; oasdiff 1.34.1. Số entry: **49**.
+Công cụ: Redocly 2.64.1; oasdiff 1.34.1. Số entry: **50**.
 
 Phân loại: **BREAKING** = client cũ có thể hỏng; **NON_BREAKING** = tương thích theo contract; **NEEDS_REVIEW** = chưa đủ bằng chứng.
 
 Các vị trí dùng JSON Pointer trên bundle tạm (`~1` là `/`). JSON đi kèm giữ toàn bộ semantic diff, fingerprint và hash phục vụ truy vết.
+
+## Thay đổi contract từ Git — NEEDS_REVIEW
+
+- ID: `90baf5ca02dabd08ba085268e75eaa57daee4ba9c725a48d2596a835a7087a69`
+- Contract: rentify-public; repository: https://github.com/pbl6-home-renter/api-doc
+- Nguồn: `src/openapi.yaml` → `src/openapi.yaml`
+- Phát hiện (UTC): 2026-11-14T16:35:03.009Z; commit time: 2026-11-14T23:34:41+07:00
+- Commit nền: aa42b808db9133eef612a3940a8f5e661d4f0a3c
+- Commit đích/bối cảnh: [1c2189c5ef0f43123f0fcbcdb3b2aef97053ca2a](https://github.com/pbl6-home-renter/api-doc/commit/1c2189c5ef0f43123f0fcbcdb3b2aef97053ca2a)
+- PR: chưa cung cấp; chạy local không suy đoán PR
+- Loại metadata: Git revision thực tế
+- Lý do: CHƯA CUNG CẤP — tác giả PR phải bổ sung lý do nghiệp vụ; không thể suy ra từ OpenAPI diff.
+
+| Mức ảnh hưởng | Endpoint / vùng | Thay đổi | Hành động FE / Mobile |
+|---|---|---|---|
+| NEEDS_REVIEW | specification | Có khác biệt cấu trúc/metadata nhưng engine không phân loại tác động; xem bảng trước/sau. (`unclassified-diff`) | FE và Mobile: đối chiếu vị trí và thay đổi trước/sau trong entry này với API adapter, DTO, parser và validation; cùng BE xác nhận phương án tương thích trước merge/phát hành. |
+
+### Vị trí và giá trị trước/sau
+
+| Path / schema / field (JSON Pointer) | Trước | Sau |
+|---|---|---|
+| `/components/schemas/BotReminderPayload/oneOf` | null | [{"required":["templateType","messageCode","parameters"],"properties":{"templateType":{"type":"string","enum":["invoice"]},"messageCode":{"type":"string","enum":["BOT_REMINDER_INVOICE_ISSUED"]},"parameters":{"type":"object","additionalProperties":false,"required":["invoiceCode","period","totalAmount"],"properties":{"invoiceCode":{"type":"string"},"period":{"type":"string","pattern":"^\\d{4}-\\d{2}$"},"totalAmount":{"type":"string","pattern":"^\\d+(\\.\\d+)?$"}}}}},{"required":["templateType","messageCode","parameters"],"properties":{"templateType":{"type":"string","enum":["contract_expiring"]},"messageCode":{"type":"string","enum":["BOT_REMINDER_CONTRACT_END_DATE"]},"parameters":{"type":"object","additionalProperties":false,"required":["endDate"],"properties":{"endDate":{"type":"string","format":"date"}}}}}] |
+| `/components/schemas/BotReminderPayload/properties/messageCode` | null | {"type":"string","enum":["BOT_REMINDER_INVOICE_ISSUED","BOT_REMINDER_CONTRACT_END_DATE"]} |
+| `/components/schemas/BotReminderPayload/properties/parameters` | null | {"type":"object","description":"Snapshot các giá trị gốc để client định dạng và dịch."} |
+| `/components/schemas/BotReminderPayload/required` | ["action","actorUserId","templateType","resourceId"] | ["action","actorUserId","templateType","resourceId","messageCode","parameters"] |
+| `/paths/~1conversations~1{conversationId}~1bot-reminders/post/description` | "Landlord chủ động gửi trong hội thoại có context hợp đồng. Người gửi phải là thành viên active và có quyền sở hữu resource theo Tenancy; ID hợp đồng của resource phải khớp context. Chỉ nhận hóa đơn `issued` hoặc hợp đồng `active`; thông báo hóa đơn không khẳng định trạng thái thanh toán. OCR chưa được hỗ trợ. `clientMessageId` dùng lại cho cùng yêu cầu sẽ trả tin đã lưu; dùng lại với nội dung khác bị từ chối. Khi Tenancy lỗi không tạo tin mới. Lưu history trước Socket và push theo cài đặt chat; không có scheduler.\n\n```mermaid\nsequenceDiagram\n  actor Landlord\n  participant C as Community\n  participant T as Tenancy\n  Landlord-&gt;&gt;C: POST /conversations/{id}/bot-reminders\n  C-&gt;&gt;C: Kiểm tra role và thành viên active\n  C-&gt;&gt;T: GET /api/v1/invoices/{id} hoặc /api/v1/contracts/{id} (Bearer)\n  T--&gt;&gt;C: Resource đã kiểm tra quyền sở hữu\n  C-&gt;&gt;C: Kiểm tra context, lưu snapshot và idempotency\n  C--&gt;&gt;Landlord: Socket và push theo preference\n  C--&gt;&gt;Landlord: 201 BOT_REMINDER_SENT\n```" | "Landlord chủ động gửi trong hội thoại có context hợp đồng. Người gửi phải là thành viên active và có quyền sở hữu resource theo Tenancy; ID hợp đồng của resource phải khớp context. Chỉ nhận hóa đơn `issued` hoặc hợp đồng `active`; thông báo hóa đơn không khẳng định trạng thái thanh toán. OCR chưa được hỗ trợ. `clientMessageId` dùng lại cho cùng yêu cầu sẽ trả tin đã lưu; dùng lại với nội dung khác bị từ chối. Khi Tenancy lỗi không tạo tin mới. Lưu history trước Socket và push theo cài đặt chat; không có scheduler.\n\nBot message lưu `content` là phần xem trước tiếng Anh chung `New reminder` cho client chưa hỗ trợ payload. `payload` chứa `messageCode` (`BOT_REMINDER_INVOICE_ISSUED` hoặc `BOT_REMINDER_CONTRACT_END_DATE`) và `parameters` là snapshot giá trị gốc, để từng client dịch và định dạng. Socket `message:created` gửi payload này. Push dùng cùng phần xem trước chung và kèm `messageCode`, `messageParameters` (chuỗi JSON) trong data để client có thể dịch.\n\n```mermaid\nsequenceDiagram\n  actor Landlord\n  participant C as Community\n  participant T as Tenancy\n  Landlord-&gt;&gt;C: POST /conversations/{id}/bot-reminders\n  C-&gt;&gt;C: Kiểm tra role và thành viên active\n  C-&gt;&gt;T: GET /api/v1/invoices/{id} hoặc /api/v1/contracts/{id} (Bearer)\n  T--&gt;&gt;C: Resource đã kiểm tra quyền sở hữu\n  C-&gt;&gt;C: Kiểm tra context, lưu snapshot và idempotency\n  C--&gt;&gt;Landlord: Socket và push theo preference\n  C--&gt;&gt;Landlord: 201 BOT_REMINDER_SENT\n```" |
+
+**Kiểm tra thủ công:** BE xác nhận lý do, endpoint dùng schema chung, thay đổi role/ownership mô tả bằng văn bản và thời điểm triển khai. FE/Mobile xác nhận tác động với parser và phiên bản client đang hỗ trợ.
 
 ## Thay đổi contract từ Git — BREAKING
 
