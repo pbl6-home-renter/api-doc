@@ -212,7 +212,7 @@ delete:
     - BearerAuth: []
   summary: Delete room
   description: |-
-    Lỗi nghiệp vụ: 404 NOT FOUND · 403 FORBIDDEN.
+    Lỗi nghiệp vụ: 404 NOT FOUND · 403 FORBIDDEN · 409 ROOM_HAS_ACTIVE_CONTRACT.
     
     **Sequence diagram**
     
@@ -260,6 +260,31 @@ delete:
       $ref: ../../openapi.yaml#/components/responses/ForbiddenError
     '404':
       $ref: ../../openapi.yaml#/components/responses/NotFoundError
+    '409':
+      x-apidog-name: Conflict
+      description: Phòng đang có hợp đồng hiệu lực nên không thể xóa.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code]
+            properties:
+              statusCode:
+                type: integer
+                enum: [409]
+              code:
+                type: string
+                enum:
+                  - ROOM_HAS_ACTIVE_CONTRACT
+                description: |-
+                  - ROOM_HAS_ACTIVE_CONTRACT: Phòng có hợp đồng `active`; kết thúc/checkout hợp đồng trước khi xóa.
+          examples:
+            room_has_active_contract:
+              summary: ROOM_HAS_ACTIVE_CONTRACT — Phòng có hợp đồng hiệu lực.
+              value:
+                statusCode: 409
+                code: ROOM_HAS_ACTIVE_CONTRACT
     '429':
       $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
     '500':
