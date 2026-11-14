@@ -5,11 +5,36 @@
 
 Báo cáo lưu lịch sử các entry đã phát hiện, mới nhất ở trên. `NO_CHANGE` không xóa entry cũ; exit code chỉ phản ánh lần chạy hiện tại.
 
-Công cụ: Redocly 2.64.1; oasdiff 1.34.1. Số entry: **43**.
+Công cụ: Redocly 2.64.1; oasdiff 1.34.1. Số entry: **44**.
 
 Phân loại: **BREAKING** = client cũ có thể hỏng; **NON_BREAKING** = tương thích theo contract; **NEEDS_REVIEW** = chưa đủ bằng chứng.
 
 Các vị trí dùng JSON Pointer trên bundle tạm (`~1` là `/`). JSON đi kèm giữ toàn bộ semantic diff, fingerprint và hash phục vụ truy vết.
+
+## Thay đổi contract từ Git — NON_BREAKING
+
+- ID: `dc4468e0f8cdabee737753faeaad5c0944f610af5790226468974c53381ea962`
+- Contract: rentify-public; repository: https://github.com/pbl6-home-renter/api-doc
+- Nguồn: `src/openapi.yaml` → `src/openapi.yaml`
+- Phát hiện (UTC): 2026-11-14T01:33:14.873Z; commit time: 2026-11-14T08:32:59+07:00
+- Commit nền: 143c0f921cd5151644a843ce9a8de569e65b71cc
+- Commit đích/bối cảnh: [047ac132f9635f6d10e42014f50b1394e0f3a109](https://github.com/pbl6-home-renter/api-doc/commit/047ac132f9635f6d10e42014f50b1394e0f3a109)
+- PR: [https://github.com/pbl6-home-renter/api-doc/pull/61](https://github.com/pbl6-home-renter/api-doc/pull/61)
+- Loại metadata: Git revision thực tế
+- Lý do: CHƯA CUNG CẤP — tác giả PR phải bổ sung lý do nghiệp vụ; không thể suy ra từ OpenAPI diff.
+
+| Mức ảnh hưởng | Endpoint / vùng | Thay đổi | Hành động FE / Mobile |
+|---|---|---|---|
+| NON_BREAKING | DELETE /rooms/{roomId} | added the non-success response with the status `409` (`response-non-success-status-added`) | FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI. |
+
+### Vị trí và giá trị trước/sau
+
+| Path / schema / field (JSON Pointer) | Trước | Sau |
+|---|---|---|
+| `/paths/~1rooms~1{roomId}/delete/description` | "Lỗi nghiệp vụ: 404 NOT FOUND · 403 FORBIDDEN.\n\n**Sequence diagram**\n\n```mermaid\nsequenceDiagram\n    autonumber\n    actor Client\n    participant GW as API Gateway\n    participant S as Tenancy-Service\n    participant Guard as JWT/access guards\n    participant C as RoomController\n    participant Bus as CQRS CommandBus\n    participant H as Application handler\n    Client-&gt;&gt;GW: DELETE /api/v1/rooms/{roomId}\n    GW-&gt;&gt;GW: Validate bearer token for protected route\n    GW-&gt;&gt;S: Proxy original HTTP request\n    S-&gt;&gt;Guard: Validate JWT, account state and route access\n    Guard--&gt;&gt;C: Continue with authenticated context\n    S-&gt;&gt;C: Invoke deleteRoomsRoomid\n    C-&gt;&gt;Bus: Execute command for deleteRoomsRoomid\n    Bus-&gt;&gt;H: Dispatch command handler\n    H--&gt;&gt;Bus: Return use-case result\n    Bus--&gt;&gt;C: Result\n    C--&gt;&gt;S: Return documented response\n    S--&gt;&gt;GW: HTTP status and response body\n    GW--&gt;&gt;Client: Forward HTTP response\n```" | "Lỗi nghiệp vụ: 404 NOT FOUND · 403 FORBIDDEN · 409 ROOM_HAS_ACTIVE_CONTRACT.\n\n**Sequence diagram**\n\n```mermaid\nsequenceDiagram\n    autonumber\n    actor Client\n    participant GW as API Gateway\n    participant S as Tenancy-Service\n    participant Guard as JWT/access guards\n    participant C as RoomController\n    participant Bus as CQRS CommandBus\n    participant H as Application handler\n    Client-&gt;&gt;GW: DELETE /api/v1/rooms/{roomId}\n    GW-&gt;&gt;GW: Validate bearer token for protected route\n    GW-&gt;&gt;S: Proxy original HTTP request\n    S-&gt;&gt;Guard: Validate JWT, account state and route access\n    Guard--&gt;&gt;C: Continue with authenticated context\n    S-&gt;&gt;C: Invoke deleteRoomsRoomid\n    C-&gt;&gt;Bus: Execute command for deleteRoomsRoomid\n    Bus-&gt;&gt;H: Dispatch command handler\n    H--&gt;&gt;Bus: Return use-case result\n    Bus--&gt;&gt;C: Result\n    C--&gt;&gt;S: Return documented response\n    S--&gt;&gt;GW: HTTP status and response body\n    GW--&gt;&gt;Client: Forward HTTP response\n```" |
+| `/paths/~1rooms~1{roomId}/delete/responses/409` | null | {"x-apidog-name":"Conflict","description":"Phòng đang có hợp đồng hiệu lực nên không thể xóa.","content":{"application/json":{"schema":{"type":"object","additionalProperties":false,"required":["statusCode","code"],"properties":{"statusCode":{"type":"integer","enum":[409]},"code":{"type":"string","enum":["ROOM_HAS_ACTIVE_CONTRACT"],"description":"- ROOM_HAS_ACTIVE_CONTRACT: Phòng có hợp đồng `active`; kết thúc/checkout hợp đồng trước khi xóa."}}},"examples":{"room_has_active_contract":{"summary":"ROOM_HAS_ACTIVE_CONTRACT — Phòng có hợp đồng hiệu lực.","value":{"statusCode":409,"code":"ROOM_HAS_ACTIVE_CONTRACT"}}}}}} |
+
+**Kiểm tra thủ công:** BE xác nhận lý do, endpoint dùng schema chung, thay đổi role/ownership mô tả bằng văn bản và thời điểm triển khai. FE/Mobile xác nhận tác động với parser và phiên bản client đang hỗ trợ.
 
 ## Thay đổi contract từ Git — NON_BREAKING
 

@@ -62953,6 +62953,113 @@
           }
         }
       }
+    },
+    {
+      "id": "dc4468e0f8cdabee737753faeaad5c0944f610af5790226468974c53381ea962",
+      "label": "Thay đổi contract từ Git",
+      "classification": "NON_BREAKING",
+      "contractId": "rentify-public",
+      "repository": "https://github.com/pbl6-home-renter/api-doc",
+      "baseHash": "940f1a10bbd838ae0db224ef5ad2ff3de28c6dd561b6581eb0792aef5eec8b3f",
+      "headHash": "ead0abbcb649412a8fb061b457cde640ca8923cd8d65a6892ca0941379aec186",
+      "baseSource": "src/openapi.yaml",
+      "headSource": "src/openapi.yaml",
+      "detectedAt": "2026-11-14T01:33:14.873Z",
+      "committedAt": "2026-11-14T08:32:59+07:00",
+      "baseCommit": "143c0f921cd5151644a843ce9a8de569e65b71cc",
+      "headCommit": "047ac132f9635f6d10e42014f50b1394e0f3a109",
+      "prUrl": "https://github.com/pbl6-home-renter/api-doc/pull/61",
+      "commitUrl": "https://github.com/pbl6-home-renter/api-doc/commit/047ac132f9635f6d10e42014f50b1394e0f3a109",
+      "metadataKind": "Git revision thực tế",
+      "reason": "CHƯA CUNG CẤP — tác giả PR phải bổ sung lý do nghiệp vụ; không thể suy ra từ OpenAPI diff.",
+      "tools": {
+        "redocly": "2.64.1",
+        "oasdiff": "1.34.1"
+      },
+      "changes": [
+        {
+          "id": "response-non-success-status-added",
+          "text": "added the non-success response with the status `409`",
+          "level": 1,
+          "operation": "DELETE",
+          "operationId": "deleteRoomsRoomid",
+          "path": "/rooms/{roomId}",
+          "section": "paths",
+          "fingerprint": "7d8d9f33fb8d",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        }
+      ],
+      "locations": [
+        {
+          "pointer": "/paths/~1rooms~1{roomId}/delete/description",
+          "before": "Lỗi nghiệp vụ: 404 NOT FOUND · 403 FORBIDDEN.\n\n**Sequence diagram**\n\n```mermaid\nsequenceDiagram\n    autonumber\n    actor Client\n    participant GW as API Gateway\n    participant S as Tenancy-Service\n    participant Guard as JWT/access guards\n    participant C as RoomController\n    participant Bus as CQRS CommandBus\n    participant H as Application handler\n    Client->>GW: DELETE /api/v1/rooms/{roomId}\n    GW->>GW: Validate bearer token for protected route\n    GW->>S: Proxy original HTTP request\n    S->>Guard: Validate JWT, account state and route access\n    Guard-->>C: Continue with authenticated context\n    S->>C: Invoke deleteRoomsRoomid\n    C->>Bus: Execute command for deleteRoomsRoomid\n    Bus->>H: Dispatch command handler\n    H-->>Bus: Return use-case result\n    Bus-->>C: Result\n    C-->>S: Return documented response\n    S-->>GW: HTTP status and response body\n    GW-->>Client: Forward HTTP response\n```",
+          "after": "Lỗi nghiệp vụ: 404 NOT FOUND · 403 FORBIDDEN · 409 ROOM_HAS_ACTIVE_CONTRACT.\n\n**Sequence diagram**\n\n```mermaid\nsequenceDiagram\n    autonumber\n    actor Client\n    participant GW as API Gateway\n    participant S as Tenancy-Service\n    participant Guard as JWT/access guards\n    participant C as RoomController\n    participant Bus as CQRS CommandBus\n    participant H as Application handler\n    Client->>GW: DELETE /api/v1/rooms/{roomId}\n    GW->>GW: Validate bearer token for protected route\n    GW->>S: Proxy original HTTP request\n    S->>Guard: Validate JWT, account state and route access\n    Guard-->>C: Continue with authenticated context\n    S->>C: Invoke deleteRoomsRoomid\n    C->>Bus: Execute command for deleteRoomsRoomid\n    Bus->>H: Dispatch command handler\n    H-->>Bus: Return use-case result\n    Bus-->>C: Result\n    C-->>S: Return documented response\n    S-->>GW: HTTP status and response body\n    GW-->>Client: Forward HTTP response\n```"
+        },
+        {
+          "pointer": "/paths/~1rooms~1{roomId}/delete/responses/409",
+          "before": null,
+          "after": {
+            "x-apidog-name": "Conflict",
+            "description": "Phòng đang có hợp đồng hiệu lực nên không thể xóa.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        409
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "ROOM_HAS_ACTIVE_CONTRACT"
+                      ],
+                      "description": "- ROOM_HAS_ACTIVE_CONTRACT: Phòng có hợp đồng `active`; kết thúc/checkout hợp đồng trước khi xóa."
+                    }
+                  }
+                },
+                "examples": {
+                  "room_has_active_contract": {
+                    "summary": "ROOM_HAS_ACTIVE_CONTRACT — Phòng có hợp đồng hiệu lực.",
+                    "value": {
+                      "statusCode": 409,
+                      "code": "ROOM_HAS_ACTIVE_CONTRACT"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      ],
+      "semanticDiff": {
+        "paths": {
+          "modified": {
+            "/rooms/{roomId}": {
+              "operations": {
+                "modified": {
+                  "DELETE": {
+                    "responses": {
+                      "added": [
+                        "409"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   ]
 }
