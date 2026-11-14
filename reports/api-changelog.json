@@ -64652,6 +64652,492 @@
           }
         }
       }
+    },
+    {
+      "id": "ccd592147174d023db11c1f542a397a04b6dd31fd907dd37e8798735c059d2be",
+      "label": "Thay đổi contract từ Git",
+      "classification": "BREAKING",
+      "contractId": "rentify-public",
+      "repository": "https://github.com/pbl6-home-renter/api-doc",
+      "baseHash": "3fbc6910f3cb37dda6d38500bbee91c867a02fd205b2d345b3a57bbf0093ae51",
+      "headHash": "41518bdd03eff88127b584eb775b11937d4f29b1587a10c380b385824c21cf29",
+      "baseSource": "src/openapi.yaml",
+      "headSource": "src/openapi.yaml",
+      "detectedAt": "2026-11-14T15:58:32.142Z",
+      "committedAt": "2026-11-14T22:57:43+07:00",
+      "baseCommit": "f4e7a3f3ae9d2223ec8d39e5496642a8f0daef5e",
+      "headCommit": "ca8253ad75591d6d36c5a63140409032e3d72f63",
+      "prUrl": null,
+      "commitUrl": "https://github.com/pbl6-home-renter/api-doc/commit/ca8253ad75591d6d36c5a63140409032e3d72f63",
+      "metadataKind": "Git revision thực tế",
+      "reason": "CHƯA CUNG CẤP — tác giả PR phải bổ sung lý do nghiệp vụ; không thể suy ra từ OpenAPI diff.",
+      "tools": {
+        "redocly": "2.64.1",
+        "oasdiff": "1.34.1"
+      },
+      "changes": [
+        {
+          "id": "request-property-enum-value-removed",
+          "text": "removed the enum value `ocr_result` of the request property `templateType`",
+          "level": 3,
+          "operation": "POST",
+          "operationId": "sendBotReminder",
+          "path": "/conversations/{conversationId}/bot-reminders",
+          "section": "paths",
+          "fingerprint": "923727920aed",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu enum trong DTO/validation và nhánh switch/when; xử lý giá trị chưa biết, kiểm thử dữ liệu cũ và mới; phối hợp BE trước khi phát hành."
+        },
+        {
+          "id": "api-version-not-bumped",
+          "text": "a breaking change was detected but the version is still `1.0.0`",
+          "level": 1,
+          "section": "info",
+          "fingerprint": "d3f96cd643c1",
+          "classification": "NON_BREAKING",
+          "clientImpact": "BE: xem lại quy ước version trước khi chấp nhận breaking change. FE/Mobile: theo kế hoạch chuyển đổi của entry này; version trong OpenAPI chưa chứng minh backend đã triển khai."
+        },
+        {
+          "id": "response-non-success-status-added",
+          "text": "added the non-success response with the status `503`",
+          "level": 1,
+          "operation": "POST",
+          "operationId": "sendBotReminder",
+          "path": "/conversations/{conversationId}/bot-reminders",
+          "section": "paths",
+          "fingerprint": "7de3f9e0f617",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        }
+      ],
+      "locations": [
+        {
+          "pointer": "/components/schemas/BotReminderPayload",
+          "before": null,
+          "after": {
+            "type": "object",
+            "title": "BotReminderPayload",
+            "x-apidog-folder": "Chat/Bot Message",
+            "additionalProperties": false,
+            "properties": {
+              "action": {
+                "type": "string",
+                "enum": [
+                  "bot_reminder"
+                ]
+              },
+              "actorUserId": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "templateType": {
+                "type": "string",
+                "enum": [
+                  "invoice",
+                  "contract_expiring"
+                ]
+              },
+              "resourceId": {
+                "type": "string",
+                "format": "uuid"
+              }
+            },
+            "required": [
+              "action",
+              "actorUserId",
+              "templateType",
+              "resourceId"
+            ]
+          }
+        },
+        {
+          "pointer": "/components/schemas/Message/allOf",
+          "before": [
+            {
+              "$ref": "#/components/schemas/BaseEntity"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "conversationId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "description": "ID cuộc hội thoại chứa tin nhắn",
+                  "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                },
+                "senderUserId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "nullable": true,
+                  "description": "ID user gửi; null với system message và bot.",
+                  "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                },
+                "senderName": {
+                  "type": "string",
+                  "maxLength": 254,
+                  "description": "Tên người gửi được snapshot tại thời điểm tạo message."
+                },
+                "senderType": {
+                  "type": "string",
+                  "enum": [
+                    "user",
+                    "system"
+                  ]
+                },
+                "type": {
+                  "type": "string",
+                  "enum": [
+                    "text",
+                    "image",
+                    "video",
+                    "file",
+                    "system",
+                    "bot"
+                  ],
+                  "description": "Loại tin nhắn",
+                  "example": "text"
+                },
+                "content": {
+                  "type": "string",
+                  "nullable": true,
+                  "description": "Nội dung tin nhắn dạng văn bản",
+                  "example": "Đã chốt số điện tháng 09: 180 kWh"
+                },
+                "mediaId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "nullable": true,
+                  "description": "Media ID của ảnh đã upload qua Media Service."
+                },
+                "sequence": {
+                  "type": "string",
+                  "pattern": "^\\d+$",
+                  "example": "42",
+                  "description": "Bigint sequence dưới dạng chuỗi thập phân để giữ chính xác trong JavaScript."
+                },
+                "clientMessageId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "description": "ID idempotency do client tạo."
+                },
+                "payload": {
+                  "type": "object",
+                  "nullable": true,
+                  "description": "Payload is a discriminated union for implemented system actions.",
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/ConversationMembersAddedPayload"
+                    },
+                    {
+                      "$ref": "#/components/schemas/ConversationMemberKickedPayload"
+                    },
+                    {
+                      "$ref": "#/components/schemas/ConversationMemberLeftPayload"
+                    },
+                    {
+                      "$ref": "#/components/schemas/ConversationAdminTransferredPayload"
+                    },
+                    {
+                      "$ref": "#/components/schemas/ConversationMemberRoleChangedPayload"
+                    },
+                    {
+                      "$ref": "#/components/schemas/ConversationTitleChangedPayload"
+                    },
+                    {
+                      "$ref": "#/components/schemas/ConversationAvatarChangedPayload"
+                    }
+                  ],
+                  "discriminator": {
+                    "propertyName": "action",
+                    "mapping": {
+                      "members_added": "#/components/schemas/ConversationMembersAddedPayload",
+                      "member_kicked": "#/components/schemas/ConversationMemberKickedPayload",
+                      "member_left": "#/components/schemas/ConversationMemberLeftPayload",
+                      "admin_transferred": "#/components/schemas/ConversationAdminTransferredPayload",
+                      "member_role_changed": "#/components/schemas/ConversationMemberRoleChangedPayload",
+                      "conversation_title_changed": "#/components/schemas/ConversationTitleChangedPayload",
+                      "conversation_avatar_changed": "#/components/schemas/ConversationAvatarChangedPayload"
+                    }
+                  },
+                  "example": {
+                    "action": "members_added",
+                    "actorUserId": "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d",
+                    "actorDisplayName": "Nguyễn Văn An",
+                    "members": [
+                      {
+                        "userId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                        "displayName": "Nguyễn Văn A"
+                      }
+                    ]
+                  }
+                }
+              },
+              "required": [
+                "conversationId",
+                "senderName",
+                "type"
+              ]
+            }
+          ],
+          "after": [
+            {
+              "$ref": "#/components/schemas/BaseEntity"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "conversationId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "description": "ID cuộc hội thoại chứa tin nhắn",
+                  "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                },
+                "senderUserId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "nullable": true,
+                  "description": "ID user gửi; null với system message và bot.",
+                  "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                },
+                "senderName": {
+                  "type": "string",
+                  "maxLength": 254,
+                  "description": "Tên người gửi được snapshot tại thời điểm tạo message."
+                },
+                "senderType": {
+                  "type": "string",
+                  "enum": [
+                    "user",
+                    "system"
+                  ]
+                },
+                "type": {
+                  "type": "string",
+                  "enum": [
+                    "text",
+                    "image",
+                    "video",
+                    "file",
+                    "system",
+                    "bot"
+                  ],
+                  "description": "Loại tin nhắn",
+                  "example": "text"
+                },
+                "content": {
+                  "type": "string",
+                  "nullable": true,
+                  "description": "Nội dung tin nhắn dạng văn bản",
+                  "example": "Đã chốt số điện tháng 09: 180 kWh"
+                },
+                "mediaId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "nullable": true,
+                  "description": "Media ID của ảnh đã upload qua Media Service."
+                },
+                "sequence": {
+                  "type": "string",
+                  "pattern": "^\\d+$",
+                  "example": "42",
+                  "description": "Bigint sequence dưới dạng chuỗi thập phân để giữ chính xác trong JavaScript."
+                },
+                "clientMessageId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "description": "ID idempotency do client tạo."
+                },
+                "payload": {
+                  "type": "object",
+                  "nullable": true,
+                  "description": "Payload for system actions or manual bot reminders.",
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/ConversationMembersAddedPayload"
+                    },
+                    {
+                      "$ref": "#/components/schemas/ConversationMemberKickedPayload"
+                    },
+                    {
+                      "$ref": "#/components/schemas/ConversationMemberLeftPayload"
+                    },
+                    {
+                      "$ref": "#/components/schemas/ConversationAdminTransferredPayload"
+                    },
+                    {
+                      "$ref": "#/components/schemas/ConversationMemberRoleChangedPayload"
+                    },
+                    {
+                      "$ref": "#/components/schemas/ConversationTitleChangedPayload"
+                    },
+                    {
+                      "$ref": "#/components/schemas/ConversationAvatarChangedPayload"
+                    },
+                    {
+                      "$ref": "#/components/schemas/BotReminderPayload"
+                    }
+                  ],
+                  "discriminator": {
+                    "propertyName": "action",
+                    "mapping": {
+                      "members_added": "#/components/schemas/ConversationMembersAddedPayload",
+                      "member_kicked": "#/components/schemas/ConversationMemberKickedPayload",
+                      "member_left": "#/components/schemas/ConversationMemberLeftPayload",
+                      "admin_transferred": "#/components/schemas/ConversationAdminTransferredPayload",
+                      "member_role_changed": "#/components/schemas/ConversationMemberRoleChangedPayload",
+                      "conversation_title_changed": "#/components/schemas/ConversationTitleChangedPayload",
+                      "conversation_avatar_changed": "#/components/schemas/ConversationAvatarChangedPayload",
+                      "bot_reminder": "#/components/schemas/BotReminderPayload"
+                    }
+                  },
+                  "example": {
+                    "action": "members_added",
+                    "actorUserId": "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d",
+                    "actorDisplayName": "Nguyễn Văn An",
+                    "members": [
+                      {
+                        "userId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                        "displayName": "Nguyễn Văn A"
+                      }
+                    ]
+                  }
+                }
+              },
+              "required": [
+                "conversationId",
+                "senderName",
+                "type"
+              ]
+            }
+          ]
+        },
+        {
+          "pointer": "/paths/~1conversations~1{conversationId}~1bot-reminders/post/description",
+          "before": "Landlord chọn mẫu và chủ động gửi; không có lịch tự động. Community kiểm tra quyền với tài nguyên, dựng nội dung bot message, lưu history, phát Socket và gửi push chat theo preference.",
+          "after": "Landlord chủ động gửi trong hội thoại có context hợp đồng. Người gửi phải là thành viên active và có quyền sở hữu resource theo Tenancy; ID hợp đồng của resource phải khớp context. Chỉ nhận hóa đơn `issued` hoặc hợp đồng `active`; thông báo hóa đơn không khẳng định trạng thái thanh toán. OCR chưa được hỗ trợ. `clientMessageId` dùng lại cho cùng yêu cầu sẽ trả tin đã lưu; dùng lại với nội dung khác bị từ chối. Khi Tenancy lỗi không tạo tin mới. Lưu history trước Socket và push theo cài đặt chat; không có scheduler.\n\n```mermaid\nsequenceDiagram\n  actor Landlord\n  participant C as Community\n  participant T as Tenancy\n  Landlord->>C: POST /conversations/{id}/bot-reminders\n  C->>C: Kiểm tra role và thành viên active\n  C->>T: GET /api/v1/invoices/{id} hoặc /api/v1/contracts/{id} (Bearer)\n  T-->>C: Resource đã kiểm tra quyền sở hữu\n  C->>C: Kiểm tra context, lưu snapshot và idempotency\n  C-->>Landlord: Socket và push theo preference\n  C-->>Landlord: 201 BOT_REMINDER_SENT\n```"
+        },
+        {
+          "pointer": "/paths/~1conversations~1{conversationId}~1bot-reminders/post/requestBody/content/application~1json/schema/properties/resourceId/description",
+          "before": "ID OCR result, invoice hoặc contract tương ứng với templateType.",
+          "after": "ID invoice hoặc contract tương ứng với templateType."
+        },
+        {
+          "pointer": "/paths/~1conversations~1{conversationId}~1bot-reminders/post/requestBody/content/application~1json/schema/properties/templateType/enum",
+          "before": [
+            "ocr_result",
+            "invoice",
+            "contract_expiring"
+          ],
+          "after": [
+            "invoice",
+            "contract_expiring"
+          ]
+        },
+        {
+          "pointer": "/paths/~1conversations~1{conversationId}~1bot-reminders/post/responses/503",
+          "before": null,
+          "after": {
+            "description": "SERVICE_UNAVAILABLE — Tenancy không thể đáp ứng, không tạo tin mới.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "statusCode",
+                    "code"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        503
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "SERVICE_UNAVAILABLE"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      ],
+      "semanticDiff": {
+        "paths": {
+          "modified": {
+            "/conversations/{conversationId}/bot-reminders": {
+              "operations": {
+                "modified": {
+                  "POST": {
+                    "requestBody": {
+                      "content": {
+                        "modified": {
+                          "application/json": {
+                            "schema": {
+                              "properties": {
+                                "modified": {
+                                  "templateType": {
+                                    "enum": {
+                                      "deleted": [
+                                        "ocr_result"
+                                      ]
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "responses": {
+                      "added": [
+                        "503"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "components": {
+          "schemas": {
+            "added": [
+              "BotReminderPayload"
+            ],
+            "modified": {
+              "Message": {
+                "properties": {
+                  "modified": {
+                    "payload": {
+                      "oneOf": {
+                        "added": [
+                          {
+                            "index": 7,
+                            "component": "BotReminderPayload"
+                          }
+                        ]
+                      },
+                      "discriminatorDiff": {
+                        "mapping": {
+                          "added": [
+                            "bot_reminder"
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   ]
 }
