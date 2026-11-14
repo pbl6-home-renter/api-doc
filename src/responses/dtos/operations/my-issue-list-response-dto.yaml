@@ -1,11 +1,14 @@
 type: object
 x-apidog-folder: "IssueReport/Response"
 title: IssueReportMyListResponseDto
-description: Danh sách báo cáo sự cố do người dùng hiện tại đã gửi
+description: Danh sách sự cố thuộc hợp đồng mà tenant hiện tại được phép xem
 
 properties:
   id: { type: string, format: uuid, description: "Định danh duy nhất của báo cáo sự cố." }
   roomId: { type: string, format: uuid, description: "Định danh phòng liên quan." }
+  buildingId: { type: string, format: uuid, description: "Định danh tòa nhà." }
+  buildingName: { type: string, description: "Tên tòa nhà." }
+  reporterId: { type: string, format: uuid, description: "Định danh người tạo báo cáo." }
   roomName: { type: string, description: "Tên phòng trọ (VD: P.201)." }
   title: { type: string, minLength: 1, maxLength: 255, description: "Tiêu đề ngắn gọn của sự cố." }
   category:
@@ -28,6 +31,9 @@ properties:
 required:
   - id
   - roomId
+  - buildingId
+  - buildingName
+  - reporterId
   - roomName
   - title
   - category
