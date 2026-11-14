@@ -7,7 +7,7 @@ get:
   security:
     - BearerAuth: []
   summary: Get issue details
-  description: 'landlord, tenant. Đọc chi tiết sự cố. Lỗi nghiệp vụ: 403 FORBIDDEN · 404 NOT FOUND.'
+  description: 'Landlord của phòng hoặc tenant hiện tại của hợp đồng gắn với sự cố được đọc chi tiết và ảnh đã upload hoàn tất. Tenant đã rời không còn quyền (P10-D86). Lỗi nghiệp vụ: 403 FORBIDDEN · 404 NOT FOUND.'
   parameters:
   - name: issueId
     in: path
@@ -44,17 +44,23 @@ get:
             data:
               id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
               roomId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+              contractId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+              buildingId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
               reporterId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
               title: Vòi xịt bồn cầu bị rò rỉ
               description: Nước rò rỉ liên tục
               status: in_progress
-              note: null
+              assignedTo: null
+              repairCost: null
+              resolutionNote: null
               closedAt: null
               issuePhotoMediaIds:
               - 3fa85f64-5717-4562-b3fc-2c963f66afa6
               roomName: Ví dụ
               buildingName: Ví dụ
-              reporterName: Ví dụ
+              canUpdate: true
+              canCancel: false
+              canUploadPhotos: true
               category: ELECTRICAL
               urgency: MEDIUM
               createdAt: '2026-09-23T11:55:00.000Z'
@@ -81,8 +87,7 @@ patch:
   security:
     - BearerAuth: []
   summary: Update issue status
-  description: 'landlord. Cập nhật tiến trình sự cố. Lỗi nghiệp vụ: 404 NOT FOUND · 403 FORBIDDEN · 409 INVALID
-    ISSUE TRANSITION.'
+  description: 'Landlord cập nhật tiến trình open → in_progress → resolved. Hai trạng thái resolved và cancelled là kết thúc (P10-D86). Lỗi nghiệp vụ: 404 NOT FOUND · 403 FORBIDDEN · 409 INVALID ISSUE TRANSITION.'
   parameters:
   - name: issueId
     in: path

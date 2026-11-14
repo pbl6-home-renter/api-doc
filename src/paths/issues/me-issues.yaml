@@ -7,7 +7,7 @@ get:
   security:
     - BearerAuth: []
   summary: List my issues
-  description: 'tenant. Sự cố của tôi. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 VALIDATION FAILED.'
+  description: 'Tenant xem sự cố của hợp đồng đang hiệu lực mà mình hiện là thành viên; không bao gồm sự cố của hợp đồng đã rời (P10-D86). Lỗi nghiệp vụ: 403 FORBIDDEN · 422 VALIDATION FAILED.'
   parameters:
   - name: filter
     in: query
@@ -21,7 +21,11 @@ get:
       properties:
         status:
           type: string
+          enum: [open, in_progress, resolved, cancelled]
         roomId:
+          type: string
+          format: uuid
+        buildingId:
           type: string
           format: uuid
   - name: sort
@@ -29,6 +33,7 @@ get:
     description: Một trường sắp xếp được endpoint hỗ trợ.
     schema:
       type: string
+      enum: [createdAt]
       default: createdAt
   - name: order
     in: query
@@ -53,14 +58,11 @@ get:
       default: 1
   - name: format
     in: query
-    description: json trả envelope; định dạng khác trả file stream.
+    description: Trả dữ liệu JSON có envelope.
     schema:
       type: string
       enum:
       - json
-      - xlsx
-      - csv
-      - pdf
       default: json
   responses:
     '200':
@@ -131,6 +133,9 @@ get:
               status: open
               description: Nước rò rỉ liên tục
               roomName: Ví dụ
+              buildingId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+              buildingName: Ví dụ
+              reporterId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
               category: PLUMBING
               urgency: HIGH
               createdAt: '2026-09-23T11:55:00.000Z'
@@ -142,18 +147,6 @@ get:
               totalPages: 1
               hasNextPage: false
               hasPreviousPage: false
-        text/csv:
-          schema:
-            type: string
-            format: binary
-        application/pdf:
-          schema:
-            type: string
-            format: binary
-        application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
-          schema:
-            type: string
-            format: binary
     '400':
       $ref: ../../openapi.yaml#/components/responses/BadRequestQueryError
     '401':

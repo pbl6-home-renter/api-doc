@@ -6,12 +6,11 @@ description: Chi tiết toàn diện về báo cáo sự cố và tiến độ x
 properties:
   id: { type: string, format: uuid, description: "Định danh duy nhất của báo cáo sự cố." }
   roomId: { type: string, format: uuid, description: "Định danh phòng liên quan." }
+  contractId: { type: string, format: uuid, description: "Hợp đồng tại thời điểm tạo sự cố." }
   roomName: { type: string, description: "Tên phòng trọ (VD: P.201)." }
   buildingId: { type: string, format: uuid, description: "Định danh tòa nhà." }
   buildingName: { type: string, description: "Tên tòa nhà." }
-  reporterId: { type: string, format: uuid, nullable: true, description: "Định danh người phản ánh." }
-  reporterName: { type: string, description: "Họ và tên người phản ánh." }
-  reporterPhone: { type: string, description: "Số điện thoại người phản ánh." }
+  reporterId: { type: string, format: uuid, description: "Định danh người tạo báo cáo." }
   title: { type: string, minLength: 1, maxLength: 255, description: "Tiêu đề sự cố." }
   category:
     type: string
@@ -30,26 +29,31 @@ properties:
     description: "Trạng thái xử lý sự cố."
   issuePhotoMediaIds:
     type: array
-    description: Danh sách ID tệp ảnh chụp hiện trường ban đầu
+    description: Danh sách ID ảnh đã hoàn tất upload gắn với sự cố
     items: { type: string, format: uuid }
   assignedTo: { type: string, nullable: true, description: "Tên hoặc thông tin thợ sửa chữa / bên bảo hành được phân công." }
   repairCost: { type: integer, minimum: 0, nullable: true, description: "Chi phí sửa chữa thực tế (VNĐ)." }
   resolutionNote: { type: string, nullable: true, maxLength: 500, description: "Ghi chú kết quả xử lý bảo trì của chủ nhà." }
-  resolutionMediaUrls:
-    type: array
-    description: Danh sách ảnh chụp nghiệm thu sau khi sửa chữa xong
-    items: { type: string, format: uri }
   createdAt: { type: string, format: date-time, description: "Thời điểm gửi báo cáo." }
   closedAt: { type: string, format: date-time, nullable: true, description: "Thời điểm đóng sự cố." }
+  canUpdate: { type: boolean, description: "Người gọi được cập nhật tiến độ." }
+  canCancel: { type: boolean, description: "Người gọi được hủy sự cố." }
+  canUploadPhotos: { type: boolean, description: "Người gọi được upload ảnh sự cố." }
 
 required:
   - id
   - roomId
+  - contractId
+  - buildingId
   - roomName
   - buildingName
-  - reporterName
+  - reporterId
   - title
   - category
   - urgency
   - status
   - createdAt
+  - issuePhotoMediaIds
+  - canUpdate
+  - canCancel
+  - canUploadPhotos
