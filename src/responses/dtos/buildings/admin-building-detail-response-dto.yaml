@@ -9,7 +9,7 @@ properties:
   province: { type: string, description: "Tỉnh / Thành phố." }
   ward: { type: string, description: "Phường / Xã." }
   address: { type: string, minLength: 1, maxLength: 254, description: "Địa chỉ chi tiết số nhà, tên đường." }
-  occupancyRate: { type: string, example: "0%", description: "Tỷ lệ lấp đầy phòng; hiện tạm trả '0%'." }
+  occupancyRate: { type: string, example: "50%", description: "Tỷ lệ phòng occupied trên tổng số phòng chưa xóa; 0 phòng trả 0%." }
   landlordId: { type: string, format: uuid, description: "Định danh chủ nhà." }
   landlord:
     type: object

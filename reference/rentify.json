@@ -6896,8 +6896,9 @@
                       "name": "Tòa nhà Rentify Central Park",
                       "address": "12 Nguyễn Trãi",
                       "status": "approved",
-                      "occupancyRate": "0%",
-                      "occupiedRooms": 0,
+                      "occupancyRate": "50%",
+                      "occupiedRooms": 2,
+                      "totalRooms": 4,
                       "createdAt": "2026-09-20T08:00:00.000Z"
                     }
                   ],
@@ -8202,12 +8203,13 @@
                     "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
                     "name": "Tòa nhà Rentify Central Park",
                     "status": "pending",
-                    "occupancyRate": "0%",
+                    "occupancyRate": "50%",
                     "reviewNote": null,
                     "province": "Thành phố Hồ Chí Minh",
                     "ward": "Phường Bến Nghé",
                     "address": "12 Nguyễn Trãi",
-                    "occupiedRooms": 0,
+                    "occupiedRooms": 2,
+                    "totalRooms": 4,
                     "amenities": null,
                     "ownershipCertificateUrls": [],
                     "vietQrConfigured": false,
@@ -8600,7 +8602,7 @@
           }
         ],
         "summary": "Get building details for approval",
-        "description": "Không tồn tại hoặc đã bị xóa trả 404 RESOURCE_NOT_FOUND. Nếu Identity unavailable, name/phone là chuỗi rỗng, email và cccdNumber là null.\nTạm thời ownershipDocuments=[], occupancyRate=\"0%\", submittedAt=createdAt; CCCD chưa có trong internal lookup.\n\n**Sequence diagram**\n\n```mermaid\nsequenceDiagram\n    autonumber\n    actor Client\n    participant GW as API Gateway\n    participant S as Tenancy-Service\n    participant Guard as JWT/access guards\n    participant C as AdminBuildingController\n    participant Bus as CQRS QueryBus\n    participant H as Application handler\n    Client->>GW: GET /api/v1/admin/buildings/{buildingId}\n    GW->>GW: Validate bearer token for protected route\n    GW->>S: Proxy original HTTP request\n    S->>Guard: Validate JWT, account state and route access\n    Guard-->>C: Continue with authenticated context\n    S->>C: Invoke getAdminBuildingsBuildingid\n    C->>Bus: Execute query for getAdminBuildingsBuildingid\n    Bus->>H: Dispatch query handler\n    H-->>Bus: Return use-case result\n    Bus-->>C: Result\n    C-->>S: Return documented response\n    S-->>GW: HTTP status and response body\n    GW-->>Client: Forward HTTP response\n```\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-30 | 🔴 BREAKING | removed the required property `data/district` from the response with the `200` status | [#25](https://github.com/pbl6-home-renter/api-doc/pull/25) |\n| 2026-10-30 | 🔴 BREAKING | removed the required property `data/totalRooms` from the response with the `200` status | [#25](https://github.com/pbl6-home-renter/api-doc/pull/25) |\n| 2026-10-30 | 🟢 NON_BREAKING | removed the optional property `data/amenities` from the response with the `200` status | [#25](https://github.com/pbl6-home-renter/api-doc/pull/25) |\n| 2026-10-30 | 🟢 NON_BREAKING | removed the optional property `data/description` from the response with the `200` status | [#25](https://github.com/pbl6-home-renter/api-doc/pull/25) |\n| 2026-10-30 | 🟢 NON_BREAKING | removed the optional property `data/totalFloors` from the response with the `200` status | [#25](https://github.com/pbl6-home-renter/api-doc/pull/25) |\n| 2026-10-30 | 🟢 NON_BREAKING | the response property `data/landlord/cccdNumber` became required for the status `200` | [#25](https://github.com/pbl6-home-renter/api-doc/pull/25) |\n| 2026-10-30 | 🟢 NON_BREAKING | the response property `data/landlord/email` became required for the status `200` | [#25](https://github.com/pbl6-home-renter/api-doc/pull/25) |\n| 2026-10-30 | 🟢 NON_BREAKING | the response property `data/occupancyRate` became required for the status `200` | [#25](https://github.com/pbl6-home-renter/api-doc/pull/25) |\n| 2026-10-30 | 🟢 NON_BREAKING | the response property `data/reviewNote` became required for the status `200` | [#25](https://github.com/pbl6-home-renter/api-doc/pull/25) |\n| 2026-10-30 | 🟢 NON_BREAKING | the response property `data/submittedAt` became required for the status `200` | [#25](https://github.com/pbl6-home-renter/api-doc/pull/25) |\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
+        "description": "Không tồn tại hoặc đã bị xóa trả 404 RESOURCE_NOT_FOUND. Nếu Identity unavailable, name/phone là chuỗi rỗng, email và cccdNumber là null.\nTạm thời ownershipDocuments=[], submittedAt=createdAt; CCCD chưa có trong internal lookup.\n\n**Sequence diagram**\n\n```mermaid\nsequenceDiagram\n    autonumber\n    actor Client\n    participant GW as API Gateway\n    participant S as Tenancy-Service\n    participant Guard as JWT/access guards\n    participant C as AdminBuildingController\n    participant Bus as CQRS QueryBus\n    participant H as Application handler\n    Client->>GW: GET /api/v1/admin/buildings/{buildingId}\n    GW->>GW: Validate bearer token for protected route\n    GW->>S: Proxy original HTTP request\n    S->>Guard: Validate JWT, account state and route access\n    Guard-->>C: Continue with authenticated context\n    S->>C: Invoke getAdminBuildingsBuildingid\n    C->>Bus: Execute query for getAdminBuildingsBuildingid\n    Bus->>H: Dispatch query handler\n    H-->>Bus: Return use-case result\n    Bus-->>C: Result\n    C-->>S: Return documented response\n    S-->>GW: HTTP status and response body\n    GW-->>Client: Forward HTTP response\n```\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-30 | 🔴 BREAKING | removed the required property `data/district` from the response with the `200` status | [#25](https://github.com/pbl6-home-renter/api-doc/pull/25) |\n| 2026-10-30 | 🔴 BREAKING | removed the required property `data/totalRooms` from the response with the `200` status | [#25](https://github.com/pbl6-home-renter/api-doc/pull/25) |\n| 2026-10-30 | 🟢 NON_BREAKING | removed the optional property `data/amenities` from the response with the `200` status | [#25](https://github.com/pbl6-home-renter/api-doc/pull/25) |\n| 2026-10-30 | 🟢 NON_BREAKING | removed the optional property `data/description` from the response with the `200` status | [#25](https://github.com/pbl6-home-renter/api-doc/pull/25) |\n| 2026-10-30 | 🟢 NON_BREAKING | removed the optional property `data/totalFloors` from the response with the `200` status | [#25](https://github.com/pbl6-home-renter/api-doc/pull/25) |\n| 2026-10-30 | 🟢 NON_BREAKING | the response property `data/landlord/cccdNumber` became required for the status `200` | [#25](https://github.com/pbl6-home-renter/api-doc/pull/25) |\n| 2026-10-30 | 🟢 NON_BREAKING | the response property `data/landlord/email` became required for the status `200` | [#25](https://github.com/pbl6-home-renter/api-doc/pull/25) |\n| 2026-10-30 | 🟢 NON_BREAKING | the response property `data/occupancyRate` became required for the status `200` | [#25](https://github.com/pbl6-home-renter/api-doc/pull/25) |\n| 2026-10-30 | 🟢 NON_BREAKING | the response property `data/reviewNote` became required for the status `200` | [#25](https://github.com/pbl6-home-renter/api-doc/pull/25) |\n| 2026-10-30 | 🟢 NON_BREAKING | the response property `data/submittedAt` became required for the status `200` | [#25](https://github.com/pbl6-home-renter/api-doc/pull/25) |\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "parameters": [
           {
             "name": "buildingId",
@@ -8652,7 +8654,7 @@
                     "address": "123 Nguyễn Thị Minh Khai",
                     "landlordId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
                     "status": "pending",
-                    "occupancyRate": "0%",
+                    "occupancyRate": "50%",
                     "reviewNote": null,
                     "createdAt": "2026-09-20T08:00:00.000Z",
                     "province": "Thành phố Hồ Chí Minh",
@@ -25974,15 +25976,22 @@
               "rejected"
             ]
           },
+          "totalRooms": {
+            "type": "integer",
+            "minimum": 0,
+            "example": 4,
+            "description": "Tổng số phòng chưa xóa."
+          },
           "occupiedRooms": {
             "type": "integer",
             "minimum": 0,
-            "description": "Số lượng phòng đang có khách thuê; hiện tạm trả 0 khi chưa tích hợp thống kê occupancy."
+            "example": 2,
+            "description": "Số phòng chưa xóa có trạng thái occupied."
           },
           "occupancyRate": {
             "type": "string",
-            "example": "0%",
-            "description": "Tỷ lệ lấp đầy; hiện tạm trả '0%' khi chưa tích hợp thống kê occupancy."
+            "example": "50%",
+            "description": "Tỷ lệ occupied trên tổng số phòng chưa xóa, làm tròn tối đa một chữ số thập phân; 0 phòng trả 0%."
           },
           "rejectionReason": {
             "type": "string",
@@ -26002,6 +26011,7 @@
           "name",
           "status",
           "occupiedRooms",
+          "totalRooms",
           "occupancyRate",
           "address",
           "createdAt"
@@ -26278,15 +26288,22 @@
             "minimum": 1,
             "description": "Trường dự phòng; hiện service chưa lưu và không trả số tầng."
           },
+          "totalRooms": {
+            "type": "integer",
+            "minimum": 0,
+            "example": 4,
+            "description": "Tổng số phòng chưa xóa."
+          },
           "occupiedRooms": {
             "type": "integer",
             "minimum": 0,
-            "description": "Số phòng đang có khách thuê; hiện tạm trả 0 khi chưa tích hợp thống kê occupancy."
+            "example": 2,
+            "description": "Số phòng chưa xóa có trạng thái occupied."
           },
           "occupancyRate": {
             "type": "string",
-            "example": "0%",
-            "description": "Tỷ lệ lấp đầy; hiện tạm trả '0%' khi chưa tích hợp thống kê occupancy."
+            "example": "50%",
+            "description": "Tỷ lệ occupied trên tổng số phòng chưa xóa, làm tròn tối đa một chữ số thập phân; 0 phòng trả 0%."
           },
           "status": {
             "type": "string",
@@ -26364,6 +26381,7 @@
           "address",
           "status",
           "occupiedRooms",
+          "totalRooms",
           "occupancyRate",
           "vietQrConfigured",
           "reviewNote",
@@ -26513,8 +26531,8 @@
           },
           "occupancyRate": {
             "type": "string",
-            "example": "0%",
-            "description": "Tỷ lệ lấp đầy phòng; hiện tạm trả '0%'."
+            "example": "50%",
+            "description": "Tỷ lệ phòng occupied trên tổng số phòng chưa xóa; 0 phòng trả 0%."
           },
           "landlordId": {
             "type": "string",
