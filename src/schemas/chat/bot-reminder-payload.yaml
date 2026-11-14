@@ -7,4 +7,31 @@ properties:
   actorUserId: { type: string, format: uuid }
   templateType: { type: string, enum: [invoice, contract_expiring] }
   resourceId: { type: string, format: uuid }
-required: [action, actorUserId, templateType, resourceId]
+  messageCode: { type: string, enum: [BOT_REMINDER_INVOICE_ISSUED, BOT_REMINDER_CONTRACT_END_DATE] }
+  parameters:
+    type: object
+    description: Snapshot các giá trị gốc để client định dạng và dịch.
+oneOf:
+  - required: [templateType, messageCode, parameters]
+    properties:
+      templateType: { type: string, enum: [invoice] }
+      messageCode: { type: string, enum: [BOT_REMINDER_INVOICE_ISSUED] }
+      parameters:
+        type: object
+        additionalProperties: false
+        required: [invoiceCode, period, totalAmount]
+        properties:
+          invoiceCode: { type: string }
+          period: { type: string, pattern: '^\d{4}-\d{2}$' }
+          totalAmount: { type: string, pattern: '^\d+(\.\d+)?$' }
+  - required: [templateType, messageCode, parameters]
+    properties:
+      templateType: { type: string, enum: [contract_expiring] }
+      messageCode: { type: string, enum: [BOT_REMINDER_CONTRACT_END_DATE] }
+      parameters:
+        type: object
+        additionalProperties: false
+        required: [endDate]
+        properties:
+          endDate: { type: string, format: date }
+required: [action, actorUserId, templateType, resourceId, messageCode, parameters]

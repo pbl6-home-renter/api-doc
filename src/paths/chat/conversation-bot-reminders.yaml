@@ -12,6 +12,8 @@ post:
   description: |-
     Landlord chủ động gửi trong hội thoại có context hợp đồng. Người gửi phải là thành viên active và có quyền sở hữu resource theo Tenancy; ID hợp đồng của resource phải khớp context. Chỉ nhận hóa đơn `issued` hoặc hợp đồng `active`; thông báo hóa đơn không khẳng định trạng thái thanh toán. OCR chưa được hỗ trợ. `clientMessageId` dùng lại cho cùng yêu cầu sẽ trả tin đã lưu; dùng lại với nội dung khác bị từ chối. Khi Tenancy lỗi không tạo tin mới. Lưu history trước Socket và push theo cài đặt chat; không có scheduler.
 
+    Bot message lưu `content` là phần xem trước tiếng Anh chung `New reminder` cho client chưa hỗ trợ payload. `payload` chứa `messageCode` (`BOT_REMINDER_INVOICE_ISSUED` hoặc `BOT_REMINDER_CONTRACT_END_DATE`) và `parameters` là snapshot giá trị gốc, để từng client dịch và định dạng. Socket `message:created` gửi payload này. Push dùng cùng phần xem trước chung và kèm `messageCode`, `messageParameters` (chuỗi JSON) trong data để client có thể dịch.
+
     ```mermaid
     sequenceDiagram
       actor Landlord

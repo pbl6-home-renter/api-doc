@@ -21824,7 +21824,7 @@
           }
         ],
         "summary": "Gửi bot reminder theo mẫu",
-        "description": "Landlord chủ động gửi trong hội thoại có context hợp đồng. Người gửi phải là thành viên active và có quyền sở hữu resource theo Tenancy; ID hợp đồng của resource phải khớp context. Chỉ nhận hóa đơn `issued` hoặc hợp đồng `active`; thông báo hóa đơn không khẳng định trạng thái thanh toán. OCR chưa được hỗ trợ. `clientMessageId` dùng lại cho cùng yêu cầu sẽ trả tin đã lưu; dùng lại với nội dung khác bị từ chối. Khi Tenancy lỗi không tạo tin mới. Lưu history trước Socket và push theo cài đặt chat; không có scheduler.\n\n```mermaid\nsequenceDiagram\n  actor Landlord\n  participant C as Community\n  participant T as Tenancy\n  Landlord->>C: POST /conversations/{id}/bot-reminders\n  C->>C: Kiểm tra role và thành viên active\n  C->>T: GET /api/v1/invoices/{id} hoặc /api/v1/contracts/{id} (Bearer)\n  T-->>C: Resource đã kiểm tra quyền sở hữu\n  C->>C: Kiểm tra context, lưu snapshot và idempotency\n  C-->>Landlord: Socket và push theo preference\n  C-->>Landlord: 201 BOT_REMINDER_SENT\n```\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-11-14 | 🔴 BREAKING | removed the enum value `ocr_result` of the request property `templateType` | [ca8253a](https://github.com/pbl6-home-renter/api-doc/commit/ca8253ad75591d6d36c5a63140409032e3d72f63) |\n| 2026-11-14 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [ca8253a](https://github.com/pbl6-home-renter/api-doc/commit/ca8253ad75591d6d36c5a63140409032e3d72f63) |\n| 2026-11-13 | 🔴 BREAKING | added the new `file` enum value to the `data/replyTo/type` response property for the response status `201` | [#59](https://github.com/pbl6-home-renter/api-doc/pull/59) |\n| 2026-11-13 | 🔴 BREAKING | added the new `file` enum value to the `data/type` response property for the response status `201` | [#59](https://github.com/pbl6-home-renter/api-doc/pull/59) |\n| 2026-11-13 | 🔴 BREAKING | added the new `video` enum value to the `data/replyTo/type` response property for the response status `201` | [#59](https://github.com/pbl6-home-renter/api-doc/pull/59) |\n| 2026-11-13 | 🔴 BREAKING | added the new `video` enum value to the `data/type` response property for the response status `201` | [#59](https://github.com/pbl6-home-renter/api-doc/pull/59) |\n| 2026-11-13 | 🟢 NON_BREAKING | added the required property `data/replyTo` to the response with the `201` status | [#56](https://github.com/pbl6-home-renter/api-doc/pull/56) |\n| 2026-11-04 | 🔴 BREAKING | the `data/sequence` response property's min was unset from `1.00` for the response status `201` | [#51](https://github.com/pbl6-home-renter/api-doc/pull/51) |\n| 2026-11-04 | 🔴 BREAKING | the `data/sequence` response's property `type/format` changed from `integer/int64` to `string` for status `201` | [#51](https://github.com/pbl6-home-renter/api-doc/pull/51) |\n| 2026-11-04 | 🟢 NON_BREAKING | the `data/sequence` response's property pattern `^\\d+$` was added for the status `201` | [#51](https://github.com/pbl6-home-renter/api-doc/pull/51) |\n| 2026-11-02 | 🟢 NON_BREAKING | added the required property `data/senderName` to the response with the `201` status | [#38](https://github.com/pbl6-home-renter/api-doc/pull/38) |\n",
+        "description": "Landlord chủ động gửi trong hội thoại có context hợp đồng. Người gửi phải là thành viên active và có quyền sở hữu resource theo Tenancy; ID hợp đồng của resource phải khớp context. Chỉ nhận hóa đơn `issued` hoặc hợp đồng `active`; thông báo hóa đơn không khẳng định trạng thái thanh toán. OCR chưa được hỗ trợ. `clientMessageId` dùng lại cho cùng yêu cầu sẽ trả tin đã lưu; dùng lại với nội dung khác bị từ chối. Khi Tenancy lỗi không tạo tin mới. Lưu history trước Socket và push theo cài đặt chat; không có scheduler.\n\nBot message lưu `content` là phần xem trước tiếng Anh chung `New reminder` cho client chưa hỗ trợ payload. `payload` chứa `messageCode` (`BOT_REMINDER_INVOICE_ISSUED` hoặc `BOT_REMINDER_CONTRACT_END_DATE`) và `parameters` là snapshot giá trị gốc, để từng client dịch và định dạng. Socket `message:created` gửi payload này. Push dùng cùng phần xem trước chung và kèm `messageCode`, `messageParameters` (chuỗi JSON) trong data để client có thể dịch.\n\n```mermaid\nsequenceDiagram\n  actor Landlord\n  participant C as Community\n  participant T as Tenancy\n  Landlord->>C: POST /conversations/{id}/bot-reminders\n  C->>C: Kiểm tra role và thành viên active\n  C->>T: GET /api/v1/invoices/{id} hoặc /api/v1/contracts/{id} (Bearer)\n  T-->>C: Resource đã kiểm tra quyền sở hữu\n  C->>C: Kiểm tra context, lưu snapshot và idempotency\n  C-->>Landlord: Socket và push theo preference\n  C-->>Landlord: 201 BOT_REMINDER_SENT\n```\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-11-14 | 🔴 BREAKING | removed the enum value `ocr_result` of the request property `templateType` | [ca8253a](https://github.com/pbl6-home-renter/api-doc/commit/ca8253ad75591d6d36c5a63140409032e3d72f63) |\n| 2026-11-14 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [ca8253a](https://github.com/pbl6-home-renter/api-doc/commit/ca8253ad75591d6d36c5a63140409032e3d72f63) |\n| 2026-11-13 | 🔴 BREAKING | added the new `file` enum value to the `data/replyTo/type` response property for the response status `201` | [#59](https://github.com/pbl6-home-renter/api-doc/pull/59) |\n| 2026-11-13 | 🔴 BREAKING | added the new `file` enum value to the `data/type` response property for the response status `201` | [#59](https://github.com/pbl6-home-renter/api-doc/pull/59) |\n| 2026-11-13 | 🔴 BREAKING | added the new `video` enum value to the `data/replyTo/type` response property for the response status `201` | [#59](https://github.com/pbl6-home-renter/api-doc/pull/59) |\n| 2026-11-13 | 🔴 BREAKING | added the new `video` enum value to the `data/type` response property for the response status `201` | [#59](https://github.com/pbl6-home-renter/api-doc/pull/59) |\n| 2026-11-13 | 🟢 NON_BREAKING | added the required property `data/replyTo` to the response with the `201` status | [#56](https://github.com/pbl6-home-renter/api-doc/pull/56) |\n| 2026-11-04 | 🔴 BREAKING | the `data/sequence` response property's min was unset from `1.00` for the response status `201` | [#51](https://github.com/pbl6-home-renter/api-doc/pull/51) |\n| 2026-11-04 | 🔴 BREAKING | the `data/sequence` response's property `type/format` changed from `integer/int64` to `string` for status `201` | [#51](https://github.com/pbl6-home-renter/api-doc/pull/51) |\n| 2026-11-04 | 🟢 NON_BREAKING | the `data/sequence` response's property pattern `^\\d+$` was added for the status `201` | [#51](https://github.com/pbl6-home-renter/api-doc/pull/51) |\n| 2026-11-02 | 🟢 NON_BREAKING | added the required property `data/senderName` to the response with the `201` status | [#38](https://github.com/pbl6-home-renter/api-doc/pull/38) |\n",
         "requestBody": {
           "required": true,
           "content": {
@@ -35409,13 +35409,105 @@
           "resourceId": {
             "type": "string",
             "format": "uuid"
+          },
+          "messageCode": {
+            "type": "string",
+            "enum": [
+              "BOT_REMINDER_INVOICE_ISSUED",
+              "BOT_REMINDER_CONTRACT_END_DATE"
+            ]
+          },
+          "parameters": {
+            "type": "object",
+            "description": "Snapshot các giá trị gốc để client định dạng và dịch."
           }
         },
+        "oneOf": [
+          {
+            "required": [
+              "templateType",
+              "messageCode",
+              "parameters"
+            ],
+            "properties": {
+              "templateType": {
+                "type": "string",
+                "enum": [
+                  "invoice"
+                ]
+              },
+              "messageCode": {
+                "type": "string",
+                "enum": [
+                  "BOT_REMINDER_INVOICE_ISSUED"
+                ]
+              },
+              "parameters": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "invoiceCode",
+                  "period",
+                  "totalAmount"
+                ],
+                "properties": {
+                  "invoiceCode": {
+                    "type": "string"
+                  },
+                  "period": {
+                    "type": "string",
+                    "pattern": "^\\d{4}-\\d{2}$"
+                  },
+                  "totalAmount": {
+                    "type": "string",
+                    "pattern": "^\\d+(\\.\\d+)?$"
+                  }
+                }
+              }
+            }
+          },
+          {
+            "required": [
+              "templateType",
+              "messageCode",
+              "parameters"
+            ],
+            "properties": {
+              "templateType": {
+                "type": "string",
+                "enum": [
+                  "contract_expiring"
+                ]
+              },
+              "messageCode": {
+                "type": "string",
+                "enum": [
+                  "BOT_REMINDER_CONTRACT_END_DATE"
+                ]
+              },
+              "parameters": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "endDate"
+                ],
+                "properties": {
+                  "endDate": {
+                    "type": "string",
+                    "format": "date"
+                  }
+                }
+              }
+            }
+          }
+        ],
         "required": [
           "action",
           "actorUserId",
           "templateType",
-          "resourceId"
+          "resourceId",
+          "messageCode",
+          "parameters"
         ]
       },
       "Message": {
