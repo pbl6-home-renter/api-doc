@@ -50,7 +50,7 @@ allOf:
         type: string
         pattern: '^\d+$'
         nullable: true
-        description: Tin cuối được phép đọc khi membership ở trạng thái read_only.
+        description: Tin nhắn cuối cùng mà thành viên `read_only` được phép đọc. Khi rời hợp đồng hoặc checkout, Community tính mốc này theo `occurredAt` trong envelope của event `contract_member.left`, kể cả khi event đến muộn; thành viên không được gửi tin nhắn mới.
       lastReadSequence:
         type: string
         pattern: '^\d+$'

@@ -43,6 +43,9 @@ post:
     Thành công trả 200 CONTRACT_ACTIVATED với id, status = active và activatedAt dạng ISO 8601 UTC.
     activatedAt được lưu ở contracts.activated_at. Hợp đồng, member đại diện, phòng và ba outbox message
     contract.activated, contract_member.added, room.status_changed được ghi cùng transaction; lỗi ghi dữ liệu sẽ rollback.
+    The contract.activated event supplies contractId, buildingId, roomId, landlordId and linked
+    tenantUserIds[] to Community. Community creates the contract conversation with the landlord
+    admin only after this event, then applies any member events stored before activation.
     Outbox relay publish sau khi commit. Không kiểm tra startDate so với ngày hiện tại; không dùng OTP/PIN.
     Service chưa có rate limiter.
     

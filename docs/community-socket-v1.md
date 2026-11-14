@@ -47,6 +47,8 @@ socket.on('session:ready', () => {
 
 `message:created` được phát sau khi lưu thành công. Retry `POST /messages` cùng `clientMessageId` trả message cũ và không phát lại event. System message của thay đổi nhóm cũng phát qua Socket nhưng không gửi FCM. Chat message của user được gửi FCM (category `chat`) cho các member khác, không tạo notification inbox.
 
+Trong chat hợp đồng, khi một ContractMember rời riêng lẻ hoặc khi hoàn tất checkout, Tenancy phát `contract_member.left`. Sau khi Community xử lý event, thành viên vẫn được giữ trong hội thoại với trạng thái `read_only`: không thể gửi `POST /messages`, không thể `conversation:join` và chỉ đọc lịch sử qua REST đến `leftSequence`. Community tính mốc này theo `occurredAt` trong envelope của event, không theo `leftAt` chỉ có độ chính xác đến ngày hoặc thời điểm nhận event. Việc thu hồi quyền có thể chậm nếu broker giao event muộn. P9-04 không tự lên lịch đổi quyền chat cho ngày rời trong tương lai. Riêng việc chấm dứt hợp đồng không xóa hội thoại.
+
 `notification:created` được phát sau khi notification đã lưu vào inbox. Socket và FCM là best-effort: nếu mất, client vẫn thấy notification qua `GET /notifications`.
 
 ## Tin mới trên user room
