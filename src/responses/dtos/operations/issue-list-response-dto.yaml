@@ -9,7 +9,7 @@ properties:
   roomName: { type: string, description: "Tên phòng trọ (VD: P.201)." }
   buildingId: { type: string, format: uuid, description: "Định danh tòa nhà." }
   buildingName: { type: string, description: "Tên tòa nhà." }
-  reporterName: { type: string, description: "Họ và tên người tạo phản ánh." }
+  reporterId: { type: string, format: uuid, description: "Định danh người tạo báo cáo." }
   title: { type: string, minLength: 1, maxLength: 255, description: "Tiêu đề ngắn gọn của sự cố." }
   category:
     type: string
@@ -32,9 +32,10 @@ properties:
 required:
   - id
   - roomId
+  - buildingId
   - roomName
   - buildingName
-  - reporterName
+  - reporterId
   - title
   - category
   - urgency

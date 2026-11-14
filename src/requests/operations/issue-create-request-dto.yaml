@@ -1,7 +1,7 @@
 type: object
 x-apidog-folder: "IssueReport/Request"
 title: IssueReportCreateRequestDto
-description: Dữ liệu gửi báo cáo sự cố hư hỏng thiết bị hoặc phản ánh cư trú
+description: Tạo báo cáo trước, sau đó upload ảnh private với ownerType issue_report và ownerId là ID báo cáo vừa tạo (P10-D86).
 additionalProperties: false
 
 properties:
@@ -33,30 +33,9 @@ properties:
     maxLength: 500
     description: Mô tả chi tiết hiện trạng hư hỏng
     example: "Vòi xịt bị nứt ren, nước chảy liên tục không khóa được"
-  issuePhotoMediaIds:
-    type: array
-    description: Danh sách ID ảnh chụp hiện trường đính kèm
-    items:
-      type: string
-      format: uuid
-    example:
-      - "48fae08f-e1a5-48b4-9c02-e2513470ff42"
-  taggedUserId:
-    type: string
-    format: uuid
-    nullable: true
-    description: Tag người liên quan (@User) trong phòng hoặc thợ sửa
-    example: null
-  taggedRoomId:
-    type: string
-    format: uuid
-    nullable: true
-    description: Tag phòng (@Room) nếu là sự cố khu vực chung ảnh hưởng nhiều phòng
-    example: null
 
 required:
   - roomId
   - title
   - category
   - urgency
-  - issuePhotoMediaIds
