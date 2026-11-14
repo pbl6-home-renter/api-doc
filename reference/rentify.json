@@ -3289,7 +3289,8 @@
                       "phone": "0901234567",
                       "email": "lan@example.com",
                       "role": "tenant",
-                      "status": "active"
+                      "status": "active",
+                      "avatarUrl": null
                     }
                   ],
                   "pagination": {
@@ -3547,7 +3548,7 @@
           }
         ],
         "summary": "Search user directory",
-        "description": "- Người gọi: chỉ `landlord`, `tenant` có `status=active`. Admin nhận 403 `FORBIDDEN`; tài khoản bị khóa nhận 403 `ACCOUNT_LOCKED`.\n- Kết quả: chỉ user `landlord`/`tenant`, `status=active`, chưa bị xóa; luôn loại chính người gọi.\n- `q` tùy chọn; bỏ trống hoặc chỉ có khoảng trắng thì trả danh sách phân trang. Khi có từ khóa, server trim rồi khớp một phần tên không phân biệt chữ hoa/thường và dấu tiếng Việt. Ký tự %, _ và backslash trong q được hiểu theo nghĩa đen.\n- Lọc, đếm `totalItems` và phân trang đều chạy trên DB trước khi cắt trang. Sắp xếp cố định theo `name` tăng dần rồi `id` tăng dần.\n- Mỗi phần tử chỉ có `id`, `name`; không trả email, phone, role, status hoặc avatar. Hai người trùng tên được trả thành hai phần tử khác `id`.\n- Không cần PostgreSQL extension: Identity chuẩn hóa dấu bằng hàm `translate()` sẵn có trên cả cột `name` và `q`. Truy vấn quét theo điều kiện role/status/is_deleted, không dùng index cho phần tìm tên.\n\n**Sequence diagram**\n\n```mermaid\nsequenceDiagram\n    autonumber\n    actor Client\n    participant GW as API Gateway\n    participant S as Identity-Service\n    participant Guard as JWT/access guards\n    participant C as UserDirectoryController\n    participant Bus as CQRS QueryBus\n    participant H as Application handler\n    Client->>GW: GET /api/v1/users/directory\n    GW->>GW: Validate bearer token for protected route\n    GW->>S: Proxy original HTTP request\n    S->>Guard: Validate JWT, account state and route access\n    Guard-->>C: Continue with authenticated context\n    S->>C: Invoke getUsersDirectory\n    C->>Bus: Execute query for getUsersDirectory\n    Bus->>H: Dispatch query handler\n    H-->>Bus: Return use-case result\n    Bus-->>C: Result\n    C-->>S: Return documented response\n    S-->>GW: HTTP status and response body\n    GW-->>Client: Forward HTTP response\n```\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-11-04 | 🟢 NON_BREAKING | Thêm endpoint mới. | [#49](https://github.com/pbl6-home-renter/api-doc/pull/49) |\n",
+        "description": "- Người gọi: chỉ `landlord`, `tenant` có `status=active`. Admin nhận 403 `FORBIDDEN`; tài khoản bị khóa nhận 403 `ACCOUNT_LOCKED`.\n- Kết quả: chỉ user `landlord`/`tenant`, `status=active`, chưa bị xóa; luôn loại chính người gọi.\n- `q` tùy chọn; bỏ trống hoặc chỉ có khoảng trắng thì trả danh sách phân trang. Khi có từ khóa, server trim rồi khớp một phần tên không phân biệt chữ hoa/thường và dấu tiếng Việt. Ký tự %, _ và backslash trong q được hiểu theo nghĩa đen.\n- Lọc, đếm `totalItems` và phân trang đều chạy trên DB trước khi cắt trang. Sắp xếp cố định theo `name` tăng dần rồi `id` tăng dần.\n- Mỗi phần tử chỉ có `id`, `name`, `avatarUrl` (URL công khai, `null` nếu chưa có avatar); không trả email, phone, role, status. Hai người trùng tên được trả thành hai phần tử khác `id`.\n- Không cần PostgreSQL extension: Identity chuẩn hóa dấu bằng hàm `translate()` sẵn có trên cả cột `name` và `q`. Truy vấn quét theo điều kiện role/status/is_deleted, không dùng index cho phần tìm tên.\n\n**Sequence diagram**\n\n```mermaid\nsequenceDiagram\n    autonumber\n    actor Client\n    participant GW as API Gateway\n    participant S as Identity-Service\n    participant Guard as JWT/access guards\n    participant C as UserDirectoryController\n    participant Bus as CQRS QueryBus\n    participant H as Application handler\n    Client->>GW: GET /api/v1/users/directory\n    GW->>GW: Validate bearer token for protected route\n    GW->>S: Proxy original HTTP request\n    S->>Guard: Validate JWT, account state and route access\n    Guard-->>C: Continue with authenticated context\n    S->>C: Invoke getUsersDirectory\n    C->>Bus: Execute query for getUsersDirectory\n    Bus->>H: Dispatch query handler\n    H-->>Bus: Return use-case result\n    Bus-->>C: Result\n    C-->>S: Return documented response\n    S-->>GW: HTTP status and response body\n    GW-->>Client: Forward HTTP response\n```\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-11-04 | 🟢 NON_BREAKING | Thêm endpoint mới. | [#49](https://github.com/pbl6-home-renter/api-doc/pull/49) |\n",
         "parameters": [
           {
             "name": "q",
@@ -3668,7 +3669,8 @@
                   "data": [
                     {
                       "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-                      "name": "Nguyễn Văn An"
+                      "name": "Nguyễn Văn An",
+                      "avatarUrl": "https://media.example.com/avatars/3fa85f64.jpg"
                     }
                   ],
                   "pagination": {
@@ -3811,7 +3813,8 @@
                     "activeContractCount": 1,
                     "lockReason": null,
                     "lockedAt": null,
-                    "payoutAccount": null
+                    "payoutAccount": null,
+                    "avatarUrl": null
                   }
                 }
               }
@@ -15787,6 +15790,7 @@
                       "leftAt": null,
                       "tenantId": null,
                       "tenantPhone": "0921234567",
+                      "tenantAvatarUrl": null,
                       "status": "active"
                     }
                   ],
@@ -22008,6 +22012,7 @@
                       "conversationId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
                       "senderUserId": "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d",
                       "senderName": "Nguyễn Văn A",
+                      "senderAvatarUrl": "https://media.example.com/avatars/9b1deb4d.jpg",
                       "senderType": "user",
                       "sequence": "42",
                       "clientMessageId": "a95a1d13-f91c-4c71-9c61-24b498d0fd0e",
@@ -24840,6 +24845,12 @@
             ],
             "description": "Trạng thái tài khoản (pending_verification: chưa xác minh email, active: bình thường, locked: bị khóa bởi admin).",
             "example": "active"
+          },
+          "avatarUrl": {
+            "type": "string",
+            "nullable": true,
+            "description": "URL công khai của avatar hiện tại (Identity, media `purpose=avatar`); `null` nếu user chưa có avatar.",
+            "example": "https://media.example.com/avatars/3fa85f64.jpg"
           }
         },
         "required": [
@@ -24848,7 +24859,8 @@
           "email",
           "phone",
           "role",
-          "status"
+          "status",
+          "avatarUrl"
         ],
         "additionalProperties": false
       },
@@ -24856,7 +24868,7 @@
         "type": "object",
         "x-apidog-folder": "User/Response",
         "title": "UserDirectoryResponseDto",
-        "description": "Một Landlord/Tenant đang hoạt động trong kết quả tìm người để chat; chỉ lộ ID và tên.",
+        "description": "Một Landlord/Tenant đang hoạt động trong kết quả tìm người để chat; chỉ lộ ID, tên và avatar.",
         "properties": {
           "id": {
             "type": "string",
@@ -24868,11 +24880,18 @@
             "type": "string",
             "description": "Họ và tên hiện tại của người dùng.",
             "example": "Nguyễn Văn An"
+          },
+          "avatarUrl": {
+            "type": "string",
+            "nullable": true,
+            "description": "URL công khai của avatar hiện tại (Identity, media `purpose=avatar`); `null` nếu user chưa có avatar.",
+            "example": "https://media.example.com/avatars/3fa85f64.jpg"
           }
         },
         "required": [
           "id",
-          "name"
+          "name",
+          "avatarUrl"
         ],
         "additionalProperties": false
       },
@@ -24979,6 +24998,12 @@
             "nullable": true,
             "description": "Số lượng hợp đồng đang có hiệu lực. `null` khi không lấy được từ Tenancy.",
             "example": 1
+          },
+          "avatarUrl": {
+            "type": "string",
+            "nullable": true,
+            "description": "URL công khai của avatar hiện tại (Identity, media `purpose=avatar`); `null` nếu user chưa có avatar.",
+            "example": "https://media.example.com/avatars/3fa85f64.jpg"
           }
         },
         "required": [
@@ -24992,7 +25017,8 @@
           "lockedAt",
           "payoutAccount",
           "buildingCount",
-          "activeContractCount"
+          "activeContractCount",
+          "avatarUrl"
         ],
         "additionalProperties": false
       },
@@ -31287,6 +31313,11 @@
             "format": "uuid",
             "nullable": true
           },
+          "avatarUrl": {
+            "type": "string",
+            "nullable": true,
+            "description": "Ảnh để hiển thị theo người đang xem. Group: `/api/v1/media/{avatarMediaId}` (private, FE tải qua `GET /media/{mediaId}/download-url`), `null` nếu nhóm chưa có ảnh. Direct: URL công khai avatar hiện tại của người còn lại, `null` nếu người đó chưa có avatar hoặc Identity không phản hồi (best effort)."
+          },
           "unreadCount": {
             "type": "integer",
             "minimum": 0,
@@ -31426,6 +31457,11 @@
             "type": "string",
             "format": "uuid",
             "nullable": true
+          },
+          "avatarUrl": {
+            "type": "string",
+            "nullable": true,
+            "description": "Ảnh để hiển thị theo người đang xem. Group: `/api/v1/media/{avatarMediaId}` (private, FE tải qua `GET /media/{mediaId}/download-url`), `null` nếu nhóm chưa có ảnh. Direct: URL công khai avatar hiện tại của người còn lại, `null` nếu người đó chưa có avatar hoặc Identity không phản hồi (best effort)."
           },
           "unreadCount": {
             "type": "integer",
@@ -31677,6 +31713,11 @@
             "type": "string",
             "maxLength": 254
           },
+          "senderAvatarUrl": {
+            "type": "string",
+            "nullable": true,
+            "description": "URL công khai avatar hiện tại của người gửi (lấy từ Identity lúc đọc); `null` với system message, user chưa có avatar hoặc khi Identity không phản hồi (best effort)."
+          },
           "senderType": {
             "type": "string",
             "enum": [
@@ -31763,6 +31804,7 @@
           "conversationId",
           "senderUserId",
           "senderName",
+          "senderAvatarUrl",
           "senderType",
           "sequence",
           "clientMessageId",
@@ -32485,6 +32527,11 @@
             "nullable": true,
             "description": "Số điện thoại thành viên."
           },
+          "tenantAvatarUrl": {
+            "type": "string",
+            "nullable": true,
+            "description": "URL công khai avatar hiện tại của tenant (Identity); `null` nếu không có tài khoản, chưa có avatar hoặc Identity không phản hồi (best effort)."
+          },
           "status": {
             "type": "string",
             "enum": [
@@ -32512,6 +32559,7 @@
           "tenantId",
           "tenantName",
           "tenantPhone",
+          "tenantAvatarUrl",
           "joinedAt",
           "leftAt",
           "status"
@@ -34837,6 +34885,11 @@
                 "type": "string",
                 "maxLength": 254,
                 "description": "Tên hiển thị được snapshot khi thêm thành viên."
+              },
+              "avatarUrl": {
+                "type": "string",
+                "nullable": true,
+                "description": "URL công khai avatar hiện tại của user (lấy từ Identity lúc đọc, không snapshot); `null` nếu chưa có avatar, là participant hệ thống hoặc Identity không phản hồi (best effort)."
               },
               "participantType": {
                 "type": "string",

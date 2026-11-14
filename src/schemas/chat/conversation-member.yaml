@@ -21,6 +21,10 @@ allOf:
         type: string
         maxLength: 254
         description: Tên hiển thị được snapshot khi thêm thành viên.
+      avatarUrl:
+        type: string
+        nullable: true
+        description: URL công khai avatar hiện tại của user (lấy từ Identity lúc đọc, không snapshot); `null` nếu chưa có avatar, là participant hệ thống hoặc Identity không phản hồi (best effort).
       participantType:
         type: string
         enum: [user, system]

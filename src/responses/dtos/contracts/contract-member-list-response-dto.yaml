@@ -24,6 +24,10 @@ properties:
     type: string
     nullable: true
     description: Số điện thoại thành viên.
+  tenantAvatarUrl:
+    type: string
+    nullable: true
+    description: URL công khai avatar hiện tại của tenant (Identity); `null` nếu không có tài khoản, chưa có avatar hoặc Identity không phản hồi (best effort).
   status:
     type: string
     enum:
@@ -47,6 +51,7 @@ required:
 - tenantId
 - tenantName
 - tenantPhone
+- tenantAvatarUrl
 - joinedAt
 - leftAt
 - status

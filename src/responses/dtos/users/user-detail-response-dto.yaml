@@ -86,6 +86,11 @@ properties:
     nullable: true
     description: Số lượng hợp đồng đang có hiệu lực. `null` khi không lấy được từ Tenancy.
     example: 1
+  avatarUrl:
+    type: string
+    nullable: true
+    description: URL công khai của avatar hiện tại (Identity, media `purpose=avatar`); `null` nếu user chưa có avatar.
+    example: 'https://media.example.com/avatars/3fa85f64.jpg'
 required:
 - id
 - name
@@ -98,4 +103,5 @@ required:
 - payoutAccount
 - buildingCount
 - activeContractCount
+- avatarUrl
 additionalProperties: false

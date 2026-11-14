@@ -41,7 +41,7 @@ socket.on('session:ready', () => {
 | `conversation:typing` | `{ conversationId, userId, isTyping }` | Chat v2. Các socket **khác** trong room conversation (tab khác của chính user vẫn nhận; FE bỏ qua `userId` của mình). |
 | `conversation:access-revoked` | `{ conversationId }` | Mọi session của user vừa leave/bị kick; server cũng loại các session khỏi room. |
 | `conversation:available` | `{ conversationId }` | Mọi session của user khi conversation được tạo/mở lại hoặc khi được thêm/kích hoạt lại; client có thể gọi REST rồi join. |
-| `chat:message-received` | `{ messageId, conversationId, sequence, senderUserId, senderName, conversationName, type, contentPreview, createdAt }` | User room của mọi member **user** đang `active` trong conversation, **kể cả người gửi** (để tab khác của người gửi cập nhật list). Chỉ cho message `text`, `image`, `bot`; không phát cho `system`. Chi tiết ở mục [Tin mới trên user room](#tin-mới-trên-user-room). |
+| `chat:message-received` | `{ messageId, conversationId, sequence, senderUserId, senderName, senderAvatarUrl, conversationName, type, contentPreview, createdAt }` | User room của mọi member **user** đang `active` trong conversation, **kể cả người gửi** (để tab khác của người gửi cập nhật list). Chỉ cho message `text`, `image`, `bot`; không phát cho `system`. Chi tiết ở mục [Tin mới trên user room](#tin-mới-trên-user-room). |
 | `notification:created` | `{ notificationId, type, title, body, deepLink, data, createdAt }` | Mọi session của user nhận notification. |
 | `notification:read-state-updated` | `{ notificationId, readAt, all }` | Mọi session của user vừa mark-read; `all=true` và `notificationId=null` khi mark-all-read. |
 
@@ -62,6 +62,7 @@ Mọi giá trị sequence/cursor trong REST và Socket (`sequence`, `lastReadSeq
 | `sequence` | string | Bigint dạng chuỗi, giống `sequence` của message REST. |
 | `senderUserId` | uuid \| null | `null` khi `type=bot`. |
 | `senderName` | string | Snapshot tên người gửi trên message. |
+| `senderAvatarUrl` | string \| null | URL công khai avatar hiện tại của người gửi, lấy từ Identity lúc phát event; `null` khi chưa có avatar, `type=bot` hoặc Identity không phản hồi. |
 | `conversationName` | string \| null | Tên theo **người nhận** event: direct là `displayName` snapshot của người còn lại với người nhận; group là `title` đã lưu. Cùng giá trị với `displayName` trong `GET /conversations` của người nhận. |
 | `type` | `text` \| `image` \| `bot` | Không bao giờ là `system`. |
 | `contentPreview` | string | Tối đa 120 ký tự (cắt 117 + `...`, như `lastMessage.contentPreview`); `image` là `Đã gửi ảnh`; content rỗng thành `""`. |
