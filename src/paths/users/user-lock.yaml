@@ -9,12 +9,25 @@ post:
   summary: Lock user
   description: |-
     **Lưu ý**
-    
+
     - User bị khóa **vẫn đăng nhập được**. Các service chặn chức năng dựa vào claim `status` trong access token (tự verify); token cấp trước khi khóa còn mang `status=active` tối đa 15 phút.
-    - Event `user.locked` chỉ để Tenancy đổi dữ liệu của mình (ẩn BĐS, tạm ngưng HĐ của landlord).
-    - Đang cân nhắc (thuộc Tenancy): landlord bị khóa quá grace period thì hủy HĐ và hoàn cọc.
+    - Admin tự khóa trả `400 USER_LOCK_CANNOT_SELF` trước khi mở transaction. User không tồn tại/đã xóa trả `404 USER_NOT_FOUND`; đã khóa trả `409 USER_LOCK_ALREADY_LOCKED`; chưa xác thực email (`pending_verification`) trả `409 EMAIL_NOT_VERIFIED`. Các nhánh lỗi không lưu thay đổi hoặc phát account notice.
+    - Theo P9-D83/P9-06, Identity ghi `user.locked` và `notification.requested` type `system` tới chính user trong cùng transaction khóa tài khoản.
+    - Tenancy nhận `user.locked` qua `tenancy.identity-lifecycle`, dedup bằng inbox. Với landlord, một transaction tạm ngưng contract active, lưu lock cycle/grace deadline và ghi notification outbox tới landlord cùng tenant/member đang hoạt động đã link. Khóa tenant không tạm ngưng contract của landlord.
+    - Duplicate lock không tạo cycle hoặc notice trùng; cycle mới giữ các contract còn suspended từ cycle trước. Scheduled job trong Tenancy tìm deadline bền vững sau restart. Khôi phục/chấm dứt contract thuộc P9-07; P9-06 không hoàn cọc hoặc thay đổi contract chat.
+    - Cấu hình triển khai hiện tại là `LANDLORD_LOCK_GRACE_PERIOD_MS=604800000` (7 ngày). `graceDeadline = lockedAt + gracePeriodMs`, với `lockedAt` lấy từ event Identity; deadline được lưu theo từng cycle và không tính lại khi thay đổi biến môi trường.
+    - Scheduler chạy khi Tenancy khởi động xong và mỗi 60 giây, đọc tối đa 100 cycle pending đến hạn mỗi lượt. Sau khi kiểm tra lại cycle ID/deadline dưới transaction lock, chỉ chuyển cycle `pending → elapsed`; contract vẫn `suspended`, không tự chấm dứt hoặc hoàn cọc trong P9-06. Thời điểm ghi nhận hết hạn phụ thuộc lượt quét.
     - Khóa không revoke refresh token.
-    
+
+    **Payload notification P9-06**
+
+    `notification.requested.payload` có `sourceService`, `recipientUserIds` và object `notification` gồm `type`, `title`, `body`, `data`. Đây là payload event; response HTTP của API lock vẫn là `UserLockResponseDto`.
+
+    - Account notice từ Identity: `sourceService: identity`, `recipientUserIds: [userId]`, `notification.type: system`; `notification.data` gồm `{ userId, status: locked, eventType: user.locked, lockedAt }`, trong đó `lockedAt` là ISO 8601 UTC.
+    - Contract notice từ Tenancy: `sourceService: tenancy`, `notification.type: system`; `notification.data` gồm `{ landlordId, lockCycleId, contractIds, graceDeadline }`. Các ID là UUID, `contractIds` là mảng UUID, `graceDeadline` là ISO 8601 UTC. `lockCycleId` dùng ID envelope của event `user.locked` được xử lý.
+    - Mỗi contract notice có một recipient. Landlord nhận danh sách contract vừa bị suspend của mình; tenant chính và ContractMember đang hoạt động, đã link chỉ nhận contract IDs liên quan đến họ. Người chưa link không có recipient ID. Contract đã suspended được giữ tham chiếu trong cycle mới nhưng không bị suspend hoặc gửi lại notice tạm ngưng.
+    - Community lưu snapshot vào inbox notification, trả `type: system` và `data` qua `GET /notifications`, đồng thời gửi Socket sau commit và push theo preference. Không đưa phone vào notification payload.
+
     **Sequence diagram**
     
     ```mermaid
@@ -27,6 +40,10 @@ post:
         participant C as UserAdminController
         participant Bus as CQRS CommandBus
         participant H as Application handler
+        participant DB as Identity DB
+        participant MQ as RabbitMQ
+        participant TEN as Tenancy
+        participant COM as Community
         Client->>GW: POST /api/v1/users/{userId}/lock
         GW->>GW: Validate bearer token for protected route
         GW->>S: Proxy original HTTP request
@@ -35,11 +52,33 @@ post:
         S->>C: Invoke lockUser
         C->>Bus: Execute command for lockUser
         Bus->>H: Dispatch command handler
+        H->>H: Kiểm tra adminId != userId trước transaction
+        break Admin tự khóa
+            H-->>Bus: 400 USER_LOCK_CANNOT_SELF
+        end
+        H->>DB: [Transaction] Đọc user FOR UPDATE
+        break User không tồn tại / đã khóa / chưa xác thực email
+            H-->>Bus: 404 USER_NOT_FOUND / 409 USER_LOCK_ALREADY_LOCKED / 409 EMAIL_NOT_VERIFIED
+        end
+        H->>DB: Cùng transaction: status=locked, lockReason, lockedAt<br/>+ outbox user.locked + notification.requested
         H-->>Bus: Return use-case result
         Bus-->>C: Result
         C-->>S: Return documented response
         S-->>GW: HTTP status and response body
         GW-->>Client: Forward HTTP response
+        S-)MQ: user.locked {userId, role, status, lockReason, lockedAt}
+        MQ-)TEN: user.locked (tenancy.identity-lifecycle)
+        alt role=landlord
+            TEN->>TEN: [Transaction] Inbox dedup + khóa landlord/cycle/contracts<br/>+ active → suspended + lưu cycle/deadline + notification outbox
+            TEN-)MQ: notification.requested {sourceService: tenancy, recipientUserIds, notification: {type: system, data}}
+        else role=tenant
+            TEN->>TEN: [Transaction] Inbox dedup + xóa tenant lookup; giữ contract
+        end
+        S-)MQ: notification.requested {sourceService: identity, recipientUserIds: [userId], notification: {type: system, data}}
+        MQ-)COM: notification.requested (community.notification)
+        COM->>COM: [Transaction] Inbox dedup + lưu notice từng recipient
+        COM->>COM: Sau commit: Socket sync / FCM theo preference
+        Note over TEN: Scheduler kiểm tra cycle ID/deadline, pending → elapsed;<br/>contract giữ suspended; khôi phục/chấm dứt thuộc P9-07
     ```
   parameters:
   - name: userId
@@ -186,7 +225,7 @@ post:
                 statusCode: 404
                 code: USER_NOT_FOUND
     '409':
-      description: Xung đột dữ liệu hoặc trạng thái.
+      description: Tài khoản đã bị khóa hoặc chưa xác thực email nên chưa thể khóa.
       content:
         application/json:
           schema:
@@ -204,12 +243,18 @@ post:
                 type: string
                 enum:
                 - USER_LOCK_ALREADY_LOCKED
+                - EMAIL_NOT_VERIFIED
           examples:
             error_1:
               summary: USER_LOCK_ALREADY_LOCKED
               value:
                 statusCode: 409
                 code: USER_LOCK_ALREADY_LOCKED
+            email_not_verified:
+              summary: EMAIL_NOT_VERIFIED — Tài khoản chưa xác thực email.
+              value:
+                statusCode: 409
+                code: EMAIL_NOT_VERIFIED
     '422':
       description: Vi phạm ràng buộc dữ liệu; trả mã của lỗi đầu tiên.
       content:

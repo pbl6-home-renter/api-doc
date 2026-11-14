@@ -8,6 +8,10 @@ get:
     - BearerAuth: []
   summary: List notifications
   description: |-
+    Trả các business notification đã lưu cho người gọi. `type: system` gồm account lock/unlock và contract suspension của P9-06; không phải message chat.
+    `data` là snapshot từ producer: account notice có `{ userId, status, eventType, lockedAt }`; contract suspension notice có `{ landlordId, lockCycleId, contractIds, graceDeadline }`.
+    Tắt push không ẩn notification khỏi danh sách; Socket sync được thực hiện độc lập với preference push.
+
     **Sequence diagram**
     
     ```mermaid
