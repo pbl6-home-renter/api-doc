@@ -2,29 +2,15 @@ post:
   tags:
   - Contract
   x-apidog-folder: Contract
-  x-apidog-status: designing
+  x-apidog-status: developing
   operationId: postContractsContractidGenerateDraftDocument
   security:
     - BearerAuth: []
   summary: Generate draft contract document
   description: |-
-    **Trạng thái triển khai:** endpoint chưa được triển khai trong Tenancy-Service và đang tạm hoãn.
-    Hiện mới có renderer PDF; chưa có handler lấy dữ liệu hệ thống, liên kết tài liệu với Contract
-    hoặc adapter upload media. Identity-Service cũng chưa có internal endpoint upload/complete cho luồng này.
-    This API remains in designing until its controller and handler are implemented.
-    No implementation sequence is published because this endpoint is not implemented.
-    Internal API sẽ được gọi trực tiếp từ Tenancy sang Identity bằng service token, không public qua gateway.
-    
-    Biến lấy từ Contract, Room, Building và BillingSetting; paymentDueDay lấy từ BillingSetting,
-    không tự thêm vào Contract. landlordName lấy qua internal user lookup; nếu không có thì để trống và log warning.
-    Renderer kiểm tra requiredVariables trước khi tạo PDF; thiếu hoặc rỗng trả 422 TEMPLATE_DATA_INVALID,
-    số 0 vẫn hợp lệ. tenantCccd chưa được điền tự động; mẫu hiện tại để chỗ trống để đối chiếu khi ký.
-    
-    Chuẩn bị upload, PUT PDF lên R2 và complete upload đều nằm ngoài UoW transaction ghi Contract.
-    Sau upload phải lock và kiểm tra lại hợp đồng còn draft, còn tồn tại và thuộc landlord trước khi lưu liên kết
-    media cùng outbox. File upload xong nhưng transaction thất bại có thể chưa được gắn vào Contract;
-    cơ chế xử lý file chưa gắn cần chốt cùng P6-04.
-    
+    Sinh PDF nh?p t? m?u ?? ?p d?ng v? d? li?u h?p ??ng, ph?ng, t?a nh? v? c?u h?nh thanh to?n hi?n c?.
+    Ch? ch? h?p ??ng nh?p ???c ph?p th?c hi?n. Kh?ng l?u t?i li?u v?o Media.
+    Thi?u m?u ?? ?p d?ng tr? 409 CONTRACT_TEMPLATE_NOT_APPLIED; d? li?u m?u b?t bu?c b? thi?u tr? 422 TEMPLATE_DATA_INVALID.
   parameters:
   - name: contractId
     in: path
@@ -32,50 +18,20 @@ post:
     schema:
       type: string
       format: uuid
-  requestBody:
-    required: true
-    content:
-      application/json:
-        schema:
-          $ref: ../../openapi.yaml#/components/schemas/ContractGenerateDraftRequestDto
-        example:
-          templateKey: standard-room-lease-v1
   responses:
-    '201':
-      description: 'Thành công: Sinh tài liệu nháp.'
-      content:
-        application/json:
-          schema:
-            type: object
-            additionalProperties: false
-            required:
-            - statusCode
-            - code
-            - data
-            properties:
-              statusCode:
-                type: integer
-                enum:
-                - 201
-              code:
-                type: string
-                enum:
-                - CONTRACT_DRAFT_GENERATED
-              data:
-                $ref: ../../openapi.yaml#/components/schemas/ContractGenerateDraftResponseDto
-          example:
-            statusCode: 201
-            code: CONTRACT_DRAFT_GENERATED
-            data:
-              contractId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
-              mediaId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
-              purpose: contract_template
+    '200':
+      description: PDF h?p ??ng nh?p.
       headers:
-        Location:
-          description: Đường dẫn tài nguyên được tạo.
+        Content-Disposition:
+          description: T?n file PDF g?i ?.
           schema:
             type: string
-            example: /api/v1/media/{mediaId}
+            example: 'attachment; filename="contract-HD-3fa85f-draft.pdf"'
+      content:
+        application/pdf:
+          schema:
+            type: string
+            format: binary
     '400':
       $ref: ../../openapi.yaml#/components/responses/BadRequestBodyPathError
     '401':
@@ -85,7 +41,16 @@ post:
     '403':
       $ref: ../../openapi.yaml#/components/responses/ForbiddenError
     '404':
-      $ref: ../../openapi.yaml#/components/responses/NotFoundError
+      description: Kh?ng t?m th?y h?p ??ng ho?c m?u ?? ?p d?ng.
+      content:
+        application/json:
+          schema:
+            type: object
+            required: [statusCode, code]
+            properties:
+              statusCode: { type: integer, enum: [404] }
+              code: { type: string, enum: [CONTRACT_NOT_FOUND, TEMPLATE_NOT_FOUND] }
+
     '409':
       x-apidog-name: Conflict
       description: Yêu cầu xung đột với trạng thái hiện tại hoặc dữ liệu đã tồn tại.
@@ -103,6 +68,7 @@ post:
                 type: string
                 enum:
                   - CONTRACT_NOT_DRAFT
+                  - CONTRACT_TEMPLATE_NOT_APPLIED
                 description: |-
                   - CONTRACT_NOT_DRAFT: Hợp đồng không ở trạng thái nháp.
           examples:

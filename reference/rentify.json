@@ -14573,7 +14573,7 @@
           "Contract"
         ],
         "x-apidog-folder": "Contract",
-        "x-apidog-status": "designing",
+        "x-apidog-status": "developing",
         "operationId": "postContractsContractidGenerateDraftDocument",
         "security": [
           {
@@ -14581,7 +14581,7 @@
           }
         ],
         "summary": "Generate draft contract document",
-        "description": "**Trạng thái triển khai:** endpoint chưa được triển khai trong Tenancy-Service và đang tạm hoãn.\nHiện mới có renderer PDF; chưa có handler lấy dữ liệu hệ thống, liên kết tài liệu với Contract\nhoặc adapter upload media. Identity-Service cũng chưa có internal endpoint upload/complete cho luồng này.\nThis API remains in designing until its controller and handler are implemented.\nNo implementation sequence is published because this endpoint is not implemented.\nInternal API sẽ được gọi trực tiếp từ Tenancy sang Identity bằng service token, không public qua gateway.\n\nBiến lấy từ Contract, Room, Building và BillingSetting; paymentDueDay lấy từ BillingSetting,\nkhông tự thêm vào Contract. landlordName lấy qua internal user lookup; nếu không có thì để trống và log warning.\nRenderer kiểm tra requiredVariables trước khi tạo PDF; thiếu hoặc rỗng trả 422 TEMPLATE_DATA_INVALID,\nsố 0 vẫn hợp lệ. tenantCccd chưa được điền tự động; mẫu hiện tại để chỗ trống để đối chiếu khi ký.\n\nChuẩn bị upload, PUT PDF lên R2 và complete upload đều nằm ngoài UoW transaction ghi Contract.\nSau upload phải lock và kiểm tra lại hợp đồng còn draft, còn tồn tại và thuộc landlord trước khi lưu liên kết\nmedia cùng outbox. File upload xong nhưng transaction thất bại có thể chưa được gắn vào Contract;\ncơ chế xử lý file chưa gắn cần chốt cùng P6-04.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
+        "description": "Sinh PDF nh?p t? m?u ?? ?p d?ng v? d? li?u h?p ??ng, ph?ng, t?a nh? v? c?u h?nh thanh to?n hi?n c?.\nCh? ch? h?p ??ng nh?p ???c ph?p th?c hi?n. Kh?ng l?u t?i li?u v?o Media.\nThi?u m?u ?? ?p d?ng tr? 409 CONTRACT_TEMPLATE_NOT_APPLIED; d? li?u m?u b?t bu?c b? thi?u tr? 422 TEMPLATE_DATA_INVALID.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "parameters": [
           {
             "name": "contractId",
@@ -14593,67 +14593,23 @@
             }
           }
         ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ContractGenerateDraftRequestDto"
-              },
-              "example": {
-                "templateKey": "standard-room-lease-v1"
-              }
-            }
-          }
-        },
         "responses": {
-          "201": {
-            "description": "Thành công: Sinh tài liệu nháp.",
-            "content": {
-              "application/json": {
+          "200": {
+            "description": "PDF h?p ??ng nh?p.",
+            "headers": {
+              "Content-Disposition": {
+                "description": "T?n file PDF g?i ?.",
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": false,
-                  "required": [
-                    "statusCode",
-                    "code",
-                    "data"
-                  ],
-                  "properties": {
-                    "statusCode": {
-                      "type": "integer",
-                      "enum": [
-                        201
-                      ]
-                    },
-                    "code": {
-                      "type": "string",
-                      "enum": [
-                        "CONTRACT_DRAFT_GENERATED"
-                      ]
-                    },
-                    "data": {
-                      "$ref": "#/components/schemas/ContractGenerateDraftResponseDto"
-                    }
-                  }
-                },
-                "example": {
-                  "statusCode": 201,
-                  "code": "CONTRACT_DRAFT_GENERATED",
-                  "data": {
-                    "contractId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-                    "mediaId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-                    "purpose": "contract_template"
-                  }
+                  "type": "string",
+                  "example": "attachment; filename=\"contract-HD-3fa85f-draft.pdf\""
                 }
               }
             },
-            "headers": {
-              "Location": {
-                "description": "Đường dẫn tài nguyên được tạo.",
+            "content": {
+              "application/pdf": {
                 "schema": {
                   "type": "string",
-                  "example": "/api/v1/media/{mediaId}"
+                  "format": "binary"
                 }
               }
             }
@@ -14668,7 +14624,33 @@
             "$ref": "#/components/responses/ForbiddenError"
           },
           "404": {
-            "$ref": "#/components/responses/NotFoundError"
+            "description": "Kh?ng t?m th?y h?p ??ng ho?c m?u ?? ?p d?ng.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "statusCode",
+                    "code"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        404
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "CONTRACT_NOT_FOUND",
+                        "TEMPLATE_NOT_FOUND"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "409": {
             "x-apidog-name": "Conflict",
@@ -14692,7 +14674,8 @@
                     "code": {
                       "type": "string",
                       "enum": [
-                        "CONTRACT_NOT_DRAFT"
+                        "CONTRACT_NOT_DRAFT",
+                        "CONTRACT_TEMPLATE_NOT_APPLIED"
                       ],
                       "description": "- CONTRACT_NOT_DRAFT: Hợp đồng không ở trạng thái nháp."
                     }
