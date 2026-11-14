@@ -12,6 +12,9 @@ post:
     - `user.registered` được ghi outbox cùng transaction tạo user; relay publish sau khi commit.
     - Tài khoản ở trạng thái `pending_verification`; Identity gửi link xác minh qua Community. Link dùng một lần, hết hạn sau 24 giờ. Chỉ đăng nhập được sau khi xác minh.
     - Khi xác minh thành công, Identity phát `user.email_verified` để Tenancy liên kết hợp đồng theo số điện thoại.
+    - Tenancy nhận qua `tenancy.identity-lifecycle`, dedup bằng inbox. `user.registered` của tài khoản pending chưa liên kết; `user.email_verified` kích hoạt liên kết Contract/ContractMember chưa xóa có `tenantId = NULL`, khớp chính xác SĐT sau chuẩn hóa `+84` về `0`. Projection user-phone phục vụ lookup theo P9-02.
+    - Inbox, projection, liên kết và outbox `contract_member.linked` commit/rollback cùng transaction. SĐT không khớp không thay đổi liên kết; không ghi đè tenantId đã có.
+    - Community nhận `contract_member.linked {contractId, contractMemberId, tenantUserId}` qua `community.contract-context`, áp dụng membership theo contract context. Nếu conversation chưa được tạo bởi `contract.activated`, event được lưu để xử lý sau theo P9-D85. Không gửi SĐT sang Community và không gọi Identity để liên kết.
     
     **Sequence diagram**
     
@@ -24,16 +27,35 @@ post:
         participant C as AuthController
         participant Bus as CQRS CommandBus
         participant H as Application handler
+        participant DB as Identity DB
+        participant MQ as RabbitMQ
+        participant TEN as Tenancy
+        participant COM as Community
         Client->>GW: POST /api/v1/auth/register
         GW->>S: Proxy original HTTP request
         S->>C: Invoke registerAccount
         C->>Bus: Execute command for registerAccount
         Bus->>H: Dispatch command handler
+        H->>DB: [Transaction] Insert user status=pending_verification<br/>+ email verification token + outbox user.registered/email.send_requested
         H-->>Bus: Return use-case result
         Bus-->>C: Result
         C-->>S: Return documented response
         S-->>GW: HTTP status and response body
         GW-->>Client: Forward HTTP response
+        S-)MQ: user.registered {userId, phone, role, status: pending_verification}
+        MQ-)TEN: user.registered (tenancy.identity-lifecycle)
+        TEN->>TEN: [Transaction] Inbox dedup; chưa liên kết tenant pending
+        S-)MQ: email.send_requested (link xác minh)
+        MQ-)COM: Gửi email xác minh
+        Client->>GW: POST /api/v1/auth/email-verifications {token}
+        GW->>S: Proxy verification request
+        S->>DB: [Transaction] Kích hoạt user + consume token<br/>+ outbox user.email_verified
+        S-)MQ: user.email_verified {userId, phone, role, status: active}
+        MQ-)TEN: user.email_verified (tenancy.identity-lifecycle)
+        TEN->>TEN: [Transaction] Inbox dedup + projection + link Contract/ContractMember NULL<br/>+ outbox contract_member.linked
+        TEN-)MQ: contract_member.linked {contractId, contractMemberId, tenantUserId}
+        MQ-)COM: contract_member.linked (community.contract-context)
+        COM->>COM: [Transaction] Inbox dedup + áp dụng/lưu chờ membership theo contract context
     ```
   security: []
   requestBody:

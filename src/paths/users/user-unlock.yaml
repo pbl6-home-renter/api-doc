@@ -9,9 +9,13 @@ post:
   summary: Unlock user
   description: |-
     **Lưu ý**
-    
+
     - Token cấp trước khi mở khóa còn mang `status=locked` tối đa 15 phút.
-    
+    - Identity ghi `user.unlocked` và `notification.requested` type `system` tới chính user trong cùng transaction. Payload `user.unlocked` bổ sung `role`, `phone` để Tenancy khôi phục tenant lookup; phone không đi sang Community.
+    - Account notice có `sourceService: identity`, `recipientUserIds: [userId]` và object `notification` gồm `type: system`, `title`, `body`, `data`. `notification.data` gồm `{ userId, status: active, eventType: user.unlocked, lockedAt: null }`. Community lưu snapshot này và trả qua `GET /notifications`; response HTTP của API unlock vẫn là `UserUnlockResponseDto`.
+    - Tenancy dùng snapshot `role`, `phone` của tenant để khôi phục lookup và liên kết theo rule hiện có. Payload unlock cũ chỉ có `userId`, `status` vẫn được inbox dedup/ack; khi thiếu snapshot, P9-06 không khôi phục lookup qua event đó.
+    - P9-06 chưa tự khôi phục contract. Dừng auto-termination và yêu cầu landlord chọn khôi phục/chấm dứt thuộc P9-07 theo P9-D83.
+
     **Sequence diagram**
     
     ```mermaid
@@ -24,6 +28,10 @@ post:
         participant C as UserAdminController
         participant Bus as CQRS CommandBus
         participant H as Application handler
+        participant DB as Identity DB
+        participant MQ as RabbitMQ
+        participant TEN as Tenancy
+        participant COM as Community
         Client->>GW: POST /api/v1/users/{userId}/unlock
         GW->>GW: Validate bearer token for protected route
         GW->>S: Proxy original HTTP request
@@ -32,11 +40,23 @@ post:
         S->>C: Invoke unlockUser
         C->>Bus: Execute command for unlockUser
         Bus->>H: Dispatch command handler
+        H->>DB: [Transaction] Đọc user FOR UPDATE
+        break User không tồn tại / chưa bị khóa
+            H-->>Bus: 404 USER_NOT_FOUND / 409 USER_UNLOCK_NOT_LOCKED
+        end
+        H->>DB: Cùng transaction: status=active, lockReason=null, lockedAt=null<br/>+ outbox user.unlocked + notification.requested
         H-->>Bus: Return use-case result
         Bus-->>C: Result
         C-->>S: Return documented response
         S-->>GW: HTTP status and response body
         GW-->>Client: Forward HTTP response
+        S-)MQ: user.unlocked {userId, status, role, phone}
+        MQ-)TEN: user.unlocked (tenancy.identity-lifecycle)
+        TEN->>TEN: [Transaction] Inbox dedup; tenant → khôi phục lookup/liên kết<br/>landlord → giữ suspended (quyết định contract thuộc P9-07)
+        S-)MQ: notification.requested {sourceService: identity, recipientUserIds: [userId], notification: {type: system, data}}
+        MQ-)COM: notification.requested (community.notification)
+        COM->>COM: [Transaction] Inbox dedup + lưu account notice
+        COM->>COM: Sau commit: Socket sync / FCM theo preference
     ```
   parameters:
   - name: userId

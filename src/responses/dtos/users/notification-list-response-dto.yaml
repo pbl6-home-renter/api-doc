@@ -7,11 +7,21 @@ properties:
   recipientUserId: { type: string, format: uuid }
   sourceService: { type: string }
   eventId: { type: string, format: uuid }
-  type: { type: string, enum: [invoice, issue] }
+  type: { type: string, enum: [invoice, issue, system], description: "system dùng cho notification building/account/contract, gồm account lock/unlock và contract suspension của P9-06." }
   title: { type: string, maxLength: 255 }
   body: { type: string, maxLength: 2000 }
   deepLink: { type: string, nullable: true }
-  data: { type: object, nullable: true, additionalProperties: true }
+  data:
+    type: object
+    nullable: true
+    additionalProperties: true
+    description: >-
+      Snapshot tùy theo producer. Với P9-06, account notice từ identity chứa
+      { userId, status, eventType, lockedAt }; unlock có lockedAt = null.
+      Contract suspension notice từ tenancy chứa
+      { landlordId, lockCycleId, contractIds, graceDeadline }; contractIds chỉ
+      gồm hợp đồng liên quan đến recipient. ID là UUID, các timestamp khác null
+      là ISO 8601 UTC. Không có phone trong các snapshot P9-06 này.
   createdAt: { type: string, format: date-time }
   readAt: { type: string, format: date-time, nullable: true }
 required: [id, recipientUserId, sourceService, eventId, type, title, body, createdAt, readAt]
