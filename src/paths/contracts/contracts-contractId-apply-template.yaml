@@ -2,21 +2,17 @@ put:
   tags:
   - Contract
   x-apidog-folder: Contract
-  x-apidog-status: designing
+  x-apidog-status: developing
   operationId: putContractsContractidApplyTemplate
   security:
     - BearerAuth: []
   summary: Apply template to draft contract
   description: |-
-    **Trạng thái triển khai:** endpoint chưa được triển khai trong Tenancy-Service và đang tạm hoãn.
-    Contract hiện chưa có cơ chế lưu liên kết mẫu; cần chốt cơ chế lưu trước khi triển khai handler.
-    This API remains in designing until its controller and handler are implemented.
-    No implementation sequence is published because this endpoint is not implemented.
-    
+    Lưu lựa chọn mẫu vào hợp đồng nháp của chủ nhà.
     Mẫu không có, inactive hoặc đã xóa trả 404 TEMPLATE_NOT_FOUND;
     hợp đồng không có hoặc đã xóa trả 404 CONTRACT_NOT_FOUND; khác chủ trả 403 FORBIDDEN;
     hợp đồng không còn draft trả 409 CONTRACT_NOT_DRAFT.
-    Khi triển khai, lưu liên kết mẫu và append outbox trong cùng UoW; relay publish sau commit.
+    Lưu liên kết mẫu và append outbox trong cùng UoW; relay publish sau commit.
     
   parameters:
   - name: contractId
@@ -55,14 +51,24 @@ put:
                 enum:
                 - CONTRACT_TEMPLATE_APPLIED
               data:
-                $ref: ../../openapi.yaml#/components/schemas/ContractApplyTemplateResponseDto
+                $ref: ../../openapi.yaml#/components/schemas/ContractDetailResponseDto
           example:
             statusCode: 200
             code: CONTRACT_TEMPLATE_APPLIED
             data:
               id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+              roomId: 3fa85f64-5717-4562-b3fc-2c963f66afa7
               templateKey: standard-room-lease-v1
               status: draft
+              tenantId: null
+              tenantName: Nguyễn An
+              tenantPhone: '0912345678'
+              rentPrice: 3000000
+              depositAmount: 3000000
+              startDate: '2026-01-01'
+              endDate: '2026-12-31'
+              vehicleCount: 0
+              description: null
     '400':
       $ref: ../../openapi.yaml#/components/responses/BadRequestBodyPathError
     '401':

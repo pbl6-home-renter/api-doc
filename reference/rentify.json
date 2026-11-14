@@ -14167,6 +14167,7 @@
                     "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
                     "roomId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
                     "status": "active",
+                    "templateKey": null,
                     "tenantId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
                     "tenantName": "Trần Văn B",
                     "tenantPhone": "0912345678",
@@ -14379,7 +14380,7 @@
           "Contract"
         ],
         "x-apidog-folder": "Contract",
-        "x-apidog-status": "designing",
+        "x-apidog-status": "developing",
         "operationId": "putContractsContractidApplyTemplate",
         "security": [
           {
@@ -14387,7 +14388,7 @@
           }
         ],
         "summary": "Apply template to draft contract",
-        "description": "**Trạng thái triển khai:** endpoint chưa được triển khai trong Tenancy-Service và đang tạm hoãn.\nContract hiện chưa có cơ chế lưu liên kết mẫu; cần chốt cơ chế lưu trước khi triển khai handler.\nThis API remains in designing until its controller and handler are implemented.\nNo implementation sequence is published because this endpoint is not implemented.\n\nMẫu không có, inactive hoặc đã xóa trả 404 TEMPLATE_NOT_FOUND;\nhợp đồng không có hoặc đã xóa trả 404 CONTRACT_NOT_FOUND; khác chủ trả 403 FORBIDDEN;\nhợp đồng không còn draft trả 409 CONTRACT_NOT_DRAFT.\nKhi triển khai, lưu liên kết mẫu và append outbox trong cùng UoW; relay publish sau commit.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
+        "description": "Lưu lựa chọn mẫu vào hợp đồng nháp của chủ nhà.\nMẫu không có, inactive hoặc đã xóa trả 404 TEMPLATE_NOT_FOUND;\nhợp đồng không có hoặc đã xóa trả 404 CONTRACT_NOT_FOUND; khác chủ trả 403 FORBIDDEN;\nhợp đồng không còn draft trả 409 CONTRACT_NOT_DRAFT.\nLưu liên kết mẫu và append outbox trong cùng UoW; relay publish sau commit.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "parameters": [
           {
             "name": "contractId",
@@ -14439,7 +14440,7 @@
                       ]
                     },
                     "data": {
-                      "$ref": "#/components/schemas/ContractApplyTemplateResponseDto"
+                      "$ref": "#/components/schemas/ContractDetailResponseDto"
                     }
                   }
                 },
@@ -14448,8 +14449,18 @@
                   "code": "CONTRACT_TEMPLATE_APPLIED",
                   "data": {
                     "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                    "roomId": "3fa85f64-5717-4562-b3fc-2c963f66afa7",
                     "templateKey": "standard-room-lease-v1",
-                    "status": "draft"
+                    "status": "draft",
+                    "tenantId": null,
+                    "tenantName": "Nguyễn An",
+                    "tenantPhone": "0912345678",
+                    "rentPrice": 3000000,
+                    "depositAmount": 3000000,
+                    "startDate": "2026-01-01",
+                    "endDate": "2026-12-31",
+                    "vehicleCount": 0,
+                    "description": null
                   }
                 }
               }
@@ -28483,7 +28494,10 @@
         "properties": {
           "templateKey": {
             "type": "string",
-            "description": "Thông tin template key của tài nguyên trong ngữ cảnh DTO."
+            "minLength": 1,
+            "maxLength": 100,
+            "pattern": "\\S",
+            "description": "Khóa của mẫu hợp đồng đang hoạt động."
           }
         },
         "required": [
@@ -28764,6 +28778,12 @@
             ],
             "description": "Trạng thái hiện tại của tài nguyên trong quy trình nghiệp vụ."
           },
+          "templateKey": {
+            "type": "string",
+            "nullable": true,
+            "maxLength": 100,
+            "description": "Mẫu đã áp dụng; null nếu chưa chọn mẫu."
+          },
           "tenantId": {
             "type": "string",
             "format": "uuid",
@@ -28824,6 +28844,7 @@
           "id",
           "roomId",
           "status",
+          "templateKey",
           "tenantId",
           "tenantName",
           "tenantPhone",

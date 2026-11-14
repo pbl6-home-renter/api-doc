@@ -6,6 +6,7 @@ properties:
   id: { type: string, format: uuid , description: "Định danh duy nhất của tài nguyên." }
   roomId: { type: string, format: uuid , description: "Định danh duy nhất của phòng liên quan." }
   status: { type: string, enum: [draft, signed, active, suspended, expired, terminated] , description: "Trạng thái hiện tại của tài nguyên trong quy trình nghiệp vụ." }
+  templateKey: { type: string, nullable: true, maxLength: 100, description: "Mẫu đã áp dụng; null nếu chưa chọn mẫu." }
   tenantId: { type: string, format: uuid, nullable: true , description: "Thông tin tenant id của tài nguyên trong ngữ cảnh DTO." }
   tenantName: { type: string, nullable: true, minLength: 1, maxLength: 254 , description: "Thông tin tenant name của tài nguyên trong ngữ cảnh DTO." }
   tenantPhone: { type: string, nullable: true, minLength: 10, maxLength: 12, pattern: '^0[0-9]{9}$|^\+84[0-9]{9}$', description: "Số điện thoại của người thuê; null khi chưa có thông tin." }
@@ -20,6 +21,7 @@ required:
   - id
   - roomId
   - status
+  - templateKey
   - tenantId
   - tenantName
   - tenantPhone
