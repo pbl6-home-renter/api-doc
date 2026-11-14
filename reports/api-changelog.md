@@ -5,11 +5,36 @@
 
 Báo cáo lưu lịch sử các entry đã phát hiện, mới nhất ở trên. `NO_CHANGE` không xóa entry cũ; exit code chỉ phản ánh lần chạy hiện tại.
 
-Công cụ: Redocly 2.64.1; oasdiff 1.34.1. Số entry: **47**.
+Công cụ: Redocly 2.64.1; oasdiff 1.34.1. Số entry: **48**.
 
 Phân loại: **BREAKING** = client cũ có thể hỏng; **NON_BREAKING** = tương thích theo contract; **NEEDS_REVIEW** = chưa đủ bằng chứng.
 
 Các vị trí dùng JSON Pointer trên bundle tạm (`~1` là `/`). JSON đi kèm giữ toàn bộ semantic diff, fingerprint và hash phục vụ truy vết.
+
+## Thay đổi contract từ Git — NEEDS_REVIEW
+
+- ID: `28baf0395ee11d4d53d80760bf10715ba6eff8923d5c0bf0755811be846d434c`
+- Contract: rentify-public; repository: https://github.com/pbl6-home-renter/api-doc
+- Nguồn: `src/openapi.yaml` → `src/openapi.yaml`
+- Phát hiện (UTC): 2026-11-14T09:41:26.663Z; commit time: 2026-11-14T16:41:14+07:00
+- Commit nền: d314cb83c37f02792e56a6a89eee417aea0c7990
+- Commit đích/bối cảnh: [0dd0d38f4eb65d9cd21e5222d4c12a9cafa5f553](https://github.com/pbl6-home-renter/api-doc/commit/0dd0d38f4eb65d9cd21e5222d4c12a9cafa5f553)
+- PR: [https://github.com/pbl6-home-renter/api-doc/pull/64](https://github.com/pbl6-home-renter/api-doc/pull/64)
+- Loại metadata: Git revision thực tế
+- Lý do: Tìm kiếm cần bao phủ toàn bộ tòa của chủ nhà trước phân trang thay vì chỉ lọc dữ liệu đã tải về client.
+
+| Mức ảnh hưởng | Endpoint / vùng | Thay đổi | Hành động FE / Mobile |
+|---|---|---|---|
+| NEEDS_REVIEW | specification | Có khác biệt cấu trúc/metadata nhưng engine không phân loại tác động; xem bảng trước/sau. (`unclassified-diff`) | FE và Mobile: đối chiếu vị trí và thay đổi trước/sau trong entry này với API adapter, DTO, parser và validation; cùng BE xác nhận phương án tương thích trước merge/phát hành. |
+
+### Vị trí và giá trị trước/sau
+
+| Path / schema / field (JSON Pointer) | Trước | Sau |
+|---|---|---|
+| `/paths/~1me~1buildings/get/description` | "Repository chỉ đọc Building có landlordId của người gọi và isDeleted=false.\nMặc định sort=createdAt, order=desc; pageNo bắt đầu từ 1, pageSize từ 1 đến 100.\nChỉ hỗ trợ format=json (hoặc bỏ format); xlsx/csv/pdf trả 422 VALIDATION_FAILED.\nQuery hoặc filter chứa trường không được hỗ trợ trả 422 UNEXPECTED_FIELD.\n\n**Sequence diagram**\n\n```mermaid\nsequenceDiagram\n    autonumber\n    actor Client\n    participant GW as API Gateway\n    participant S as Tenancy-Service\n    participant Guard as JWT/access guards\n    participant C as MyBuildingController\n    participant Bus as CQRS QueryBus\n    participant H as Application handler\n    Client-&gt;&gt;GW: GET /api/v1/me/buildings\n    GW-&gt;&gt;GW: Validate bearer token for protected route\n    GW-&gt;&gt;S: Proxy original HTTP request\n    S-&gt;&gt;Guard: Validate JWT, account state and route access\n    Guard--&gt;&gt;C: Continue with authenticated context\n    S-&gt;&gt;C: Invoke getMeBuildings\n    C-&gt;&gt;Bus: Execute query for getMeBuildings\n    Bus-&gt;&gt;H: Dispatch query handler\n    H--&gt;&gt;Bus: Return use-case result\n    Bus--&gt;&gt;C: Result\n    C--&gt;&gt;S: Return documented response\n    S--&gt;&gt;GW: HTTP status and response body\n    GW--&gt;&gt;Client: Forward HTTP response\n```" | "Repository chỉ đọc Building có landlordId của người gọi và isDeleted=false.\nMặc định sort=createdAt, order=desc; pageNo bắt đầu từ 1, pageSize từ 1 đến 100.\nChỉ hỗ trợ format=json (hoặc bỏ format); xlsx/csv/pdf trả 422 VALIDATION_FAILED.\nQuery hoặc filter chứa trường không được hỗ trợ trả 422 UNEXPECTED_FIELD.\nfilter[search] tìm chuỗi con không phân biệt hoa thường trong tên hoặc địa chỉ;\nkhoảng trắng đầu/cuối được loại bỏ, chuỗi rỗng bỏ qua; %, _ và \\ được coi là ký tự thường.\n\n**Sequence diagram**\n\n```mermaid\nsequenceDiagram\n    autonumber\n    actor Client\n    participant GW as API Gateway\n    participant S as Tenancy-Service\n    participant Guard as JWT/access guards\n    participant C as MyBuildingController\n    participant Bus as CQRS QueryBus\n    participant H as Application handler\n    Client-&gt;&gt;GW: GET /api/v1/me/buildings\n    GW-&gt;&gt;GW: Validate bearer token for protected route\n    GW-&gt;&gt;S: Proxy original HTTP request\n    S-&gt;&gt;Guard: Validate JWT, account state and route access\n    Guard--&gt;&gt;C: Continue with authenticated context\n    S-&gt;&gt;C: Invoke getMeBuildings\n    C-&gt;&gt;Bus: Execute query for getMeBuildings\n    Bus-&gt;&gt;H: Dispatch query handler\n    H--&gt;&gt;Bus: Return use-case result\n    Bus--&gt;&gt;C: Result\n    C--&gt;&gt;S: Return documented response\n    S--&gt;&gt;GW: HTTP status and response body\n    GW--&gt;&gt;Client: Forward HTTP response\n```" |
+| `/paths/~1me~1buildings/get/parameters` | [{"name":"filter","in":"query","required":false,"style":"deepObject","explode":true,"description":"Bộ lọc được endpoint hỗ trợ.","schema":{"type":"object","additionalProperties":false,"properties":{"status":{"type":"string","enum":["pending","approved","rejected"]}}}},{"name":"sort","in":"query","description":"Chỉ nhận một trong các trường createdAt, name hoặc status.","schema":{"type":"string","enum":["createdAt","name","status"],"default":"createdAt"}},{"name":"order","in":"query","schema":{"type":"string","enum":["asc","desc"],"default":"desc"}},{"name":"pageSize","in":"query","schema":{"type":"integer","minimum":1,"maximum":100,"default":20}},{"name":"pageNo","in":"query","schema":{"type":"integer","minimum":1,"default":1}},{"name":"format","in":"query","description":"Chỉ hỗ trợ JSON envelope; chưa hỗ trợ xuất file.","schema":{"type":"string","enum":["json"],"default":"json"}}] | [{"name":"filter","in":"query","required":false,"style":"deepObject","explode":true,"description":"Bộ lọc được endpoint hỗ trợ.","schema":{"type":"object","additionalProperties":false,"properties":{"status":{"type":"string","enum":["pending","approved","rejected"]},"search":{"type":"string","maxLength":100,"example":"An Bình","description":"Tìm theo tên hoặc địa chỉ tòa nhà."}}},"example":{"status":"approved","search":"An Bình"}},{"name":"sort","in":"query","description":"Chỉ nhận một trong các trường createdAt, name hoặc status.","schema":{"type":"string","enum":["createdAt","name","status"],"default":"createdAt"}},{"name":"order","in":"query","schema":{"type":"string","enum":["asc","desc"],"default":"desc"}},{"name":"pageSize","in":"query","schema":{"type":"integer","minimum":1,"maximum":100,"default":20}},{"name":"pageNo","in":"query","schema":{"type":"integer","minimum":1,"default":1}},{"name":"format","in":"query","description":"Chỉ hỗ trợ JSON envelope; chưa hỗ trợ xuất file.","schema":{"type":"string","enum":["json"],"default":"json"}}] |
+
+**Kiểm tra thủ công:** BE xác nhận lý do, endpoint dùng schema chung, thay đổi role/ownership mô tả bằng văn bản và thời điểm triển khai. FE/Mobile xác nhận tác động với parser và phiên bản client đang hỗ trợ.
 
 ## Thay đổi contract từ Git — NON_BREAKING
 
