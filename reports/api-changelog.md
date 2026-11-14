@@ -5,11 +5,75 @@
 
 Báo cáo lưu lịch sử các entry đã phát hiện, mới nhất ở trên. `NO_CHANGE` không xóa entry cũ; exit code chỉ phản ánh lần chạy hiện tại.
 
-Công cụ: Redocly 2.64.1; oasdiff 1.34.1. Số entry: **44**.
+Công cụ: Redocly 2.64.1; oasdiff 1.34.1. Số entry: **45**.
 
 Phân loại: **BREAKING** = client cũ có thể hỏng; **NON_BREAKING** = tương thích theo contract; **NEEDS_REVIEW** = chưa đủ bằng chứng.
 
 Các vị trí dùng JSON Pointer trên bundle tạm (`~1` là `/`). JSON đi kèm giữ toàn bộ semantic diff, fingerprint và hash phục vụ truy vết.
+
+## Thay đổi contract từ Git — BREAKING
+
+- ID: `6e445ab3ff09c19986393294750c6838241723691f2465bcd185530e5b30ba9b`
+- Contract: rentify-public; repository: https://github.com/pbl6-home-renter/api-doc
+- Nguồn: `src/openapi.yaml` → `src/openapi.yaml`
+- Phát hiện (UTC): 2026-11-14T09:19:48.447Z; commit time: 2026-11-14T16:19:37+07:00
+- Commit nền: 4c8b4dd2a1ceee28099dda1c22a9222e0ebea122
+- Commit đích/bối cảnh: [68a53786a0a87baf8771bc2e289bcea718012149](https://github.com/pbl6-home-renter/api-doc/commit/68a53786a0a87baf8771bc2e289bcea718012149)
+- PR: [https://github.com/pbl6-home-renter/api-doc/pull/62](https://github.com/pbl6-home-renter/api-doc/pull/62)
+- Loại metadata: Git revision thực tế
+- Lý do: Chủ nhà cần lưu lựa chọn mẫu vào hợp đồng nháp và đọc lại khi mở chi tiết hợp đồng.
+
+| Mức ảnh hưởng | Endpoint / vùng | Thay đổi | Hành động FE / Mobile |
+|---|---|---|---|
+| BREAKING | PUT /contracts/{contractId}/apply-template | the `templateKey` request property's maxLength was set to `100` (`request-property-max-length-set`) | FE và Mobile: đối chiếu vị trí và thay đổi trước/sau trong entry này với API adapter, DTO, parser và validation; cùng BE xác nhận phương án tương thích trước merge/phát hành. |
+| BREAKING | PUT /contracts/{contractId}/apply-template | the `templateKey` request property's minLength was set to `1` (`request-property-min-length-set`) | FE và Mobile: đối chiếu vị trí và thay đổi trước/sau trong entry này với API adapter, DTO, parser và validation; cùng BE xác nhận phương án tương thích trước merge/phát hành. |
+| BREAKING | PUT /contracts/{contractId}/apply-template | added the pattern `\S` to the request property `templateKey` (`request-property-pattern-added`) | FE và Mobile: đối chiếu vị trí và thay đổi trước/sau trong entry này với API adapter, DTO, parser và validation; cùng BE xác nhận phương án tương thích trước merge/phát hành. |
+| BREAKING | PUT /contracts/{contractId}/apply-template | the response property `data/templateKey` became nullable for the status `200` (`response-property-became-nullable`) | FE và Mobile: đối chiếu vị trí và thay đổi trước/sau trong entry này với API adapter, DTO, parser và validation; cùng BE xác nhận phương án tương thích trước merge/phát hành. |
+| BREAKING | PUT /contracts/{contractId}/apply-template | added the new `active` enum value to the `data/status` response property for the response status `200` (`response-property-enum-value-added`) | FE: có thể bỏ qua field mới active; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại. |
+| BREAKING | PUT /contracts/{contractId}/apply-template | added the new `expired` enum value to the `data/status` response property for the response status `200` (`response-property-enum-value-added`) | FE: có thể bỏ qua field mới expired; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại. |
+| BREAKING | PUT /contracts/{contractId}/apply-template | added the new `signed` enum value to the `data/status` response property for the response status `200` (`response-property-enum-value-added`) | FE: có thể bỏ qua field mới signed; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại. |
+| BREAKING | PUT /contracts/{contractId}/apply-template | added the new `suspended` enum value to the `data/status` response property for the response status `200` (`response-property-enum-value-added`) | FE: có thể bỏ qua field mới suspended; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại. |
+| BREAKING | PUT /contracts/{contractId}/apply-template | added the new `terminated` enum value to the `data/status` response property for the response status `200` (`response-property-enum-value-added`) | FE: có thể bỏ qua field mới terminated; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại. |
+| NON_BREAKING | info | Đã phát hiện breaking change nhưng info.version vẫn là `1.0.0`. (`api-version-not-bumped`) | BE: xem lại quy ước version trước khi chấp nhận breaking change. FE/Mobile: theo kế hoạch chuyển đổi của entry này; version trong OpenAPI chưa chứng minh backend đã triển khai. |
+| NON_BREAKING | GET /contracts/{contractId} | added the required property `data/templateKey` to the response with the `200` status (`response-required-property-added`) | FE: có thể bỏ qua field mới data/templateKey; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại. |
+| NON_BREAKING | PUT /contracts/{contractId}/apply-template | the `data/templateKey` response property's maxLength was set to `100` for the response status `200` (`response-property-max-length-set`) | FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI. |
+| NON_BREAKING | PUT /contracts/{contractId}/apply-template | added the required property `data/depositAmount` to the response with the `200` status (`response-required-property-added`) | FE: có thể bỏ qua field mới data/depositAmount; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại. |
+| NON_BREAKING | PUT /contracts/{contractId}/apply-template | added the required property `data/description` to the response with the `200` status (`response-required-property-added`) | FE: có thể bỏ qua field mới data/description; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại. |
+| NON_BREAKING | PUT /contracts/{contractId}/apply-template | added the required property `data/endDate` to the response with the `200` status (`response-required-property-added`) | FE: có thể bỏ qua field mới data/endDate; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại. |
+| NON_BREAKING | PUT /contracts/{contractId}/apply-template | added the required property `data/rentPrice` to the response with the `200` status (`response-required-property-added`) | FE: có thể bỏ qua field mới data/rentPrice; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại. |
+| NON_BREAKING | PUT /contracts/{contractId}/apply-template | added the required property `data/roomId` to the response with the `200` status (`response-required-property-added`) | FE: có thể bỏ qua field mới data/roomId; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại. |
+| NON_BREAKING | PUT /contracts/{contractId}/apply-template | added the required property `data/startDate` to the response with the `200` status (`response-required-property-added`) | FE: có thể bỏ qua field mới data/startDate; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại. |
+| NON_BREAKING | PUT /contracts/{contractId}/apply-template | added the required property `data/tenantId` to the response with the `200` status (`response-required-property-added`) | FE: có thể bỏ qua field mới data/tenantId; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại. |
+| NON_BREAKING | PUT /contracts/{contractId}/apply-template | added the required property `data/tenantName` to the response with the `200` status (`response-required-property-added`) | FE: có thể bỏ qua field mới data/tenantName; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại. |
+| NON_BREAKING | PUT /contracts/{contractId}/apply-template | added the required property `data/tenantPhone` to the response with the `200` status (`response-required-property-added`) | FE: có thể bỏ qua field mới data/tenantPhone; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại. |
+| NON_BREAKING | PUT /contracts/{contractId}/apply-template | added the required property `data/vehicleCount` to the response with the `200` status (`response-required-property-added`) | FE: có thể bỏ qua field mới data/vehicleCount; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại. |
+
+### Vị trí và giá trị trước/sau
+
+| Path / schema / field (JSON Pointer) | Trước | Sau |
+|---|---|---|
+| `/components/schemas/ContractApplyTemplateRequestDto/properties/templateKey/description` | "Thông tin template key của tài nguyên trong ngữ cảnh DTO." | "Khóa của mẫu hợp đồng đang hoạt động." |
+| `/components/schemas/ContractApplyTemplateRequestDto/properties/templateKey/maxLength` | null | 100 |
+| `/components/schemas/ContractApplyTemplateRequestDto/properties/templateKey/minLength` | null | 1 |
+| `/components/schemas/ContractApplyTemplateRequestDto/properties/templateKey/pattern` | null | "\\S" |
+| `/components/schemas/ContractDetailResponseDto/properties/templateKey` | null | {"type":"string","nullable":true,"maxLength":100,"description":"Mẫu đã áp dụng; null nếu chưa chọn mẫu."} |
+| `/components/schemas/ContractDetailResponseDto/required` | ["id","roomId","status","tenantId","tenantName","tenantPhone","rentPrice","depositAmount","startDate","endDate","vehicleCount","description"] | ["id","roomId","status","templateKey","tenantId","tenantName","tenantPhone","rentPrice","depositAmount","startDate","endDate","vehicleCount","description"] |
+| `/paths/~1contracts~1{contractId}/get/responses/200/content/application~1json/example/data/templateKey` | null | null |
+| `/paths/~1contracts~1{contractId}~1apply-template/put/description` | "**Trạng thái triển khai:** endpoint chưa được triển khai trong Tenancy-Service và đang tạm hoãn.\nContract hiện chưa có cơ chế lưu liên kết mẫu; cần chốt cơ chế lưu trước khi triển khai handler.\nThis API remains in designing until its controller and handler are implemented.\nNo implementation sequence is published because this endpoint is not implemented.\n\nMẫu không có, inactive hoặc đã xóa trả 404 TEMPLATE_NOT_FOUND;\nhợp đồng không có hoặc đã xóa trả 404 CONTRACT_NOT_FOUND; khác chủ trả 403 FORBIDDEN;\nhợp đồng không còn draft trả 409 CONTRACT_NOT_DRAFT.\nKhi triển khai, lưu liên kết mẫu và append outbox trong cùng UoW; relay publish sau commit." | "Lưu lựa chọn mẫu vào hợp đồng nháp của chủ nhà.\nMẫu không có, inactive hoặc đã xóa trả 404 TEMPLATE_NOT_FOUND;\nhợp đồng không có hoặc đã xóa trả 404 CONTRACT_NOT_FOUND; khác chủ trả 403 FORBIDDEN;\nhợp đồng không còn draft trả 409 CONTRACT_NOT_DRAFT.\nLưu liên kết mẫu và append outbox trong cùng UoW; relay publish sau commit." |
+| `/paths/~1contracts~1{contractId}~1apply-template/put/responses/200/content/application~1json/example/data/depositAmount` | null | 3000000 |
+| `/paths/~1contracts~1{contractId}~1apply-template/put/responses/200/content/application~1json/example/data/description` | null | null |
+| `/paths/~1contracts~1{contractId}~1apply-template/put/responses/200/content/application~1json/example/data/endDate` | null | "2026-12-31" |
+| `/paths/~1contracts~1{contractId}~1apply-template/put/responses/200/content/application~1json/example/data/rentPrice` | null | 3000000 |
+| `/paths/~1contracts~1{contractId}~1apply-template/put/responses/200/content/application~1json/example/data/roomId` | null | "3fa85f64-5717-4562-b3fc-2c963f66afa7" |
+| `/paths/~1contracts~1{contractId}~1apply-template/put/responses/200/content/application~1json/example/data/startDate` | null | "2026-01-01" |
+| `/paths/~1contracts~1{contractId}~1apply-template/put/responses/200/content/application~1json/example/data/tenantId` | null | null |
+| `/paths/~1contracts~1{contractId}~1apply-template/put/responses/200/content/application~1json/example/data/tenantName` | null | "Nguyễn An" |
+| `/paths/~1contracts~1{contractId}~1apply-template/put/responses/200/content/application~1json/example/data/tenantPhone` | null | "0912345678" |
+| `/paths/~1contracts~1{contractId}~1apply-template/put/responses/200/content/application~1json/example/data/vehicleCount` | null | 0 |
+| `/paths/~1contracts~1{contractId}~1apply-template/put/responses/200/content/application~1json/schema/properties/data/$ref` | "#/components/schemas/ContractApplyTemplateResponseDto" | "#/components/schemas/ContractDetailResponseDto" |
+| `/paths/~1contracts~1{contractId}~1apply-template/put/x-apidog-status` | "designing" | "developing" |
+
+**Kiểm tra thủ công:** BE xác nhận lý do, endpoint dùng schema chung, thay đổi role/ownership mô tả bằng văn bản và thời điểm triển khai. FE/Mobile xác nhận tác động với parser và phiên bản client đang hỗ trợ.
 
 ## Thay đổi contract từ Git — NON_BREAKING
 
