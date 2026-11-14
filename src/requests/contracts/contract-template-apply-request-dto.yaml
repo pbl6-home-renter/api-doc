@@ -4,5 +4,5 @@ title: ContractApplyTemplateRequestDto
 description: Dữ liệu áp dụng mẫu hợp đồng
 additionalProperties: false
 properties:
-  templateKey: { type: string , description: "Thông tin template key của tài nguyên trong ngữ cảnh DTO." }
+  templateKey: { type: string, minLength: 1, maxLength: 100, pattern: '\S', description: "Khóa của mẫu hợp đồng đang hoạt động." }
 required: [templateKey]
