@@ -7,6 +7,7 @@ properties:
   conversationId: { type: string, format: uuid , description: "Thông tin conversation id của tài nguyên trong ngữ cảnh DTO." }
   senderUserId: { type: string, format: uuid, nullable: true, description: "ID user gửi tin; null với system message." }
   senderName: { type: string, maxLength: 254 }
+  senderAvatarUrl: { type: string, nullable: true, description: 'URL công khai avatar hiện tại của người gửi (lấy từ Identity lúc đọc); `null` với system message, user chưa có avatar hoặc khi Identity không phản hồi (best effort).' }
   senderType: { type: string, enum: [user, system] }
   sequence: { type: string, pattern: '^\d+$', example: '42', description: Bigint sequence dưới dạng chuỗi thập phân. }
   clientMessageId: { type: string, format: uuid, nullable: true, description: "ID retry do client tạo; null với system message." }
@@ -32,4 +33,4 @@ properties:
     allOf:
       - $ref: ../../../openapi.yaml#/components/schemas/MessageReplyReference
   createdAt: { type: string, format: date-time , description: "Thời điểm bản ghi được tạo, theo định dạng ngày giờ ISO 8601." }
-required: [id, conversationId, senderUserId, senderName, senderType, sequence, clientMessageId, type, content, mediaId, payload, replyTo, createdAt]
+required: [id, conversationId, senderUserId, senderName, senderAvatarUrl, senderType, sequence, clientMessageId, type, content, mediaId, payload, replyTo, createdAt]

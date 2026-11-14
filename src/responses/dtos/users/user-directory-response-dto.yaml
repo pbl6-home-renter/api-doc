@@ -1,7 +1,7 @@
 type: object
 x-apidog-folder: User/Response
 title: UserDirectoryResponseDto
-description: Một Landlord/Tenant đang hoạt động trong kết quả tìm người để chat; chỉ lộ ID và tên.
+description: Một Landlord/Tenant đang hoạt động trong kết quả tìm người để chat; chỉ lộ ID, tên và avatar.
 properties:
   id:
     type: string
@@ -12,7 +12,13 @@ properties:
     type: string
     description: Họ và tên hiện tại của người dùng.
     example: Nguyễn Văn An
+  avatarUrl:
+    type: string
+    nullable: true
+    description: URL công khai của avatar hiện tại (Identity, media `purpose=avatar`); `null` nếu user chưa có avatar.
+    example: 'https://media.example.com/avatars/3fa85f64.jpg'
 required:
 - id
 - name
+- avatarUrl
 additionalProperties: false

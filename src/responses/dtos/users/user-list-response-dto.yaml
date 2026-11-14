@@ -35,6 +35,11 @@ properties:
     - locked
     description: 'Trạng thái tài khoản (pending_verification: chưa xác minh email, active: bình thường, locked: bị khóa bởi admin).'
     example: active
+  avatarUrl:
+    type: string
+    nullable: true
+    description: URL công khai của avatar hiện tại (Identity, media `purpose=avatar`); `null` nếu user chưa có avatar.
+    example: 'https://media.example.com/avatars/3fa85f64.jpg'
 required:
 - id
 - name
@@ -42,4 +47,5 @@ required:
 - phone
 - role
 - status
+- avatarUrl
 additionalProperties: false
