@@ -8,7 +8,7 @@ get:
   - BearerAuth: []
   summary: Get total unread messages
   description: |-
-    **Quy tắc unread chung** (giống `unreadCount` của `GET /conversations`, `GET /conversations/{conversationId}`, response `POST /messages/mark-read` và Socket `conversation:read-updated`): đếm message chưa xóa có `type` thuộc `text`, `image`, `bot`; `sequence > lastReadSequence` của member; người gửi khác chính member đó. Message `system` vẫn có trong lịch sử nhưng không bao giờ được đếm. Member `read_only` chỉ đếm tới `leftSequence`.
+    **Quy tắc unread chung** (giống `unreadCount` của `GET /conversations`, `GET /conversations/{conversationId}`, response `POST /messages/mark-read` và Socket `conversation:read-updated`): đếm message chưa xóa có `type` thuộc `text`, `image`, `video`, `file`, `bot`; `sequence > lastReadSequence` của member; người gửi khác chính member đó. Message `system` vẫn có trong lịch sử nhưng không bao giờ được đếm. Member `read_only` chỉ đếm tới `leftSequence`.
     
     Route tĩnh `/conversations/unread-summary` được khai báo trước `/conversations/{conversationId}`; `conversationId` luôn là UUID nên `unread-summary` không bị hiểu là ID.
     

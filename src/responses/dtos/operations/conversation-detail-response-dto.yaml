@@ -13,7 +13,11 @@ properties:
     maxLength: 255
     description: Tên hiển thị theo người đang xem. Direct dùng `displayName` snapshot của người còn lại trên ConversationMember (không cập nhật khi người đó đổi tên hồ sơ); group dùng `title` đã lưu. `null` chỉ khi dữ liệu cũ không có title/thành viên còn lại.
   avatarMediaId: { type: string, format: uuid, nullable: true }
-  unreadCount: { type: integer, minimum: 0, description: 'Số tin text/image/bot chưa đọc của người khác gửi; không tính system, read-only chỉ tới leftSequence.' }
+  avatarUrl:
+    type: string
+    nullable: true
+    description: 'Ảnh để hiển thị theo người đang xem. Group: `/api/v1/media/{avatarMediaId}` (private, FE tải qua `GET /media/{mediaId}/download-url`), `null` nếu nhóm chưa có ảnh. Direct: URL công khai avatar hiện tại của người còn lại, `null` nếu người đó chưa có avatar hoặc Identity không phản hồi (best effort).'
+  unreadCount: { type: integer, minimum: 0, description: 'Số tin text/image/video/file/bot chưa đọc của người khác gửi; không tính system, read-only chỉ tới leftSequence.' }
   members:
     type: array
     items: { $ref: ../../../schemas/chat/conversation-member.yaml }

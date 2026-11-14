@@ -12,7 +12,7 @@ get:
     - Kết quả: chỉ user `landlord`/`tenant`, `status=active`, chưa bị xóa; luôn loại chính người gọi.
     - `q` tùy chọn; bỏ trống hoặc chỉ có khoảng trắng thì trả danh sách phân trang. Khi có từ khóa, server trim rồi khớp một phần tên không phân biệt chữ hoa/thường và dấu tiếng Việt. Ký tự %, _ và backslash trong q được hiểu theo nghĩa đen.
     - Lọc, đếm `totalItems` và phân trang đều chạy trên DB trước khi cắt trang. Sắp xếp cố định theo `name` tăng dần rồi `id` tăng dần.
-    - Mỗi phần tử chỉ có `id`, `name`; không trả email, phone, role, status hoặc avatar. Hai người trùng tên được trả thành hai phần tử khác `id`.
+    - Mỗi phần tử chỉ có `id`, `name`, `avatarUrl` (URL công khai, `null` nếu chưa có avatar); không trả email, phone, role, status. Hai người trùng tên được trả thành hai phần tử khác `id`.
     - Không cần PostgreSQL extension: Identity chuẩn hóa dấu bằng hàm `translate()` sẵn có trên cả cột `name` và `q`. Truy vấn quét theo điều kiện role/status/is_deleted, không dùng index cho phần tìm tên.
     
     **Sequence diagram**
@@ -131,6 +131,7 @@ get:
             data:
             - id: '3fa85f64-5717-4562-b3fc-2c963f66afa6'
               name: Nguyễn Văn An
+              avatarUrl: 'https://media.example.com/avatars/3fa85f64.jpg'
             pagination:
               type: offset
               pageNo: 1

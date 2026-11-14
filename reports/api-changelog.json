@@ -60284,6 +60284,2782 @@
           }
         }
       }
+    },
+    {
+      "id": "52059559a82e763ca308e7b8fa0387788f95c1485eb0b4497340ed3a0e838ee5",
+      "label": "Thay đổi contract từ Git",
+      "classification": "NON_BREAKING",
+      "contractId": "rentify-public",
+      "repository": "https://github.com/pbl6-home-renter/api-doc",
+      "baseHash": "7d022d9518dc86d139210f40d986325e401a4003fa0948328a08ad2fed84a100",
+      "headHash": "dd86be08634db5c5d3799f6c29822fb88a5142501cc9c859a0b9c71ebb68599b",
+      "baseSource": "src/openapi.yaml",
+      "headSource": "src/openapi.yaml",
+      "detectedAt": "2026-11-13T13:06:38.412Z",
+      "committedAt": "2026-11-13T20:06:27+07:00",
+      "baseCommit": "b6508815989c9dce60f67c4ae833182f8fe4b399",
+      "headCommit": "2859fa71c5698add36d3b5cbcac9421a241dd50a",
+      "prUrl": "https://github.com/pbl6-home-renter/api-doc/pull/58",
+      "commitUrl": "https://github.com/pbl6-home-renter/api-doc/commit/2859fa71c5698add36d3b5cbcac9421a241dd50a",
+      "metadataKind": "Git revision thực tế",
+      "reason": "CHƯA CUNG CẤP — tác giả PR phải bổ sung lý do nghiệp vụ; không thể suy ra từ OpenAPI diff.",
+      "tools": {
+        "redocly": "2.64.1",
+        "oasdiff": "1.34.1"
+      },
+      "changes": [
+        {
+          "id": "new-optional-request-parameter",
+          "text": "added the new optional `query` request parameter `afterSequence`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getMessages",
+          "path": "/messages",
+          "section": "paths",
+          "fingerprint": "53add30f3309",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        }
+      ],
+      "locations": [
+        {
+          "pointer": "/paths/~1messages/get/parameters",
+          "before": [
+            {
+              "name": "conversationId",
+              "in": "query",
+              "required": true,
+              "schema": {
+                "type": "string",
+                "format": "uuid"
+              }
+            },
+            {
+              "name": "cursor",
+              "in": "query",
+              "description": "Cursor opaque từ trang trước; bỏ qua ở trang đầu.",
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "pageSize",
+              "in": "query",
+              "schema": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 100,
+                "default": 30
+              }
+            },
+            {
+              "name": "maxSequence",
+              "in": "query",
+              "required": false,
+              "description": "(Chat v2, tùy chọn) Chỉ trả tin có `sequence <= maxSequence` — dùng để mở một tin tìm được hoặc tin gốc của trích dẫn.\nTrang tiếp theo dùng `cursor` như bình thường (có thể gửi lại `maxSequence`, kết quả không đổi). Không vượt `leftSequence` của thành viên `read_only`.",
+              "schema": {
+                "type": "string",
+                "pattern": "^[1-9]\\d{0,17}$",
+                "example": "42"
+              }
+            }
+          ],
+          "after": [
+            {
+              "name": "conversationId",
+              "in": "query",
+              "required": true,
+              "schema": {
+                "type": "string",
+                "format": "uuid"
+              }
+            },
+            {
+              "name": "cursor",
+              "in": "query",
+              "description": "Cursor opaque từ trang trước; bỏ qua ở trang đầu.",
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "pageSize",
+              "in": "query",
+              "schema": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 100,
+                "default": 30
+              }
+            },
+            {
+              "name": "maxSequence",
+              "in": "query",
+              "required": false,
+              "description": "(Chat v2, tùy chọn) Chỉ trả tin có `sequence <= maxSequence` — dùng để mở một tin tìm được hoặc tin gốc của trích dẫn.\nTrang tiếp theo dùng `cursor` như bình thường (có thể gửi lại `maxSequence`, kết quả không đổi). Không vượt `leftSequence` của thành viên `read_only`.",
+              "schema": {
+                "type": "string",
+                "pattern": "^[1-9]\\d{0,17}$",
+                "example": "42"
+              }
+            },
+            {
+              "name": "afterSequence",
+              "in": "query",
+              "required": false,
+              "description": "(Chat v2, tùy chọn) Chỉ trả tin có `sequence > afterSequence`, **sắp `sequence` tăng dần** — dùng để tải tin mới hơn khi đang xem một tin cũ (mở bằng `maxSequence`).\nFE gọi lại với `afterSequence` = sequence lớn nhất đã tải cho tới khi `hasNextPage=false` (đã tới tin mới nhất). Cursor của trang tăng dần chỉ dùng được với request có `afterSequence`. Vẫn áp giới hạn `leftSequence` của thành viên `read_only`.",
+              "schema": {
+                "type": "string",
+                "pattern": "^(0|[1-9]\\d{0,17})$",
+                "example": "42"
+              }
+            }
+          ]
+        }
+      ],
+      "semanticDiff": {
+        "paths": {
+          "modified": {
+            "/messages": {
+              "operations": {
+                "modified": {
+                  "GET": {
+                    "parameters": {
+                      "added": {
+                        "query": [
+                          "afterSequence"
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "08d9c02d4f6cd4904d24fff4011d6a5645295126941c02870c6c0a33ffe4e540",
+      "label": "Thay đổi contract từ Git",
+      "classification": "BREAKING",
+      "contractId": "rentify-public",
+      "repository": "https://github.com/pbl6-home-renter/api-doc",
+      "baseHash": "dd86be08634db5c5d3799f6c29822fb88a5142501cc9c859a0b9c71ebb68599b",
+      "headHash": "ee8740efaf2be1b34a76a04b9dc2ee0029431298099be0e16d6ecc440448c042",
+      "baseSource": "src/openapi.yaml",
+      "headSource": "src/openapi.yaml",
+      "detectedAt": "2026-11-13T16:13:05.952Z",
+      "committedAt": "2026-11-13T23:12:39+07:00",
+      "baseCommit": "e778d4991825fb6db5e49b7a7ec946c65de452fc",
+      "headCommit": "5981f6d8d6c80fc2bea49e6648a3b7701ae0c985",
+      "prUrl": "https://github.com/pbl6-home-renter/api-doc/pull/59",
+      "commitUrl": "https://github.com/pbl6-home-renter/api-doc/commit/5981f6d8d6c80fc2bea49e6648a3b7701ae0c985",
+      "metadataKind": "Git revision thực tế",
+      "reason": "CHƯA CUNG CẤP — tác giả PR phải bổ sung lý do nghiệp vụ; không thể suy ra từ OpenAPI diff.",
+      "tools": {
+        "redocly": "2.64.1",
+        "oasdiff": "1.34.1"
+      },
+      "changes": [
+        {
+          "id": "response-property-enum-value-added",
+          "text": "added the new `file` enum value to the `data/items/lastMessage/type` response property for the response status `200`",
+          "comment": "The server may now return a value the previous contract excluded, so a client written against it may not handle the response. If the value set is meant to grow, declare it with x-extensible-enum.",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getConversations",
+          "path": "/conversations",
+          "section": "paths",
+          "fingerprint": "d08703cfb12c",
+          "classification": "BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới file; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-property-enum-value-added",
+          "text": "added the new `video` enum value to the `data/items/lastMessage/type` response property for the response status `200`",
+          "comment": "The server may now return a value the previous contract excluded, so a client written against it may not handle the response. If the value set is meant to grow, declare it with x-extensible-enum.",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getConversations",
+          "path": "/conversations",
+          "section": "paths",
+          "fingerprint": "9c13702bd02d",
+          "classification": "BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới video; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-property-enum-value-added",
+          "text": "added the new `file` enum value to the `data/replyTo/type` response property for the response status `201`",
+          "comment": "The server may now return a value the previous contract excluded, so a client written against it may not handle the response. If the value set is meant to grow, declare it with x-extensible-enum.",
+          "level": 3,
+          "operation": "POST",
+          "operationId": "sendBotReminder",
+          "path": "/conversations/{conversationId}/bot-reminders",
+          "section": "paths",
+          "fingerprint": "da091d5ffad5",
+          "classification": "BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới file; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-property-enum-value-added",
+          "text": "added the new `file` enum value to the `data/type` response property for the response status `201`",
+          "comment": "The server may now return a value the previous contract excluded, so a client written against it may not handle the response. If the value set is meant to grow, declare it with x-extensible-enum.",
+          "level": 3,
+          "operation": "POST",
+          "operationId": "sendBotReminder",
+          "path": "/conversations/{conversationId}/bot-reminders",
+          "section": "paths",
+          "fingerprint": "14356f59803b",
+          "classification": "BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới file; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-property-enum-value-added",
+          "text": "added the new `video` enum value to the `data/replyTo/type` response property for the response status `201`",
+          "comment": "The server may now return a value the previous contract excluded, so a client written against it may not handle the response. If the value set is meant to grow, declare it with x-extensible-enum.",
+          "level": 3,
+          "operation": "POST",
+          "operationId": "sendBotReminder",
+          "path": "/conversations/{conversationId}/bot-reminders",
+          "section": "paths",
+          "fingerprint": "bb56bcbbda0d",
+          "classification": "BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới video; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-property-enum-value-added",
+          "text": "added the new `video` enum value to the `data/type` response property for the response status `201`",
+          "comment": "The server may now return a value the previous contract excluded, so a client written against it may not handle the response. If the value set is meant to grow, declare it with x-extensible-enum.",
+          "level": 3,
+          "operation": "POST",
+          "operationId": "sendBotReminder",
+          "path": "/conversations/{conversationId}/bot-reminders",
+          "section": "paths",
+          "fingerprint": "e4cef12969ac",
+          "classification": "BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới video; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-property-enum-value-added",
+          "text": "added the new `video/mp4` enum value to the `data/requiredHeaders/Content-Type` response property for the response status `201`",
+          "comment": "The server may now return a value the previous contract excluded, so a client written against it may not handle the response. If the value set is meant to grow, declare it with x-extensible-enum.",
+          "level": 3,
+          "operation": "POST",
+          "operationId": "postMediaPresignUpload",
+          "path": "/media/presign-upload",
+          "section": "paths",
+          "fingerprint": "56b2cb780450",
+          "classification": "BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới video/mp4; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-property-enum-value-added",
+          "text": "added the new `video/webm` enum value to the `data/requiredHeaders/Content-Type` response property for the response status `201`",
+          "comment": "The server may now return a value the previous contract excluded, so a client written against it may not handle the response. If the value set is meant to grow, declare it with x-extensible-enum.",
+          "level": 3,
+          "operation": "POST",
+          "operationId": "postMediaPresignUpload",
+          "path": "/media/presign-upload",
+          "section": "paths",
+          "fingerprint": "447dc27cda4f",
+          "classification": "BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới video/webm; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-property-enum-value-added",
+          "text": "added the new `file` enum value to the `data/items/replyTo/type` response property for the response status `200`",
+          "comment": "The server may now return a value the previous contract excluded, so a client written against it may not handle the response. If the value set is meant to grow, declare it with x-extensible-enum.",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getMessages",
+          "path": "/messages",
+          "section": "paths",
+          "fingerprint": "890ed44f1972",
+          "classification": "BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới file; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-property-enum-value-added",
+          "text": "added the new `file` enum value to the `data/items/type` response property for the response status `200`",
+          "comment": "The server may now return a value the previous contract excluded, so a client written against it may not handle the response. If the value set is meant to grow, declare it with x-extensible-enum.",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getMessages",
+          "path": "/messages",
+          "section": "paths",
+          "fingerprint": "1a94ba5c57b8",
+          "classification": "BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới file; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-property-enum-value-added",
+          "text": "added the new `video` enum value to the `data/items/replyTo/type` response property for the response status `200`",
+          "comment": "The server may now return a value the previous contract excluded, so a client written against it may not handle the response. If the value set is meant to grow, declare it with x-extensible-enum.",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getMessages",
+          "path": "/messages",
+          "section": "paths",
+          "fingerprint": "3f50e9d801ff",
+          "classification": "BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới video; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-property-enum-value-added",
+          "text": "added the new `video` enum value to the `data/items/type` response property for the response status `200`",
+          "comment": "The server may now return a value the previous contract excluded, so a client written against it may not handle the response. If the value set is meant to grow, declare it with x-extensible-enum.",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getMessages",
+          "path": "/messages",
+          "section": "paths",
+          "fingerprint": "2caf340633a9",
+          "classification": "BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới video; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-property-enum-value-added",
+          "text": "added the new `file` enum value to the `data/replyTo/type` response property for the response status `201`",
+          "comment": "The server may now return a value the previous contract excluded, so a client written against it may not handle the response. If the value set is meant to grow, declare it with x-extensible-enum.",
+          "level": 3,
+          "operation": "POST",
+          "operationId": "postMessages",
+          "path": "/messages",
+          "section": "paths",
+          "fingerprint": "5451e837d18a",
+          "classification": "BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới file; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-property-enum-value-added",
+          "text": "added the new `file` enum value to the `data/type` response property for the response status `201`",
+          "comment": "The server may now return a value the previous contract excluded, so a client written against it may not handle the response. If the value set is meant to grow, declare it with x-extensible-enum.",
+          "level": 3,
+          "operation": "POST",
+          "operationId": "postMessages",
+          "path": "/messages",
+          "section": "paths",
+          "fingerprint": "ef284accce51",
+          "classification": "BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới file; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-property-enum-value-added",
+          "text": "added the new `video` enum value to the `data/replyTo/type` response property for the response status `201`",
+          "comment": "The server may now return a value the previous contract excluded, so a client written against it may not handle the response. If the value set is meant to grow, declare it with x-extensible-enum.",
+          "level": 3,
+          "operation": "POST",
+          "operationId": "postMessages",
+          "path": "/messages",
+          "section": "paths",
+          "fingerprint": "43bbe7b558f9",
+          "classification": "BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới video; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-property-enum-value-added",
+          "text": "added the new `video` enum value to the `data/type` response property for the response status `201`",
+          "comment": "The server may now return a value the previous contract excluded, so a client written against it may not handle the response. If the value set is meant to grow, declare it with x-extensible-enum.",
+          "level": 3,
+          "operation": "POST",
+          "operationId": "postMessages",
+          "path": "/messages",
+          "section": "paths",
+          "fingerprint": "797101079632",
+          "classification": "BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới video; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-property-enum-value-added",
+          "text": "added the new `file` enum value to the `data/items/type` response property for the response status `200`",
+          "comment": "The server may now return a value the previous contract excluded, so a client written against it may not handle the response. If the value set is meant to grow, declare it with x-extensible-enum.",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getMessagesSearch",
+          "path": "/messages/search",
+          "section": "paths",
+          "fingerprint": "2b05aa5c1359",
+          "classification": "BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới file; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-property-enum-value-added",
+          "text": "added the new `video` enum value to the `data/items/type` response property for the response status `200`",
+          "comment": "The server may now return a value the previous contract excluded, so a client written against it may not handle the response. If the value set is meant to grow, declare it with x-extensible-enum.",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getMessagesSearch",
+          "path": "/messages/search",
+          "section": "paths",
+          "fingerprint": "58c907517ef2",
+          "classification": "BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới video; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "api-version-not-bumped",
+          "text": "a breaking change was detected but the version is still `1.0.0`",
+          "level": 1,
+          "section": "info",
+          "fingerprint": "d3f96cd643c1",
+          "classification": "NON_BREAKING",
+          "clientImpact": "BE: xem lại quy ước version trước khi chấp nhận breaking change. FE/Mobile: theo kế hoạch chuyển đổi của entry này; version trong OpenAPI chưa chứng minh backend đã triển khai."
+        },
+        {
+          "id": "request-property-enum-value-added",
+          "text": "added the new `video/mp4` enum value to the request property `contentType`",
+          "level": 1,
+          "operation": "POST",
+          "operationId": "postMediaPresignUpload",
+          "path": "/media/presign-upload",
+          "section": "paths",
+          "fingerprint": "084286834dd1",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu enum trong DTO/validation và nhánh switch/when; xử lý giá trị chưa biết, kiểm thử dữ liệu cũ và mới; phối hợp BE trước khi phát hành."
+        },
+        {
+          "id": "request-property-enum-value-added",
+          "text": "added the new `video/webm` enum value to the request property `contentType`",
+          "level": 1,
+          "operation": "POST",
+          "operationId": "postMediaPresignUpload",
+          "path": "/media/presign-upload",
+          "section": "paths",
+          "fingerprint": "e786d58a03fd",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu enum trong DTO/validation và nhánh switch/when; xử lý giá trị chưa biết, kiểm thử dữ liệu cũ và mới; phối hợp BE trước khi phát hành."
+        },
+        {
+          "id": "response-required-property-added",
+          "text": "added the required property `data/contentType` to the response with the `200` status",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getMediaDownloadUrl",
+          "path": "/media/{mediaId}/download-url",
+          "section": "paths",
+          "fingerprint": "85326af61aa3",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/contentType; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-required-property-added",
+          "text": "added the required property `data/fileName` to the response with the `200` status",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getMediaDownloadUrl",
+          "path": "/media/{mediaId}/download-url",
+          "section": "paths",
+          "fingerprint": "93238161f77f",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/fileName; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "request-property-enum-value-added",
+          "text": "added the new `file` enum value to the request property `type`",
+          "level": 1,
+          "operation": "POST",
+          "operationId": "postMessages",
+          "path": "/messages",
+          "section": "paths",
+          "fingerprint": "72013281969a",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu enum trong DTO/validation và nhánh switch/when; xử lý giá trị chưa biết, kiểm thử dữ liệu cũ và mới; phối hợp BE trước khi phát hành."
+        },
+        {
+          "id": "request-property-enum-value-added",
+          "text": "added the new `video` enum value to the request property `type`",
+          "level": 1,
+          "operation": "POST",
+          "operationId": "postMessages",
+          "path": "/messages",
+          "section": "paths",
+          "fingerprint": "1a94b5e91f23",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu enum trong DTO/validation và nhánh switch/when; xử lý giá trị chưa biết, kiểm thử dữ liệu cũ và mới; phối hợp BE trước khi phát hành."
+        }
+      ],
+      "locations": [
+        {
+          "pointer": "/components/schemas/ConversationDetailResponseDto/properties/unreadCount/description",
+          "before": "Số tin text/image/bot chưa đọc của người khác gửi; không tính system, read-only chỉ tới leftSequence.",
+          "after": "Số tin text/image/video/file/bot chưa đọc của người khác gửi; không tính system, read-only chỉ tới leftSequence."
+        },
+        {
+          "pointer": "/components/schemas/ConversationListResponseDto/properties/lastMessage/properties/type/enum",
+          "before": [
+            "text",
+            "image",
+            "system",
+            "bot"
+          ],
+          "after": [
+            "text",
+            "image",
+            "video",
+            "file",
+            "system",
+            "bot"
+          ]
+        },
+        {
+          "pointer": "/components/schemas/ConversationListResponseDto/properties/unreadCount/description",
+          "before": "Số tin text/image/bot chưa đọc của người khác gửi; không tính system, read-only chỉ tới leftSequence.",
+          "after": "Số tin text/image/video/file/bot chưa đọc của người khác gửi; không tính system, read-only chỉ tới leftSequence."
+        },
+        {
+          "pointer": "/components/schemas/MediaDownloadUrlResponseDto/properties/contentType",
+          "before": null,
+          "after": {
+            "type": "string",
+            "description": "MIME type of the file."
+          }
+        },
+        {
+          "pointer": "/components/schemas/MediaDownloadUrlResponseDto/properties/fileName",
+          "before": null,
+          "after": {
+            "type": "string",
+            "description": "Original file name."
+          }
+        },
+        {
+          "pointer": "/components/schemas/MediaDownloadUrlResponseDto/required",
+          "before": [
+            "url"
+          ],
+          "after": [
+            "url",
+            "fileName",
+            "contentType"
+          ]
+        },
+        {
+          "pointer": "/components/schemas/MediaPresignUploadRequestDto/properties/contentType/enum",
+          "before": [
+            "image/jpeg",
+            "image/png",
+            "image/webp",
+            "application/pdf"
+          ],
+          "after": [
+            "image/jpeg",
+            "image/png",
+            "image/webp",
+            "application/pdf",
+            "video/mp4",
+            "video/webm"
+          ]
+        },
+        {
+          "pointer": "/components/schemas/MediaPresignUploadRequestDto/properties/fileName/description",
+          "before": "Tên file do client cung cấp. Đuôi file (không phân biệt hoa thường) phải khớp `contentType`: `image/jpeg` → `.jpg`/`.jpeg`, `image/png` → `.png`, `image/webp` → `.webp`, `application/pdf` → `.pdf`; sai thì trả `422 MEDIA_TYPE_NOT_ALLOWED`.",
+          "after": "Tên file do client cung cấp. Đuôi file (không phân biệt hoa thường) phải khớp `contentType`: `image/jpeg` → `.jpg`/`.jpeg`, `image/png` → `.png`, `image/webp` → `.webp`, `application/pdf` → `.pdf`, `video/mp4` → `.mp4`, `video/webm` → `.webm`; sai thì trả `422 MEDIA_TYPE_NOT_ALLOWED`."
+        },
+        {
+          "pointer": "/components/schemas/MediaPresignUploadResponseDto/properties/requiredHeaders/properties/Content-Type/enum",
+          "before": [
+            "image/jpeg",
+            "image/png",
+            "image/webp",
+            "application/pdf"
+          ],
+          "after": [
+            "image/jpeg",
+            "image/png",
+            "image/webp",
+            "application/pdf",
+            "video/mp4",
+            "video/webm"
+          ]
+        },
+        {
+          "pointer": "/components/schemas/Message/allOf",
+          "before": [
+            {
+              "$ref": "#/components/schemas/BaseEntity"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "conversationId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "description": "ID cuộc hội thoại chứa tin nhắn",
+                  "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                },
+                "senderUserId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "nullable": true,
+                  "description": "ID user gửi; null với system message và bot.",
+                  "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                },
+                "senderName": {
+                  "type": "string",
+                  "maxLength": 254,
+                  "description": "Tên người gửi được snapshot tại thời điểm tạo message."
+                },
+                "senderType": {
+                  "type": "string",
+                  "enum": [
+                    "user",
+                    "system"
+                  ]
+                },
+                "type": {
+                  "type": "string",
+                  "enum": [
+                    "text",
+                    "image",
+                    "system",
+                    "bot"
+                  ],
+                  "description": "Loại tin nhắn",
+                  "example": "text"
+                },
+                "content": {
+                  "type": "string",
+                  "nullable": true,
+                  "description": "Nội dung tin nhắn dạng văn bản",
+                  "example": "Đã chốt số điện tháng 09: 180 kWh"
+                },
+                "mediaId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "nullable": true,
+                  "description": "Media ID của ảnh đã upload qua Media Service."
+                },
+                "sequence": {
+                  "type": "string",
+                  "pattern": "^\\d+$",
+                  "example": "42",
+                  "description": "Bigint sequence dưới dạng chuỗi thập phân để giữ chính xác trong JavaScript."
+                },
+                "clientMessageId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "description": "ID idempotency do client tạo."
+                },
+                "payload": {
+                  "type": "object",
+                  "nullable": true,
+                  "description": "Payload is a discriminated union for implemented system actions.",
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/ConversationMembersAddedPayload"
+                    },
+                    {
+                      "$ref": "#/components/schemas/ConversationMemberKickedPayload"
+                    },
+                    {
+                      "$ref": "#/components/schemas/ConversationMemberLeftPayload"
+                    },
+                    {
+                      "$ref": "#/components/schemas/ConversationAdminTransferredPayload"
+                    },
+                    {
+                      "$ref": "#/components/schemas/ConversationMemberRoleChangedPayload"
+                    },
+                    {
+                      "$ref": "#/components/schemas/ConversationTitleChangedPayload"
+                    },
+                    {
+                      "$ref": "#/components/schemas/ConversationAvatarChangedPayload"
+                    }
+                  ],
+                  "discriminator": {
+                    "propertyName": "action",
+                    "mapping": {
+                      "members_added": "#/components/schemas/ConversationMembersAddedPayload",
+                      "member_kicked": "#/components/schemas/ConversationMemberKickedPayload",
+                      "member_left": "#/components/schemas/ConversationMemberLeftPayload",
+                      "admin_transferred": "#/components/schemas/ConversationAdminTransferredPayload",
+                      "member_role_changed": "#/components/schemas/ConversationMemberRoleChangedPayload",
+                      "conversation_title_changed": "#/components/schemas/ConversationTitleChangedPayload",
+                      "conversation_avatar_changed": "#/components/schemas/ConversationAvatarChangedPayload"
+                    }
+                  },
+                  "example": {
+                    "action": "members_added",
+                    "actorUserId": "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d",
+                    "actorDisplayName": "Nguyễn Văn An",
+                    "members": [
+                      {
+                        "userId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                        "displayName": "Nguyễn Văn A"
+                      }
+                    ]
+                  }
+                }
+              },
+              "required": [
+                "conversationId",
+                "senderName",
+                "type"
+              ]
+            }
+          ],
+          "after": [
+            {
+              "$ref": "#/components/schemas/BaseEntity"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "conversationId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "description": "ID cuộc hội thoại chứa tin nhắn",
+                  "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                },
+                "senderUserId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "nullable": true,
+                  "description": "ID user gửi; null với system message và bot.",
+                  "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                },
+                "senderName": {
+                  "type": "string",
+                  "maxLength": 254,
+                  "description": "Tên người gửi được snapshot tại thời điểm tạo message."
+                },
+                "senderType": {
+                  "type": "string",
+                  "enum": [
+                    "user",
+                    "system"
+                  ]
+                },
+                "type": {
+                  "type": "string",
+                  "enum": [
+                    "text",
+                    "image",
+                    "video",
+                    "file",
+                    "system",
+                    "bot"
+                  ],
+                  "description": "Loại tin nhắn",
+                  "example": "text"
+                },
+                "content": {
+                  "type": "string",
+                  "nullable": true,
+                  "description": "Nội dung tin nhắn dạng văn bản",
+                  "example": "Đã chốt số điện tháng 09: 180 kWh"
+                },
+                "mediaId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "nullable": true,
+                  "description": "Media ID của ảnh đã upload qua Media Service."
+                },
+                "sequence": {
+                  "type": "string",
+                  "pattern": "^\\d+$",
+                  "example": "42",
+                  "description": "Bigint sequence dưới dạng chuỗi thập phân để giữ chính xác trong JavaScript."
+                },
+                "clientMessageId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "description": "ID idempotency do client tạo."
+                },
+                "payload": {
+                  "type": "object",
+                  "nullable": true,
+                  "description": "Payload is a discriminated union for implemented system actions.",
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/ConversationMembersAddedPayload"
+                    },
+                    {
+                      "$ref": "#/components/schemas/ConversationMemberKickedPayload"
+                    },
+                    {
+                      "$ref": "#/components/schemas/ConversationMemberLeftPayload"
+                    },
+                    {
+                      "$ref": "#/components/schemas/ConversationAdminTransferredPayload"
+                    },
+                    {
+                      "$ref": "#/components/schemas/ConversationMemberRoleChangedPayload"
+                    },
+                    {
+                      "$ref": "#/components/schemas/ConversationTitleChangedPayload"
+                    },
+                    {
+                      "$ref": "#/components/schemas/ConversationAvatarChangedPayload"
+                    }
+                  ],
+                  "discriminator": {
+                    "propertyName": "action",
+                    "mapping": {
+                      "members_added": "#/components/schemas/ConversationMembersAddedPayload",
+                      "member_kicked": "#/components/schemas/ConversationMemberKickedPayload",
+                      "member_left": "#/components/schemas/ConversationMemberLeftPayload",
+                      "admin_transferred": "#/components/schemas/ConversationAdminTransferredPayload",
+                      "member_role_changed": "#/components/schemas/ConversationMemberRoleChangedPayload",
+                      "conversation_title_changed": "#/components/schemas/ConversationTitleChangedPayload",
+                      "conversation_avatar_changed": "#/components/schemas/ConversationAvatarChangedPayload"
+                    }
+                  },
+                  "example": {
+                    "action": "members_added",
+                    "actorUserId": "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d",
+                    "actorDisplayName": "Nguyễn Văn An",
+                    "members": [
+                      {
+                        "userId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                        "displayName": "Nguyễn Văn A"
+                      }
+                    ]
+                  }
+                }
+              },
+              "required": [
+                "conversationId",
+                "senderName",
+                "type"
+              ]
+            }
+          ]
+        },
+        {
+          "pointer": "/components/schemas/MessageListResponseDto/properties/type/enum",
+          "before": [
+            "text",
+            "image",
+            "system",
+            "bot"
+          ],
+          "after": [
+            "text",
+            "image",
+            "video",
+            "file",
+            "system",
+            "bot"
+          ]
+        },
+        {
+          "pointer": "/components/schemas/MessageReplyReference/properties/type/enum",
+          "before": [
+            "text",
+            "image",
+            "bot",
+            null
+          ],
+          "after": [
+            "text",
+            "image",
+            "video",
+            "file",
+            "bot",
+            null
+          ]
+        },
+        {
+          "pointer": "/components/schemas/MessageSearchResponseDto/properties/type/enum",
+          "before": [
+            "text",
+            "image",
+            "bot"
+          ],
+          "after": [
+            "text",
+            "image",
+            "video",
+            "file",
+            "bot"
+          ]
+        },
+        {
+          "pointer": "/components/schemas/MessageSendRequestDto/description",
+          "before": "Dữ liệu gửi một tin nhắn text hoặc một ảnh vào hội thoại.",
+          "after": "Dữ liệu gửi một tin nhắn văn bản hoặc một tệp đính kèm vào hội thoại."
+        },
+        {
+          "pointer": "/components/schemas/MessageSendRequestDto/properties/mediaId/description",
+          "before": "ID ảnh đã upload nếu type là image.",
+          "after": "ID tệp đã upload nếu type là image, video hoặc file; loại tệp phải khớp với type."
+        },
+        {
+          "pointer": "/components/schemas/MessageSendRequestDto/properties/replyToMessageId/description",
+          "before": "(Chat v2, tùy chọn) ID tin được trả lời. Tin gốc phải cùng hội thoại, chưa xóa và là `text`/`image`/`bot`; sai thì `422 MESSAGE_REPLY_TARGET_INVALID`.\nRetry cùng `clientMessageId` trả tin đã lưu, không kiểm tra lại tin gốc.",
+          "after": "(Chat v2, tùy chọn) ID tin được trả lời. Tin gốc phải cùng hội thoại, chưa xóa và là `text`/`image`/`video`/`file`/`bot`; sai thì `422 MESSAGE_REPLY_TARGET_INVALID`.\nRetry cùng `clientMessageId` trả tin đã lưu, không kiểm tra lại tin gốc."
+        },
+        {
+          "pointer": "/components/schemas/MessageSendRequestDto/properties/type/enum",
+          "before": [
+            "text",
+            "image"
+          ],
+          "after": [
+            "text",
+            "image",
+            "video",
+            "file"
+          ]
+        },
+        {
+          "pointer": "/components/schemas/MessageSendResponseDto/properties/type/enum",
+          "before": [
+            "text",
+            "image",
+            "system",
+            "bot"
+          ],
+          "after": [
+            "text",
+            "image",
+            "video",
+            "file",
+            "system",
+            "bot"
+          ]
+        },
+        {
+          "pointer": "/paths/~1conversations~1unread-summary/get/description",
+          "before": "**Quy tắc unread chung** (giống `unreadCount` của `GET /conversations`, `GET /conversations/{conversationId}`, response `POST /messages/mark-read` và Socket `conversation:read-updated`): đếm message chưa xóa có `type` thuộc `text`, `image`, `bot`; `sequence > lastReadSequence` của member; người gửi khác chính member đó. Message `system` vẫn có trong lịch sử nhưng không bao giờ được đếm. Member `read_only` chỉ đếm tới `leftSequence`.\n\nRoute tĩnh `/conversations/unread-summary` được khai báo trước `/conversations/{conversationId}`; `conversationId` luôn là UUID nên `unread-summary` không bị hiểu là ID.\n\n**Sequence diagram**\n\n```mermaid\nsequenceDiagram\n    autonumber\n    actor Client\n    participant GW as API Gateway\n    participant S as community-service\n    participant Guard as JWT/access guards\n    participant C as ConversationController\n    participant Bus as CQRS QueryBus\n    participant H as Application handler\n    Client->>GW: GET /api/v1/conversations/unread-summary\n    GW->>GW: Validate bearer token for protected route\n    GW->>S: Proxy original HTTP request\n    S->>Guard: Validate JWT, account state and route access\n    Guard-->>C: Continue with authenticated context\n    S->>C: Invoke getConversationsUnreadSummary\n    C->>Bus: Execute query for getConversationsUnreadSummary\n    Bus->>H: Dispatch query handler\n    H-->>Bus: Return use-case result\n    Bus-->>C: Result\n    C-->>S: Return documented response\n    S-->>GW: HTTP status and response body\n    GW-->>Client: Forward HTTP response\n```",
+          "after": "**Quy tắc unread chung** (giống `unreadCount` của `GET /conversations`, `GET /conversations/{conversationId}`, response `POST /messages/mark-read` và Socket `conversation:read-updated`): đếm message chưa xóa có `type` thuộc `text`, `image`, `video`, `file`, `bot`; `sequence > lastReadSequence` của member; người gửi khác chính member đó. Message `system` vẫn có trong lịch sử nhưng không bao giờ được đếm. Member `read_only` chỉ đếm tới `leftSequence`.\n\nRoute tĩnh `/conversations/unread-summary` được khai báo trước `/conversations/{conversationId}`; `conversationId` luôn là UUID nên `unread-summary` không bị hiểu là ID.\n\n**Sequence diagram**\n\n```mermaid\nsequenceDiagram\n    autonumber\n    actor Client\n    participant GW as API Gateway\n    participant S as community-service\n    participant Guard as JWT/access guards\n    participant C as ConversationController\n    participant Bus as CQRS QueryBus\n    participant H as Application handler\n    Client->>GW: GET /api/v1/conversations/unread-summary\n    GW->>GW: Validate bearer token for protected route\n    GW->>S: Proxy original HTTP request\n    S->>Guard: Validate JWT, account state and route access\n    Guard-->>C: Continue with authenticated context\n    S->>C: Invoke getConversationsUnreadSummary\n    C->>Bus: Execute query for getConversationsUnreadSummary\n    Bus->>H: Dispatch query handler\n    H-->>Bus: Return use-case result\n    Bus-->>C: Result\n    C-->>S: Return documented response\n    S-->>GW: HTTP status and response body\n    GW-->>Client: Forward HTTP response\n```"
+        },
+        {
+          "pointer": "/paths/~1media~1presign-upload/post/description",
+          "before": "**Luồng upload**\n\n1. `POST /media/presign-upload` → nhận `id`, `uploadUrl`, `requiredHeaders`, `expiresIn`.\n2. `PUT {uploadUrl}` với body là file (binary) và đúng `requiredHeaders` (không gửi `Authorization`).\n3. `POST /media/{id}/complete-upload` → server kiểm tra object trên storage và trả `url` để đọc.\n\nLiên kết file với thực thể cha được xác định ngay lúc presign qua `ownerType` + `ownerId` + `purpose`; không có bước \"gắn\" riêng. Các API nghiệp vụ khác (ví dụ `photoMediaIds` khi tạo phòng) nhận `id` của Media đã complete.\n\n**Quy tắc theo `purpose`** (admin luôn được upload; người upload luôn đọc được file của mình)\n\n| purpose | ownerType hợp lệ | MIME cho phép | Hiển thị | Ai được upload | Ghi chú |\n|---|---|---|---|---|---|\n| `avatar` | `user` | jpeg, png, webp | public | chính user đó | 1 file/owner, file mới thay file cũ |\n| `cover_photo` | `building`, `room` | jpeg, png, webp | public | landlord sở hữu | 1 file/owner, file mới thay file cũ |\n| `gallery_photo` | `building`, `room` | jpeg, png, webp | public | landlord sở hữu | |\n| `ownership_proof` | `building` | jpeg, png, webp, pdf | private | landlord sở hữu | không xóa được khi building `approved` |\n| `cccd_front`, `cccd_back` | `user`, `contract_member` | jpeg, png, webp | private | chính user, thành viên HĐ, landlord sở hữu | |\n| `contract_template` | `contract` | pdf | private | landlord sở hữu | |\n| `contract_signed` | `contract` | jpeg, png, webp, pdf | private | landlord sở hữu | không xóa được khi HĐ `signed/active/suspended/expired/terminated` |\n| `meter_reading_evidence` | `meter_reading` | jpeg, png, webp | private | landlord sở hữu; tenant của HĐ chỉ với `captureSource = camera_direct` | |\n| `issue_photo` | `issue_report` | jpeg, png, webp | private | người trong HĐ, landlord sở hữu | chưa hỗ trợ (503) |\n| `chat_attachment` | `conversation` | jpeg, png, webp | private | upload: active member; download: member allowed to read the message that references the media | Community verifies active membership on upload and message linkage on read |\n| `conversation_avatar` | `conversation` | jpeg, png, webp | private | active member may upload | Community validates active group admin and media ownership on metadata update; old media remains valid so uploading a replacement cannot break the current avatar before the metadata update commits |\n\nKích thước tối đa 10 MiB cho mọi purpose. Không hỗ trợ SVG/HTML/video.\n\nLỗi nghiệp vụ: 403 FORBIDDEN (không có quyền với thực thể cha, hoặc thực thể cha không tồn tại) · 422 INVALID_PURPOSE (`purpose` không hợp lệ với `ownerType`) · 422 MEDIA_TYPE_NOT_ALLOWED (MIME, đuôi file hoặc kích thước không hợp lệ) · 503 SERVICE_UNAVAILABLE.\n\n**Sequence diagram**\n\n```mermaid\nsequenceDiagram\n    autonumber\n    actor Client\n    participant GW as API Gateway\n    participant S as Identity-Service\n    participant Guard as JWT/access guards\n    participant C as MediaController\n    participant Bus as CQRS CommandBus\n    participant H as Application handler\n    Client->>GW: POST /api/v1/media/presign-upload\n    GW->>GW: Validate bearer token for protected route\n    GW->>S: Proxy original HTTP request\n    S->>Guard: Validate JWT, account state and route access\n    Guard-->>C: Continue with authenticated context\n    S->>C: Invoke postMediaPresignUpload\n    C->>Bus: Execute command for postMediaPresignUpload\n    Bus->>H: Dispatch command handler\n    H-->>Bus: Return use-case result\n    Bus-->>C: Result\n    C-->>S: Return documented response\n    S-->>GW: HTTP status and response body\n    GW-->>Client: Forward HTTP response\n```",
+          "after": "**Luồng upload**\n\n1. `POST /media/presign-upload` → nhận `id`, `uploadUrl`, `requiredHeaders`, `expiresIn`.\n2. `PUT {uploadUrl}` với body là file (binary) và đúng `requiredHeaders` (không gửi `Authorization`).\n3. `POST /media/{id}/complete-upload` → server kiểm tra object trên storage và trả `url` để đọc.\n\nLiên kết file với thực thể cha được xác định ngay lúc presign qua `ownerType` + `ownerId` + `purpose`; không có bước \"gắn\" riêng. Các API nghiệp vụ khác (ví dụ `photoMediaIds` khi tạo phòng) nhận `id` của Media đã complete.\n\n**Quy tắc theo `purpose`** (admin luôn được upload; người upload luôn đọc được file của mình)\n\n| purpose | ownerType hợp lệ | MIME cho phép | Hiển thị | Ai được upload | Ghi chú |\n|---|---|---|---|---|---|\n| `avatar` | `user` | jpeg, png, webp | public | chính user đó | 1 file/owner, file mới thay file cũ |\n| `cover_photo` | `building`, `room` | jpeg, png, webp | public | landlord sở hữu | 1 file/owner, file mới thay file cũ |\n| `gallery_photo` | `building`, `room` | jpeg, png, webp | public | landlord sở hữu | |\n| `ownership_proof` | `building` | jpeg, png, webp, pdf | private | landlord sở hữu | không xóa được khi building `approved` |\n| `cccd_front`, `cccd_back` | `user`, `contract_member` | jpeg, png, webp | private | chính user, thành viên HĐ, landlord sở hữu | |\n| `contract_template` | `contract` | pdf | private | landlord sở hữu | |\n| `contract_signed` | `contract` | jpeg, png, webp, pdf | private | landlord sở hữu | không xóa được khi HĐ `signed/active/suspended/expired/terminated` |\n| `meter_reading_evidence` | `meter_reading` | jpeg, png, webp | private | landlord sở hữu; tenant của HĐ chỉ với `captureSource = camera_direct` | |\n| `issue_photo` | `issue_report` | jpeg, png, webp | private | người trong HĐ, landlord sở hữu | chưa hỗ trợ (503) |\n| `chat_attachment` | `conversation` | jpeg, png, webp, pdf, mp4, webm | private | upload: active member; download: member allowed to read the message that references the media | Community verifies active membership on upload and message linkage on read |\n| `conversation_avatar` | `conversation` | jpeg, png, webp | private | active member may upload | Community validates active group admin and media ownership on metadata update; old media remains valid so uploading a replacement cannot break the current avatar before the metadata update commits |\n\nKích thước tối đa 10 MiB cho mọi purpose. Chỉ chat_attachment hỗ trợ video MP4/WebM; không hỗ trợ SVG/HTML.\n\nLỗi nghiệp vụ: 403 FORBIDDEN (không có quyền với thực thể cha, hoặc thực thể cha không tồn tại) · 422 INVALID_PURPOSE (`purpose` không hợp lệ với `ownerType`) · 422 MEDIA_TYPE_NOT_ALLOWED (MIME, đuôi file hoặc kích thước không hợp lệ) · 503 SERVICE_UNAVAILABLE.\n\n**Sequence diagram**\n\n```mermaid\nsequenceDiagram\n    autonumber\n    actor Client\n    participant GW as API Gateway\n    participant S as Identity-Service\n    participant Guard as JWT/access guards\n    participant C as MediaController\n    participant Bus as CQRS CommandBus\n    participant H as Application handler\n    Client->>GW: POST /api/v1/media/presign-upload\n    GW->>GW: Validate bearer token for protected route\n    GW->>S: Proxy original HTTP request\n    S->>Guard: Validate JWT, account state and route access\n    Guard-->>C: Continue with authenticated context\n    S->>C: Invoke postMediaPresignUpload\n    C->>Bus: Execute command for postMediaPresignUpload\n    Bus->>H: Dispatch command handler\n    H-->>Bus: Return use-case result\n    Bus-->>C: Result\n    C-->>S: Return documented response\n    S-->>GW: HTTP status and response body\n    GW-->>Client: Forward HTTP response\n```"
+        }
+      ],
+      "semanticDiff": {
+        "paths": {
+          "modified": {
+            "/conversations": {
+              "operations": {
+                "modified": {
+                  "GET": {
+                    "responses": {
+                      "modified": {
+                        "200": {
+                          "content": {
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "properties": {
+                                    "modified": {
+                                      "data": {
+                                        "items": {
+                                          "properties": {
+                                            "modified": {
+                                              "lastMessage": {
+                                                "properties": {
+                                                  "modified": {
+                                                    "type": {
+                                                      "enum": {
+                                                        "added": [
+                                                          "video",
+                                                          "file"
+                                                        ]
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "/conversations/{conversationId}/bot-reminders": {
+              "operations": {
+                "modified": {
+                  "POST": {
+                    "responses": {
+                      "modified": {
+                        "201": {
+                          "content": {
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "properties": {
+                                    "modified": {
+                                      "data": {
+                                        "properties": {
+                                          "modified": {
+                                            "replyTo": {
+                                              "properties": {
+                                                "modified": {
+                                                  "type": {
+                                                    "enum": {
+                                                      "added": [
+                                                        "video",
+                                                        "file"
+                                                      ]
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            },
+                                            "type": {
+                                              "enum": {
+                                                "added": [
+                                                  "video",
+                                                  "file"
+                                                ]
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "/media/presign-upload": {
+              "operations": {
+                "modified": {
+                  "POST": {
+                    "requestBody": {
+                      "content": {
+                        "modified": {
+                          "application/json": {
+                            "schema": {
+                              "properties": {
+                                "modified": {
+                                  "contentType": {
+                                    "enum": {
+                                      "added": [
+                                        "video/mp4",
+                                        "video/webm"
+                                      ]
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "responses": {
+                      "modified": {
+                        "201": {
+                          "content": {
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "properties": {
+                                    "modified": {
+                                      "data": {
+                                        "properties": {
+                                          "modified": {
+                                            "requiredHeaders": {
+                                              "properties": {
+                                                "modified": {
+                                                  "Content-Type": {
+                                                    "enum": {
+                                                      "added": [
+                                                        "video/mp4",
+                                                        "video/webm"
+                                                      ]
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "/media/{mediaId}/download-url": {
+              "operations": {
+                "modified": {
+                  "GET": {
+                    "responses": {
+                      "modified": {
+                        "200": {
+                          "content": {
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "properties": {
+                                    "modified": {
+                                      "data": {
+                                        "required": {
+                                          "added": [
+                                            "fileName",
+                                            "contentType"
+                                          ]
+                                        },
+                                        "properties": {
+                                          "added": [
+                                            "contentType",
+                                            "fileName"
+                                          ]
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "/messages": {
+              "operations": {
+                "modified": {
+                  "GET": {
+                    "responses": {
+                      "modified": {
+                        "200": {
+                          "content": {
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "properties": {
+                                    "modified": {
+                                      "data": {
+                                        "items": {
+                                          "properties": {
+                                            "modified": {
+                                              "replyTo": {
+                                                "properties": {
+                                                  "modified": {
+                                                    "type": {
+                                                      "enum": {
+                                                        "added": [
+                                                          "video",
+                                                          "file"
+                                                        ]
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              },
+                                              "type": {
+                                                "enum": {
+                                                  "added": [
+                                                    "video",
+                                                    "file"
+                                                  ]
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "POST": {
+                    "requestBody": {
+                      "content": {
+                        "modified": {
+                          "application/json": {
+                            "schema": {
+                              "properties": {
+                                "modified": {
+                                  "type": {
+                                    "enum": {
+                                      "added": [
+                                        "video",
+                                        "file"
+                                      ]
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "responses": {
+                      "modified": {
+                        "201": {
+                          "content": {
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "properties": {
+                                    "modified": {
+                                      "data": {
+                                        "properties": {
+                                          "modified": {
+                                            "replyTo": {
+                                              "properties": {
+                                                "modified": {
+                                                  "type": {
+                                                    "enum": {
+                                                      "added": [
+                                                        "video",
+                                                        "file"
+                                                      ]
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            },
+                                            "type": {
+                                              "enum": {
+                                                "added": [
+                                                  "video",
+                                                  "file"
+                                                ]
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "/messages/search": {
+              "operations": {
+                "modified": {
+                  "GET": {
+                    "responses": {
+                      "modified": {
+                        "200": {
+                          "content": {
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "properties": {
+                                    "modified": {
+                                      "data": {
+                                        "items": {
+                                          "properties": {
+                                            "modified": {
+                                              "type": {
+                                                "enum": {
+                                                  "added": [
+                                                    "video",
+                                                    "file"
+                                                  ]
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "components": {
+          "schemas": {
+            "modified": {
+              "ConversationListResponseDto": {
+                "properties": {
+                  "modified": {
+                    "lastMessage": {
+                      "properties": {
+                        "modified": {
+                          "type": {
+                            "enum": {
+                              "added": [
+                                "video",
+                                "file"
+                              ]
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "MediaDownloadUrlResponseDto": {
+                "required": {
+                  "added": [
+                    "fileName",
+                    "contentType"
+                  ]
+                },
+                "properties": {
+                  "added": [
+                    "fileName",
+                    "contentType"
+                  ]
+                }
+              },
+              "MediaPresignUploadRequestDto": {
+                "properties": {
+                  "modified": {
+                    "contentType": {
+                      "enum": {
+                        "added": [
+                          "video/mp4",
+                          "video/webm"
+                        ]
+                      }
+                    }
+                  }
+                }
+              },
+              "MediaPresignUploadResponseDto": {
+                "properties": {
+                  "modified": {
+                    "requiredHeaders": {
+                      "properties": {
+                        "modified": {
+                          "Content-Type": {
+                            "enum": {
+                              "added": [
+                                "video/mp4",
+                                "video/webm"
+                              ]
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "Message": {
+                "properties": {
+                  "modified": {
+                    "type": {
+                      "enum": {
+                        "added": [
+                          "video",
+                          "file"
+                        ]
+                      }
+                    }
+                  }
+                }
+              },
+              "MessageListResponseDto": {
+                "properties": {
+                  "modified": {
+                    "replyTo": {
+                      "properties": {
+                        "modified": {
+                          "type": {
+                            "enum": {
+                              "added": [
+                                "video",
+                                "file"
+                              ]
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "type": {
+                      "enum": {
+                        "added": [
+                          "video",
+                          "file"
+                        ]
+                      }
+                    }
+                  }
+                }
+              },
+              "MessageReplyReference": {
+                "properties": {
+                  "modified": {
+                    "type": {
+                      "enum": {
+                        "added": [
+                          "video",
+                          "file"
+                        ]
+                      }
+                    }
+                  }
+                }
+              },
+              "MessageSearchResponseDto": {
+                "properties": {
+                  "modified": {
+                    "type": {
+                      "enum": {
+                        "added": [
+                          "video",
+                          "file"
+                        ]
+                      }
+                    }
+                  }
+                }
+              },
+              "MessageSendRequestDto": {
+                "properties": {
+                  "modified": {
+                    "type": {
+                      "enum": {
+                        "added": [
+                          "video",
+                          "file"
+                        ]
+                      }
+                    }
+                  }
+                }
+              },
+              "MessageSendResponseDto": {
+                "properties": {
+                  "modified": {
+                    "replyTo": {
+                      "properties": {
+                        "modified": {
+                          "type": {
+                            "enum": {
+                              "added": [
+                                "video",
+                                "file"
+                              ]
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "type": {
+                      "enum": {
+                        "added": [
+                          "video",
+                          "file"
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "a70f2a886e35c4213308c6490a0835eec5ec022ed3fc3fc243b1b7e5ac752f89",
+      "label": "Thay đổi contract từ Git",
+      "classification": "NON_BREAKING",
+      "contractId": "rentify-public",
+      "repository": "https://github.com/pbl6-home-renter/api-doc",
+      "baseHash": "ee8740efaf2be1b34a76a04b9dc2ee0029431298099be0e16d6ecc440448c042",
+      "headHash": "940f1a10bbd838ae0db224ef5ad2ff3de28c6dd561b6581eb0792aef5eec8b3f",
+      "baseSource": "src/openapi.yaml",
+      "headSource": "src/openapi.yaml",
+      "detectedAt": "2026-11-14T01:08:01.088Z",
+      "committedAt": "2026-11-14T08:07:39+07:00",
+      "baseCommit": "b90ef8fc3388fa007ff8f91f0c59c92cd8fa29b2",
+      "headCommit": "8fbba792442abec0b61261041f58cf8878074e47",
+      "prUrl": "https://github.com/pbl6-home-renter/api-doc/pull/60",
+      "commitUrl": "https://github.com/pbl6-home-renter/api-doc/commit/8fbba792442abec0b61261041f58cf8878074e47",
+      "metadataKind": "Git revision thực tế",
+      "reason": "CHƯA CUNG CẤP — tác giả PR phải bổ sung lý do nghiệp vụ; không thể suy ra từ OpenAPI diff.",
+      "tools": {
+        "redocly": "2.64.1",
+        "oasdiff": "1.34.1"
+      },
+      "changes": [
+        {
+          "id": "response-required-property-added",
+          "text": "added the required property `data/items/tenantAvatarUrl` to the response with the `200` status",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getContractMembers",
+          "path": "/contract-members",
+          "section": "paths",
+          "fingerprint": "5a3f448c9f58",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/items/tenantAvatarUrl; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-optional-property-added",
+          "text": "added the optional property `data/items/avatarUrl` to the response with the `200` status",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getConversations",
+          "path": "/conversations",
+          "section": "paths",
+          "fingerprint": "2e60f101dde1",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/items/avatarUrl; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-optional-property-added",
+          "text": "added the optional property `data/avatarUrl` to the response with the `201` status",
+          "level": 1,
+          "operation": "POST",
+          "operationId": "createConversation",
+          "path": "/conversations",
+          "section": "paths",
+          "fingerprint": "e50e9775ef3f",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/avatarUrl; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-optional-property-added",
+          "text": "added the optional property `data/members/items/avatarUrl` to the response with the `201` status",
+          "level": 1,
+          "operation": "POST",
+          "operationId": "createConversation",
+          "path": "/conversations",
+          "section": "paths",
+          "fingerprint": "82c2c9f60c56",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/members/items/avatarUrl; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-optional-property-added",
+          "text": "added the optional property `data/avatarUrl` to the response with the `200` status",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getConversationsConversationid",
+          "path": "/conversations/{conversationId}",
+          "section": "paths",
+          "fingerprint": "67ca63d28273",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/avatarUrl; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-optional-property-added",
+          "text": "added the optional property `data/members/items/avatarUrl` to the response with the `200` status",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getConversationsConversationid",
+          "path": "/conversations/{conversationId}",
+          "section": "paths",
+          "fingerprint": "1d6e93bb4579",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/members/items/avatarUrl; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-optional-property-added",
+          "text": "added the optional property `data/items/avatarUrl` to the response with the `200` status",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "listConversationMembers",
+          "path": "/conversations/{conversationId}/members",
+          "section": "paths",
+          "fingerprint": "8e72bcacb23d",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/items/avatarUrl; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-optional-property-added",
+          "text": "added the optional property `data/items/avatarUrl` to the response with the `200` status",
+          "level": 1,
+          "operation": "POST",
+          "operationId": "addConversationMembers",
+          "path": "/conversations/{conversationId}/members",
+          "section": "paths",
+          "fingerprint": "d918b06d1378",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/items/avatarUrl; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-required-property-added",
+          "text": "added the required property `data/items/senderAvatarUrl` to the response with the `200` status",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getMessages",
+          "path": "/messages",
+          "section": "paths",
+          "fingerprint": "00bbed77f92d",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/items/senderAvatarUrl; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-required-property-added",
+          "text": "added the required property `data/items/avatarUrl` to the response with the `200` status",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getUsersAdmin",
+          "path": "/users",
+          "section": "paths",
+          "fingerprint": "aeb2d65d6602",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/items/avatarUrl; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-required-property-added",
+          "text": "added the required property `data/items/avatarUrl` to the response with the `200` status",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getUsersDirectory",
+          "path": "/users/directory",
+          "section": "paths",
+          "fingerprint": "7cbb2f6f94e3",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/items/avatarUrl; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-required-property-added",
+          "text": "added the required property `data/avatarUrl` to the response with the `200` status",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getUserById",
+          "path": "/users/{userId}",
+          "section": "paths",
+          "fingerprint": "26557cf2f3b7",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/avatarUrl; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        }
+      ],
+      "locations": [
+        {
+          "pointer": "/components/schemas/ContractMemberListResponseDto/properties/tenantAvatarUrl",
+          "before": null,
+          "after": {
+            "type": "string",
+            "nullable": true,
+            "description": "URL công khai avatar hiện tại của tenant (Identity); `null` nếu không có tài khoản, chưa có avatar hoặc Identity không phản hồi (best effort)."
+          }
+        },
+        {
+          "pointer": "/components/schemas/ContractMemberListResponseDto/required",
+          "before": [
+            "id",
+            "contractId",
+            "tenantId",
+            "tenantName",
+            "tenantPhone",
+            "joinedAt",
+            "leftAt",
+            "status"
+          ],
+          "after": [
+            "id",
+            "contractId",
+            "tenantId",
+            "tenantName",
+            "tenantPhone",
+            "tenantAvatarUrl",
+            "joinedAt",
+            "leftAt",
+            "status"
+          ]
+        },
+        {
+          "pointer": "/components/schemas/ConversationDetailResponseDto/properties/avatarUrl",
+          "before": null,
+          "after": {
+            "type": "string",
+            "nullable": true,
+            "description": "Ảnh để hiển thị theo người đang xem. Group: `/api/v1/media/{avatarMediaId}` (private, FE tải qua `GET /media/{mediaId}/download-url`), `null` nếu nhóm chưa có ảnh. Direct: URL công khai avatar hiện tại của người còn lại, `null` nếu người đó chưa có avatar hoặc Identity không phản hồi (best effort)."
+          }
+        },
+        {
+          "pointer": "/components/schemas/ConversationListResponseDto/properties/avatarUrl",
+          "before": null,
+          "after": {
+            "type": "string",
+            "nullable": true,
+            "description": "Ảnh để hiển thị theo người đang xem. Group: `/api/v1/media/{avatarMediaId}` (private, FE tải qua `GET /media/{mediaId}/download-url`), `null` nếu nhóm chưa có ảnh. Direct: URL công khai avatar hiện tại của người còn lại, `null` nếu người đó chưa có avatar hoặc Identity không phản hồi (best effort)."
+          }
+        },
+        {
+          "pointer": "/components/schemas/ConversationMember/allOf",
+          "before": [
+            {
+              "$ref": "#/components/schemas/BaseEntity"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "conversationId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "description": "ID cuộc hội thoại",
+                  "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                },
+                "userId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "nullable": true,
+                  "description": "ID người dùng tham gia",
+                  "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                },
+                "displayName": {
+                  "type": "string",
+                  "maxLength": 254,
+                  "description": "Tên hiển thị được snapshot khi thêm thành viên."
+                },
+                "participantType": {
+                  "type": "string",
+                  "enum": [
+                    "user",
+                    "system"
+                  ],
+                  "description": "Phân biệt user với participant hệ thống như bot."
+                },
+                "role": {
+                  "type": "string",
+                  "enum": [
+                    "admin",
+                    "member",
+                    "system"
+                  ]
+                },
+                "status": {
+                  "type": "string",
+                  "enum": [
+                    "active",
+                    "read_only"
+                  ]
+                },
+                "joinedAt": {
+                  "type": "string",
+                  "format": "date-time",
+                  "description": "Thời điểm bắt đầu tham gia nhóm chat",
+                  "example": "2026-09-01T10:05:00Z"
+                },
+                "leftAt": {
+                  "type": "string",
+                  "format": "date-time",
+                  "nullable": true,
+                  "description": "Thời điểm rời hoặc bị xóa khỏi hội thoại.",
+                  "example": null
+                },
+                "leftSequence": {
+                  "type": "string",
+                  "pattern": "^\\d+$",
+                  "nullable": true,
+                  "description": "Tin cuối được phép đọc khi membership ở trạng thái read_only."
+                },
+                "lastReadSequence": {
+                  "type": "string",
+                  "pattern": "^\\d+$",
+                  "example": "12",
+                  "description": "Sequence cuối đã đọc; unread tính từ sequence kế tiếp."
+                }
+              },
+              "required": [
+                "conversationId",
+                "displayName",
+                "participantType",
+                "role",
+                "status",
+                "joinedAt"
+              ]
+            }
+          ],
+          "after": [
+            {
+              "$ref": "#/components/schemas/BaseEntity"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "conversationId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "description": "ID cuộc hội thoại",
+                  "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                },
+                "userId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "nullable": true,
+                  "description": "ID người dùng tham gia",
+                  "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                },
+                "displayName": {
+                  "type": "string",
+                  "maxLength": 254,
+                  "description": "Tên hiển thị được snapshot khi thêm thành viên."
+                },
+                "avatarUrl": {
+                  "type": "string",
+                  "nullable": true,
+                  "description": "URL công khai avatar hiện tại của user (lấy từ Identity lúc đọc, không snapshot); `null` nếu chưa có avatar, là participant hệ thống hoặc Identity không phản hồi (best effort)."
+                },
+                "participantType": {
+                  "type": "string",
+                  "enum": [
+                    "user",
+                    "system"
+                  ],
+                  "description": "Phân biệt user với participant hệ thống như bot."
+                },
+                "role": {
+                  "type": "string",
+                  "enum": [
+                    "admin",
+                    "member",
+                    "system"
+                  ]
+                },
+                "status": {
+                  "type": "string",
+                  "enum": [
+                    "active",
+                    "read_only"
+                  ]
+                },
+                "joinedAt": {
+                  "type": "string",
+                  "format": "date-time",
+                  "description": "Thời điểm bắt đầu tham gia nhóm chat",
+                  "example": "2026-09-01T10:05:00Z"
+                },
+                "leftAt": {
+                  "type": "string",
+                  "format": "date-time",
+                  "nullable": true,
+                  "description": "Thời điểm rời hoặc bị xóa khỏi hội thoại.",
+                  "example": null
+                },
+                "leftSequence": {
+                  "type": "string",
+                  "pattern": "^\\d+$",
+                  "nullable": true,
+                  "description": "Tin cuối được phép đọc khi membership ở trạng thái read_only."
+                },
+                "lastReadSequence": {
+                  "type": "string",
+                  "pattern": "^\\d+$",
+                  "example": "12",
+                  "description": "Sequence cuối đã đọc; unread tính từ sequence kế tiếp."
+                }
+              },
+              "required": [
+                "conversationId",
+                "displayName",
+                "participantType",
+                "role",
+                "status",
+                "joinedAt"
+              ]
+            }
+          ]
+        },
+        {
+          "pointer": "/components/schemas/MessageListResponseDto/properties/senderAvatarUrl",
+          "before": null,
+          "after": {
+            "type": "string",
+            "nullable": true,
+            "description": "URL công khai avatar hiện tại của người gửi (lấy từ Identity lúc đọc); `null` với system message, user chưa có avatar hoặc khi Identity không phản hồi (best effort)."
+          }
+        },
+        {
+          "pointer": "/components/schemas/MessageListResponseDto/required",
+          "before": [
+            "id",
+            "conversationId",
+            "senderUserId",
+            "senderName",
+            "senderType",
+            "sequence",
+            "clientMessageId",
+            "type",
+            "content",
+            "mediaId",
+            "payload",
+            "replyTo",
+            "createdAt"
+          ],
+          "after": [
+            "id",
+            "conversationId",
+            "senderUserId",
+            "senderName",
+            "senderAvatarUrl",
+            "senderType",
+            "sequence",
+            "clientMessageId",
+            "type",
+            "content",
+            "mediaId",
+            "payload",
+            "replyTo",
+            "createdAt"
+          ]
+        },
+        {
+          "pointer": "/components/schemas/UserDetailResponseDto/properties/avatarUrl",
+          "before": null,
+          "after": {
+            "type": "string",
+            "nullable": true,
+            "description": "URL công khai của avatar hiện tại (Identity, media `purpose=avatar`); `null` nếu user chưa có avatar.",
+            "example": "https://media.example.com/avatars/3fa85f64.jpg"
+          }
+        },
+        {
+          "pointer": "/components/schemas/UserDetailResponseDto/required",
+          "before": [
+            "id",
+            "name",
+            "email",
+            "phone",
+            "role",
+            "status",
+            "lockReason",
+            "lockedAt",
+            "payoutAccount",
+            "buildingCount",
+            "activeContractCount"
+          ],
+          "after": [
+            "id",
+            "name",
+            "email",
+            "phone",
+            "role",
+            "status",
+            "lockReason",
+            "lockedAt",
+            "payoutAccount",
+            "buildingCount",
+            "activeContractCount",
+            "avatarUrl"
+          ]
+        },
+        {
+          "pointer": "/components/schemas/UserDirectoryResponseDto/description",
+          "before": "Một Landlord/Tenant đang hoạt động trong kết quả tìm người để chat; chỉ lộ ID và tên.",
+          "after": "Một Landlord/Tenant đang hoạt động trong kết quả tìm người để chat; chỉ lộ ID, tên và avatar."
+        },
+        {
+          "pointer": "/components/schemas/UserDirectoryResponseDto/properties/avatarUrl",
+          "before": null,
+          "after": {
+            "type": "string",
+            "nullable": true,
+            "description": "URL công khai của avatar hiện tại (Identity, media `purpose=avatar`); `null` nếu user chưa có avatar.",
+            "example": "https://media.example.com/avatars/3fa85f64.jpg"
+          }
+        },
+        {
+          "pointer": "/components/schemas/UserDirectoryResponseDto/required",
+          "before": [
+            "id",
+            "name"
+          ],
+          "after": [
+            "id",
+            "name",
+            "avatarUrl"
+          ]
+        },
+        {
+          "pointer": "/components/schemas/UserListResponseDto/properties/avatarUrl",
+          "before": null,
+          "after": {
+            "type": "string",
+            "nullable": true,
+            "description": "URL công khai của avatar hiện tại (Identity, media `purpose=avatar`); `null` nếu user chưa có avatar.",
+            "example": "https://media.example.com/avatars/3fa85f64.jpg"
+          }
+        },
+        {
+          "pointer": "/components/schemas/UserListResponseDto/required",
+          "before": [
+            "id",
+            "name",
+            "email",
+            "phone",
+            "role",
+            "status"
+          ],
+          "after": [
+            "id",
+            "name",
+            "email",
+            "phone",
+            "role",
+            "status",
+            "avatarUrl"
+          ]
+        },
+        {
+          "pointer": "/paths/~1contract-members/get/responses/200/content/application~1json/example/data",
+          "before": [
+            {
+              "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+              "contractId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+              "tenantName": "Trần Văn B",
+              "joinedAt": "2026-09-01",
+              "leftAt": null,
+              "tenantId": null,
+              "tenantPhone": "0921234567",
+              "status": "active"
+            }
+          ],
+          "after": [
+            {
+              "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+              "contractId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+              "tenantName": "Trần Văn B",
+              "joinedAt": "2026-09-01",
+              "leftAt": null,
+              "tenantId": null,
+              "tenantPhone": "0921234567",
+              "tenantAvatarUrl": null,
+              "status": "active"
+            }
+          ]
+        },
+        {
+          "pointer": "/paths/~1messages/get/responses/200/content/application~1json/example/data",
+          "before": [
+            {
+              "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+              "conversationId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+              "senderUserId": "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d",
+              "senderName": "Nguyễn Văn A",
+              "senderType": "user",
+              "sequence": "42",
+              "clientMessageId": "a95a1d13-f91c-4c71-9c61-24b498d0fd0e",
+              "type": "text",
+              "content": "Dạ em gửi ảnh vòi xịt ạ",
+              "mediaId": null,
+              "payload": null,
+              "replyTo": {
+                "id": "7c9e6679-7425-40de-944b-e07fc1f90ae7",
+                "sequence": "41",
+                "senderName": "Trần Thị B",
+                "type": "image",
+                "contentPreview": "Vòi xịt nhà tắm bị rỉ",
+                "isUnavailable": false
+              },
+              "createdAt": "2026-09-23T11:30:00.000Z"
+            }
+          ],
+          "after": [
+            {
+              "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+              "conversationId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+              "senderUserId": "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d",
+              "senderName": "Nguyễn Văn A",
+              "senderAvatarUrl": "https://media.example.com/avatars/9b1deb4d.jpg",
+              "senderType": "user",
+              "sequence": "42",
+              "clientMessageId": "a95a1d13-f91c-4c71-9c61-24b498d0fd0e",
+              "type": "text",
+              "content": "Dạ em gửi ảnh vòi xịt ạ",
+              "mediaId": null,
+              "payload": null,
+              "replyTo": {
+                "id": "7c9e6679-7425-40de-944b-e07fc1f90ae7",
+                "sequence": "41",
+                "senderName": "Trần Thị B",
+                "type": "image",
+                "contentPreview": "Vòi xịt nhà tắm bị rỉ",
+                "isUnavailable": false
+              },
+              "createdAt": "2026-09-23T11:30:00.000Z"
+            }
+          ]
+        },
+        {
+          "pointer": "/paths/~1users/get/responses/200/content/application~1json/example/data",
+          "before": [
+            {
+              "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+              "name": "Lê Văn An",
+              "phone": "0901234567",
+              "email": "lan@example.com",
+              "role": "tenant",
+              "status": "active"
+            }
+          ],
+          "after": [
+            {
+              "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+              "name": "Lê Văn An",
+              "phone": "0901234567",
+              "email": "lan@example.com",
+              "role": "tenant",
+              "status": "active",
+              "avatarUrl": null
+            }
+          ]
+        },
+        {
+          "pointer": "/paths/~1users~1directory/get/description",
+          "before": "- Người gọi: chỉ `landlord`, `tenant` có `status=active`. Admin nhận 403 `FORBIDDEN`; tài khoản bị khóa nhận 403 `ACCOUNT_LOCKED`.\n- Kết quả: chỉ user `landlord`/`tenant`, `status=active`, chưa bị xóa; luôn loại chính người gọi.\n- `q` tùy chọn; bỏ trống hoặc chỉ có khoảng trắng thì trả danh sách phân trang. Khi có từ khóa, server trim rồi khớp một phần tên không phân biệt chữ hoa/thường và dấu tiếng Việt. Ký tự %, _ và backslash trong q được hiểu theo nghĩa đen.\n- Lọc, đếm `totalItems` và phân trang đều chạy trên DB trước khi cắt trang. Sắp xếp cố định theo `name` tăng dần rồi `id` tăng dần.\n- Mỗi phần tử chỉ có `id`, `name`; không trả email, phone, role, status hoặc avatar. Hai người trùng tên được trả thành hai phần tử khác `id`.\n- Không cần PostgreSQL extension: Identity chuẩn hóa dấu bằng hàm `translate()` sẵn có trên cả cột `name` và `q`. Truy vấn quét theo điều kiện role/status/is_deleted, không dùng index cho phần tìm tên.\n\n**Sequence diagram**\n\n```mermaid\nsequenceDiagram\n    autonumber\n    actor Client\n    participant GW as API Gateway\n    participant S as Identity-Service\n    participant Guard as JWT/access guards\n    participant C as UserDirectoryController\n    participant Bus as CQRS QueryBus\n    participant H as Application handler\n    Client->>GW: GET /api/v1/users/directory\n    GW->>GW: Validate bearer token for protected route\n    GW->>S: Proxy original HTTP request\n    S->>Guard: Validate JWT, account state and route access\n    Guard-->>C: Continue with authenticated context\n    S->>C: Invoke getUsersDirectory\n    C->>Bus: Execute query for getUsersDirectory\n    Bus->>H: Dispatch query handler\n    H-->>Bus: Return use-case result\n    Bus-->>C: Result\n    C-->>S: Return documented response\n    S-->>GW: HTTP status and response body\n    GW-->>Client: Forward HTTP response\n```",
+          "after": "- Người gọi: chỉ `landlord`, `tenant` có `status=active`. Admin nhận 403 `FORBIDDEN`; tài khoản bị khóa nhận 403 `ACCOUNT_LOCKED`.\n- Kết quả: chỉ user `landlord`/`tenant`, `status=active`, chưa bị xóa; luôn loại chính người gọi.\n- `q` tùy chọn; bỏ trống hoặc chỉ có khoảng trắng thì trả danh sách phân trang. Khi có từ khóa, server trim rồi khớp một phần tên không phân biệt chữ hoa/thường và dấu tiếng Việt. Ký tự %, _ và backslash trong q được hiểu theo nghĩa đen.\n- Lọc, đếm `totalItems` và phân trang đều chạy trên DB trước khi cắt trang. Sắp xếp cố định theo `name` tăng dần rồi `id` tăng dần.\n- Mỗi phần tử chỉ có `id`, `name`, `avatarUrl` (URL công khai, `null` nếu chưa có avatar); không trả email, phone, role, status. Hai người trùng tên được trả thành hai phần tử khác `id`.\n- Không cần PostgreSQL extension: Identity chuẩn hóa dấu bằng hàm `translate()` sẵn có trên cả cột `name` và `q`. Truy vấn quét theo điều kiện role/status/is_deleted, không dùng index cho phần tìm tên.\n\n**Sequence diagram**\n\n```mermaid\nsequenceDiagram\n    autonumber\n    actor Client\n    participant GW as API Gateway\n    participant S as Identity-Service\n    participant Guard as JWT/access guards\n    participant C as UserDirectoryController\n    participant Bus as CQRS QueryBus\n    participant H as Application handler\n    Client->>GW: GET /api/v1/users/directory\n    GW->>GW: Validate bearer token for protected route\n    GW->>S: Proxy original HTTP request\n    S->>Guard: Validate JWT, account state and route access\n    Guard-->>C: Continue with authenticated context\n    S->>C: Invoke getUsersDirectory\n    C->>Bus: Execute query for getUsersDirectory\n    Bus->>H: Dispatch query handler\n    H-->>Bus: Return use-case result\n    Bus-->>C: Result\n    C-->>S: Return documented response\n    S-->>GW: HTTP status and response body\n    GW-->>Client: Forward HTTP response\n```"
+        },
+        {
+          "pointer": "/paths/~1users~1directory/get/responses/200/content/application~1json/example/data",
+          "before": [
+            {
+              "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+              "name": "Nguyễn Văn An"
+            }
+          ],
+          "after": [
+            {
+              "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+              "name": "Nguyễn Văn An",
+              "avatarUrl": "https://media.example.com/avatars/3fa85f64.jpg"
+            }
+          ]
+        },
+        {
+          "pointer": "/paths/~1users~1{userId}/get/responses/200/content/application~1json/example/data/avatarUrl",
+          "before": null,
+          "after": null
+        }
+      ],
+      "semanticDiff": {
+        "paths": {
+          "modified": {
+            "/contract-members": {
+              "operations": {
+                "modified": {
+                  "GET": {
+                    "responses": {
+                      "modified": {
+                        "200": {
+                          "content": {
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "properties": {
+                                    "modified": {
+                                      "data": {
+                                        "items": {
+                                          "required": {
+                                            "added": [
+                                              "tenantAvatarUrl"
+                                            ]
+                                          },
+                                          "properties": {
+                                            "added": [
+                                              "tenantAvatarUrl"
+                                            ]
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "/conversations": {
+              "operations": {
+                "modified": {
+                  "GET": {
+                    "responses": {
+                      "modified": {
+                        "200": {
+                          "content": {
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "properties": {
+                                    "modified": {
+                                      "data": {
+                                        "items": {
+                                          "properties": {
+                                            "added": [
+                                              "avatarUrl"
+                                            ]
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "POST": {
+                    "responses": {
+                      "modified": {
+                        "201": {
+                          "content": {
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "properties": {
+                                    "modified": {
+                                      "data": {
+                                        "properties": {
+                                          "added": [
+                                            "avatarUrl"
+                                          ],
+                                          "modified": {
+                                            "members": {
+                                              "items": {
+                                                "properties": {
+                                                  "added": [
+                                                    "avatarUrl"
+                                                  ]
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "/conversations/{conversationId}": {
+              "operations": {
+                "modified": {
+                  "GET": {
+                    "responses": {
+                      "modified": {
+                        "200": {
+                          "content": {
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "properties": {
+                                    "modified": {
+                                      "data": {
+                                        "properties": {
+                                          "added": [
+                                            "avatarUrl"
+                                          ],
+                                          "modified": {
+                                            "members": {
+                                              "items": {
+                                                "properties": {
+                                                  "added": [
+                                                    "avatarUrl"
+                                                  ]
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "/conversations/{conversationId}/members": {
+              "operations": {
+                "modified": {
+                  "GET": {
+                    "responses": {
+                      "modified": {
+                        "200": {
+                          "content": {
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "properties": {
+                                    "modified": {
+                                      "data": {
+                                        "items": {
+                                          "properties": {
+                                            "added": [
+                                              "avatarUrl"
+                                            ]
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "POST": {
+                    "responses": {
+                      "modified": {
+                        "200": {
+                          "content": {
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "properties": {
+                                    "modified": {
+                                      "data": {
+                                        "items": {
+                                          "properties": {
+                                            "added": [
+                                              "avatarUrl"
+                                            ]
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "/messages": {
+              "operations": {
+                "modified": {
+                  "GET": {
+                    "responses": {
+                      "modified": {
+                        "200": {
+                          "content": {
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "properties": {
+                                    "modified": {
+                                      "data": {
+                                        "items": {
+                                          "required": {
+                                            "added": [
+                                              "senderAvatarUrl"
+                                            ]
+                                          },
+                                          "properties": {
+                                            "added": [
+                                              "senderAvatarUrl"
+                                            ]
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "/users": {
+              "operations": {
+                "modified": {
+                  "GET": {
+                    "responses": {
+                      "modified": {
+                        "200": {
+                          "content": {
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "properties": {
+                                    "modified": {
+                                      "data": {
+                                        "items": {
+                                          "required": {
+                                            "added": [
+                                              "avatarUrl"
+                                            ]
+                                          },
+                                          "properties": {
+                                            "added": [
+                                              "avatarUrl"
+                                            ]
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "/users/directory": {
+              "operations": {
+                "modified": {
+                  "GET": {
+                    "responses": {
+                      "modified": {
+                        "200": {
+                          "content": {
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "properties": {
+                                    "modified": {
+                                      "data": {
+                                        "items": {
+                                          "required": {
+                                            "added": [
+                                              "avatarUrl"
+                                            ]
+                                          },
+                                          "properties": {
+                                            "added": [
+                                              "avatarUrl"
+                                            ]
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "/users/{userId}": {
+              "operations": {
+                "modified": {
+                  "GET": {
+                    "responses": {
+                      "modified": {
+                        "200": {
+                          "content": {
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "properties": {
+                                    "modified": {
+                                      "data": {
+                                        "required": {
+                                          "added": [
+                                            "avatarUrl"
+                                          ]
+                                        },
+                                        "properties": {
+                                          "added": [
+                                            "avatarUrl"
+                                          ]
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "components": {
+          "schemas": {
+            "modified": {
+              "ContractMemberListResponseDto": {
+                "required": {
+                  "added": [
+                    "tenantAvatarUrl"
+                  ]
+                },
+                "properties": {
+                  "added": [
+                    "tenantAvatarUrl"
+                  ]
+                }
+              },
+              "ConversationDetailResponseDto": {
+                "properties": {
+                  "added": [
+                    "avatarUrl"
+                  ],
+                  "modified": {
+                    "members": {
+                      "items": {
+                        "properties": {
+                          "added": [
+                            "avatarUrl"
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "ConversationListResponseDto": {
+                "properties": {
+                  "added": [
+                    "avatarUrl"
+                  ]
+                }
+              },
+              "ConversationMember": {
+                "properties": {
+                  "added": [
+                    "avatarUrl"
+                  ]
+                }
+              },
+              "MessageListResponseDto": {
+                "required": {
+                  "added": [
+                    "senderAvatarUrl"
+                  ]
+                },
+                "properties": {
+                  "added": [
+                    "senderAvatarUrl"
+                  ]
+                }
+              },
+              "UserDetailResponseDto": {
+                "required": {
+                  "added": [
+                    "avatarUrl"
+                  ]
+                },
+                "properties": {
+                  "added": [
+                    "avatarUrl"
+                  ]
+                }
+              },
+              "UserDirectoryResponseDto": {
+                "required": {
+                  "added": [
+                    "avatarUrl"
+                  ]
+                },
+                "properties": {
+                  "added": [
+                    "avatarUrl"
+                  ]
+                }
+              },
+              "UserListResponseDto": {
+                "required": {
+                  "added": [
+                    "avatarUrl"
+                  ]
+                },
+                "properties": {
+                  "added": [
+                    "avatarUrl"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "dc4468e0f8cdabee737753faeaad5c0944f610af5790226468974c53381ea962",
+      "label": "Thay đổi contract từ Git",
+      "classification": "NON_BREAKING",
+      "contractId": "rentify-public",
+      "repository": "https://github.com/pbl6-home-renter/api-doc",
+      "baseHash": "940f1a10bbd838ae0db224ef5ad2ff3de28c6dd561b6581eb0792aef5eec8b3f",
+      "headHash": "ead0abbcb649412a8fb061b457cde640ca8923cd8d65a6892ca0941379aec186",
+      "baseSource": "src/openapi.yaml",
+      "headSource": "src/openapi.yaml",
+      "detectedAt": "2026-11-14T01:33:14.873Z",
+      "committedAt": "2026-11-14T08:32:59+07:00",
+      "baseCommit": "143c0f921cd5151644a843ce9a8de569e65b71cc",
+      "headCommit": "047ac132f9635f6d10e42014f50b1394e0f3a109",
+      "prUrl": "https://github.com/pbl6-home-renter/api-doc/pull/61",
+      "commitUrl": "https://github.com/pbl6-home-renter/api-doc/commit/047ac132f9635f6d10e42014f50b1394e0f3a109",
+      "metadataKind": "Git revision thực tế",
+      "reason": "CHƯA CUNG CẤP — tác giả PR phải bổ sung lý do nghiệp vụ; không thể suy ra từ OpenAPI diff.",
+      "tools": {
+        "redocly": "2.64.1",
+        "oasdiff": "1.34.1"
+      },
+      "changes": [
+        {
+          "id": "response-non-success-status-added",
+          "text": "added the non-success response with the status `409`",
+          "level": 1,
+          "operation": "DELETE",
+          "operationId": "deleteRoomsRoomid",
+          "path": "/rooms/{roomId}",
+          "section": "paths",
+          "fingerprint": "7d8d9f33fb8d",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        }
+      ],
+      "locations": [
+        {
+          "pointer": "/paths/~1rooms~1{roomId}/delete/description",
+          "before": "Lỗi nghiệp vụ: 404 NOT FOUND · 403 FORBIDDEN.\n\n**Sequence diagram**\n\n```mermaid\nsequenceDiagram\n    autonumber\n    actor Client\n    participant GW as API Gateway\n    participant S as Tenancy-Service\n    participant Guard as JWT/access guards\n    participant C as RoomController\n    participant Bus as CQRS CommandBus\n    participant H as Application handler\n    Client->>GW: DELETE /api/v1/rooms/{roomId}\n    GW->>GW: Validate bearer token for protected route\n    GW->>S: Proxy original HTTP request\n    S->>Guard: Validate JWT, account state and route access\n    Guard-->>C: Continue with authenticated context\n    S->>C: Invoke deleteRoomsRoomid\n    C->>Bus: Execute command for deleteRoomsRoomid\n    Bus->>H: Dispatch command handler\n    H-->>Bus: Return use-case result\n    Bus-->>C: Result\n    C-->>S: Return documented response\n    S-->>GW: HTTP status and response body\n    GW-->>Client: Forward HTTP response\n```",
+          "after": "Lỗi nghiệp vụ: 404 NOT FOUND · 403 FORBIDDEN · 409 ROOM_HAS_ACTIVE_CONTRACT.\n\n**Sequence diagram**\n\n```mermaid\nsequenceDiagram\n    autonumber\n    actor Client\n    participant GW as API Gateway\n    participant S as Tenancy-Service\n    participant Guard as JWT/access guards\n    participant C as RoomController\n    participant Bus as CQRS CommandBus\n    participant H as Application handler\n    Client->>GW: DELETE /api/v1/rooms/{roomId}\n    GW->>GW: Validate bearer token for protected route\n    GW->>S: Proxy original HTTP request\n    S->>Guard: Validate JWT, account state and route access\n    Guard-->>C: Continue with authenticated context\n    S->>C: Invoke deleteRoomsRoomid\n    C->>Bus: Execute command for deleteRoomsRoomid\n    Bus->>H: Dispatch command handler\n    H-->>Bus: Return use-case result\n    Bus-->>C: Result\n    C-->>S: Return documented response\n    S-->>GW: HTTP status and response body\n    GW-->>Client: Forward HTTP response\n```"
+        },
+        {
+          "pointer": "/paths/~1rooms~1{roomId}/delete/responses/409",
+          "before": null,
+          "after": {
+            "x-apidog-name": "Conflict",
+            "description": "Phòng đang có hợp đồng hiệu lực nên không thể xóa.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        409
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "ROOM_HAS_ACTIVE_CONTRACT"
+                      ],
+                      "description": "- ROOM_HAS_ACTIVE_CONTRACT: Phòng có hợp đồng `active`; kết thúc/checkout hợp đồng trước khi xóa."
+                    }
+                  }
+                },
+                "examples": {
+                  "room_has_active_contract": {
+                    "summary": "ROOM_HAS_ACTIVE_CONTRACT — Phòng có hợp đồng hiệu lực.",
+                    "value": {
+                      "statusCode": 409,
+                      "code": "ROOM_HAS_ACTIVE_CONTRACT"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      ],
+      "semanticDiff": {
+        "paths": {
+          "modified": {
+            "/rooms/{roomId}": {
+              "operations": {
+                "modified": {
+                  "DELETE": {
+                    "responses": {
+                      "added": [
+                        "409"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   ]
 }
