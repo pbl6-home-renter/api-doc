@@ -65377,6 +65377,2360 @@
           }
         }
       }
+    },
+    {
+      "id": "348423370b24a4356114edea8fc56f930161802d82521b90855a11b711bdba95",
+      "label": "Thay đổi contract từ Git",
+      "classification": "BREAKING",
+      "contractId": "rentify-public",
+      "repository": "https://github.com/pbl6-home-renter/api-doc",
+      "baseHash": "8f0e0e85678c088ec64b2f9d818f5b898abff7b1a427a595ca7bb555448cb482",
+      "headHash": "26dee608327e24b72a6a43761ebf7a48ff57b4d9702affa1af8c7dd8ae462751",
+      "baseSource": "src/openapi.yaml",
+      "headSource": "src/openapi.yaml",
+      "detectedAt": "2026-11-14T16:42:55.883Z",
+      "committedAt": "2026-11-14T23:42:45+07:00",
+      "baseCommit": "b67d90f1aee31a1e321fa3c852a3cf327957fd3a",
+      "headCommit": "c784fdda25ad47a4b6f087a91ee791d3c1aee158",
+      "prUrl": "https://github.com/pbl6-home-renter/api-doc/pull/68",
+      "commitUrl": "https://github.com/pbl6-home-renter/api-doc/commit/c784fdda25ad47a4b6f087a91ee791d3c1aee158",
+      "metadataKind": "Git revision thực tế",
+      "reason": "CHƯA CUNG CẤP — tác giả PR phải bổ sung lý do nghiệp vụ; không thể suy ra từ OpenAPI diff.",
+      "tools": {
+        "redocly": "2.64.1",
+        "oasdiff": "1.34.1"
+      },
+      "changes": [
+        {
+          "id": "request-parameter-became-enum",
+          "text": "the `query` request parameter `sort` was restricted to a list of enum values",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getIssues",
+          "path": "/issues",
+          "section": "paths",
+          "fingerprint": "0099eefd27c9",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu enum trong DTO/validation và nhánh switch/when; xử lý giá trị chưa biết, kiểm thử dữ liệu cũ và mới; phối hợp BE trước khi phát hành."
+        },
+        {
+          "id": "request-parameter-enum-value-removed",
+          "text": "removed the enum value `csv` from the `query` request parameter `format`",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getIssues",
+          "path": "/issues",
+          "section": "paths",
+          "fingerprint": "0a7fa280a896",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu enum trong DTO/validation và nhánh switch/when; xử lý giá trị chưa biết, kiểm thử dữ liệu cũ và mới; phối hợp BE trước khi phát hành."
+        },
+        {
+          "id": "request-parameter-enum-value-removed",
+          "text": "removed the enum value `pdf` from the `query` request parameter `format`",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getIssues",
+          "path": "/issues",
+          "section": "paths",
+          "fingerprint": "ca37aea1bc97",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu enum trong DTO/validation và nhánh switch/when; xử lý giá trị chưa biết, kiểm thử dữ liệu cũ và mới; phối hợp BE trước khi phát hành."
+        },
+        {
+          "id": "request-parameter-enum-value-removed",
+          "text": "removed the enum value `xlsx` from the `query` request parameter `format`",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getIssues",
+          "path": "/issues",
+          "section": "paths",
+          "fingerprint": "f6efd4bb67b9",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu enum trong DTO/validation và nhánh switch/when; xử lý giá trị chưa biết, kiểm thử dữ liệu cũ và mới; phối hợp BE trước khi phát hành."
+        },
+        {
+          "id": "response-media-type-removed",
+          "text": "removed the media type `application/pdf` for the response with the status `200`",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getIssues",
+          "path": "/issues",
+          "section": "paths",
+          "fingerprint": "a4b19b527059",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "response-media-type-removed",
+          "text": "removed the media type `application/vnd.openxmlformats-officedocument.spreadsheetml.sheet` for the response with the status `200`",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getIssues",
+          "path": "/issues",
+          "section": "paths",
+          "fingerprint": "e7bbee8d1616",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "response-media-type-removed",
+          "text": "removed the media type `text/csv` for the response with the status `200`",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getIssues",
+          "path": "/issues",
+          "section": "paths",
+          "fingerprint": "8d1e58b83358",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "response-required-property-removed",
+          "text": "removed the required property `data/items/reporterName` from the response with the `200` status",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getIssues",
+          "path": "/issues",
+          "section": "paths",
+          "fingerprint": "f5bb5093683c",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "response-required-property-removed",
+          "text": "removed the required property `data/reporterName` from the response with the `200` status",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getIssuesIssueid",
+          "path": "/issues/{issueId}",
+          "section": "paths",
+          "fingerprint": "4284cf42569b",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "request-property-enum-value-removed",
+          "text": "removed the enum value `cancelled` of the request property `status`",
+          "level": 3,
+          "operation": "PATCH",
+          "operationId": "patchIssuesIssueid",
+          "path": "/issues/{issueId}",
+          "section": "paths",
+          "fingerprint": "6008b1779b42",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu enum trong DTO/validation và nhánh switch/when; xử lý giá trị chưa biết, kiểm thử dữ liệu cũ và mới; phối hợp BE trước khi phát hành."
+        },
+        {
+          "id": "request-property-enum-value-removed",
+          "text": "removed the enum value `open` of the request property `status`",
+          "level": 3,
+          "operation": "PATCH",
+          "operationId": "patchIssuesIssueid",
+          "path": "/issues/{issueId}",
+          "section": "paths",
+          "fingerprint": "97cd494b1e79",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu enum trong DTO/validation và nhánh switch/when; xử lý giá trị chưa biết, kiểm thử dữ liệu cũ và mới; phối hợp BE trước khi phát hành."
+        },
+        {
+          "id": "request-property-max-length-set",
+          "text": "the `assignedTo` request property's maxLength was set to `500`",
+          "comment": "Setting a bound rejects values the previous contract accepted. If your clients are known to stay within the new limit, lower this check with --severity-levels.",
+          "level": 3,
+          "operation": "PATCH",
+          "operationId": "patchIssuesIssueid",
+          "path": "/issues/{issueId}",
+          "section": "paths",
+          "fingerprint": "c55747ffd115",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu vị trí và thay đổi trước/sau trong entry này với API adapter, DTO, parser và validation; cùng BE xác nhận phương án tương thích trước merge/phát hành."
+        },
+        {
+          "id": "request-property-max-set",
+          "text": "the `repairCost` request property's max was set to `2147483647.00`",
+          "comment": "Setting a bound rejects values the previous contract accepted. If your clients are known to stay within the new limit, lower this check with --severity-levels.",
+          "level": 3,
+          "operation": "PATCH",
+          "operationId": "patchIssuesIssueid",
+          "path": "/issues/{issueId}",
+          "section": "paths",
+          "fingerprint": "76af50c4d091",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu vị trí và thay đổi trước/sau trong entry này với API adapter, DTO, parser và validation; cùng BE xác nhận phương án tương thích trước merge/phát hành."
+        },
+        {
+          "id": "request-property-min-length-set",
+          "text": "the `assignedTo` request property's minLength was set to `1`",
+          "comment": "Setting a bound rejects values the previous contract accepted. If your clients are known to stay within the new limit, lower this check with --severity-levels.",
+          "level": 3,
+          "operation": "PATCH",
+          "operationId": "patchIssuesIssueid",
+          "path": "/issues/{issueId}",
+          "section": "paths",
+          "fingerprint": "5eafb2476c26",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu vị trí và thay đổi trước/sau trong entry này với API adapter, DTO, parser và validation; cùng BE xác nhận phương án tương thích trước merge/phát hành."
+        },
+        {
+          "id": "response-property-enum-value-added",
+          "text": "added the new `cancelled` enum value to the `data/status` response property for the response status `200`",
+          "comment": "The server may now return a value the previous contract excluded, so a client written against it may not handle the response. If the value set is meant to grow, declare it with x-extensible-enum.",
+          "level": 3,
+          "operation": "POST",
+          "operationId": "postIssuesIssueidCancel",
+          "path": "/issues/{issueId}/cancel",
+          "section": "paths",
+          "fingerprint": "de6bb36118f9",
+          "classification": "BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới cancelled; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "request-parameter-became-enum",
+          "text": "the `query` request parameter `sort` was restricted to a list of enum values",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getMeIssues",
+          "path": "/me/issues",
+          "section": "paths",
+          "fingerprint": "7a111ffbcedc",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu enum trong DTO/validation và nhánh switch/when; xử lý giá trị chưa biết, kiểm thử dữ liệu cũ và mới; phối hợp BE trước khi phát hành."
+        },
+        {
+          "id": "request-parameter-enum-value-removed",
+          "text": "removed the enum value `csv` from the `query` request parameter `format`",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getMeIssues",
+          "path": "/me/issues",
+          "section": "paths",
+          "fingerprint": "0d05235eb227",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu enum trong DTO/validation và nhánh switch/when; xử lý giá trị chưa biết, kiểm thử dữ liệu cũ và mới; phối hợp BE trước khi phát hành."
+        },
+        {
+          "id": "request-parameter-enum-value-removed",
+          "text": "removed the enum value `pdf` from the `query` request parameter `format`",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getMeIssues",
+          "path": "/me/issues",
+          "section": "paths",
+          "fingerprint": "95a2d03b668b",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu enum trong DTO/validation và nhánh switch/when; xử lý giá trị chưa biết, kiểm thử dữ liệu cũ và mới; phối hợp BE trước khi phát hành."
+        },
+        {
+          "id": "request-parameter-enum-value-removed",
+          "text": "removed the enum value `xlsx` from the `query` request parameter `format`",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getMeIssues",
+          "path": "/me/issues",
+          "section": "paths",
+          "fingerprint": "64497d184f6a",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu enum trong DTO/validation và nhánh switch/when; xử lý giá trị chưa biết, kiểm thử dữ liệu cũ và mới; phối hợp BE trước khi phát hành."
+        },
+        {
+          "id": "response-media-type-removed",
+          "text": "removed the media type `application/pdf` for the response with the status `200`",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getMeIssues",
+          "path": "/me/issues",
+          "section": "paths",
+          "fingerprint": "fae342c92a0e",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "response-media-type-removed",
+          "text": "removed the media type `application/vnd.openxmlformats-officedocument.spreadsheetml.sheet` for the response with the status `200`",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getMeIssues",
+          "path": "/me/issues",
+          "section": "paths",
+          "fingerprint": "f4f031ae66f3",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "response-media-type-removed",
+          "text": "removed the media type `text/csv` for the response with the status `200`",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getMeIssues",
+          "path": "/me/issues",
+          "section": "paths",
+          "fingerprint": "aece9ede7281",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "request-property-removed",
+          "text": "removed the request property `issuePhotoMediaIds`",
+          "level": 2,
+          "operation": "POST",
+          "operationId": "postIssues",
+          "path": "/issues",
+          "section": "paths",
+          "fingerprint": "9ac4abb7e15f",
+          "classification": "NEEDS_REVIEW",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "request-property-removed",
+          "text": "removed the request property `taggedRoomId`",
+          "level": 2,
+          "operation": "POST",
+          "operationId": "postIssues",
+          "path": "/issues",
+          "section": "paths",
+          "fingerprint": "ce6df881e7c1",
+          "classification": "NEEDS_REVIEW",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "request-property-removed",
+          "text": "removed the request property `taggedUserId`",
+          "level": 2,
+          "operation": "POST",
+          "operationId": "postIssues",
+          "path": "/issues",
+          "section": "paths",
+          "fingerprint": "ccd82257205d",
+          "classification": "NEEDS_REVIEW",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "request-property-removed",
+          "text": "removed the request property `resolutionMediaIds`",
+          "level": 2,
+          "operation": "PATCH",
+          "operationId": "patchIssuesIssueid",
+          "path": "/issues/{issueId}",
+          "section": "paths",
+          "fingerprint": "a58883d0b5e0",
+          "classification": "NEEDS_REVIEW",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "api-version-not-bumped",
+          "text": "a breaking change was detected but the version is still `1.0.0`",
+          "level": 1,
+          "section": "info",
+          "fingerprint": "d3f96cd643c1",
+          "classification": "NON_BREAKING",
+          "clientImpact": "BE: xem lại quy ước version trước khi chấp nhận breaking change. FE/Mobile: theo kế hoạch chuyển đổi của entry này; version trong OpenAPI chưa chứng minh backend đã triển khai."
+        },
+        {
+          "id": "request-parameter-property-enum-value-added",
+          "text": "added the enum value `cancelled` to the property `status` of the `query` request parameter `filter`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getIssues",
+          "path": "/issues",
+          "section": "paths",
+          "fingerprint": "4cbac69b8f3f",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu enum trong DTO/validation và nhánh switch/when; xử lý giá trị chưa biết, kiểm thử dữ liệu cũ và mới; phối hợp BE trước khi phát hành."
+        },
+        {
+          "id": "request-parameter-property-enum-value-added",
+          "text": "added the enum value `in_progress` to the property `status` of the `query` request parameter `filter`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getIssues",
+          "path": "/issues",
+          "section": "paths",
+          "fingerprint": "c2fc623bbdf8",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu enum trong DTO/validation và nhánh switch/when; xử lý giá trị chưa biết, kiểm thử dữ liệu cũ và mới; phối hợp BE trước khi phát hành."
+        },
+        {
+          "id": "request-parameter-property-enum-value-added",
+          "text": "added the enum value `open` to the property `status` of the `query` request parameter `filter`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getIssues",
+          "path": "/issues",
+          "section": "paths",
+          "fingerprint": "e4b391a6e9ac",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu enum trong DTO/validation và nhánh switch/when; xử lý giá trị chưa biết, kiểm thử dữ liệu cũ và mới; phối hợp BE trước khi phát hành."
+        },
+        {
+          "id": "request-parameter-property-enum-value-added",
+          "text": "added the enum value `resolved` to the property `status` of the `query` request parameter `filter`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getIssues",
+          "path": "/issues",
+          "section": "paths",
+          "fingerprint": "437d0e816c1b",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu enum trong DTO/validation và nhánh switch/when; xử lý giá trị chưa biết, kiểm thử dữ liệu cũ và mới; phối hợp BE trước khi phát hành."
+        },
+        {
+          "id": "response-property-became-required",
+          "text": "the response property `data/items/buildingId` became required for the status `200`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getIssues",
+          "path": "/issues",
+          "section": "paths",
+          "fingerprint": "803df686029c",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        },
+        {
+          "id": "response-required-property-added",
+          "text": "added the required property `data/items/reporterId` to the response with the `200` status",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getIssues",
+          "path": "/issues",
+          "section": "paths",
+          "fingerprint": "3e266b7b3eb2",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/items/reporterId; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-property-enum-value-removed",
+          "text": "removed the `ISSUE_PHOTO_INVALID` enum value from the `code` response property for the response status `422`",
+          "level": 1,
+          "operation": "POST",
+          "operationId": "postIssues",
+          "path": "/issues",
+          "section": "paths",
+          "fingerprint": "bb1fb3d87d25",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu enum trong DTO/validation và nhánh switch/when; xử lý giá trị chưa biết, kiểm thử dữ liệu cũ và mới; phối hợp BE trước khi phát hành."
+        },
+        {
+          "id": "response-optional-property-removed",
+          "text": "removed the optional property `data/reporterPhone` from the response with the `200` status",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getIssuesIssueid",
+          "path": "/issues/{issueId}",
+          "section": "paths",
+          "fingerprint": "d51b4c0c6773",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "response-optional-property-removed",
+          "text": "removed the optional property `data/resolutionMediaUrls` from the response with the `200` status",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getIssuesIssueid",
+          "path": "/issues/{issueId}",
+          "section": "paths",
+          "fingerprint": "d15922e8a24f",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "response-property-became-not-nullable",
+          "text": "the response property `data/reporterId` became not nullable for the status `200`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getIssuesIssueid",
+          "path": "/issues/{issueId}",
+          "section": "paths",
+          "fingerprint": "542088878103",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        },
+        {
+          "id": "response-property-became-required",
+          "text": "the response property `data/buildingId` became required for the status `200`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getIssuesIssueid",
+          "path": "/issues/{issueId}",
+          "section": "paths",
+          "fingerprint": "8de400bab2f2",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        },
+        {
+          "id": "response-property-became-required",
+          "text": "the response property `data/issuePhotoMediaIds` became required for the status `200`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getIssuesIssueid",
+          "path": "/issues/{issueId}",
+          "section": "paths",
+          "fingerprint": "225cd340eefa",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        },
+        {
+          "id": "response-property-became-required",
+          "text": "the response property `data/reporterId` became required for the status `200`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getIssuesIssueid",
+          "path": "/issues/{issueId}",
+          "section": "paths",
+          "fingerprint": "42b7a6bfb1f4",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        },
+        {
+          "id": "response-required-property-added",
+          "text": "added the required property `data/canCancel` to the response with the `200` status",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getIssuesIssueid",
+          "path": "/issues/{issueId}",
+          "section": "paths",
+          "fingerprint": "48c94a8ba857",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/canCancel; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-required-property-added",
+          "text": "added the required property `data/canUpdate` to the response with the `200` status",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getIssuesIssueid",
+          "path": "/issues/{issueId}",
+          "section": "paths",
+          "fingerprint": "46b3abc33367",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/canUpdate; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-required-property-added",
+          "text": "added the required property `data/canUploadPhotos` to the response with the `200` status",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getIssuesIssueid",
+          "path": "/issues/{issueId}",
+          "section": "paths",
+          "fingerprint": "d7fe2039858b",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/canUploadPhotos; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-required-property-added",
+          "text": "added the required property `data/contractId` to the response with the `200` status",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getIssuesIssueid",
+          "path": "/issues/{issueId}",
+          "section": "paths",
+          "fingerprint": "caf9c6048e3d",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/contractId; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-property-enum-value-removed",
+          "text": "removed the `cancel` enum value from the `data/status` response property for the response status `200`",
+          "level": 1,
+          "operation": "POST",
+          "operationId": "postIssuesIssueidCancel",
+          "path": "/issues/{issueId}/cancel",
+          "section": "paths",
+          "fingerprint": "412a9a54fe2d",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu enum trong DTO/validation và nhánh switch/when; xử lý giá trị chưa biết, kiểm thử dữ liệu cũ và mới; phối hợp BE trước khi phát hành."
+        },
+        {
+          "id": "request-parameter-property-enum-value-added",
+          "text": "added the enum value `cancelled` to the property `status` of the `query` request parameter `filter`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getMeIssues",
+          "path": "/me/issues",
+          "section": "paths",
+          "fingerprint": "dc064592a88e",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu enum trong DTO/validation và nhánh switch/when; xử lý giá trị chưa biết, kiểm thử dữ liệu cũ và mới; phối hợp BE trước khi phát hành."
+        },
+        {
+          "id": "request-parameter-property-enum-value-added",
+          "text": "added the enum value `in_progress` to the property `status` of the `query` request parameter `filter`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getMeIssues",
+          "path": "/me/issues",
+          "section": "paths",
+          "fingerprint": "7d6d0f6b9532",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu enum trong DTO/validation và nhánh switch/when; xử lý giá trị chưa biết, kiểm thử dữ liệu cũ và mới; phối hợp BE trước khi phát hành."
+        },
+        {
+          "id": "request-parameter-property-enum-value-added",
+          "text": "added the enum value `open` to the property `status` of the `query` request parameter `filter`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getMeIssues",
+          "path": "/me/issues",
+          "section": "paths",
+          "fingerprint": "f64841e7a641",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu enum trong DTO/validation và nhánh switch/when; xử lý giá trị chưa biết, kiểm thử dữ liệu cũ và mới; phối hợp BE trước khi phát hành."
+        },
+        {
+          "id": "request-parameter-property-enum-value-added",
+          "text": "added the enum value `resolved` to the property `status` of the `query` request parameter `filter`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getMeIssues",
+          "path": "/me/issues",
+          "section": "paths",
+          "fingerprint": "688c0800535d",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu enum trong DTO/validation và nhánh switch/when; xử lý giá trị chưa biết, kiểm thử dữ liệu cũ và mới; phối hợp BE trước khi phát hành."
+        },
+        {
+          "id": "response-required-property-added",
+          "text": "added the required property `data/items/buildingId` to the response with the `200` status",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getMeIssues",
+          "path": "/me/issues",
+          "section": "paths",
+          "fingerprint": "ab2ee78a7396",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/items/buildingId; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-required-property-added",
+          "text": "added the required property `data/items/buildingName` to the response with the `200` status",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getMeIssues",
+          "path": "/me/issues",
+          "section": "paths",
+          "fingerprint": "dc91cd312e45",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/items/buildingName; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-required-property-added",
+          "text": "added the required property `data/items/reporterId` to the response with the `200` status",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getMeIssues",
+          "path": "/me/issues",
+          "section": "paths",
+          "fingerprint": "cb33a8aea8ed",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/items/reporterId; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        }
+      ],
+      "locations": [
+        {
+          "pointer": "/components/schemas/IssueReport/allOf",
+          "before": [
+            {
+              "$ref": "#/components/schemas/BaseEntity"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "roomId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "description": "ID phòng xảy ra sự cố",
+                  "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                },
+                "conversationId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "nullable": true,
+                  "description": "ID hội thoại trao đổi về sự cố",
+                  "example": null
+                },
+                "reporterId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "nullable": true,
+                  "description": "ID người báo cáo (null nếu chủ nhà tự tạo thay người thuê passive - D29)",
+                  "example": null
+                },
+                "status": {
+                  "type": "string",
+                  "enum": [
+                    "open",
+                    "in_progress",
+                    "resolved",
+                    "cancelled"
+                  ],
+                  "default": "open",
+                  "description": "Trạng thái xử lý sự cố",
+                  "example": "open"
+                },
+                "title": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 255,
+                  "description": "Tiêu đề sự cố",
+                  "example": "Đèn cháy"
+                },
+                "description": {
+                  "type": "string",
+                  "nullable": true,
+                  "minLength": 1,
+                  "maxLength": 500,
+                  "description": "Mô tả chi tiết hiện tượng hư hỏng",
+                  "example": "Bóng đèn phòng ngủ cháy 2 bóng"
+                },
+                "note": {
+                  "type": "string",
+                  "nullable": true,
+                  "minLength": 1,
+                  "maxLength": 500,
+                  "description": "Ghi chú kết quả xử lý của chủ nhà",
+                  "example": null
+                },
+                "closedAt": {
+                  "type": "string",
+                  "format": "date-time",
+                  "nullable": true,
+                  "description": "Thời điểm đóng sự cố (khi resolved hoặc cancelled)",
+                  "example": null
+                }
+              },
+              "required": [
+                "roomId",
+                "status",
+                "title"
+              ]
+            }
+          ],
+          "after": [
+            {
+              "$ref": "#/components/schemas/BaseEntity"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "roomId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "description": "ID phòng xảy ra sự cố",
+                  "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                },
+                "buildingId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "description": "ID tòa nhà tại thời điểm tạo"
+                },
+                "contractId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "description": "ID hợp đồng tại thời điểm tạo"
+                },
+                "reporterId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "description": "ID người tạo báo cáo, kể cả khi chủ trọ tạo thay người thuê passive"
+                },
+                "status": {
+                  "type": "string",
+                  "enum": [
+                    "open",
+                    "in_progress",
+                    "resolved",
+                    "cancelled"
+                  ],
+                  "default": "open",
+                  "description": "Trạng thái xử lý sự cố",
+                  "example": "open"
+                },
+                "title": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 255,
+                  "description": "Tiêu đề sự cố",
+                  "example": "Đèn cháy"
+                },
+                "description": {
+                  "type": "string",
+                  "nullable": true,
+                  "minLength": 1,
+                  "maxLength": 500,
+                  "description": "Mô tả chi tiết hiện tượng hư hỏng",
+                  "example": "Bóng đèn phòng ngủ cháy 2 bóng"
+                },
+                "category": {
+                  "type": "string",
+                  "enum": [
+                    "PLUMBING",
+                    "ELECTRICAL",
+                    "APPLIANCE",
+                    "STRUCTURAL",
+                    "SECURITY",
+                    "OTHER"
+                  ]
+                },
+                "urgency": {
+                  "type": "string",
+                  "enum": [
+                    "LOW",
+                    "MEDIUM",
+                    "HIGH",
+                    "EMERGENCY"
+                  ]
+                },
+                "resolutionNote": {
+                  "type": "string",
+                  "nullable": true,
+                  "minLength": 1,
+                  "maxLength": 500,
+                  "description": "Ghi chú kết quả xử lý của chủ nhà",
+                  "example": null
+                },
+                "closedAt": {
+                  "type": "string",
+                  "format": "date-time",
+                  "nullable": true,
+                  "description": "Thời điểm đóng sự cố (khi resolved hoặc cancelled)",
+                  "example": null
+                }
+              },
+              "required": [
+                "roomId",
+                "buildingId",
+                "contractId",
+                "reporterId",
+                "status",
+                "title",
+                "category",
+                "urgency"
+              ]
+            }
+          ]
+        },
+        {
+          "pointer": "/components/schemas/IssueReportCancelResponseDto/properties/status/enum",
+          "before": [
+            "cancel"
+          ],
+          "after": [
+            "cancelled"
+          ]
+        },
+        {
+          "pointer": "/components/schemas/IssueReportCancelResponseDto/properties/status/example",
+          "before": "cancel",
+          "after": "cancelled"
+        },
+        {
+          "pointer": "/components/schemas/IssueReportCreateRequestDto/description",
+          "before": "Dữ liệu gửi báo cáo sự cố hư hỏng thiết bị hoặc phản ánh cư trú",
+          "after": "Tạo báo cáo trước, sau đó upload ảnh private với ownerType issue_report và ownerId là ID báo cáo vừa tạo (P10-D86)."
+        },
+        {
+          "pointer": "/components/schemas/IssueReportCreateRequestDto/properties/issuePhotoMediaIds",
+          "before": {
+            "type": "array",
+            "description": "Danh sách ID ảnh chụp hiện trường đính kèm",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "example": [
+              "48fae08f-e1a5-48b4-9c02-e2513470ff42"
+            ]
+          },
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/IssueReportCreateRequestDto/properties/taggedRoomId",
+          "before": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true,
+            "description": "Tag phòng (@Room) nếu là sự cố khu vực chung ảnh hưởng nhiều phòng",
+            "example": null
+          },
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/IssueReportCreateRequestDto/properties/taggedUserId",
+          "before": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true,
+            "description": "Tag người liên quan (@User) trong phòng hoặc thợ sửa",
+            "example": null
+          },
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/IssueReportCreateRequestDto/required",
+          "before": [
+            "roomId",
+            "title",
+            "category",
+            "urgency",
+            "issuePhotoMediaIds"
+          ],
+          "after": [
+            "roomId",
+            "title",
+            "category",
+            "urgency"
+          ]
+        },
+        {
+          "pointer": "/components/schemas/IssueReportDetailResponseDto/properties/canCancel",
+          "before": null,
+          "after": {
+            "type": "boolean",
+            "description": "Người gọi được hủy sự cố."
+          }
+        },
+        {
+          "pointer": "/components/schemas/IssueReportDetailResponseDto/properties/canUpdate",
+          "before": null,
+          "after": {
+            "type": "boolean",
+            "description": "Người gọi được cập nhật tiến độ."
+          }
+        },
+        {
+          "pointer": "/components/schemas/IssueReportDetailResponseDto/properties/canUploadPhotos",
+          "before": null,
+          "after": {
+            "type": "boolean",
+            "description": "Người gọi được upload ảnh sự cố."
+          }
+        },
+        {
+          "pointer": "/components/schemas/IssueReportDetailResponseDto/properties/contractId",
+          "before": null,
+          "after": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Hợp đồng tại thời điểm tạo sự cố."
+          }
+        },
+        {
+          "pointer": "/components/schemas/IssueReportDetailResponseDto/properties/issuePhotoMediaIds/description",
+          "before": "Danh sách ID tệp ảnh chụp hiện trường ban đầu",
+          "after": "Danh sách ID ảnh đã hoàn tất upload gắn với sự cố"
+        },
+        {
+          "pointer": "/components/schemas/IssueReportDetailResponseDto/properties/reporterId/description",
+          "before": "Định danh người phản ánh.",
+          "after": "Định danh người tạo báo cáo."
+        },
+        {
+          "pointer": "/components/schemas/IssueReportDetailResponseDto/properties/reporterId/nullable",
+          "before": true,
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/IssueReportDetailResponseDto/properties/reporterName",
+          "before": {
+            "type": "string",
+            "description": "Họ và tên người phản ánh."
+          },
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/IssueReportDetailResponseDto/properties/reporterPhone",
+          "before": {
+            "type": "string",
+            "description": "Số điện thoại người phản ánh."
+          },
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/IssueReportDetailResponseDto/properties/resolutionMediaUrls",
+          "before": {
+            "type": "array",
+            "description": "Danh sách ảnh chụp nghiệm thu sau khi sửa chữa xong",
+            "items": {
+              "type": "string",
+              "format": "uri"
+            }
+          },
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/IssueReportDetailResponseDto/required",
+          "before": [
+            "id",
+            "roomId",
+            "roomName",
+            "buildingName",
+            "reporterName",
+            "title",
+            "category",
+            "urgency",
+            "status",
+            "createdAt"
+          ],
+          "after": [
+            "id",
+            "roomId",
+            "contractId",
+            "buildingId",
+            "roomName",
+            "buildingName",
+            "reporterId",
+            "title",
+            "category",
+            "urgency",
+            "status",
+            "createdAt",
+            "issuePhotoMediaIds",
+            "canUpdate",
+            "canCancel",
+            "canUploadPhotos"
+          ]
+        },
+        {
+          "pointer": "/components/schemas/IssueReportListResponseDto/properties/reporterId",
+          "before": null,
+          "after": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Định danh người tạo báo cáo."
+          }
+        },
+        {
+          "pointer": "/components/schemas/IssueReportListResponseDto/properties/reporterName",
+          "before": {
+            "type": "string",
+            "description": "Họ và tên người tạo phản ánh."
+          },
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/IssueReportListResponseDto/required",
+          "before": [
+            "id",
+            "roomId",
+            "roomName",
+            "buildingName",
+            "reporterName",
+            "title",
+            "category",
+            "urgency",
+            "status",
+            "createdAt"
+          ],
+          "after": [
+            "id",
+            "roomId",
+            "buildingId",
+            "roomName",
+            "buildingName",
+            "reporterId",
+            "title",
+            "category",
+            "urgency",
+            "status",
+            "createdAt"
+          ]
+        },
+        {
+          "pointer": "/components/schemas/IssueReportMyListResponseDto/description",
+          "before": "Danh sách báo cáo sự cố do người dùng hiện tại đã gửi",
+          "after": "Danh sách sự cố thuộc hợp đồng mà tenant hiện tại được phép xem"
+        },
+        {
+          "pointer": "/components/schemas/IssueReportMyListResponseDto/properties/buildingId",
+          "before": null,
+          "after": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Định danh tòa nhà."
+          }
+        },
+        {
+          "pointer": "/components/schemas/IssueReportMyListResponseDto/properties/buildingName",
+          "before": null,
+          "after": {
+            "type": "string",
+            "description": "Tên tòa nhà."
+          }
+        },
+        {
+          "pointer": "/components/schemas/IssueReportMyListResponseDto/properties/reporterId",
+          "before": null,
+          "after": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Định danh người tạo báo cáo."
+          }
+        },
+        {
+          "pointer": "/components/schemas/IssueReportMyListResponseDto/required",
+          "before": [
+            "id",
+            "roomId",
+            "roomName",
+            "title",
+            "category",
+            "urgency",
+            "status",
+            "createdAt"
+          ],
+          "after": [
+            "id",
+            "roomId",
+            "buildingId",
+            "buildingName",
+            "reporterId",
+            "roomName",
+            "title",
+            "category",
+            "urgency",
+            "status",
+            "createdAt"
+          ]
+        },
+        {
+          "pointer": "/components/schemas/IssueReportUpdateRequestDto/properties/assignedTo/maxLength",
+          "before": null,
+          "after": 500
+        },
+        {
+          "pointer": "/components/schemas/IssueReportUpdateRequestDto/properties/assignedTo/minLength",
+          "before": null,
+          "after": 1
+        },
+        {
+          "pointer": "/components/schemas/IssueReportUpdateRequestDto/properties/repairCost/maximum",
+          "before": null,
+          "after": 2147483647
+        },
+        {
+          "pointer": "/components/schemas/IssueReportUpdateRequestDto/properties/resolutionMediaIds",
+          "before": {
+            "type": "array",
+            "nullable": true,
+            "description": "Danh sách ID ảnh chụp sau khi đã sửa xong để nghiệm thu",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/IssueReportUpdateRequestDto/properties/status/description",
+          "before": "Trạng thái mới của sự cố",
+          "after": "Chủ trọ chuyển open sang in_progress, sau đó in_progress sang resolved. Hủy bằng operation cancel riêng."
+        },
+        {
+          "pointer": "/components/schemas/IssueReportUpdateRequestDto/properties/status/enum",
+          "before": [
+            "open",
+            "in_progress",
+            "resolved",
+            "cancelled"
+          ],
+          "after": [
+            "in_progress",
+            "resolved"
+          ]
+        },
+        {
+          "pointer": "/paths/~1issues/get/parameters",
+          "before": [
+            {
+              "name": "filter",
+              "in": "query",
+              "required": false,
+              "style": "deepObject",
+              "explode": true,
+              "description": "Bộ lọc được endpoint hỗ trợ.",
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "roomId": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "buildingId": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "status": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            {
+              "name": "sort",
+              "in": "query",
+              "description": "Một trường sắp xếp được endpoint hỗ trợ.",
+              "schema": {
+                "type": "string",
+                "default": "createdAt"
+              }
+            },
+            {
+              "name": "order",
+              "in": "query",
+              "schema": {
+                "type": "string",
+                "enum": [
+                  "asc",
+                  "desc"
+                ],
+                "default": "asc"
+              }
+            },
+            {
+              "name": "pageSize",
+              "in": "query",
+              "schema": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 100,
+                "default": 20
+              }
+            },
+            {
+              "name": "pageNo",
+              "in": "query",
+              "schema": {
+                "type": "integer",
+                "minimum": 1,
+                "default": 1
+              }
+            },
+            {
+              "name": "format",
+              "in": "query",
+              "description": "json trả envelope; định dạng khác trả file stream.",
+              "schema": {
+                "type": "string",
+                "enum": [
+                  "json",
+                  "xlsx",
+                  "csv",
+                  "pdf"
+                ],
+                "default": "json"
+              }
+            }
+          ],
+          "after": [
+            {
+              "name": "filter",
+              "in": "query",
+              "required": false,
+              "style": "deepObject",
+              "explode": true,
+              "description": "Bộ lọc được endpoint hỗ trợ.",
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "roomId": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "buildingId": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "status": {
+                    "type": "string",
+                    "enum": [
+                      "open",
+                      "in_progress",
+                      "resolved",
+                      "cancelled"
+                    ]
+                  }
+                }
+              }
+            },
+            {
+              "name": "sort",
+              "in": "query",
+              "description": "Một trường sắp xếp được endpoint hỗ trợ.",
+              "schema": {
+                "type": "string",
+                "enum": [
+                  "createdAt"
+                ],
+                "default": "createdAt"
+              }
+            },
+            {
+              "name": "order",
+              "in": "query",
+              "schema": {
+                "type": "string",
+                "enum": [
+                  "asc",
+                  "desc"
+                ],
+                "default": "asc"
+              }
+            },
+            {
+              "name": "pageSize",
+              "in": "query",
+              "schema": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 100,
+                "default": 20
+              }
+            },
+            {
+              "name": "pageNo",
+              "in": "query",
+              "schema": {
+                "type": "integer",
+                "minimum": 1,
+                "default": 1
+              }
+            },
+            {
+              "name": "format",
+              "in": "query",
+              "description": "Trả dữ liệu JSON có envelope.",
+              "schema": {
+                "type": "string",
+                "enum": [
+                  "json"
+                ],
+                "default": "json"
+              }
+            }
+          ]
+        },
+        {
+          "pointer": "/paths/~1issues/get/responses/200/content/application~1json/example/data",
+          "before": [
+            {
+              "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+              "roomId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+              "title": "Vòi xịt bồn cầu bị rò rỉ",
+              "status": "open",
+              "description": "Nước rò rỉ liên tục",
+              "roomName": "Ví dụ",
+              "buildingName": "Ví dụ",
+              "reporterName": "Ví dụ",
+              "category": "PLUMBING",
+              "urgency": "HIGH",
+              "createdAt": "2026-09-23T11:55:00.000Z"
+            }
+          ],
+          "after": [
+            {
+              "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+              "roomId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+              "title": "Vòi xịt bồn cầu bị rò rỉ",
+              "status": "open",
+              "description": "Nước rò rỉ liên tục",
+              "roomName": "Ví dụ",
+              "buildingName": "Ví dụ",
+              "reporterId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+              "buildingId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+              "category": "PLUMBING",
+              "urgency": "HIGH",
+              "createdAt": "2026-09-23T11:55:00.000Z"
+            }
+          ]
+        },
+        {
+          "pointer": "/paths/~1issues/get/responses/200/content/application~1pdf",
+          "before": {
+            "schema": {
+              "type": "string",
+              "format": "binary"
+            }
+          },
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1issues/get/responses/200/content/application~1vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+          "before": {
+            "schema": {
+              "type": "string",
+              "format": "binary"
+            }
+          },
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1issues/get/responses/200/content/text~1csv",
+          "before": {
+            "schema": {
+              "type": "string",
+              "format": "binary"
+            }
+          },
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1issues/post/description",
+          "before": "tenant, landlord. Báo cáo sự cố. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 ISSUE PHOTO INVALID · 404 ROOM NOT FOUND.",
+          "after": "Tenant hiện tại hoặc landlord của phòng tạo sự cố gắn với hợp đồng active (P10-D86). Sau khi tạo, upload ảnh private theo ownerType `issue_report`, purpose `issue_photo` và ID sự cố; không gửi media ID khi tạo. Lỗi nghiệp vụ: 403 FORBIDDEN · 404 ROOM NOT FOUND.\n\nEvent `notification.requested` mang `data.messageKey` (`issue.created`, `issue.updated`, hoặc `issue.cancelled`), `issueId` và `contractId`. Web dịch nội dung theo key; Community kiểm tra lại recipient trước khi lưu và gửi thông báo."
+        },
+        {
+          "pointer": "/paths/~1issues/post/requestBody/content/application~1json/example/issuePhotoMediaIds",
+          "before": [
+            "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+          ],
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1issues/post/responses/422/$ref",
+          "before": null,
+          "after": "#/components/responses/ValidationError"
+        },
+        {
+          "pointer": "/paths/~1issues/post/responses/422/content",
+          "before": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "statusCode",
+                  "code"
+                ],
+                "properties": {
+                  "statusCode": {
+                    "type": "integer",
+                    "enum": [
+                      422
+                    ]
+                  },
+                  "code": {
+                    "type": "string",
+                    "enum": [
+                      "ISSUE_PHOTO_INVALID",
+                      "VALIDATION_FAILED"
+                    ],
+                    "description": "- ISSUE_PHOTO_INVALID: Ảnh sự cố không hợp lệ.\n- VALIDATION_FAILED: Dữ liệu vi phạm ràng buộc schema hoặc quy tắc nghiệp vụ khác chưa có mã riêng."
+                  }
+                }
+              },
+              "examples": {
+                "issue_photo_invalid": {
+                  "summary": "ISSUE_PHOTO_INVALID — Ảnh sự cố không hợp lệ.",
+                  "value": {
+                    "statusCode": 422,
+                    "code": "ISSUE_PHOTO_INVALID"
+                  }
+                },
+                "validation_failed": {
+                  "summary": "VALIDATION_FAILED — Dữ liệu vi phạm ràng buộc schema hoặc quy tắc nghiệp vụ khác chưa có mã riêng.",
+                  "value": {
+                    "statusCode": 422,
+                    "code": "VALIDATION_FAILED"
+                  }
+                }
+              }
+            }
+          },
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1issues/post/responses/422/description",
+          "before": "Dữ liệu hợp lệ về cấu trúc nhưng vi phạm ràng buộc trường hoặc quy tắc nghiệp vụ.",
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1issues/post/responses/422/x-apidog-name",
+          "before": "Unprocessable Entity",
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1issues~1{issueId}/get/description",
+          "before": "landlord, tenant. Đọc chi tiết sự cố. Lỗi nghiệp vụ: 403 FORBIDDEN · 404 NOT FOUND.",
+          "after": "Landlord của phòng hoặc tenant hiện tại của hợp đồng gắn với sự cố được đọc chi tiết và ảnh đã upload hoàn tất. Tenant đã rời không còn quyền (P10-D86). Lỗi nghiệp vụ: 403 FORBIDDEN · 404 NOT FOUND."
+        },
+        {
+          "pointer": "/paths/~1issues~1{issueId}/get/responses/200/content/application~1json/example/data/assignedTo",
+          "before": null,
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1issues~1{issueId}/get/responses/200/content/application~1json/example/data/buildingId",
+          "before": null,
+          "after": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+        },
+        {
+          "pointer": "/paths/~1issues~1{issueId}/get/responses/200/content/application~1json/example/data/canCancel",
+          "before": null,
+          "after": false
+        },
+        {
+          "pointer": "/paths/~1issues~1{issueId}/get/responses/200/content/application~1json/example/data/canUpdate",
+          "before": null,
+          "after": true
+        },
+        {
+          "pointer": "/paths/~1issues~1{issueId}/get/responses/200/content/application~1json/example/data/canUploadPhotos",
+          "before": null,
+          "after": true
+        },
+        {
+          "pointer": "/paths/~1issues~1{issueId}/get/responses/200/content/application~1json/example/data/contractId",
+          "before": null,
+          "after": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+        },
+        {
+          "pointer": "/paths/~1issues~1{issueId}/get/responses/200/content/application~1json/example/data/note",
+          "before": null,
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1issues~1{issueId}/get/responses/200/content/application~1json/example/data/repairCost",
+          "before": null,
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1issues~1{issueId}/get/responses/200/content/application~1json/example/data/reporterName",
+          "before": "Ví dụ",
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1issues~1{issueId}/get/responses/200/content/application~1json/example/data/resolutionNote",
+          "before": null,
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1issues~1{issueId}/patch/description",
+          "before": "landlord. Cập nhật tiến trình sự cố. Lỗi nghiệp vụ: 404 NOT FOUND · 403 FORBIDDEN · 409 INVALID ISSUE TRANSITION.",
+          "after": "Landlord cập nhật tiến trình open → in_progress → resolved. Hai trạng thái resolved và cancelled là kết thúc (P10-D86). Lỗi nghiệp vụ: 404 NOT FOUND · 403 FORBIDDEN · 409 INVALID ISSUE TRANSITION."
+        },
+        {
+          "pointer": "/paths/~1issues~1{issueId}~1cancel/post/description",
+          "before": "tenant. Huỷ báo cáo sự cố. Lỗi nghiệp vụ: 404 NOT FOUND · 403 FORBIDDEN · 422 CANNOT CANCEL RESOLVED ISSUE.",
+          "after": "Người tạo còn quyền truy cập hủy báo cáo chưa resolved. Lặp lại yêu cầu hủy đã thành công là idempotent (P10-D86). Lỗi nghiệp vụ: 404 NOT FOUND · 403 FORBIDDEN · 422 CANNOT CANCEL RESOLVED ISSUE."
+        },
+        {
+          "pointer": "/paths/~1issues~1{issueId}~1cancel/post/responses/200/content/application~1json/example/data/status",
+          "before": "cancel",
+          "after": "cancelled"
+        },
+        {
+          "pointer": "/paths/~1me~1issues/get/description",
+          "before": "tenant. Sự cố của tôi. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 VALIDATION FAILED.",
+          "after": "Tenant xem sự cố của hợp đồng đang hiệu lực mà mình hiện là thành viên; không bao gồm sự cố của hợp đồng đã rời (P10-D86). Lỗi nghiệp vụ: 403 FORBIDDEN · 422 VALIDATION FAILED."
+        },
+        {
+          "pointer": "/paths/~1me~1issues/get/parameters",
+          "before": [
+            {
+              "name": "filter",
+              "in": "query",
+              "required": false,
+              "style": "deepObject",
+              "explode": true,
+              "description": "Bộ lọc được endpoint hỗ trợ.",
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "status": {
+                    "type": "string"
+                  },
+                  "roomId": {
+                    "type": "string",
+                    "format": "uuid"
+                  }
+                }
+              }
+            },
+            {
+              "name": "sort",
+              "in": "query",
+              "description": "Một trường sắp xếp được endpoint hỗ trợ.",
+              "schema": {
+                "type": "string",
+                "default": "createdAt"
+              }
+            },
+            {
+              "name": "order",
+              "in": "query",
+              "schema": {
+                "type": "string",
+                "enum": [
+                  "asc",
+                  "desc"
+                ],
+                "default": "asc"
+              }
+            },
+            {
+              "name": "pageSize",
+              "in": "query",
+              "schema": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 100,
+                "default": 20
+              }
+            },
+            {
+              "name": "pageNo",
+              "in": "query",
+              "schema": {
+                "type": "integer",
+                "minimum": 1,
+                "default": 1
+              }
+            },
+            {
+              "name": "format",
+              "in": "query",
+              "description": "json trả envelope; định dạng khác trả file stream.",
+              "schema": {
+                "type": "string",
+                "enum": [
+                  "json",
+                  "xlsx",
+                  "csv",
+                  "pdf"
+                ],
+                "default": "json"
+              }
+            }
+          ],
+          "after": [
+            {
+              "name": "filter",
+              "in": "query",
+              "required": false,
+              "style": "deepObject",
+              "explode": true,
+              "description": "Bộ lọc được endpoint hỗ trợ.",
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "status": {
+                    "type": "string",
+                    "enum": [
+                      "open",
+                      "in_progress",
+                      "resolved",
+                      "cancelled"
+                    ]
+                  },
+                  "roomId": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "buildingId": {
+                    "type": "string",
+                    "format": "uuid"
+                  }
+                }
+              }
+            },
+            {
+              "name": "sort",
+              "in": "query",
+              "description": "Một trường sắp xếp được endpoint hỗ trợ.",
+              "schema": {
+                "type": "string",
+                "enum": [
+                  "createdAt"
+                ],
+                "default": "createdAt"
+              }
+            },
+            {
+              "name": "order",
+              "in": "query",
+              "schema": {
+                "type": "string",
+                "enum": [
+                  "asc",
+                  "desc"
+                ],
+                "default": "asc"
+              }
+            },
+            {
+              "name": "pageSize",
+              "in": "query",
+              "schema": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 100,
+                "default": 20
+              }
+            },
+            {
+              "name": "pageNo",
+              "in": "query",
+              "schema": {
+                "type": "integer",
+                "minimum": 1,
+                "default": 1
+              }
+            },
+            {
+              "name": "format",
+              "in": "query",
+              "description": "Trả dữ liệu JSON có envelope.",
+              "schema": {
+                "type": "string",
+                "enum": [
+                  "json"
+                ],
+                "default": "json"
+              }
+            }
+          ]
+        },
+        {
+          "pointer": "/paths/~1me~1issues/get/responses/200/content/application~1json/example/data",
+          "before": [
+            {
+              "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+              "roomId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+              "title": "Vòi xịt bồn cầu bị rò rỉ",
+              "status": "open",
+              "description": "Nước rò rỉ liên tục",
+              "roomName": "Ví dụ",
+              "category": "PLUMBING",
+              "urgency": "HIGH",
+              "createdAt": "2026-09-23T11:55:00.000Z"
+            }
+          ],
+          "after": [
+            {
+              "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+              "roomId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+              "title": "Vòi xịt bồn cầu bị rò rỉ",
+              "status": "open",
+              "description": "Nước rò rỉ liên tục",
+              "roomName": "Ví dụ",
+              "buildingId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+              "buildingName": "Ví dụ",
+              "reporterId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+              "category": "PLUMBING",
+              "urgency": "HIGH",
+              "createdAt": "2026-09-23T11:55:00.000Z"
+            }
+          ]
+        },
+        {
+          "pointer": "/paths/~1me~1issues/get/responses/200/content/application~1pdf",
+          "before": {
+            "schema": {
+              "type": "string",
+              "format": "binary"
+            }
+          },
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1me~1issues/get/responses/200/content/application~1vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+          "before": {
+            "schema": {
+              "type": "string",
+              "format": "binary"
+            }
+          },
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1me~1issues/get/responses/200/content/text~1csv",
+          "before": {
+            "schema": {
+              "type": "string",
+              "format": "binary"
+            }
+          },
+          "after": null
+        }
+      ],
+      "semanticDiff": {
+        "paths": {
+          "modified": {
+            "/issues": {
+              "operations": {
+                "modified": {
+                  "GET": {
+                    "parameters": {
+                      "modified": {
+                        "query": {
+                          "filter": {
+                            "schema": {
+                              "properties": {
+                                "modified": {
+                                  "status": {
+                                    "enum": {
+                                      "enumAdded": true,
+                                      "added": [
+                                        "open",
+                                        "in_progress",
+                                        "resolved",
+                                        "cancelled"
+                                      ]
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          },
+                          "format": {
+                            "schema": {
+                              "enum": {
+                                "deleted": [
+                                  "xlsx",
+                                  "csv",
+                                  "pdf"
+                                ]
+                              }
+                            }
+                          },
+                          "sort": {
+                            "schema": {
+                              "enum": {
+                                "enumAdded": true,
+                                "added": [
+                                  "createdAt"
+                                ]
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "responses": {
+                      "modified": {
+                        "200": {
+                          "content": {
+                            "deleted": [
+                              "application/pdf",
+                              "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                              "text/csv"
+                            ],
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "properties": {
+                                    "modified": {
+                                      "data": {
+                                        "items": {
+                                          "required": {
+                                            "added": [
+                                              "reporterId",
+                                              "buildingId"
+                                            ],
+                                            "deleted": [
+                                              "reporterName"
+                                            ]
+                                          },
+                                          "properties": {
+                                            "added": [
+                                              "reporterId"
+                                            ],
+                                            "deleted": [
+                                              "reporterName"
+                                            ]
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "POST": {
+                    "requestBody": {
+                      "content": {
+                        "modified": {
+                          "application/json": {
+                            "schema": {
+                              "required": {
+                                "deleted": [
+                                  "issuePhotoMediaIds"
+                                ]
+                              },
+                              "properties": {
+                                "deleted": [
+                                  "issuePhotoMediaIds",
+                                  "taggedUserId",
+                                  "taggedRoomId"
+                                ]
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "responses": {
+                      "modified": {
+                        "422": {
+                          "content": {
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "properties": {
+                                    "modified": {
+                                      "code": {
+                                        "enum": {
+                                          "deleted": [
+                                            "ISSUE_PHOTO_INVALID"
+                                          ]
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "/issues/{issueId}": {
+              "operations": {
+                "modified": {
+                  "GET": {
+                    "responses": {
+                      "modified": {
+                        "200": {
+                          "content": {
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "properties": {
+                                    "modified": {
+                                      "data": {
+                                        "required": {
+                                          "added": [
+                                            "canUploadPhotos",
+                                            "contractId",
+                                            "buildingId",
+                                            "reporterId",
+                                            "canUpdate",
+                                            "issuePhotoMediaIds",
+                                            "canCancel"
+                                          ],
+                                          "deleted": [
+                                            "reporterName"
+                                          ]
+                                        },
+                                        "properties": {
+                                          "added": [
+                                            "canCancel",
+                                            "contractId",
+                                            "canUpdate",
+                                            "canUploadPhotos"
+                                          ],
+                                          "deleted": [
+                                            "reporterPhone",
+                                            "reporterName",
+                                            "resolutionMediaUrls"
+                                          ],
+                                          "modified": {
+                                            "reporterId": {
+                                              "nullable": {
+                                                "from": true,
+                                                "to": false
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "PATCH": {
+                    "requestBody": {
+                      "content": {
+                        "modified": {
+                          "application/json": {
+                            "schema": {
+                              "properties": {
+                                "deleted": [
+                                  "resolutionMediaIds"
+                                ],
+                                "modified": {
+                                  "assignedTo": {
+                                    "minLength": {
+                                      "from": 0,
+                                      "to": 1
+                                    },
+                                    "maxLength": {
+                                      "from": null,
+                                      "to": 500
+                                    }
+                                  },
+                                  "repairCost": {
+                                    "max": {
+                                      "from": null,
+                                      "to": 2147483647
+                                    }
+                                  },
+                                  "status": {
+                                    "enum": {
+                                      "deleted": [
+                                        "open",
+                                        "cancelled"
+                                      ]
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "/issues/{issueId}/cancel": {
+              "operations": {
+                "modified": {
+                  "POST": {
+                    "responses": {
+                      "modified": {
+                        "200": {
+                          "content": {
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "properties": {
+                                    "modified": {
+                                      "data": {
+                                        "properties": {
+                                          "modified": {
+                                            "status": {
+                                              "enum": {
+                                                "added": [
+                                                  "cancelled"
+                                                ],
+                                                "deleted": [
+                                                  "cancel"
+                                                ]
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "/me/issues": {
+              "operations": {
+                "modified": {
+                  "GET": {
+                    "parameters": {
+                      "modified": {
+                        "query": {
+                          "filter": {
+                            "schema": {
+                              "properties": {
+                                "added": [
+                                  "buildingId"
+                                ],
+                                "modified": {
+                                  "status": {
+                                    "enum": {
+                                      "enumAdded": true,
+                                      "added": [
+                                        "open",
+                                        "in_progress",
+                                        "resolved",
+                                        "cancelled"
+                                      ]
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          },
+                          "format": {
+                            "schema": {
+                              "enum": {
+                                "deleted": [
+                                  "xlsx",
+                                  "csv",
+                                  "pdf"
+                                ]
+                              }
+                            }
+                          },
+                          "sort": {
+                            "schema": {
+                              "enum": {
+                                "enumAdded": true,
+                                "added": [
+                                  "createdAt"
+                                ]
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "responses": {
+                      "modified": {
+                        "200": {
+                          "content": {
+                            "deleted": [
+                              "application/pdf",
+                              "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                              "text/csv"
+                            ],
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "properties": {
+                                    "modified": {
+                                      "data": {
+                                        "items": {
+                                          "required": {
+                                            "added": [
+                                              "buildingId",
+                                              "reporterId",
+                                              "buildingName"
+                                            ]
+                                          },
+                                          "properties": {
+                                            "added": [
+                                              "buildingId",
+                                              "buildingName",
+                                              "reporterId"
+                                            ]
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "components": {
+          "schemas": {
+            "modified": {
+              "IssueReport": {
+                "required": {
+                  "added": [
+                    "buildingId",
+                    "contractId",
+                    "reporterId",
+                    "category",
+                    "urgency"
+                  ]
+                },
+                "properties": {
+                  "added": [
+                    "category",
+                    "resolutionNote",
+                    "contractId",
+                    "buildingId",
+                    "urgency"
+                  ],
+                  "deleted": [
+                    "note",
+                    "conversationId"
+                  ],
+                  "modified": {
+                    "reporterId": {
+                      "nullable": {
+                        "from": true,
+                        "to": false
+                      }
+                    }
+                  }
+                }
+              },
+              "IssueReportCancelResponseDto": {
+                "properties": {
+                  "modified": {
+                    "status": {
+                      "enum": {
+                        "added": [
+                          "cancelled"
+                        ],
+                        "deleted": [
+                          "cancel"
+                        ]
+                      }
+                    }
+                  }
+                }
+              },
+              "IssueReportCreateRequestDto": {
+                "required": {
+                  "deleted": [
+                    "issuePhotoMediaIds"
+                  ]
+                },
+                "properties": {
+                  "deleted": [
+                    "issuePhotoMediaIds",
+                    "taggedUserId",
+                    "taggedRoomId"
+                  ]
+                }
+              },
+              "IssueReportDetailResponseDto": {
+                "required": {
+                  "added": [
+                    "reporterId",
+                    "canUpdate",
+                    "canCancel",
+                    "buildingId",
+                    "canUploadPhotos",
+                    "issuePhotoMediaIds",
+                    "contractId"
+                  ],
+                  "deleted": [
+                    "reporterName"
+                  ]
+                },
+                "properties": {
+                  "added": [
+                    "contractId",
+                    "canUpdate",
+                    "canUploadPhotos",
+                    "canCancel"
+                  ],
+                  "deleted": [
+                    "reporterName",
+                    "resolutionMediaUrls",
+                    "reporterPhone"
+                  ],
+                  "modified": {
+                    "reporterId": {
+                      "nullable": {
+                        "from": true,
+                        "to": false
+                      }
+                    }
+                  }
+                }
+              },
+              "IssueReportListResponseDto": {
+                "required": {
+                  "added": [
+                    "buildingId",
+                    "reporterId"
+                  ],
+                  "deleted": [
+                    "reporterName"
+                  ]
+                },
+                "properties": {
+                  "added": [
+                    "reporterId"
+                  ],
+                  "deleted": [
+                    "reporterName"
+                  ]
+                }
+              },
+              "IssueReportMyListResponseDto": {
+                "required": {
+                  "added": [
+                    "buildingId",
+                    "buildingName",
+                    "reporterId"
+                  ]
+                },
+                "properties": {
+                  "added": [
+                    "buildingId",
+                    "buildingName",
+                    "reporterId"
+                  ]
+                }
+              },
+              "IssueReportUpdateRequestDto": {
+                "properties": {
+                  "deleted": [
+                    "resolutionMediaIds"
+                  ],
+                  "modified": {
+                    "assignedTo": {
+                      "minLength": {
+                        "from": 0,
+                        "to": 1
+                      },
+                      "maxLength": {
+                        "from": null,
+                        "to": 500
+                      }
+                    },
+                    "repairCost": {
+                      "max": {
+                        "from": null,
+                        "to": 2147483647
+                      }
+                    },
+                    "status": {
+                      "enum": {
+                        "deleted": [
+                          "open",
+                          "cancelled"
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   ]
 }
