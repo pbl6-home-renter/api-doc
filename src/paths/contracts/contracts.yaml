@@ -216,8 +216,8 @@ post:
   summary: Create draft contract
   description: |-
     Room không tồn tại hoặc đã xóa trả 404 RESOURCE_NOT_FOUND; Room thuộc landlord khác trả 403 FORBIDDEN.
-    Room đã có hợp đồng active trả 409 ACTIVE_CONTRACT_EXISTS. Điều kiện active không loại hợp đồng đã xóa mềm,
-    theo partial unique index hiện tại. Tạo draft không đổi trạng thái Room.
+    Room đã có hợp đồng active, suspended hoặc terminated qua P9-07 đang chờ bàn giao trả
+    409 ACTIVE_CONTRACT_EXISTS; bỏ qua hợp đồng đã xóa mềm. Tạo draft không đổi trạng thái Room.
     Nếu tenantId null hoặc không gửi, phải có tenantName và tenantPhone; thiếu liên hệ trả 422 TENANT_IDENTITY_INVALID.
     Khi có tenantId, mỗi trường liên hệ có thể null hoặc không gửi. Chưa kiểm tra tài khoản tenant bên Identity.
     Body chỉ nhận các field có trong request schema. rentalType, tenantCccd, paymentDueDay,
@@ -328,10 +328,10 @@ post:
                 enum:
                   - ACTIVE_CONTRACT_EXISTS
                 description: |-
-                  - ACTIVE_CONTRACT_EXISTS: Phòng đã có hợp đồng đang hiệu lực.
+                  - ACTIVE_CONTRACT_EXISTS: Phòng có hợp đồng active, suspended hoặc terminated qua P9-07 đang chờ bàn giao.
           examples:
             active_contract_exists:
-              summary: ACTIVE_CONTRACT_EXISTS — Phòng đã có hợp đồng đang hiệu lực.
+              summary: ACTIVE_CONTRACT_EXISTS — Phòng còn hợp đồng giữ quyền sử dụng.
               value:
                 statusCode: 409
                 code: ACTIVE_CONTRACT_EXISTS
