@@ -1,0 +1,121 @@
+put:
+  tags: [Contract]
+  x-apidog-folder: Contract
+  x-apidog-status: developing
+  operationId: putContractsContractidLockCyclesLockcycleidDecision
+  summary: Resolve a suspended contract after landlord unlock
+  security:
+    - BearerAuth: []
+  description: |-
+    The owning landlord chooses restore or terminate for one suspended contract in the current lock cycle.
+    An unlock strictly before the grace deadline moves the cycle to decision_pending.
+    Unlock at the deadline is treated as expiry. Unchosen contracts remain suspended.
+    Decisions are stored per cycle and contract. Repeating the same action returns the stored result,
+    including after the current cycle completes. A different action returns CONTRACT_LOCK_DECISION_CONFLICT.
+    A superseded cycle returns LANDLORD_LOCK_CYCLE_STALE. A cycle outside decision_pending without a stored
+    result returns LANDLORD_LOCK_CYCLE_NOT_AWAITING_DECISION. A contract outside the cycle or outside suspended
+    returns CONTRACT_LOCK_DECISION_INVALID. Another landlord receives FORBIDDEN.
+    Restore requires the room to remain occupied, belong to the landlord, and have no other blocking contract.
+    Failure returns CONTRACT_RESTORE_ROOM_UNAVAILABLE. Restore retains the existing contract and room data.
+    The response is the stored decision snapshot, including its handover requirement. GET contract details returns
+    the current handover state. Termination leaves the room occupied and members unchanged until the landlord
+    confirms POST /contracts/{contractId}/complete-checkout. This handover moves the room to maintenance and
+    publishes existing contract_member.left events. Identical handover replay creates no new events.
+    Contract state, the stored decision, cycle state and notification outbox commit in one transaction.
+    Each successful decision requests one system notice for each distinct linked recipient, including the landlord.
+    Notifications use CONTRACT_RESTORED_TITLE/BODY or CONTRACT_TERMINATED_TITLE/BODY localization keys.
+    Before a new decision, Tenancy checks Identity's authenticated GET /internal/users/{userId}/lock-period
+    for the same lockedAt. A later lock returns LANDLORD_LOCK_CYCLE_STALE even if its event has not arrived.
+    Missing or unavailable proof returns 503 SERVICE_UNAVAILABLE and preserves the suspended contract.
+
+    ```mermaid
+    sequenceDiagram
+        actor Landlord
+        participant TEN as Tenancy
+        participant DB as Tenancy DB
+        participant MQ as RabbitMQ
+        participant COM as Community
+        Landlord->>TEN: PUT /contracts/{contractId}/lock-cycles/{lockCycleId}/decision
+        TEN->>DB: Transaction, landlord lock, current cycle and contract locks
+        TEN->>DB: Validate owner, cycle and stored decision
+        alt Same action already recorded
+            TEN-->>Landlord: 200 stored result
+        else New decision
+            TEN->>TEN: Verify the matching unlock through Identity internal GET
+            TEN->>DB: Restore or terminate, record decision and notification outbox
+            TEN->>DB: Commit
+            TEN-->>Landlord: 200 CONTRACT_LOCK_DECISION_RECORDED
+            TEN-)MQ: notification.requested
+            MQ-)COM: Persist system notices and deliver after commit
+        end
+        opt Terminated contract is handed over later
+            Landlord->>TEN: POST /contracts/{contractId}/complete-checkout
+            TEN->>DB: Transaction, mark handover, members leave, room maintenance, outbox
+            TEN-)MQ: contract_member.left and room.status_changed
+        end
+    ```
+  parameters:
+    - { name: contractId, in: path, required: true, schema: { type: string, format: uuid } }
+    - { name: lockCycleId, in: path, required: true, schema: { type: string, format: uuid } }
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: ../../openapi.yaml#/components/schemas/ContractLockDecisionRequestDto
+  responses:
+    '200':
+      description: Decision recorded or replayed.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code, data]
+            properties:
+              statusCode: { type: integer, enum: [200] }
+              code: { type: string, enum: [CONTRACT_LOCK_DECISION_RECORDED] }
+              data:
+                $ref: ../../openapi.yaml#/components/schemas/ContractLockDecisionResponseDto
+    '400':
+      $ref: ../../openapi.yaml#/components/responses/BadRequestBodyPathError
+    '401':
+      $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
+    '403':
+      $ref: ../../openapi.yaml#/components/responses/ForbiddenError
+    '404':
+      description: Contract or lock cycle not found.
+      content:
+        application/json:
+          schema:
+            type: object
+            required: [statusCode, code]
+            properties:
+              statusCode: { type: integer, enum: [404] }
+              code: { type: string, enum: [RESOURCE_NOT_FOUND, LANDLORD_LOCK_CYCLE_NOT_FOUND] }
+    '409':
+      description: The decision conflicts with the current cycle, contract or room.
+      content:
+        application/json:
+          schema:
+            type: object
+            required: [statusCode, code]
+            properties:
+              statusCode: { type: integer, enum: [409] }
+              code:
+                type: string
+                enum: [LANDLORD_LOCK_CYCLE_STALE, LANDLORD_LOCK_CYCLE_NOT_AWAITING_DECISION, CONTRACT_LOCK_DECISION_CONFLICT, CONTRACT_LOCK_DECISION_INVALID, CONTRACT_RESTORE_ROOM_UNAVAILABLE]
+    '422':
+      $ref: ../../openapi.yaml#/components/responses/ValidationError
+    '503':
+      description: Identity evidence or authentication verification is unavailable.
+      content:
+        application/json:
+          schema:
+            type: object
+            required: [statusCode, code]
+            properties:
+              statusCode: { type: integer, enum: [503] }
+              code: { type: string, enum: [SERVICE_UNAVAILABLE, AUTH_UNAVAILABLE] }
+    '500':
+      $ref: ../../openapi.yaml#/components/responses/InternalServerError
