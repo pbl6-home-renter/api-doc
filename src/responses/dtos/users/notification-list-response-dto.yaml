@@ -11,11 +11,11 @@ properties:
   title:
     type: string
     maxLength: 255
-    description: "Account notice mới từ Identity dùng key USER_ACCOUNT_LOCKED_TITLE hoặc USER_ACCOUNT_UNLOCKED_TITLE. Contract suspension notice mới từ Tenancy dùng CONTRACT_SUSPENDED_TITLE. P9-07 dùng CONTRACT_LOCK_DECISION_REQUIRED_TITLE, CONTRACT_RESTORED_TITLE hoặc CONTRACT_TERMINATED_TITLE. FE dịch các key này. Các notice khác hoặc notice cũ có thể chứa nội dung văn bản."
+    description: "Account notice mới từ Identity dùng key USER_ACCOUNT_LOCKED_TITLE hoặc USER_ACCOUNT_UNLOCKED_TITLE. Contract suspension notice mới từ Tenancy dùng CONTRACT_SUSPENDED_TITLE. FE dịch các key này. Các notice khác hoặc notice cũ có thể chứa nội dung văn bản."
   body:
     type: string
     maxLength: 2000
-    description: "Account notice mới từ Identity dùng key USER_ACCOUNT_LOCKED_BODY hoặc USER_ACCOUNT_UNLOCKED_BODY. Contract suspension notice mới từ Tenancy dùng CONTRACT_SUSPENDED_BODY. P9-07 dùng CONTRACT_LOCK_DECISION_REQUIRED_BODY, CONTRACT_RESTORED_BODY hoặc CONTRACT_TERMINATED_BODY. FE dịch các key này. Các notice khác hoặc notice cũ có thể chứa nội dung văn bản."
+    description: "Account notice mới từ Identity dùng key USER_ACCOUNT_LOCKED_BODY hoặc USER_ACCOUNT_UNLOCKED_BODY. Contract suspension notice mới từ Tenancy dùng CONTRACT_SUSPENDED_BODY. FE dịch các key này. Các notice khác hoặc notice cũ có thể chứa nội dung văn bản."
   deepLink: { type: string, nullable: true }
   data:
     type: object
@@ -26,8 +26,7 @@ properties:
       { userId, status, eventType, lockedAt }; unlock có lockedAt = null.
       Contract suspension notice từ tenancy chứa
       { landlordId, lockCycleId, contractIds, graceDeadline }; contractIds chỉ
-      gồm hợp đồng liên quan đến recipient. P9-07 resolution notices add
-      action = decision_required, restore or terminate. ID là UUID, các timestamp khác null
+      gồm hợp đồng liên quan đến recipient. ID là UUID, các timestamp khác null
       là ISO 8601 UTC. Không có phone trong các snapshot P9-06 này.
   createdAt: { type: string, format: date-time }
   readAt: { type: string, format: date-time, nullable: true }

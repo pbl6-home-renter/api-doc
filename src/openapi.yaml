@@ -158,8 +158,6 @@ paths:
     $ref: './paths/contracts/contracts-contractId-activate-contract.yaml'
   /contracts/{contractId}/complete-checkout:
     $ref: './paths/contracts/contracts-contractId-complete-checkout.yaml'
-  /contracts/{contractId}/lock-cycles/{lockCycleId}/decision:
-    $ref: './paths/contracts/contracts-contractId-lock-cycles-lockCycleId-decision.yaml'
   /contracts/{contractId}/deposit-settlement:
     $ref: './paths/contracts/contracts-contractId-deposit-settlement.yaml'
   /contract-members:
@@ -448,10 +446,6 @@ components:
       $ref: './requests/contracts/contract-activate-request-dto.yaml'
     ContractCompleteCheckoutRequestDto:
       $ref: './requests/contracts/contract-checkout-complete-request-dto.yaml'
-    ContractLockDecisionRequestDto:
-      $ref: './requests/contracts/contract-lock-decision-request-dto.yaml'
-    ContractLockDecisionResponseDto:
-      $ref: './responses/dtos/contracts/contract-lock-decision-response-dto.yaml'
     # Contract Response DTOs
     ContractMyListResponseDto:
       $ref: './responses/dtos/contracts/my-contract-list-response-dto.yaml'

@@ -4604,7 +4604,7 @@
           }
         ],
         "summary": "Lock user",
-        "description": "**Lưu ý**\n\n- User bị khóa **vẫn đăng nhập được**. Các service chặn chức năng dựa vào claim `status` trong access token (tự verify); token cấp trước khi khóa còn mang `status=active` tối đa 15 phút.\n- Admin tự khóa trả `400 USER_LOCK_CANNOT_SELF` trước khi mở transaction. User không tồn tại/đã xóa trả `404 USER_NOT_FOUND`; đã khóa trả `409 USER_LOCK_ALREADY_LOCKED`; chưa xác thực email (`pending_verification`) trả `409 EMAIL_NOT_VERIFIED`. Các nhánh lỗi không lưu thay đổi hoặc phát account notice.\n- Theo P9-D83/P9-06, Identity ghi `user.locked` và `notification.requested` type `system` tới chính user trong cùng transaction khóa tài khoản.\n- Tenancy nhận `user.locked` qua `tenancy.identity-lifecycle`, dedup bằng inbox. Với landlord, một transaction tạm ngưng contract active, lưu lock cycle/grace deadline và ghi notification outbox tới landlord cùng tenant/member đang hoạt động đã link. Khóa tenant không tạm ngưng contract của landlord.\n- Duplicate lock không tạo cycle hoặc notice trùng; cycle mới giữ các contract còn suspended từ cycle trước. Scheduled job trong Tenancy tìm deadline bền vững sau restart. Khôi phục/chấm dứt contract thuộc P9-07; P9-06 không hoàn cọc hoặc thay đổi contract chat.\n- Tenancy uses the constant `LANDLORD_LOCK_GRACE_PERIOD_MS = 604800000` (7 days). Each cycle persists `graceDeadline = lockedAt + gracePeriodMs` using Identity's lock timestamp.\n- P9-07 scans at startup and every 60 seconds, taking up to 100 due pending or legacy elapsed cycles. Each cycle is rechecked under the landlord/cycle lock. Identity evidence is read through authenticated `GET /internal/users/{userId}/lock-period?lockedAt=...`.\n- Identity stores lock-period history and serializes evidence reads with account lock/unlock writes. An unlock strictly before the deadline moves the cycle to `decision_pending` and requests landlord choices. The event may arrive after the deadline. Unlock exactly at or after the deadline permits expiry processing.\n- The service-token protected internal GET returns `{ lockedAt, unlockedAt, latestLockedAt, observedAt, state }` inside the normal response envelope. Timestamps are ISO 8601 UTC; state is `locked`, `unlocked` or `unknown`. Unknown historical periods retain null unlockedAt; the current account status alone is not unlock evidence.\n- A confirmed expiry terminates only suspended contracts belonging to the current cycle and requests system notices in the same transaction. Rooms remain occupied and members retain their residence until explicit checkout. Missing evidence or an unavailable Identity preserves the cycle for reconciliation. A newer Identity lock defers processing until its lock event is received.\n- Legacy elapsed cycles use the same evidence checks. An active account without historical proof is insufficient to determine its unlock time. Unresolved cycles rotate through the scan using updatedAt so they cannot starve later deadlines.\n- Khóa không revoke refresh token.\n\n**Payload notification P9-06**\n\n`notification.requested.payload` có `sourceService`, `recipientUserIds` và object `notification` gồm `type`, `title`, `body`, `data`. Đây là payload event; response HTTP của API lock vẫn là `UserLockResponseDto`.\n\n- Account notice từ Identity: `sourceService: identity`, `recipientUserIds: [userId]`, `notification.type: system`; `notification.data` gồm `{ userId, status: locked, eventType: user.locked, lockedAt }`, trong đó `lockedAt` là ISO 8601 UTC.\n- Account notice khi khóa dùng `notification.title: USER_ACCOUNT_LOCKED_TITLE` và `notification.body: USER_ACCOUNT_LOCKED_BODY`. Đây là key để FE dịch theo ngôn ngữ hiển thị.\n- Contract notice từ Tenancy: `sourceService: tenancy`, `notification.type: system`; `notification.data` gồm `{ landlordId, lockCycleId, contractIds, graceDeadline }`. Các ID là UUID, `contractIds` là mảng UUID, `graceDeadline` là ISO 8601 UTC. `lockCycleId` dùng ID envelope của event `user.locked` được xử lý.\n- Contract suspension notice dùng `notification.title: CONTRACT_SUSPENDED_TITLE` và `notification.body: CONTRACT_SUSPENDED_BODY` để FE dịch thông báo hợp đồng tạm ngưng do tài khoản chủ trọ bị khóa.\n- P9-07 adds `CONTRACT_LOCK_DECISION_REQUIRED_TITLE/BODY`, `CONTRACT_RESTORED_TITLE/BODY` and `CONTRACT_TERMINATED_TITLE/BODY`. Resolution data also includes `action` as `decision_required`, `restore` or `terminate`.\n- Mỗi contract notice có một recipient. Landlord nhận danh sách contract vừa bị suspend của mình; tenant chính và ContractMember đang hoạt động, đã link chỉ nhận contract IDs liên quan đến họ. Người chưa link không có recipient ID. Contract đã suspended được giữ tham chiếu trong cycle mới nhưng không bị suspend hoặc gửi lại notice tạm ngưng.\n- Community lưu snapshot vào inbox notification, trả `type: system` và `data` qua `GET /notifications`, đồng thời gửi Socket sau commit và push theo preference. Không đưa phone vào notification payload.\n\n**Sequence diagram**\n\n```mermaid\nsequenceDiagram\n    autonumber\n    actor Client\n    participant GW as API Gateway\n    participant S as Identity-Service\n    participant Guard as JWT/access guards\n    participant C as UserAdminController\n    participant Bus as CQRS CommandBus\n    participant H as Application handler\n    participant DB as Identity DB\n    participant MQ as RabbitMQ\n    participant TEN as Tenancy\n    participant TDB as Tenancy DB\n    participant COM as Community\n    Client->>GW: POST /api/v1/users/{userId}/lock\n    GW->>GW: Validate bearer token for protected route\n    GW->>S: Proxy original HTTP request\n    S->>Guard: Validate JWT, account state and route access\n    Guard-->>C: Continue with authenticated context\n    S->>C: Invoke lockUser\n    C->>Bus: Execute command for lockUser\n    Bus->>H: Dispatch command handler\n    H->>H: Kiểm tra adminId != userId trước transaction\n    break Admin tự khóa\n        H-->>Bus: 400 USER_LOCK_CANNOT_SELF\n    end\n    H->>DB: [Transaction] Đọc user FOR UPDATE\n    break User không tồn tại / đã khóa / chưa xác thực email\n        H-->>Bus: 404 USER_NOT_FOUND / 409 USER_LOCK_ALREADY_LOCKED / 409 EMAIL_NOT_VERIFIED\n    end\n    H->>DB: Cùng transaction: status=locked, lockReason, lockedAt<br/>+ outbox user.locked + notification.requested\n    H-->>Bus: Return use-case result\n    Bus-->>C: Result\n    C-->>S: Return documented response\n    S-->>GW: HTTP status and response body\n    GW-->>Client: Forward HTTP response\n    S-)MQ: user.locked {userId, role, status, lockReason, lockedAt}\n    MQ-)TEN: user.locked (tenancy.identity-lifecycle)\n    alt role=landlord\n        TEN->>TEN: [Transaction] Inbox dedup + khóa landlord/cycle/contracts<br/>+ active → suspended + lưu cycle/deadline + notification outbox\n        TEN-)MQ: notification.requested {sourceService: tenancy, recipientUserIds, notification: {type: system, data}}\n    else role=tenant\n        TEN->>TEN: [Transaction] Inbox dedup + xóa tenant lookup; giữ contract\n    end\n    S-)MQ: notification.requested {sourceService: identity, recipientUserIds: [userId], notification: {type: system, data}}\n    MQ-)COM: notification.requested (community.notification)\n    COM->>COM: [Transaction] Inbox dedup + lưu notice từng recipient\n    COM->>COM: Sau commit: Socket sync / FCM theo preference\n    opt P9-07 deadline scan, including after restart\n        TEN->>S: Service-token GET lock-period for the matching lockedAt\n        S->>DB: Serialize evidence read with lock/unlock writes\n        S-->>TEN: Historical unlock time, latest lock and observation time\n        alt Exact evidence is available and cycle is still current\n            TEN->>TDB: Transaction: lock landlord/cycle/contracts and recheck deadline\n            TEN->>TDB: Early unlock → decision_pending; otherwise terminate suspended contracts<br/>save decisions, cycle and notification outbox; commit\n            TEN-)MQ: notification.requested, room and members unchanged\n        else Evidence is unavailable, unknown or a newer lock exists\n            TEN->>TDB: Retain cycle and contracts for reconciliation\n        end\n    end\n    TEN->>S: GET /internal/users/{userId}/lock-period?lockedAt=... (service token)\n    Note over TEN: Transaction rechecks cycle and proof<br/>early unlock → decision_pending; expiry → terminate and notify<br/>room remains occupied until checkout\n```\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-11-15 | 🔴 BREAKING | added the new `EMAIL_NOT_VERIFIED` enum value to the `code` response property for the response status `409` | [#66](https://github.com/pbl6-home-renter/api-doc/pull/66) |\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
+        "description": "**Lưu ý**\n\n- User bị khóa **vẫn đăng nhập được**. Các service chặn chức năng dựa vào claim `status` trong access token (tự verify); token cấp trước khi khóa còn mang `status=active` tối đa 15 phút.\n- Admin tự khóa trả `400 USER_LOCK_CANNOT_SELF` trước khi mở transaction. User không tồn tại/đã xóa trả `404 USER_NOT_FOUND`; đã khóa trả `409 USER_LOCK_ALREADY_LOCKED`; chưa xác thực email (`pending_verification`) trả `409 EMAIL_NOT_VERIFIED`. Các nhánh lỗi không lưu thay đổi hoặc phát account notice.\n- Theo P9-D83/P9-06, Identity ghi `user.locked` và `notification.requested` type `system` tới chính user trong cùng transaction khóa tài khoản.\n- Tenancy nhận `user.locked` qua `tenancy.identity-lifecycle`, dedup bằng inbox. Với landlord, một transaction tạm ngưng contract active, lưu lock cycle/grace deadline và ghi notification outbox tới landlord cùng tenant/member đang hoạt động đã link. Khóa tenant không tạm ngưng contract của landlord.\n- Duplicate lock không tạo cycle hoặc notice trùng; cycle mới giữ các contract còn suspended từ cycle trước. Scheduled job trong Tenancy tìm deadline bền vững sau restart. Khôi phục/chấm dứt contract thuộc P9-07; P9-06 không hoàn cọc hoặc thay đổi contract chat.\n- Tenancy dùng constant `LANDLORD_LOCK_GRACE_PERIOD_MS = 604800000` (7 ngày). `graceDeadline = lockedAt + gracePeriodMs`, với `lockedAt` lấy từ event Identity; deadline được lưu theo từng cycle.\n- Scheduler chạy khi Tenancy khởi động xong và mỗi 60 giây, đọc tối đa 100 cycle pending đến hạn mỗi lượt. Sau khi kiểm tra lại cycle ID/deadline dưới transaction lock, chỉ chuyển cycle `pending → elapsed`; contract vẫn `suspended`, không tự chấm dứt hoặc hoàn cọc trong P9-06. Thời điểm ghi nhận hết hạn phụ thuộc lượt quét.\n- Khóa không revoke refresh token.\n\n**Payload notification P9-06**\n\n`notification.requested.payload` có `sourceService`, `recipientUserIds` và object `notification` gồm `type`, `title`, `body`, `data`. Đây là payload event; response HTTP của API lock vẫn là `UserLockResponseDto`.\n\n- Account notice từ Identity: `sourceService: identity`, `recipientUserIds: [userId]`, `notification.type: system`; `notification.data` gồm `{ userId, status: locked, eventType: user.locked, lockedAt }`, trong đó `lockedAt` là ISO 8601 UTC.\n- Account notice khi khóa dùng `notification.title: USER_ACCOUNT_LOCKED_TITLE` và `notification.body: USER_ACCOUNT_LOCKED_BODY`. Đây là key để FE dịch theo ngôn ngữ hiển thị.\n- Contract notice từ Tenancy: `sourceService: tenancy`, `notification.type: system`; `notification.data` gồm `{ landlordId, lockCycleId, contractIds, graceDeadline }`. Các ID là UUID, `contractIds` là mảng UUID, `graceDeadline` là ISO 8601 UTC. `lockCycleId` dùng ID envelope của event `user.locked` được xử lý.\n- Contract suspension notice dùng `notification.title: CONTRACT_SUSPENDED_TITLE` và `notification.body: CONTRACT_SUSPENDED_BODY` để FE dịch thông báo hợp đồng tạm ngưng do tài khoản chủ trọ bị khóa.\n- Mỗi contract notice có một recipient. Landlord nhận danh sách contract vừa bị suspend của mình; tenant chính và ContractMember đang hoạt động, đã link chỉ nhận contract IDs liên quan đến họ. Người chưa link không có recipient ID. Contract đã suspended được giữ tham chiếu trong cycle mới nhưng không bị suspend hoặc gửi lại notice tạm ngưng.\n- Community lưu snapshot vào inbox notification, trả `type: system` và `data` qua `GET /notifications`, đồng thời gửi Socket sau commit và push theo preference. Không đưa phone vào notification payload.\n\n**Sequence diagram**\n\n```mermaid\nsequenceDiagram\n    autonumber\n    actor Client\n    participant GW as API Gateway\n    participant S as Identity-Service\n    participant Guard as JWT/access guards\n    participant C as UserAdminController\n    participant Bus as CQRS CommandBus\n    participant H as Application handler\n    participant DB as Identity DB\n    participant MQ as RabbitMQ\n    participant TEN as Tenancy\n    participant COM as Community\n    Client->>GW: POST /api/v1/users/{userId}/lock\n    GW->>GW: Validate bearer token for protected route\n    GW->>S: Proxy original HTTP request\n    S->>Guard: Validate JWT, account state and route access\n    Guard-->>C: Continue with authenticated context\n    S->>C: Invoke lockUser\n    C->>Bus: Execute command for lockUser\n    Bus->>H: Dispatch command handler\n    H->>H: Kiểm tra adminId != userId trước transaction\n    break Admin tự khóa\n        H-->>Bus: 400 USER_LOCK_CANNOT_SELF\n    end\n    H->>DB: [Transaction] Đọc user FOR UPDATE\n    break User không tồn tại / đã khóa / chưa xác thực email\n        H-->>Bus: 404 USER_NOT_FOUND / 409 USER_LOCK_ALREADY_LOCKED / 409 EMAIL_NOT_VERIFIED\n    end\n    H->>DB: Cùng transaction: status=locked, lockReason, lockedAt<br/>+ outbox user.locked + notification.requested\n    H-->>Bus: Return use-case result\n    Bus-->>C: Result\n    C-->>S: Return documented response\n    S-->>GW: HTTP status and response body\n    GW-->>Client: Forward HTTP response\n    S-)MQ: user.locked {userId, role, status, lockReason, lockedAt}\n    MQ-)TEN: user.locked (tenancy.identity-lifecycle)\n    alt role=landlord\n        TEN->>TEN: [Transaction] Inbox dedup + khóa landlord/cycle/contracts<br/>+ active → suspended + lưu cycle/deadline + notification outbox\n        TEN-)MQ: notification.requested {sourceService: tenancy, recipientUserIds, notification: {type: system, data}}\n    else role=tenant\n        TEN->>TEN: [Transaction] Inbox dedup + xóa tenant lookup; giữ contract\n    end\n    S-)MQ: notification.requested {sourceService: identity, recipientUserIds: [userId], notification: {type: system, data}}\n    MQ-)COM: notification.requested (community.notification)\n    COM->>COM: [Transaction] Inbox dedup + lưu notice từng recipient\n    COM->>COM: Sau commit: Socket sync / FCM theo preference\n    Note over TEN: Scheduler kiểm tra cycle ID/deadline, pending → elapsed;<br/>contract giữ suspended; khôi phục/chấm dứt thuộc P9-07\n```\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-11-15 | 🔴 BREAKING | added the new `EMAIL_NOT_VERIFIED` enum value to the `code` response property for the response status `409` | [#66](https://github.com/pbl6-home-renter/api-doc/pull/66) |\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "parameters": [
           {
             "name": "userId",
@@ -4960,7 +4960,7 @@
           }
         ],
         "summary": "Unlock user",
-        "description": "**Lưu ý**\n\n- Token cấp trước khi mở khóa còn mang `status=locked` tối đa 15 phút.\n- Identity ghi `user.unlocked` và `notification.requested` type `system` tới chính user trong cùng transaction. Payload `user.unlocked` bổ sung `role`, `phone` để Tenancy khôi phục tenant lookup; phone không đi sang Community.\n- Account notice có `sourceService: identity`, `recipientUserIds: [userId]` và object `notification` gồm `type: system`, `title`, `body`, `data`. `notification.data` gồm `{ userId, status: active, eventType: user.unlocked, lockedAt: null }`. Community lưu snapshot này và trả qua `GET /notifications`; response HTTP của API unlock vẫn là `UserUnlockResponseDto`.\n- Account notice khi mở khóa dùng `notification.title: USER_ACCOUNT_UNLOCKED_TITLE` và `notification.body: USER_ACCOUNT_UNLOCKED_BODY`. Đây là key để FE dịch theo ngôn ngữ hiển thị.\n- Tenancy dùng snapshot `role`, `phone` của tenant để khôi phục lookup và liên kết theo rule hiện có. Payload unlock cũ chỉ có `userId`, `status` vẫn được inbox dedup/ack; khi thiếu snapshot, P9-06 không khôi phục lookup qua event đó.\n- P9-07 adds the original lock timestamp as `user.unlocked.payload.lockedAt`; the envelope `occurredAt` is the unlock time persisted by Identity in the same transaction. The HTTP response and account-notice snapshot still return `lockedAt: null`.\n- For a matching landlord cycle, unlock strictly before its deadline moves it to `decision_pending`, keeping contracts suspended. One landlord notice lists the contracts requiring choices through `PUT /contracts/{contractId}/lock-cycles/{lockCycleId}/decision`. Empty cycles complete without a choice notice. Duplicate unlocks create no additional notice.\n- Unlock at the deadline is expiry. An unlock for an older lock cannot change a newer cycle. A new-format unlock received before its lock is retried through the inbox transaction. Legacy events without lock evidence are acknowledged and due cycles are reconciled through Identity's internal lock-period endpoint.\n- Decision-required notices use `CONTRACT_LOCK_DECISION_REQUIRED_TITLE/BODY`. Account restoration notices use `USER_ACCOUNT_UNLOCKED_TITLE/BODY`. Cycle decisions and their notification outbox share a local transaction.\n\n**Sequence diagram**\n\n```mermaid\nsequenceDiagram\n    autonumber\n    actor Client\n    participant GW as API Gateway\n    participant S as Identity-Service\n    participant Guard as JWT/access guards\n    participant C as UserAdminController\n    participant Bus as CQRS CommandBus\n    participant H as Application handler\n    participant DB as Identity DB\n    participant MQ as RabbitMQ\n    participant TEN as Tenancy\n    participant COM as Community\n    Client->>GW: POST /api/v1/users/{userId}/unlock\n    GW->>GW: Validate bearer token for protected route\n    GW->>S: Proxy original HTTP request\n    S->>Guard: Validate JWT, account state and route access\n    Guard-->>C: Continue with authenticated context\n    S->>C: Invoke unlockUser\n    C->>Bus: Execute command for unlockUser\n    Bus->>H: Dispatch command handler\n    H->>DB: [Transaction] Đọc user FOR UPDATE\n    break User không tồn tại / chưa bị khóa\n        H-->>Bus: 404 USER_NOT_FOUND / 409 USER_UNLOCK_NOT_LOCKED\n    end\n    H->>DB: Cùng transaction: status=active, lockReason=null, lockedAt=null<br/>+ outbox user.unlocked + notification.requested\n    H-->>Bus: Return use-case result\n    Bus-->>C: Result\n    C-->>S: Return documented response\n    S-->>GW: HTTP status and response body\n    GW-->>Client: Forward HTTP response\n    S-)MQ: user.unlocked {userId, status, role, phone, lockedAt}; occurredAt=unlock time\n    MQ-)TEN: user.unlocked (tenancy.identity-lifecycle)\n    TEN->>TEN: Transaction inbox dedup; tenant lookup preserved<br/>landlord matching early unlock → decision_pending and notification outbox\n    TEN-)MQ: notification.requested {system, decision_required, lockCycleId, contractIds}\n    S-)MQ: notification.requested {sourceService: identity, recipientUserIds: [userId], notification: {type: system, data}}\n    MQ-)COM: notification.requested (community.notification)\n    COM->>COM: [Transaction] Inbox dedup + lưu account notice\n    COM->>COM: Sau commit: Socket sync / FCM theo preference\n```\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
+        "description": "**Lưu ý**\n\n- Token cấp trước khi mở khóa còn mang `status=locked` tối đa 15 phút.\n- Identity ghi `user.unlocked` và `notification.requested` type `system` tới chính user trong cùng transaction. Payload `user.unlocked` bổ sung `role`, `phone` để Tenancy khôi phục tenant lookup; phone không đi sang Community.\n- Account notice có `sourceService: identity`, `recipientUserIds: [userId]` và object `notification` gồm `type: system`, `title`, `body`, `data`. `notification.data` gồm `{ userId, status: active, eventType: user.unlocked, lockedAt: null }`. Community lưu snapshot này và trả qua `GET /notifications`; response HTTP của API unlock vẫn là `UserUnlockResponseDto`.\n- Account notice khi mở khóa dùng `notification.title: USER_ACCOUNT_UNLOCKED_TITLE` và `notification.body: USER_ACCOUNT_UNLOCKED_BODY`. Đây là key để FE dịch theo ngôn ngữ hiển thị.\n- Tenancy dùng snapshot `role`, `phone` của tenant để khôi phục lookup và liên kết theo rule hiện có. Payload unlock cũ chỉ có `userId`, `status` vẫn được inbox dedup/ack; khi thiếu snapshot, P9-06 không khôi phục lookup qua event đó.\n- P9-06 chưa tự khôi phục contract. Dừng auto-termination và yêu cầu landlord chọn khôi phục/chấm dứt thuộc P9-07 theo P9-D83.\n\n**Sequence diagram**\n\n```mermaid\nsequenceDiagram\n    autonumber\n    actor Client\n    participant GW as API Gateway\n    participant S as Identity-Service\n    participant Guard as JWT/access guards\n    participant C as UserAdminController\n    participant Bus as CQRS CommandBus\n    participant H as Application handler\n    participant DB as Identity DB\n    participant MQ as RabbitMQ\n    participant TEN as Tenancy\n    participant COM as Community\n    Client->>GW: POST /api/v1/users/{userId}/unlock\n    GW->>GW: Validate bearer token for protected route\n    GW->>S: Proxy original HTTP request\n    S->>Guard: Validate JWT, account state and route access\n    Guard-->>C: Continue with authenticated context\n    S->>C: Invoke unlockUser\n    C->>Bus: Execute command for unlockUser\n    Bus->>H: Dispatch command handler\n    H->>DB: [Transaction] Đọc user FOR UPDATE\n    break User không tồn tại / chưa bị khóa\n        H-->>Bus: 404 USER_NOT_FOUND / 409 USER_UNLOCK_NOT_LOCKED\n    end\n    H->>DB: Cùng transaction: status=active, lockReason=null, lockedAt=null<br/>+ outbox user.unlocked + notification.requested\n    H-->>Bus: Return use-case result\n    Bus-->>C: Result\n    C-->>S: Return documented response\n    S-->>GW: HTTP status and response body\n    GW-->>Client: Forward HTTP response\n    S-)MQ: user.unlocked {userId, status, role, phone}\n    MQ-)TEN: user.unlocked (tenancy.identity-lifecycle)\n    TEN->>TEN: [Transaction] Inbox dedup; tenant → khôi phục lookup/liên kết<br/>landlord → giữ suspended (quyết định contract thuộc P9-07)\n    S-)MQ: notification.requested {sourceService: identity, recipientUserIds: [userId], notification: {type: system, data}}\n    MQ-)COM: notification.requested (community.notification)\n    COM->>COM: [Transaction] Inbox dedup + lưu account notice\n    COM->>COM: Sau commit: Socket sync / FCM theo preference\n```\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "parameters": [
           {
             "name": "userId",
@@ -9824,7 +9824,7 @@
                       "enum": [
                         "ROOM_HAS_ACTIVE_CONTRACT"
                       ],
-                      "description": "- ROOM_HAS_ACTIVE_CONTRACT: The room has an active or suspended contract, or a P9-07 terminated contract awaiting handover. Confirm handover before deletion."
+                      "description": "- ROOM_HAS_ACTIVE_CONTRACT: Phòng có hợp đồng `active`; kết thúc/checkout hợp đồng trước khi xóa."
                     }
                   }
                 },
@@ -9866,7 +9866,7 @@
           }
         ],
         "summary": "Mark room ready for rent",
-        "description": "P9-07 returns 409 ROOM_HAS_ACTIVE_CONTRACT when a room is reserved by an active or suspended contract,\nor by a landlord-lock terminated contract awaiting handover. Confirm handover before marking the room ready.\nLỗi nghiệp vụ: 404 NOT FOUND · 403 FORBIDDEN · 409 INVALID ROOM TRANSITION.\n\n**Sequence diagram**\n\n```mermaid\nsequenceDiagram\n    autonumber\n    actor Client\n    participant GW as API Gateway\n    participant S as Tenancy-Service\n    participant Guard as JWT/access guards\n    participant C as RoomController\n    participant Bus as CQRS CommandBus\n    participant H as Application handler\n    Client->>GW: POST /api/v1/rooms/{roomId}/mark-ready\n    GW->>GW: Validate bearer token for protected route\n    GW->>S: Proxy original HTTP request\n    S->>Guard: Validate JWT, account state and route access\n    Guard-->>C: Continue with authenticated context\n    S->>C: Invoke postRoomsRoomidMarkReady\n    C->>Bus: Execute command for postRoomsRoomidMarkReady\n    Bus->>H: Dispatch command handler\n    H-->>Bus: Return use-case result\n    Bus-->>C: Result\n    C-->>S: Return documented response\n    S-->>GW: HTTP status and response body\n    GW-->>Client: Forward HTTP response\n```\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
+        "description": "Lỗi nghiệp vụ: 404 NOT FOUND · 403 FORBIDDEN · 409 INVALID ROOM TRANSITION.\n\n**Sequence diagram**\n\n```mermaid\nsequenceDiagram\n    autonumber\n    actor Client\n    participant GW as API Gateway\n    participant S as Tenancy-Service\n    participant Guard as JWT/access guards\n    participant C as RoomController\n    participant Bus as CQRS CommandBus\n    participant H as Application handler\n    Client->>GW: POST /api/v1/rooms/{roomId}/mark-ready\n    GW->>GW: Validate bearer token for protected route\n    GW->>S: Proxy original HTTP request\n    S->>Guard: Validate JWT, account state and route access\n    Guard-->>C: Continue with authenticated context\n    S->>C: Invoke postRoomsRoomidMarkReady\n    C->>Bus: Execute command for postRoomsRoomidMarkReady\n    Bus->>H: Dispatch command handler\n    H-->>Bus: Return use-case result\n    Bus-->>C: Result\n    C-->>S: Return documented response\n    S-->>GW: HTTP status and response body\n    GW-->>Client: Forward HTTP response\n```\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "parameters": [
           {
             "name": "roomId",
@@ -9954,8 +9954,7 @@
                     "code": {
                       "type": "string",
                       "enum": [
-                        "INVALID_ROOM_TRANSITION",
-                        "ROOM_HAS_ACTIVE_CONTRACT"
+                        "INVALID_ROOM_TRANSITION"
                       ],
                       "description": "- INVALID_ROOM_TRANSITION: Không thể chuyển phòng sang trạng thái yêu cầu."
                     }
@@ -13963,7 +13962,7 @@
           }
         ],
         "summary": "Create draft contract",
-        "description": "Room không tồn tại hoặc đã xóa trả 404 RESOURCE_NOT_FOUND; Room thuộc landlord khác trả 403 FORBIDDEN.\nRoom đã có hợp đồng active, suspended hoặc terminated qua P9-07 đang chờ bàn giao trả\n409 ACTIVE_CONTRACT_EXISTS; bỏ qua hợp đồng đã xóa mềm. Tạo draft không đổi trạng thái Room.\nNếu tenantId null hoặc không gửi, phải có tenantName và tenantPhone; thiếu liên hệ trả 422 TENANT_IDENTITY_INVALID.\nKhi có tenantId, mỗi trường liên hệ có thể null hoặc không gửi. Chưa kiểm tra tài khoản tenant bên Identity.\nBody chỉ nhận các field có trong request schema. rentalType, tenantCccd, paymentDueDay,\ntemplateKey, templateVariables và các field khác ngoài DTO trả 422 UNEXPECTED_FIELD.\nroomId/tenantId không phải UUID trả 422 INVALID_UUID. Tiền thuê/cọc là số không âm;\nngày theo YYYY-MM-DD và startDate phải trước endDate.\nContract và outbox contract.created được lưu trong cùng transaction; relay publish sau commit.\nService chưa có rate limiter.\n\n**Sequence diagram**\n\n```mermaid\nsequenceDiagram\n    autonumber\n    actor Client\n    participant GW as API Gateway\n    participant S as Tenancy-Service\n    participant Guard as JWT/access guards\n    participant C as ContractController\n    participant Bus as CQRS CommandBus\n    participant H as Application handler\n    Client->>GW: POST /api/v1/contracts\n    GW->>GW: Validate bearer token for protected route\n    GW->>S: Proxy original HTTP request\n    S->>Guard: Validate JWT, account state and route access\n    Guard-->>C: Continue with authenticated context\n    S->>C: Invoke postContracts\n    C->>Bus: Execute command for postContracts\n    Bus->>H: Dispatch command handler\n    H-->>Bus: Return use-case result\n    Bus-->>C: Result\n    C-->>S: Return documented response\n    S-->>GW: HTTP status and response body\n    GW-->>Client: Forward HTTP response\n```\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-11-02 | 🔴 BREAKING | the `vehicleCount` request property's max was set to `2147483647.00` | [#34](https://github.com/pbl6-home-renter/api-doc/pull/34) |\n| 2026-11-02 | 🔴 BREAKING | added the pattern `\\S` to the request property `tenantName` | [#34](https://github.com/pbl6-home-renter/api-doc/pull/34) |\n| 2026-11-02 | 🔴 BREAKING | added the new `INVALID_UUID` enum value to the `code` response property for the response status `422` | [#34](https://github.com/pbl6-home-renter/api-doc/pull/34) |\n| 2026-11-02 | 🔴 BREAKING | added the new `UNEXPECTED_FIELD` enum value to the `code` response property for the response status `422` | [#34](https://github.com/pbl6-home-renter/api-doc/pull/34) |\n| 2026-11-02 | 🔴 BREAKING | the `data/rentPrice` response's property `type` was widened from `integer` to `number` for status `201` | [#34](https://github.com/pbl6-home-renter/api-doc/pull/34) |\n| 2026-11-02 | 🟡 NEEDS_REVIEW | removed the request property `paymentDueDay` | [#34](https://github.com/pbl6-home-renter/api-doc/pull/34) |\n| 2026-11-02 | 🟡 NEEDS_REVIEW | removed the request property `rentalType` | [#34](https://github.com/pbl6-home-renter/api-doc/pull/34) |\n| 2026-11-02 | 🟡 NEEDS_REVIEW | removed the request property `templateKey` | [#34](https://github.com/pbl6-home-renter/api-doc/pull/34) |\n| 2026-11-02 | 🟡 NEEDS_REVIEW | removed the request property `templateVariables` | [#34](https://github.com/pbl6-home-renter/api-doc/pull/34) |\n| 2026-11-02 | 🟡 NEEDS_REVIEW | removed the request property `tenantCccd` | [#34](https://github.com/pbl6-home-renter/api-doc/pull/34) |\n| 2026-11-02 | 🟢 NON_BREAKING | the optional response header `location` removed for the status `201` | [#34](https://github.com/pbl6-home-renter/api-doc/pull/34) |\n| 2026-11-02 | 🟢 NON_BREAKING | added `subschema #1, subschema #2` to the request body `anyOf` list | [#34](https://github.com/pbl6-home-renter/api-doc/pull/34) |\n| 2026-11-02 | 🟢 NON_BREAKING | the request property `tenantName` became nullable | [#34](https://github.com/pbl6-home-renter/api-doc/pull/34) |\n| 2026-11-02 | 🟢 NON_BREAKING | the request property `tenantPhone` became nullable | [#34](https://github.com/pbl6-home-renter/api-doc/pull/34) |\n| 2026-11-02 | 🟢 NON_BREAKING | the request property `tenantName` became optional | [#34](https://github.com/pbl6-home-renter/api-doc/pull/34) |\n| 2026-11-02 | 🟢 NON_BREAKING | the request property `tenantPhone` became optional | [#34](https://github.com/pbl6-home-renter/api-doc/pull/34) |\n| 2026-11-02 | 🟢 NON_BREAKING | the `depositAmount` request property `type` was widened from `integer` to `number` | [#34](https://github.com/pbl6-home-renter/api-doc/pull/34) |\n| 2026-11-02 | 🟢 NON_BREAKING | the `rentPrice` request property `type` was widened from `integer` to `number` | [#34](https://github.com/pbl6-home-renter/api-doc/pull/34) |\n| 2026-11-02 | 🟢 NON_BREAKING | added the non-success response with the status `404` | [#34](https://github.com/pbl6-home-renter/api-doc/pull/34) |\n| 2026-11-02 | 🟢 NON_BREAKING | Bỏ response lỗi HTTP 429. | [#34](https://github.com/pbl6-home-renter/api-doc/pull/34) |\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
+        "description": "Room không tồn tại hoặc đã xóa trả 404 RESOURCE_NOT_FOUND; Room thuộc landlord khác trả 403 FORBIDDEN.\nRoom đã có hợp đồng active trả 409 ACTIVE_CONTRACT_EXISTS. Điều kiện active không loại hợp đồng đã xóa mềm,\ntheo partial unique index hiện tại. Tạo draft không đổi trạng thái Room.\nNếu tenantId null hoặc không gửi, phải có tenantName và tenantPhone; thiếu liên hệ trả 422 TENANT_IDENTITY_INVALID.\nKhi có tenantId, mỗi trường liên hệ có thể null hoặc không gửi. Chưa kiểm tra tài khoản tenant bên Identity.\nBody chỉ nhận các field có trong request schema. rentalType, tenantCccd, paymentDueDay,\ntemplateKey, templateVariables và các field khác ngoài DTO trả 422 UNEXPECTED_FIELD.\nroomId/tenantId không phải UUID trả 422 INVALID_UUID. Tiền thuê/cọc là số không âm;\nngày theo YYYY-MM-DD và startDate phải trước endDate.\nContract và outbox contract.created được lưu trong cùng transaction; relay publish sau commit.\nService chưa có rate limiter.\n\n**Sequence diagram**\n\n```mermaid\nsequenceDiagram\n    autonumber\n    actor Client\n    participant GW as API Gateway\n    participant S as Tenancy-Service\n    participant Guard as JWT/access guards\n    participant C as ContractController\n    participant Bus as CQRS CommandBus\n    participant H as Application handler\n    Client->>GW: POST /api/v1/contracts\n    GW->>GW: Validate bearer token for protected route\n    GW->>S: Proxy original HTTP request\n    S->>Guard: Validate JWT, account state and route access\n    Guard-->>C: Continue with authenticated context\n    S->>C: Invoke postContracts\n    C->>Bus: Execute command for postContracts\n    Bus->>H: Dispatch command handler\n    H-->>Bus: Return use-case result\n    Bus-->>C: Result\n    C-->>S: Return documented response\n    S-->>GW: HTTP status and response body\n    GW-->>Client: Forward HTTP response\n```\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-11-02 | 🔴 BREAKING | the `vehicleCount` request property's max was set to `2147483647.00` | [#34](https://github.com/pbl6-home-renter/api-doc/pull/34) |\n| 2026-11-02 | 🔴 BREAKING | added the pattern `\\S` to the request property `tenantName` | [#34](https://github.com/pbl6-home-renter/api-doc/pull/34) |\n| 2026-11-02 | 🔴 BREAKING | added the new `INVALID_UUID` enum value to the `code` response property for the response status `422` | [#34](https://github.com/pbl6-home-renter/api-doc/pull/34) |\n| 2026-11-02 | 🔴 BREAKING | added the new `UNEXPECTED_FIELD` enum value to the `code` response property for the response status `422` | [#34](https://github.com/pbl6-home-renter/api-doc/pull/34) |\n| 2026-11-02 | 🔴 BREAKING | the `data/rentPrice` response's property `type` was widened from `integer` to `number` for status `201` | [#34](https://github.com/pbl6-home-renter/api-doc/pull/34) |\n| 2026-11-02 | 🟡 NEEDS_REVIEW | removed the request property `paymentDueDay` | [#34](https://github.com/pbl6-home-renter/api-doc/pull/34) |\n| 2026-11-02 | 🟡 NEEDS_REVIEW | removed the request property `rentalType` | [#34](https://github.com/pbl6-home-renter/api-doc/pull/34) |\n| 2026-11-02 | 🟡 NEEDS_REVIEW | removed the request property `templateKey` | [#34](https://github.com/pbl6-home-renter/api-doc/pull/34) |\n| 2026-11-02 | 🟡 NEEDS_REVIEW | removed the request property `templateVariables` | [#34](https://github.com/pbl6-home-renter/api-doc/pull/34) |\n| 2026-11-02 | 🟡 NEEDS_REVIEW | removed the request property `tenantCccd` | [#34](https://github.com/pbl6-home-renter/api-doc/pull/34) |\n| 2026-11-02 | 🟢 NON_BREAKING | the optional response header `location` removed for the status `201` | [#34](https://github.com/pbl6-home-renter/api-doc/pull/34) |\n| 2026-11-02 | 🟢 NON_BREAKING | added `subschema #1, subschema #2` to the request body `anyOf` list | [#34](https://github.com/pbl6-home-renter/api-doc/pull/34) |\n| 2026-11-02 | 🟢 NON_BREAKING | the request property `tenantName` became nullable | [#34](https://github.com/pbl6-home-renter/api-doc/pull/34) |\n| 2026-11-02 | 🟢 NON_BREAKING | the request property `tenantPhone` became nullable | [#34](https://github.com/pbl6-home-renter/api-doc/pull/34) |\n| 2026-11-02 | 🟢 NON_BREAKING | the request property `tenantName` became optional | [#34](https://github.com/pbl6-home-renter/api-doc/pull/34) |\n| 2026-11-02 | 🟢 NON_BREAKING | the request property `tenantPhone` became optional | [#34](https://github.com/pbl6-home-renter/api-doc/pull/34) |\n| 2026-11-02 | 🟢 NON_BREAKING | the `depositAmount` request property `type` was widened from `integer` to `number` | [#34](https://github.com/pbl6-home-renter/api-doc/pull/34) |\n| 2026-11-02 | 🟢 NON_BREAKING | the `rentPrice` request property `type` was widened from `integer` to `number` | [#34](https://github.com/pbl6-home-renter/api-doc/pull/34) |\n| 2026-11-02 | 🟢 NON_BREAKING | added the non-success response with the status `404` | [#34](https://github.com/pbl6-home-renter/api-doc/pull/34) |\n| 2026-11-02 | 🟢 NON_BREAKING | Bỏ response lỗi HTTP 429. | [#34](https://github.com/pbl6-home-renter/api-doc/pull/34) |\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "requestBody": {
           "required": true,
           "content": {
@@ -14065,13 +14064,13 @@
                       "enum": [
                         "ACTIVE_CONTRACT_EXISTS"
                       ],
-                      "description": "- ACTIVE_CONTRACT_EXISTS: Phòng có hợp đồng active, suspended hoặc terminated qua P9-07 đang chờ bàn giao."
+                      "description": "- ACTIVE_CONTRACT_EXISTS: Phòng đã có hợp đồng đang hiệu lực."
                     }
                   }
                 },
                 "examples": {
                   "active_contract_exists": {
-                    "summary": "ACTIVE_CONTRACT_EXISTS — Phòng còn hợp đồng giữ quyền sử dụng.",
+                    "summary": "ACTIVE_CONTRACT_EXISTS — Phòng đã có hợp đồng đang hiệu lực.",
                     "value": {
                       "statusCode": 409,
                       "code": "ACTIVE_CONTRACT_EXISTS"
@@ -14218,8 +14217,6 @@
                     "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
                     "roomId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
                     "status": "active",
-                    "handoverRequired": false,
-                    "handoverCompletedOn": null,
                     "templateKey": null,
                     "tenantId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
                     "tenantName": "Trần Văn B",
@@ -14501,8 +14498,6 @@
                   "statusCode": 200,
                   "code": "CONTRACT_TEMPLATE_APPLIED",
                   "data": {
-                    "handoverRequired": false,
-                    "handoverCompletedOn": null,
                     "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
                     "roomId": "3fa85f64-5717-4562-b3fc-2c963f66afa7",
                     "templateKey": "standard-room-lease-v1",
@@ -14833,7 +14828,7 @@
           }
         ],
         "summary": "Activate signed contract",
-        "description": "contractId sai định dạng UUID trả 400 BAD_REQUEST theo ParseUUIDPipe.\nThiếu hoặc null signedContractMediaId trả 422 VALIDATION_FAILED; UUID của file không hợp lệ trả\n422 INVALID_UUID; field ngoài DTO trả 422 UNEXPECTED_FIELD.\n\nTenancy kiểm tra media trước khi mở transaction, qua GET /internal/media/{signedContractMediaId}\ncủa Identity bằng service token. Adapter yêu cầu phần data của response envelope gồm\nid, ownerType, ownerId, purpose và status. Chỉ chấp nhận id khớp signedContractMediaId,\nownerType = contract, ownerId = contractId, purpose = contract_signed và status = uploaded.\nIdentity timeout, không kết nối được, lỗi 5xx hoặc từ chối service token trả 503 SERVICE_UNAVAILABLE.\nCác lỗi 4xx khác từ Identity được truyền nguyên trạng. Chưa xác minh được file thì không kích hoạt.\n\nSau khi media hợp lệ, trong cùng transaction: khóa hợp đồng, kiểm tra hợp đồng chưa bị xóa\nvà landlordId = user.id, khóa phòng, kích hoạt hợp đồng, tự thêm đại diện vào contract_members với joined_at = start_date\nvà chuyển phòng sang occupied. Member giữ tenant_id/name/phone từ hợp đồng, không có cờ đại diện.\nHợp đồng hoặc phòng không tồn tại/đã xóa trả 404 RESOURCE_NOT_FOUND; khác landlord trả 403 FORBIDDEN.\nPhòng có hợp đồng active, suspended hoặc terminated qua P9-07 đang chờ bàn giao trả\n409 ACTIVE_CONTRACT_EXISTS; unique index UQ_contracts_room_occupancy bảo vệ cùng quy tắc khi ghi.\nVì media được kiểm tra trước, media không hợp lệ có thể trả 409 trước khi kiểm tra 404/403 của hợp đồng.\n\n**Điều kiện lỗi theo Contract**\n\n- `409 SIGNED_FILE_MISSING`: xảy ra khi có ít nhất một điều kiện:\n  media không tồn tại (Identity trả 404 hoặc response không có dữ liệu media);\n  `media.id` khác `signedContractMediaId`;\n  `ownerType` khác `contract`;\n  `ownerId` khác `contractId` trên URL;\n  `purpose` khác `contract_signed`;\n  hoặc file chưa upload xong (`status` khác `uploaded`). Không mở transaction ở nhánh này.\n- `409 CONTRACT_NOT_READY`: hợp đồng không ở `draft` hoặc `signed`,\n  hoặc phòng không ở `available` (đang `maintenance` hoặc đã `occupied`).\n  Transaction rollback, không lưu thay đổi hợp đồng, phòng hoặc outbox.\n  Hợp đồng/phòng không tồn tại hoặc đã xóa được xử lý riêng bằng `404 RESOURCE_NOT_FOUND`.\n\nThành công trả 200 CONTRACT_ACTIVATED với id, status = active và activatedAt dạng ISO 8601 UTC.\nactivatedAt được lưu ở contracts.activated_at. Hợp đồng, member đại diện, phòng và ba outbox message\ncontract.activated, contract_member.added, room.status_changed được ghi cùng transaction; lỗi ghi dữ liệu sẽ rollback.\nThe contract.activated event supplies contractId, buildingId, roomId, landlordId and linked\ntenantUserIds[] to Community. Community creates the contract conversation with the landlord\nadmin only after this event, then applies any member events stored before activation.\nOutbox relay publish sau khi commit. Không kiểm tra startDate so với ngày hiện tại; không dùng OTP/PIN.\nService chưa có rate limiter.\n\n**Giới hạn tích hợp hiện tại:** Identity-Service local chưa triển khai GET /internal/media/{id};\nresponse public complete-upload cũng chưa có field status. Dữ liệu ở trên là contract nội bộ\nadapter đang yêu cầu, chưa phải endpoint media đã được triển khai. Nếu Identity trả 404 cho route\nchưa có, Tenancy hiện trả 409 SIGNED_FILE_MISSING. signedContractMediaId được xác minh để kích hoạt,\nnhưng hiện chưa được lưu trên Contract hoặc đưa vào event contract.activated.\nHandler so sánh UUID theo chuỗi, chưa chuẩn hóa hoa/thường; giữ nguyên UUID do API trả về\nđể tránh bị từ chối nhầm bằng SIGNED_FILE_MISSING.\n\n**Sequence diagram**\n\n```mermaid\nsequenceDiagram\n    autonumber\n    actor Client\n    participant GW as API Gateway\n    participant S as Tenancy-Service\n    participant Guard as JWT/access guards\n    participant C as ContractController\n    participant Bus as CQRS CommandBus\n    participant H as Application handler\n    Client->>GW: POST /api/v1/contracts/{contractId}/activate-contract\n    GW->>GW: Validate bearer token for protected route\n    GW->>S: Proxy original HTTP request\n    S->>Guard: Validate JWT, account state and route access\n    Guard-->>C: Continue with authenticated context\n    S->>C: Invoke postContractsContractidActivateContract\n    C->>Bus: Execute command for postContractsContractidActivateContract\n    Bus->>H: Dispatch command handler\n    H-->>Bus: Return use-case result\n    Bus-->>C: Result\n    C-->>S: Return documented response\n    S-->>GW: HTTP status and response body\n    GW-->>Client: Forward HTTP response\n```\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-11-02 | 🔴 BREAKING | added the new `ACTIVE_CONTRACT_EXISTS` enum value to the `code` response property for the response status `409` | [#34](https://github.com/pbl6-home-renter/api-doc/pull/34) |\n| 2026-11-02 | 🔴 BREAKING | added the new `INVALID_UUID` enum value to the `code` response property for the response status `422` | [#34](https://github.com/pbl6-home-renter/api-doc/pull/34) |\n| 2026-11-02 | 🔴 BREAKING | added the new `SERVICE_UNAVAILABLE` enum value to the `code` response property for the response status `503` | [#34](https://github.com/pbl6-home-renter/api-doc/pull/34) |\n| 2026-11-02 | 🔴 BREAKING | added the new `UNEXPECTED_FIELD` enum value to the `code` response property for the response status `422` | [#34](https://github.com/pbl6-home-renter/api-doc/pull/34) |\n| 2026-11-02 | 🟢 NON_BREAKING | Bỏ response lỗi HTTP 429. | [#34](https://github.com/pbl6-home-renter/api-doc/pull/34) |\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
+        "description": "contractId sai định dạng UUID trả 400 BAD_REQUEST theo ParseUUIDPipe.\nThiếu hoặc null signedContractMediaId trả 422 VALIDATION_FAILED; UUID của file không hợp lệ trả\n422 INVALID_UUID; field ngoài DTO trả 422 UNEXPECTED_FIELD.\n\nTenancy kiểm tra media trước khi mở transaction, qua GET /internal/media/{signedContractMediaId}\ncủa Identity bằng service token. Adapter yêu cầu phần data của response envelope gồm\nid, ownerType, ownerId, purpose và status. Chỉ chấp nhận id khớp signedContractMediaId,\nownerType = contract, ownerId = contractId, purpose = contract_signed và status = uploaded.\nIdentity timeout, không kết nối được, lỗi 5xx hoặc từ chối service token trả 503 SERVICE_UNAVAILABLE.\nCác lỗi 4xx khác từ Identity được truyền nguyên trạng. Chưa xác minh được file thì không kích hoạt.\n\nSau khi media hợp lệ, trong cùng transaction: khóa hợp đồng, kiểm tra hợp đồng chưa bị xóa\nvà landlordId = user.id, khóa phòng, kích hoạt hợp đồng, tự thêm đại diện vào contract_members với joined_at = start_date\nvà chuyển phòng sang occupied. Member giữ tenant_id/name/phone từ hợp đồng, không có cờ đại diện.\nHợp đồng hoặc phòng không tồn tại/đã xóa trả 404 RESOURCE_NOT_FOUND; khác landlord trả 403 FORBIDDEN.\nVi phạm unique index UQ_contracts_room_active trả 409 ACTIVE_CONTRACT_EXISTS.\nVì media được kiểm tra trước, media không hợp lệ có thể trả 409 trước khi kiểm tra 404/403 của hợp đồng.\n\n**Điều kiện lỗi theo Contract**\n\n- `409 SIGNED_FILE_MISSING`: xảy ra khi có ít nhất một điều kiện:\n  media không tồn tại (Identity trả 404 hoặc response không có dữ liệu media);\n  `media.id` khác `signedContractMediaId`;\n  `ownerType` khác `contract`;\n  `ownerId` khác `contractId` trên URL;\n  `purpose` khác `contract_signed`;\n  hoặc file chưa upload xong (`status` khác `uploaded`). Không mở transaction ở nhánh này.\n- `409 CONTRACT_NOT_READY`: hợp đồng không ở `draft` hoặc `signed`,\n  hoặc phòng không ở `available` (đang `maintenance` hoặc đã `occupied`).\n  Transaction rollback, không lưu thay đổi hợp đồng, phòng hoặc outbox.\n  Hợp đồng/phòng không tồn tại hoặc đã xóa được xử lý riêng bằng `404 RESOURCE_NOT_FOUND`.\n\nThành công trả 200 CONTRACT_ACTIVATED với id, status = active và activatedAt dạng ISO 8601 UTC.\nactivatedAt được lưu ở contracts.activated_at. Hợp đồng, member đại diện, phòng và ba outbox message\ncontract.activated, contract_member.added, room.status_changed được ghi cùng transaction; lỗi ghi dữ liệu sẽ rollback.\nThe contract.activated event supplies contractId, buildingId, roomId, landlordId and linked\ntenantUserIds[] to Community. Community creates the contract conversation with the landlord\nadmin only after this event, then applies any member events stored before activation.\nOutbox relay publish sau khi commit. Không kiểm tra startDate so với ngày hiện tại; không dùng OTP/PIN.\nService chưa có rate limiter.\n\n**Giới hạn tích hợp hiện tại:** Identity-Service local chưa triển khai GET /internal/media/{id};\nresponse public complete-upload cũng chưa có field status. Dữ liệu ở trên là contract nội bộ\nadapter đang yêu cầu, chưa phải endpoint media đã được triển khai. Nếu Identity trả 404 cho route\nchưa có, Tenancy hiện trả 409 SIGNED_FILE_MISSING. signedContractMediaId được xác minh để kích hoạt,\nnhưng hiện chưa được lưu trên Contract hoặc đưa vào event contract.activated.\nHandler so sánh UUID theo chuỗi, chưa chuẩn hóa hoa/thường; giữ nguyên UUID do API trả về\nđể tránh bị từ chối nhầm bằng SIGNED_FILE_MISSING.\n\n**Sequence diagram**\n\n```mermaid\nsequenceDiagram\n    autonumber\n    actor Client\n    participant GW as API Gateway\n    participant S as Tenancy-Service\n    participant Guard as JWT/access guards\n    participant C as ContractController\n    participant Bus as CQRS CommandBus\n    participant H as Application handler\n    Client->>GW: POST /api/v1/contracts/{contractId}/activate-contract\n    GW->>GW: Validate bearer token for protected route\n    GW->>S: Proxy original HTTP request\n    S->>Guard: Validate JWT, account state and route access\n    Guard-->>C: Continue with authenticated context\n    S->>C: Invoke postContractsContractidActivateContract\n    C->>Bus: Execute command for postContractsContractidActivateContract\n    Bus->>H: Dispatch command handler\n    H-->>Bus: Return use-case result\n    Bus-->>C: Result\n    C-->>S: Return documented response\n    S-->>GW: HTTP status and response body\n    GW-->>Client: Forward HTTP response\n```\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-11-02 | 🔴 BREAKING | added the new `ACTIVE_CONTRACT_EXISTS` enum value to the `code` response property for the response status `409` | [#34](https://github.com/pbl6-home-renter/api-doc/pull/34) |\n| 2026-11-02 | 🔴 BREAKING | added the new `INVALID_UUID` enum value to the `code` response property for the response status `422` | [#34](https://github.com/pbl6-home-renter/api-doc/pull/34) |\n| 2026-11-02 | 🔴 BREAKING | added the new `SERVICE_UNAVAILABLE` enum value to the `code` response property for the response status `503` | [#34](https://github.com/pbl6-home-renter/api-doc/pull/34) |\n| 2026-11-02 | 🔴 BREAKING | added the new `UNEXPECTED_FIELD` enum value to the `code` response property for the response status `422` | [#34](https://github.com/pbl6-home-renter/api-doc/pull/34) |\n| 2026-11-02 | 🟢 NON_BREAKING | Bỏ response lỗi HTTP 429. | [#34](https://github.com/pbl6-home-renter/api-doc/pull/34) |\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "parameters": [
           {
             "name": "contractId",
@@ -14939,7 +14934,7 @@
                         "SIGNED_FILE_MISSING",
                         "ACTIVE_CONTRACT_EXISTS"
                       ],
-                      "description": "- CONTRACT_NOT_READY: Hợp đồng không ở draft/signed hoặc phòng đang maintenance/occupied; transaction rollback.\n- SIGNED_FILE_MISSING: Media không tồn tại/Identity trả 404, id khác signedContractMediaId, ownerType khác contract, ownerId khác contractId, purpose khác contract_signed hoặc chưa upload xong (status khác uploaded); chưa mở transaction.\n- ACTIVE_CONTRACT_EXISTS: Phòng có hợp đồng active, suspended hoặc terminated qua P9-07 đang chờ bàn giao."
+                      "description": "- CONTRACT_NOT_READY: Hợp đồng không ở draft/signed hoặc phòng đang maintenance/occupied; transaction rollback.\n- SIGNED_FILE_MISSING: Media không tồn tại/Identity trả 404, id khác signedContractMediaId, ownerType khác contract, ownerId khác contractId, purpose khác contract_signed hoặc chưa upload xong (status khác uploaded); chưa mở transaction.\n- ACTIVE_CONTRACT_EXISTS: Vi phạm unique index UQ_contracts_room_active vì phòng đã có hợp đồng active."
                     }
                   }
                 },
@@ -14959,7 +14954,7 @@
                     }
                   },
                   "active_contract_exists": {
-                    "summary": "Phòng còn hợp đồng giữ quyền sử dụng.",
+                    "summary": "Phòng đã có hợp đồng active khi lưu dữ liệu.",
                     "value": {
                       "statusCode": 409,
                       "code": "ACTIVE_CONTRACT_EXISTS"
@@ -15091,7 +15086,7 @@
           }
         ],
         "summary": "Complete checkout",
-        "description": "P9-07 also allows handover of a contract terminated by a landlord-lock decision or grace expiry.\nSuch termination keeps the room occupied and members present until this request. This handover bypasses\nsettlement/payment checks, persists handoverCompletedOn, updates remaining members, moves the room to maintenance\nand appends existing contract_member.left and room.status_changed events atomically. Same-date replay returns\nthe recorded result without more events; a different date returns 409 CONTRACT_HANDOVER_CONFLICT.\nGET /contracts/{contractId} exposes current handoverRequired and handoverCompletedOn.\nThe active-contract checkout rules below continue to apply to ordinary checkout.\nThe contract must be active, otherwise 409 CONTRACT_NOT_ACTIVE.\ncompletedOn is a YYYY-MM-DD date between the contract start date and today (UTC), inclusive.\nInvalid format or a date outside the contract start date to today range returns 422 VALIDATION_FAILED.\ncompletedOn must also be on or after joinedAt for every member who has not left;\na violation returns 422 LEFT_DATE_INVALID, the same domain error used by leave-contract.\nCheckout may take place after the contract end date; the end-date restriction belongs to leave-contract only.\nThe invoice period is completedOn sliced to YYYY-MM. At least one non-deleted invoice for that contract/period\nmust be issued, and none may be pending; otherwise 409 SETTLEMENT_NOT_READY. Voided invoices do not satisfy readiness.\nIn one transaction, lock the contract, check invoices, set remaining members' left_at to completedOn,\nterminate the contract, move the room from occupied to maintenance, and persist all corresponding outbox events.\nEach member marked left produces a contract_member.left outbox event in that transaction.\nAfter Community consumes the event, it retains the contract conversation and membership but\nchanges that member to read_only: sending stops and REST history is limited to leftSequence,\nthe last message sequence at or before the event envelope's occurredAt. The domain leftAt\nremains a date. Broker delivery delay can delay access revocation.\nA member has not left when left_at IS NULL or after today (UTC). A future scheduled leave is replaced by completedOn;\nprevious departures and soft-deleted members are preserved. A room already in maintenance stays there.\nThis endpoint does not schedule a future chat access change; P9-04 only applies delivered leave events.\nOrdinary checkout echoes completedOn. P9-07 handover persists its handoverCompletedOn for replay and room reservation checks.\nNo deposit settlement, early termination fee or automatic checkout-date prorating is performed.\nCall POST /rooms/{roomId}/mark-ready after cleaning to make the room available again.\nField outside the request DTO returns 422 UNEXPECTED_FIELD, matching existing project validation.\nThe invoices table is supplied by P6-02g1. The service does not currently apply rate limiting.\n\n**Sequence diagram**\n\n```mermaid\nsequenceDiagram\n    autonumber\n    actor Client\n    participant GW as API Gateway\n    participant S as Tenancy-Service\n    participant Guard as JWT/access guards\n    participant C as ContractController\n    participant Bus as CQRS CommandBus\n    participant H as Application handler\n    Client->>GW: POST /api/v1/contracts/{contractId}/complete-checkout\n    GW->>GW: Validate bearer token for protected route\n    GW->>S: Proxy original HTTP request\n    S->>Guard: Validate JWT, account state and route access\n    Guard-->>C: Continue with authenticated context\n    S->>C: Invoke postContractsContractidCompleteCheckout\n    C->>Bus: Execute command for postContractsContractidCompleteCheckout\n    Bus->>H: Dispatch command handler\n    H-->>Bus: Return use-case result\n    Bus-->>C: Result\n    C-->>S: Return documented response\n    S-->>GW: HTTP status and response body\n    GW-->>Client: Forward HTTP response\n```\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-11-06 | 🔴 BREAKING | added the pattern `^(?!0000)\\d{4}-\\d{2}-\\d{2}$` to the request property `completedOn` | [#50](https://github.com/pbl6-home-renter/api-doc/pull/50) |\n| 2026-11-06 | 🔴 BREAKING | added the new `INVALID_ROOM_TRANSITION` enum value to the `code` response property for the response status `409` | [#50](https://github.com/pbl6-home-renter/api-doc/pull/50) |\n| 2026-11-06 | 🔴 BREAKING | added the new `LEFT_DATE_INVALID` enum value to the `code` response property for the response status `422` | [#50](https://github.com/pbl6-home-renter/api-doc/pull/50) |\n| 2026-11-06 | 🔴 BREAKING | added the new `SETTLEMENT_NOT_READY` enum value to the `code` response property for the response status `409` | [#50](https://github.com/pbl6-home-renter/api-doc/pull/50) |\n| 2026-11-06 | 🔴 BREAKING | added the new `UNEXPECTED_FIELD` enum value to the `code` response property for the response status `422` | [#50](https://github.com/pbl6-home-renter/api-doc/pull/50) |\n| 2026-11-06 | 🔴 BREAKING | added the new `terminated` enum value to the `data/status` response property for the response status `200` | [#50](https://github.com/pbl6-home-renter/api-doc/pull/50) |\n| 2026-11-06 | 🟢 NON_BREAKING | Bỏ response lỗi HTTP 429. | [#50](https://github.com/pbl6-home-renter/api-doc/pull/50) |\n| 2026-11-06 | 🟢 NON_BREAKING | removed the `SETTLEMENT_NOT_READY` enum value from the `code` response property for the response status `422` | [#50](https://github.com/pbl6-home-renter/api-doc/pull/50) |\n| 2026-11-06 | 🟢 NON_BREAKING | removed the `expired` enum value from the `data/status` response property for the response status `200` | [#50](https://github.com/pbl6-home-renter/api-doc/pull/50) |\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
+        "description": "The contract must be active, otherwise 409 CONTRACT_NOT_ACTIVE.\ncompletedOn is a YYYY-MM-DD date between the contract start date and today (UTC), inclusive.\nInvalid format or a date outside the contract start date to today range returns 422 VALIDATION_FAILED.\ncompletedOn must also be on or after joinedAt for every member who has not left;\na violation returns 422 LEFT_DATE_INVALID, the same domain error used by leave-contract.\nCheckout may take place after the contract end date; the end-date restriction belongs to leave-contract only.\nThe invoice period is completedOn sliced to YYYY-MM. At least one non-deleted invoice for that contract/period\nmust be issued, and none may be pending; otherwise 409 SETTLEMENT_NOT_READY. Voided invoices do not satisfy readiness.\nIn one transaction, lock the contract, check invoices, set remaining members' left_at to completedOn,\nterminate the contract, move the room from occupied to maintenance, and persist all corresponding outbox events.\nEach member marked left produces a contract_member.left outbox event in that transaction.\nAfter Community consumes the event, it retains the contract conversation and membership but\nchanges that member to read_only: sending stops and REST history is limited to leftSequence,\nthe last message sequence at or before the event envelope's occurredAt. The domain leftAt\nremains a date. Broker delivery delay can delay access revocation.\nA member has not left when left_at IS NULL or after today (UTC). A future scheduled leave is replaced by completedOn;\nprevious departures and soft-deleted members are preserved. A room already in maintenance stays there.\nThis endpoint does not schedule a future chat access change; P9-04 only applies delivered leave events.\nThe response echoes completedOn; no completed_on or terminated_at column is added to contracts.\nNo deposit settlement, early termination fee or automatic checkout-date prorating is performed.\nCall POST /rooms/{roomId}/mark-ready after cleaning to make the room available again.\nField outside the request DTO returns 422 UNEXPECTED_FIELD, matching existing project validation.\nThe invoices table is supplied by P6-02g1. The service does not currently apply rate limiting.\n\n**Sequence diagram**\n\n```mermaid\nsequenceDiagram\n    autonumber\n    actor Client\n    participant GW as API Gateway\n    participant S as Tenancy-Service\n    participant Guard as JWT/access guards\n    participant C as ContractController\n    participant Bus as CQRS CommandBus\n    participant H as Application handler\n    Client->>GW: POST /api/v1/contracts/{contractId}/complete-checkout\n    GW->>GW: Validate bearer token for protected route\n    GW->>S: Proxy original HTTP request\n    S->>Guard: Validate JWT, account state and route access\n    Guard-->>C: Continue with authenticated context\n    S->>C: Invoke postContractsContractidCompleteCheckout\n    C->>Bus: Execute command for postContractsContractidCompleteCheckout\n    Bus->>H: Dispatch command handler\n    H-->>Bus: Return use-case result\n    Bus-->>C: Result\n    C-->>S: Return documented response\n    S-->>GW: HTTP status and response body\n    GW-->>Client: Forward HTTP response\n```\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-11-06 | 🔴 BREAKING | added the pattern `^(?!0000)\\d{4}-\\d{2}-\\d{2}$` to the request property `completedOn` | [#50](https://github.com/pbl6-home-renter/api-doc/pull/50) |\n| 2026-11-06 | 🔴 BREAKING | added the new `INVALID_ROOM_TRANSITION` enum value to the `code` response property for the response status `409` | [#50](https://github.com/pbl6-home-renter/api-doc/pull/50) |\n| 2026-11-06 | 🔴 BREAKING | added the new `LEFT_DATE_INVALID` enum value to the `code` response property for the response status `422` | [#50](https://github.com/pbl6-home-renter/api-doc/pull/50) |\n| 2026-11-06 | 🔴 BREAKING | added the new `SETTLEMENT_NOT_READY` enum value to the `code` response property for the response status `409` | [#50](https://github.com/pbl6-home-renter/api-doc/pull/50) |\n| 2026-11-06 | 🔴 BREAKING | added the new `UNEXPECTED_FIELD` enum value to the `code` response property for the response status `422` | [#50](https://github.com/pbl6-home-renter/api-doc/pull/50) |\n| 2026-11-06 | 🔴 BREAKING | added the new `terminated` enum value to the `data/status` response property for the response status `200` | [#50](https://github.com/pbl6-home-renter/api-doc/pull/50) |\n| 2026-11-06 | 🟢 NON_BREAKING | Bỏ response lỗi HTTP 429. | [#50](https://github.com/pbl6-home-renter/api-doc/pull/50) |\n| 2026-11-06 | 🟢 NON_BREAKING | removed the `SETTLEMENT_NOT_READY` enum value from the `code` response property for the response status `422` | [#50](https://github.com/pbl6-home-renter/api-doc/pull/50) |\n| 2026-11-06 | 🟢 NON_BREAKING | removed the `expired` enum value from the `data/status` response property for the response status `200` | [#50](https://github.com/pbl6-home-renter/api-doc/pull/50) |\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "parameters": [
           {
             "name": "contractId",
@@ -15195,7 +15190,6 @@
                       "enum": [
                         "CONTRACT_NOT_ACTIVE",
                         "SETTLEMENT_NOT_READY",
-                        "CONTRACT_HANDOVER_CONFLICT",
                         "INVALID_ROOM_TRANSITION"
                       ],
                       "description": "- CONTRACT_NOT_ACTIVE: Hợp đồng không ở trạng thái đang hiệu lực.\n- SETTLEMENT_NOT_READY: The checkout period has no issued invoice or still has a pending invoice.\n- INVALID_ROOM_TRANSITION: The room is neither occupied nor in maintenance."
@@ -15275,193 +15269,6 @@
           },
           "503": {
             "$ref": "#/components/responses/AuthUnavailableError"
-          }
-        }
-      }
-    },
-    "/contracts/{contractId}/lock-cycles/{lockCycleId}/decision": {
-      "put": {
-        "tags": [
-          "Contract"
-        ],
-        "x-apidog-folder": "Contract",
-        "x-apidog-status": "developing",
-        "operationId": "putContractsContractidLockCyclesLockcycleidDecision",
-        "summary": "Resolve a suspended contract after landlord unlock",
-        "security": [
-          {
-            "BearerAuth": []
-          }
-        ],
-        "description": "The owning landlord chooses restore or terminate for one suspended contract in the current lock cycle.\nAn unlock strictly before the grace deadline moves the cycle to decision_pending.\nUnlock at the deadline is treated as expiry. Unchosen contracts remain suspended.\nDecisions are stored per cycle and contract. Repeating the same action returns the stored result,\nincluding after the current cycle completes. A different action returns CONTRACT_LOCK_DECISION_CONFLICT.\nA superseded cycle returns LANDLORD_LOCK_CYCLE_STALE. A cycle outside decision_pending without a stored\nresult returns LANDLORD_LOCK_CYCLE_NOT_AWAITING_DECISION. A contract outside the cycle or outside suspended\nreturns CONTRACT_LOCK_DECISION_INVALID. Another landlord receives FORBIDDEN.\nRestore requires the room to remain occupied, belong to the landlord, and have no other blocking contract.\nFailure returns CONTRACT_RESTORE_ROOM_UNAVAILABLE. Restore retains the existing contract and room data.\nThe response is the stored decision snapshot, including its handover requirement. GET contract details returns\nthe current handover state. Termination leaves the room occupied and members unchanged until the landlord\nconfirms POST /contracts/{contractId}/complete-checkout. This handover moves the room to maintenance and\npublishes existing contract_member.left events. Identical handover replay creates no new events.\nContract state, the stored decision, cycle state and notification outbox commit in one transaction.\nEach successful decision requests one system notice for each distinct linked recipient, including the landlord.\nNotifications use CONTRACT_RESTORED_TITLE/BODY or CONTRACT_TERMINATED_TITLE/BODY localization keys.\nBefore a new decision, Tenancy checks Identity's authenticated GET /internal/users/{userId}/lock-period\nfor the same lockedAt. A later lock returns LANDLORD_LOCK_CYCLE_STALE even if its event has not arrived.\nMissing or unavailable proof returns 503 SERVICE_UNAVAILABLE and preserves the suspended contract.\n\n```mermaid\nsequenceDiagram\n    actor Landlord\n    participant TEN as Tenancy\n    participant DB as Tenancy DB\n    participant MQ as RabbitMQ\n    participant COM as Community\n    Landlord->>TEN: PUT /contracts/{contractId}/lock-cycles/{lockCycleId}/decision\n    TEN->>DB: Transaction, landlord lock, current cycle and contract locks\n    TEN->>DB: Validate owner, cycle and stored decision\n    alt Same action already recorded\n        TEN-->>Landlord: 200 stored result\n    else New decision\n        TEN->>TEN: Verify the matching unlock through Identity internal GET\n        TEN->>DB: Restore or terminate, record decision and notification outbox\n        TEN->>DB: Commit\n        TEN-->>Landlord: 200 CONTRACT_LOCK_DECISION_RECORDED\n        TEN-)MQ: notification.requested\n        MQ-)COM: Persist system notices and deliver after commit\n    end\n    opt Terminated contract is handed over later\n        Landlord->>TEN: POST /contracts/{contractId}/complete-checkout\n        TEN->>DB: Transaction, mark handover, members leave, room maintenance, outbox\n        TEN-)MQ: contract_member.left and room.status_changed\n    end\n```",
-        "parameters": [
-          {
-            "name": "contractId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          },
-          {
-            "name": "lockCycleId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ContractLockDecisionRequestDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Decision recorded or replayed.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "additionalProperties": false,
-                  "required": [
-                    "statusCode",
-                    "code",
-                    "data"
-                  ],
-                  "properties": {
-                    "statusCode": {
-                      "type": "integer",
-                      "enum": [
-                        200
-                      ]
-                    },
-                    "code": {
-                      "type": "string",
-                      "enum": [
-                        "CONTRACT_LOCK_DECISION_RECORDED"
-                      ]
-                    },
-                    "data": {
-                      "$ref": "#/components/schemas/ContractLockDecisionResponseDto"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/BadRequestBodyPathError"
-          },
-          "401": {
-            "$ref": "#/components/responses/UnauthorizedError"
-          },
-          "403": {
-            "$ref": "#/components/responses/ForbiddenError"
-          },
-          "404": {
-            "description": "Contract or lock cycle not found.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "required": [
-                    "statusCode",
-                    "code"
-                  ],
-                  "properties": {
-                    "statusCode": {
-                      "type": "integer",
-                      "enum": [
-                        404
-                      ]
-                    },
-                    "code": {
-                      "type": "string",
-                      "enum": [
-                        "RESOURCE_NOT_FOUND",
-                        "LANDLORD_LOCK_CYCLE_NOT_FOUND"
-                      ]
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "The decision conflicts with the current cycle, contract or room.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "required": [
-                    "statusCode",
-                    "code"
-                  ],
-                  "properties": {
-                    "statusCode": {
-                      "type": "integer",
-                      "enum": [
-                        409
-                      ]
-                    },
-                    "code": {
-                      "type": "string",
-                      "enum": [
-                        "LANDLORD_LOCK_CYCLE_STALE",
-                        "LANDLORD_LOCK_CYCLE_NOT_AWAITING_DECISION",
-                        "CONTRACT_LOCK_DECISION_CONFLICT",
-                        "CONTRACT_LOCK_DECISION_INVALID",
-                        "CONTRACT_RESTORE_ROOM_UNAVAILABLE"
-                      ]
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "422": {
-            "$ref": "#/components/responses/ValidationError"
-          },
-          "500": {
-            "$ref": "#/components/responses/InternalServerError"
-          },
-          "503": {
-            "description": "Identity evidence or authentication verification is unavailable.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "required": [
-                    "statusCode",
-                    "code"
-                  ],
-                  "properties": {
-                    "statusCode": {
-                      "type": "integer",
-                      "enum": [
-                        503
-                      ]
-                    },
-                    "code": {
-                      "type": "string",
-                      "enum": [
-                        "SERVICE_UNAVAILABLE",
-                        "AUTH_UNAVAILABLE"
-                      ]
-                    }
-                  }
-                }
-              }
-            }
           }
         }
       }
@@ -28587,70 +28394,6 @@
           "completedOn"
         ]
       },
-      "ContractLockDecisionRequestDto": {
-        "type": "object",
-        "title": "ContractLockDecisionRequestDto",
-        "x-apidog-folder": "Contract/Request",
-        "additionalProperties": false,
-        "required": [
-          "action"
-        ],
-        "properties": {
-          "action": {
-            "type": "string",
-            "enum": [
-              "restore",
-              "terminate"
-            ]
-          }
-        }
-      },
-      "ContractLockDecisionResponseDto": {
-        "type": "object",
-        "title": "ContractLockDecisionResponseDto",
-        "x-apidog-folder": "Contract/Response",
-        "additionalProperties": false,
-        "required": [
-          "contractId",
-          "lockCycleId",
-          "action",
-          "status",
-          "decidedAt",
-          "handoverRequired"
-        ],
-        "properties": {
-          "contractId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "lockCycleId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "action": {
-            "type": "string",
-            "enum": [
-              "restore",
-              "terminate"
-            ]
-          },
-          "status": {
-            "type": "string",
-            "enum": [
-              "active",
-              "terminated"
-            ]
-          },
-          "decidedAt": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "handoverRequired": {
-            "type": "boolean",
-            "description": "Handover requirement at the time of the stored decision. Read contract details for the current handover state."
-          }
-        }
-      },
       "ContractMyListResponseDto": {
         "type": "object",
         "x-apidog-folder": "Contract/Response",
@@ -28852,15 +28595,6 @@
         "title": "ContractDetailResponseDto",
         "description": "Chi tiết hợp đồng",
         "properties": {
-          "handoverRequired": {
-            "type": "boolean",
-            "description": "True for a P9-07 terminated contract awaiting room handover."
-          },
-          "handoverCompletedOn": {
-            "type": "string",
-            "format": "date",
-            "nullable": true
-          },
           "id": {
             "type": "string",
             "format": "uuid",
@@ -28946,8 +28680,6 @@
           }
         },
         "required": [
-          "handoverRequired",
-          "handoverCompletedOn",
           "id",
           "roomId",
           "status",
@@ -32161,12 +31893,12 @@
           "title": {
             "type": "string",
             "maxLength": 255,
-            "description": "Account notice mới từ Identity dùng key USER_ACCOUNT_LOCKED_TITLE hoặc USER_ACCOUNT_UNLOCKED_TITLE. Contract suspension notice mới từ Tenancy dùng CONTRACT_SUSPENDED_TITLE. P9-07 dùng CONTRACT_LOCK_DECISION_REQUIRED_TITLE, CONTRACT_RESTORED_TITLE hoặc CONTRACT_TERMINATED_TITLE. FE dịch các key này. Các notice khác hoặc notice cũ có thể chứa nội dung văn bản."
+            "description": "Account notice mới từ Identity dùng key USER_ACCOUNT_LOCKED_TITLE hoặc USER_ACCOUNT_UNLOCKED_TITLE. Contract suspension notice mới từ Tenancy dùng CONTRACT_SUSPENDED_TITLE. FE dịch các key này. Các notice khác hoặc notice cũ có thể chứa nội dung văn bản."
           },
           "body": {
             "type": "string",
             "maxLength": 2000,
-            "description": "Account notice mới từ Identity dùng key USER_ACCOUNT_LOCKED_BODY hoặc USER_ACCOUNT_UNLOCKED_BODY. Contract suspension notice mới từ Tenancy dùng CONTRACT_SUSPENDED_BODY. P9-07 dùng CONTRACT_LOCK_DECISION_REQUIRED_BODY, CONTRACT_RESTORED_BODY hoặc CONTRACT_TERMINATED_BODY. FE dịch các key này. Các notice khác hoặc notice cũ có thể chứa nội dung văn bản."
+            "description": "Account notice mới từ Identity dùng key USER_ACCOUNT_LOCKED_BODY hoặc USER_ACCOUNT_UNLOCKED_BODY. Contract suspension notice mới từ Tenancy dùng CONTRACT_SUSPENDED_BODY. FE dịch các key này. Các notice khác hoặc notice cũ có thể chứa nội dung văn bản."
           },
           "deepLink": {
             "type": "string",
@@ -32176,7 +31908,7 @@
             "type": "object",
             "nullable": true,
             "additionalProperties": true,
-            "description": "Snapshot tùy theo producer. Với P9-06, account notice từ identity chứa { userId, status, eventType, lockedAt }; unlock có lockedAt = null. Contract suspension notice từ tenancy chứa { landlordId, lockCycleId, contractIds, graceDeadline }; contractIds chỉ gồm hợp đồng liên quan đến recipient. P9-07 resolution notices add action = decision_required, restore or terminate. ID là UUID, các timestamp khác null là ISO 8601 UTC. Không có phone trong các snapshot P9-06 này."
+            "description": "Snapshot tùy theo producer. Với P9-06, account notice từ identity chứa { userId, status, eventType, lockedAt }; unlock có lockedAt = null. Contract suspension notice từ tenancy chứa { landlordId, lockCycleId, contractIds, graceDeadline }; contractIds chỉ gồm hợp đồng liên quan đến recipient. ID là UUID, các timestamp khác null là ISO 8601 UTC. Không có phone trong các snapshot P9-06 này."
           },
           "createdAt": {
             "type": "string",

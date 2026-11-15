@@ -8,8 +8,6 @@ post:
     - BearerAuth: []
   summary: Mark room ready for rent
   description: |-
-    P9-07 returns 409 ROOM_HAS_ACTIVE_CONTRACT when a room is reserved by an active or suspended contract,
-    or by a landlord-lock terminated contract awaiting handover. Confirm handover before marking the room ready.
     Lỗi nghiệp vụ: 404 NOT FOUND · 403 FORBIDDEN · 409 INVALID ROOM TRANSITION.
     
     **Sequence diagram**
@@ -101,7 +99,6 @@ post:
                 type: string
                 enum:
                   - INVALID_ROOM_TRANSITION
-                  - ROOM_HAS_ACTIVE_CONTRACT
                 description: |-
                   - INVALID_ROOM_TRANSITION: Không thể chuyển phòng sang trạng thái yêu cầu.
           examples:

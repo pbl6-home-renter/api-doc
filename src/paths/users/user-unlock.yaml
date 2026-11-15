@@ -15,10 +15,7 @@ post:
     - Account notice có `sourceService: identity`, `recipientUserIds: [userId]` và object `notification` gồm `type: system`, `title`, `body`, `data`. `notification.data` gồm `{ userId, status: active, eventType: user.unlocked, lockedAt: null }`. Community lưu snapshot này và trả qua `GET /notifications`; response HTTP của API unlock vẫn là `UserUnlockResponseDto`.
     - Account notice khi mở khóa dùng `notification.title: USER_ACCOUNT_UNLOCKED_TITLE` và `notification.body: USER_ACCOUNT_UNLOCKED_BODY`. Đây là key để FE dịch theo ngôn ngữ hiển thị.
     - Tenancy dùng snapshot `role`, `phone` của tenant để khôi phục lookup và liên kết theo rule hiện có. Payload unlock cũ chỉ có `userId`, `status` vẫn được inbox dedup/ack; khi thiếu snapshot, P9-06 không khôi phục lookup qua event đó.
-    - P9-07 adds the original lock timestamp as `user.unlocked.payload.lockedAt`; the envelope `occurredAt` is the unlock time persisted by Identity in the same transaction. The HTTP response and account-notice snapshot still return `lockedAt: null`.
-    - For a matching landlord cycle, unlock strictly before its deadline moves it to `decision_pending`, keeping contracts suspended. One landlord notice lists the contracts requiring choices through `PUT /contracts/{contractId}/lock-cycles/{lockCycleId}/decision`. Empty cycles complete without a choice notice. Duplicate unlocks create no additional notice.
-    - Unlock at the deadline is expiry. An unlock for an older lock cannot change a newer cycle. A new-format unlock received before its lock is retried through the inbox transaction. Legacy events without lock evidence are acknowledged and due cycles are reconciled through Identity's internal lock-period endpoint.
-    - Decision-required notices use `CONTRACT_LOCK_DECISION_REQUIRED_TITLE/BODY`. Account restoration notices use `USER_ACCOUNT_UNLOCKED_TITLE/BODY`. Cycle decisions and their notification outbox share a local transaction.
+    - P9-06 chưa tự khôi phục contract. Dừng auto-termination và yêu cầu landlord chọn khôi phục/chấm dứt thuộc P9-07 theo P9-D83.
 
     **Sequence diagram**
     
@@ -54,10 +51,9 @@ post:
         C-->>S: Return documented response
         S-->>GW: HTTP status and response body
         GW-->>Client: Forward HTTP response
-        S-)MQ: user.unlocked {userId, status, role, phone, lockedAt}; occurredAt=unlock time
+        S-)MQ: user.unlocked {userId, status, role, phone}
         MQ-)TEN: user.unlocked (tenancy.identity-lifecycle)
-        TEN->>TEN: Transaction inbox dedup; tenant lookup preserved<br/>landlord matching early unlock → decision_pending and notification outbox
-        TEN-)MQ: notification.requested {system, decision_required, lockCycleId, contractIds}
+        TEN->>TEN: [Transaction] Inbox dedup; tenant → khôi phục lookup/liên kết<br/>landlord → giữ suspended (quyết định contract thuộc P9-07)
         S-)MQ: notification.requested {sourceService: identity, recipientUserIds: [userId], notification: {type: system, data}}
         MQ-)COM: notification.requested (community.notification)
         COM->>COM: [Transaction] Inbox dedup + lưu account notice

@@ -23,8 +23,7 @@ post:
     và landlordId = user.id, khóa phòng, kích hoạt hợp đồng, tự thêm đại diện vào contract_members với joined_at = start_date
     và chuyển phòng sang occupied. Member giữ tenant_id/name/phone từ hợp đồng, không có cờ đại diện.
     Hợp đồng hoặc phòng không tồn tại/đã xóa trả 404 RESOURCE_NOT_FOUND; khác landlord trả 403 FORBIDDEN.
-    Phòng có hợp đồng active, suspended hoặc terminated qua P9-07 đang chờ bàn giao trả
-    409 ACTIVE_CONTRACT_EXISTS; unique index UQ_contracts_room_occupancy bảo vệ cùng quy tắc khi ghi.
+    Vi phạm unique index UQ_contracts_room_active trả 409 ACTIVE_CONTRACT_EXISTS.
     Vì media được kiểm tra trước, media không hợp lệ có thể trả 409 trước khi kiểm tra 404/403 của hợp đồng.
     
     **Điều kiện lỗi theo Contract**
@@ -188,7 +187,7 @@ post:
                 description: |-
                   - CONTRACT_NOT_READY: Hợp đồng không ở draft/signed hoặc phòng đang maintenance/occupied; transaction rollback.
                   - SIGNED_FILE_MISSING: Media không tồn tại/Identity trả 404, id khác signedContractMediaId, ownerType khác contract, ownerId khác contractId, purpose khác contract_signed hoặc chưa upload xong (status khác uploaded); chưa mở transaction.
-                  - ACTIVE_CONTRACT_EXISTS: Phòng có hợp đồng active, suspended hoặc terminated qua P9-07 đang chờ bàn giao.
+                  - ACTIVE_CONTRACT_EXISTS: Vi phạm unique index UQ_contracts_room_active vì phòng đã có hợp đồng active.
           examples:
             contract_not_ready:
               summary: CONTRACT_NOT_READY — Hợp đồng chưa đủ điều kiện để kích hoạt.
@@ -201,7 +200,7 @@ post:
                 statusCode: 409
                 code: SIGNED_FILE_MISSING
             active_contract_exists:
-              summary: Phòng còn hợp đồng giữ quyền sử dụng.
+              summary: Phòng đã có hợp đồng active khi lưu dữ liệu.
               value:
                 statusCode: 409
                 code: ACTIVE_CONTRACT_EXISTS
