@@ -8,8 +8,14 @@ properties:
   sourceService: { type: string }
   eventId: { type: string, format: uuid }
   type: { type: string, enum: [invoice, issue, system], description: "system dùng cho notification building/account/contract, gồm account lock/unlock và contract suspension của P9-06." }
-  title: { type: string, maxLength: 255 }
-  body: { type: string, maxLength: 2000 }
+  title:
+    type: string
+    maxLength: 255
+    description: "Account notice mới từ Identity dùng key USER_ACCOUNT_LOCKED_TITLE hoặc USER_ACCOUNT_UNLOCKED_TITLE. Contract suspension notice mới từ Tenancy dùng CONTRACT_SUSPENDED_TITLE. FE dịch các key này. Các notice khác hoặc notice cũ có thể chứa nội dung văn bản."
+  body:
+    type: string
+    maxLength: 2000
+    description: "Account notice mới từ Identity dùng key USER_ACCOUNT_LOCKED_BODY hoặc USER_ACCOUNT_UNLOCKED_BODY. Contract suspension notice mới từ Tenancy dùng CONTRACT_SUSPENDED_BODY. FE dịch các key này. Các notice khác hoặc notice cũ có thể chứa nội dung văn bản."
   deepLink: { type: string, nullable: true }
   data:
     type: object

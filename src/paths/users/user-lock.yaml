@@ -15,7 +15,7 @@ post:
     - Theo P9-D83/P9-06, Identity ghi `user.locked` và `notification.requested` type `system` tới chính user trong cùng transaction khóa tài khoản.
     - Tenancy nhận `user.locked` qua `tenancy.identity-lifecycle`, dedup bằng inbox. Với landlord, một transaction tạm ngưng contract active, lưu lock cycle/grace deadline và ghi notification outbox tới landlord cùng tenant/member đang hoạt động đã link. Khóa tenant không tạm ngưng contract của landlord.
     - Duplicate lock không tạo cycle hoặc notice trùng; cycle mới giữ các contract còn suspended từ cycle trước. Scheduled job trong Tenancy tìm deadline bền vững sau restart. Khôi phục/chấm dứt contract thuộc P9-07; P9-06 không hoàn cọc hoặc thay đổi contract chat.
-    - Cấu hình triển khai hiện tại là `LANDLORD_LOCK_GRACE_PERIOD_MS=604800000` (7 ngày). `graceDeadline = lockedAt + gracePeriodMs`, với `lockedAt` lấy từ event Identity; deadline được lưu theo từng cycle và không tính lại khi thay đổi biến môi trường.
+    - Tenancy dùng constant `LANDLORD_LOCK_GRACE_PERIOD_MS = 604800000` (7 ngày). `graceDeadline = lockedAt + gracePeriodMs`, với `lockedAt` lấy từ event Identity; deadline được lưu theo từng cycle.
     - Scheduler chạy khi Tenancy khởi động xong và mỗi 60 giây, đọc tối đa 100 cycle pending đến hạn mỗi lượt. Sau khi kiểm tra lại cycle ID/deadline dưới transaction lock, chỉ chuyển cycle `pending → elapsed`; contract vẫn `suspended`, không tự chấm dứt hoặc hoàn cọc trong P9-06. Thời điểm ghi nhận hết hạn phụ thuộc lượt quét.
     - Khóa không revoke refresh token.
 
@@ -24,7 +24,9 @@ post:
     `notification.requested.payload` có `sourceService`, `recipientUserIds` và object `notification` gồm `type`, `title`, `body`, `data`. Đây là payload event; response HTTP của API lock vẫn là `UserLockResponseDto`.
 
     - Account notice từ Identity: `sourceService: identity`, `recipientUserIds: [userId]`, `notification.type: system`; `notification.data` gồm `{ userId, status: locked, eventType: user.locked, lockedAt }`, trong đó `lockedAt` là ISO 8601 UTC.
+    - Account notice khi khóa dùng `notification.title: USER_ACCOUNT_LOCKED_TITLE` và `notification.body: USER_ACCOUNT_LOCKED_BODY`. Đây là key để FE dịch theo ngôn ngữ hiển thị.
     - Contract notice từ Tenancy: `sourceService: tenancy`, `notification.type: system`; `notification.data` gồm `{ landlordId, lockCycleId, contractIds, graceDeadline }`. Các ID là UUID, `contractIds` là mảng UUID, `graceDeadline` là ISO 8601 UTC. `lockCycleId` dùng ID envelope của event `user.locked` được xử lý.
+    - Contract suspension notice dùng `notification.title: CONTRACT_SUSPENDED_TITLE` và `notification.body: CONTRACT_SUSPENDED_BODY` để FE dịch thông báo hợp đồng tạm ngưng do tài khoản chủ trọ bị khóa.
     - Mỗi contract notice có một recipient. Landlord nhận danh sách contract vừa bị suspend của mình; tenant chính và ContractMember đang hoạt động, đã link chỉ nhận contract IDs liên quan đến họ. Người chưa link không có recipient ID. Contract đã suspended được giữ tham chiếu trong cycle mới nhưng không bị suspend hoặc gửi lại notice tạm ngưng.
     - Community lưu snapshot vào inbox notification, trả `type: system` và `data` qua `GET /notifications`, đồng thời gửi Socket sau commit và push theo preference. Không đưa phone vào notification payload.
 
