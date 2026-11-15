@@ -67731,6 +67731,235 @@
           }
         }
       }
+    },
+    {
+      "id": "fd6fd3651c495afd4ff865d56c8b717e0c83525fb2a0a35549db64a44e987f9c",
+      "label": "Thay đổi contract từ Git",
+      "classification": "BREAKING",
+      "contractId": "rentify-public",
+      "repository": "https://github.com/pbl6-home-renter/api-doc",
+      "baseHash": "26dee608327e24b72a6a43761ebf7a48ff57b4d9702affa1af8c7dd8ae462751",
+      "headHash": "a21f38964a9676d5fe3fae871c2976730285ff4894c7373dac18d014a8e454cb",
+      "baseSource": "src/openapi.yaml",
+      "headSource": "src/openapi.yaml",
+      "detectedAt": "2026-11-15T03:48:47.970Z",
+      "committedAt": "2026-11-15T10:48:34+07:00",
+      "baseCommit": "205a5c7b1b44e2519a3d0fd4440d206c0ad21ca6",
+      "headCommit": "6e49171039830ad0a875dd44ea73d682d250d782",
+      "prUrl": "https://github.com/pbl6-home-renter/api-doc/pull/66",
+      "commitUrl": "https://github.com/pbl6-home-renter/api-doc/commit/6e49171039830ad0a875dd44ea73d682d250d782",
+      "metadataKind": "Git revision thực tế",
+      "reason": "CHƯA CUNG CẤP — tác giả PR phải bổ sung lý do nghiệp vụ; không thể suy ra từ OpenAPI diff.",
+      "tools": {
+        "redocly": "2.64.1",
+        "oasdiff": "1.34.1"
+      },
+      "changes": [
+        {
+          "id": "response-property-enum-value-added",
+          "text": "added the new `system` enum value to the `data/items/type` response property for the response status `200`",
+          "comment": "The server may now return a value the previous contract excluded, so a client written against it may not handle the response. If the value set is meant to grow, declare it with x-extensible-enum.",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getNotifications",
+          "path": "/notifications",
+          "section": "paths",
+          "fingerprint": "6aa9671dec75",
+          "classification": "BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới system; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-property-enum-value-added",
+          "text": "added the new `EMAIL_NOT_VERIFIED` enum value to the `code` response property for the response status `409`",
+          "comment": "The server may now return a value the previous contract excluded, so a client written against it may not handle the response. If the value set is meant to grow, declare it with x-extensible-enum.",
+          "level": 3,
+          "operation": "POST",
+          "operationId": "lockUser",
+          "path": "/users/{userId}/lock",
+          "section": "paths",
+          "fingerprint": "86b4b4dfb078",
+          "classification": "BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới EMAIL_NOT_VERIFIED; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "api-version-not-bumped",
+          "text": "a breaking change was detected but the version is still `1.0.0`",
+          "level": 1,
+          "section": "info",
+          "fingerprint": "d3f96cd643c1",
+          "classification": "NON_BREAKING",
+          "clientImpact": "BE: xem lại quy ước version trước khi chấp nhận breaking change. FE/Mobile: theo kế hoạch chuyển đổi của entry này; version trong OpenAPI chưa chứng minh backend đã triển khai."
+        }
+      ],
+      "locations": [
+        {
+          "pointer": "/components/schemas/NotificationListResponseDto/properties/data/description",
+          "before": null,
+          "after": "Snapshot tùy theo producer. Với P9-06, account notice từ identity chứa { userId, status, eventType, lockedAt }; unlock có lockedAt = null. Contract suspension notice từ tenancy chứa { landlordId, lockCycleId, contractIds, graceDeadline }; contractIds chỉ gồm hợp đồng liên quan đến recipient. ID là UUID, các timestamp khác null là ISO 8601 UTC. Không có phone trong các snapshot P9-06 này."
+        },
+        {
+          "pointer": "/components/schemas/NotificationListResponseDto/properties/type/description",
+          "before": null,
+          "after": "system dùng cho notification building/account/contract, gồm account lock/unlock và contract suspension của P9-06."
+        },
+        {
+          "pointer": "/components/schemas/NotificationListResponseDto/properties/type/enum",
+          "before": [
+            "invoice",
+            "issue"
+          ],
+          "after": [
+            "invoice",
+            "issue",
+            "system"
+          ]
+        },
+        {
+          "pointer": "/paths/~1auth~1register/post/description",
+          "before": "**Lưu ý**\n\n- Chỉ `tenant`/`landlord` được tự đăng ký; admin được seed sẵn. Role không đổi được sau khi đăng ký.\n- `user.registered` được ghi outbox cùng transaction tạo user; relay publish sau khi commit.\n- Tài khoản ở trạng thái `pending_verification`; Identity gửi link xác minh qua Community. Link dùng một lần, hết hạn sau 24 giờ. Chỉ đăng nhập được sau khi xác minh.\n- Khi xác minh thành công, Identity phát `user.email_verified` để Tenancy liên kết hợp đồng theo số điện thoại.\n\n**Sequence diagram**\n\n```mermaid\nsequenceDiagram\n    autonumber\n    actor Client\n    participant GW as API Gateway\n    participant S as Identity-Service\n    participant C as AuthController\n    participant Bus as CQRS CommandBus\n    participant H as Application handler\n    Client->>GW: POST /api/v1/auth/register\n    GW->>S: Proxy original HTTP request\n    S->>C: Invoke registerAccount\n    C->>Bus: Execute command for registerAccount\n    Bus->>H: Dispatch command handler\n    H-->>Bus: Return use-case result\n    Bus-->>C: Result\n    C-->>S: Return documented response\n    S-->>GW: HTTP status and response body\n    GW-->>Client: Forward HTTP response\n```",
+          "after": "**Lưu ý**\n\n- Chỉ `tenant`/`landlord` được tự đăng ký; admin được seed sẵn. Role không đổi được sau khi đăng ký.\n- `user.registered` được ghi outbox cùng transaction tạo user; relay publish sau khi commit.\n- Tài khoản ở trạng thái `pending_verification`; Identity gửi link xác minh qua Community. Link dùng một lần, hết hạn sau 24 giờ. Chỉ đăng nhập được sau khi xác minh.\n- Khi xác minh thành công, Identity phát `user.email_verified` để Tenancy liên kết hợp đồng theo số điện thoại.\n- Tenancy nhận qua `tenancy.identity-lifecycle`, dedup bằng inbox. `user.registered` của tài khoản pending chưa liên kết; `user.email_verified` kích hoạt liên kết Contract/ContractMember chưa xóa có `tenantId = NULL`, khớp chính xác SĐT sau chuẩn hóa `+84` về `0`. Projection user-phone phục vụ lookup theo P9-02.\n- Inbox, projection, liên kết và outbox `contract_member.linked` commit/rollback cùng transaction. SĐT không khớp không thay đổi liên kết; không ghi đè tenantId đã có.\n- Community nhận `contract_member.linked {contractId, contractMemberId, tenantUserId}` qua `community.contract-context`, áp dụng membership theo contract context. Nếu conversation chưa được tạo bởi `contract.activated`, event được lưu để xử lý sau theo P9-D85. Không gửi SĐT sang Community và không gọi Identity để liên kết.\n\n**Sequence diagram**\n\n```mermaid\nsequenceDiagram\n    autonumber\n    actor Client\n    participant GW as API Gateway\n    participant S as Identity-Service\n    participant C as AuthController\n    participant Bus as CQRS CommandBus\n    participant H as Application handler\n    participant DB as Identity DB\n    participant MQ as RabbitMQ\n    participant TEN as Tenancy\n    participant COM as Community\n    Client->>GW: POST /api/v1/auth/register\n    GW->>S: Proxy original HTTP request\n    S->>C: Invoke registerAccount\n    C->>Bus: Execute command for registerAccount\n    Bus->>H: Dispatch command handler\n    H->>DB: [Transaction] Insert user status=pending_verification<br/>+ email verification token + outbox user.registered/email.send_requested\n    H-->>Bus: Return use-case result\n    Bus-->>C: Result\n    C-->>S: Return documented response\n    S-->>GW: HTTP status and response body\n    GW-->>Client: Forward HTTP response\n    S-)MQ: user.registered {userId, phone, role, status: pending_verification}\n    MQ-)TEN: user.registered (tenancy.identity-lifecycle)\n    TEN->>TEN: [Transaction] Inbox dedup; chưa liên kết tenant pending\n    S-)MQ: email.send_requested (link xác minh)\n    MQ-)COM: Gửi email xác minh\n    Client->>GW: POST /api/v1/auth/email-verifications {token}\n    GW->>S: Proxy verification request\n    S->>DB: [Transaction] Kích hoạt user + consume token<br/>+ outbox user.email_verified\n    S-)MQ: user.email_verified {userId, phone, role, status: active}\n    MQ-)TEN: user.email_verified (tenancy.identity-lifecycle)\n    TEN->>TEN: [Transaction] Inbox dedup + projection + link Contract/ContractMember NULL<br/>+ outbox contract_member.linked\n    TEN-)MQ: contract_member.linked {contractId, contractMemberId, tenantUserId}\n    MQ-)COM: contract_member.linked (community.contract-context)\n    COM->>COM: [Transaction] Inbox dedup + áp dụng/lưu chờ membership theo contract context\n```"
+        },
+        {
+          "pointer": "/paths/~1notifications/get/description",
+          "before": "**Sequence diagram**\n\n```mermaid\nsequenceDiagram\n    autonumber\n    actor Client\n    participant GW as API Gateway\n    participant S as community-service\n    participant Guard as JWT/access guards\n    participant C as NotificationController\n    participant Bus as CQRS QueryBus\n    participant H as Application handler\n    Client->>GW: GET /api/v1/notifications\n    GW->>GW: Validate bearer token for protected route\n    GW->>S: Proxy original HTTP request\n    S->>Guard: Validate JWT, account state and route access\n    Guard-->>C: Continue with authenticated context\n    S->>C: Invoke getNotifications\n    C->>Bus: Execute query for getNotifications\n    Bus->>H: Dispatch query handler\n    H-->>Bus: Return use-case result\n    Bus-->>C: Result\n    C-->>S: Return documented response\n    S-->>GW: HTTP status and response body\n    GW-->>Client: Forward HTTP response\n```",
+          "after": "Trả các business notification đã lưu cho người gọi. `type: system` gồm account lock/unlock và contract suspension của P9-06; không phải message chat.\n`data` là snapshot từ producer: account notice có `{ userId, status, eventType, lockedAt }`; contract suspension notice có `{ landlordId, lockCycleId, contractIds, graceDeadline }`.\nTắt push không ẩn notification khỏi danh sách; Socket sync được thực hiện độc lập với preference push.\n\n**Sequence diagram**\n\n```mermaid\nsequenceDiagram\n    autonumber\n    actor Client\n    participant GW as API Gateway\n    participant S as community-service\n    participant Guard as JWT/access guards\n    participant C as NotificationController\n    participant Bus as CQRS QueryBus\n    participant H as Application handler\n    Client->>GW: GET /api/v1/notifications\n    GW->>GW: Validate bearer token for protected route\n    GW->>S: Proxy original HTTP request\n    S->>Guard: Validate JWT, account state and route access\n    Guard-->>C: Continue with authenticated context\n    S->>C: Invoke getNotifications\n    C->>Bus: Execute query for getNotifications\n    Bus->>H: Dispatch query handler\n    H-->>Bus: Return use-case result\n    Bus-->>C: Result\n    C-->>S: Return documented response\n    S-->>GW: HTTP status and response body\n    GW-->>Client: Forward HTTP response\n```"
+        },
+        {
+          "pointer": "/paths/~1users~1{userId}~1lock/post/description",
+          "before": "**Lưu ý**\n\n- User bị khóa **vẫn đăng nhập được**. Các service chặn chức năng dựa vào claim `status` trong access token (tự verify); token cấp trước khi khóa còn mang `status=active` tối đa 15 phút.\n- Event `user.locked` chỉ để Tenancy đổi dữ liệu của mình (ẩn BĐS, tạm ngưng HĐ của landlord).\n- Đang cân nhắc (thuộc Tenancy): landlord bị khóa quá grace period thì hủy HĐ và hoàn cọc.\n- Khóa không revoke refresh token.\n\n**Sequence diagram**\n\n```mermaid\nsequenceDiagram\n    autonumber\n    actor Client\n    participant GW as API Gateway\n    participant S as Identity-Service\n    participant Guard as JWT/access guards\n    participant C as UserAdminController\n    participant Bus as CQRS CommandBus\n    participant H as Application handler\n    Client->>GW: POST /api/v1/users/{userId}/lock\n    GW->>GW: Validate bearer token for protected route\n    GW->>S: Proxy original HTTP request\n    S->>Guard: Validate JWT, account state and route access\n    Guard-->>C: Continue with authenticated context\n    S->>C: Invoke lockUser\n    C->>Bus: Execute command for lockUser\n    Bus->>H: Dispatch command handler\n    H-->>Bus: Return use-case result\n    Bus-->>C: Result\n    C-->>S: Return documented response\n    S-->>GW: HTTP status and response body\n    GW-->>Client: Forward HTTP response\n```",
+          "after": "**Lưu ý**\n\n- User bị khóa **vẫn đăng nhập được**. Các service chặn chức năng dựa vào claim `status` trong access token (tự verify); token cấp trước khi khóa còn mang `status=active` tối đa 15 phút.\n- Admin tự khóa trả `400 USER_LOCK_CANNOT_SELF` trước khi mở transaction. User không tồn tại/đã xóa trả `404 USER_NOT_FOUND`; đã khóa trả `409 USER_LOCK_ALREADY_LOCKED`; chưa xác thực email (`pending_verification`) trả `409 EMAIL_NOT_VERIFIED`. Các nhánh lỗi không lưu thay đổi hoặc phát account notice.\n- Theo P9-D83/P9-06, Identity ghi `user.locked` và `notification.requested` type `system` tới chính user trong cùng transaction khóa tài khoản.\n- Tenancy nhận `user.locked` qua `tenancy.identity-lifecycle`, dedup bằng inbox. Với landlord, một transaction tạm ngưng contract active, lưu lock cycle/grace deadline và ghi notification outbox tới landlord cùng tenant/member đang hoạt động đã link. Khóa tenant không tạm ngưng contract của landlord.\n- Duplicate lock không tạo cycle hoặc notice trùng; cycle mới giữ các contract còn suspended từ cycle trước. Scheduled job trong Tenancy tìm deadline bền vững sau restart. Khôi phục/chấm dứt contract thuộc P9-07; P9-06 không hoàn cọc hoặc thay đổi contract chat.\n- Cấu hình triển khai hiện tại là `LANDLORD_LOCK_GRACE_PERIOD_MS=604800000` (7 ngày). `graceDeadline = lockedAt + gracePeriodMs`, với `lockedAt` lấy từ event Identity; deadline được lưu theo từng cycle và không tính lại khi thay đổi biến môi trường.\n- Scheduler chạy khi Tenancy khởi động xong và mỗi 60 giây, đọc tối đa 100 cycle pending đến hạn mỗi lượt. Sau khi kiểm tra lại cycle ID/deadline dưới transaction lock, chỉ chuyển cycle `pending → elapsed`; contract vẫn `suspended`, không tự chấm dứt hoặc hoàn cọc trong P9-06. Thời điểm ghi nhận hết hạn phụ thuộc lượt quét.\n- Khóa không revoke refresh token.\n\n**Payload notification P9-06**\n\n`notification.requested.payload` có `sourceService`, `recipientUserIds` và object `notification` gồm `type`, `title`, `body`, `data`. Đây là payload event; response HTTP của API lock vẫn là `UserLockResponseDto`.\n\n- Account notice từ Identity: `sourceService: identity`, `recipientUserIds: [userId]`, `notification.type: system`; `notification.data` gồm `{ userId, status: locked, eventType: user.locked, lockedAt }`, trong đó `lockedAt` là ISO 8601 UTC.\n- Contract notice từ Tenancy: `sourceService: tenancy`, `notification.type: system`; `notification.data` gồm `{ landlordId, lockCycleId, contractIds, graceDeadline }`. Các ID là UUID, `contractIds` là mảng UUID, `graceDeadline` là ISO 8601 UTC. `lockCycleId` dùng ID envelope của event `user.locked` được xử lý.\n- Mỗi contract notice có một recipient. Landlord nhận danh sách contract vừa bị suspend của mình; tenant chính và ContractMember đang hoạt động, đã link chỉ nhận contract IDs liên quan đến họ. Người chưa link không có recipient ID. Contract đã suspended được giữ tham chiếu trong cycle mới nhưng không bị suspend hoặc gửi lại notice tạm ngưng.\n- Community lưu snapshot vào inbox notification, trả `type: system` và `data` qua `GET /notifications`, đồng thời gửi Socket sau commit và push theo preference. Không đưa phone vào notification payload.\n\n**Sequence diagram**\n\n```mermaid\nsequenceDiagram\n    autonumber\n    actor Client\n    participant GW as API Gateway\n    participant S as Identity-Service\n    participant Guard as JWT/access guards\n    participant C as UserAdminController\n    participant Bus as CQRS CommandBus\n    participant H as Application handler\n    participant DB as Identity DB\n    participant MQ as RabbitMQ\n    participant TEN as Tenancy\n    participant COM as Community\n    Client->>GW: POST /api/v1/users/{userId}/lock\n    GW->>GW: Validate bearer token for protected route\n    GW->>S: Proxy original HTTP request\n    S->>Guard: Validate JWT, account state and route access\n    Guard-->>C: Continue with authenticated context\n    S->>C: Invoke lockUser\n    C->>Bus: Execute command for lockUser\n    Bus->>H: Dispatch command handler\n    H->>H: Kiểm tra adminId != userId trước transaction\n    break Admin tự khóa\n        H-->>Bus: 400 USER_LOCK_CANNOT_SELF\n    end\n    H->>DB: [Transaction] Đọc user FOR UPDATE\n    break User không tồn tại / đã khóa / chưa xác thực email\n        H-->>Bus: 404 USER_NOT_FOUND / 409 USER_LOCK_ALREADY_LOCKED / 409 EMAIL_NOT_VERIFIED\n    end\n    H->>DB: Cùng transaction: status=locked, lockReason, lockedAt<br/>+ outbox user.locked + notification.requested\n    H-->>Bus: Return use-case result\n    Bus-->>C: Result\n    C-->>S: Return documented response\n    S-->>GW: HTTP status and response body\n    GW-->>Client: Forward HTTP response\n    S-)MQ: user.locked {userId, role, status, lockReason, lockedAt}\n    MQ-)TEN: user.locked (tenancy.identity-lifecycle)\n    alt role=landlord\n        TEN->>TEN: [Transaction] Inbox dedup + khóa landlord/cycle/contracts<br/>+ active → suspended + lưu cycle/deadline + notification outbox\n        TEN-)MQ: notification.requested {sourceService: tenancy, recipientUserIds, notification: {type: system, data}}\n    else role=tenant\n        TEN->>TEN: [Transaction] Inbox dedup + xóa tenant lookup; giữ contract\n    end\n    S-)MQ: notification.requested {sourceService: identity, recipientUserIds: [userId], notification: {type: system, data}}\n    MQ-)COM: notification.requested (community.notification)\n    COM->>COM: [Transaction] Inbox dedup + lưu notice từng recipient\n    COM->>COM: Sau commit: Socket sync / FCM theo preference\n    Note over TEN: Scheduler kiểm tra cycle ID/deadline, pending → elapsed;<br/>contract giữ suspended; khôi phục/chấm dứt thuộc P9-07\n```"
+        },
+        {
+          "pointer": "/paths/~1users~1{userId}~1lock/post/responses/409/content/application~1json/examples/email_not_verified",
+          "before": null,
+          "after": {
+            "summary": "EMAIL_NOT_VERIFIED — Tài khoản chưa xác thực email.",
+            "value": {
+              "statusCode": 409,
+              "code": "EMAIL_NOT_VERIFIED"
+            }
+          }
+        },
+        {
+          "pointer": "/paths/~1users~1{userId}~1lock/post/responses/409/content/application~1json/schema/properties/code/enum",
+          "before": [
+            "USER_LOCK_ALREADY_LOCKED"
+          ],
+          "after": [
+            "USER_LOCK_ALREADY_LOCKED",
+            "EMAIL_NOT_VERIFIED"
+          ]
+        },
+        {
+          "pointer": "/paths/~1users~1{userId}~1lock/post/responses/409/description",
+          "before": "Xung đột dữ liệu hoặc trạng thái.",
+          "after": "Tài khoản đã bị khóa hoặc chưa xác thực email nên chưa thể khóa."
+        },
+        {
+          "pointer": "/paths/~1users~1{userId}~1unlock/post/description",
+          "before": "**Lưu ý**\n\n- Token cấp trước khi mở khóa còn mang `status=locked` tối đa 15 phút.\n\n**Sequence diagram**\n\n```mermaid\nsequenceDiagram\n    autonumber\n    actor Client\n    participant GW as API Gateway\n    participant S as Identity-Service\n    participant Guard as JWT/access guards\n    participant C as UserAdminController\n    participant Bus as CQRS CommandBus\n    participant H as Application handler\n    Client->>GW: POST /api/v1/users/{userId}/unlock\n    GW->>GW: Validate bearer token for protected route\n    GW->>S: Proxy original HTTP request\n    S->>Guard: Validate JWT, account state and route access\n    Guard-->>C: Continue with authenticated context\n    S->>C: Invoke unlockUser\n    C->>Bus: Execute command for unlockUser\n    Bus->>H: Dispatch command handler\n    H-->>Bus: Return use-case result\n    Bus-->>C: Result\n    C-->>S: Return documented response\n    S-->>GW: HTTP status and response body\n    GW-->>Client: Forward HTTP response\n```",
+          "after": "**Lưu ý**\n\n- Token cấp trước khi mở khóa còn mang `status=locked` tối đa 15 phút.\n- Identity ghi `user.unlocked` và `notification.requested` type `system` tới chính user trong cùng transaction. Payload `user.unlocked` bổ sung `role`, `phone` để Tenancy khôi phục tenant lookup; phone không đi sang Community.\n- Account notice có `sourceService: identity`, `recipientUserIds: [userId]` và object `notification` gồm `type: system`, `title`, `body`, `data`. `notification.data` gồm `{ userId, status: active, eventType: user.unlocked, lockedAt: null }`. Community lưu snapshot này và trả qua `GET /notifications`; response HTTP của API unlock vẫn là `UserUnlockResponseDto`.\n- Tenancy dùng snapshot `role`, `phone` của tenant để khôi phục lookup và liên kết theo rule hiện có. Payload unlock cũ chỉ có `userId`, `status` vẫn được inbox dedup/ack; khi thiếu snapshot, P9-06 không khôi phục lookup qua event đó.\n- P9-06 chưa tự khôi phục contract. Dừng auto-termination và yêu cầu landlord chọn khôi phục/chấm dứt thuộc P9-07 theo P9-D83.\n\n**Sequence diagram**\n\n```mermaid\nsequenceDiagram\n    autonumber\n    actor Client\n    participant GW as API Gateway\n    participant S as Identity-Service\n    participant Guard as JWT/access guards\n    participant C as UserAdminController\n    participant Bus as CQRS CommandBus\n    participant H as Application handler\n    participant DB as Identity DB\n    participant MQ as RabbitMQ\n    participant TEN as Tenancy\n    participant COM as Community\n    Client->>GW: POST /api/v1/users/{userId}/unlock\n    GW->>GW: Validate bearer token for protected route\n    GW->>S: Proxy original HTTP request\n    S->>Guard: Validate JWT, account state and route access\n    Guard-->>C: Continue with authenticated context\n    S->>C: Invoke unlockUser\n    C->>Bus: Execute command for unlockUser\n    Bus->>H: Dispatch command handler\n    H->>DB: [Transaction] Đọc user FOR UPDATE\n    break User không tồn tại / chưa bị khóa\n        H-->>Bus: 404 USER_NOT_FOUND / 409 USER_UNLOCK_NOT_LOCKED\n    end\n    H->>DB: Cùng transaction: status=active, lockReason=null, lockedAt=null<br/>+ outbox user.unlocked + notification.requested\n    H-->>Bus: Return use-case result\n    Bus-->>C: Result\n    C-->>S: Return documented response\n    S-->>GW: HTTP status and response body\n    GW-->>Client: Forward HTTP response\n    S-)MQ: user.unlocked {userId, status, role, phone}\n    MQ-)TEN: user.unlocked (tenancy.identity-lifecycle)\n    TEN->>TEN: [Transaction] Inbox dedup; tenant → khôi phục lookup/liên kết<br/>landlord → giữ suspended (quyết định contract thuộc P9-07)\n    S-)MQ: notification.requested {sourceService: identity, recipientUserIds: [userId], notification: {type: system, data}}\n    MQ-)COM: notification.requested (community.notification)\n    COM->>COM: [Transaction] Inbox dedup + lưu account notice\n    COM->>COM: Sau commit: Socket sync / FCM theo preference\n```"
+        }
+      ],
+      "semanticDiff": {
+        "paths": {
+          "modified": {
+            "/notifications": {
+              "operations": {
+                "modified": {
+                  "GET": {
+                    "responses": {
+                      "modified": {
+                        "200": {
+                          "content": {
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "properties": {
+                                    "modified": {
+                                      "data": {
+                                        "items": {
+                                          "properties": {
+                                            "modified": {
+                                              "type": {
+                                                "enum": {
+                                                  "added": [
+                                                    "system"
+                                                  ]
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "/users/{userId}/lock": {
+              "operations": {
+                "modified": {
+                  "POST": {
+                    "responses": {
+                      "modified": {
+                        "409": {
+                          "content": {
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "properties": {
+                                    "modified": {
+                                      "code": {
+                                        "enum": {
+                                          "added": [
+                                            "EMAIL_NOT_VERIFIED"
+                                          ]
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "components": {
+          "schemas": {
+            "modified": {
+              "NotificationListResponseDto": {
+                "properties": {
+                  "modified": {
+                    "type": {
+                      "enum": {
+                        "added": [
+                          "system"
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   ]
 }
