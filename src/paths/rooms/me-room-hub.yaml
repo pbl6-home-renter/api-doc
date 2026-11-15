@@ -1,66 +1,63 @@
 get:
-  tags:
-  - Property
+  tags: [Property]
   x-apidog-folder: Room
   x-apidog-status: designing
   operationId: getMeRoomHub
-  security:
-    - BearerAuth: []
-  summary: Get tenant room hub dashboard
-  description: "tenant. Lấy thông tin tổng hợp cho trang chủ trung tâm phòng của người thuê (hợp đồng hiện tại, hóa đơn chưa thanh toán, chỉ số điện nước, sự cố đang xử lý, bạn cùng phòng). Lỗi nghiệp vụ: 404 ACTIVE CONTRACT NOT FOUND · 403 FORBIDDEN."
+  security: [{ BearerAuth: [] }]
+  summary: List the current tenant's rooms
+  description: |-
+    Returns one entry per active contract for which the caller is the named tenant or a current linked member,
+    using the same membership rule as GET /me/contracts. A member whose left date is today or earlier (UTC)
+    no longer has member access. Soft-deleted contracts, rooms and buildings are excluded. Results are ordered
+    by contract start date descending and contract ID ascending. An empty result returns 200 with an empty array.
+    Rent is the contract rent. Only available room, building and contract data is returned.
+
+    ```mermaid
+    sequenceDiagram
+      actor Tenant
+      participant Gateway
+      participant Tenancy
+      participant DB as Tenancy database
+      Tenant->>Gateway: GET /me/room-hub
+      Gateway->>Tenancy: Forward authenticated request
+      Tenancy->>DB: Query active contracts with tenant access
+      DB-->>Tenancy: Authorized rooms and pagination
+      Tenancy-->>Tenant: ROOM_HUB_FETCHED
+    ```
+  parameters:
+    - name: pageNo
+      in: query
+      schema: { type: integer, minimum: 1, default: 1 }
+    - name: pageSize
+      in: query
+      schema: { type: integer, minimum: 1, maximum: 100, default: 20 }
   responses:
-    "200":
-      description: "Thành công: Lấy thông tin trung tâm phòng."
+    '200':
+      description: Authorized active contracts and rooms, possibly empty.
       content:
         application/json:
           schema:
             type: object
-            additionalProperties: false
-            required:
-            - statusCode
-            - code
-            - data
+            required: [statusCode, code, data, pagination]
             properties:
-              statusCode:
-                type: integer
-                enum:
-                - 200
-              code:
-                type: string
-                enum:
-                - ROOM_HUB_FETCHED
+              statusCode: { type: integer, enum: [200] }
+              code: { type: string, enum: [ROOM_HUB_FETCHED] }
               data:
-                $ref: ../../openapi.yaml#/components/schemas/MyRoomHubResponseDto
-    "401":
-      $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
-    "503":
-      $ref: ../../openapi.yaml#/components/responses/AuthUnavailableError
-    "403":
-      $ref: ../../openapi.yaml#/components/responses/ForbiddenError
-    '404':
-      x-apidog-name: Not Found
-      description: Không tìm thấy tài nguyên được yêu cầu.
-      content:
-        application/json:
-          schema:
-            type: object
-            additionalProperties: false
-            required: [statusCode, code]
-            properties:
-              statusCode:
-                type: integer
-                enum: [404]
-              code:
-                type: string
-                enum:
-                  - ACTIVE_CONTRACT_NOT_FOUND
-                description: |-
-                  - ACTIVE_CONTRACT_NOT_FOUND: Không tìm thấy hợp đồng đang hiệu lực.
-          examples:
-            active_contract_not_found:
-              summary: ACTIVE_CONTRACT_NOT_FOUND — Không tìm thấy hợp đồng đang hiệu lực.
-              value:
-                statusCode: 404
-                code: ACTIVE_CONTRACT_NOT_FOUND
-    "500":
-      $ref: ../../openapi.yaml#/components/responses/InternalServerError
+                type: array
+                items: { $ref: '../../openapi.yaml#/components/schemas/MyRoomHubResponseDto' }
+              pagination:
+                type: object
+                required: [type, pageNo, pageSize, totalItems, totalPages, hasNextPage, hasPreviousPage]
+                properties:
+                  type: { type: string, enum: [offset] }
+                  pageNo: { type: integer, minimum: 1 }
+                  pageSize: { type: integer, minimum: 1, maximum: 100 }
+                  totalItems: { type: integer, minimum: 0 }
+                  totalPages: { type: integer, minimum: 0 }
+                  hasNextPage: { type: boolean }
+                  hasPreviousPage: { type: boolean }
+    '401': { $ref: '../../openapi.yaml#/components/responses/UnauthorizedError' }
+    '403': { $ref: '../../openapi.yaml#/components/responses/ForbiddenError' }
+    '422': { $ref: '../../openapi.yaml#/components/responses/ValidationError' }
+    '503': { $ref: '../../openapi.yaml#/components/responses/AuthUnavailableError' }
+    '500': { $ref: '../../openapi.yaml#/components/responses/InternalServerError' }
