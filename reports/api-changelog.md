@@ -5,11 +5,80 @@
 
 Báo cáo lưu lịch sử các entry đã phát hiện, mới nhất ở trên. `NO_CHANGE` không xóa entry cũ; exit code chỉ phản ánh lần chạy hiện tại.
 
-Công cụ: Redocly 2.64.1; oasdiff 1.34.1. Số entry: **52**.
+Công cụ: Redocly 2.64.1; oasdiff 1.34.1. Số entry: **53**.
 
 Phân loại: **BREAKING** = client cũ có thể hỏng; **NON_BREAKING** = tương thích theo contract; **NEEDS_REVIEW** = chưa đủ bằng chứng.
 
 Các vị trí dùng JSON Pointer trên bundle tạm (`~1` là `/`). JSON đi kèm giữ toàn bộ semantic diff, fingerprint và hash phục vụ truy vết.
+
+## Thay đổi contract từ Git — BREAKING
+
+- ID: `3d1f1d7b968b80c1d4f9a9fffc443ed1c3b62d04cc8f5e79433156a7b117c13b`
+- Contract: rentify-public; repository: https://github.com/pbl6-home-renter/api-doc
+- Nguồn: `src/openapi.yaml` → `src/openapi.yaml`
+- Phát hiện (UTC): 2026-11-15T09:43:28.049Z; commit time: 2026-11-15T16:43:17+07:00
+- Commit nền: 8de6c8a590b13b5e57be599d7e44d625739a95f3
+- Commit đích/bối cảnh: [04eba8e119731b127d69981f3bf76b27d1bb3639](https://github.com/pbl6-home-renter/api-doc/commit/04eba8e119731b127d69981f3bf76b27d1bb3639)
+- PR: [https://github.com/pbl6-home-renter/api-doc/pull/70](https://github.com/pbl6-home-renter/api-doc/pull/70)
+- Loại metadata: Git revision thực tế
+- Lý do: P10-14 thay schema nháp chưa triển khai bằng response có nguồn dữ liệu thật trong Tenancy và điều kiện quyền theo `/me/contracts`. Không suy đoán trạng thái thanh toán hay số sự cố.  PR liên quan: [Tenancy #56](https://github.com/pbl6-home-renter/Tenancy-Service/pull/56), [quyết định P10-D87 #158](https://github.com/pbl6-home-renter/docs/pull/158).
+
+| Mức ảnh hưởng | Endpoint / vùng | Thay đổi | Hành động FE / Mobile |
+|---|---|---|---|
+| BREAKING | GET /me/room-hub | the `data` response's property `type` changed from `object` to `array&lt;object&gt;` for status `200` (`response-property-type-changed`) | FE và Mobile: đối chiếu vị trí và thay đổi trước/sau trong entry này với API adapter, DTO, parser và validation; cùng BE xác nhận phương án tương thích trước merge/phát hành. |
+| BREAKING | GET /me/room-hub | removed the required property `data/activeIssuesCount` from the response with the `200` status (`response-required-property-removed`) | FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ. |
+| BREAKING | GET /me/room-hub | removed the required property `data/contract` from the response with the `200` status (`response-required-property-removed`) | FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ. |
+| BREAKING | GET /me/room-hub | removed the required property `data/landlord` from the response with the `200` status (`response-required-property-removed`) | FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ. |
+| BREAKING | GET /me/room-hub | removed the required property `data/room` from the response with the `200` status (`response-required-property-removed`) | FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ. |
+| BREAKING | GET /me/room-hub | removed the required property `data/roommates` from the response with the `200` status (`response-required-property-removed`) | FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ. |
+| NON_BREAKING | info | Đã phát hiện breaking change nhưng info.version vẫn là `1.0.0`. (`api-version-not-bumped`) | BE: xem lại quy ước version trước khi chấp nhận breaking change. FE/Mobile: theo kế hoạch chuyển đổi của entry này; version trong OpenAPI chưa chứng minh backend đã triển khai. |
+| NON_BREAKING | GET /me/room-hub | added the new optional `query` request parameter `pageNo` (`new-optional-request-parameter`) | FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI. |
+| NON_BREAKING | GET /me/room-hub | added the new optional `query` request parameter `pageSize` (`new-optional-request-parameter`) | FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI. |
+| NON_BREAKING | GET /me/room-hub | added the non-success response with the status `422` (`response-non-success-status-added`) | FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI. |
+| NON_BREAKING | GET /me/room-hub | Bỏ response lỗi HTTP 404. (`response-non-success-status-removed`) | FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ. |
+| NON_BREAKING | GET /me/room-hub | removed the optional property `data/currentInvoice` from the response with the `200` status (`response-optional-property-removed`) | FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ. |
+| NON_BREAKING | GET /me/room-hub | added the required property `pagination` to the response with the `200` status (`response-required-property-added`) | FE: có thể bỏ qua field mới pagination; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại. |
+
+### Vị trí và giá trị trước/sau
+
+| Path / schema / field (JSON Pointer) | Trước | Sau |
+|---|---|---|
+| `/components/schemas/MyRoomHubResponseDto/additionalProperties` | null | false |
+| `/components/schemas/MyRoomHubResponseDto/description` | "Dữ liệu tổng hợp màn hình Trung tâm phòng của tôi dành cho khách thuê (Hợp đồng, hóa đơn, bạn cùng phòng, chủ trọ)" | "One active contract and its room, visible to the current tenant." |
+| `/components/schemas/MyRoomHubResponseDto/properties/activeIssuesCount` | {"type":"integer","minimum":0,"description":"Số sự cố đang chờ xử lý của phòng","example":1} | null |
+| `/components/schemas/MyRoomHubResponseDto/properties/address` | null | {"type":"string"} |
+| `/components/schemas/MyRoomHubResponseDto/properties/area` | null | {"type":"number","nullable":true} |
+| `/components/schemas/MyRoomHubResponseDto/properties/buildingId` | null | {"type":"string","format":"uuid"} |
+| `/components/schemas/MyRoomHubResponseDto/properties/buildingName` | null | {"type":"string"} |
+| `/components/schemas/MyRoomHubResponseDto/properties/contract` | {"type":"object","description":"Hợp đồng thuê phòng có hiệu lực hiện tại","properties":{"id":{"type":"string","format":"uuid","example":"a81d4284-5f6e-4b68-b762-d3369b12be12"},"contractCode":{"type":"string","example":"HD-2026-0012"},"rentalType":{"type":"string","enum":["LONG_TERM","SHORT_TERM_DAILY"],"example":"LONG_TERM"},"startDate":{"type":"string","format":"date","example":"2026-01-01"},"endDate":{"type":"string","format":"date","example":"2027-01-01"},"status":{"type":"string","example":"active"},"signedContractUrl":{"type":"string","format":"uri","nullable":true,"example":"https://example.com/contracts/signed_hd0012.pdf"}},"required":["id","contractCode","rentalType","startDate","endDate","status"]} | null |
+| `/components/schemas/MyRoomHubResponseDto/properties/contractId` | null | {"type":"string","format":"uuid"} |
+| `/components/schemas/MyRoomHubResponseDto/properties/currentInvoice` | {"type":"object","nullable":true,"description":"Hóa đơn của kỳ hiện tại cần thanh toán","properties":{"id":{"type":"string","format":"uuid","example":"e6fbbff5-d72b-426b-8fb7-bf6f3a743e49"},"code":{"type":"string","example":"INV-2026-09-001"},"period":{"type":"string","example":"2026-09"},"totalAmount":{"type":"integer","minimum":0,"example":3850000},"remainingAmount":{"type":"integer","minimum":0,"example":3850000},"dueDate":{"type":"string","format":"date-time","example":"2026-10-05T23:59:59Z"},"invoiceStatus":{"type":"string","example":"issued"},"vietQrPaymentUrl":{"type":"string","format":"uri","nullable":true,"example":"https://api.vietqr.io/image/970422-0987654321-INV001.jpg"}},"required":["id","code","period","totalAmount","remainingAmount","dueDate","invoiceStatus"]} | null |
+| `/components/schemas/MyRoomHubResponseDto/properties/endDate` | null | {"type":"string","format":"date"} |
+| `/components/schemas/MyRoomHubResponseDto/properties/landlord` | {"type":"object","description":"Thông tin liên hệ của chủ trọ","properties":{"id":{"type":"string","format":"uuid","example":"1c28c89b-f975-4302-86ee-ea5e158dfb1d"},"name":{"type":"string","example":"Nguyễn Văn Chủ"},"phone":{"type":"string","example":"0909123456"},"avatarUrl":{"type":"string","format":"uri","nullable":true,"example":"https://example.com/avatars/landlord.jpg"}},"required":["id","name","phone"]} | null |
+| `/components/schemas/MyRoomHubResponseDto/properties/province` | null | {"type":"string"} |
+| `/components/schemas/MyRoomHubResponseDto/properties/rentPrice` | null | {"type":"number","minimum":0,"description":"Rent from the contract."} |
+| `/components/schemas/MyRoomHubResponseDto/properties/room` | {"type":"object","description":"Thông tin phòng đang thuê hiện tại","properties":{"id":{"type":"string","format":"uuid","example":"3fa85f64-5717-4562-b3fc-2c963f66afa6"},"name":{"type":"string","example":"P.201"},"area":{"type":"string","nullable":true,"example":"25.0"},"rentPrice":{"type":"integer","minimum":0,"example":3500000},"buildingId":{"type":"string","format":"uuid","example":"9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d"},"buildingName":{"type":"string","example":"Nhà trọ Thanh Xuân"},"address":{"type":"string","example":"12 Nguyễn Trãi, Phường Bến Nghé, Quận 1, TP Hồ Chí Minh"},"photoUrls":{"type":"array","items":{"type":"string","format":"uri"}}},"required":["id","name","rentPrice","buildingId","buildingName","address"]} | null |
+| `/components/schemas/MyRoomHubResponseDto/properties/roomId` | null | {"type":"string","format":"uuid"} |
+| `/components/schemas/MyRoomHubResponseDto/properties/roomName` | null | {"type":"string"} |
+| `/components/schemas/MyRoomHubResponseDto/properties/roommates` | {"type":"array","description":"Danh sách thành viên đang cùng cư trú trong phòng","items":{"type":"object","properties":{"id":{"type":"string","format":"uuid"},"name":{"type":"string","example":"Lê Văn C"},"phone":{"type":"string","nullable":true,"example":"0912345678"},"avatarUrl":{"type":"string","format":"uri","nullable":true},"isRepresentative":{"type":"boolean","example":false}},"required":["id","name","isRepresentative"]}} | null |
+| `/components/schemas/MyRoomHubResponseDto/properties/startDate` | null | {"type":"string","format":"date"} |
+| `/components/schemas/MyRoomHubResponseDto/properties/ward` | null | {"type":"string"} |
+| `/components/schemas/MyRoomHubResponseDto/required` | ["room","landlord","contract","roommates","activeIssuesCount"] | ["contractId","roomId","roomName","area","buildingId","buildingName","address","ward","province","rentPrice","startDate","endDate"] |
+| `/components/schemas/MyRoomHubResponseDto/x-apidog-folder` | "Room/Response" | null |
+| `/paths/~1me~1room-hub/get/description` | "tenant. Lấy thông tin tổng hợp cho trang chủ trung tâm phòng của người thuê (hợp đồng hiện tại, hóa đơn chưa thanh toán, chỉ số điện nước, sự cố đang xử lý, bạn cùng phòng). Lỗi nghiệp vụ: 404 ACTIVE CONTRACT NOT FOUND · 403 FORBIDDEN." | "Returns one entry per active contract for which the caller is the named tenant or a current linked member,\nusing the same membership rule as GET /me/contracts. A member whose left date is today or earlier (UTC)\nno longer has member access. Soft-deleted contracts, rooms and buildings are excluded. Results are ordered\nby contract start date descending and contract ID ascending. An empty result returns 200 with an empty array.\nRent is the contract rent. Only available room, building and contract data is returned.\n\n```mermaid\nsequenceDiagram\n  actor Tenant\n  participant Gateway\n  participant Tenancy\n  participant DB as Tenancy database\n  Tenant-&gt;&gt;Gateway: GET /me/room-hub\n  Gateway-&gt;&gt;Tenancy: Forward authenticated request\n  Tenancy-&gt;&gt;DB: Query active contracts with tenant access\n  DB--&gt;&gt;Tenancy: Authorized rooms and pagination\n  Tenancy--&gt;&gt;Tenant: ROOM_HUB_FETCHED\n```" |
+| `/paths/~1me~1room-hub/get/parameters` | null | [{"name":"pageNo","in":"query","schema":{"type":"integer","minimum":1,"default":1}},{"name":"pageSize","in":"query","schema":{"type":"integer","minimum":1,"maximum":100,"default":20}}] |
+| `/paths/~1me~1room-hub/get/responses/200/content/application~1json/schema/additionalProperties` | false | null |
+| `/paths/~1me~1room-hub/get/responses/200/content/application~1json/schema/properties/data/$ref` | "#/components/schemas/MyRoomHubResponseDto" | null |
+| `/paths/~1me~1room-hub/get/responses/200/content/application~1json/schema/properties/data/items` | null | {"$ref":"#/components/schemas/MyRoomHubResponseDto"} |
+| `/paths/~1me~1room-hub/get/responses/200/content/application~1json/schema/properties/data/type` | null | "array" |
+| `/paths/~1me~1room-hub/get/responses/200/content/application~1json/schema/properties/pagination` | null | {"type":"object","required":["type","pageNo","pageSize","totalItems","totalPages","hasNextPage","hasPreviousPage"],"properties":{"type":{"type":"string","enum":["offset"]},"pageNo":{"type":"integer","minimum":1},"pageSize":{"type":"integer","minimum":1,"maximum":100},"totalItems":{"type":"integer","minimum":0},"totalPages":{"type":"integer","minimum":0},"hasNextPage":{"type":"boolean"},"hasPreviousPage":{"type":"boolean"}}} |
+| `/paths/~1me~1room-hub/get/responses/200/content/application~1json/schema/required` | ["statusCode","code","data"] | ["statusCode","code","data","pagination"] |
+| `/paths/~1me~1room-hub/get/responses/200/description` | "Thành công: Lấy thông tin trung tâm phòng." | "Authorized active contracts and rooms, possibly empty." |
+| `/paths/~1me~1room-hub/get/responses/404` | {"x-apidog-name":"Not Found","description":"Không tìm thấy tài nguyên được yêu cầu.","content":{"application/json":{"schema":{"type":"object","additionalProperties":false,"required":["statusCode","code"],"properties":{"statusCode":{"type":"integer","enum":[404]},"code":{"type":"string","enum":["ACTIVE_CONTRACT_NOT_FOUND"],"description":"- ACTIVE_CONTRACT_NOT_FOUND: Không tìm thấy hợp đồng đang hiệu lực."}}},"examples":{"active_contract_not_found":{"summary":"ACTIVE_CONTRACT_NOT_FOUND — Không tìm thấy hợp đồng đang hiệu lực.","value":{"statusCode":404,"code":"ACTIVE_CONTRACT_NOT_FOUND"}}}}}} | null |
+| `/paths/~1me~1room-hub/get/responses/422` | null | {"$ref":"#/components/responses/ValidationError"} |
+| `/paths/~1me~1room-hub/get/summary` | "Get tenant room hub dashboard" | "List the current tenant's rooms" |
+
+**Kiểm tra thủ công:** BE xác nhận lý do, endpoint dùng schema chung, thay đổi role/ownership mô tả bằng văn bản và thời điểm triển khai. FE/Mobile xác nhận tác động với parser và phiên bản client đang hỗ trợ.
 
 ## Thay đổi contract từ Git — BREAKING
 

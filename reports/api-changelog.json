@@ -67960,6 +67960,904 @@
           }
         }
       }
+    },
+    {
+      "id": "3d1f1d7b968b80c1d4f9a9fffc443ed1c3b62d04cc8f5e79433156a7b117c13b",
+      "label": "Thay đổi contract từ Git",
+      "classification": "BREAKING",
+      "contractId": "rentify-public",
+      "repository": "https://github.com/pbl6-home-renter/api-doc",
+      "baseHash": "6f3732f2fbf43e4d4f085c8216791ad601b5262acfd0ac0d2a7b6499a05ab17b",
+      "headHash": "bbd2e759081ac4c193eb44bf8365889bf05ce8433264a9c517a7cf8d3b2b1597",
+      "baseSource": "src/openapi.yaml",
+      "headSource": "src/openapi.yaml",
+      "detectedAt": "2026-11-15T09:43:28.049Z",
+      "committedAt": "2026-11-15T16:43:17+07:00",
+      "baseCommit": "8de6c8a590b13b5e57be599d7e44d625739a95f3",
+      "headCommit": "04eba8e119731b127d69981f3bf76b27d1bb3639",
+      "prUrl": "https://github.com/pbl6-home-renter/api-doc/pull/70",
+      "commitUrl": "https://github.com/pbl6-home-renter/api-doc/commit/04eba8e119731b127d69981f3bf76b27d1bb3639",
+      "metadataKind": "Git revision thực tế",
+      "reason": "P10-14 thay schema nháp chưa triển khai bằng response có nguồn dữ liệu thật trong Tenancy và điều kiện quyền theo `/me/contracts`. Không suy đoán trạng thái thanh toán hay số sự cố.\n\nPR liên quan: [Tenancy #56](https://github.com/pbl6-home-renter/Tenancy-Service/pull/56), [quyết định P10-D87 #158](https://github.com/pbl6-home-renter/docs/pull/158).",
+      "tools": {
+        "redocly": "2.64.1",
+        "oasdiff": "1.34.1"
+      },
+      "changes": [
+        {
+          "id": "response-property-type-changed",
+          "text": "the `data` response's property `type` changed from `object` to `array<object>` for status `200`",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getMeRoomHub",
+          "path": "/me/room-hub",
+          "section": "paths",
+          "fingerprint": "764df661329a",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu vị trí và thay đổi trước/sau trong entry này với API adapter, DTO, parser và validation; cùng BE xác nhận phương án tương thích trước merge/phát hành."
+        },
+        {
+          "id": "response-required-property-removed",
+          "text": "removed the required property `data/activeIssuesCount` from the response with the `200` status",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getMeRoomHub",
+          "path": "/me/room-hub",
+          "section": "paths",
+          "fingerprint": "cebcc1bfb33c",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "response-required-property-removed",
+          "text": "removed the required property `data/contract` from the response with the `200` status",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getMeRoomHub",
+          "path": "/me/room-hub",
+          "section": "paths",
+          "fingerprint": "05090e534003",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "response-required-property-removed",
+          "text": "removed the required property `data/landlord` from the response with the `200` status",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getMeRoomHub",
+          "path": "/me/room-hub",
+          "section": "paths",
+          "fingerprint": "e24ce31509f5",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "response-required-property-removed",
+          "text": "removed the required property `data/room` from the response with the `200` status",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getMeRoomHub",
+          "path": "/me/room-hub",
+          "section": "paths",
+          "fingerprint": "39aca539dfb0",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "response-required-property-removed",
+          "text": "removed the required property `data/roommates` from the response with the `200` status",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getMeRoomHub",
+          "path": "/me/room-hub",
+          "section": "paths",
+          "fingerprint": "080cd187a6cf",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "api-version-not-bumped",
+          "text": "a breaking change was detected but the version is still `1.0.0`",
+          "level": 1,
+          "section": "info",
+          "fingerprint": "d3f96cd643c1",
+          "classification": "NON_BREAKING",
+          "clientImpact": "BE: xem lại quy ước version trước khi chấp nhận breaking change. FE/Mobile: theo kế hoạch chuyển đổi của entry này; version trong OpenAPI chưa chứng minh backend đã triển khai."
+        },
+        {
+          "id": "new-optional-request-parameter",
+          "text": "added the new optional `query` request parameter `pageNo`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getMeRoomHub",
+          "path": "/me/room-hub",
+          "section": "paths",
+          "fingerprint": "0e7558c33a10",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        },
+        {
+          "id": "new-optional-request-parameter",
+          "text": "added the new optional `query` request parameter `pageSize`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getMeRoomHub",
+          "path": "/me/room-hub",
+          "section": "paths",
+          "fingerprint": "6a8da88842ea",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        },
+        {
+          "id": "response-non-success-status-added",
+          "text": "added the non-success response with the status `422`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getMeRoomHub",
+          "path": "/me/room-hub",
+          "section": "paths",
+          "fingerprint": "779598207036",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        },
+        {
+          "id": "response-non-success-status-removed",
+          "text": "removed the non-success response with the status `404`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getMeRoomHub",
+          "path": "/me/room-hub",
+          "section": "paths",
+          "fingerprint": "0e9255f94ee5",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "response-optional-property-removed",
+          "text": "removed the optional property `data/currentInvoice` from the response with the `200` status",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getMeRoomHub",
+          "path": "/me/room-hub",
+          "section": "paths",
+          "fingerprint": "a335088de887",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "response-required-property-added",
+          "text": "added the required property `pagination` to the response with the `200` status",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getMeRoomHub",
+          "path": "/me/room-hub",
+          "section": "paths",
+          "fingerprint": "89599b43add9",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới pagination; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        }
+      ],
+      "locations": [
+        {
+          "pointer": "/components/schemas/MyRoomHubResponseDto/additionalProperties",
+          "before": null,
+          "after": false
+        },
+        {
+          "pointer": "/components/schemas/MyRoomHubResponseDto/description",
+          "before": "Dữ liệu tổng hợp màn hình Trung tâm phòng của tôi dành cho khách thuê (Hợp đồng, hóa đơn, bạn cùng phòng, chủ trọ)",
+          "after": "One active contract and its room, visible to the current tenant."
+        },
+        {
+          "pointer": "/components/schemas/MyRoomHubResponseDto/properties/activeIssuesCount",
+          "before": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Số sự cố đang chờ xử lý của phòng",
+            "example": 1
+          },
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/MyRoomHubResponseDto/properties/address",
+          "before": null,
+          "after": {
+            "type": "string"
+          }
+        },
+        {
+          "pointer": "/components/schemas/MyRoomHubResponseDto/properties/area",
+          "before": null,
+          "after": {
+            "type": "number",
+            "nullable": true
+          }
+        },
+        {
+          "pointer": "/components/schemas/MyRoomHubResponseDto/properties/buildingId",
+          "before": null,
+          "after": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        {
+          "pointer": "/components/schemas/MyRoomHubResponseDto/properties/buildingName",
+          "before": null,
+          "after": {
+            "type": "string"
+          }
+        },
+        {
+          "pointer": "/components/schemas/MyRoomHubResponseDto/properties/contract",
+          "before": {
+            "type": "object",
+            "description": "Hợp đồng thuê phòng có hiệu lực hiện tại",
+            "properties": {
+              "id": {
+                "type": "string",
+                "format": "uuid",
+                "example": "a81d4284-5f6e-4b68-b762-d3369b12be12"
+              },
+              "contractCode": {
+                "type": "string",
+                "example": "HD-2026-0012"
+              },
+              "rentalType": {
+                "type": "string",
+                "enum": [
+                  "LONG_TERM",
+                  "SHORT_TERM_DAILY"
+                ],
+                "example": "LONG_TERM"
+              },
+              "startDate": {
+                "type": "string",
+                "format": "date",
+                "example": "2026-01-01"
+              },
+              "endDate": {
+                "type": "string",
+                "format": "date",
+                "example": "2027-01-01"
+              },
+              "status": {
+                "type": "string",
+                "example": "active"
+              },
+              "signedContractUrl": {
+                "type": "string",
+                "format": "uri",
+                "nullable": true,
+                "example": "https://example.com/contracts/signed_hd0012.pdf"
+              }
+            },
+            "required": [
+              "id",
+              "contractCode",
+              "rentalType",
+              "startDate",
+              "endDate",
+              "status"
+            ]
+          },
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/MyRoomHubResponseDto/properties/contractId",
+          "before": null,
+          "after": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        {
+          "pointer": "/components/schemas/MyRoomHubResponseDto/properties/currentInvoice",
+          "before": {
+            "type": "object",
+            "nullable": true,
+            "description": "Hóa đơn của kỳ hiện tại cần thanh toán",
+            "properties": {
+              "id": {
+                "type": "string",
+                "format": "uuid",
+                "example": "e6fbbff5-d72b-426b-8fb7-bf6f3a743e49"
+              },
+              "code": {
+                "type": "string",
+                "example": "INV-2026-09-001"
+              },
+              "period": {
+                "type": "string",
+                "example": "2026-09"
+              },
+              "totalAmount": {
+                "type": "integer",
+                "minimum": 0,
+                "example": 3850000
+              },
+              "remainingAmount": {
+                "type": "integer",
+                "minimum": 0,
+                "example": 3850000
+              },
+              "dueDate": {
+                "type": "string",
+                "format": "date-time",
+                "example": "2026-10-05T23:59:59Z"
+              },
+              "invoiceStatus": {
+                "type": "string",
+                "example": "issued"
+              },
+              "vietQrPaymentUrl": {
+                "type": "string",
+                "format": "uri",
+                "nullable": true,
+                "example": "https://api.vietqr.io/image/970422-0987654321-INV001.jpg"
+              }
+            },
+            "required": [
+              "id",
+              "code",
+              "period",
+              "totalAmount",
+              "remainingAmount",
+              "dueDate",
+              "invoiceStatus"
+            ]
+          },
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/MyRoomHubResponseDto/properties/endDate",
+          "before": null,
+          "after": {
+            "type": "string",
+            "format": "date"
+          }
+        },
+        {
+          "pointer": "/components/schemas/MyRoomHubResponseDto/properties/landlord",
+          "before": {
+            "type": "object",
+            "description": "Thông tin liên hệ của chủ trọ",
+            "properties": {
+              "id": {
+                "type": "string",
+                "format": "uuid",
+                "example": "1c28c89b-f975-4302-86ee-ea5e158dfb1d"
+              },
+              "name": {
+                "type": "string",
+                "example": "Nguyễn Văn Chủ"
+              },
+              "phone": {
+                "type": "string",
+                "example": "0909123456"
+              },
+              "avatarUrl": {
+                "type": "string",
+                "format": "uri",
+                "nullable": true,
+                "example": "https://example.com/avatars/landlord.jpg"
+              }
+            },
+            "required": [
+              "id",
+              "name",
+              "phone"
+            ]
+          },
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/MyRoomHubResponseDto/properties/province",
+          "before": null,
+          "after": {
+            "type": "string"
+          }
+        },
+        {
+          "pointer": "/components/schemas/MyRoomHubResponseDto/properties/rentPrice",
+          "before": null,
+          "after": {
+            "type": "number",
+            "minimum": 0,
+            "description": "Rent from the contract."
+          }
+        },
+        {
+          "pointer": "/components/schemas/MyRoomHubResponseDto/properties/room",
+          "before": {
+            "type": "object",
+            "description": "Thông tin phòng đang thuê hiện tại",
+            "properties": {
+              "id": {
+                "type": "string",
+                "format": "uuid",
+                "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+              },
+              "name": {
+                "type": "string",
+                "example": "P.201"
+              },
+              "area": {
+                "type": "string",
+                "nullable": true,
+                "example": "25.0"
+              },
+              "rentPrice": {
+                "type": "integer",
+                "minimum": 0,
+                "example": 3500000
+              },
+              "buildingId": {
+                "type": "string",
+                "format": "uuid",
+                "example": "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d"
+              },
+              "buildingName": {
+                "type": "string",
+                "example": "Nhà trọ Thanh Xuân"
+              },
+              "address": {
+                "type": "string",
+                "example": "12 Nguyễn Trãi, Phường Bến Nghé, Quận 1, TP Hồ Chí Minh"
+              },
+              "photoUrls": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uri"
+                }
+              }
+            },
+            "required": [
+              "id",
+              "name",
+              "rentPrice",
+              "buildingId",
+              "buildingName",
+              "address"
+            ]
+          },
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/MyRoomHubResponseDto/properties/roomId",
+          "before": null,
+          "after": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        {
+          "pointer": "/components/schemas/MyRoomHubResponseDto/properties/roomName",
+          "before": null,
+          "after": {
+            "type": "string"
+          }
+        },
+        {
+          "pointer": "/components/schemas/MyRoomHubResponseDto/properties/roommates",
+          "before": {
+            "type": "array",
+            "description": "Danh sách thành viên đang cùng cư trú trong phòng",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "name": {
+                  "type": "string",
+                  "example": "Lê Văn C"
+                },
+                "phone": {
+                  "type": "string",
+                  "nullable": true,
+                  "example": "0912345678"
+                },
+                "avatarUrl": {
+                  "type": "string",
+                  "format": "uri",
+                  "nullable": true
+                },
+                "isRepresentative": {
+                  "type": "boolean",
+                  "example": false
+                }
+              },
+              "required": [
+                "id",
+                "name",
+                "isRepresentative"
+              ]
+            }
+          },
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/MyRoomHubResponseDto/properties/startDate",
+          "before": null,
+          "after": {
+            "type": "string",
+            "format": "date"
+          }
+        },
+        {
+          "pointer": "/components/schemas/MyRoomHubResponseDto/properties/ward",
+          "before": null,
+          "after": {
+            "type": "string"
+          }
+        },
+        {
+          "pointer": "/components/schemas/MyRoomHubResponseDto/required",
+          "before": [
+            "room",
+            "landlord",
+            "contract",
+            "roommates",
+            "activeIssuesCount"
+          ],
+          "after": [
+            "contractId",
+            "roomId",
+            "roomName",
+            "area",
+            "buildingId",
+            "buildingName",
+            "address",
+            "ward",
+            "province",
+            "rentPrice",
+            "startDate",
+            "endDate"
+          ]
+        },
+        {
+          "pointer": "/components/schemas/MyRoomHubResponseDto/x-apidog-folder",
+          "before": "Room/Response",
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1me~1room-hub/get/description",
+          "before": "tenant. Lấy thông tin tổng hợp cho trang chủ trung tâm phòng của người thuê (hợp đồng hiện tại, hóa đơn chưa thanh toán, chỉ số điện nước, sự cố đang xử lý, bạn cùng phòng). Lỗi nghiệp vụ: 404 ACTIVE CONTRACT NOT FOUND · 403 FORBIDDEN.",
+          "after": "Returns one entry per active contract for which the caller is the named tenant or a current linked member,\nusing the same membership rule as GET /me/contracts. A member whose left date is today or earlier (UTC)\nno longer has member access. Soft-deleted contracts, rooms and buildings are excluded. Results are ordered\nby contract start date descending and contract ID ascending. An empty result returns 200 with an empty array.\nRent is the contract rent. Only available room, building and contract data is returned.\n\n```mermaid\nsequenceDiagram\n  actor Tenant\n  participant Gateway\n  participant Tenancy\n  participant DB as Tenancy database\n  Tenant->>Gateway: GET /me/room-hub\n  Gateway->>Tenancy: Forward authenticated request\n  Tenancy->>DB: Query active contracts with tenant access\n  DB-->>Tenancy: Authorized rooms and pagination\n  Tenancy-->>Tenant: ROOM_HUB_FETCHED\n```"
+        },
+        {
+          "pointer": "/paths/~1me~1room-hub/get/parameters",
+          "before": null,
+          "after": [
+            {
+              "name": "pageNo",
+              "in": "query",
+              "schema": {
+                "type": "integer",
+                "minimum": 1,
+                "default": 1
+              }
+            },
+            {
+              "name": "pageSize",
+              "in": "query",
+              "schema": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 100,
+                "default": 20
+              }
+            }
+          ]
+        },
+        {
+          "pointer": "/paths/~1me~1room-hub/get/responses/200/content/application~1json/schema/additionalProperties",
+          "before": false,
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1me~1room-hub/get/responses/200/content/application~1json/schema/properties/data/$ref",
+          "before": "#/components/schemas/MyRoomHubResponseDto",
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1me~1room-hub/get/responses/200/content/application~1json/schema/properties/data/items",
+          "before": null,
+          "after": {
+            "$ref": "#/components/schemas/MyRoomHubResponseDto"
+          }
+        },
+        {
+          "pointer": "/paths/~1me~1room-hub/get/responses/200/content/application~1json/schema/properties/data/type",
+          "before": null,
+          "after": "array"
+        },
+        {
+          "pointer": "/paths/~1me~1room-hub/get/responses/200/content/application~1json/schema/properties/pagination",
+          "before": null,
+          "after": {
+            "type": "object",
+            "required": [
+              "type",
+              "pageNo",
+              "pageSize",
+              "totalItems",
+              "totalPages",
+              "hasNextPage",
+              "hasPreviousPage"
+            ],
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": [
+                  "offset"
+                ]
+              },
+              "pageNo": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "pageSize": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 100
+              },
+              "totalItems": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "totalPages": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "hasNextPage": {
+                "type": "boolean"
+              },
+              "hasPreviousPage": {
+                "type": "boolean"
+              }
+            }
+          }
+        },
+        {
+          "pointer": "/paths/~1me~1room-hub/get/responses/200/content/application~1json/schema/required",
+          "before": [
+            "statusCode",
+            "code",
+            "data"
+          ],
+          "after": [
+            "statusCode",
+            "code",
+            "data",
+            "pagination"
+          ]
+        },
+        {
+          "pointer": "/paths/~1me~1room-hub/get/responses/200/description",
+          "before": "Thành công: Lấy thông tin trung tâm phòng.",
+          "after": "Authorized active contracts and rooms, possibly empty."
+        },
+        {
+          "pointer": "/paths/~1me~1room-hub/get/responses/404",
+          "before": {
+            "x-apidog-name": "Not Found",
+            "description": "Không tìm thấy tài nguyên được yêu cầu.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        404
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "ACTIVE_CONTRACT_NOT_FOUND"
+                      ],
+                      "description": "- ACTIVE_CONTRACT_NOT_FOUND: Không tìm thấy hợp đồng đang hiệu lực."
+                    }
+                  }
+                },
+                "examples": {
+                  "active_contract_not_found": {
+                    "summary": "ACTIVE_CONTRACT_NOT_FOUND — Không tìm thấy hợp đồng đang hiệu lực.",
+                    "value": {
+                      "statusCode": 404,
+                      "code": "ACTIVE_CONTRACT_NOT_FOUND"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1me~1room-hub/get/responses/422",
+          "before": null,
+          "after": {
+            "$ref": "#/components/responses/ValidationError"
+          }
+        },
+        {
+          "pointer": "/paths/~1me~1room-hub/get/summary",
+          "before": "Get tenant room hub dashboard",
+          "after": "List the current tenant's rooms"
+        }
+      ],
+      "semanticDiff": {
+        "paths": {
+          "modified": {
+            "/me/room-hub": {
+              "operations": {
+                "modified": {
+                  "GET": {
+                    "parameters": {
+                      "added": {
+                        "query": [
+                          "pageNo",
+                          "pageSize"
+                        ]
+                      }
+                    },
+                    "responses": {
+                      "added": [
+                        "422"
+                      ],
+                      "deleted": [
+                        "404"
+                      ],
+                      "modified": {
+                        "200": {
+                          "content": {
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "additionalPropertiesAllowed": {
+                                    "from": false,
+                                    "to": null
+                                  },
+                                  "required": {
+                                    "added": [
+                                      "pagination"
+                                    ]
+                                  },
+                                  "properties": {
+                                    "added": [
+                                      "pagination"
+                                    ],
+                                    "modified": {
+                                      "data": {
+                                        "extensions": {
+                                          "deleted": [
+                                            "x-apidog-folder"
+                                          ]
+                                        },
+                                        "type": {
+                                          "added": [
+                                            "array"
+                                          ],
+                                          "deleted": [
+                                            "object"
+                                          ]
+                                        },
+                                        "items": {
+                                          "schemaAdded": true
+                                        },
+                                        "required": {
+                                          "deleted": [
+                                            "contract",
+                                            "roommates",
+                                            "activeIssuesCount",
+                                            "room",
+                                            "landlord"
+                                          ]
+                                        },
+                                        "properties": {
+                                          "deleted": [
+                                            "landlord",
+                                            "contract",
+                                            "currentInvoice",
+                                            "roommates",
+                                            "activeIssuesCount",
+                                            "room"
+                                          ]
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "components": {
+          "schemas": {
+            "modified": {
+              "MyRoomHubResponseDto": {
+                "extensions": {
+                  "deleted": [
+                    "x-apidog-folder"
+                  ]
+                },
+                "additionalPropertiesAllowed": {
+                  "from": null,
+                  "to": false
+                },
+                "required": {
+                  "added": [
+                    "buildingName",
+                    "ward",
+                    "address",
+                    "province",
+                    "rentPrice",
+                    "endDate",
+                    "roomId",
+                    "contractId",
+                    "roomName",
+                    "area",
+                    "startDate",
+                    "buildingId"
+                  ],
+                  "deleted": [
+                    "landlord",
+                    "contract",
+                    "roommates",
+                    "activeIssuesCount",
+                    "room"
+                  ]
+                },
+                "properties": {
+                  "added": [
+                    "ward",
+                    "rentPrice",
+                    "endDate",
+                    "address",
+                    "startDate",
+                    "roomId",
+                    "buildingName",
+                    "province",
+                    "buildingId",
+                    "contractId",
+                    "roomName",
+                    "area"
+                  ],
+                  "deleted": [
+                    "roommates",
+                    "activeIssuesCount",
+                    "room",
+                    "landlord",
+                    "contract",
+                    "currentInvoice"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
     }
   ]
 }
