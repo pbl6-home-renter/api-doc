@@ -13,6 +13,7 @@ post:
     - Token cấp trước khi mở khóa còn mang `status=locked` tối đa 15 phút.
     - Identity ghi `user.unlocked` và `notification.requested` type `system` tới chính user trong cùng transaction. Payload `user.unlocked` bổ sung `role`, `phone` để Tenancy khôi phục tenant lookup; phone không đi sang Community.
     - Account notice có `sourceService: identity`, `recipientUserIds: [userId]` và object `notification` gồm `type: system`, `title`, `body`, `data`. `notification.data` gồm `{ userId, status: active, eventType: user.unlocked, lockedAt: null }`. Community lưu snapshot này và trả qua `GET /notifications`; response HTTP của API unlock vẫn là `UserUnlockResponseDto`.
+    - Account notice khi mở khóa dùng `notification.title: USER_ACCOUNT_UNLOCKED_TITLE` và `notification.body: USER_ACCOUNT_UNLOCKED_BODY`. Đây là key để FE dịch theo ngôn ngữ hiển thị.
     - Tenancy dùng snapshot `role`, `phone` của tenant để khôi phục lookup và liên kết theo rule hiện có. Payload unlock cũ chỉ có `userId`, `status` vẫn được inbox dedup/ack; khi thiếu snapshot, P9-06 không khôi phục lookup qua event đó.
     - P9-06 chưa tự khôi phục contract. Dừng auto-termination và yêu cầu landlord chọn khôi phục/chấm dứt thuộc P9-07 theo P9-D83.
 
