@@ -1,0 +1,30 @@
+title: ContractTenantListItemResponseDto
+type: object
+additionalProperties: false
+required:
+- contractMemberId
+- tenantName
+- isLinked
+- scope
+- contractCount
+properties:
+  contractMemberId:
+    type: string
+    format: uuid
+    description: 'Member đại diện: joinedAt asc, id asc trên toàn bộ nhóm hợp lệ; không phụ thuộc filter/sort/page.'
+  tenantName:
+    type: string
+    nullable: true
+    description: Snapshot đầu tiên khác rỗng theo joinedAt asc, contractMemberId asc trong các membership
+      hợp lệ của landlord; không đọc Identity.
+  isLinked:
+    type: boolean
+  scope:
+    type: string
+    enum:
+    - current
+    - history
+  contractCount:
+    type: integer
+    minimum: 1
+    description: Số contractId khác nhau thuộc landlord trong toàn bộ nhóm hợp lệ.
