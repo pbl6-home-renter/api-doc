@@ -10951,23 +10951,21 @@
           "Matching"
         ],
         "x-apidog-folder": "MatchRequest",
-        "x-apidog-status": "designing",
+        "x-apidog-status": "developing",
         "operationId": "getMatchRequests",
         "security": [
           {
             "BearerAuth": []
           }
         ],
-        "summary": "List match requests",
-        "description": "tenant. Liệt kê yêu cầu đến hoặc đi. Lỗi nghiệp vụ: 422 VALIDATION FAILED.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
+        "summary": "List my match requests",
+        "description": "Active tenant only. Returns requests involving the caller, newest first with ID as a tie breaker. No phone, AI data or conversation is disclosed.\n\n```mermaid\nsequenceDiagram\n  participant T as Tenant\n  participant TEN as Tenancy\n  participant ID as Identity\n  participant DB as Tenancy DB\n  T->>TEN: GET /match-requests\n  TEN->>ID: GET /internal/users?ids=actor\n  ID-->>TEN: Active tenant summary\n  TEN->>DB: Page by requester/target and optional filters\n  DB-->>TEN: Caller-owned requests and total\n  TEN-->>T: 200 MATCH_REQUESTS_FETCHED\n```\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "parameters": [
           {
             "name": "filter",
             "in": "query",
-            "required": false,
             "style": "deepObject",
             "explode": true,
-            "description": "Bộ lọc được endpoint hỗ trợ.",
             "schema": {
               "type": "object",
               "additionalProperties": false,
@@ -10980,9 +10978,24 @@
                   ]
                 },
                 "status": {
-                  "type": "string"
+                  "type": "string",
+                  "enum": [
+                    "pending",
+                    "accepted",
+                    "rejected",
+                    "withdrawn"
+                  ]
                 }
               }
+            }
+          },
+          {
+            "name": "pageNo",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1
             }
           },
           {
@@ -10994,20 +11007,11 @@
               "maximum": 100,
               "default": 20
             }
-          },
-          {
-            "name": "pageNo",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "minimum": 1,
-              "default": 1
-            }
           }
         ],
         "responses": {
           "200": {
-            "description": "Thành công: Liệt kê yêu cầu đến hoặc đi.",
+            "description": "Caller-owned match requests.",
             "content": {
               "application/json": {
                 "schema": {
@@ -11035,7 +11039,7 @@
                     "data": {
                       "type": "array",
                       "items": {
-                        "$ref": "#/components/schemas/MatchRequestListResponseDto"
+                        "$ref": "#/components/schemas/MatchRequestResponseDto"
                       }
                     },
                     "pagination": {
@@ -11083,38 +11087,6 @@
                       }
                     }
                   }
-                },
-                "example": {
-                  "statusCode": 200,
-                  "code": "MATCH_REQUESTS_FETCHED",
-                  "data": [
-                    {
-                      "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-                      "requesterId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-                      "targetId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-                      "status": "pending",
-                      "createdAt": "2026-09-23T10:00:00.000Z",
-                      "requester": {
-                        "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-                        "name": "Nguyễn Văn A",
-                        "gender": "male"
-                      },
-                      "target": {
-                        "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-                        "name": "Trần Thị B",
-                        "gender": "male"
-                      }
-                    }
-                  ],
-                  "pagination": {
-                    "type": "offset",
-                    "pageNo": 1,
-                    "pageSize": 20,
-                    "totalItems": 1,
-                    "totalPages": 1,
-                    "hasNextPage": false,
-                    "hasPreviousPage": false
-                  }
                 }
               }
             }
@@ -11131,12 +11103,6 @@
           "422": {
             "$ref": "#/components/responses/ValidationError"
           },
-          "429": {
-            "$ref": "#/components/responses/TooManyRequestsError"
-          },
-          "500": {
-            "$ref": "#/components/responses/InternalServerError"
-          },
           "503": {
             "$ref": "#/components/responses/AuthUnavailableError"
           }
@@ -11147,31 +11113,40 @@
           "Matching"
         ],
         "x-apidog-folder": "MatchRequest",
-        "x-apidog-status": "designing",
+        "x-apidog-status": "developing",
         "operationId": "postMatchRequests",
         "security": [
           {
             "BearerAuth": []
           }
         ],
-        "summary": "Create match request",
-        "description": "tenant. Gửi yêu cầu tìm bạn ở. Lỗi nghiệp vụ: 409 DUPLICATE MATCH REQUEST · 422 SELF MATCHING NOT ALLOWED · 404 NOT FOUND.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
+        "summary": "Send a match request",
+        "description": "Active tenant only. The target must be a different active tenant with a currently discoverable profile. A UUID Idempotency-Key is required per new intent. Replaying the same key and target returns the current request with 201 and does not emit another notification, even after its status changes. A different key is allowed after rejection or withdrawal, while only one pending request is allowed per unordered pair. The requester comes from the access token; Tenancy verifies the target through Identity and the local profile table. Tenancy emits `match_request.created` with `matchRequestId`, `actorUserId`, Identity `actorDisplayName`, and `recipientUserId`; Community forwards the actor to the Web notification and adds deep link `/roommates?matchRequestId=<id>`. The Web route currently shows a placeholder, and mobile navigation is not implemented. Deploy the Community consumer before the Tenancy producer.\n\n```mermaid\nsequenceDiagram\n  participant T as Tenant\n  participant TEN as Tenancy\n  participant ID as Identity\n  participant DB as Tenancy DB\n  participant MQ as RabbitMQ\n  participant COM as Community\n  T->>TEN: POST /match-requests + Idempotency-Key\n  TEN->>ID: GET /internal/users?ids=requester\n  ID-->>TEN: Active requester\n  TEN->>DB: Transaction: insert or replay by request key and pending pair\n  TEN->>ID: GET /internal/users?ids=target (new requests only)\n  ID-->>TEN: Active target\n  TEN->>DB: Lock discoverable target profile; append outbox\n  DB-->>TEN: Committed pending request\n  TEN-->>T: 201 MATCH_REQUEST_CREATED\n  TEN-)MQ: match_request.created to target\n  MQ-)COM: Inbox dedup + system notification\n```\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
+        "parameters": [
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "description": "UUID unique per new request intent for this requester.",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
                 "$ref": "#/components/schemas/MatchRequestCreateRequestDto"
-              },
-              "example": {
-                "targetId": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
               }
             }
           }
         },
         "responses": {
           "201": {
-            "description": "Thành công: Gửi yêu cầu tìm bạn ở.",
+            "description": "Created or idempotent replay of the current request.",
             "content": {
               "application/json": {
                 "schema": {
@@ -11196,27 +11171,9 @@
                       ]
                     },
                     "data": {
-                      "$ref": "#/components/schemas/MatchRequestCreateResponseDto"
+                      "$ref": "#/components/schemas/MatchRequestResponseDto"
                     }
                   }
-                },
-                "example": {
-                  "statusCode": 201,
-                  "code": "MATCH_REQUEST_CREATED",
-                  "data": {
-                    "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-                    "status": "pending",
-                    "respondedAt": null
-                  }
-                }
-              }
-            },
-            "headers": {
-              "Location": {
-                "description": "Đường dẫn tài nguyên được tạo.",
-                "schema": {
-                  "type": "string",
-                  "example": "/api/v1/match-requests"
                 }
               }
             }
@@ -11234,13 +11191,11 @@
             "$ref": "#/components/responses/NotFoundError"
           },
           "409": {
-            "x-apidog-name": "Conflict",
-            "description": "Yêu cầu xung đột với trạng thái hiện tại hoặc dữ liệu đã tồn tại.",
+            "description": "Pending pair exists or key reused for another target.",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "additionalProperties": false,
                   "required": [
                     "statusCode",
                     "code"
@@ -11255,18 +11210,9 @@
                     "code": {
                       "type": "string",
                       "enum": [
-                        "DUPLICATE_MATCH_REQUEST"
-                      ],
-                      "description": "- DUPLICATE_MATCH_REQUEST: Yêu cầu tìm bạn ở đã tồn tại."
-                    }
-                  }
-                },
-                "examples": {
-                  "duplicate_match_request": {
-                    "summary": "DUPLICATE_MATCH_REQUEST — Yêu cầu tìm bạn ở đã tồn tại.",
-                    "value": {
-                      "statusCode": 409,
-                      "code": "DUPLICATE_MATCH_REQUEST"
+                        "DUPLICATE_MATCH_REQUEST",
+                        "IDEMPOTENCY_KEY_REUSED"
+                      ]
                     }
                   }
                 }
@@ -11274,13 +11220,11 @@
             }
           },
           "422": {
-            "x-apidog-name": "Unprocessable Entity",
-            "description": "Dữ liệu hợp lệ về cấu trúc nhưng vi phạm ràng buộc trường hoặc quy tắc nghiệp vụ.",
+            "description": "Invalid request or self matching.",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "additionalProperties": false,
                   "required": [
                     "statusCode",
                     "code"
@@ -11296,36 +11240,14 @@
                       "type": "string",
                       "enum": [
                         "SELF_MATCHING_NOT_ALLOWED",
-                        "VALIDATION_FAILED"
-                      ],
-                      "description": "- SELF_MATCHING_NOT_ALLOWED: Không thể gửi yêu cầu ghép đôi cho chính mình.\n- VALIDATION_FAILED: Dữ liệu vi phạm ràng buộc schema hoặc quy tắc nghiệp vụ khác chưa có mã riêng."
-                    }
-                  }
-                },
-                "examples": {
-                  "self_matching_not_allowed": {
-                    "summary": "SELF_MATCHING_NOT_ALLOWED — Không thể gửi yêu cầu ghép đôi cho chính mình.",
-                    "value": {
-                      "statusCode": 422,
-                      "code": "SELF_MATCHING_NOT_ALLOWED"
-                    }
-                  },
-                  "validation_failed": {
-                    "summary": "VALIDATION_FAILED — Dữ liệu vi phạm ràng buộc schema hoặc quy tắc nghiệp vụ khác chưa có mã riêng.",
-                    "value": {
-                      "statusCode": 422,
-                      "code": "VALIDATION_FAILED"
+                        "VALIDATION_FAILED",
+                        "UNEXPECTED_FIELD"
+                      ]
                     }
                   }
                 }
               }
             }
-          },
-          "429": {
-            "$ref": "#/components/responses/TooManyRequestsError"
-          },
-          "500": {
-            "$ref": "#/components/responses/InternalServerError"
           },
           "503": {
             "$ref": "#/components/responses/AuthUnavailableError"
@@ -11339,15 +11261,15 @@
           "Matching"
         ],
         "x-apidog-folder": "MatchRequest",
-        "x-apidog-status": "designing",
+        "x-apidog-status": "developing",
         "operationId": "postMatchRequestsMatchrequestidAcceptRequest",
         "security": [
           {
             "BearerAuth": []
           }
         ],
-        "summary": "Accept match request",
-        "description": "tenant. Chấp nhận yêu cầu. Lỗi nghiệp vụ: 403 FORBIDDEN · 409 MATCH REQUEST NOT PENDING · 404 NOT FOUND.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
+        "summary": "Accept a pending match request",
+        "description": "Only the active recipient can accept. Repeating accept returns the current accepted request without another notification. Another terminal state returns 409 MATCH_REQUEST_NOT_PENDING. No conversation or contact details are created.\n\n```mermaid\nsequenceDiagram\n  participant T as Recipient\n  participant TEN as Tenancy\n  participant DB as Tenancy DB\n  participant MQ as RabbitMQ\n  participant COM as Community\n  T->>TEN: POST /match-requests/{id}/accept-request\n  TEN->>DB: Transaction: lock request, verify actor and pending state\n  TEN->>DB: Save accepted + match_request.accepted outbox\n  TEN-->>T: 200 MATCH_REQUEST_ACCEPTED\n  TEN-)MQ: match_request.accepted to requester\n  MQ-)COM: Inbox dedup + system notification\n```\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "parameters": [
           {
             "name": "matchRequestId",
@@ -11361,12 +11283,11 @@
         ],
         "responses": {
           "200": {
-            "description": "Thành công: Chấp nhận yêu cầu.",
+            "description": "Accepted request, including an idempotent repeat.",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "additionalProperties": false,
                   "required": [
                     "statusCode",
                     "code",
@@ -11386,17 +11307,8 @@
                       ]
                     },
                     "data": {
-                      "$ref": "#/components/schemas/MatchRequestAcceptResponseDto"
+                      "$ref": "#/components/schemas/MatchRequestResponseDto"
                     }
-                  }
-                },
-                "example": {
-                  "statusCode": 200,
-                  "code": "MATCH_REQUEST_ACCEPTED",
-                  "data": {
-                    "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-                    "status": "accepted",
-                    "conversationId": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
                   }
                 }
               }
@@ -11415,13 +11327,11 @@
             "$ref": "#/components/responses/NotFoundError"
           },
           "409": {
-            "x-apidog-name": "Conflict",
-            "description": "Yêu cầu xung đột với trạng thái hiện tại hoặc dữ liệu đã tồn tại.",
+            "description": "Request is no longer pending.",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "additionalProperties": false,
                   "required": [
                     "statusCode",
                     "code"
@@ -11437,28 +11347,12 @@
                       "type": "string",
                       "enum": [
                         "MATCH_REQUEST_NOT_PENDING"
-                      ],
-                      "description": "- MATCH_REQUEST_NOT_PENDING: Yêu cầu tìm bạn ở không còn chờ xử lý."
-                    }
-                  }
-                },
-                "examples": {
-                  "match_request_not_pending": {
-                    "summary": "MATCH_REQUEST_NOT_PENDING — Yêu cầu tìm bạn ở không còn chờ xử lý.",
-                    "value": {
-                      "statusCode": 409,
-                      "code": "MATCH_REQUEST_NOT_PENDING"
+                      ]
                     }
                   }
                 }
               }
             }
-          },
-          "429": {
-            "$ref": "#/components/responses/TooManyRequestsError"
-          },
-          "500": {
-            "$ref": "#/components/responses/InternalServerError"
           },
           "503": {
             "$ref": "#/components/responses/AuthUnavailableError"
@@ -11472,15 +11366,15 @@
           "Matching"
         ],
         "x-apidog-folder": "MatchRequest",
-        "x-apidog-status": "designing",
+        "x-apidog-status": "developing",
         "operationId": "postMatchRequestsMatchrequestidRejectRequest",
         "security": [
           {
             "BearerAuth": []
           }
         ],
-        "summary": "Reject match request",
-        "description": "tenant. Từ chối yêu cầu. Lỗi nghiệp vụ: 403 FORBIDDEN · 409 MATCH REQUEST NOT PENDING.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
+        "summary": "Reject a pending match request",
+        "description": "Only the active recipient can reject. Repeating reject returns the current rejected request without another notification. Another terminal state returns 409 MATCH_REQUEST_NOT_PENDING.\n\n```mermaid\nsequenceDiagram\n  participant T as Recipient\n  participant TEN as Tenancy\n  participant DB as Tenancy DB\n  participant MQ as RabbitMQ\n  participant COM as Community\n  T->>TEN: POST /match-requests/{id}/reject-request\n  TEN->>DB: Transaction: lock request, verify actor and pending state\n  TEN->>DB: Save rejected + match_request.rejected outbox\n  TEN-->>T: 200 MATCH_REQUEST_REJECTED\n  TEN-)MQ: match_request.rejected to requester\n  MQ-)COM: Inbox dedup + system notification\n```\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "parameters": [
           {
             "name": "matchRequestId",
@@ -11494,12 +11388,11 @@
         ],
         "responses": {
           "200": {
-            "description": "Thành công: Từ chối yêu cầu.",
+            "description": "Rejected request, including an idempotent repeat.",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "additionalProperties": false,
                   "required": [
                     "statusCode",
                     "code",
@@ -11519,16 +11412,8 @@
                       ]
                     },
                     "data": {
-                      "$ref": "#/components/schemas/MatchRequestRejectResponseDto"
+                      "$ref": "#/components/schemas/MatchRequestResponseDto"
                     }
-                  }
-                },
-                "example": {
-                  "statusCode": 200,
-                  "code": "MATCH_REQUEST_REJECTED",
-                  "data": {
-                    "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-                    "status": "rejected"
                   }
                 }
               }
@@ -11547,13 +11432,11 @@
             "$ref": "#/components/responses/NotFoundError"
           },
           "409": {
-            "x-apidog-name": "Conflict",
-            "description": "Yêu cầu xung đột với trạng thái hiện tại hoặc dữ liệu đã tồn tại.",
+            "description": "Request is no longer pending.",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "additionalProperties": false,
                   "required": [
                     "statusCode",
                     "code"
@@ -11569,28 +11452,12 @@
                       "type": "string",
                       "enum": [
                         "MATCH_REQUEST_NOT_PENDING"
-                      ],
-                      "description": "- MATCH_REQUEST_NOT_PENDING: Yêu cầu tìm bạn ở không còn chờ xử lý."
-                    }
-                  }
-                },
-                "examples": {
-                  "match_request_not_pending": {
-                    "summary": "MATCH_REQUEST_NOT_PENDING — Yêu cầu tìm bạn ở không còn chờ xử lý.",
-                    "value": {
-                      "statusCode": 409,
-                      "code": "MATCH_REQUEST_NOT_PENDING"
+                      ]
                     }
                   }
                 }
               }
             }
-          },
-          "429": {
-            "$ref": "#/components/responses/TooManyRequestsError"
-          },
-          "500": {
-            "$ref": "#/components/responses/InternalServerError"
           },
           "503": {
             "$ref": "#/components/responses/AuthUnavailableError"
@@ -11604,15 +11471,15 @@
           "Matching"
         ],
         "x-apidog-folder": "MatchRequest",
-        "x-apidog-status": "designing",
+        "x-apidog-status": "developing",
         "operationId": "postMatchRequestsMatchrequestidWithdrawRequest",
         "security": [
           {
             "BearerAuth": []
           }
         ],
-        "summary": "Withdraw match request",
-        "description": "tenant. Người gửi rút yêu cầu. Lỗi nghiệp vụ: 403 FORBIDDEN · 404 NOT FOUND · 409 NOT REQUESTER · 409 MATCH REQUEST NOT PENDING.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
+        "summary": "Withdraw a pending match request",
+        "description": "Only the active requester can withdraw. Repeating withdraw returns the current withdrawn request without another notification. Another terminal state returns 409 MATCH_REQUEST_NOT_PENDING.\n\n```mermaid\nsequenceDiagram\n  participant T as Requester\n  participant TEN as Tenancy\n  participant DB as Tenancy DB\n  participant MQ as RabbitMQ\n  participant COM as Community\n  T->>TEN: POST /match-requests/{id}/withdraw-request\n  TEN->>DB: Transaction: lock request, verify actor and pending state\n  TEN->>DB: Save withdrawn + match_request.withdrawn outbox\n  TEN-->>T: 200 MATCH_REQUEST_WITHDRAWN\n  TEN-)MQ: match_request.withdrawn to recipient\n  MQ-)COM: Inbox dedup + system notification\n```\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "parameters": [
           {
             "name": "matchRequestId",
@@ -11626,12 +11493,11 @@
         ],
         "responses": {
           "200": {
-            "description": "Thành công: Người gửi rút yêu cầu.",
+            "description": "Withdrawn request, including an idempotent repeat.",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "additionalProperties": false,
                   "required": [
                     "statusCode",
                     "code",
@@ -11651,17 +11517,8 @@
                       ]
                     },
                     "data": {
-                      "$ref": "#/components/schemas/MatchRequestWithdrawResponseDto"
+                      "$ref": "#/components/schemas/MatchRequestResponseDto"
                     }
-                  }
-                },
-                "example": {
-                  "statusCode": 200,
-                  "code": "MATCH_REQUEST_WITHDRAWN",
-                  "data": {
-                    "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-                    "status": "withdrawn",
-                    "respondedAt": "2026-09-27T03:10:00.000Z"
                   }
                 }
               }
@@ -11680,13 +11537,11 @@
             "$ref": "#/components/responses/NotFoundError"
           },
           "409": {
-            "x-apidog-name": "Conflict",
-            "description": "Yêu cầu không thể rút do người gọi hoặc trạng thái hiện tại.",
+            "description": "Request is no longer pending.",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "additionalProperties": false,
                   "required": [
                     "statusCode",
                     "code"
@@ -11701,37 +11556,13 @@
                     "code": {
                       "type": "string",
                       "enum": [
-                        "NOT_REQUESTER",
                         "MATCH_REQUEST_NOT_PENDING"
-                      ],
-                      "description": "- NOT_REQUESTER: Người gọi không phải người gửi yêu cầu.\n- MATCH_REQUEST_NOT_PENDING: Yêu cầu tìm bạn ở không còn chờ xử lý."
-                    }
-                  }
-                },
-                "examples": {
-                  "not_requester": {
-                    "summary": "NOT_REQUESTER — Người gọi không phải người gửi yêu cầu.",
-                    "value": {
-                      "statusCode": 409,
-                      "code": "NOT_REQUESTER"
-                    }
-                  },
-                  "match_request_not_pending": {
-                    "summary": "MATCH_REQUEST_NOT_PENDING — Yêu cầu tìm bạn ở không còn chờ xử lý.",
-                    "value": {
-                      "statusCode": 409,
-                      "code": "MATCH_REQUEST_NOT_PENDING"
+                      ]
                     }
                   }
                 }
               }
             }
-          },
-          "429": {
-            "$ref": "#/components/responses/TooManyRequestsError"
-          },
-          "500": {
-            "$ref": "#/components/responses/InternalServerError"
           },
           "503": {
             "$ref": "#/components/responses/AuthUnavailableError"
@@ -32733,13 +32564,13 @@
         "type": "object",
         "x-apidog-folder": "MatchRequest/Request",
         "title": "MatchRequestCreateRequestDto",
-        "description": "Dữ liệu gửi yêu cầu kết nối tìm bạn ở ghép",
+        "description": "Direct invitation to an active tenant with a discoverable roommate profile.",
         "additionalProperties": false,
         "properties": {
           "targetId": {
             "type": "string",
             "format": "uuid",
-            "description": "ID tenant nhận yêu cầu",
+            "description": "Identity user ID of the recipient tenant.",
             "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
           }
         },
@@ -32747,111 +32578,31 @@
           "targetId"
         ]
       },
-      "MatchRequestListResponseDto": {
+      "MatchRequestResponseDto": {
         "type": "object",
-        "x-apidog-folder": "MatchRequest/Response",
-        "title": "MatchRequestListResponseDto",
-        "description": "Danh sách yêu cầu kết nối tìm bạn ở ghép giữa 2 khách thuê",
+        "title": "MatchRequestResponseDto",
+        "additionalProperties": false,
+        "description": "A request visible only to its requester and recipient.",
+        "required": [
+          "id",
+          "requesterId",
+          "targetId",
+          "status",
+          "createdAt",
+          "respondedAt"
+        ],
         "properties": {
           "id": {
             "type": "string",
-            "format": "uuid",
-            "description": "Định danh duy nhất của yêu cầu kết nối."
+            "format": "uuid"
           },
           "requesterId": {
             "type": "string",
-            "format": "uuid",
-            "description": "Định danh người gửi yêu cầu ghép."
-          },
-          "requester": {
-            "type": "object",
-            "description": "Thông tin tóm tắt người gửi yêu cầu",
-            "properties": {
-              "id": {
-                "type": "string",
-                "format": "uuid"
-              },
-              "name": {
-                "type": "string",
-                "example": "Nguyễn Văn A"
-              },
-              "avatarUrl": {
-                "type": "string",
-                "format": "uri",
-                "nullable": true
-              },
-              "phone": {
-                "type": "string",
-                "nullable": true
-              },
-              "gender": {
-                "type": "string",
-                "enum": [
-                  "male",
-                  "female",
-                  "other"
-                ]
-              }
-            },
-            "required": [
-              "id",
-              "name",
-              "gender"
-            ]
+            "format": "uuid"
           },
           "targetId": {
             "type": "string",
-            "format": "uuid",
-            "description": "Định danh người nhận yêu cầu ghép."
-          },
-          "target": {
-            "type": "object",
-            "description": "Thông tin tóm tắt người nhận yêu cầu",
-            "properties": {
-              "id": {
-                "type": "string",
-                "format": "uuid"
-              },
-              "name": {
-                "type": "string",
-                "example": "Trần Thị B"
-              },
-              "avatarUrl": {
-                "type": "string",
-                "format": "uri",
-                "nullable": true
-              },
-              "phone": {
-                "type": "string",
-                "nullable": true
-              },
-              "gender": {
-                "type": "string",
-                "enum": [
-                  "male",
-                  "female",
-                  "other"
-                ]
-              }
-            },
-            "required": [
-              "id",
-              "name",
-              "gender"
-            ]
-          },
-          "matchScore": {
-            "type": "integer",
-            "minimum": 0,
-            "maximum": 100,
-            "nullable": true,
-            "description": "Điểm tương thích AI giữa hai bên (0 - 100%)."
-          },
-          "message": {
-            "type": "string",
-            "nullable": true,
-            "maxLength": 500,
-            "description": "Lời nhắn gửi kèm khi mời ghép phòng."
+            "format": "uuid"
           },
           "status": {
             "type": "string",
@@ -32860,143 +32611,18 @@
               "accepted",
               "rejected",
               "withdrawn"
-            ],
-            "description": "Trạng thái yêu cầu ghép phòng."
+            ]
           },
           "createdAt": {
             "type": "string",
-            "format": "date-time",
-            "description": "Thời điểm gửi yêu cầu."
-          }
-        },
-        "required": [
-          "id",
-          "requesterId",
-          "requester",
-          "targetId",
-          "target",
-          "status",
-          "createdAt"
-        ]
-      },
-      "MatchRequestCreateResponseDto": {
-        "type": "object",
-        "x-apidog-folder": "MatchRequest/Response",
-        "title": "MatchRequestCreateResponseDto",
-        "description": "Phản hồi khi tạo yêu cầu kết nối",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid",
-            "description": "Định danh duy nhất của tài nguyên."
-          },
-          "status": {
-            "type": "string",
-            "enum": [
-              "pending"
-            ],
-            "example": "pending",
-            "description": "Trạng thái hiện tại của tài nguyên trong quy trình nghiệp vụ."
+            "format": "date-time"
           },
           "respondedAt": {
             "type": "string",
             "format": "date-time",
-            "nullable": true,
-            "description": "Thông tin responded at của tài nguyên trong ngữ cảnh DTO."
+            "nullable": true
           }
-        },
-        "required": [
-          "id",
-          "status",
-          "respondedAt"
-        ]
-      },
-      "MatchRequestAcceptResponseDto": {
-        "type": "object",
-        "x-apidog-folder": "MatchRequest/Response",
-        "title": "MatchRequestAcceptResponseDto",
-        "description": "Phản hồi khi chấp nhận yêu cầu kết nối",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid",
-            "description": "Định danh duy nhất của tài nguyên."
-          },
-          "status": {
-            "type": "string",
-            "enum": [
-              "accepted"
-            ],
-            "example": "accepted",
-            "description": "Trạng thái hiện tại của tài nguyên trong quy trình nghiệp vụ."
-          },
-          "conversationId": {
-            "type": "string",
-            "format": "uuid",
-            "description": "Thông tin conversation id của tài nguyên trong ngữ cảnh DTO."
-          }
-        },
-        "required": [
-          "id",
-          "status",
-          "conversationId"
-        ]
-      },
-      "MatchRequestRejectResponseDto": {
-        "type": "object",
-        "x-apidog-folder": "MatchRequest/Response",
-        "title": "MatchRequestRejectResponseDto",
-        "description": "Phản hồi khi từ chối yêu cầu kết nối",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid",
-            "description": "Định danh duy nhất của tài nguyên."
-          },
-          "status": {
-            "type": "string",
-            "enum": [
-              "rejected"
-            ],
-            "example": "rejected",
-            "description": "Trạng thái hiện tại của tài nguyên trong quy trình nghiệp vụ."
-          }
-        },
-        "required": [
-          "id",
-          "status"
-        ]
-      },
-      "MatchRequestWithdrawResponseDto": {
-        "type": "object",
-        "x-apidog-folder": "MatchRequest/Response",
-        "title": "MatchRequestWithdrawResponseDto",
-        "description": "Phản hồi khi rút yêu cầu kết nối",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid",
-            "description": "Định danh duy nhất của tài nguyên."
-          },
-          "status": {
-            "type": "string",
-            "enum": [
-              "withdrawn"
-            ],
-            "example": "withdrawn",
-            "description": "Trạng thái hiện tại của tài nguyên trong quy trình nghiệp vụ."
-          },
-          "respondedAt": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Thông tin responded at của tài nguyên trong ngữ cảnh DTO."
-          }
-        },
-        "required": [
-          "id",
-          "status",
-          "respondedAt"
-        ]
+        }
       },
       "RatePolicyCreateRequestDto": {
         "type": "object",
@@ -35807,25 +35433,27 @@
         "type": "object",
         "x-apidog-folder": "MatchRequest",
         "title": "MatchRequest",
-        "description": "Yêu cầu kết nối tìm bạn ở ghép giữa 2 tenant",
+        "description": "Direct invitation between two active tenant accounts.",
         "allOf": [
           {
             "$ref": "#/components/schemas/BaseEntity"
           },
           {
             "type": "object",
+            "required": [
+              "requesterId",
+              "targetId",
+              "status",
+              "respondedAt"
+            ],
             "properties": {
               "requesterId": {
                 "type": "string",
-                "format": "uuid",
-                "description": "ID tenant gửi lời mời kết nối",
-                "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                "format": "uuid"
               },
               "targetId": {
                 "type": "string",
-                "format": "uuid",
-                "description": "ID tenant nhận lời mời kết nối",
-                "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                "format": "uuid"
               },
               "status": {
                 "type": "string",
@@ -35834,38 +35462,14 @@
                   "accepted",
                   "rejected",
                   "withdrawn"
-                ],
-                "default": "pending",
-                "description": "Trạng thái yêu cầu ghép phòng (withdrawn do chính người gửi rút lại - D50)",
-                "example": "pending"
+                ]
               },
               "respondedAt": {
                 "type": "string",
                 "format": "date-time",
-                "nullable": true,
-                "description": "Thời điểm người nhận phản hồi (chấp nhận/từ chối)",
-                "example": null
-              },
-              "aiScore": {
-                "type": "number",
-                "minimum": 0,
-                "maximum": 100,
-                "nullable": true,
-                "description": "Điểm số độ tương thích tính bởi AI (D28)",
-                "example": 87.5
-              },
-              "aiAdvice": {
-                "type": "string",
-                "nullable": true,
-                "description": "Lời khuyên phân tích tương thích của AI (D28)",
-                "example": "Hai người cùng giờ ngủ, ít rủi ro xung đột"
+                "nullable": true
               }
-            },
-            "required": [
-              "requesterId",
-              "targetId",
-              "status"
-            ]
+            }
           }
         ]
       },

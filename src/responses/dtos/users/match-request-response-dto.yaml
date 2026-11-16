@@ -1,0 +1,12 @@
+type: object
+title: MatchRequestResponseDto
+additionalProperties: false
+description: A request visible only to its requester and recipient.
+required: [id, requesterId, targetId, status, createdAt, respondedAt]
+properties:
+  id: { type: string, format: uuid }
+  requesterId: { type: string, format: uuid }
+  targetId: { type: string, format: uuid }
+  status: { type: string, enum: [pending, accepted, rejected, withdrawn] }
+  createdAt: { type: string, format: date-time }
+  respondedAt: { type: string, format: date-time, nullable: true }
