@@ -69591,6 +69591,2428 @@
           }
         }
       }
+    },
+    {
+      "id": "0d13d560845f81d3d1e1a2882a3a3ac002d7e49af54c3556ae46f4c9241adffd",
+      "label": "Thay đổi contract từ Git",
+      "classification": "BREAKING",
+      "contractId": "rentify-public",
+      "repository": "https://github.com/pbl6-home-renter/api-doc",
+      "baseHash": "73f22b00f88298d7f90b1b196444307bae4d1148c918e448760f6cd0a9cc75ed",
+      "headHash": "e83a2945110aaef69c77ad6f282195a87ce84bab39ebebf357699adb86f0bd78",
+      "baseSource": "src/openapi.yaml",
+      "headSource": "src/openapi.yaml",
+      "detectedAt": "2026-11-16T11:02:38.194Z",
+      "committedAt": "2026-11-16T18:02:25+07:00",
+      "baseCommit": "3b26a0165982809d66858bc19434249c6ef882d6",
+      "headCommit": "a8d455fccf38b01f7a26ad68d6d9af5fdfa7cb3f",
+      "prUrl": "https://github.com/pbl6-home-renter/api-doc/pull/73",
+      "commitUrl": "https://github.com/pbl6-home-renter/api-doc/commit/a8d455fccf38b01f7a26ad68d6d9af5fdfa7cb3f",
+      "metadataKind": "Git revision thực tế",
+      "reason": "CHƯA CUNG CẤP — tác giả PR phải bổ sung lý do nghiệp vụ; không thể suy ra từ OpenAPI diff.",
+      "tools": {
+        "redocly": "2.64.1",
+        "oasdiff": "1.34.1"
+      },
+      "changes": [
+        {
+          "id": "response-required-property-removed",
+          "text": "removed the required property `data/items/requester` from the response with the `200` status",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getMatchRequests",
+          "path": "/match-requests",
+          "section": "paths",
+          "fingerprint": "491d91c0b0d6",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "response-required-property-removed",
+          "text": "removed the required property `data/items/target` from the response with the `200` status",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getMatchRequests",
+          "path": "/match-requests",
+          "section": "paths",
+          "fingerprint": "ddc86a16b557",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "new-required-request-parameter",
+          "text": "added the new required `header` request parameter `idempotency-key`",
+          "level": 3,
+          "operation": "POST",
+          "operationId": "postMatchRequests",
+          "path": "/match-requests",
+          "section": "paths",
+          "fingerprint": "5ea5eb68b9cd",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu vị trí và thay đổi trước/sau trong entry này với API adapter, DTO, parser và validation; cùng BE xác nhận phương án tương thích trước merge/phát hành."
+        },
+        {
+          "id": "response-property-enum-value-added",
+          "text": "added the new `IDEMPOTENCY_KEY_REUSED` enum value to the `code` response property for the response status `409`",
+          "comment": "The server may now return a value the previous contract excluded, so a client written against it may not handle the response. If the value set is meant to grow, declare it with x-extensible-enum.",
+          "level": 3,
+          "operation": "POST",
+          "operationId": "postMatchRequests",
+          "path": "/match-requests",
+          "section": "paths",
+          "fingerprint": "0412017edadc",
+          "classification": "BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới IDEMPOTENCY_KEY_REUSED; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-property-enum-value-added",
+          "text": "added the new `UNEXPECTED_FIELD` enum value to the `code` response property for the response status `422`",
+          "comment": "The server may now return a value the previous contract excluded, so a client written against it may not handle the response. If the value set is meant to grow, declare it with x-extensible-enum.",
+          "level": 3,
+          "operation": "POST",
+          "operationId": "postMatchRequests",
+          "path": "/match-requests",
+          "section": "paths",
+          "fingerprint": "c96bc68b46cf",
+          "classification": "BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới UNEXPECTED_FIELD; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-property-enum-value-added",
+          "text": "added the new `accepted` enum value to the `data/status` response property for the response status `201`",
+          "comment": "The server may now return a value the previous contract excluded, so a client written against it may not handle the response. If the value set is meant to grow, declare it with x-extensible-enum.",
+          "level": 3,
+          "operation": "POST",
+          "operationId": "postMatchRequests",
+          "path": "/match-requests",
+          "section": "paths",
+          "fingerprint": "7d2ba3aad00c",
+          "classification": "BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới accepted; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-property-enum-value-added",
+          "text": "added the new `rejected` enum value to the `data/status` response property for the response status `201`",
+          "comment": "The server may now return a value the previous contract excluded, so a client written against it may not handle the response. If the value set is meant to grow, declare it with x-extensible-enum.",
+          "level": 3,
+          "operation": "POST",
+          "operationId": "postMatchRequests",
+          "path": "/match-requests",
+          "section": "paths",
+          "fingerprint": "aa2f1597fb45",
+          "classification": "BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới rejected; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-property-enum-value-added",
+          "text": "added the new `withdrawn` enum value to the `data/status` response property for the response status `201`",
+          "comment": "The server may now return a value the previous contract excluded, so a client written against it may not handle the response. If the value set is meant to grow, declare it with x-extensible-enum.",
+          "level": 3,
+          "operation": "POST",
+          "operationId": "postMatchRequests",
+          "path": "/match-requests",
+          "section": "paths",
+          "fingerprint": "1fbd0215101f",
+          "classification": "BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới withdrawn; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-property-enum-value-added",
+          "text": "added the new `pending` enum value to the `data/status` response property for the response status `200`",
+          "comment": "The server may now return a value the previous contract excluded, so a client written against it may not handle the response. If the value set is meant to grow, declare it with x-extensible-enum.",
+          "level": 3,
+          "operation": "POST",
+          "operationId": "postMatchRequestsMatchrequestidAcceptRequest",
+          "path": "/match-requests/{matchRequestId}/accept-request",
+          "section": "paths",
+          "fingerprint": "a090f34ec906",
+          "classification": "BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới pending; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-property-enum-value-added",
+          "text": "added the new `rejected` enum value to the `data/status` response property for the response status `200`",
+          "comment": "The server may now return a value the previous contract excluded, so a client written against it may not handle the response. If the value set is meant to grow, declare it with x-extensible-enum.",
+          "level": 3,
+          "operation": "POST",
+          "operationId": "postMatchRequestsMatchrequestidAcceptRequest",
+          "path": "/match-requests/{matchRequestId}/accept-request",
+          "section": "paths",
+          "fingerprint": "dd5dce062ad0",
+          "classification": "BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới rejected; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-property-enum-value-added",
+          "text": "added the new `withdrawn` enum value to the `data/status` response property for the response status `200`",
+          "comment": "The server may now return a value the previous contract excluded, so a client written against it may not handle the response. If the value set is meant to grow, declare it with x-extensible-enum.",
+          "level": 3,
+          "operation": "POST",
+          "operationId": "postMatchRequestsMatchrequestidAcceptRequest",
+          "path": "/match-requests/{matchRequestId}/accept-request",
+          "section": "paths",
+          "fingerprint": "8343c29fdd4a",
+          "classification": "BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới withdrawn; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-required-property-removed",
+          "text": "removed the required property `data/conversationId` from the response with the `200` status",
+          "level": 3,
+          "operation": "POST",
+          "operationId": "postMatchRequestsMatchrequestidAcceptRequest",
+          "path": "/match-requests/{matchRequestId}/accept-request",
+          "section": "paths",
+          "fingerprint": "beaa317bf10b",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "response-property-enum-value-added",
+          "text": "added the new `accepted` enum value to the `data/status` response property for the response status `200`",
+          "comment": "The server may now return a value the previous contract excluded, so a client written against it may not handle the response. If the value set is meant to grow, declare it with x-extensible-enum.",
+          "level": 3,
+          "operation": "POST",
+          "operationId": "postMatchRequestsMatchrequestidRejectRequest",
+          "path": "/match-requests/{matchRequestId}/reject-request",
+          "section": "paths",
+          "fingerprint": "c79592ff9628",
+          "classification": "BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới accepted; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-property-enum-value-added",
+          "text": "added the new `pending` enum value to the `data/status` response property for the response status `200`",
+          "comment": "The server may now return a value the previous contract excluded, so a client written against it may not handle the response. If the value set is meant to grow, declare it with x-extensible-enum.",
+          "level": 3,
+          "operation": "POST",
+          "operationId": "postMatchRequestsMatchrequestidRejectRequest",
+          "path": "/match-requests/{matchRequestId}/reject-request",
+          "section": "paths",
+          "fingerprint": "4a75a82b8eca",
+          "classification": "BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới pending; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-property-enum-value-added",
+          "text": "added the new `withdrawn` enum value to the `data/status` response property for the response status `200`",
+          "comment": "The server may now return a value the previous contract excluded, so a client written against it may not handle the response. If the value set is meant to grow, declare it with x-extensible-enum.",
+          "level": 3,
+          "operation": "POST",
+          "operationId": "postMatchRequestsMatchrequestidRejectRequest",
+          "path": "/match-requests/{matchRequestId}/reject-request",
+          "section": "paths",
+          "fingerprint": "2eb04768a9f8",
+          "classification": "BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới withdrawn; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-property-became-nullable",
+          "text": "the response property `data/respondedAt` became nullable for the status `200`",
+          "level": 3,
+          "operation": "POST",
+          "operationId": "postMatchRequestsMatchrequestidWithdrawRequest",
+          "path": "/match-requests/{matchRequestId}/withdraw-request",
+          "section": "paths",
+          "fingerprint": "828a4f551665",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu vị trí và thay đổi trước/sau trong entry này với API adapter, DTO, parser và validation; cùng BE xác nhận phương án tương thích trước merge/phát hành."
+        },
+        {
+          "id": "response-property-enum-value-added",
+          "text": "added the new `accepted` enum value to the `data/status` response property for the response status `200`",
+          "comment": "The server may now return a value the previous contract excluded, so a client written against it may not handle the response. If the value set is meant to grow, declare it with x-extensible-enum.",
+          "level": 3,
+          "operation": "POST",
+          "operationId": "postMatchRequestsMatchrequestidWithdrawRequest",
+          "path": "/match-requests/{matchRequestId}/withdraw-request",
+          "section": "paths",
+          "fingerprint": "f277429648e6",
+          "classification": "BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới accepted; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-property-enum-value-added",
+          "text": "added the new `pending` enum value to the `data/status` response property for the response status `200`",
+          "comment": "The server may now return a value the previous contract excluded, so a client written against it may not handle the response. If the value set is meant to grow, declare it with x-extensible-enum.",
+          "level": 3,
+          "operation": "POST",
+          "operationId": "postMatchRequestsMatchrequestidWithdrawRequest",
+          "path": "/match-requests/{matchRequestId}/withdraw-request",
+          "section": "paths",
+          "fingerprint": "71adcc115958",
+          "classification": "BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới pending; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-property-enum-value-added",
+          "text": "added the new `rejected` enum value to the `data/status` response property for the response status `200`",
+          "comment": "The server may now return a value the previous contract excluded, so a client written against it may not handle the response. If the value set is meant to grow, declare it with x-extensible-enum.",
+          "level": 3,
+          "operation": "POST",
+          "operationId": "postMatchRequestsMatchrequestidWithdrawRequest",
+          "path": "/match-requests/{matchRequestId}/withdraw-request",
+          "section": "paths",
+          "fingerprint": "0ed25a070ae8",
+          "classification": "BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới rejected; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "api-schema-removed",
+          "text": "removed the schema `MatchRequestAcceptResponseDto`",
+          "level": 1,
+          "section": "components",
+          "fingerprint": "8fe2a8ac25d5",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "api-schema-removed",
+          "text": "removed the schema `MatchRequestCreateResponseDto`",
+          "level": 1,
+          "section": "components",
+          "fingerprint": "b212f93f0ae8",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "api-schema-removed",
+          "text": "removed the schema `MatchRequestListResponseDto`",
+          "level": 1,
+          "section": "components",
+          "fingerprint": "f5602bcf6c34",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "api-schema-removed",
+          "text": "removed the schema `MatchRequestRejectResponseDto`",
+          "level": 1,
+          "section": "components",
+          "fingerprint": "528365361964",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "api-schema-removed",
+          "text": "removed the schema `MatchRequestWithdrawResponseDto`",
+          "level": 1,
+          "section": "components",
+          "fingerprint": "cb441b586d19",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "api-version-not-bumped",
+          "text": "a breaking change was detected but the version is still `1.0.0`",
+          "level": 1,
+          "section": "info",
+          "fingerprint": "d3f96cd643c1",
+          "classification": "NON_BREAKING",
+          "clientImpact": "BE: xem lại quy ước version trước khi chấp nhận breaking change. FE/Mobile: theo kế hoạch chuyển đổi của entry này; version trong OpenAPI chưa chứng minh backend đã triển khai."
+        },
+        {
+          "id": "request-parameter-property-enum-value-added",
+          "text": "added the enum value `accepted` to the property `status` of the `query` request parameter `filter`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getMatchRequests",
+          "path": "/match-requests",
+          "section": "paths",
+          "fingerprint": "1bd770e21268",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu enum trong DTO/validation và nhánh switch/when; xử lý giá trị chưa biết, kiểm thử dữ liệu cũ và mới; phối hợp BE trước khi phát hành."
+        },
+        {
+          "id": "request-parameter-property-enum-value-added",
+          "text": "added the enum value `pending` to the property `status` of the `query` request parameter `filter`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getMatchRequests",
+          "path": "/match-requests",
+          "section": "paths",
+          "fingerprint": "4ba62cae1f25",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu enum trong DTO/validation và nhánh switch/when; xử lý giá trị chưa biết, kiểm thử dữ liệu cũ và mới; phối hợp BE trước khi phát hành."
+        },
+        {
+          "id": "request-parameter-property-enum-value-added",
+          "text": "added the enum value `rejected` to the property `status` of the `query` request parameter `filter`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getMatchRequests",
+          "path": "/match-requests",
+          "section": "paths",
+          "fingerprint": "a52021d85162",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu enum trong DTO/validation và nhánh switch/when; xử lý giá trị chưa biết, kiểm thử dữ liệu cũ và mới; phối hợp BE trước khi phát hành."
+        },
+        {
+          "id": "request-parameter-property-enum-value-added",
+          "text": "added the enum value `withdrawn` to the property `status` of the `query` request parameter `filter`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getMatchRequests",
+          "path": "/match-requests",
+          "section": "paths",
+          "fingerprint": "a4a651df4a3c",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu enum trong DTO/validation và nhánh switch/when; xử lý giá trị chưa biết, kiểm thử dữ liệu cũ và mới; phối hợp BE trước khi phát hành."
+        },
+        {
+          "id": "response-non-success-status-removed",
+          "text": "removed the non-success response with the status `429`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getMatchRequests",
+          "path": "/match-requests",
+          "section": "paths",
+          "fingerprint": "a87d77ba3756",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "response-non-success-status-removed",
+          "text": "removed the non-success response with the status `500`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getMatchRequests",
+          "path": "/match-requests",
+          "section": "paths",
+          "fingerprint": "830b0713ad85",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "response-optional-property-removed",
+          "text": "removed the optional property `data/items/matchScore` from the response with the `200` status",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getMatchRequests",
+          "path": "/match-requests",
+          "section": "paths",
+          "fingerprint": "d10b745b2fb9",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "response-optional-property-removed",
+          "text": "removed the optional property `data/items/message` from the response with the `200` status",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getMatchRequests",
+          "path": "/match-requests",
+          "section": "paths",
+          "fingerprint": "a8f318ab6fc4",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "response-required-property-added",
+          "text": "added the required property `data/items/respondedAt` to the response with the `200` status",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getMatchRequests",
+          "path": "/match-requests",
+          "section": "paths",
+          "fingerprint": "25e0c8867da6",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/items/respondedAt; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "optional-response-header-removed",
+          "text": "the optional response header `location` removed for the status `201`",
+          "level": 1,
+          "operation": "POST",
+          "operationId": "postMatchRequests",
+          "path": "/match-requests",
+          "section": "paths",
+          "baseSource": {
+            "file": "/tmp/rentify-contract-xMZIsZ/base-0.json"
+          },
+          "fingerprint": "ce17ebd33b07",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "response-non-success-status-removed",
+          "text": "removed the non-success response with the status `429`",
+          "level": 1,
+          "operation": "POST",
+          "operationId": "postMatchRequests",
+          "path": "/match-requests",
+          "section": "paths",
+          "fingerprint": "33f2204a5ac6",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "response-non-success-status-removed",
+          "text": "removed the non-success response with the status `500`",
+          "level": 1,
+          "operation": "POST",
+          "operationId": "postMatchRequests",
+          "path": "/match-requests",
+          "section": "paths",
+          "fingerprint": "d3f9058231cf",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "response-required-property-added",
+          "text": "added the required property `data/createdAt` to the response with the `201` status",
+          "level": 1,
+          "operation": "POST",
+          "operationId": "postMatchRequests",
+          "path": "/match-requests",
+          "section": "paths",
+          "fingerprint": "1f08020be34c",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/createdAt; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-required-property-added",
+          "text": "added the required property `data/requesterId` to the response with the `201` status",
+          "level": 1,
+          "operation": "POST",
+          "operationId": "postMatchRequests",
+          "path": "/match-requests",
+          "section": "paths",
+          "fingerprint": "c4c2523da33f",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/requesterId; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-required-property-added",
+          "text": "added the required property `data/targetId` to the response with the `201` status",
+          "level": 1,
+          "operation": "POST",
+          "operationId": "postMatchRequests",
+          "path": "/match-requests",
+          "section": "paths",
+          "fingerprint": "0e3bf37b8c80",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/targetId; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-non-success-status-removed",
+          "text": "removed the non-success response with the status `429`",
+          "level": 1,
+          "operation": "POST",
+          "operationId": "postMatchRequestsMatchrequestidAcceptRequest",
+          "path": "/match-requests/{matchRequestId}/accept-request",
+          "section": "paths",
+          "fingerprint": "65f65cc91c09",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "response-non-success-status-removed",
+          "text": "removed the non-success response with the status `500`",
+          "level": 1,
+          "operation": "POST",
+          "operationId": "postMatchRequestsMatchrequestidAcceptRequest",
+          "path": "/match-requests/{matchRequestId}/accept-request",
+          "section": "paths",
+          "fingerprint": "9d48bdb65468",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "response-required-property-added",
+          "text": "added the required property `data/createdAt` to the response with the `200` status",
+          "level": 1,
+          "operation": "POST",
+          "operationId": "postMatchRequestsMatchrequestidAcceptRequest",
+          "path": "/match-requests/{matchRequestId}/accept-request",
+          "section": "paths",
+          "fingerprint": "2a41e41ebe4a",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/createdAt; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-required-property-added",
+          "text": "added the required property `data/requesterId` to the response with the `200` status",
+          "level": 1,
+          "operation": "POST",
+          "operationId": "postMatchRequestsMatchrequestidAcceptRequest",
+          "path": "/match-requests/{matchRequestId}/accept-request",
+          "section": "paths",
+          "fingerprint": "8075d0076e5f",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/requesterId; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-required-property-added",
+          "text": "added the required property `data/respondedAt` to the response with the `200` status",
+          "level": 1,
+          "operation": "POST",
+          "operationId": "postMatchRequestsMatchrequestidAcceptRequest",
+          "path": "/match-requests/{matchRequestId}/accept-request",
+          "section": "paths",
+          "fingerprint": "7c13cdb0c55b",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/respondedAt; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-required-property-added",
+          "text": "added the required property `data/targetId` to the response with the `200` status",
+          "level": 1,
+          "operation": "POST",
+          "operationId": "postMatchRequestsMatchrequestidAcceptRequest",
+          "path": "/match-requests/{matchRequestId}/accept-request",
+          "section": "paths",
+          "fingerprint": "3576a475eef1",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/targetId; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-non-success-status-removed",
+          "text": "removed the non-success response with the status `429`",
+          "level": 1,
+          "operation": "POST",
+          "operationId": "postMatchRequestsMatchrequestidRejectRequest",
+          "path": "/match-requests/{matchRequestId}/reject-request",
+          "section": "paths",
+          "fingerprint": "261c73c8fe54",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "response-non-success-status-removed",
+          "text": "removed the non-success response with the status `500`",
+          "level": 1,
+          "operation": "POST",
+          "operationId": "postMatchRequestsMatchrequestidRejectRequest",
+          "path": "/match-requests/{matchRequestId}/reject-request",
+          "section": "paths",
+          "fingerprint": "712736733ec4",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "response-required-property-added",
+          "text": "added the required property `data/createdAt` to the response with the `200` status",
+          "level": 1,
+          "operation": "POST",
+          "operationId": "postMatchRequestsMatchrequestidRejectRequest",
+          "path": "/match-requests/{matchRequestId}/reject-request",
+          "section": "paths",
+          "fingerprint": "6c78003f394c",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/createdAt; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-required-property-added",
+          "text": "added the required property `data/requesterId` to the response with the `200` status",
+          "level": 1,
+          "operation": "POST",
+          "operationId": "postMatchRequestsMatchrequestidRejectRequest",
+          "path": "/match-requests/{matchRequestId}/reject-request",
+          "section": "paths",
+          "fingerprint": "08e6f6c51398",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/requesterId; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-required-property-added",
+          "text": "added the required property `data/respondedAt` to the response with the `200` status",
+          "level": 1,
+          "operation": "POST",
+          "operationId": "postMatchRequestsMatchrequestidRejectRequest",
+          "path": "/match-requests/{matchRequestId}/reject-request",
+          "section": "paths",
+          "fingerprint": "c52cf3518f1b",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/respondedAt; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-required-property-added",
+          "text": "added the required property `data/targetId` to the response with the `200` status",
+          "level": 1,
+          "operation": "POST",
+          "operationId": "postMatchRequestsMatchrequestidRejectRequest",
+          "path": "/match-requests/{matchRequestId}/reject-request",
+          "section": "paths",
+          "fingerprint": "7596eba31265",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/targetId; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-non-success-status-removed",
+          "text": "removed the non-success response with the status `429`",
+          "level": 1,
+          "operation": "POST",
+          "operationId": "postMatchRequestsMatchrequestidWithdrawRequest",
+          "path": "/match-requests/{matchRequestId}/withdraw-request",
+          "section": "paths",
+          "fingerprint": "534c65f8d384",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "response-non-success-status-removed",
+          "text": "removed the non-success response with the status `500`",
+          "level": 1,
+          "operation": "POST",
+          "operationId": "postMatchRequestsMatchrequestidWithdrawRequest",
+          "path": "/match-requests/{matchRequestId}/withdraw-request",
+          "section": "paths",
+          "fingerprint": "c7088d94f131",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "response-property-enum-value-removed",
+          "text": "removed the `NOT_REQUESTER` enum value from the `code` response property for the response status `409`",
+          "level": 1,
+          "operation": "POST",
+          "operationId": "postMatchRequestsMatchrequestidWithdrawRequest",
+          "path": "/match-requests/{matchRequestId}/withdraw-request",
+          "section": "paths",
+          "fingerprint": "a568967807e3",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu enum trong DTO/validation và nhánh switch/when; xử lý giá trị chưa biết, kiểm thử dữ liệu cũ và mới; phối hợp BE trước khi phát hành."
+        },
+        {
+          "id": "response-required-property-added",
+          "text": "added the required property `data/createdAt` to the response with the `200` status",
+          "level": 1,
+          "operation": "POST",
+          "operationId": "postMatchRequestsMatchrequestidWithdrawRequest",
+          "path": "/match-requests/{matchRequestId}/withdraw-request",
+          "section": "paths",
+          "fingerprint": "70e1d0e23fbc",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/createdAt; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-required-property-added",
+          "text": "added the required property `data/requesterId` to the response with the `200` status",
+          "level": 1,
+          "operation": "POST",
+          "operationId": "postMatchRequestsMatchrequestidWithdrawRequest",
+          "path": "/match-requests/{matchRequestId}/withdraw-request",
+          "section": "paths",
+          "fingerprint": "74dd16456146",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/requesterId; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-required-property-added",
+          "text": "added the required property `data/targetId` to the response with the `200` status",
+          "level": 1,
+          "operation": "POST",
+          "operationId": "postMatchRequestsMatchrequestidWithdrawRequest",
+          "path": "/match-requests/{matchRequestId}/withdraw-request",
+          "section": "paths",
+          "fingerprint": "f3478ee144ec",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/targetId; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        }
+      ],
+      "locations": [
+        {
+          "pointer": "/components/schemas/MatchRequest/allOf",
+          "before": [
+            {
+              "$ref": "#/components/schemas/BaseEntity"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "requesterId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "description": "ID tenant gửi lời mời kết nối",
+                  "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                },
+                "targetId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "description": "ID tenant nhận lời mời kết nối",
+                  "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                },
+                "status": {
+                  "type": "string",
+                  "enum": [
+                    "pending",
+                    "accepted",
+                    "rejected",
+                    "withdrawn"
+                  ],
+                  "default": "pending",
+                  "description": "Trạng thái yêu cầu ghép phòng (withdrawn do chính người gửi rút lại - D50)",
+                  "example": "pending"
+                },
+                "respondedAt": {
+                  "type": "string",
+                  "format": "date-time",
+                  "nullable": true,
+                  "description": "Thời điểm người nhận phản hồi (chấp nhận/từ chối)",
+                  "example": null
+                },
+                "aiScore": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 100,
+                  "nullable": true,
+                  "description": "Điểm số độ tương thích tính bởi AI (D28)",
+                  "example": 87.5
+                },
+                "aiAdvice": {
+                  "type": "string",
+                  "nullable": true,
+                  "description": "Lời khuyên phân tích tương thích của AI (D28)",
+                  "example": "Hai người cùng giờ ngủ, ít rủi ro xung đột"
+                }
+              },
+              "required": [
+                "requesterId",
+                "targetId",
+                "status"
+              ]
+            }
+          ],
+          "after": [
+            {
+              "$ref": "#/components/schemas/BaseEntity"
+            },
+            {
+              "type": "object",
+              "required": [
+                "requesterId",
+                "targetId",
+                "status",
+                "respondedAt"
+              ],
+              "properties": {
+                "requesterId": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "targetId": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "status": {
+                  "type": "string",
+                  "enum": [
+                    "pending",
+                    "accepted",
+                    "rejected",
+                    "withdrawn"
+                  ]
+                },
+                "respondedAt": {
+                  "type": "string",
+                  "format": "date-time",
+                  "nullable": true
+                }
+              }
+            }
+          ]
+        },
+        {
+          "pointer": "/components/schemas/MatchRequest/description",
+          "before": "Yêu cầu kết nối tìm bạn ở ghép giữa 2 tenant",
+          "after": "Direct invitation between two active tenant accounts."
+        },
+        {
+          "pointer": "/components/schemas/MatchRequestAcceptResponseDto",
+          "before": {
+            "type": "object",
+            "x-apidog-folder": "MatchRequest/Response",
+            "title": "MatchRequestAcceptResponseDto",
+            "description": "Phản hồi khi chấp nhận yêu cầu kết nối",
+            "properties": {
+              "id": {
+                "type": "string",
+                "format": "uuid",
+                "description": "Định danh duy nhất của tài nguyên."
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "accepted"
+                ],
+                "example": "accepted",
+                "description": "Trạng thái hiện tại của tài nguyên trong quy trình nghiệp vụ."
+              },
+              "conversationId": {
+                "type": "string",
+                "format": "uuid",
+                "description": "Thông tin conversation id của tài nguyên trong ngữ cảnh DTO."
+              }
+            },
+            "required": [
+              "id",
+              "status",
+              "conversationId"
+            ]
+          },
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/MatchRequestCreateRequestDto/description",
+          "before": "Dữ liệu gửi yêu cầu kết nối tìm bạn ở ghép",
+          "after": "Direct invitation to an active tenant with a discoverable roommate profile."
+        },
+        {
+          "pointer": "/components/schemas/MatchRequestCreateRequestDto/properties/targetId/description",
+          "before": "ID tenant nhận yêu cầu",
+          "after": "Identity user ID of the recipient tenant."
+        },
+        {
+          "pointer": "/components/schemas/MatchRequestCreateResponseDto",
+          "before": {
+            "type": "object",
+            "x-apidog-folder": "MatchRequest/Response",
+            "title": "MatchRequestCreateResponseDto",
+            "description": "Phản hồi khi tạo yêu cầu kết nối",
+            "properties": {
+              "id": {
+                "type": "string",
+                "format": "uuid",
+                "description": "Định danh duy nhất của tài nguyên."
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "pending"
+                ],
+                "example": "pending",
+                "description": "Trạng thái hiện tại của tài nguyên trong quy trình nghiệp vụ."
+              },
+              "respondedAt": {
+                "type": "string",
+                "format": "date-time",
+                "nullable": true,
+                "description": "Thông tin responded at của tài nguyên trong ngữ cảnh DTO."
+              }
+            },
+            "required": [
+              "id",
+              "status",
+              "respondedAt"
+            ]
+          },
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/MatchRequestListResponseDto",
+          "before": {
+            "type": "object",
+            "x-apidog-folder": "MatchRequest/Response",
+            "title": "MatchRequestListResponseDto",
+            "description": "Danh sách yêu cầu kết nối tìm bạn ở ghép giữa 2 khách thuê",
+            "properties": {
+              "id": {
+                "type": "string",
+                "format": "uuid",
+                "description": "Định danh duy nhất của yêu cầu kết nối."
+              },
+              "requesterId": {
+                "type": "string",
+                "format": "uuid",
+                "description": "Định danh người gửi yêu cầu ghép."
+              },
+              "requester": {
+                "type": "object",
+                "description": "Thông tin tóm tắt người gửi yêu cầu",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "name": {
+                    "type": "string",
+                    "example": "Nguyễn Văn A"
+                  },
+                  "avatarUrl": {
+                    "type": "string",
+                    "format": "uri",
+                    "nullable": true
+                  },
+                  "phone": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "gender": {
+                    "type": "string",
+                    "enum": [
+                      "male",
+                      "female",
+                      "other"
+                    ]
+                  }
+                },
+                "required": [
+                  "id",
+                  "name",
+                  "gender"
+                ]
+              },
+              "targetId": {
+                "type": "string",
+                "format": "uuid",
+                "description": "Định danh người nhận yêu cầu ghép."
+              },
+              "target": {
+                "type": "object",
+                "description": "Thông tin tóm tắt người nhận yêu cầu",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "name": {
+                    "type": "string",
+                    "example": "Trần Thị B"
+                  },
+                  "avatarUrl": {
+                    "type": "string",
+                    "format": "uri",
+                    "nullable": true
+                  },
+                  "phone": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "gender": {
+                    "type": "string",
+                    "enum": [
+                      "male",
+                      "female",
+                      "other"
+                    ]
+                  }
+                },
+                "required": [
+                  "id",
+                  "name",
+                  "gender"
+                ]
+              },
+              "matchScore": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 100,
+                "nullable": true,
+                "description": "Điểm tương thích AI giữa hai bên (0 - 100%)."
+              },
+              "message": {
+                "type": "string",
+                "nullable": true,
+                "maxLength": 500,
+                "description": "Lời nhắn gửi kèm khi mời ghép phòng."
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "pending",
+                  "accepted",
+                  "rejected",
+                  "withdrawn"
+                ],
+                "description": "Trạng thái yêu cầu ghép phòng."
+              },
+              "createdAt": {
+                "type": "string",
+                "format": "date-time",
+                "description": "Thời điểm gửi yêu cầu."
+              }
+            },
+            "required": [
+              "id",
+              "requesterId",
+              "requester",
+              "targetId",
+              "target",
+              "status",
+              "createdAt"
+            ]
+          },
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/MatchRequestRejectResponseDto",
+          "before": {
+            "type": "object",
+            "x-apidog-folder": "MatchRequest/Response",
+            "title": "MatchRequestRejectResponseDto",
+            "description": "Phản hồi khi từ chối yêu cầu kết nối",
+            "properties": {
+              "id": {
+                "type": "string",
+                "format": "uuid",
+                "description": "Định danh duy nhất của tài nguyên."
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "rejected"
+                ],
+                "example": "rejected",
+                "description": "Trạng thái hiện tại của tài nguyên trong quy trình nghiệp vụ."
+              }
+            },
+            "required": [
+              "id",
+              "status"
+            ]
+          },
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/MatchRequestResponseDto",
+          "before": null,
+          "after": {
+            "type": "object",
+            "title": "MatchRequestResponseDto",
+            "additionalProperties": false,
+            "description": "A request visible only to its requester and recipient.",
+            "required": [
+              "id",
+              "requesterId",
+              "targetId",
+              "status",
+              "createdAt",
+              "respondedAt"
+            ],
+            "properties": {
+              "id": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "requesterId": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "targetId": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "pending",
+                  "accepted",
+                  "rejected",
+                  "withdrawn"
+                ]
+              },
+              "createdAt": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "respondedAt": {
+                "type": "string",
+                "format": "date-time",
+                "nullable": true
+              }
+            }
+          }
+        },
+        {
+          "pointer": "/components/schemas/MatchRequestWithdrawResponseDto",
+          "before": {
+            "type": "object",
+            "x-apidog-folder": "MatchRequest/Response",
+            "title": "MatchRequestWithdrawResponseDto",
+            "description": "Phản hồi khi rút yêu cầu kết nối",
+            "properties": {
+              "id": {
+                "type": "string",
+                "format": "uuid",
+                "description": "Định danh duy nhất của tài nguyên."
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "withdrawn"
+                ],
+                "example": "withdrawn",
+                "description": "Trạng thái hiện tại của tài nguyên trong quy trình nghiệp vụ."
+              },
+              "respondedAt": {
+                "type": "string",
+                "format": "date-time",
+                "description": "Thông tin responded at của tài nguyên trong ngữ cảnh DTO."
+              }
+            },
+            "required": [
+              "id",
+              "status",
+              "respondedAt"
+            ]
+          },
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1match-requests/get/description",
+          "before": "tenant. Liệt kê yêu cầu đến hoặc đi. Lỗi nghiệp vụ: 422 VALIDATION FAILED.",
+          "after": "Active tenant only. Returns requests involving the caller, newest first with ID as a tie breaker. No phone, AI data or conversation is disclosed.\n\n```mermaid\nsequenceDiagram\n  participant T as Tenant\n  participant TEN as Tenancy\n  participant ID as Identity\n  participant DB as Tenancy DB\n  T->>TEN: GET /match-requests\n  TEN->>ID: GET /internal/users?ids=actor\n  ID-->>TEN: Active tenant summary\n  TEN->>DB: Page by requester/target and optional filters\n  DB-->>TEN: Caller-owned requests and total\n  TEN-->>T: 200 MATCH_REQUESTS_FETCHED\n```\n"
+        },
+        {
+          "pointer": "/paths/~1match-requests/get/parameters",
+          "before": [
+            {
+              "name": "filter",
+              "in": "query",
+              "required": false,
+              "style": "deepObject",
+              "explode": true,
+              "description": "Bộ lọc được endpoint hỗ trợ.",
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "direction": {
+                    "type": "string",
+                    "enum": [
+                      "incoming",
+                      "outgoing"
+                    ]
+                  },
+                  "status": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            {
+              "name": "pageSize",
+              "in": "query",
+              "schema": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 100,
+                "default": 20
+              }
+            },
+            {
+              "name": "pageNo",
+              "in": "query",
+              "schema": {
+                "type": "integer",
+                "minimum": 1,
+                "default": 1
+              }
+            }
+          ],
+          "after": [
+            {
+              "name": "filter",
+              "in": "query",
+              "style": "deepObject",
+              "explode": true,
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "direction": {
+                    "type": "string",
+                    "enum": [
+                      "incoming",
+                      "outgoing"
+                    ]
+                  },
+                  "status": {
+                    "type": "string",
+                    "enum": [
+                      "pending",
+                      "accepted",
+                      "rejected",
+                      "withdrawn"
+                    ]
+                  }
+                }
+              }
+            },
+            {
+              "name": "pageNo",
+              "in": "query",
+              "schema": {
+                "type": "integer",
+                "minimum": 1,
+                "default": 1
+              }
+            },
+            {
+              "name": "pageSize",
+              "in": "query",
+              "schema": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 100,
+                "default": 20
+              }
+            }
+          ]
+        },
+        {
+          "pointer": "/paths/~1match-requests/get/responses/200/content/application~1json/example",
+          "before": {
+            "statusCode": 200,
+            "code": "MATCH_REQUESTS_FETCHED",
+            "data": [
+              {
+                "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                "requesterId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                "targetId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                "status": "pending",
+                "createdAt": "2026-09-23T10:00:00.000Z",
+                "requester": {
+                  "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                  "name": "Nguyễn Văn A",
+                  "gender": "male"
+                },
+                "target": {
+                  "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                  "name": "Trần Thị B",
+                  "gender": "male"
+                }
+              }
+            ],
+            "pagination": {
+              "type": "offset",
+              "pageNo": 1,
+              "pageSize": 20,
+              "totalItems": 1,
+              "totalPages": 1,
+              "hasNextPage": false,
+              "hasPreviousPage": false
+            }
+          },
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1match-requests/get/responses/200/content/application~1json/schema/properties/data/items/$ref",
+          "before": "#/components/schemas/MatchRequestListResponseDto",
+          "after": "#/components/schemas/MatchRequestResponseDto"
+        },
+        {
+          "pointer": "/paths/~1match-requests/get/responses/200/description",
+          "before": "Thành công: Liệt kê yêu cầu đến hoặc đi.",
+          "after": "Caller-owned match requests."
+        },
+        {
+          "pointer": "/paths/~1match-requests/get/responses/429",
+          "before": {
+            "$ref": "#/components/responses/TooManyRequestsError"
+          },
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1match-requests/get/responses/500",
+          "before": {
+            "$ref": "#/components/responses/InternalServerError"
+          },
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1match-requests/get/summary",
+          "before": "List match requests",
+          "after": "List my match requests"
+        },
+        {
+          "pointer": "/paths/~1match-requests/get/x-apidog-status",
+          "before": "designing",
+          "after": "developing"
+        },
+        {
+          "pointer": "/paths/~1match-requests/post/description",
+          "before": "tenant. Gửi yêu cầu tìm bạn ở. Lỗi nghiệp vụ: 409 DUPLICATE MATCH REQUEST · 422 SELF MATCHING NOT ALLOWED · 404 NOT FOUND.",
+          "after": "Active tenant only. The target must be a different active tenant with a currently discoverable profile. A UUID Idempotency-Key is required per new intent. Replaying the same key and target returns the current request with 201 and does not emit another notification, even after its status changes. A different key is allowed after rejection or withdrawal, while only one pending request is allowed per unordered pair. The requester comes from the access token; Tenancy verifies the target through Identity and the local profile table. Tenancy emits `match_request.created` with `matchRequestId`, `actorUserId`, Identity `actorDisplayName`, and `recipientUserId`; Community forwards the actor to the Web notification and adds deep link `/roommates?matchRequestId=<id>`. The Web route currently shows a placeholder, and mobile navigation is not implemented. Deploy the Community consumer before the Tenancy producer.\n\n```mermaid\nsequenceDiagram\n  participant T as Tenant\n  participant TEN as Tenancy\n  participant ID as Identity\n  participant DB as Tenancy DB\n  participant MQ as RabbitMQ\n  participant COM as Community\n  T->>TEN: POST /match-requests + Idempotency-Key\n  TEN->>ID: GET /internal/users?ids=requester\n  ID-->>TEN: Active requester\n  TEN->>DB: Transaction: insert or replay by request key and pending pair\n  TEN->>ID: GET /internal/users?ids=target (new requests only)\n  ID-->>TEN: Active target\n  TEN->>DB: Lock discoverable target profile; append outbox\n  DB-->>TEN: Committed pending request\n  TEN-->>T: 201 MATCH_REQUEST_CREATED\n  TEN-)MQ: match_request.created to target\n  MQ-)COM: Inbox dedup + system notification\n```\n"
+        },
+        {
+          "pointer": "/paths/~1match-requests/post/parameters",
+          "before": null,
+          "after": [
+            {
+              "name": "Idempotency-Key",
+              "in": "header",
+              "required": true,
+              "description": "UUID unique per new request intent for this requester.",
+              "schema": {
+                "type": "string",
+                "format": "uuid"
+              }
+            }
+          ]
+        },
+        {
+          "pointer": "/paths/~1match-requests/post/requestBody/content/application~1json/example",
+          "before": {
+            "targetId": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+          },
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1match-requests/post/responses/201/content/application~1json/example",
+          "before": {
+            "statusCode": 201,
+            "code": "MATCH_REQUEST_CREATED",
+            "data": {
+              "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+              "status": "pending",
+              "respondedAt": null
+            }
+          },
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1match-requests/post/responses/201/content/application~1json/schema/properties/data/$ref",
+          "before": "#/components/schemas/MatchRequestCreateResponseDto",
+          "after": "#/components/schemas/MatchRequestResponseDto"
+        },
+        {
+          "pointer": "/paths/~1match-requests/post/responses/201/description",
+          "before": "Thành công: Gửi yêu cầu tìm bạn ở.",
+          "after": "Created or idempotent replay of the current request."
+        },
+        {
+          "pointer": "/paths/~1match-requests/post/responses/201/headers",
+          "before": {
+            "Location": {
+              "description": "Đường dẫn tài nguyên được tạo.",
+              "schema": {
+                "type": "string",
+                "example": "/api/v1/match-requests"
+              }
+            }
+          },
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1match-requests/post/responses/409/content/application~1json/examples",
+          "before": {
+            "duplicate_match_request": {
+              "summary": "DUPLICATE_MATCH_REQUEST — Yêu cầu tìm bạn ở đã tồn tại.",
+              "value": {
+                "statusCode": 409,
+                "code": "DUPLICATE_MATCH_REQUEST"
+              }
+            }
+          },
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1match-requests/post/responses/409/content/application~1json/schema/additionalProperties",
+          "before": false,
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1match-requests/post/responses/409/content/application~1json/schema/properties/code/description",
+          "before": "- DUPLICATE_MATCH_REQUEST: Yêu cầu tìm bạn ở đã tồn tại.",
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1match-requests/post/responses/409/content/application~1json/schema/properties/code/enum",
+          "before": [
+            "DUPLICATE_MATCH_REQUEST"
+          ],
+          "after": [
+            "DUPLICATE_MATCH_REQUEST",
+            "IDEMPOTENCY_KEY_REUSED"
+          ]
+        },
+        {
+          "pointer": "/paths/~1match-requests/post/responses/409/description",
+          "before": "Yêu cầu xung đột với trạng thái hiện tại hoặc dữ liệu đã tồn tại.",
+          "after": "Pending pair exists or key reused for another target."
+        },
+        {
+          "pointer": "/paths/~1match-requests/post/responses/409/x-apidog-name",
+          "before": "Conflict",
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1match-requests/post/responses/422/content/application~1json/examples",
+          "before": {
+            "self_matching_not_allowed": {
+              "summary": "SELF_MATCHING_NOT_ALLOWED — Không thể gửi yêu cầu ghép đôi cho chính mình.",
+              "value": {
+                "statusCode": 422,
+                "code": "SELF_MATCHING_NOT_ALLOWED"
+              }
+            },
+            "validation_failed": {
+              "summary": "VALIDATION_FAILED — Dữ liệu vi phạm ràng buộc schema hoặc quy tắc nghiệp vụ khác chưa có mã riêng.",
+              "value": {
+                "statusCode": 422,
+                "code": "VALIDATION_FAILED"
+              }
+            }
+          },
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1match-requests/post/responses/422/content/application~1json/schema/additionalProperties",
+          "before": false,
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1match-requests/post/responses/422/content/application~1json/schema/properties/code/description",
+          "before": "- SELF_MATCHING_NOT_ALLOWED: Không thể gửi yêu cầu ghép đôi cho chính mình.\n- VALIDATION_FAILED: Dữ liệu vi phạm ràng buộc schema hoặc quy tắc nghiệp vụ khác chưa có mã riêng.",
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1match-requests/post/responses/422/content/application~1json/schema/properties/code/enum",
+          "before": [
+            "SELF_MATCHING_NOT_ALLOWED",
+            "VALIDATION_FAILED"
+          ],
+          "after": [
+            "SELF_MATCHING_NOT_ALLOWED",
+            "VALIDATION_FAILED",
+            "UNEXPECTED_FIELD"
+          ]
+        },
+        {
+          "pointer": "/paths/~1match-requests/post/responses/422/description",
+          "before": "Dữ liệu hợp lệ về cấu trúc nhưng vi phạm ràng buộc trường hoặc quy tắc nghiệp vụ.",
+          "after": "Invalid request or self matching."
+        },
+        {
+          "pointer": "/paths/~1match-requests/post/responses/422/x-apidog-name",
+          "before": "Unprocessable Entity",
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1match-requests/post/responses/429",
+          "before": {
+            "$ref": "#/components/responses/TooManyRequestsError"
+          },
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1match-requests/post/responses/500",
+          "before": {
+            "$ref": "#/components/responses/InternalServerError"
+          },
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1match-requests/post/summary",
+          "before": "Create match request",
+          "after": "Send a match request"
+        },
+        {
+          "pointer": "/paths/~1match-requests/post/x-apidog-status",
+          "before": "designing",
+          "after": "developing"
+        },
+        {
+          "pointer": "/paths/~1match-requests~1{matchRequestId}~1accept-request/post/description",
+          "before": "tenant. Chấp nhận yêu cầu. Lỗi nghiệp vụ: 403 FORBIDDEN · 409 MATCH REQUEST NOT PENDING · 404 NOT FOUND.",
+          "after": "Only the active recipient can accept. Repeating accept returns the current accepted request without another notification. Another terminal state returns 409 MATCH_REQUEST_NOT_PENDING. No conversation or contact details are created.\n\n```mermaid\nsequenceDiagram\n  participant T as Recipient\n  participant TEN as Tenancy\n  participant DB as Tenancy DB\n  participant MQ as RabbitMQ\n  participant COM as Community\n  T->>TEN: POST /match-requests/{id}/accept-request\n  TEN->>DB: Transaction: lock request, verify actor and pending state\n  TEN->>DB: Save accepted + match_request.accepted outbox\n  TEN-->>T: 200 MATCH_REQUEST_ACCEPTED\n  TEN-)MQ: match_request.accepted to requester\n  MQ-)COM: Inbox dedup + system notification\n```\n"
+        },
+        {
+          "pointer": "/paths/~1match-requests~1{matchRequestId}~1accept-request/post/responses/200/content/application~1json/example",
+          "before": {
+            "statusCode": 200,
+            "code": "MATCH_REQUEST_ACCEPTED",
+            "data": {
+              "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+              "status": "accepted",
+              "conversationId": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+            }
+          },
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1match-requests~1{matchRequestId}~1accept-request/post/responses/200/content/application~1json/schema/additionalProperties",
+          "before": false,
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1match-requests~1{matchRequestId}~1accept-request/post/responses/200/content/application~1json/schema/properties/data/$ref",
+          "before": "#/components/schemas/MatchRequestAcceptResponseDto",
+          "after": "#/components/schemas/MatchRequestResponseDto"
+        },
+        {
+          "pointer": "/paths/~1match-requests~1{matchRequestId}~1accept-request/post/responses/200/description",
+          "before": "Thành công: Chấp nhận yêu cầu.",
+          "after": "Accepted request, including an idempotent repeat."
+        },
+        {
+          "pointer": "/paths/~1match-requests~1{matchRequestId}~1accept-request/post/responses/409/content/application~1json/examples",
+          "before": {
+            "match_request_not_pending": {
+              "summary": "MATCH_REQUEST_NOT_PENDING — Yêu cầu tìm bạn ở không còn chờ xử lý.",
+              "value": {
+                "statusCode": 409,
+                "code": "MATCH_REQUEST_NOT_PENDING"
+              }
+            }
+          },
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1match-requests~1{matchRequestId}~1accept-request/post/responses/409/content/application~1json/schema/additionalProperties",
+          "before": false,
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1match-requests~1{matchRequestId}~1accept-request/post/responses/409/content/application~1json/schema/properties/code/description",
+          "before": "- MATCH_REQUEST_NOT_PENDING: Yêu cầu tìm bạn ở không còn chờ xử lý.",
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1match-requests~1{matchRequestId}~1accept-request/post/responses/409/description",
+          "before": "Yêu cầu xung đột với trạng thái hiện tại hoặc dữ liệu đã tồn tại.",
+          "after": "Request is no longer pending."
+        },
+        {
+          "pointer": "/paths/~1match-requests~1{matchRequestId}~1accept-request/post/responses/409/x-apidog-name",
+          "before": "Conflict",
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1match-requests~1{matchRequestId}~1accept-request/post/responses/429",
+          "before": {
+            "$ref": "#/components/responses/TooManyRequestsError"
+          },
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1match-requests~1{matchRequestId}~1accept-request/post/responses/500",
+          "before": {
+            "$ref": "#/components/responses/InternalServerError"
+          },
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1match-requests~1{matchRequestId}~1accept-request/post/summary",
+          "before": "Accept match request",
+          "after": "Accept a pending match request"
+        },
+        {
+          "pointer": "/paths/~1match-requests~1{matchRequestId}~1accept-request/post/x-apidog-status",
+          "before": "designing",
+          "after": "developing"
+        },
+        {
+          "pointer": "/paths/~1match-requests~1{matchRequestId}~1reject-request/post/description",
+          "before": "tenant. Từ chối yêu cầu. Lỗi nghiệp vụ: 403 FORBIDDEN · 409 MATCH REQUEST NOT PENDING.",
+          "after": "Only the active recipient can reject. Repeating reject returns the current rejected request without another notification. Another terminal state returns 409 MATCH_REQUEST_NOT_PENDING.\n\n```mermaid\nsequenceDiagram\n  participant T as Recipient\n  participant TEN as Tenancy\n  participant DB as Tenancy DB\n  participant MQ as RabbitMQ\n  participant COM as Community\n  T->>TEN: POST /match-requests/{id}/reject-request\n  TEN->>DB: Transaction: lock request, verify actor and pending state\n  TEN->>DB: Save rejected + match_request.rejected outbox\n  TEN-->>T: 200 MATCH_REQUEST_REJECTED\n  TEN-)MQ: match_request.rejected to requester\n  MQ-)COM: Inbox dedup + system notification\n```\n"
+        },
+        {
+          "pointer": "/paths/~1match-requests~1{matchRequestId}~1reject-request/post/responses/200/content/application~1json/example",
+          "before": {
+            "statusCode": 200,
+            "code": "MATCH_REQUEST_REJECTED",
+            "data": {
+              "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+              "status": "rejected"
+            }
+          },
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1match-requests~1{matchRequestId}~1reject-request/post/responses/200/content/application~1json/schema/additionalProperties",
+          "before": false,
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1match-requests~1{matchRequestId}~1reject-request/post/responses/200/content/application~1json/schema/properties/data/$ref",
+          "before": "#/components/schemas/MatchRequestRejectResponseDto",
+          "after": "#/components/schemas/MatchRequestResponseDto"
+        },
+        {
+          "pointer": "/paths/~1match-requests~1{matchRequestId}~1reject-request/post/responses/200/description",
+          "before": "Thành công: Từ chối yêu cầu.",
+          "after": "Rejected request, including an idempotent repeat."
+        },
+        {
+          "pointer": "/paths/~1match-requests~1{matchRequestId}~1reject-request/post/responses/409/content/application~1json/examples",
+          "before": {
+            "match_request_not_pending": {
+              "summary": "MATCH_REQUEST_NOT_PENDING — Yêu cầu tìm bạn ở không còn chờ xử lý.",
+              "value": {
+                "statusCode": 409,
+                "code": "MATCH_REQUEST_NOT_PENDING"
+              }
+            }
+          },
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1match-requests~1{matchRequestId}~1reject-request/post/responses/409/content/application~1json/schema/additionalProperties",
+          "before": false,
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1match-requests~1{matchRequestId}~1reject-request/post/responses/409/content/application~1json/schema/properties/code/description",
+          "before": "- MATCH_REQUEST_NOT_PENDING: Yêu cầu tìm bạn ở không còn chờ xử lý.",
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1match-requests~1{matchRequestId}~1reject-request/post/responses/409/description",
+          "before": "Yêu cầu xung đột với trạng thái hiện tại hoặc dữ liệu đã tồn tại.",
+          "after": "Request is no longer pending."
+        },
+        {
+          "pointer": "/paths/~1match-requests~1{matchRequestId}~1reject-request/post/responses/409/x-apidog-name",
+          "before": "Conflict",
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1match-requests~1{matchRequestId}~1reject-request/post/responses/429",
+          "before": {
+            "$ref": "#/components/responses/TooManyRequestsError"
+          },
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1match-requests~1{matchRequestId}~1reject-request/post/responses/500",
+          "before": {
+            "$ref": "#/components/responses/InternalServerError"
+          },
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1match-requests~1{matchRequestId}~1reject-request/post/summary",
+          "before": "Reject match request",
+          "after": "Reject a pending match request"
+        },
+        {
+          "pointer": "/paths/~1match-requests~1{matchRequestId}~1reject-request/post/x-apidog-status",
+          "before": "designing",
+          "after": "developing"
+        },
+        {
+          "pointer": "/paths/~1match-requests~1{matchRequestId}~1withdraw-request/post/description",
+          "before": "tenant. Người gửi rút yêu cầu. Lỗi nghiệp vụ: 403 FORBIDDEN · 404 NOT FOUND · 409 NOT REQUESTER · 409 MATCH REQUEST NOT PENDING.",
+          "after": "Only the active requester can withdraw. Repeating withdraw returns the current withdrawn request without another notification. Another terminal state returns 409 MATCH_REQUEST_NOT_PENDING.\n\n```mermaid\nsequenceDiagram\n  participant T as Requester\n  participant TEN as Tenancy\n  participant DB as Tenancy DB\n  participant MQ as RabbitMQ\n  participant COM as Community\n  T->>TEN: POST /match-requests/{id}/withdraw-request\n  TEN->>DB: Transaction: lock request, verify actor and pending state\n  TEN->>DB: Save withdrawn + match_request.withdrawn outbox\n  TEN-->>T: 200 MATCH_REQUEST_WITHDRAWN\n  TEN-)MQ: match_request.withdrawn to recipient\n  MQ-)COM: Inbox dedup + system notification\n```\n"
+        },
+        {
+          "pointer": "/paths/~1match-requests~1{matchRequestId}~1withdraw-request/post/responses/200/content/application~1json/example",
+          "before": {
+            "statusCode": 200,
+            "code": "MATCH_REQUEST_WITHDRAWN",
+            "data": {
+              "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+              "status": "withdrawn",
+              "respondedAt": "2026-09-27T03:10:00.000Z"
+            }
+          },
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1match-requests~1{matchRequestId}~1withdraw-request/post/responses/200/content/application~1json/schema/additionalProperties",
+          "before": false,
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1match-requests~1{matchRequestId}~1withdraw-request/post/responses/200/content/application~1json/schema/properties/data/$ref",
+          "before": "#/components/schemas/MatchRequestWithdrawResponseDto",
+          "after": "#/components/schemas/MatchRequestResponseDto"
+        },
+        {
+          "pointer": "/paths/~1match-requests~1{matchRequestId}~1withdraw-request/post/responses/200/description",
+          "before": "Thành công: Người gửi rút yêu cầu.",
+          "after": "Withdrawn request, including an idempotent repeat."
+        },
+        {
+          "pointer": "/paths/~1match-requests~1{matchRequestId}~1withdraw-request/post/responses/409/content/application~1json/examples",
+          "before": {
+            "not_requester": {
+              "summary": "NOT_REQUESTER — Người gọi không phải người gửi yêu cầu.",
+              "value": {
+                "statusCode": 409,
+                "code": "NOT_REQUESTER"
+              }
+            },
+            "match_request_not_pending": {
+              "summary": "MATCH_REQUEST_NOT_PENDING — Yêu cầu tìm bạn ở không còn chờ xử lý.",
+              "value": {
+                "statusCode": 409,
+                "code": "MATCH_REQUEST_NOT_PENDING"
+              }
+            }
+          },
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1match-requests~1{matchRequestId}~1withdraw-request/post/responses/409/content/application~1json/schema/additionalProperties",
+          "before": false,
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1match-requests~1{matchRequestId}~1withdraw-request/post/responses/409/content/application~1json/schema/properties/code/description",
+          "before": "- NOT_REQUESTER: Người gọi không phải người gửi yêu cầu.\n- MATCH_REQUEST_NOT_PENDING: Yêu cầu tìm bạn ở không còn chờ xử lý.",
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1match-requests~1{matchRequestId}~1withdraw-request/post/responses/409/content/application~1json/schema/properties/code/enum",
+          "before": [
+            "NOT_REQUESTER",
+            "MATCH_REQUEST_NOT_PENDING"
+          ],
+          "after": [
+            "MATCH_REQUEST_NOT_PENDING"
+          ]
+        },
+        {
+          "pointer": "/paths/~1match-requests~1{matchRequestId}~1withdraw-request/post/responses/409/description",
+          "before": "Yêu cầu không thể rút do người gọi hoặc trạng thái hiện tại.",
+          "after": "Request is no longer pending."
+        },
+        {
+          "pointer": "/paths/~1match-requests~1{matchRequestId}~1withdraw-request/post/responses/409/x-apidog-name",
+          "before": "Conflict",
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1match-requests~1{matchRequestId}~1withdraw-request/post/responses/429",
+          "before": {
+            "$ref": "#/components/responses/TooManyRequestsError"
+          },
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1match-requests~1{matchRequestId}~1withdraw-request/post/responses/500",
+          "before": {
+            "$ref": "#/components/responses/InternalServerError"
+          },
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1match-requests~1{matchRequestId}~1withdraw-request/post/summary",
+          "before": "Withdraw match request",
+          "after": "Withdraw a pending match request"
+        },
+        {
+          "pointer": "/paths/~1match-requests~1{matchRequestId}~1withdraw-request/post/x-apidog-status",
+          "before": "designing",
+          "after": "developing"
+        }
+      ],
+      "semanticDiff": {
+        "paths": {
+          "modified": {
+            "/match-requests": {
+              "operations": {
+                "modified": {
+                  "GET": {
+                    "extensions": {
+                      "modified": {
+                        "x-apidog-status": [
+                          {
+                            "oldValue": "designing",
+                            "value": "developing",
+                            "op": "replace",
+                            "from": "",
+                            "path": ""
+                          }
+                        ]
+                      }
+                    },
+                    "parameters": {
+                      "modified": {
+                        "query": {
+                          "filter": {
+                            "schema": {
+                              "properties": {
+                                "modified": {
+                                  "status": {
+                                    "enum": {
+                                      "enumAdded": true,
+                                      "added": [
+                                        "pending",
+                                        "accepted",
+                                        "rejected",
+                                        "withdrawn"
+                                      ]
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "responses": {
+                      "deleted": [
+                        "429",
+                        "500"
+                      ],
+                      "modified": {
+                        "200": {
+                          "content": {
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "properties": {
+                                    "modified": {
+                                      "data": {
+                                        "items": {
+                                          "extensions": {
+                                            "deleted": [
+                                              "x-apidog-folder"
+                                            ]
+                                          },
+                                          "additionalPropertiesAllowed": {
+                                            "from": null,
+                                            "to": false
+                                          },
+                                          "required": {
+                                            "added": [
+                                              "respondedAt"
+                                            ],
+                                            "deleted": [
+                                              "requester",
+                                              "target"
+                                            ]
+                                          },
+                                          "properties": {
+                                            "added": [
+                                              "respondedAt"
+                                            ],
+                                            "deleted": [
+                                              "matchScore",
+                                              "message",
+                                              "target",
+                                              "requester"
+                                            ]
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "POST": {
+                    "extensions": {
+                      "modified": {
+                        "x-apidog-status": [
+                          {
+                            "oldValue": "designing",
+                            "value": "developing",
+                            "op": "replace",
+                            "from": "",
+                            "path": ""
+                          }
+                        ]
+                      }
+                    },
+                    "parameters": {
+                      "added": {
+                        "header": [
+                          "idempotency-key"
+                        ]
+                      }
+                    },
+                    "responses": {
+                      "deleted": [
+                        "429",
+                        "500"
+                      ],
+                      "modified": {
+                        "201": {
+                          "headers": {
+                            "deleted": [
+                              "location"
+                            ]
+                          },
+                          "content": {
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "properties": {
+                                    "modified": {
+                                      "data": {
+                                        "extensions": {
+                                          "deleted": [
+                                            "x-apidog-folder"
+                                          ]
+                                        },
+                                        "additionalPropertiesAllowed": {
+                                          "from": null,
+                                          "to": false
+                                        },
+                                        "required": {
+                                          "added": [
+                                            "createdAt",
+                                            "requesterId",
+                                            "targetId"
+                                          ]
+                                        },
+                                        "properties": {
+                                          "added": [
+                                            "requesterId",
+                                            "targetId",
+                                            "createdAt"
+                                          ],
+                                          "modified": {
+                                            "status": {
+                                              "enum": {
+                                                "added": [
+                                                  "accepted",
+                                                  "rejected",
+                                                  "withdrawn"
+                                                ]
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "409": {
+                          "extensions": {
+                            "deleted": [
+                              "x-apidog-name"
+                            ]
+                          },
+                          "content": {
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "additionalPropertiesAllowed": {
+                                    "from": false,
+                                    "to": null
+                                  },
+                                  "properties": {
+                                    "modified": {
+                                      "code": {
+                                        "enum": {
+                                          "added": [
+                                            "IDEMPOTENCY_KEY_REUSED"
+                                          ]
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "422": {
+                          "extensions": {
+                            "deleted": [
+                              "x-apidog-name"
+                            ]
+                          },
+                          "content": {
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "additionalPropertiesAllowed": {
+                                    "from": false,
+                                    "to": null
+                                  },
+                                  "properties": {
+                                    "modified": {
+                                      "code": {
+                                        "enum": {
+                                          "added": [
+                                            "UNEXPECTED_FIELD"
+                                          ]
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "/match-requests/{matchRequestId}/accept-request": {
+              "operations": {
+                "modified": {
+                  "POST": {
+                    "extensions": {
+                      "modified": {
+                        "x-apidog-status": [
+                          {
+                            "oldValue": "designing",
+                            "value": "developing",
+                            "op": "replace",
+                            "from": "",
+                            "path": ""
+                          }
+                        ]
+                      }
+                    },
+                    "responses": {
+                      "deleted": [
+                        "429",
+                        "500"
+                      ],
+                      "modified": {
+                        "200": {
+                          "content": {
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "additionalPropertiesAllowed": {
+                                    "from": false,
+                                    "to": null
+                                  },
+                                  "properties": {
+                                    "modified": {
+                                      "data": {
+                                        "extensions": {
+                                          "deleted": [
+                                            "x-apidog-folder"
+                                          ]
+                                        },
+                                        "additionalPropertiesAllowed": {
+                                          "from": null,
+                                          "to": false
+                                        },
+                                        "required": {
+                                          "added": [
+                                            "requesterId",
+                                            "targetId",
+                                            "createdAt",
+                                            "respondedAt"
+                                          ],
+                                          "deleted": [
+                                            "conversationId"
+                                          ]
+                                        },
+                                        "properties": {
+                                          "added": [
+                                            "requesterId",
+                                            "targetId",
+                                            "createdAt",
+                                            "respondedAt"
+                                          ],
+                                          "deleted": [
+                                            "conversationId"
+                                          ],
+                                          "modified": {
+                                            "status": {
+                                              "enum": {
+                                                "added": [
+                                                  "pending",
+                                                  "rejected",
+                                                  "withdrawn"
+                                                ]
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "409": {
+                          "extensions": {
+                            "deleted": [
+                              "x-apidog-name"
+                            ]
+                          },
+                          "content": {
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "additionalPropertiesAllowed": {
+                                    "from": false,
+                                    "to": null
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "/match-requests/{matchRequestId}/reject-request": {
+              "operations": {
+                "modified": {
+                  "POST": {
+                    "extensions": {
+                      "modified": {
+                        "x-apidog-status": [
+                          {
+                            "oldValue": "designing",
+                            "value": "developing",
+                            "op": "replace",
+                            "from": "",
+                            "path": ""
+                          }
+                        ]
+                      }
+                    },
+                    "responses": {
+                      "deleted": [
+                        "500",
+                        "429"
+                      ],
+                      "modified": {
+                        "200": {
+                          "content": {
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "additionalPropertiesAllowed": {
+                                    "from": false,
+                                    "to": null
+                                  },
+                                  "properties": {
+                                    "modified": {
+                                      "data": {
+                                        "extensions": {
+                                          "deleted": [
+                                            "x-apidog-folder"
+                                          ]
+                                        },
+                                        "additionalPropertiesAllowed": {
+                                          "from": null,
+                                          "to": false
+                                        },
+                                        "required": {
+                                          "added": [
+                                            "respondedAt",
+                                            "requesterId",
+                                            "targetId",
+                                            "createdAt"
+                                          ]
+                                        },
+                                        "properties": {
+                                          "added": [
+                                            "targetId",
+                                            "createdAt",
+                                            "respondedAt",
+                                            "requesterId"
+                                          ],
+                                          "modified": {
+                                            "status": {
+                                              "enum": {
+                                                "added": [
+                                                  "pending",
+                                                  "accepted",
+                                                  "withdrawn"
+                                                ]
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "409": {
+                          "extensions": {
+                            "deleted": [
+                              "x-apidog-name"
+                            ]
+                          },
+                          "content": {
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "additionalPropertiesAllowed": {
+                                    "from": false,
+                                    "to": null
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "/match-requests/{matchRequestId}/withdraw-request": {
+              "operations": {
+                "modified": {
+                  "POST": {
+                    "extensions": {
+                      "modified": {
+                        "x-apidog-status": [
+                          {
+                            "oldValue": "designing",
+                            "value": "developing",
+                            "op": "replace",
+                            "from": "",
+                            "path": ""
+                          }
+                        ]
+                      }
+                    },
+                    "responses": {
+                      "deleted": [
+                        "429",
+                        "500"
+                      ],
+                      "modified": {
+                        "200": {
+                          "content": {
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "additionalPropertiesAllowed": {
+                                    "from": false,
+                                    "to": null
+                                  },
+                                  "properties": {
+                                    "modified": {
+                                      "data": {
+                                        "extensions": {
+                                          "deleted": [
+                                            "x-apidog-folder"
+                                          ]
+                                        },
+                                        "additionalPropertiesAllowed": {
+                                          "from": null,
+                                          "to": false
+                                        },
+                                        "required": {
+                                          "added": [
+                                            "requesterId",
+                                            "targetId",
+                                            "createdAt"
+                                          ]
+                                        },
+                                        "properties": {
+                                          "added": [
+                                            "targetId",
+                                            "createdAt",
+                                            "requesterId"
+                                          ],
+                                          "modified": {
+                                            "respondedAt": {
+                                              "nullable": {
+                                                "from": false,
+                                                "to": true
+                                              }
+                                            },
+                                            "status": {
+                                              "enum": {
+                                                "added": [
+                                                  "pending",
+                                                  "accepted",
+                                                  "rejected"
+                                                ]
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "409": {
+                          "extensions": {
+                            "deleted": [
+                              "x-apidog-name"
+                            ]
+                          },
+                          "content": {
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "additionalPropertiesAllowed": {
+                                    "from": false,
+                                    "to": null
+                                  },
+                                  "properties": {
+                                    "modified": {
+                                      "code": {
+                                        "enum": {
+                                          "deleted": [
+                                            "NOT_REQUESTER"
+                                          ]
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "components": {
+          "schemas": {
+            "added": [
+              "MatchRequestResponseDto"
+            ],
+            "deleted": [
+              "MatchRequestWithdrawResponseDto",
+              "MatchRequestCreateResponseDto",
+              "MatchRequestListResponseDto",
+              "MatchRequestRejectResponseDto",
+              "MatchRequestAcceptResponseDto"
+            ],
+            "modified": {
+              "MatchRequest": {
+                "required": {
+                  "added": [
+                    "respondedAt"
+                  ]
+                },
+                "properties": {
+                  "deleted": [
+                    "aiScore",
+                    "aiAdvice"
+                  ],
+                  "modified": {
+                    "status": {
+                      "default": {
+                        "from": "pending",
+                        "to": null
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   ]
 }
