@@ -1,265 +1,166 @@
 get:
-  tags:
-  - Matching
+  tags: [Matching]
   x-apidog-folder: MatchRequest
-  x-apidog-status: designing
+  x-apidog-status: developing
   operationId: getMatchRequests
   security:
     - BearerAuth: []
-  summary: List match requests
-  description: 'tenant. Liệt kê yêu cầu đến hoặc đi. Lỗi nghiệp vụ: 422 VALIDATION FAILED.'
+  summary: List my match requests
+  description: |
+    Active tenant only. Returns requests involving the caller, newest first with ID as a tie breaker. No phone, AI data or conversation is disclosed.
+
+    ```mermaid
+    sequenceDiagram
+      participant T as Tenant
+      participant TEN as Tenancy
+      participant ID as Identity
+      participant DB as Tenancy DB
+      T->>TEN: GET /match-requests
+      TEN->>ID: GET /internal/users?ids=actor
+      ID-->>TEN: Active tenant summary
+      TEN->>DB: Page by requester/target and optional filters
+      DB-->>TEN: Caller-owned requests and total
+      TEN-->>T: 200 MATCH_REQUESTS_FETCHED
+    ```
   parameters:
-  - name: filter
-    in: query
-    required: false
-    style: deepObject
-    explode: true
-    description: Bộ lọc được endpoint hỗ trợ.
-    schema:
-      type: object
-      additionalProperties: false
-      properties:
-        direction:
-          type: string
-          enum:
-          - incoming
-          - outgoing
-        status:
-          type: string
-  - name: pageSize
-    in: query
-    schema:
-      type: integer
-      minimum: 1
-      maximum: 100
-      default: 20
-  - name: pageNo
-    in: query
-    schema:
-      type: integer
-      minimum: 1
-      default: 1
+    - name: filter
+      in: query
+      style: deepObject
+      explode: true
+      schema:
+        type: object
+        additionalProperties: false
+        properties:
+          direction: { type: string, enum: [incoming, outgoing] }
+          status: { type: string, enum: [pending, accepted, rejected, withdrawn] }
+    - name: pageNo
+      in: query
+      schema: { type: integer, minimum: 1, default: 1 }
+    - name: pageSize
+      in: query
+      schema: { type: integer, minimum: 1, maximum: 100, default: 20 }
   responses:
     '200':
-      description: 'Thành công: Liệt kê yêu cầu đến hoặc đi.'
+      description: Caller-owned match requests.
       content:
         application/json:
           schema:
             type: object
             additionalProperties: false
-            required:
-            - statusCode
-            - code
-            - data
-            - pagination
+            required: [statusCode, code, data, pagination]
             properties:
-              statusCode:
-                type: integer
-                enum:
-                - 200
-              code:
-                type: string
-                enum:
-                - MATCH_REQUESTS_FETCHED
+              statusCode: { type: integer, enum: [200] }
+              code: { type: string, enum: [MATCH_REQUESTS_FETCHED] }
               data:
                 type: array
                 items:
-                  $ref: ../../openapi.yaml#/components/schemas/MatchRequestListResponseDto
+                  $ref: ../../openapi.yaml#/components/schemas/MatchRequestResponseDto
               pagination:
                 type: object
                 additionalProperties: false
-                required:
-                - type
-                - pageNo
-                - pageSize
-                - totalItems
-                - totalPages
-                - hasNextPage
-                - hasPreviousPage
+                required: [type, pageNo, pageSize, totalItems, totalPages, hasNextPage, hasPreviousPage]
                 properties:
-                  type:
-                    type: string
-                    enum:
-                    - offset
-                  pageNo:
-                    type: integer
-                    minimum: 1
-                  pageSize:
-                    type: integer
-                    minimum: 1
-                    maximum: 100
-                  totalItems:
-                    type: integer
-                    minimum: 0
-                  totalPages:
-                    type: integer
-                    minimum: 0
-                  hasNextPage:
-                    type: boolean
-                  hasPreviousPage:
-                    type: boolean
-          example:
-            statusCode: 200
-            code: MATCH_REQUESTS_FETCHED
-            data:
-            - id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
-              requesterId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
-              targetId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
-              status: pending
-              createdAt: '2026-09-23T10:00:00.000Z'
-              requester:
-                id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
-                name: Nguyễn Văn A
-                gender: male
-              target:
-                id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
-                name: Trần Thị B
-                gender: male
-            pagination:
-              type: offset
-              pageNo: 1
-              pageSize: 20
-              totalItems: 1
-              totalPages: 1
-              hasNextPage: false
-              hasPreviousPage: false
+                  type: { type: string, enum: [offset] }
+                  pageNo: { type: integer, minimum: 1 }
+                  pageSize: { type: integer, minimum: 1, maximum: 100 }
+                  totalItems: { type: integer, minimum: 0 }
+                  totalPages: { type: integer, minimum: 0 }
+                  hasNextPage: { type: boolean }
+                  hasPreviousPage: { type: boolean }
     '400':
       $ref: ../../openapi.yaml#/components/responses/BadRequestQueryError
     '401':
       $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
-    '503':
-      $ref: ../../openapi.yaml#/components/responses/AuthUnavailableError
     '403':
       $ref: ../../openapi.yaml#/components/responses/ForbiddenError
     '422':
       $ref: ../../openapi.yaml#/components/responses/ValidationError
-    '429':
-      $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
-    '500':
-      $ref: ../../openapi.yaml#/components/responses/InternalServerError
+    '503':
+      $ref: ../../openapi.yaml#/components/responses/AuthUnavailableError
 post:
-  tags:
-  - Matching
+  tags: [Matching]
   x-apidog-folder: MatchRequest
-  x-apidog-status: designing
+  x-apidog-status: developing
   operationId: postMatchRequests
   security:
     - BearerAuth: []
-  summary: Create match request
-  description: 'tenant. Gửi yêu cầu tìm bạn ở. Lỗi nghiệp vụ: 409 DUPLICATE MATCH REQUEST · 422 SELF MATCHING NOT
-    ALLOWED · 404 NOT FOUND.'
+  summary: Send a match request
+  description: |
+    Active tenant only. The target must be a different active tenant with a currently discoverable profile. A UUID Idempotency-Key is required per new intent. Replaying the same key and target returns the current request with 201 and does not emit another notification, even after its status changes. A different key is allowed after rejection or withdrawal, while only one pending request is allowed per unordered pair. The requester comes from the access token; Tenancy verifies the target through Identity and the local profile table. Tenancy emits `match_request.created` with `matchRequestId`, `actorUserId`, Identity `actorDisplayName`, and `recipientUserId`; Community forwards the actor to the Web notification and adds deep link `/roommates?matchRequestId=<id>`. The Web route currently shows a placeholder, and mobile navigation is not implemented. Deploy the Community consumer before the Tenancy producer.
+
+    ```mermaid
+    sequenceDiagram
+      participant T as Tenant
+      participant TEN as Tenancy
+      participant ID as Identity
+      participant DB as Tenancy DB
+      participant MQ as RabbitMQ
+      participant COM as Community
+      T->>TEN: POST /match-requests + Idempotency-Key
+      TEN->>ID: GET /internal/users?ids=requester
+      ID-->>TEN: Active requester
+      TEN->>DB: Transaction: insert or replay by request key and pending pair
+      TEN->>ID: GET /internal/users?ids=target (new requests only)
+      ID-->>TEN: Active target
+      TEN->>DB: Lock discoverable target profile; append outbox
+      DB-->>TEN: Committed pending request
+      TEN-->>T: 201 MATCH_REQUEST_CREATED
+      TEN-)MQ: match_request.created to target
+      MQ-)COM: Inbox dedup + system notification
+    ```
+  parameters:
+    - name: Idempotency-Key
+      in: header
+      required: true
+      description: UUID unique per new request intent for this requester.
+      schema: { type: string, format: uuid }
   requestBody:
     required: true
     content:
       application/json:
         schema:
           $ref: ../../openapi.yaml#/components/schemas/MatchRequestCreateRequestDto
-        example:
-          targetId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
   responses:
     '201':
-      description: 'Thành công: Gửi yêu cầu tìm bạn ở.'
+      description: Created or idempotent replay of the current request.
       content:
         application/json:
           schema:
             type: object
             additionalProperties: false
-            required:
-            - statusCode
-            - code
-            - data
+            required: [statusCode, code, data]
             properties:
-              statusCode:
-                type: integer
-                enum:
-                - 201
-              code:
-                type: string
-                enum:
-                - MATCH_REQUEST_CREATED
+              statusCode: { type: integer, enum: [201] }
+              code: { type: string, enum: [MATCH_REQUEST_CREATED] }
               data:
-                $ref: ../../openapi.yaml#/components/schemas/MatchRequestCreateResponseDto
-          example:
-            statusCode: 201
-            code: MATCH_REQUEST_CREATED
-            data:
-              id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
-              status: pending
-              respondedAt: null
-      headers:
-        Location:
-          description: Đường dẫn tài nguyên được tạo.
-          schema:
-            type: string
-            example: /api/v1/match-requests
+                $ref: ../../openapi.yaml#/components/schemas/MatchRequestResponseDto
     '400':
       $ref: ../../openapi.yaml#/components/responses/BadRequestBodyError
     '401':
       $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
-    '503':
-      $ref: ../../openapi.yaml#/components/responses/AuthUnavailableError
     '403':
       $ref: ../../openapi.yaml#/components/responses/ForbiddenError
     '404':
       $ref: ../../openapi.yaml#/components/responses/NotFoundError
     '409':
-      x-apidog-name: Conflict
-      description: Yêu cầu xung đột với trạng thái hiện tại hoặc dữ liệu đã tồn tại.
+      description: Pending pair exists or key reused for another target.
       content:
         application/json:
           schema:
             type: object
-            additionalProperties: false
             required: [statusCode, code]
             properties:
-              statusCode:
-                type: integer
-                enum: [409]
-              code:
-                type: string
-                enum:
-                  - DUPLICATE_MATCH_REQUEST
-                description: |-
-                  - DUPLICATE_MATCH_REQUEST: Yêu cầu tìm bạn ở đã tồn tại.
-          examples:
-            duplicate_match_request:
-              summary: DUPLICATE_MATCH_REQUEST — Yêu cầu tìm bạn ở đã tồn tại.
-              value:
-                statusCode: 409
-                code: DUPLICATE_MATCH_REQUEST
+              statusCode: { type: integer, enum: [409] }
+              code: { type: string, enum: [DUPLICATE_MATCH_REQUEST, IDEMPOTENCY_KEY_REUSED] }
     '422':
-      x-apidog-name: Unprocessable Entity
-      description: Dữ liệu hợp lệ về cấu trúc nhưng vi phạm ràng buộc trường hoặc quy tắc nghiệp vụ.
+      description: Invalid request or self matching.
       content:
         application/json:
           schema:
             type: object
-            additionalProperties: false
             required: [statusCode, code]
             properties:
-              statusCode:
-                type: integer
-                enum: [422]
-              code:
-                type: string
-                enum:
-                  - SELF_MATCHING_NOT_ALLOWED
-                  - VALIDATION_FAILED
-                description: |-
-                  - SELF_MATCHING_NOT_ALLOWED: Không thể gửi yêu cầu ghép đôi cho chính mình.
-                  - VALIDATION_FAILED: Dữ liệu vi phạm ràng buộc schema hoặc quy tắc nghiệp vụ khác chưa có mã riêng.
-          examples:
-            self_matching_not_allowed:
-              summary: SELF_MATCHING_NOT_ALLOWED — Không thể gửi yêu cầu ghép đôi cho chính mình.
-              value:
-                statusCode: 422
-                code: SELF_MATCHING_NOT_ALLOWED
-            validation_failed:
-              summary: VALIDATION_FAILED — Dữ liệu vi phạm ràng buộc schema hoặc quy tắc nghiệp vụ khác chưa có mã riêng.
-              value:
-                statusCode: 422
-                code: VALIDATION_FAILED
-    '429':
-      $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
-    '500':
-      $ref: ../../openapi.yaml#/components/responses/InternalServerError
+              statusCode: { type: integer, enum: [422] }
+              code: { type: string, enum: [SELF_MATCHING_NOT_ALLOWED, VALIDATION_FAILED, UNEXPECTED_FIELD] }
+    '503':
+      $ref: ../../openapi.yaml#/components/responses/AuthUnavailableError
