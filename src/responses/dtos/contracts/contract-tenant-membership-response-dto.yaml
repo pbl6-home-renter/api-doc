@@ -1,0 +1,45 @@
+title: ContractTenantMembershipResponseDto
+type: object
+additionalProperties: false
+required:
+- contractMemberId
+- contractId
+- roomId
+- contractStatus
+- joinedAt
+- leftAt
+- isCurrent
+- tenantName
+- tenantPhone
+properties:
+  contractMemberId: &id001
+    type: string
+    format: uuid
+  contractId: *id001
+  roomId: *id001
+  contractStatus:
+    type: string
+    enum:
+    - draft
+    - signed
+    - active
+    - suspended
+    - expired
+    - terminated
+  joinedAt:
+    type: string
+    format: date
+  leftAt:
+    type: string
+    format: date
+    nullable: true
+  isCurrent:
+    type: boolean
+  tenantName:
+    type: string
+    nullable: true
+  tenantPhone:
+    type: string
+    nullable: true
+    description: Chỉ snapshot của membership này trong Tenancy; thiếu trả null. Không lấy phone của account
+      hay membership khác.

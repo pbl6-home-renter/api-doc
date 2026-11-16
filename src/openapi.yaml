@@ -148,6 +148,10 @@ paths:
     $ref: './paths/contracts/me-contracts.yaml'
   /contracts:
     $ref: './paths/contracts/contracts.yaml'
+  /contracts/tenants:
+    $ref: './paths/contracts/contracts-tenants.yaml'
+  /contracts/tenants/{contractMemberId}:
+    $ref: './paths/contracts/contracts-tenants-contractMemberId.yaml'
   /contracts/{contractId}:
     $ref: './paths/contracts/contracts-contractId.yaml'
   /contracts/{contractId}/apply-template:
@@ -455,6 +459,12 @@ components:
     # Contract Response DTOs
     ContractMyListResponseDto:
       $ref: './responses/dtos/contracts/my-contract-list-response-dto.yaml'
+    ContractTenantListItemResponseDto:
+      $ref: './responses/dtos/contracts/contract-tenant-list-item-response-dto.yaml'
+    ContractTenantDetailResponseDto:
+      $ref: './responses/dtos/contracts/contract-tenant-detail-response-dto.yaml'
+    ContractTenantMembershipResponseDto:
+      $ref: './responses/dtos/contracts/contract-tenant-membership-response-dto.yaml'
     ContractListResponseDto:
       $ref: './responses/dtos/contracts/contract-list-response-dto.yaml'
     ContractCreateResponseDto:
