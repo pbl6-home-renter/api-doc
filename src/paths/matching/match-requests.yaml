@@ -17,10 +17,12 @@ get:
       participant DB as Tenancy DB
       T->>TEN: GET /match-requests
       TEN->>ID: GET /internal/users?ids=actor
-      ID-->>TEN: Active tenant summary
+      ID-->>TEN: Active caller summary
       TEN->>DB: Page by requester/target and optional filters
       DB-->>TEN: Caller-owned requests and total
-      TEN-->>T: 200 MATCH_REQUESTS_FETCHED
+      TEN->>ID: GET /internal/users?ids=other participants
+      ID-->>TEN: Active requester and target summaries
+      TEN-->>T: 200 MATCH_REQUESTS_FETCHED with summaries
     ```
   parameters:
     - name: filter
@@ -54,7 +56,7 @@ get:
               data:
                 type: array
                 items:
-                  $ref: ../../openapi.yaml#/components/schemas/MatchRequestResponseDto
+                  $ref: ../../openapi.yaml#/components/schemas/MatchRequestListResponseDto
               pagination:
                 type: object
                 additionalProperties: false
@@ -73,6 +75,17 @@ get:
       $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
     '403':
       $ref: ../../openapi.yaml#/components/responses/ForbiddenError
+    '404':
+      description: One of the match request participants is no longer active.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code]
+            properties:
+              statusCode: { type: integer, enum: [404] }
+              code: { type: string, enum: [MATCH_REQUEST_PARTICIPANT_UNAVAILABLE] }
     '422':
       $ref: ../../openapi.yaml#/components/responses/ValidationError
     '503':
