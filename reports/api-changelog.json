@@ -72628,6 +72628,1685 @@
           }
         }
       }
+    },
+    {
+      "id": "85bb4e37b6b9400e95c94547f8b0e509b8b1fce7c0f43c3a048bce2b890174df",
+      "label": "Thay đổi contract từ Git",
+      "classification": "BREAKING",
+      "contractId": "rentify-public",
+      "repository": "https://github.com/pbl6-home-renter/api-doc",
+      "baseHash": "425cae484ed9ab43c699189e4c542667f158937f63ca1168516a48e1ace9e2e5",
+      "headHash": "4f65c32c2a11e7d70d7baeba67632872c2a7b9bc0b80bee8593dd5132686e85b",
+      "baseSource": "src/openapi.yaml",
+      "headSource": "src/openapi.yaml",
+      "detectedAt": "2026-11-18T14:21:41.780Z",
+      "committedAt": "2026-11-18T21:21:29+07:00",
+      "baseCommit": "56701ffcd180e833858bb50a462eaa1eab130547",
+      "headCommit": "774277861e1c8bc9fe4624d0eab4b50151fe4929",
+      "prUrl": "https://github.com/pbl6-home-renter/api-doc/pull/75",
+      "commitUrl": "https://github.com/pbl6-home-renter/api-doc/commit/774277861e1c8bc9fe4624d0eab4b50151fe4929",
+      "metadataKind": "Git revision thực tế",
+      "reason": "CHƯA CUNG CẤP — tác giả PR phải bổ sung lý do nghiệp vụ; không thể suy ra từ OpenAPI diff.",
+      "tools": {
+        "redocly": "2.64.1",
+        "oasdiff": "1.34.1"
+      },
+      "changes": [
+        {
+          "id": "request-parameter-enum-value-removed",
+          "text": "removed the enum value `csv` from the `query` request parameter `format`",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getMeFavoriteRooms",
+          "path": "/me/favorite-rooms",
+          "section": "paths",
+          "fingerprint": "3aa48de8d58e",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu enum trong DTO/validation và nhánh switch/when; xử lý giá trị chưa biết, kiểm thử dữ liệu cũ và mới; phối hợp BE trước khi phát hành."
+        },
+        {
+          "id": "request-parameter-enum-value-removed",
+          "text": "removed the enum value `pdf` from the `query` request parameter `format`",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getMeFavoriteRooms",
+          "path": "/me/favorite-rooms",
+          "section": "paths",
+          "fingerprint": "b3dcae7d3c25",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu enum trong DTO/validation và nhánh switch/when; xử lý giá trị chưa biết, kiểm thử dữ liệu cũ và mới; phối hợp BE trước khi phát hành."
+        },
+        {
+          "id": "request-parameter-enum-value-removed",
+          "text": "removed the enum value `xlsx` from the `query` request parameter `format`",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getMeFavoriteRooms",
+          "path": "/me/favorite-rooms",
+          "section": "paths",
+          "fingerprint": "392eca1d12ec",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu enum trong DTO/validation và nhánh switch/when; xử lý giá trị chưa biết, kiểm thử dữ liệu cũ và mới; phối hợp BE trước khi phát hành."
+        },
+        {
+          "id": "response-media-type-removed",
+          "text": "removed the media type `application/pdf` for the response with the status `200`",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getMeFavoriteRooms",
+          "path": "/me/favorite-rooms",
+          "section": "paths",
+          "fingerprint": "0ee11c8d2a7c",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "response-media-type-removed",
+          "text": "removed the media type `application/vnd.openxmlformats-officedocument.spreadsheetml.sheet` for the response with the status `200`",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getMeFavoriteRooms",
+          "path": "/me/favorite-rooms",
+          "section": "paths",
+          "fingerprint": "42676808dd98",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "response-media-type-removed",
+          "text": "removed the media type `text/csv` for the response with the status `200`",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getMeFavoriteRooms",
+          "path": "/me/favorite-rooms",
+          "section": "paths",
+          "fingerprint": "e57d8ecc217c",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "request-parameter-enum-value-removed",
+          "text": "removed the enum value `csv` from the `query` request parameter `format`",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getRooms",
+          "path": "/rooms",
+          "section": "paths",
+          "fingerprint": "d6d4411eb731",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu enum trong DTO/validation và nhánh switch/when; xử lý giá trị chưa biết, kiểm thử dữ liệu cũ và mới; phối hợp BE trước khi phát hành."
+        },
+        {
+          "id": "request-parameter-enum-value-removed",
+          "text": "removed the enum value `pdf` from the `query` request parameter `format`",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getRooms",
+          "path": "/rooms",
+          "section": "paths",
+          "fingerprint": "f69fdf295134",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu enum trong DTO/validation và nhánh switch/when; xử lý giá trị chưa biết, kiểm thử dữ liệu cũ và mới; phối hợp BE trước khi phát hành."
+        },
+        {
+          "id": "request-parameter-enum-value-removed",
+          "text": "removed the enum value `xlsx` from the `query` request parameter `format`",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getRooms",
+          "path": "/rooms",
+          "section": "paths",
+          "fingerprint": "3c1d45638d8a",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu enum trong DTO/validation và nhánh switch/when; xử lý giá trị chưa biết, kiểm thử dữ liệu cũ và mới; phối hợp BE trước khi phát hành."
+        },
+        {
+          "id": "response-media-type-removed",
+          "text": "removed the media type `application/pdf` for the response with the status `200`",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getRooms",
+          "path": "/rooms",
+          "section": "paths",
+          "fingerprint": "da63684e88ae",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "response-media-type-removed",
+          "text": "removed the media type `application/vnd.openxmlformats-officedocument.spreadsheetml.sheet` for the response with the status `200`",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getRooms",
+          "path": "/rooms",
+          "section": "paths",
+          "fingerprint": "4c7c962199e8",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "response-media-type-removed",
+          "text": "removed the media type `text/csv` for the response with the status `200`",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getRooms",
+          "path": "/rooms",
+          "section": "paths",
+          "fingerprint": "bd5ed0c58192",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "response-property-became-nullable",
+          "text": "the response property `data/items/area` became nullable for the status `200`",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getRooms",
+          "path": "/rooms",
+          "section": "paths",
+          "fingerprint": "bc0be2aa4b69",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu vị trí và thay đổi trước/sau trong entry này với API adapter, DTO, parser và validation; cùng BE xác nhận phương án tương thích trước merge/phát hành."
+        },
+        {
+          "id": "response-required-property-removed",
+          "text": "removed the required property `data/items/district` from the response with the `200` status",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getRooms",
+          "path": "/rooms",
+          "section": "paths",
+          "fingerprint": "f39d877ad456",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "api-version-not-bumped",
+          "text": "a breaking change was detected but the version is still `1.0.0`",
+          "level": 1,
+          "section": "info",
+          "fingerprint": "d3f96cd643c1",
+          "classification": "NON_BREAKING",
+          "clientImpact": "BE: xem lại quy ước version trước khi chấp nhận breaking change. FE/Mobile: theo kế hoạch chuyển đổi của entry này; version trong OpenAPI chưa chứng minh backend đã triển khai."
+        },
+        {
+          "id": "new-optional-request-parameter",
+          "text": "added the new optional `query` request parameter `filter`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getMeFavoriteRooms",
+          "path": "/me/favorite-rooms",
+          "section": "paths",
+          "fingerprint": "4f429fd00c3c",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        },
+        {
+          "id": "new-optional-request-parameter",
+          "text": "added the new optional `query` request parameter `order`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getMeFavoriteRooms",
+          "path": "/me/favorite-rooms",
+          "section": "paths",
+          "fingerprint": "f35caa9b1096",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        },
+        {
+          "id": "new-optional-request-parameter",
+          "text": "added the new optional `query` request parameter `sort`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getMeFavoriteRooms",
+          "path": "/me/favorite-rooms",
+          "section": "paths",
+          "fingerprint": "dc8badcb251d",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        },
+        {
+          "id": "response-optional-property-added",
+          "text": "added the optional property `data/items/address` to the response with the `200` status",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getMeFavoriteRooms",
+          "path": "/me/favorite-rooms",
+          "section": "paths",
+          "fingerprint": "8b7aa2cbb1b2",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/items/address; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-optional-property-added",
+          "text": "added the optional property `data/items/area` to the response with the `200` status",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getMeFavoriteRooms",
+          "path": "/me/favorite-rooms",
+          "section": "paths",
+          "fingerprint": "e3818f98a04a",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/items/area; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-optional-property-added",
+          "text": "added the optional property `data/items/buildingId` to the response with the `200` status",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getMeFavoriteRooms",
+          "path": "/me/favorite-rooms",
+          "section": "paths",
+          "fingerprint": "a1a28b77b427",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/items/buildingId; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-optional-property-added",
+          "text": "added the optional property `data/items/buildingName` to the response with the `200` status",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getMeFavoriteRooms",
+          "path": "/me/favorite-rooms",
+          "section": "paths",
+          "fingerprint": "08ce189e5dff",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/items/buildingName; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-optional-property-added",
+          "text": "added the optional property `data/items/genderPolicy` to the response with the `200` status",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getMeFavoriteRooms",
+          "path": "/me/favorite-rooms",
+          "section": "paths",
+          "fingerprint": "9f0ce15e23ac",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/items/genderPolicy; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-optional-property-added",
+          "text": "added the optional property `data/items/id` to the response with the `200` status",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getMeFavoriteRooms",
+          "path": "/me/favorite-rooms",
+          "section": "paths",
+          "fingerprint": "d57f6aa5189e",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/items/id; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-optional-property-added",
+          "text": "added the optional property `data/items/isFavorited` to the response with the `200` status",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getMeFavoriteRooms",
+          "path": "/me/favorite-rooms",
+          "section": "paths",
+          "fingerprint": "d40fecb372b3",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/items/isFavorited; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-optional-property-added",
+          "text": "added the optional property `data/items/photoMediaIds` to the response with the `200` status",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getMeFavoriteRooms",
+          "path": "/me/favorite-rooms",
+          "section": "paths",
+          "fingerprint": "ac336afc48d5",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/items/photoMediaIds; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-optional-property-added",
+          "text": "added the optional property `data/items/photoUrls` to the response with the `200` status",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getMeFavoriteRooms",
+          "path": "/me/favorite-rooms",
+          "section": "paths",
+          "fingerprint": "445db9e44224",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/items/photoUrls; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-optional-property-added",
+          "text": "added the optional property `data/items/province` to the response with the `200` status",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getMeFavoriteRooms",
+          "path": "/me/favorite-rooms",
+          "section": "paths",
+          "fingerprint": "a37e642892ec",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/items/province; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-optional-property-added",
+          "text": "added the optional property `data/items/thumbnailUrl` to the response with the `200` status",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getMeFavoriteRooms",
+          "path": "/me/favorite-rooms",
+          "section": "paths",
+          "fingerprint": "e3d765a2edf9",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/items/thumbnailUrl; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-optional-property-added",
+          "text": "added the optional property `data/items/ward` to the response with the `200` status",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getMeFavoriteRooms",
+          "path": "/me/favorite-rooms",
+          "section": "paths",
+          "fingerprint": "e2e5001dec07",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/items/ward; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "api-security-added",
+          "text": "the endpoint scheme security `BearerAuth` was added to the API",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getRooms",
+          "path": "/rooms",
+          "section": "paths",
+          "fingerprint": "1f82c66d08ad",
+          "classification": "NEEDS_REVIEW",
+          "clientImpact": "FE và Mobile: kiểm tra token, header, scope và luồng đăng nhập; BE xác nhận quyền truy cập thực tế, thời điểm áp dụng và tương thích app cũ."
+        },
+        {
+          "id": "response-property-deprecated",
+          "text": "response property `data/items/thumbnailUrl` deprecated",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getRooms",
+          "path": "/rooms",
+          "section": "paths",
+          "fingerprint": "9f2a0f48ff62",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        },
+        {
+          "id": "response-required-property-added",
+          "text": "added the required property `data/items/buildingName` to the response with the `200` status",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getRooms",
+          "path": "/rooms",
+          "section": "paths",
+          "fingerprint": "443163418255",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/items/buildingName; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-required-property-added",
+          "text": "added the required property `data/items/photoMediaIds` to the response with the `200` status",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getRooms",
+          "path": "/rooms",
+          "section": "paths",
+          "fingerprint": "4dd0e56984ce",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/items/photoMediaIds; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-required-property-added",
+          "text": "added the required property `data/items/photoUrls` to the response with the `200` status",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getRooms",
+          "path": "/rooms",
+          "section": "paths",
+          "fingerprint": "f3b4be08451e",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/items/photoUrls; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-required-property-added",
+          "text": "added the required property `data/items/ward` to the response with the `200` status",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getRooms",
+          "path": "/rooms",
+          "section": "paths",
+          "fingerprint": "b7ada48b005b",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/items/ward; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-non-success-status-added",
+          "text": "added the non-success response with the status `503`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getRoomsRoomid",
+          "path": "/rooms/{roomId}",
+          "section": "paths",
+          "fingerprint": "6f25bf192d4b",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        },
+        {
+          "id": "response-property-became-required",
+          "text": "the response property `data/photoUrls` became required for the status `200`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getRoomsRoomid",
+          "path": "/rooms/{roomId}",
+          "section": "paths",
+          "fingerprint": "3758e066e8aa",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        },
+        {
+          "id": "response-required-property-added",
+          "text": "added the required property `data/address` to the response with the `200` status",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getRoomsRoomid",
+          "path": "/rooms/{roomId}",
+          "section": "paths",
+          "fingerprint": "3b9b214b690e",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/address; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-required-property-added",
+          "text": "added the required property `data/photoMediaIds` to the response with the `200` status",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getRoomsRoomid",
+          "path": "/rooms/{roomId}",
+          "section": "paths",
+          "fingerprint": "a26b492d76c9",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/photoMediaIds; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-required-property-added",
+          "text": "added the required property `data/province` to the response with the `200` status",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getRoomsRoomid",
+          "path": "/rooms/{roomId}",
+          "section": "paths",
+          "fingerprint": "9b89a773f0f2",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/province; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-required-property-added",
+          "text": "added the required property `data/ward` to the response with the `200` status",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getRoomsRoomid",
+          "path": "/rooms/{roomId}",
+          "section": "paths",
+          "fingerprint": "4991111de909",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/ward; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        }
+      ],
+      "locations": [
+        {
+          "pointer": "/components/parameters",
+          "before": null,
+          "after": {
+            "0": {
+              "name": "filter",
+              "in": "query",
+              "required": false,
+              "style": "deepObject",
+              "explode": true,
+              "description": "Bộ lọc được endpoint hỗ trợ.",
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "province": {
+                    "type": "string"
+                  },
+                  "ward": {
+                    "type": "string"
+                  },
+                  "minPrice": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "maxPrice": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "genderPolicy": {
+                    "type": "string",
+                    "enum": [
+                      "any",
+                      "male",
+                      "female"
+                    ]
+                  }
+                }
+              }
+            },
+            "1": {
+              "name": "sort",
+              "in": "query",
+              "description": "Một trường sắp xếp được endpoint hỗ trợ.",
+              "schema": {
+                "type": "string",
+                "default": "rentPrice"
+              }
+            },
+            "2": {
+              "name": "order",
+              "in": "query",
+              "schema": {
+                "type": "string",
+                "enum": [
+                  "asc",
+                  "desc"
+                ],
+                "default": "asc"
+              }
+            }
+          }
+        },
+        {
+          "pointer": "/components/schemas/FavoriteRoomListResponseDto/description",
+          "before": "Danh sách phòng đã lưu của tenant hiện tại",
+          "after": "Phòng công khai còn available trong danh sách đã lưu của tenant; phòng đã ẩn/occupied vẫn được lưu và có thể bỏ lưu nhưng không có trong danh sách này."
+        },
+        {
+          "pointer": "/components/schemas/FavoriteRoomListResponseDto/properties/address",
+          "before": null,
+          "after": {
+            "type": "string"
+          }
+        },
+        {
+          "pointer": "/components/schemas/FavoriteRoomListResponseDto/properties/area",
+          "before": null,
+          "after": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        {
+          "pointer": "/components/schemas/FavoriteRoomListResponseDto/properties/buildingId",
+          "before": null,
+          "after": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        {
+          "pointer": "/components/schemas/FavoriteRoomListResponseDto/properties/buildingName",
+          "before": null,
+          "after": {
+            "type": "string"
+          }
+        },
+        {
+          "pointer": "/components/schemas/FavoriteRoomListResponseDto/properties/genderPolicy",
+          "before": null,
+          "after": {
+            "type": "string",
+            "enum": [
+              "any",
+              "male",
+              "female"
+            ]
+          }
+        },
+        {
+          "pointer": "/components/schemas/FavoriteRoomListResponseDto/properties/id",
+          "before": null,
+          "after": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        {
+          "pointer": "/components/schemas/FavoriteRoomListResponseDto/properties/isFavorited",
+          "before": null,
+          "after": {
+            "type": "boolean",
+            "enum": [
+              true
+            ]
+          }
+        },
+        {
+          "pointer": "/components/schemas/FavoriteRoomListResponseDto/properties/photoMediaIds",
+          "before": null,
+          "after": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        },
+        {
+          "pointer": "/components/schemas/FavoriteRoomListResponseDto/properties/photoUrls",
+          "before": null,
+          "after": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uri"
+            }
+          }
+        },
+        {
+          "pointer": "/components/schemas/FavoriteRoomListResponseDto/properties/province",
+          "before": null,
+          "after": {
+            "type": "string"
+          }
+        },
+        {
+          "pointer": "/components/schemas/FavoriteRoomListResponseDto/properties/thumbnailUrl",
+          "before": null,
+          "after": {
+            "type": "string",
+            "format": "uri",
+            "nullable": true,
+            "deprecated": true
+          }
+        },
+        {
+          "pointer": "/components/schemas/FavoriteRoomListResponseDto/properties/ward",
+          "before": null,
+          "after": {
+            "type": "string"
+          }
+        },
+        {
+          "pointer": "/components/schemas/RoomDetailResponseDto/properties/address",
+          "before": null,
+          "after": {
+            "type": "string",
+            "description": "Địa chỉ tòa nhà chứa phòng."
+          }
+        },
+        {
+          "pointer": "/components/schemas/RoomDetailResponseDto/properties/photoMediaIds",
+          "before": null,
+          "after": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        },
+        {
+          "pointer": "/components/schemas/RoomDetailResponseDto/properties/province",
+          "before": null,
+          "after": {
+            "type": "string",
+            "description": "Tỉnh / thành phố của tòa nhà."
+          }
+        },
+        {
+          "pointer": "/components/schemas/RoomDetailResponseDto/properties/ward",
+          "before": null,
+          "after": {
+            "type": "string",
+            "description": "Tên xã / phường của tòa nhà."
+          }
+        },
+        {
+          "pointer": "/components/schemas/RoomDetailResponseDto/required",
+          "before": [
+            "id",
+            "buildingId",
+            "buildingName",
+            "name",
+            "rentPrice",
+            "depositAmount",
+            "status",
+            "landlord"
+          ],
+          "after": [
+            "id",
+            "buildingId",
+            "buildingName",
+            "address",
+            "ward",
+            "province",
+            "photoMediaIds",
+            "photoUrls",
+            "name",
+            "rentPrice",
+            "depositAmount",
+            "status",
+            "landlord"
+          ]
+        },
+        {
+          "pointer": "/components/schemas/RoomPublicListResponseDto/properties/area/nullable",
+          "before": null,
+          "after": true
+        },
+        {
+          "pointer": "/components/schemas/RoomPublicListResponseDto/properties/buildingName",
+          "before": null,
+          "after": {
+            "type": "string",
+            "description": "Tên tòa nhà chứa phòng."
+          }
+        },
+        {
+          "pointer": "/components/schemas/RoomPublicListResponseDto/properties/district",
+          "before": {
+            "type": "string",
+            "description": "Quận / Huyện."
+          },
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/RoomPublicListResponseDto/properties/photoMediaIds",
+          "before": null,
+          "after": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        },
+        {
+          "pointer": "/components/schemas/RoomPublicListResponseDto/properties/photoUrls",
+          "before": null,
+          "after": {
+            "type": "array",
+            "description": "URL public của ảnh đã upload và gắn vào phòng, theo thứ tự đính kèm; rỗng nếu không có ảnh.",
+            "items": {
+              "type": "string",
+              "format": "uri"
+            }
+          }
+        },
+        {
+          "pointer": "/components/schemas/RoomPublicListResponseDto/properties/thumbnailUrl/deprecated",
+          "before": null,
+          "after": true
+        },
+        {
+          "pointer": "/components/schemas/RoomPublicListResponseDto/properties/thumbnailUrl/description",
+          "before": "URL ảnh đại diện chính của căn phòng.",
+          "after": "Tương thích client cũ: ảnh đầu tiên trong photoUrls, null nếu không có ảnh."
+        },
+        {
+          "pointer": "/components/schemas/RoomPublicListResponseDto/properties/ward",
+          "before": null,
+          "after": {
+            "type": "string",
+            "description": "Tên xã / phường của tòa nhà."
+          }
+        },
+        {
+          "pointer": "/components/schemas/RoomPublicListResponseDto/required",
+          "before": [
+            "id",
+            "buildingId",
+            "name",
+            "area",
+            "rentPrice",
+            "genderPolicy",
+            "address",
+            "district",
+            "province",
+            "isFavorited"
+          ],
+          "after": [
+            "id",
+            "buildingId",
+            "buildingName",
+            "photoMediaIds",
+            "photoUrls",
+            "name",
+            "area",
+            "rentPrice",
+            "genderPolicy",
+            "address",
+            "ward",
+            "province",
+            "isFavorited"
+          ]
+        },
+        {
+          "pointer": "/paths/~1contracts/post/description",
+          "before": "Room không tồn tại hoặc đã xóa trả 404 RESOURCE_NOT_FOUND; Room thuộc landlord khác trả 403 FORBIDDEN.\nRoom đã có hợp đồng active, suspended hoặc terminated qua P9-07 đang chờ bàn giao trả\n409 ACTIVE_CONTRACT_EXISTS; bỏ qua hợp đồng đã xóa mềm. Tạo draft không đổi trạng thái Room.\nNếu tenantId null hoặc không gửi, phải có tenantName và tenantPhone; thiếu liên hệ trả 422 TENANT_IDENTITY_INVALID.\nKhi có tenantId, mỗi trường liên hệ có thể null hoặc không gửi. Chưa kiểm tra tài khoản tenant bên Identity.\nBody chỉ nhận các field có trong request schema. rentalType, tenantCccd, paymentDueDay,\ntemplateKey, templateVariables và các field khác ngoài DTO trả 422 UNEXPECTED_FIELD.\nroomId/tenantId không phải UUID trả 422 INVALID_UUID. Tiền thuê/cọc là số không âm;\nngày theo YYYY-MM-DD và startDate phải trước endDate.\nContract và outbox contract.created được lưu trong cùng transaction; relay publish sau commit.\nService chưa có rate limiter.\n\n**Sequence diagram**\n\n```mermaid\nsequenceDiagram\n    autonumber\n    actor Client\n    participant GW as API Gateway\n    participant S as Tenancy-Service\n    participant Guard as JWT/access guards\n    participant C as ContractController\n    participant Bus as CQRS CommandBus\n    participant H as Application handler\n    Client->>GW: POST /api/v1/contracts\n    GW->>GW: Validate bearer token for protected route\n    GW->>S: Proxy original HTTP request\n    S->>Guard: Validate JWT, account state and route access\n    Guard-->>C: Continue with authenticated context\n    S->>C: Invoke postContracts\n    C->>Bus: Execute command for postContracts\n    Bus->>H: Dispatch command handler\n    H-->>Bus: Return use-case result\n    Bus-->>C: Result\n    C-->>S: Return documented response\n    S-->>GW: HTTP status and response body\n    GW-->>Client: Forward HTTP response\n```",
+          "after": "Room không tồn tại hoặc đã xóa trả 404 RESOURCE_NOT_FOUND; Room thuộc landlord khác trả 403 FORBIDDEN.\nRoom đã có hợp đồng active, suspended hoặc terminated qua P9-07 đang chờ bàn giao trả\n409 ACTIVE_CONTRACT_EXISTS; bỏ qua hợp đồng đã xóa mềm. Tạo draft không đổi trạng thái Room.\nNếu tenantId null hoặc không gửi, phải có tenantName và tenantPhone; thiếu liên hệ trả 422 TENANT_IDENTITY_INVALID.\nKhi có tenantId, mỗi trường liên hệ có thể null hoặc không gửi; ID tường minh được giữ nguyên theo contract hiện hành.\nNếu không gửi tenantId, Tenancy chuẩn hóa tenantPhone (0... / +84...) và tra projection Identity cục bộ\ncho tenant active. Khớp chính xác thì lưu tenantId; chưa khớp vẫn tạo draft với ID null để reconcile sau.\nKhông gọi HTTP Identity trong transaction tạo hợp đồng. Tạo draft chưa làm phòng xuất hiện trong danh sách phòng đang thuê.\nBody chỉ nhận các field có trong request schema. rentalType, tenantCccd, paymentDueDay,\ntemplateKey, templateVariables và các field khác ngoài DTO trả 422 UNEXPECTED_FIELD.\nroomId/tenantId không phải UUID trả 422 INVALID_UUID. Tiền thuê/cọc là số không âm;\nngày theo YYYY-MM-DD và startDate phải trước endDate.\nContract và outbox contract.created được lưu trong cùng transaction; relay publish sau commit.\nService chưa có rate limiter.\n\n**Sequence diagram**\n\n```mermaid\nsequenceDiagram\n    autonumber\n    actor Client\n    participant GW as API Gateway\n    participant S as Tenancy-Service\n    participant Guard as JWT/access guards\n    participant C as ContractController\n    participant Bus as CQRS CommandBus\n    participant H as Application handler\n    Client->>GW: POST /api/v1/contracts\n    GW->>GW: Validate bearer token for protected route\n    GW->>S: Proxy original HTTP request\n    S->>Guard: Validate JWT, account state and route access\n    Guard-->>C: Continue with authenticated context\n    S->>C: Invoke postContracts\n    C->>Bus: Execute command for postContracts\n    Bus->>H: Dispatch command handler\n    H-->>Bus: Return use-case result\n    Bus-->>C: Result\n    C-->>S: Return documented response\n    S-->>GW: HTTP status and response body\n    GW-->>Client: Forward HTTP response\n```"
+        },
+        {
+          "pointer": "/paths/~1contracts~1{contractId}~1activate-contract/post/description",
+          "before": "contractId sai định dạng UUID trả 400 BAD_REQUEST theo ParseUUIDPipe.\nThiếu hoặc null signedContractMediaId trả 422 VALIDATION_FAILED; UUID của file không hợp lệ trả\n422 INVALID_UUID; field ngoài DTO trả 422 UNEXPECTED_FIELD.\n\nTenancy kiểm tra media trước khi mở transaction, qua GET /internal/media/{signedContractMediaId}\ncủa Identity bằng service token. Adapter yêu cầu phần data của response envelope gồm\nid, ownerType, ownerId, purpose và status. Chỉ chấp nhận id khớp signedContractMediaId,\nownerType = contract, ownerId = contractId, purpose = contract_signed và status = uploaded.\nIdentity timeout, không kết nối được, lỗi 5xx hoặc từ chối service token trả 503 SERVICE_UNAVAILABLE.\nCác lỗi 4xx khác từ Identity được truyền nguyên trạng. Chưa xác minh được file thì không kích hoạt.\n\nSau khi media hợp lệ, trong cùng transaction: khóa hợp đồng, kiểm tra hợp đồng chưa bị xóa\nvà landlordId = user.id, khóa phòng, kích hoạt hợp đồng, tự thêm đại diện vào contract_members với joined_at = start_date\nvà chuyển phòng sang occupied. Member giữ tenant_id/name/phone từ hợp đồng, không có cờ đại diện.\nHợp đồng hoặc phòng không tồn tại/đã xóa trả 404 RESOURCE_NOT_FOUND; khác landlord trả 403 FORBIDDEN.\nPhòng có hợp đồng active, suspended hoặc terminated qua P9-07 đang chờ bàn giao trả\n409 ACTIVE_CONTRACT_EXISTS; unique index UQ_contracts_room_occupancy bảo vệ cùng quy tắc khi ghi.\nVì media được kiểm tra trước, media không hợp lệ có thể trả 409 trước khi kiểm tra 404/403 của hợp đồng.\n\n**Điều kiện lỗi theo Contract**\n\n- `409 SIGNED_FILE_MISSING`: xảy ra khi có ít nhất một điều kiện:\n  media không tồn tại (Identity trả 404 hoặc response không có dữ liệu media);\n  `media.id` khác `signedContractMediaId`;\n  `ownerType` khác `contract`;\n  `ownerId` khác `contractId` trên URL;\n  `purpose` khác `contract_signed`;\n  hoặc file chưa upload xong (`status` khác `uploaded`). Không mở transaction ở nhánh này.\n- `409 CONTRACT_NOT_READY`: hợp đồng không ở `draft` hoặc `signed`,\n  hoặc phòng không ở `available` (đang `maintenance` hoặc đã `occupied`).\n  Transaction rollback, không lưu thay đổi hợp đồng, phòng hoặc outbox.\n  Hợp đồng/phòng không tồn tại hoặc đã xóa được xử lý riêng bằng `404 RESOURCE_NOT_FOUND`.\n\nThành công trả 200 CONTRACT_ACTIVATED với id, status = active và activatedAt dạng ISO 8601 UTC.\nactivatedAt được lưu ở contracts.activated_at. Hợp đồng, member đại diện, phòng và ba outbox message\ncontract.activated, contract_member.added, room.status_changed được ghi cùng transaction; lỗi ghi dữ liệu sẽ rollback.\nThe contract.activated event supplies contractId, buildingId, roomId, landlordId and linked\ntenantUserIds[] to Community. Community creates the contract conversation with the landlord\nadmin only after this event, then applies any member events stored before activation.\nOutbox relay publish sau khi commit. Không kiểm tra startDate so với ngày hiện tại; không dùng OTP/PIN.\nService chưa có rate limiter.\n\n**Giới hạn tích hợp hiện tại:** Identity-Service local chưa triển khai GET /internal/media/{id};\nresponse public complete-upload cũng chưa có field status. Dữ liệu ở trên là contract nội bộ\nadapter đang yêu cầu, chưa phải endpoint media đã được triển khai. Nếu Identity trả 404 cho route\nchưa có, Tenancy hiện trả 409 SIGNED_FILE_MISSING. signedContractMediaId được xác minh để kích hoạt,\nnhưng hiện chưa được lưu trên Contract hoặc đưa vào event contract.activated.\nHandler so sánh UUID theo chuỗi, chưa chuẩn hóa hoa/thường; giữ nguyên UUID do API trả về\nđể tránh bị từ chối nhầm bằng SIGNED_FILE_MISSING.\n\n**Sequence diagram**\n\n```mermaid\nsequenceDiagram\n    autonumber\n    actor Client\n    participant GW as API Gateway\n    participant S as Tenancy-Service\n    participant Guard as JWT/access guards\n    participant C as ContractController\n    participant Bus as CQRS CommandBus\n    participant H as Application handler\n    Client->>GW: POST /api/v1/contracts/{contractId}/activate-contract\n    GW->>GW: Validate bearer token for protected route\n    GW->>S: Proxy original HTTP request\n    S->>Guard: Validate JWT, account state and route access\n    Guard-->>C: Continue with authenticated context\n    S->>C: Invoke postContractsContractidActivateContract\n    C->>Bus: Execute command for postContractsContractidActivateContract\n    Bus->>H: Dispatch command handler\n    H-->>Bus: Return use-case result\n    Bus-->>C: Result\n    C-->>S: Return documented response\n    S-->>GW: HTTP status and response body\n    GW-->>Client: Forward HTTP response\n```",
+          "after": "contractId sai định dạng UUID trả 400 BAD_REQUEST theo ParseUUIDPipe.\nThiếu hoặc null signedContractMediaId trả 422 VALIDATION_FAILED; UUID của file không hợp lệ trả\n422 INVALID_UUID; field ngoài DTO trả 422 UNEXPECTED_FIELD.\n\nTenancy kiểm tra media trước khi mở transaction, qua GET /internal/media/{signedContractMediaId}\ncủa Identity bằng service token. Adapter yêu cầu phần data của response envelope gồm\nid, ownerType, ownerId, purpose và status. Chỉ chấp nhận id khớp signedContractMediaId,\nownerType = contract, ownerId = contractId, purpose = contract_signed và status = uploaded.\nIdentity timeout, không kết nối được, lỗi 5xx hoặc từ chối service token trả 503 SERVICE_UNAVAILABLE.\nCác lỗi 4xx khác từ Identity được truyền nguyên trạng. Chưa xác minh được file thì không kích hoạt.\n\nSau khi media hợp lệ, trong cùng transaction: đọc SĐT bất biến của hợp đồng, khóa phone trước hợp đồng\ntheo cùng thứ tự với consumer Identity. Nếu tenantId còn null, thử resolve lại từ projection active tenant\ntrước khi tạo representative và snapshot contract.activated; ID đã chỉ định không bị ghi đè.\nTiếp theo khóa hợp đồng, kiểm tra hợp đồng chưa bị xóa\nvà landlordId = user.id, khóa phòng, kích hoạt hợp đồng, tự thêm đại diện vào contract_members với joined_at = start_date\nvà chuyển phòng sang occupied. Member giữ tenant_id/name/phone từ hợp đồng, không có cờ đại diện.\nHợp đồng hoặc phòng không tồn tại/đã xóa trả 404 RESOURCE_NOT_FOUND; khác landlord trả 403 FORBIDDEN.\nPhòng có hợp đồng active, suspended hoặc terminated qua P9-07 đang chờ bàn giao trả\n409 ACTIVE_CONTRACT_EXISTS; unique index UQ_contracts_room_occupancy bảo vệ cùng quy tắc khi ghi.\nVì media được kiểm tra trước, media không hợp lệ có thể trả 409 trước khi kiểm tra 404/403 của hợp đồng.\n\n**Điều kiện lỗi theo Contract**\n\n- `409 SIGNED_FILE_MISSING`: xảy ra khi có ít nhất một điều kiện:\n  media không tồn tại (Identity trả 404 hoặc response không có dữ liệu media);\n  `media.id` khác `signedContractMediaId`;\n  `ownerType` khác `contract`;\n  `ownerId` khác `contractId` trên URL;\n  `purpose` khác `contract_signed`;\n  hoặc file chưa upload xong (`status` khác `uploaded`). Không mở transaction ở nhánh này.\n- `409 CONTRACT_NOT_READY`: hợp đồng không ở `draft` hoặc `signed`,\n  hoặc phòng không ở `available` (đang `maintenance` hoặc đã `occupied`).\n  Transaction rollback, không lưu thay đổi hợp đồng, phòng hoặc outbox.\n  Hợp đồng/phòng không tồn tại hoặc đã xóa được xử lý riêng bằng `404 RESOURCE_NOT_FOUND`.\n\nThành công trả 200 CONTRACT_ACTIVATED với id, status = active và activatedAt dạng ISO 8601 UTC.\nactivatedAt được lưu ở contracts.activated_at. Hợp đồng, member đại diện, phòng và ba outbox message\ncontract.activated, contract_member.added, room.status_changed được ghi cùng transaction; lỗi ghi dữ liệu sẽ rollback.\nThe contract.activated event supplies contractId, buildingId, roomId, landlordId and linked\ntenantUserIds[] to Community. Community creates the contract conversation with the landlord\nadmin only after this event, then applies any member events stored before activation.\nOutbox relay publish sau khi commit. Không kiểm tra startDate so với ngày hiện tại; không dùng OTP/PIN.\nService chưa có rate limiter.\n\n**Giới hạn tích hợp hiện tại:** Identity-Service local chưa triển khai GET /internal/media/{id};\nresponse public complete-upload cũng chưa có field status. Dữ liệu ở trên là contract nội bộ\nadapter đang yêu cầu, chưa phải endpoint media đã được triển khai. Nếu Identity trả 404 cho route\nchưa có, Tenancy hiện trả 409 SIGNED_FILE_MISSING. signedContractMediaId được xác minh để kích hoạt,\nnhưng hiện chưa được lưu trên Contract hoặc đưa vào event contract.activated.\nHandler so sánh UUID theo chuỗi, chưa chuẩn hóa hoa/thường; giữ nguyên UUID do API trả về\nđể tránh bị từ chối nhầm bằng SIGNED_FILE_MISSING.\n\n**Sequence diagram**\n\n```mermaid\nsequenceDiagram\n    autonumber\n    actor Client\n    participant GW as API Gateway\n    participant S as Tenancy-Service\n    participant Guard as JWT/access guards\n    participant C as ContractController\n    participant Bus as CQRS CommandBus\n    participant H as Application handler\n    Client->>GW: POST /api/v1/contracts/{contractId}/activate-contract\n    GW->>GW: Validate bearer token for protected route\n    GW->>S: Proxy original HTTP request\n    S->>Guard: Validate JWT, account state and route access\n    Guard-->>C: Continue with authenticated context\n    S->>C: Invoke postContractsContractidActivateContract\n    C->>Bus: Execute command for postContractsContractidActivateContract\n    Bus->>H: Dispatch command handler\n    H-->>Bus: Return use-case result\n    Bus-->>C: Result\n    C-->>S: Return documented response\n    S-->>GW: HTTP status and response body\n    GW-->>Client: Forward HTTP response\n```"
+        },
+        {
+          "pointer": "/paths/~1me~1favorite-rooms/get/description",
+          "before": "tenant. Liệt kê phòng đã lưu. Lỗi nghiệp vụ: 401 INVALID TOKEN.",
+          "after": "Tenant active. Trả phòng đã lưu còn available thuộc tòa approved chưa xóa. Phòng occupied hoặc không còn public được ẩn nhưng bản ghi lưu vẫn giữ để bỏ lưu hoặc hiển thị lại khi phòng public. Tenant mới không cần hồ sơ phụ; chưa có phòng phù hợp trả 200 với data rỗng. Mặc định sắp xếp rentPrice tăng dần, roomId là tie-breaker. Chỉ hỗ trợ format=json."
+        },
+        {
+          "pointer": "/paths/~1me~1favorite-rooms/get/parameters",
+          "before": [
+            {
+              "name": "pageSize",
+              "in": "query",
+              "schema": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 100,
+                "default": 20
+              }
+            },
+            {
+              "name": "pageNo",
+              "in": "query",
+              "schema": {
+                "type": "integer",
+                "minimum": 1,
+                "default": 1
+              }
+            },
+            {
+              "name": "format",
+              "in": "query",
+              "description": "json trả envelope; định dạng khác trả file stream.",
+              "schema": {
+                "type": "string",
+                "enum": [
+                  "json",
+                  "xlsx",
+                  "csv",
+                  "pdf"
+                ],
+                "default": "json"
+              }
+            }
+          ],
+          "after": [
+            {
+              "name": "pageSize",
+              "in": "query",
+              "schema": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 100,
+                "default": 20
+              }
+            },
+            {
+              "name": "pageNo",
+              "in": "query",
+              "schema": {
+                "type": "integer",
+                "minimum": 1,
+                "default": 1
+              }
+            },
+            {
+              "$ref": "#/components/parameters/0"
+            },
+            {
+              "$ref": "#/components/parameters/1"
+            },
+            {
+              "$ref": "#/components/parameters/2"
+            },
+            {
+              "name": "format",
+              "in": "query",
+              "description": "Chỉ hỗ trợ JSON envelope.",
+              "schema": {
+                "type": "string",
+                "enum": [
+                  "json"
+                ],
+                "default": "json"
+              }
+            }
+          ]
+        },
+        {
+          "pointer": "/paths/~1me~1favorite-rooms/get/responses/200/content/application~1pdf",
+          "before": {
+            "schema": {
+              "type": "string",
+              "format": "binary"
+            }
+          },
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1me~1favorite-rooms/get/responses/200/content/application~1vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+          "before": {
+            "schema": {
+              "type": "string",
+              "format": "binary"
+            }
+          },
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1me~1favorite-rooms/get/responses/200/content/text~1csv",
+          "before": {
+            "schema": {
+              "type": "string",
+              "format": "binary"
+            }
+          },
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1me~1favorite-rooms/get/x-apidog-status",
+          "before": "designing",
+          "after": "developing"
+        },
+        {
+          "pointer": "/paths/~1me~1favorite-rooms/post/description",
+          "before": "tenant. Lưu một phòng. Lỗi nghiệp vụ: 404 NOT FOUND · 409 ALREADY FAVORITED.",
+          "after": "Tenant active. Chỉ lưu phòng available của tòa approved chưa xóa. ID tenant lấy từ token. 404 RESOURCE_NOT_FOUND nếu phòng không public; 409 ALREADY_FAVORITED nếu đã lưu. Unique theo tenantId/roomId, không cần tenant profile."
+        },
+        {
+          "pointer": "/paths/~1me~1favorite-rooms/post/x-apidog-status",
+          "before": "designing",
+          "after": "developing"
+        },
+        {
+          "pointer": "/paths/~1me~1favorite-rooms~1{roomId}/delete/description",
+          "before": "tenant. Bỏ lưu một phòng. Lỗi nghiệp vụ: 404 NOT FOUND.",
+          "after": "Tenant active. Chỉ xóa bản ghi đã lưu của user hiện tại, kể cả phòng đã occupied/ẩn/xóa. Trả 204 khi đã xóa, 404 RESOURCE_NOT_FOUND nếu user chưa lưu phòng (bao gồm lần DELETE thứ hai). Không cần tenant profile."
+        },
+        {
+          "pointer": "/paths/~1me~1favorite-rooms~1{roomId}/delete/x-apidog-status",
+          "before": "designing",
+          "after": "developing"
+        },
+        {
+          "pointer": "/paths/~1rooms/get/description",
+          "before": "**Sequence diagram**\n\n```mermaid\nsequenceDiagram\n    autonumber\n    actor Client\n    participant GW as API Gateway\n    participant S as Tenancy-Service\n    participant C as RoomController\n    participant Bus as CQRS QueryBus\n    participant H as Application handler\n    Client->>GW: GET /api/v1/rooms\n    GW->>S: Proxy original HTTP request\n    S->>C: Invoke getRooms\n    C->>Bus: Execute query for getRooms\n    Bus->>H: Dispatch query handler\n    H-->>Bus: Return use-case result\n    Bus-->>C: Result\n    C-->>S: Return documented response\n    S-->>GW: HTTP status and response body\n    GW-->>Client: Forward HTTP response\n```",
+          "after": "Phòng available thuộc tòa approved. Trả buildingName, address, ward, province và photoUrls ngay trong response.\nAnonymous nhận isFavorited=false; Bearer hợp lệ cho phép trả trạng thái đã lưu của chính user.\nResponse có Vary: Authorization và private/no-store khi đã xác thực. Chỉ hỗ trợ format=json.\n\n**Sequence diagram**\n\n```mermaid\nsequenceDiagram\n    autonumber\n    actor Client\n    participant GW as API Gateway\n    participant S as Tenancy-Service\n    participant C as RoomController\n    participant Bus as CQRS QueryBus\n    participant H as Application handler\n    Client->>GW: GET /api/v1/rooms\n    GW->>S: Proxy original HTTP request\n    S->>C: Invoke getRooms\n    C->>Bus: Execute query for getRooms\n    Bus->>H: Dispatch query handler\n    H-->>Bus: Return use-case result\n    Bus-->>C: Result\n    C-->>S: Return documented response\n    S-->>GW: HTTP status and response body\n    GW-->>Client: Forward HTTP response\n```"
+        },
+        {
+          "pointer": "/paths/~1rooms/get/parameters",
+          "before": [
+            {
+              "name": "filter",
+              "in": "query",
+              "required": false,
+              "style": "deepObject",
+              "explode": true,
+              "description": "Bộ lọc được endpoint hỗ trợ.",
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "province": {
+                    "type": "string"
+                  },
+                  "ward": {
+                    "type": "string"
+                  },
+                  "minPrice": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "maxPrice": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "genderPolicy": {
+                    "type": "string",
+                    "enum": [
+                      "any",
+                      "male",
+                      "female"
+                    ]
+                  }
+                }
+              }
+            },
+            {
+              "name": "sort",
+              "in": "query",
+              "description": "Một trường sắp xếp được endpoint hỗ trợ.",
+              "schema": {
+                "type": "string",
+                "default": "rentPrice"
+              }
+            },
+            {
+              "name": "order",
+              "in": "query",
+              "schema": {
+                "type": "string",
+                "enum": [
+                  "asc",
+                  "desc"
+                ],
+                "default": "asc"
+              }
+            },
+            {
+              "name": "pageSize",
+              "in": "query",
+              "schema": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 100,
+                "default": 20
+              }
+            },
+            {
+              "name": "pageNo",
+              "in": "query",
+              "schema": {
+                "type": "integer",
+                "minimum": 1,
+                "default": 1
+              }
+            },
+            {
+              "name": "format",
+              "in": "query",
+              "description": "json trả envelope; định dạng khác trả file stream.",
+              "schema": {
+                "type": "string",
+                "enum": [
+                  "json",
+                  "xlsx",
+                  "csv",
+                  "pdf"
+                ],
+                "default": "json"
+              }
+            }
+          ],
+          "after": [
+            {
+              "name": "filter",
+              "in": "query",
+              "required": false,
+              "style": "deepObject",
+              "explode": true,
+              "description": "Bộ lọc được endpoint hỗ trợ.",
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "province": {
+                    "type": "string"
+                  },
+                  "ward": {
+                    "type": "string"
+                  },
+                  "minPrice": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "maxPrice": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "genderPolicy": {
+                    "type": "string",
+                    "enum": [
+                      "any",
+                      "male",
+                      "female"
+                    ]
+                  }
+                }
+              }
+            },
+            {
+              "name": "sort",
+              "in": "query",
+              "description": "Một trường sắp xếp được endpoint hỗ trợ.",
+              "schema": {
+                "type": "string",
+                "default": "rentPrice"
+              }
+            },
+            {
+              "name": "order",
+              "in": "query",
+              "schema": {
+                "type": "string",
+                "enum": [
+                  "asc",
+                  "desc"
+                ],
+                "default": "asc"
+              }
+            },
+            {
+              "name": "pageSize",
+              "in": "query",
+              "schema": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 100,
+                "default": 20
+              }
+            },
+            {
+              "name": "pageNo",
+              "in": "query",
+              "schema": {
+                "type": "integer",
+                "minimum": 1,
+                "default": 1
+              }
+            },
+            {
+              "name": "format",
+              "in": "query",
+              "description": "Chỉ hỗ trợ JSON envelope.",
+              "schema": {
+                "type": "string",
+                "enum": [
+                  "json"
+                ],
+                "default": "json"
+              }
+            }
+          ]
+        },
+        {
+          "pointer": "/paths/~1rooms/get/responses/200/content/application~1json/example/data",
+          "before": [
+            {
+              "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+              "buildingId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+              "name": "P.201",
+              "area": "18.5",
+              "rentPrice": 3500000,
+              "genderPolicy": "any",
+              "address": "12 Nguyễn Trãi",
+              "district": "Quận 1",
+              "province": "Thành phố Hồ Chí Minh",
+              "isFavorited": false
+            }
+          ],
+          "after": [
+            {
+              "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+              "buildingId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+              "buildingName": "Tòa Nguyễn Trãi",
+              "photoMediaIds": [],
+              "photoUrls": [],
+              "thumbnailUrl": null,
+              "name": "P.201",
+              "area": "18.5",
+              "rentPrice": 3500000,
+              "genderPolicy": "any",
+              "address": "12 Nguyễn Trãi",
+              "ward": "Phường Bến Thành",
+              "province": "Thành phố Hồ Chí Minh",
+              "isFavorited": false
+            }
+          ]
+        },
+        {
+          "pointer": "/paths/~1rooms/get/responses/200/content/application~1pdf",
+          "before": {
+            "schema": {
+              "type": "string",
+              "format": "binary"
+            }
+          },
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1rooms/get/responses/200/content/application~1vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+          "before": {
+            "schema": {
+              "type": "string",
+              "format": "binary"
+            }
+          },
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1rooms/get/responses/200/content/text~1csv",
+          "before": {
+            "schema": {
+              "type": "string",
+              "format": "binary"
+            }
+          },
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1rooms/get/security",
+          "before": [],
+          "after": [
+            {},
+            {
+              "BearerAuth": []
+            }
+          ]
+        },
+        {
+          "pointer": "/paths/~1rooms~1{roomId}/get/description",
+          "before": "**Sequence diagram**\n\n```mermaid\nsequenceDiagram\n    autonumber\n    actor Client\n    participant GW as API Gateway\n    participant S as Tenancy-Service\n    participant C as RoomController\n    participant Bus as CQRS QueryBus\n    participant H as Application handler\n    Client->>GW: GET /api/v1/rooms/{roomId}\n    GW->>S: Proxy original HTTP request\n    S->>C: Invoke getRoomsRoomid\n    C->>Bus: Execute query for getRoomsRoomid\n    Bus->>H: Dispatch query handler\n    H-->>Bus: Return use-case result\n    Bus-->>C: Result\n    C-->>S: Return documented response\n    S-->>GW: HTTP status and response body\n    GW-->>Client: Forward HTTP response\n```",
+          "after": "Trả address/ward/province của tòa và landlord gồm id/name/phone qua Identity nội bộ, không lộ email.\nChủ trọ không còn tồn tại/đã xóa hoặc sai role làm phòng không hợp lệ: trả 404 RESOURCE_NOT_FOUND.\nIdentity không khả dụng trả 503 SERVICE_UNAVAILABLE, không trả landlord=null để che lỗi.\n\n**Sequence diagram**\n\n```mermaid\nsequenceDiagram\n    autonumber\n    actor Client\n    participant GW as API Gateway\n    participant S as Tenancy-Service\n    participant C as RoomController\n    participant Bus as CQRS QueryBus\n    participant H as Application handler\n    Client->>GW: GET /api/v1/rooms/{roomId}\n    GW->>S: Proxy original HTTP request\n    S->>C: Invoke getRoomsRoomid\n    C->>Bus: Execute query for getRoomsRoomid\n    Bus->>H: Dispatch query handler\n    H-->>Bus: Return use-case result\n    Bus-->>C: Result\n    C-->>S: Return documented response\n    S-->>GW: HTTP status and response body\n    GW-->>Client: Forward HTTP response\n```"
+        },
+        {
+          "pointer": "/paths/~1rooms~1{roomId}/get/responses/200/content/application~1json/example/data/address",
+          "before": null,
+          "after": "12 Nguyễn Trãi"
+        },
+        {
+          "pointer": "/paths/~1rooms~1{roomId}/get/responses/200/content/application~1json/example/data/photoMediaIds",
+          "before": null,
+          "after": []
+        },
+        {
+          "pointer": "/paths/~1rooms~1{roomId}/get/responses/200/content/application~1json/example/data/photoUrls",
+          "before": null,
+          "after": []
+        },
+        {
+          "pointer": "/paths/~1rooms~1{roomId}/get/responses/200/content/application~1json/example/data/province",
+          "before": null,
+          "after": "Thành phố Hồ Chí Minh"
+        },
+        {
+          "pointer": "/paths/~1rooms~1{roomId}/get/responses/200/content/application~1json/example/data/ward",
+          "before": null,
+          "after": "Phường Bến Thành"
+        },
+        {
+          "pointer": "/paths/~1rooms~1{roomId}/get/responses/503",
+          "before": null,
+          "after": {
+            "$ref": "#/components/responses/AuthUnavailableError"
+          }
+        }
+      ],
+      "semanticDiff": {
+        "paths": {
+          "modified": {
+            "/me/favorite-rooms": {
+              "operations": {
+                "modified": {
+                  "GET": {
+                    "extensions": {
+                      "modified": {
+                        "x-apidog-status": [
+                          {
+                            "oldValue": "designing",
+                            "value": "developing",
+                            "op": "replace",
+                            "from": "",
+                            "path": ""
+                          }
+                        ]
+                      }
+                    },
+                    "parameters": {
+                      "added": {
+                        "query": [
+                          "filter",
+                          "sort",
+                          "order"
+                        ]
+                      },
+                      "modified": {
+                        "query": {
+                          "format": {
+                            "schema": {
+                              "enum": {
+                                "deleted": [
+                                  "xlsx",
+                                  "csv",
+                                  "pdf"
+                                ]
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "responses": {
+                      "modified": {
+                        "200": {
+                          "content": {
+                            "deleted": [
+                              "application/pdf",
+                              "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                              "text/csv"
+                            ],
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "properties": {
+                                    "modified": {
+                                      "data": {
+                                        "items": {
+                                          "properties": {
+                                            "added": [
+                                              "ward",
+                                              "buildingId",
+                                              "buildingName",
+                                              "address",
+                                              "area",
+                                              "photoMediaIds",
+                                              "thumbnailUrl",
+                                              "genderPolicy",
+                                              "province",
+                                              "photoUrls",
+                                              "isFavorited",
+                                              "id"
+                                            ]
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "POST": {
+                    "extensions": {
+                      "modified": {
+                        "x-apidog-status": [
+                          {
+                            "oldValue": "designing",
+                            "value": "developing",
+                            "op": "replace",
+                            "from": "",
+                            "path": ""
+                          }
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "/me/favorite-rooms/{roomId}": {
+              "operations": {
+                "modified": {
+                  "DELETE": {
+                    "extensions": {
+                      "modified": {
+                        "x-apidog-status": [
+                          {
+                            "oldValue": "designing",
+                            "value": "developing",
+                            "op": "replace",
+                            "from": "",
+                            "path": ""
+                          }
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "/rooms": {
+              "operations": {
+                "modified": {
+                  "GET": {
+                    "parameters": {
+                      "modified": {
+                        "query": {
+                          "format": {
+                            "schema": {
+                              "enum": {
+                                "deleted": [
+                                  "xlsx",
+                                  "csv",
+                                  "pdf"
+                                ]
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "responses": {
+                      "modified": {
+                        "200": {
+                          "content": {
+                            "deleted": [
+                              "application/pdf",
+                              "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                              "text/csv"
+                            ],
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "properties": {
+                                    "modified": {
+                                      "data": {
+                                        "items": {
+                                          "required": {
+                                            "added": [
+                                              "photoMediaIds",
+                                              "photoUrls",
+                                              "ward",
+                                              "buildingName"
+                                            ],
+                                            "deleted": [
+                                              "district"
+                                            ]
+                                          },
+                                          "properties": {
+                                            "added": [
+                                              "photoMediaIds",
+                                              "photoUrls",
+                                              "ward",
+                                              "buildingName"
+                                            ],
+                                            "deleted": [
+                                              "district"
+                                            ],
+                                            "modified": {
+                                              "area": {
+                                                "nullable": {
+                                                  "from": false,
+                                                  "to": true
+                                                }
+                                              },
+                                              "thumbnailUrl": {
+                                                "deprecated": {
+                                                  "from": false,
+                                                  "to": true
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "securityRequirements": {
+                      "added": [
+                        {
+                          "index": 0,
+                          "schemes": {}
+                        },
+                        {
+                          "index": 1,
+                          "schemes": {
+                            "BearerAuth": []
+                          }
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            },
+            "/rooms/{roomId}": {
+              "operations": {
+                "modified": {
+                  "GET": {
+                    "responses": {
+                      "added": [
+                        "503"
+                      ],
+                      "modified": {
+                        "200": {
+                          "content": {
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "properties": {
+                                    "modified": {
+                                      "data": {
+                                        "required": {
+                                          "added": [
+                                            "photoUrls",
+                                            "address",
+                                            "province",
+                                            "ward",
+                                            "photoMediaIds"
+                                          ]
+                                        },
+                                        "properties": {
+                                          "added": [
+                                            "province",
+                                            "address",
+                                            "ward",
+                                            "photoMediaIds"
+                                          ]
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "components": {
+          "schemas": {
+            "modified": {
+              "FavoriteRoomListResponseDto": {
+                "properties": {
+                  "added": [
+                    "id",
+                    "area",
+                    "photoMediaIds",
+                    "genderPolicy",
+                    "province",
+                    "buildingName",
+                    "address",
+                    "photoUrls",
+                    "isFavorited",
+                    "thumbnailUrl",
+                    "ward",
+                    "buildingId"
+                  ]
+                }
+              },
+              "RoomDetailResponseDto": {
+                "required": {
+                  "added": [
+                    "address",
+                    "province",
+                    "photoMediaIds",
+                    "photoUrls",
+                    "ward"
+                  ]
+                },
+                "properties": {
+                  "added": [
+                    "ward",
+                    "photoMediaIds",
+                    "province",
+                    "address"
+                  ]
+                }
+              },
+              "RoomPublicListResponseDto": {
+                "required": {
+                  "added": [
+                    "photoUrls",
+                    "ward",
+                    "photoMediaIds",
+                    "buildingName"
+                  ],
+                  "deleted": [
+                    "district"
+                  ]
+                },
+                "properties": {
+                  "added": [
+                    "photoMediaIds",
+                    "photoUrls",
+                    "ward",
+                    "buildingName"
+                  ],
+                  "deleted": [
+                    "district"
+                  ],
+                  "modified": {
+                    "area": {
+                      "nullable": {
+                        "from": false,
+                        "to": true
+                      }
+                    },
+                    "thumbnailUrl": {
+                      "deprecated": {
+                        "from": false,
+                        "to": true
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "parameters": {
+            "added": [
+              "0",
+              "1",
+              "2"
+            ]
+          }
+        }
+      }
     }
   ]
 }
