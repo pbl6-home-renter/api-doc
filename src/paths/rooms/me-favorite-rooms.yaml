@@ -2,12 +2,16 @@ get:
   tags:
   - Property
   x-apidog-folder: FavoriteRoom
-  x-apidog-status: designing
+  x-apidog-status: developing
   operationId: getMeFavoriteRooms
   security:
     - BearerAuth: []
   summary: List favorite rooms
-  description: 'tenant. Liệt kê phòng đã lưu. Lỗi nghiệp vụ: 401 INVALID TOKEN.'
+  description: >-
+    Tenant active. Trả phòng đã lưu còn available thuộc tòa approved chưa xóa.
+    Phòng occupied hoặc không còn public được ẩn nhưng bản ghi lưu vẫn giữ để bỏ lưu hoặc hiển thị lại khi phòng public.
+    Tenant mới không cần hồ sơ phụ; chưa có phòng phù hợp trả 200 với data rỗng.
+    Mặc định sắp xếp rentPrice tăng dần, roomId là tie-breaker. Chỉ hỗ trợ format=json.
   parameters:
   - name: pageSize
     in: query
@@ -22,16 +26,16 @@ get:
       type: integer
       minimum: 1
       default: 1
+  - $ref: ./rooms.yaml#/get/parameters/0
+  - $ref: ./rooms.yaml#/get/parameters/1
+  - $ref: ./rooms.yaml#/get/parameters/2
   - name: format
     in: query
-    description: json trả envelope; định dạng khác trả file stream.
+    description: Chỉ hỗ trợ JSON envelope.
     schema:
       type: string
       enum:
       - json
-      - xlsx
-      - csv
-      - pdf
       default: json
   responses:
     '200':
@@ -107,18 +111,6 @@ get:
               totalPages: 1
               hasNextPage: false
               hasPreviousPage: false
-        text/csv:
-          schema:
-            type: string
-            format: binary
-        application/pdf:
-          schema:
-            type: string
-            format: binary
-        application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
-          schema:
-            type: string
-            format: binary
     '400':
       $ref: ../../openapi.yaml#/components/responses/BadRequestQueryError
     '401':
@@ -135,12 +127,12 @@ post:
   tags:
   - Property
   x-apidog-folder: FavoriteRoom
-  x-apidog-status: designing
+  x-apidog-status: developing
   operationId: postMeFavoriteRooms
   security:
     - BearerAuth: []
   summary: Add favorite room
-  description: 'tenant. Lưu một phòng. Lỗi nghiệp vụ: 404 NOT FOUND · 409 ALREADY FAVORITED.'
+  description: 'Tenant active. Chỉ lưu phòng available của tòa approved chưa xóa. ID tenant lấy từ token. 404 RESOURCE_NOT_FOUND nếu phòng không public; 409 ALREADY_FAVORITED nếu đã lưu. Unique theo tenantId/roomId, không cần tenant profile.'
   requestBody:
     required: true
     content:

@@ -219,7 +219,10 @@ post:
     Room đã có hợp đồng active, suspended hoặc terminated qua P9-07 đang chờ bàn giao trả
     409 ACTIVE_CONTRACT_EXISTS; bỏ qua hợp đồng đã xóa mềm. Tạo draft không đổi trạng thái Room.
     Nếu tenantId null hoặc không gửi, phải có tenantName và tenantPhone; thiếu liên hệ trả 422 TENANT_IDENTITY_INVALID.
-    Khi có tenantId, mỗi trường liên hệ có thể null hoặc không gửi. Chưa kiểm tra tài khoản tenant bên Identity.
+    Khi có tenantId, mỗi trường liên hệ có thể null hoặc không gửi; ID tường minh được giữ nguyên theo contract hiện hành.
+    Nếu không gửi tenantId, Tenancy chuẩn hóa tenantPhone (0... / +84...) và tra projection Identity cục bộ
+    cho tenant active. Khớp chính xác thì lưu tenantId; chưa khớp vẫn tạo draft với ID null để reconcile sau.
+    Không gọi HTTP Identity trong transaction tạo hợp đồng. Tạo draft chưa làm phòng xuất hiện trong danh sách phòng đang thuê.
     Body chỉ nhận các field có trong request schema. rentalType, tenantCccd, paymentDueDay,
     templateKey, templateVariables và các field khác ngoài DTO trả 422 UNEXPECTED_FIELD.
     roomId/tenantId không phải UUID trả 422 INVALID_UUID. Tiền thuê/cọc là số không âm;

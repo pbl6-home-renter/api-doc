@@ -6,6 +6,10 @@ get:
   operationId: getRoomsRoomid
   summary: Get room details
   description: |-
+    Trả address/ward/province của tòa và landlord gồm id/name/phone qua Identity nội bộ, không lộ email.
+    Chủ trọ không còn tồn tại/đã xóa hoặc sai role làm phòng không hợp lệ: trả 404 RESOURCE_NOT_FOUND.
+    Identity không khả dụng trả 503 SERVICE_UNAVAILABLE, không trả landlord=null để che lỗi.
+
     **Sequence diagram**
     
     ```mermaid
@@ -74,11 +78,18 @@ get:
                 electricity: flat
                 water: flat
               buildingName: Ví dụ
+              address: 12 Nguyễn Trãi
+              ward: Phường Bến Thành
+              province: Thành phố Hồ Chí Minh
+              photoMediaIds: []
+              photoUrls: []
               depositAmount: 0
               landlord:
                 id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
                 name: Ví dụ
                 phone: '0901234567'
+    '503':
+      $ref: ../../openapi.yaml#/components/responses/AuthUnavailableError
     '400':
       $ref: ../../openapi.yaml#/components/responses/BadRequestPathError
     '403':

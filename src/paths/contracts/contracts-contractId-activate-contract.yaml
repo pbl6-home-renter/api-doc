@@ -19,7 +19,10 @@ post:
     Identity timeout, không kết nối được, lỗi 5xx hoặc từ chối service token trả 503 SERVICE_UNAVAILABLE.
     Các lỗi 4xx khác từ Identity được truyền nguyên trạng. Chưa xác minh được file thì không kích hoạt.
     
-    Sau khi media hợp lệ, trong cùng transaction: khóa hợp đồng, kiểm tra hợp đồng chưa bị xóa
+    Sau khi media hợp lệ, trong cùng transaction: đọc SĐT bất biến của hợp đồng, khóa phone trước hợp đồng
+    theo cùng thứ tự với consumer Identity. Nếu tenantId còn null, thử resolve lại từ projection active tenant
+    trước khi tạo representative và snapshot contract.activated; ID đã chỉ định không bị ghi đè.
+    Tiếp theo khóa hợp đồng, kiểm tra hợp đồng chưa bị xóa
     và landlordId = user.id, khóa phòng, kích hoạt hợp đồng, tự thêm đại diện vào contract_members với joined_at = start_date
     và chuyển phòng sang occupied. Member giữ tenant_id/name/phone từ hợp đồng, không có cờ đại diện.
     Hợp đồng hoặc phòng không tồn tại/đã xóa trả 404 RESOURCE_NOT_FOUND; khác landlord trả 403 FORBIDDEN.
