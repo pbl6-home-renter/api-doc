@@ -8724,8 +8724,13 @@
         "x-apidog-status": "released",
         "operationId": "getRooms",
         "summary": "Search public rooms",
-        "description": "**Sequence diagram**\n\n```mermaid\nsequenceDiagram\n    autonumber\n    actor Client\n    participant GW as API Gateway\n    participant S as Tenancy-Service\n    participant C as RoomController\n    participant Bus as CQRS QueryBus\n    participant H as Application handler\n    Client->>GW: GET /api/v1/rooms\n    GW->>S: Proxy original HTTP request\n    S->>C: Invoke getRooms\n    C->>Bus: Execute query for getRooms\n    Bus->>H: Dispatch query handler\n    H-->>Bus: Return use-case result\n    Bus-->>C: Result\n    C-->>S: Return documented response\n    S-->>GW: HTTP status and response body\n    GW-->>Client: Forward HTTP response\n```\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-28 | 🟢 NON_BREAKING | removed the optional property `data/items/roomType` from the response with the `200` status | [#24](https://github.com/pbl6-home-renter/api-doc/pull/24) |\n",
-        "security": [],
+        "description": "Phòng available thuộc tòa approved. Trả buildingName, address, ward, province và photoUrls ngay trong response.\nAnonymous nhận isFavorited=false; Bearer hợp lệ cho phép trả trạng thái đã lưu của chính user.\nResponse có Vary: Authorization và private/no-store khi đã xác thực. Chỉ hỗ trợ format=json.\n\n**Sequence diagram**\n\n```mermaid\nsequenceDiagram\n    autonumber\n    actor Client\n    participant GW as API Gateway\n    participant S as Tenancy-Service\n    participant C as RoomController\n    participant Bus as CQRS QueryBus\n    participant H as Application handler\n    Client->>GW: GET /api/v1/rooms\n    GW->>S: Proxy original HTTP request\n    S->>C: Invoke getRooms\n    C->>Bus: Execute query for getRooms\n    Bus->>H: Dispatch query handler\n    H-->>Bus: Return use-case result\n    Bus-->>C: Result\n    C-->>S: Return documented response\n    S-->>GW: HTTP status and response body\n    GW-->>Client: Forward HTTP response\n```\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-28 | 🟢 NON_BREAKING | removed the optional property `data/items/roomType` from the response with the `200` status | [#24](https://github.com/pbl6-home-renter/api-doc/pull/24) |\n",
+        "security": [
+          {},
+          {
+            "BearerAuth": []
+          }
+        ],
         "parameters": [
           {
             "name": "filter",
@@ -8806,14 +8811,11 @@
           {
             "name": "format",
             "in": "query",
-            "description": "json trả envelope; định dạng khác trả file stream.",
+            "description": "Chỉ hỗ trợ JSON envelope.",
             "schema": {
               "type": "string",
               "enum": [
-                "json",
-                "xlsx",
-                "csv",
-                "pdf"
+                "json"
               ],
               "default": "json"
             }
@@ -8905,12 +8907,16 @@
                     {
                       "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
                       "buildingId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                      "buildingName": "Tòa Nguyễn Trãi",
+                      "photoMediaIds": [],
+                      "photoUrls": [],
+                      "thumbnailUrl": null,
                       "name": "P.201",
                       "area": "18.5",
                       "rentPrice": 3500000,
                       "genderPolicy": "any",
                       "address": "12 Nguyễn Trãi",
-                      "district": "Quận 1",
+                      "ward": "Phường Bến Thành",
                       "province": "Thành phố Hồ Chí Minh",
                       "isFavorited": false
                     }
@@ -8924,24 +8930,6 @@
                     "hasNextPage": false,
                     "hasPreviousPage": false
                   }
-                }
-              },
-              "text/csv": {
-                "schema": {
-                  "type": "string",
-                  "format": "binary"
-                }
-              },
-              "application/pdf": {
-                "schema": {
-                  "type": "string",
-                  "format": "binary"
-                }
-              },
-              "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": {
-                "schema": {
-                  "type": "string",
-                  "format": "binary"
                 }
               }
             }
@@ -9548,7 +9536,7 @@
         "x-apidog-status": "released",
         "operationId": "getRoomsRoomid",
         "summary": "Get room details",
-        "description": "**Sequence diagram**\n\n```mermaid\nsequenceDiagram\n    autonumber\n    actor Client\n    participant GW as API Gateway\n    participant S as Tenancy-Service\n    participant C as RoomController\n    participant Bus as CQRS QueryBus\n    participant H as Application handler\n    Client->>GW: GET /api/v1/rooms/{roomId}\n    GW->>S: Proxy original HTTP request\n    S->>C: Invoke getRoomsRoomid\n    C->>Bus: Execute query for getRoomsRoomid\n    Bus->>H: Dispatch query handler\n    H-->>Bus: Return use-case result\n    Bus-->>C: Result\n    C-->>S: Return documented response\n    S-->>GW: HTTP status and response body\n    GW-->>Client: Forward HTTP response\n```\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-28 | 🟢 NON_BREAKING | removed the optional property `data/roomType` from the response with the `200` status | [#24](https://github.com/pbl6-home-renter/api-doc/pull/24) |\n| 2026-10-25 | 🟢 NON_BREAKING | Thêm field response tùy chọn `data/amenities/aircon` ở HTTP 200. | [#17](https://github.com/pbl6-home-renter/api-doc/pull/17) |\n| 2026-10-25 | 🟢 NON_BREAKING | Thêm field response tùy chọn `data/amenities/chair` ở HTTP 200. | [#17](https://github.com/pbl6-home-renter/api-doc/pull/17) |\n| 2026-10-25 | 🟢 NON_BREAKING | Thêm field response tùy chọn `data/amenities/fridge` ở HTTP 200. | [#17](https://github.com/pbl6-home-renter/api-doc/pull/17) |\n| 2026-10-25 | 🟢 NON_BREAKING | Thêm field response tùy chọn `data/amenities/mezzanine` ở HTTP 200. | [#17](https://github.com/pbl6-home-renter/api-doc/pull/17) |\n| 2026-10-25 | 🟢 NON_BREAKING | Thêm field response tùy chọn `data/amenities/table` ở HTTP 200. | [#17](https://github.com/pbl6-home-renter/api-doc/pull/17) |\n| 2026-10-25 | 🟢 NON_BREAKING | Thêm field response tùy chọn `data/amenities/waterHeater` ở HTTP 200. | [#17](https://github.com/pbl6-home-renter/api-doc/pull/17) |\n| 2026-10-25 | 🟢 NON_BREAKING | Thêm field response tùy chọn `data/amenities/wcInside` ở HTTP 200. | [#17](https://github.com/pbl6-home-renter/api-doc/pull/17) |\n| 2026-10-25 | 🟢 NON_BREAKING | the response property `data/amenities` became not nullable for the status `200` | [#17](https://github.com/pbl6-home-renter/api-doc/pull/17) |\n",
+        "description": "Trả address/ward/province của tòa và landlord gồm id/name/phone qua Identity nội bộ, không lộ email.\nChủ trọ không còn tồn tại/đã xóa hoặc sai role làm phòng không hợp lệ: trả 404 RESOURCE_NOT_FOUND.\nIdentity không khả dụng trả 503 SERVICE_UNAVAILABLE, không trả landlord=null để che lỗi.\n\n**Sequence diagram**\n\n```mermaid\nsequenceDiagram\n    autonumber\n    actor Client\n    participant GW as API Gateway\n    participant S as Tenancy-Service\n    participant C as RoomController\n    participant Bus as CQRS QueryBus\n    participant H as Application handler\n    Client->>GW: GET /api/v1/rooms/{roomId}\n    GW->>S: Proxy original HTTP request\n    S->>C: Invoke getRoomsRoomid\n    C->>Bus: Execute query for getRoomsRoomid\n    Bus->>H: Dispatch query handler\n    H-->>Bus: Return use-case result\n    Bus-->>C: Result\n    C-->>S: Return documented response\n    S-->>GW: HTTP status and response body\n    GW-->>Client: Forward HTTP response\n```\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-28 | 🟢 NON_BREAKING | removed the optional property `data/roomType` from the response with the `200` status | [#24](https://github.com/pbl6-home-renter/api-doc/pull/24) |\n| 2026-10-25 | 🟢 NON_BREAKING | Thêm field response tùy chọn `data/amenities/aircon` ở HTTP 200. | [#17](https://github.com/pbl6-home-renter/api-doc/pull/17) |\n| 2026-10-25 | 🟢 NON_BREAKING | Thêm field response tùy chọn `data/amenities/chair` ở HTTP 200. | [#17](https://github.com/pbl6-home-renter/api-doc/pull/17) |\n| 2026-10-25 | 🟢 NON_BREAKING | Thêm field response tùy chọn `data/amenities/fridge` ở HTTP 200. | [#17](https://github.com/pbl6-home-renter/api-doc/pull/17) |\n| 2026-10-25 | 🟢 NON_BREAKING | Thêm field response tùy chọn `data/amenities/mezzanine` ở HTTP 200. | [#17](https://github.com/pbl6-home-renter/api-doc/pull/17) |\n| 2026-10-25 | 🟢 NON_BREAKING | Thêm field response tùy chọn `data/amenities/table` ở HTTP 200. | [#17](https://github.com/pbl6-home-renter/api-doc/pull/17) |\n| 2026-10-25 | 🟢 NON_BREAKING | Thêm field response tùy chọn `data/amenities/waterHeater` ở HTTP 200. | [#17](https://github.com/pbl6-home-renter/api-doc/pull/17) |\n| 2026-10-25 | 🟢 NON_BREAKING | Thêm field response tùy chọn `data/amenities/wcInside` ở HTTP 200. | [#17](https://github.com/pbl6-home-renter/api-doc/pull/17) |\n| 2026-10-25 | 🟢 NON_BREAKING | the response property `data/amenities` became not nullable for the status `200` | [#17](https://github.com/pbl6-home-renter/api-doc/pull/17) |\n",
         "security": [],
         "parameters": [
           {
@@ -9608,6 +9596,11 @@
                       "water": "flat"
                     },
                     "buildingName": "Ví dụ",
+                    "address": "12 Nguyễn Trãi",
+                    "ward": "Phường Bến Thành",
+                    "province": "Thành phố Hồ Chí Minh",
+                    "photoMediaIds": [],
+                    "photoUrls": [],
                     "depositAmount": 0,
                     "landlord": {
                       "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
@@ -9633,6 +9626,9 @@
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
+          },
+          "503": {
+            "$ref": "#/components/responses/AuthUnavailableError"
           }
         }
       },
@@ -9991,7 +9987,7 @@
           "Property"
         ],
         "x-apidog-folder": "FavoriteRoom",
-        "x-apidog-status": "designing",
+        "x-apidog-status": "developing",
         "operationId": "getMeFavoriteRooms",
         "security": [
           {
@@ -9999,7 +9995,7 @@
           }
         ],
         "summary": "List favorite rooms",
-        "description": "tenant. Liệt kê phòng đã lưu. Lỗi nghiệp vụ: 401 INVALID TOKEN.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
+        "description": "Tenant active. Trả phòng đã lưu còn available thuộc tòa approved chưa xóa. Phòng occupied hoặc không còn public được ẩn nhưng bản ghi lưu vẫn giữ để bỏ lưu hoặc hiển thị lại khi phòng public. Tenant mới không cần hồ sơ phụ; chưa có phòng phù hợp trả 200 với data rỗng. Mặc định sắp xếp rentPrice tăng dần, roomId là tie-breaker. Chỉ hỗ trợ format=json.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "parameters": [
           {
             "name": "pageSize",
@@ -10021,16 +10017,22 @@
             }
           },
           {
+            "$ref": "#/components/parameters/0"
+          },
+          {
+            "$ref": "#/components/parameters/1"
+          },
+          {
+            "$ref": "#/components/parameters/2"
+          },
+          {
             "name": "format",
             "in": "query",
-            "description": "json trả envelope; định dạng khác trả file stream.",
+            "description": "Chỉ hỗ trợ JSON envelope.",
             "schema": {
               "type": "string",
               "enum": [
-                "json",
-                "xlsx",
-                "csv",
-                "pdf"
+                "json"
               ],
               "default": "json"
             }
@@ -10135,24 +10137,6 @@
                     "hasPreviousPage": false
                   }
                 }
-              },
-              "text/csv": {
-                "schema": {
-                  "type": "string",
-                  "format": "binary"
-                }
-              },
-              "application/pdf": {
-                "schema": {
-                  "type": "string",
-                  "format": "binary"
-                }
-              },
-              "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": {
-                "schema": {
-                  "type": "string",
-                  "format": "binary"
-                }
               }
             }
           },
@@ -10181,7 +10165,7 @@
           "Property"
         ],
         "x-apidog-folder": "FavoriteRoom",
-        "x-apidog-status": "designing",
+        "x-apidog-status": "developing",
         "operationId": "postMeFavoriteRooms",
         "security": [
           {
@@ -10189,7 +10173,7 @@
           }
         ],
         "summary": "Add favorite room",
-        "description": "tenant. Lưu một phòng. Lỗi nghiệp vụ: 404 NOT FOUND · 409 ALREADY FAVORITED.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
+        "description": "Tenant active. Chỉ lưu phòng available của tòa approved chưa xóa. ID tenant lấy từ token. 404 RESOURCE_NOT_FOUND nếu phòng không public; 409 ALREADY_FAVORITED nếu đã lưu. Unique theo tenantId/roomId, không cần tenant profile.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "requestBody": {
           "required": true,
           "content": {
@@ -10327,7 +10311,7 @@
           "Property"
         ],
         "x-apidog-folder": "FavoriteRoom",
-        "x-apidog-status": "designing",
+        "x-apidog-status": "developing",
         "operationId": "deleteMeFavoriteRoomsRoomid",
         "security": [
           {
@@ -10335,7 +10319,7 @@
           }
         ],
         "summary": "Remove favorite room",
-        "description": "tenant. Bỏ lưu một phòng. Lỗi nghiệp vụ: 404 NOT FOUND.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
+        "description": "Tenant active. Chỉ xóa bản ghi đã lưu của user hiện tại, kể cả phòng đã occupied/ẩn/xóa. Trả 204 khi đã xóa, 404 RESOURCE_NOT_FOUND nếu user chưa lưu phòng (bao gồm lần DELETE thứ hai). Không cần tenant profile.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "parameters": [
           {
             "name": "roomId",
@@ -13794,7 +13778,7 @@
           }
         ],
         "summary": "Create draft contract",
-        "description": "Room không tồn tại hoặc đã xóa trả 404 RESOURCE_NOT_FOUND; Room thuộc landlord khác trả 403 FORBIDDEN.\nRoom đã có hợp đồng active, suspended hoặc terminated qua P9-07 đang chờ bàn giao trả\n409 ACTIVE_CONTRACT_EXISTS; bỏ qua hợp đồng đã xóa mềm. Tạo draft không đổi trạng thái Room.\nNếu tenantId null hoặc không gửi, phải có tenantName và tenantPhone; thiếu liên hệ trả 422 TENANT_IDENTITY_INVALID.\nKhi có tenantId, mỗi trường liên hệ có thể null hoặc không gửi. Chưa kiểm tra tài khoản tenant bên Identity.\nBody chỉ nhận các field có trong request schema. rentalType, tenantCccd, paymentDueDay,\ntemplateKey, templateVariables và các field khác ngoài DTO trả 422 UNEXPECTED_FIELD.\nroomId/tenantId không phải UUID trả 422 INVALID_UUID. Tiền thuê/cọc là số không âm;\nngày theo YYYY-MM-DD và startDate phải trước endDate.\nContract và outbox contract.created được lưu trong cùng transaction; relay publish sau commit.\nService chưa có rate limiter.\n\n**Sequence diagram**\n\n```mermaid\nsequenceDiagram\n    autonumber\n    actor Client\n    participant GW as API Gateway\n    participant S as Tenancy-Service\n    participant Guard as JWT/access guards\n    participant C as ContractController\n    participant Bus as CQRS CommandBus\n    participant H as Application handler\n    Client->>GW: POST /api/v1/contracts\n    GW->>GW: Validate bearer token for protected route\n    GW->>S: Proxy original HTTP request\n    S->>Guard: Validate JWT, account state and route access\n    Guard-->>C: Continue with authenticated context\n    S->>C: Invoke postContracts\n    C->>Bus: Execute command for postContracts\n    Bus->>H: Dispatch command handler\n    H-->>Bus: Return use-case result\n    Bus-->>C: Result\n    C-->>S: Return documented response\n    S-->>GW: HTTP status and response body\n    GW-->>Client: Forward HTTP response\n```\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-11-02 | 🔴 BREAKING | the `vehicleCount` request property's max was set to `2147483647.00` | [#34](https://github.com/pbl6-home-renter/api-doc/pull/34) |\n| 2026-11-02 | 🔴 BREAKING | added the pattern `\\S` to the request property `tenantName` | [#34](https://github.com/pbl6-home-renter/api-doc/pull/34) |\n| 2026-11-02 | 🔴 BREAKING | added the new `INVALID_UUID` enum value to the `code` response property for the response status `422` | [#34](https://github.com/pbl6-home-renter/api-doc/pull/34) |\n| 2026-11-02 | 🔴 BREAKING | added the new `UNEXPECTED_FIELD` enum value to the `code` response property for the response status `422` | [#34](https://github.com/pbl6-home-renter/api-doc/pull/34) |\n| 2026-11-02 | 🔴 BREAKING | the `data/rentPrice` response's property `type` was widened from `integer` to `number` for status `201` | [#34](https://github.com/pbl6-home-renter/api-doc/pull/34) |\n| 2026-11-02 | 🟡 NEEDS_REVIEW | removed the request property `paymentDueDay` | [#34](https://github.com/pbl6-home-renter/api-doc/pull/34) |\n| 2026-11-02 | 🟡 NEEDS_REVIEW | removed the request property `rentalType` | [#34](https://github.com/pbl6-home-renter/api-doc/pull/34) |\n| 2026-11-02 | 🟡 NEEDS_REVIEW | removed the request property `templateKey` | [#34](https://github.com/pbl6-home-renter/api-doc/pull/34) |\n| 2026-11-02 | 🟡 NEEDS_REVIEW | removed the request property `templateVariables` | [#34](https://github.com/pbl6-home-renter/api-doc/pull/34) |\n| 2026-11-02 | 🟡 NEEDS_REVIEW | removed the request property `tenantCccd` | [#34](https://github.com/pbl6-home-renter/api-doc/pull/34) |\n| 2026-11-02 | 🟢 NON_BREAKING | the optional response header `location` removed for the status `201` | [#34](https://github.com/pbl6-home-renter/api-doc/pull/34) |\n| 2026-11-02 | 🟢 NON_BREAKING | added `subschema #1, subschema #2` to the request body `anyOf` list | [#34](https://github.com/pbl6-home-renter/api-doc/pull/34) |\n| 2026-11-02 | 🟢 NON_BREAKING | the request property `tenantName` became nullable | [#34](https://github.com/pbl6-home-renter/api-doc/pull/34) |\n| 2026-11-02 | 🟢 NON_BREAKING | the request property `tenantPhone` became nullable | [#34](https://github.com/pbl6-home-renter/api-doc/pull/34) |\n| 2026-11-02 | 🟢 NON_BREAKING | the request property `tenantName` became optional | [#34](https://github.com/pbl6-home-renter/api-doc/pull/34) |\n| 2026-11-02 | 🟢 NON_BREAKING | the request property `tenantPhone` became optional | [#34](https://github.com/pbl6-home-renter/api-doc/pull/34) |\n| 2026-11-02 | 🟢 NON_BREAKING | the `depositAmount` request property `type` was widened from `integer` to `number` | [#34](https://github.com/pbl6-home-renter/api-doc/pull/34) |\n| 2026-11-02 | 🟢 NON_BREAKING | the `rentPrice` request property `type` was widened from `integer` to `number` | [#34](https://github.com/pbl6-home-renter/api-doc/pull/34) |\n| 2026-11-02 | 🟢 NON_BREAKING | added the non-success response with the status `404` | [#34](https://github.com/pbl6-home-renter/api-doc/pull/34) |\n| 2026-11-02 | 🟢 NON_BREAKING | Bỏ response lỗi HTTP 429. | [#34](https://github.com/pbl6-home-renter/api-doc/pull/34) |\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
+        "description": "Room không tồn tại hoặc đã xóa trả 404 RESOURCE_NOT_FOUND; Room thuộc landlord khác trả 403 FORBIDDEN.\nRoom đã có hợp đồng active, suspended hoặc terminated qua P9-07 đang chờ bàn giao trả\n409 ACTIVE_CONTRACT_EXISTS; bỏ qua hợp đồng đã xóa mềm. Tạo draft không đổi trạng thái Room.\nNếu tenantId null hoặc không gửi, phải có tenantName và tenantPhone; thiếu liên hệ trả 422 TENANT_IDENTITY_INVALID.\nKhi có tenantId, mỗi trường liên hệ có thể null hoặc không gửi; ID tường minh được giữ nguyên theo contract hiện hành.\nNếu không gửi tenantId, Tenancy chuẩn hóa tenantPhone (0... / +84...) và tra projection Identity cục bộ\ncho tenant active. Khớp chính xác thì lưu tenantId; chưa khớp vẫn tạo draft với ID null để reconcile sau.\nKhông gọi HTTP Identity trong transaction tạo hợp đồng. Tạo draft chưa làm phòng xuất hiện trong danh sách phòng đang thuê.\nBody chỉ nhận các field có trong request schema. rentalType, tenantCccd, paymentDueDay,\ntemplateKey, templateVariables và các field khác ngoài DTO trả 422 UNEXPECTED_FIELD.\nroomId/tenantId không phải UUID trả 422 INVALID_UUID. Tiền thuê/cọc là số không âm;\nngày theo YYYY-MM-DD và startDate phải trước endDate.\nContract và outbox contract.created được lưu trong cùng transaction; relay publish sau commit.\nService chưa có rate limiter.\n\n**Sequence diagram**\n\n```mermaid\nsequenceDiagram\n    autonumber\n    actor Client\n    participant GW as API Gateway\n    participant S as Tenancy-Service\n    participant Guard as JWT/access guards\n    participant C as ContractController\n    participant Bus as CQRS CommandBus\n    participant H as Application handler\n    Client->>GW: POST /api/v1/contracts\n    GW->>GW: Validate bearer token for protected route\n    GW->>S: Proxy original HTTP request\n    S->>Guard: Validate JWT, account state and route access\n    Guard-->>C: Continue with authenticated context\n    S->>C: Invoke postContracts\n    C->>Bus: Execute command for postContracts\n    Bus->>H: Dispatch command handler\n    H-->>Bus: Return use-case result\n    Bus-->>C: Result\n    C-->>S: Return documented response\n    S-->>GW: HTTP status and response body\n    GW-->>Client: Forward HTTP response\n```\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-11-02 | 🔴 BREAKING | the `vehicleCount` request property's max was set to `2147483647.00` | [#34](https://github.com/pbl6-home-renter/api-doc/pull/34) |\n| 2026-11-02 | 🔴 BREAKING | added the pattern `\\S` to the request property `tenantName` | [#34](https://github.com/pbl6-home-renter/api-doc/pull/34) |\n| 2026-11-02 | 🔴 BREAKING | added the new `INVALID_UUID` enum value to the `code` response property for the response status `422` | [#34](https://github.com/pbl6-home-renter/api-doc/pull/34) |\n| 2026-11-02 | 🔴 BREAKING | added the new `UNEXPECTED_FIELD` enum value to the `code` response property for the response status `422` | [#34](https://github.com/pbl6-home-renter/api-doc/pull/34) |\n| 2026-11-02 | 🔴 BREAKING | the `data/rentPrice` response's property `type` was widened from `integer` to `number` for status `201` | [#34](https://github.com/pbl6-home-renter/api-doc/pull/34) |\n| 2026-11-02 | 🟡 NEEDS_REVIEW | removed the request property `paymentDueDay` | [#34](https://github.com/pbl6-home-renter/api-doc/pull/34) |\n| 2026-11-02 | 🟡 NEEDS_REVIEW | removed the request property `rentalType` | [#34](https://github.com/pbl6-home-renter/api-doc/pull/34) |\n| 2026-11-02 | 🟡 NEEDS_REVIEW | removed the request property `templateKey` | [#34](https://github.com/pbl6-home-renter/api-doc/pull/34) |\n| 2026-11-02 | 🟡 NEEDS_REVIEW | removed the request property `templateVariables` | [#34](https://github.com/pbl6-home-renter/api-doc/pull/34) |\n| 2026-11-02 | 🟡 NEEDS_REVIEW | removed the request property `tenantCccd` | [#34](https://github.com/pbl6-home-renter/api-doc/pull/34) |\n| 2026-11-02 | 🟢 NON_BREAKING | the optional response header `location` removed for the status `201` | [#34](https://github.com/pbl6-home-renter/api-doc/pull/34) |\n| 2026-11-02 | 🟢 NON_BREAKING | added `subschema #1, subschema #2` to the request body `anyOf` list | [#34](https://github.com/pbl6-home-renter/api-doc/pull/34) |\n| 2026-11-02 | 🟢 NON_BREAKING | the request property `tenantName` became nullable | [#34](https://github.com/pbl6-home-renter/api-doc/pull/34) |\n| 2026-11-02 | 🟢 NON_BREAKING | the request property `tenantPhone` became nullable | [#34](https://github.com/pbl6-home-renter/api-doc/pull/34) |\n| 2026-11-02 | 🟢 NON_BREAKING | the request property `tenantName` became optional | [#34](https://github.com/pbl6-home-renter/api-doc/pull/34) |\n| 2026-11-02 | 🟢 NON_BREAKING | the request property `tenantPhone` became optional | [#34](https://github.com/pbl6-home-renter/api-doc/pull/34) |\n| 2026-11-02 | 🟢 NON_BREAKING | the `depositAmount` request property `type` was widened from `integer` to `number` | [#34](https://github.com/pbl6-home-renter/api-doc/pull/34) |\n| 2026-11-02 | 🟢 NON_BREAKING | the `rentPrice` request property `type` was widened from `integer` to `number` | [#34](https://github.com/pbl6-home-renter/api-doc/pull/34) |\n| 2026-11-02 | 🟢 NON_BREAKING | added the non-success response with the status `404` | [#34](https://github.com/pbl6-home-renter/api-doc/pull/34) |\n| 2026-11-02 | 🟢 NON_BREAKING | Bỏ response lỗi HTTP 429. | [#34](https://github.com/pbl6-home-renter/api-doc/pull/34) |\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "requestBody": {
           "required": true,
           "content": {
@@ -15037,7 +15021,7 @@
           }
         ],
         "summary": "Activate signed contract",
-        "description": "contractId sai định dạng UUID trả 400 BAD_REQUEST theo ParseUUIDPipe.\nThiếu hoặc null signedContractMediaId trả 422 VALIDATION_FAILED; UUID của file không hợp lệ trả\n422 INVALID_UUID; field ngoài DTO trả 422 UNEXPECTED_FIELD.\n\nTenancy kiểm tra media trước khi mở transaction, qua GET /internal/media/{signedContractMediaId}\ncủa Identity bằng service token. Adapter yêu cầu phần data của response envelope gồm\nid, ownerType, ownerId, purpose và status. Chỉ chấp nhận id khớp signedContractMediaId,\nownerType = contract, ownerId = contractId, purpose = contract_signed và status = uploaded.\nIdentity timeout, không kết nối được, lỗi 5xx hoặc từ chối service token trả 503 SERVICE_UNAVAILABLE.\nCác lỗi 4xx khác từ Identity được truyền nguyên trạng. Chưa xác minh được file thì không kích hoạt.\n\nSau khi media hợp lệ, trong cùng transaction: khóa hợp đồng, kiểm tra hợp đồng chưa bị xóa\nvà landlordId = user.id, khóa phòng, kích hoạt hợp đồng, tự thêm đại diện vào contract_members với joined_at = start_date\nvà chuyển phòng sang occupied. Member giữ tenant_id/name/phone từ hợp đồng, không có cờ đại diện.\nHợp đồng hoặc phòng không tồn tại/đã xóa trả 404 RESOURCE_NOT_FOUND; khác landlord trả 403 FORBIDDEN.\nPhòng có hợp đồng active, suspended hoặc terminated qua P9-07 đang chờ bàn giao trả\n409 ACTIVE_CONTRACT_EXISTS; unique index UQ_contracts_room_occupancy bảo vệ cùng quy tắc khi ghi.\nVì media được kiểm tra trước, media không hợp lệ có thể trả 409 trước khi kiểm tra 404/403 của hợp đồng.\n\n**Điều kiện lỗi theo Contract**\n\n- `409 SIGNED_FILE_MISSING`: xảy ra khi có ít nhất một điều kiện:\n  media không tồn tại (Identity trả 404 hoặc response không có dữ liệu media);\n  `media.id` khác `signedContractMediaId`;\n  `ownerType` khác `contract`;\n  `ownerId` khác `contractId` trên URL;\n  `purpose` khác `contract_signed`;\n  hoặc file chưa upload xong (`status` khác `uploaded`). Không mở transaction ở nhánh này.\n- `409 CONTRACT_NOT_READY`: hợp đồng không ở `draft` hoặc `signed`,\n  hoặc phòng không ở `available` (đang `maintenance` hoặc đã `occupied`).\n  Transaction rollback, không lưu thay đổi hợp đồng, phòng hoặc outbox.\n  Hợp đồng/phòng không tồn tại hoặc đã xóa được xử lý riêng bằng `404 RESOURCE_NOT_FOUND`.\n\nThành công trả 200 CONTRACT_ACTIVATED với id, status = active và activatedAt dạng ISO 8601 UTC.\nactivatedAt được lưu ở contracts.activated_at. Hợp đồng, member đại diện, phòng và ba outbox message\ncontract.activated, contract_member.added, room.status_changed được ghi cùng transaction; lỗi ghi dữ liệu sẽ rollback.\nThe contract.activated event supplies contractId, buildingId, roomId, landlordId and linked\ntenantUserIds[] to Community. Community creates the contract conversation with the landlord\nadmin only after this event, then applies any member events stored before activation.\nOutbox relay publish sau khi commit. Không kiểm tra startDate so với ngày hiện tại; không dùng OTP/PIN.\nService chưa có rate limiter.\n\n**Giới hạn tích hợp hiện tại:** Identity-Service local chưa triển khai GET /internal/media/{id};\nresponse public complete-upload cũng chưa có field status. Dữ liệu ở trên là contract nội bộ\nadapter đang yêu cầu, chưa phải endpoint media đã được triển khai. Nếu Identity trả 404 cho route\nchưa có, Tenancy hiện trả 409 SIGNED_FILE_MISSING. signedContractMediaId được xác minh để kích hoạt,\nnhưng hiện chưa được lưu trên Contract hoặc đưa vào event contract.activated.\nHandler so sánh UUID theo chuỗi, chưa chuẩn hóa hoa/thường; giữ nguyên UUID do API trả về\nđể tránh bị từ chối nhầm bằng SIGNED_FILE_MISSING.\n\n**Sequence diagram**\n\n```mermaid\nsequenceDiagram\n    autonumber\n    actor Client\n    participant GW as API Gateway\n    participant S as Tenancy-Service\n    participant Guard as JWT/access guards\n    participant C as ContractController\n    participant Bus as CQRS CommandBus\n    participant H as Application handler\n    Client->>GW: POST /api/v1/contracts/{contractId}/activate-contract\n    GW->>GW: Validate bearer token for protected route\n    GW->>S: Proxy original HTTP request\n    S->>Guard: Validate JWT, account state and route access\n    Guard-->>C: Continue with authenticated context\n    S->>C: Invoke postContractsContractidActivateContract\n    C->>Bus: Execute command for postContractsContractidActivateContract\n    Bus->>H: Dispatch command handler\n    H-->>Bus: Return use-case result\n    Bus-->>C: Result\n    C-->>S: Return documented response\n    S-->>GW: HTTP status and response body\n    GW-->>Client: Forward HTTP response\n```\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-11-02 | 🔴 BREAKING | added the new `ACTIVE_CONTRACT_EXISTS` enum value to the `code` response property for the response status `409` | [#34](https://github.com/pbl6-home-renter/api-doc/pull/34) |\n| 2026-11-02 | 🔴 BREAKING | added the new `INVALID_UUID` enum value to the `code` response property for the response status `422` | [#34](https://github.com/pbl6-home-renter/api-doc/pull/34) |\n| 2026-11-02 | 🔴 BREAKING | added the new `SERVICE_UNAVAILABLE` enum value to the `code` response property for the response status `503` | [#34](https://github.com/pbl6-home-renter/api-doc/pull/34) |\n| 2026-11-02 | 🔴 BREAKING | added the new `UNEXPECTED_FIELD` enum value to the `code` response property for the response status `422` | [#34](https://github.com/pbl6-home-renter/api-doc/pull/34) |\n| 2026-11-02 | 🟢 NON_BREAKING | Bỏ response lỗi HTTP 429. | [#34](https://github.com/pbl6-home-renter/api-doc/pull/34) |\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
+        "description": "contractId sai định dạng UUID trả 400 BAD_REQUEST theo ParseUUIDPipe.\nThiếu hoặc null signedContractMediaId trả 422 VALIDATION_FAILED; UUID của file không hợp lệ trả\n422 INVALID_UUID; field ngoài DTO trả 422 UNEXPECTED_FIELD.\n\nTenancy kiểm tra media trước khi mở transaction, qua GET /internal/media/{signedContractMediaId}\ncủa Identity bằng service token. Adapter yêu cầu phần data của response envelope gồm\nid, ownerType, ownerId, purpose và status. Chỉ chấp nhận id khớp signedContractMediaId,\nownerType = contract, ownerId = contractId, purpose = contract_signed và status = uploaded.\nIdentity timeout, không kết nối được, lỗi 5xx hoặc từ chối service token trả 503 SERVICE_UNAVAILABLE.\nCác lỗi 4xx khác từ Identity được truyền nguyên trạng. Chưa xác minh được file thì không kích hoạt.\n\nSau khi media hợp lệ, trong cùng transaction: đọc SĐT bất biến của hợp đồng, khóa phone trước hợp đồng\ntheo cùng thứ tự với consumer Identity. Nếu tenantId còn null, thử resolve lại từ projection active tenant\ntrước khi tạo representative và snapshot contract.activated; ID đã chỉ định không bị ghi đè.\nTiếp theo khóa hợp đồng, kiểm tra hợp đồng chưa bị xóa\nvà landlordId = user.id, khóa phòng, kích hoạt hợp đồng, tự thêm đại diện vào contract_members với joined_at = start_date\nvà chuyển phòng sang occupied. Member giữ tenant_id/name/phone từ hợp đồng, không có cờ đại diện.\nHợp đồng hoặc phòng không tồn tại/đã xóa trả 404 RESOURCE_NOT_FOUND; khác landlord trả 403 FORBIDDEN.\nPhòng có hợp đồng active, suspended hoặc terminated qua P9-07 đang chờ bàn giao trả\n409 ACTIVE_CONTRACT_EXISTS; unique index UQ_contracts_room_occupancy bảo vệ cùng quy tắc khi ghi.\nVì media được kiểm tra trước, media không hợp lệ có thể trả 409 trước khi kiểm tra 404/403 của hợp đồng.\n\n**Điều kiện lỗi theo Contract**\n\n- `409 SIGNED_FILE_MISSING`: xảy ra khi có ít nhất một điều kiện:\n  media không tồn tại (Identity trả 404 hoặc response không có dữ liệu media);\n  `media.id` khác `signedContractMediaId`;\n  `ownerType` khác `contract`;\n  `ownerId` khác `contractId` trên URL;\n  `purpose` khác `contract_signed`;\n  hoặc file chưa upload xong (`status` khác `uploaded`). Không mở transaction ở nhánh này.\n- `409 CONTRACT_NOT_READY`: hợp đồng không ở `draft` hoặc `signed`,\n  hoặc phòng không ở `available` (đang `maintenance` hoặc đã `occupied`).\n  Transaction rollback, không lưu thay đổi hợp đồng, phòng hoặc outbox.\n  Hợp đồng/phòng không tồn tại hoặc đã xóa được xử lý riêng bằng `404 RESOURCE_NOT_FOUND`.\n\nThành công trả 200 CONTRACT_ACTIVATED với id, status = active và activatedAt dạng ISO 8601 UTC.\nactivatedAt được lưu ở contracts.activated_at. Hợp đồng, member đại diện, phòng và ba outbox message\ncontract.activated, contract_member.added, room.status_changed được ghi cùng transaction; lỗi ghi dữ liệu sẽ rollback.\nThe contract.activated event supplies contractId, buildingId, roomId, landlordId and linked\ntenantUserIds[] to Community. Community creates the contract conversation with the landlord\nadmin only after this event, then applies any member events stored before activation.\nOutbox relay publish sau khi commit. Không kiểm tra startDate so với ngày hiện tại; không dùng OTP/PIN.\nService chưa có rate limiter.\n\n**Giới hạn tích hợp hiện tại:** Identity-Service local chưa triển khai GET /internal/media/{id};\nresponse public complete-upload cũng chưa có field status. Dữ liệu ở trên là contract nội bộ\nadapter đang yêu cầu, chưa phải endpoint media đã được triển khai. Nếu Identity trả 404 cho route\nchưa có, Tenancy hiện trả 409 SIGNED_FILE_MISSING. signedContractMediaId được xác minh để kích hoạt,\nnhưng hiện chưa được lưu trên Contract hoặc đưa vào event contract.activated.\nHandler so sánh UUID theo chuỗi, chưa chuẩn hóa hoa/thường; giữ nguyên UUID do API trả về\nđể tránh bị từ chối nhầm bằng SIGNED_FILE_MISSING.\n\n**Sequence diagram**\n\n```mermaid\nsequenceDiagram\n    autonumber\n    actor Client\n    participant GW as API Gateway\n    participant S as Tenancy-Service\n    participant Guard as JWT/access guards\n    participant C as ContractController\n    participant Bus as CQRS CommandBus\n    participant H as Application handler\n    Client->>GW: POST /api/v1/contracts/{contractId}/activate-contract\n    GW->>GW: Validate bearer token for protected route\n    GW->>S: Proxy original HTTP request\n    S->>Guard: Validate JWT, account state and route access\n    Guard-->>C: Continue with authenticated context\n    S->>C: Invoke postContractsContractidActivateContract\n    C->>Bus: Execute command for postContractsContractidActivateContract\n    Bus->>H: Dispatch command handler\n    H-->>Bus: Return use-case result\n    Bus-->>C: Result\n    C-->>S: Return documented response\n    S-->>GW: HTTP status and response body\n    GW-->>Client: Forward HTTP response\n```\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-11-02 | 🔴 BREAKING | added the new `ACTIVE_CONTRACT_EXISTS` enum value to the `code` response property for the response status `409` | [#34](https://github.com/pbl6-home-renter/api-doc/pull/34) |\n| 2026-11-02 | 🔴 BREAKING | added the new `INVALID_UUID` enum value to the `code` response property for the response status `422` | [#34](https://github.com/pbl6-home-renter/api-doc/pull/34) |\n| 2026-11-02 | 🔴 BREAKING | added the new `SERVICE_UNAVAILABLE` enum value to the `code` response property for the response status `503` | [#34](https://github.com/pbl6-home-renter/api-doc/pull/34) |\n| 2026-11-02 | 🔴 BREAKING | added the new `UNEXPECTED_FIELD` enum value to the `code` response property for the response status `422` | [#34](https://github.com/pbl6-home-renter/api-doc/pull/34) |\n| 2026-11-02 | 🟢 NON_BREAKING | Bỏ response lỗi HTTP 429. | [#34](https://github.com/pbl6-home-renter/api-doc/pull/34) |\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "parameters": [
           {
             "name": "contractId",
@@ -27289,6 +27273,10 @@
             "format": "uuid",
             "description": "Định danh duy nhất của tòa nhà liên quan."
           },
+          "buildingName": {
+            "type": "string",
+            "description": "Tên tòa nhà chứa phòng."
+          },
           "name": {
             "type": "string",
             "minLength": 1,
@@ -27299,10 +27287,27 @@
             "type": "string",
             "nullable": true,
             "format": "uri",
-            "description": "URL ảnh đại diện chính của căn phòng."
+            "deprecated": true,
+            "description": "Tương thích client cũ: ảnh đầu tiên trong photoUrls, null nếu không có ảnh."
+          },
+          "photoMediaIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "photoUrls": {
+            "type": "array",
+            "description": "URL public của ảnh đã upload và gắn vào phòng, theo thứ tự đính kèm; rỗng nếu không có ảnh.",
+            "items": {
+              "type": "string",
+              "format": "uri"
+            }
           },
           "area": {
             "type": "string",
+            "nullable": true,
             "example": "25.0",
             "description": "Diện tích phòng (m2)."
           },
@@ -27324,9 +27329,9 @@
             "type": "string",
             "description": "Địa chỉ cụ thể của tòa nhà chứa phòng."
           },
-          "district": {
+          "ward": {
             "type": "string",
-            "description": "Quận / Huyện."
+            "description": "Tên xã / phường của tòa nhà."
           },
           "province": {
             "type": "string",
@@ -27340,12 +27345,15 @@
         "required": [
           "id",
           "buildingId",
+          "buildingName",
+          "photoMediaIds",
+          "photoUrls",
           "name",
           "area",
           "rentPrice",
           "genderPolicy",
           "address",
-          "district",
+          "ward",
           "province",
           "isFavorited"
         ]
@@ -27481,6 +27489,25 @@
           "buildingName": {
             "type": "string",
             "description": "Tên tòa nhà chứa phòng."
+          },
+          "address": {
+            "type": "string",
+            "description": "Địa chỉ tòa nhà chứa phòng."
+          },
+          "ward": {
+            "type": "string",
+            "description": "Tên xã / phường của tòa nhà."
+          },
+          "province": {
+            "type": "string",
+            "description": "Tỉnh / thành phố của tòa nhà."
+          },
+          "photoMediaIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
           },
           "name": {
             "type": "string",
@@ -27689,6 +27716,11 @@
           "id",
           "buildingId",
           "buildingName",
+          "address",
+          "ward",
+          "province",
+          "photoMediaIds",
+          "photoUrls",
           "name",
           "rentPrice",
           "depositAmount",
@@ -27892,7 +27924,7 @@
         "type": "object",
         "x-apidog-folder": "FavoriteRoom/Response",
         "title": "FavoriteRoomListResponseDto",
-        "description": "Danh sách phòng đã lưu của tenant hiện tại",
+        "description": "Phòng công khai còn available trong danh sách đã lưu của tenant; phòng đã ẩn/occupied vẫn được lưu và có thể bỏ lưu nhưng không có trong danh sách này.",
         "properties": {
           "roomId": {
             "type": "string",
@@ -27909,6 +27941,64 @@
             "type": "integer",
             "minimum": 0,
             "description": "Thông tin rent price của tài nguyên trong ngữ cảnh DTO."
+          },
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "buildingId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "buildingName": {
+            "type": "string"
+          },
+          "address": {
+            "type": "string"
+          },
+          "ward": {
+            "type": "string"
+          },
+          "province": {
+            "type": "string"
+          },
+          "area": {
+            "type": "string",
+            "nullable": true
+          },
+          "genderPolicy": {
+            "type": "string",
+            "enum": [
+              "any",
+              "male",
+              "female"
+            ]
+          },
+          "isFavorited": {
+            "type": "boolean",
+            "enum": [
+              true
+            ]
+          },
+          "thumbnailUrl": {
+            "type": "string",
+            "format": "uri",
+            "nullable": true,
+            "deprecated": true
+          },
+          "photoMediaIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "photoUrls": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uri"
+            }
           }
         },
         "required": [
@@ -37049,6 +37139,65 @@
         "scheme": "bearer",
         "bearerFormat": "JWT",
         "description": "Access token trong header Authorization: Bearer <token>."
+      }
+    },
+    "parameters": {
+      "0": {
+        "name": "filter",
+        "in": "query",
+        "required": false,
+        "style": "deepObject",
+        "explode": true,
+        "description": "Bộ lọc được endpoint hỗ trợ.",
+        "schema": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "province": {
+              "type": "string"
+            },
+            "ward": {
+              "type": "string"
+            },
+            "minPrice": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "maxPrice": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "genderPolicy": {
+              "type": "string",
+              "enum": [
+                "any",
+                "male",
+                "female"
+              ]
+            }
+          }
+        }
+      },
+      "1": {
+        "name": "sort",
+        "in": "query",
+        "description": "Một trường sắp xếp được endpoint hỗ trợ.",
+        "schema": {
+          "type": "string",
+          "default": "rentPrice"
+        }
+      },
+      "2": {
+        "name": "order",
+        "in": "query",
+        "schema": {
+          "type": "string",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "default": "asc"
+        }
       }
     }
   }

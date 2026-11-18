@@ -7,6 +7,12 @@ properties:
   id: { type: string, format: uuid, description: "Định danh duy nhất của phòng." }
   buildingId: { type: string, format: uuid, description: "Định danh duy nhất của tòa nhà liên quan." }
   buildingName: { type: string, description: "Tên tòa nhà chứa phòng." }
+  address: { type: string, description: "Địa chỉ tòa nhà chứa phòng." }
+  ward: { type: string, description: "Tên xã / phường của tòa nhà." }
+  province: { type: string, description: "Tỉnh / thành phố của tòa nhà." }
+  photoMediaIds:
+    type: array
+    items: { type: string, format: uuid }
   name: { type: string, description: "Tên hoặc mã số phòng." }
   description: { type: string, nullable: true, maxLength: 1000, description: "Mô tả chi tiết phòng trọ." }
   area: { type: string, nullable: true, example: '25.0', description: "Diện tích sử dụng (m2)." }
@@ -86,6 +92,11 @@ required:
   - id
   - buildingId
   - buildingName
+  - address
+  - ward
+  - province
+  - photoMediaIds
+  - photoUrls
   - name
   - rentPrice
   - depositAmount

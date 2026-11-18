@@ -6,6 +6,10 @@ get:
   operationId: getRooms
   summary: Search public rooms
   description: |-
+    Phòng available thuộc tòa approved. Trả buildingName, address, ward, province và photoUrls ngay trong response.
+    Anonymous nhận isFavorited=false; Bearer hợp lệ cho phép trả trạng thái đã lưu của chính user.
+    Response có Vary: Authorization và private/no-store khi đã xác thực. Chỉ hỗ trợ format=json.
+
     **Sequence diagram**
     
     ```mermaid
@@ -28,7 +32,9 @@ get:
         S-->>GW: HTTP status and response body
         GW-->>Client: Forward HTTP response
     ```
-  security: []
+  security:
+  - {}
+  - BearerAuth: []
   parameters:
   - name: filter
     in: query
@@ -85,14 +91,11 @@ get:
       default: 1
   - name: format
     in: query
-    description: json trả envelope; định dạng khác trả file stream.
+    description: Chỉ hỗ trợ JSON envelope.
     schema:
       type: string
       enum:
       - json
-      - xlsx
-      - csv
-      - pdf
       default: json
   responses:
     '200':
@@ -159,12 +162,16 @@ get:
             data:
             - id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
               buildingId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+              buildingName: Tòa Nguyễn Trãi
+              photoMediaIds: []
+              photoUrls: []
+              thumbnailUrl: null
               name: P.201
               area: '18.5'
               rentPrice: 3500000
               genderPolicy: any
               address: 12 Nguyễn Trãi
-              district: Quận 1
+              ward: Phường Bến Thành
               province: Thành phố Hồ Chí Minh
               isFavorited: false
             pagination:
@@ -175,18 +182,6 @@ get:
               totalPages: 1
               hasNextPage: false
               hasPreviousPage: false
-        text/csv:
-          schema:
-            type: string
-            format: binary
-        application/pdf:
-          schema:
-            type: string
-            format: binary
-        application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
-          schema:
-            type: string
-            format: binary
     '400':
       $ref: ../../openapi.yaml#/components/responses/BadRequestQueryError
     '422':

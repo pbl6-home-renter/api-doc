@@ -1,10 +1,26 @@
 type: object
 x-apidog-folder: "FavoriteRoom/Response"
 title: FavoriteRoomListResponseDto
-description: Danh sách phòng đã lưu của tenant hiện tại
+description: Phòng công khai còn available trong danh sách đã lưu của tenant; phòng đã ẩn/occupied vẫn được lưu và có thể bỏ lưu nhưng không có trong danh sách này.
 
 properties:
   roomId: { type: string, format: uuid , description: "Định danh duy nhất của phòng liên quan." }
   name: { type: string, minLength: 1, maxLength: 254 , description: "Thông tin name của tài nguyên trong ngữ cảnh DTO." }
   rentPrice: { type: integer, minimum: 0 , description: "Thông tin rent price của tài nguyên trong ngữ cảnh DTO." }
+  id: { type: string, format: uuid }
+  buildingId: { type: string, format: uuid }
+  buildingName: { type: string }
+  address: { type: string }
+  ward: { type: string }
+  province: { type: string }
+  area: { type: string, nullable: true }
+  genderPolicy: { type: string, enum: [any, male, female] }
+  isFavorited: { type: boolean, enum: [true] }
+  thumbnailUrl: { type: string, format: uri, nullable: true, deprecated: true }
+  photoMediaIds:
+    type: array
+    items: { type: string, format: uuid }
+  photoUrls:
+    type: array
+    items: { type: string, format: uri }
 required: [roomId, name, rentPrice]

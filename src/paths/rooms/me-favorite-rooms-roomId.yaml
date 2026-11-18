@@ -2,12 +2,12 @@ delete:
   tags:
   - Property
   x-apidog-folder: FavoriteRoom
-  x-apidog-status: designing
+  x-apidog-status: developing
   operationId: deleteMeFavoriteRoomsRoomid
   security:
     - BearerAuth: []
   summary: Remove favorite room
-  description: 'tenant. Bỏ lưu một phòng. Lỗi nghiệp vụ: 404 NOT FOUND.'
+  description: 'Tenant active. Chỉ xóa bản ghi đã lưu của user hiện tại, kể cả phòng đã occupied/ẩn/xóa. Trả 204 khi đã xóa, 404 RESOURCE_NOT_FOUND nếu user chưa lưu phòng (bao gồm lần DELETE thứ hai). Không cần tenant profile.'
   parameters:
   - name: roomId
     in: path
