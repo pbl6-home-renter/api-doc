@@ -1,0 +1,28 @@
+type: object
+title: MatchRequestListResponseDto
+additionalProperties: false
+description: A match request with participant summaries for the list endpoint.
+required: [id, requesterId, targetId, requester, target, status, createdAt, respondedAt]
+properties:
+  id: { type: string, format: uuid }
+  requesterId: { type: string, format: uuid }
+  requester:
+    type: object
+    additionalProperties: false
+    required: [id, name, avatarUrl]
+    properties:
+      id: { type: string, format: uuid }
+      name: { type: string }
+      avatarUrl: { type: string, format: uri, nullable: true }
+  targetId: { type: string, format: uuid }
+  target:
+    type: object
+    additionalProperties: false
+    required: [id, name, avatarUrl]
+    properties:
+      id: { type: string, format: uuid }
+      name: { type: string }
+      avatarUrl: { type: string, format: uri, nullable: true }
+  status: { type: string, enum: [pending, accepted, rejected, withdrawn] }
+  createdAt: { type: string, format: date-time }
+  respondedAt: { type: string, format: date-time, nullable: true }
