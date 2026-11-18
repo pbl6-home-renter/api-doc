@@ -5,11 +5,40 @@
 
 Báo cáo lưu lịch sử các entry đã phát hiện, mới nhất ở trên. `NO_CHANGE` không xóa entry cũ; exit code chỉ phản ánh lần chạy hiện tại.
 
-Công cụ: Redocly 2.64.1; oasdiff 1.34.1. Số entry: **57**.
+Công cụ: Redocly 2.64.1; oasdiff 1.34.1. Số entry: **58**.
 
 Phân loại: **BREAKING** = client cũ có thể hỏng; **NON_BREAKING** = tương thích theo contract; **NEEDS_REVIEW** = chưa đủ bằng chứng.
 
 Các vị trí dùng JSON Pointer trên bundle tạm (`~1` là `/`). JSON đi kèm giữ toàn bộ semantic diff, fingerprint và hash phục vụ truy vết.
+
+## Thay đổi contract từ Git — NON_BREAKING
+
+- ID: `a95c6ac6b8bf2895ea4cc5647beeadde14b79324fcb049f747afe25afa358c2e`
+- Contract: rentify-public; repository: https://github.com/pbl6-home-renter/api-doc
+- Nguồn: `src/openapi.yaml` → `src/openapi.yaml`
+- Phát hiện (UTC): 2026-11-18T16:17:41.483Z; commit time: 2026-11-18T23:17:30+07:00
+- Commit nền: 537f01df8feca0f14f640e372b0fbd808fdcab36
+- Commit đích/bối cảnh: [75b60af367499259ad18d28ac196a1dc00e9d8d0](https://github.com/pbl6-home-renter/api-doc/commit/75b60af367499259ad18d28ac196a1dc00e9d8d0)
+- PR: [https://github.com/pbl6-home-renter/api-doc/pull/76](https://github.com/pbl6-home-renter/api-doc/pull/76)
+- Loại metadata: Git revision thực tế
+- Lý do: CHƯA CUNG CẤP — tác giả PR phải bổ sung lý do nghiệp vụ; không thể suy ra từ OpenAPI diff.
+
+| Mức ảnh hưởng | Endpoint / vùng | Thay đổi | Hành động FE / Mobile |
+|---|---|---|---|
+| NON_BREAKING | GET /match-requests | added the non-success response with the status `404` (`response-non-success-status-added`) | FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI. |
+| NON_BREAKING | GET /match-requests | added the required property `data/items/requester` to the response with the `200` status (`response-required-property-added`) | FE: có thể bỏ qua field mới data/items/requester; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại. |
+| NON_BREAKING | GET /match-requests | added the required property `data/items/target` to the response with the `200` status (`response-required-property-added`) | FE: có thể bỏ qua field mới data/items/target; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại. |
+
+### Vị trí và giá trị trước/sau
+
+| Path / schema / field (JSON Pointer) | Trước | Sau |
+|---|---|---|
+| `/components/schemas/MatchRequestListResponseDto` | null | {"type":"object","title":"MatchRequestListResponseDto","additionalProperties":false,"description":"A match request with participant summaries for the list endpoint.","required":["id","requesterId","targetId","requester","target","status","createdAt","respondedAt"],"properties":{"id":{"type":"string","format":"uuid"},"requesterId":{"type":"string","format":"uuid"},"requester":{"type":"object","additionalProperties":false,"required":["id","name","avatarUrl"],"properties":{"id":{"type":"string","format":"uuid"},"name":{"type":"string"},"avatarUrl":{"type":"string","format":"uri","nullable":true}}},"targetId":{"type":"string","format":"uuid"},"target":{"type":"object","additionalProperties":false,"required":["id","name","avatarUrl"],"properties":{"id":{"type":"string","format":"uuid"},"name":{"type":"string"},"avatarUrl":{"type":"string","format":"uri","nullable":true}}},"status":{"type":"string","enum":["pending","accepted","rejected","withdrawn"]},"createdAt":{"type":"string","format":"date-time"},"respondedAt":{"type":"string","format":"date-time","nullable":true}}} |
+| `/paths/~1match-requests/get/description` | "Active tenant only. Returns requests involving the caller, newest first with ID as a tie breaker. No phone, AI data or conversation is disclosed.\n\n```mermaid\nsequenceDiagram\n  participant T as Tenant\n  participant TEN as Tenancy\n  participant ID as Identity\n  participant DB as Tenancy DB\n  T-&gt;&gt;TEN: GET /match-requests\n  TEN-&gt;&gt;ID: GET /internal/users?ids=actor\n  ID--&gt;&gt;TEN: Active tenant summary\n  TEN-&gt;&gt;DB: Page by requester/target and optional filters\n  DB--&gt;&gt;TEN: Caller-owned requests and total\n  TEN--&gt;&gt;T: 200 MATCH_REQUESTS_FETCHED\n```\n" | "Active tenant only. Returns requests involving the caller, newest first with ID as a tie breaker. No phone, AI data or conversation is disclosed.\n\n```mermaid\nsequenceDiagram\n  participant T as Tenant\n  participant TEN as Tenancy\n  participant ID as Identity\n  participant DB as Tenancy DB\n  T-&gt;&gt;TEN: GET /match-requests\n  TEN-&gt;&gt;ID: GET /internal/users?ids=actor\n  ID--&gt;&gt;TEN: Active caller summary\n  TEN-&gt;&gt;DB: Page by requester/target and optional filters\n  DB--&gt;&gt;TEN: Caller-owned requests and total\n  TEN-&gt;&gt;ID: GET /internal/users?ids=other participants\n  ID--&gt;&gt;TEN: Active requester and target summaries\n  TEN--&gt;&gt;T: 200 MATCH_REQUESTS_FETCHED with summaries\n```\n" |
+| `/paths/~1match-requests/get/responses/200/content/application~1json/schema/properties/data/items/$ref` | "#/components/schemas/MatchRequestResponseDto" | "#/components/schemas/MatchRequestListResponseDto" |
+| `/paths/~1match-requests/get/responses/404` | null | {"description":"One of the match request participants is no longer active.","content":{"application/json":{"schema":{"type":"object","additionalProperties":false,"required":["statusCode","code"],"properties":{"statusCode":{"type":"integer","enum":[404]},"code":{"type":"string","enum":["MATCH_REQUEST_PARTICIPANT_UNAVAILABLE"]}}}}}} |
+
+**Kiểm tra thủ công:** BE xác nhận lý do, endpoint dùng schema chung, thay đổi role/ownership mô tả bằng văn bản và thời điểm triển khai. FE/Mobile xác nhận tác động với parser và phiên bản client đang hỗ trợ.
 
 ## Thay đổi contract từ Git — BREAKING
 
