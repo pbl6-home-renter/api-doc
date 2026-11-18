@@ -74569,6 +74569,218 @@
           }
         }
       }
+    },
+    {
+      "id": "5878d8ad11cd8e5e6136b36edb19cdddde55a72ff1049c4f5b462330cdd8f51c",
+      "label": "Thay đổi contract từ Git",
+      "classification": "BREAKING",
+      "contractId": "rentify-public",
+      "repository": "https://github.com/pbl6-home-renter/api-doc",
+      "baseHash": "cdee244b5956245fb2fd0ddc59928d35c6fa14db75baf4747d7823e65dfae7d0",
+      "headHash": "0486149d07eee4401f0ceb9ea9adae9a2aac4e87aaa7f1517369def765c12a34",
+      "baseSource": "src/openapi.yaml",
+      "headSource": "src/openapi.yaml",
+      "detectedAt": "2026-11-18T16:36:32.656Z",
+      "committedAt": "2026-11-18T23:36:00+07:00",
+      "baseCommit": "e50666c23115126a77f83eadeab51d1f4ea47f7d",
+      "headCommit": "0eaf2d9dde2fce83978f91e24a25a1ef6b6f8f76",
+      "prUrl": null,
+      "commitUrl": "https://github.com/pbl6-home-renter/api-doc/commit/0eaf2d9dde2fce83978f91e24a25a1ef6b6f8f76",
+      "metadataKind": "Git revision thực tế",
+      "reason": "CHƯA CUNG CẤP — tác giả PR phải bổ sung lý do nghiệp vụ; không thể suy ra từ OpenAPI diff.",
+      "tools": {
+        "redocly": "2.64.1",
+        "oasdiff": "1.34.1"
+      },
+      "changes": [
+        {
+          "id": "response-property-enum-value-added",
+          "text": "added the new `MEDIA_FILE_LIMIT_EXCEEDED` enum value to the `code` response property for the response status `422`",
+          "comment": "The server may now return a value the previous contract excluded, so a client written against it may not handle the response. If the value set is meant to grow, declare it with x-extensible-enum.",
+          "level": 3,
+          "operation": "POST",
+          "operationId": "postMediaPresignUpload",
+          "path": "/media/presign-upload",
+          "section": "paths",
+          "fingerprint": "481c11ca6bf7",
+          "classification": "BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới MEDIA_FILE_LIMIT_EXCEEDED; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "api-version-not-bumped",
+          "text": "a breaking change was detected but the version is still `1.0.0`",
+          "level": 1,
+          "section": "info",
+          "fingerprint": "d3f96cd643c1",
+          "classification": "NON_BREAKING",
+          "clientImpact": "BE: xem lại quy ước version trước khi chấp nhận breaking change. FE/Mobile: theo kế hoạch chuyển đổi của entry này; version trong OpenAPI chưa chứng minh backend đã triển khai."
+        },
+        {
+          "id": "response-property-max-items-set",
+          "text": "the `data/issuePhotoMediaIds` response property's maxItems was set to `5` for the response status `200`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getIssuesIssueid",
+          "path": "/issues/{issueId}",
+          "section": "paths",
+          "fingerprint": "f40eb68ac6cb",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        }
+      ],
+      "locations": [
+        {
+          "pointer": "/components/schemas/IssueReportCreateRequestDto/description",
+          "before": "Tạo báo cáo trước, sau đó upload ảnh private với ownerType issue_report và ownerId là ID báo cáo vừa tạo (P10-D86).",
+          "after": "Tạo báo cáo trước, sau đó upload tối đa 5 ảnh/video private với ownerType issue_report và ownerId là ID báo cáo vừa tạo (P10-D86)."
+        },
+        {
+          "pointer": "/components/schemas/IssueReportDetailResponseDto/properties/canUploadPhotos/description",
+          "before": "Người gọi được upload ảnh sự cố.",
+          "after": "Người gọi được upload ảnh/video sự cố; false khi issue đã đóng hoặc đủ 5 file."
+        },
+        {
+          "pointer": "/components/schemas/IssueReportDetailResponseDto/properties/issuePhotoMediaIds/description",
+          "before": "Danh sách ID ảnh đã hoàn tất upload gắn với sự cố",
+          "after": "Danh sách ID ảnh/video đã hoàn tất upload gắn với sự cố"
+        },
+        {
+          "pointer": "/components/schemas/IssueReportDetailResponseDto/properties/issuePhotoMediaIds/maxItems",
+          "before": null,
+          "after": 5
+        },
+        {
+          "pointer": "/paths/~1issues/post/description",
+          "before": "Tenant hiện tại hoặc landlord của phòng tạo sự cố gắn với hợp đồng active (P10-D86). Sau khi tạo, upload ảnh private theo ownerType `issue_report`, purpose `issue_photo` và ID sự cố; không gửi media ID khi tạo. Lỗi nghiệp vụ: 403 FORBIDDEN · 404 ROOM NOT FOUND.\n\nEvent `notification.requested` mang `data.messageKey` (`issue.created`, `issue.updated`, hoặc `issue.cancelled`), `issueId` và `contractId`. Web dịch nội dung theo key; Community kiểm tra lại recipient trước khi lưu và gửi thông báo.",
+          "after": "Tenant hiện tại hoặc landlord của phòng tạo sự cố gắn với hợp đồng active (P10-D86). Sau khi tạo, upload tối đa 5 ảnh/video private theo ownerType `issue_report`, purpose `issue_photo` và ID sự cố; không gửi media ID khi tạo. Lỗi nghiệp vụ: 403 FORBIDDEN · 404 ROOM NOT FOUND.\n\nEvent `notification.requested` mang `data.messageKey` (`issue.created`, `issue.updated`, hoặc `issue.cancelled`), `issueId` và `contractId`. Web dịch nội dung theo key; Community kiểm tra lại recipient trước khi lưu và gửi thông báo."
+        },
+        {
+          "pointer": "/paths/~1issues~1{issueId}/get/description",
+          "before": "Landlord của phòng hoặc tenant hiện tại của hợp đồng gắn với sự cố được đọc chi tiết và ảnh đã upload hoàn tất. Tenant đã rời không còn quyền (P10-D86). Lỗi nghiệp vụ: 403 FORBIDDEN · 404 NOT FOUND.",
+          "after": "Landlord của phòng hoặc tenant hiện tại của hợp đồng gắn với sự cố được đọc chi tiết và media đã upload hoàn tất. Issue hỗ trợ ảnh/video, tối đa 5 file; chỉ có thể upload khi issue còn open hoặc in_progress. Tenant đã rời không còn quyền (P10-D86). Lỗi nghiệp vụ: 403 FORBIDDEN · 404 NOT FOUND."
+        },
+        {
+          "pointer": "/paths/~1media~1presign-upload/post/description",
+          "before": "**Luồng upload**\n\n1. `POST /media/presign-upload` → nhận `id`, `uploadUrl`, `requiredHeaders`, `expiresIn`.\n2. `PUT {uploadUrl}` với body là file (binary) và đúng `requiredHeaders` (không gửi `Authorization`).\n3. `POST /media/{id}/complete-upload` → server kiểm tra object trên storage và trả `url` để đọc.\n\nLiên kết file với thực thể cha được xác định ngay lúc presign qua `ownerType` + `ownerId` + `purpose`; không có bước \"gắn\" riêng. Các API nghiệp vụ khác (ví dụ `photoMediaIds` khi tạo phòng) nhận `id` của Media đã complete.\n\n**Quy tắc theo `purpose`** (admin luôn được upload; người upload luôn đọc được file của mình)\n\n| purpose | ownerType hợp lệ | MIME cho phép | Hiển thị | Ai được upload | Ghi chú |\n|---|---|---|---|---|---|\n| `avatar` | `user` | jpeg, png, webp | public | chính user đó | 1 file/owner, file mới thay file cũ |\n| `cover_photo` | `building`, `room` | jpeg, png, webp | public | landlord sở hữu | 1 file/owner, file mới thay file cũ |\n| `gallery_photo` | `building`, `room` | jpeg, png, webp | public | landlord sở hữu | |\n| `ownership_proof` | `building` | jpeg, png, webp, pdf | private | landlord sở hữu | không xóa được khi building `approved` |\n| `cccd_front`, `cccd_back` | `user`, `contract_member` | jpeg, png, webp | private | chính user, thành viên HĐ, landlord sở hữu | |\n| `contract_template` | `contract` | pdf | private | landlord sở hữu | |\n| `contract_signed` | `contract` | jpeg, png, webp, pdf | private | landlord sở hữu | không xóa được khi HĐ `signed/active/suspended/expired/terminated` |\n| `meter_reading_evidence` | `meter_reading` | jpeg, png, webp | private | landlord sở hữu; tenant của HĐ chỉ với `captureSource = camera_direct` | |\n| `issue_photo` | `issue_report` | jpeg, png, webp | private | người trong HĐ, landlord sở hữu | chưa hỗ trợ (503) |\n| `chat_attachment` | `conversation` | jpeg, png, webp, pdf, mp4, webm | private | upload: active member; download: member allowed to read the message that references the media | Community verifies active membership on upload and message linkage on read |\n| `conversation_avatar` | `conversation` | jpeg, png, webp | private | active member may upload | Community validates active group admin and media ownership on metadata update; old media remains valid so uploading a replacement cannot break the current avatar before the metadata update commits |\n\nKích thước tối đa 10 MiB cho mọi purpose. Chỉ chat_attachment hỗ trợ video MP4/WebM; không hỗ trợ SVG/HTML.\n\nLỗi nghiệp vụ: 403 FORBIDDEN (không có quyền với thực thể cha, hoặc thực thể cha không tồn tại) · 422 INVALID_PURPOSE (`purpose` không hợp lệ với `ownerType`) · 422 MEDIA_TYPE_NOT_ALLOWED (MIME, đuôi file hoặc kích thước không hợp lệ) · 503 SERVICE_UNAVAILABLE.\n\n**Sequence diagram**\n\n```mermaid\nsequenceDiagram\n    autonumber\n    actor Client\n    participant GW as API Gateway\n    participant S as Identity-Service\n    participant Guard as JWT/access guards\n    participant C as MediaController\n    participant Bus as CQRS CommandBus\n    participant H as Application handler\n    Client->>GW: POST /api/v1/media/presign-upload\n    GW->>GW: Validate bearer token for protected route\n    GW->>S: Proxy original HTTP request\n    S->>Guard: Validate JWT, account state and route access\n    Guard-->>C: Continue with authenticated context\n    S->>C: Invoke postMediaPresignUpload\n    C->>Bus: Execute command for postMediaPresignUpload\n    Bus->>H: Dispatch command handler\n    H-->>Bus: Return use-case result\n    Bus-->>C: Result\n    C-->>S: Return documented response\n    S-->>GW: HTTP status and response body\n    GW-->>Client: Forward HTTP response\n```",
+          "after": "**Luồng upload**\n\n1. `POST /media/presign-upload` → nhận `id`, `uploadUrl`, `requiredHeaders`, `expiresIn`.\n2. `PUT {uploadUrl}` với body là file (binary) và đúng `requiredHeaders` (không gửi `Authorization`).\n3. `POST /media/{id}/complete-upload` → server kiểm tra object trên storage và trả `url` để đọc.\n\nLiên kết file với thực thể cha được xác định ngay lúc presign qua `ownerType` + `ownerId` + `purpose`; không có bước \"gắn\" riêng. Các API nghiệp vụ khác (ví dụ `photoMediaIds` khi tạo phòng) nhận `id` của Media đã complete.\n\n**Quy tắc theo `purpose`** (admin luôn được upload; người upload luôn đọc được file của mình)\n\n| purpose | ownerType hợp lệ | MIME cho phép | Hiển thị | Ai được upload | Ghi chú |\n|---|---|---|---|---|---|\n| `avatar` | `user` | jpeg, png, webp | public | chính user đó | 1 file/owner, file mới thay file cũ |\n| `cover_photo` | `building`, `room` | jpeg, png, webp | public | landlord sở hữu | 1 file/owner, file mới thay file cũ |\n| `gallery_photo` | `building`, `room` | jpeg, png, webp | public | landlord sở hữu | |\n| `ownership_proof` | `building` | jpeg, png, webp, pdf | private | landlord sở hữu | không xóa được khi building `approved` |\n| `cccd_front`, `cccd_back` | `user`, `contract_member` | jpeg, png, webp | private | chính user, thành viên HĐ, landlord sở hữu | |\n| `contract_template` | `contract` | pdf | private | landlord sở hữu | |\n| `contract_signed` | `contract` | jpeg, png, webp, pdf | private | landlord sở hữu | không xóa được khi HĐ `signed/active/suspended/expired/terminated` |\n| `meter_reading_evidence` | `meter_reading` | jpeg, png, webp | private | landlord sở hữu; tenant của HĐ chỉ với `captureSource = camera_direct` | |\n| `issue_photo` | `issue_report` | jpeg, png, webp, mp4, webm | private | người trong HĐ, landlord sở hữu | tối đa 5 file/issue; chỉ upload khi issue `open` hoặc `in_progress` |\n| `chat_attachment` | `conversation` | jpeg, png, webp, pdf, mp4, webm | private | upload: active member; download: member allowed to read the message that references the media | Community verifies active membership on upload and message linkage on read |\n| `conversation_avatar` | `conversation` | jpeg, png, webp | private | active member may upload | Community validates active group admin and media ownership on metadata update; old media remains valid so uploading a replacement cannot break the current avatar before the metadata update commits |\n\nKích thước tối đa 10 MiB cho mọi purpose. `issue_photo` và `chat_attachment` hỗ trợ video MP4/WebM; không hỗ trợ SVG/HTML.\n\nLỗi nghiệp vụ: 403 FORBIDDEN (không có quyền với thực thể cha, hoặc thực thể cha không tồn tại) · 422 INVALID_PURPOSE (`purpose` không hợp lệ với `ownerType`) · 422 MEDIA_TYPE_NOT_ALLOWED (MIME, đuôi file hoặc kích thước không hợp lệ) · 503 SERVICE_UNAVAILABLE.\n\n**Sequence diagram**\n\n```mermaid\nsequenceDiagram\n    autonumber\n    actor Client\n    participant GW as API Gateway\n    participant S as Identity-Service\n    participant Guard as JWT/access guards\n    participant C as MediaController\n    participant Bus as CQRS CommandBus\n    participant H as Application handler\n    Client->>GW: POST /api/v1/media/presign-upload\n    GW->>GW: Validate bearer token for protected route\n    GW->>S: Proxy original HTTP request\n    S->>Guard: Validate JWT, account state and route access\n    Guard-->>C: Continue with authenticated context\n    S->>C: Invoke postMediaPresignUpload\n    C->>Bus: Execute command for postMediaPresignUpload\n    Bus->>H: Dispatch command handler\n    H-->>Bus: Return use-case result\n    Bus-->>C: Result\n    C-->>S: Return documented response\n    S-->>GW: HTTP status and response body\n    GW-->>Client: Forward HTTP response\n```"
+        },
+        {
+          "pointer": "/paths/~1media~1presign-upload/post/responses/422/content/application~1json/schema/properties/code/description",
+          "before": "- MEDIA_TYPE_NOT_ALLOWED: MIME không thuộc danh sách của purpose, đuôi `fileName` không khớp `contentType`, hoặc `size` vượt giới hạn.\n- INVALID_PURPOSE: Mục đích upload không phù hợp với `ownerType`.\n- VALIDATION_FAILED: Thiếu field, sai kiểu hoặc sai enum.\n- UNEXPECTED_FIELD: Body có field ngoài contract.",
+          "after": "- MEDIA_TYPE_NOT_ALLOWED: MIME không thuộc danh sách của purpose, đuôi `fileName` không khớp `contentType`, hoặc `size` vượt giới hạn.\n- MEDIA_FILE_LIMIT_EXCEEDED: Owner đã đạt số file live tối đa của purpose (issue tối đa 5 file).\n- INVALID_PURPOSE: Mục đích upload không phù hợp với `ownerType`.\n- VALIDATION_FAILED: Thiếu field, sai kiểu hoặc sai enum.\n- UNEXPECTED_FIELD: Body có field ngoài contract."
+        },
+        {
+          "pointer": "/paths/~1media~1presign-upload/post/responses/422/content/application~1json/schema/properties/code/enum",
+          "before": [
+            "MEDIA_TYPE_NOT_ALLOWED",
+            "INVALID_PURPOSE",
+            "VALIDATION_FAILED",
+            "UNEXPECTED_FIELD"
+          ],
+          "after": [
+            "MEDIA_TYPE_NOT_ALLOWED",
+            "MEDIA_FILE_LIMIT_EXCEEDED",
+            "INVALID_PURPOSE",
+            "VALIDATION_FAILED",
+            "UNEXPECTED_FIELD"
+          ]
+        }
+      ],
+      "semanticDiff": {
+        "paths": {
+          "modified": {
+            "/issues/{issueId}": {
+              "operations": {
+                "modified": {
+                  "GET": {
+                    "responses": {
+                      "modified": {
+                        "200": {
+                          "content": {
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "properties": {
+                                    "modified": {
+                                      "data": {
+                                        "properties": {
+                                          "modified": {
+                                            "issuePhotoMediaIds": {
+                                              "maxItems": {
+                                                "from": null,
+                                                "to": 5
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "/media/presign-upload": {
+              "operations": {
+                "modified": {
+                  "POST": {
+                    "responses": {
+                      "modified": {
+                        "422": {
+                          "content": {
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "properties": {
+                                    "modified": {
+                                      "code": {
+                                        "enum": {
+                                          "added": [
+                                            "MEDIA_FILE_LIMIT_EXCEEDED"
+                                          ]
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "components": {
+          "schemas": {
+            "modified": {
+              "IssueReportDetailResponseDto": {
+                "properties": {
+                  "modified": {
+                    "issuePhotoMediaIds": {
+                      "maxItems": {
+                        "from": null,
+                        "to": 5
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   ]
 }
