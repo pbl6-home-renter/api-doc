@@ -171,7 +171,7 @@ post:
     - BearerAuth: []
   summary: Report issue
   description: |-
-    Tenant hiện tại hoặc landlord của phòng tạo sự cố gắn với hợp đồng active (P10-D86). Sau khi tạo, upload ảnh private theo ownerType `issue_report`, purpose `issue_photo` và ID sự cố; không gửi media ID khi tạo. Lỗi nghiệp vụ: 403 FORBIDDEN · 404 ROOM NOT FOUND.
+    Tenant hiện tại hoặc landlord của phòng tạo sự cố gắn với hợp đồng active (P10-D86). Sau khi tạo, upload tối đa 5 ảnh/video private theo ownerType `issue_report`, purpose `issue_photo` và ID sự cố; không gửi media ID khi tạo. Lỗi nghiệp vụ: 403 FORBIDDEN · 404 ROOM NOT FOUND.
 
     Event `notification.requested` mang `data.messageKey` (`issue.created`, `issue.updated`, hoặc `issue.cancelled`), `issueId` và `contractId`. Web dịch nội dung theo key; Community kiểm tra lại recipient trước khi lưu và gửi thông báo.
   requestBody:

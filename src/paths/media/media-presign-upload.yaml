@@ -28,11 +28,11 @@ post:
     | `contract_template` | `contract` | pdf | private | landlord sở hữu | |
     | `contract_signed` | `contract` | jpeg, png, webp, pdf | private | landlord sở hữu | không xóa được khi HĐ `signed/active/suspended/expired/terminated` |
     | `meter_reading_evidence` | `meter_reading` | jpeg, png, webp | private | landlord sở hữu; tenant của HĐ chỉ với `captureSource = camera_direct` | |
-    | `issue_photo` | `issue_report` | jpeg, png, webp | private | người trong HĐ, landlord sở hữu | chưa hỗ trợ (503) |
+    | `issue_photo` | `issue_report` | jpeg, png, webp, mp4, webm | private | người trong HĐ, landlord sở hữu | tối đa 5 file/issue; chỉ upload khi issue `open` hoặc `in_progress` |
     | `chat_attachment` | `conversation` | jpeg, png, webp, pdf, mp4, webm | private | upload: active member; download: member allowed to read the message that references the media | Community verifies active membership on upload and message linkage on read |
     | `conversation_avatar` | `conversation` | jpeg, png, webp | private | active member may upload | Community validates active group admin and media ownership on metadata update; old media remains valid so uploading a replacement cannot break the current avatar before the metadata update commits |
     
-    Kích thước tối đa 10 MiB cho mọi purpose. Chỉ chat_attachment hỗ trợ video MP4/WebM; không hỗ trợ SVG/HTML.
+    Kích thước tối đa 10 MiB cho mọi purpose. `issue_photo` và `chat_attachment` hỗ trợ video MP4/WebM; không hỗ trợ SVG/HTML.
     
     Lỗi nghiệp vụ: 403 FORBIDDEN (không có quyền với thực thể cha, hoặc thực thể cha không tồn tại) · 422 INVALID_PURPOSE (`purpose` không hợp lệ với `ownerType`) · 422 MEDIA_TYPE_NOT_ALLOWED (MIME, đuôi file hoặc kích thước không hợp lệ) · 503 SERVICE_UNAVAILABLE.
     
@@ -171,11 +171,13 @@ post:
                 type: string
                 enum:
                   - MEDIA_TYPE_NOT_ALLOWED
+                  - MEDIA_FILE_LIMIT_EXCEEDED
                   - INVALID_PURPOSE
                   - VALIDATION_FAILED
                   - UNEXPECTED_FIELD
                 description: |-
                   - MEDIA_TYPE_NOT_ALLOWED: MIME không thuộc danh sách của purpose, đuôi `fileName` không khớp `contentType`, hoặc `size` vượt giới hạn.
+                  - MEDIA_FILE_LIMIT_EXCEEDED: Owner đã đạt số file live tối đa của purpose (issue tối đa 5 file).
                   - INVALID_PURPOSE: Mục đích upload không phù hợp với `ownerType`.
                   - VALIDATION_FAILED: Thiếu field, sai kiểu hoặc sai enum.
                   - UNEXPECTED_FIELD: Body có field ngoài contract.

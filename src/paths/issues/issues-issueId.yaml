@@ -7,7 +7,7 @@ get:
   security:
     - BearerAuth: []
   summary: Get issue details
-  description: 'Landlord của phòng hoặc tenant hiện tại của hợp đồng gắn với sự cố được đọc chi tiết và ảnh đã upload hoàn tất. Tenant đã rời không còn quyền (P10-D86). Lỗi nghiệp vụ: 403 FORBIDDEN · 404 NOT FOUND.'
+  description: 'Landlord của phòng hoặc tenant hiện tại của hợp đồng gắn với sự cố được đọc chi tiết và media đã upload hoàn tất. Issue hỗ trợ ảnh/video, tối đa 5 file; chỉ có thể upload khi issue còn open hoặc in_progress. Tenant đã rời không còn quyền (P10-D86). Lỗi nghiệp vụ: 403 FORBIDDEN · 404 NOT FOUND.'
   parameters:
   - name: issueId
     in: path

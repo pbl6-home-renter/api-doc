@@ -29,7 +29,8 @@ properties:
     description: "Trạng thái xử lý sự cố."
   issuePhotoMediaIds:
     type: array
-    description: Danh sách ID ảnh đã hoàn tất upload gắn với sự cố
+    maxItems: 5
+    description: Danh sách ID ảnh/video đã hoàn tất upload gắn với sự cố
     items: { type: string, format: uuid }
   assignedTo: { type: string, nullable: true, description: "Tên hoặc thông tin thợ sửa chữa / bên bảo hành được phân công." }
   repairCost: { type: integer, minimum: 0, nullable: true, description: "Chi phí sửa chữa thực tế (VNĐ)." }
@@ -38,7 +39,7 @@ properties:
   closedAt: { type: string, format: date-time, nullable: true, description: "Thời điểm đóng sự cố." }
   canUpdate: { type: boolean, description: "Người gọi được cập nhật tiến độ." }
   canCancel: { type: boolean, description: "Người gọi được hủy sự cố." }
-  canUploadPhotos: { type: boolean, description: "Người gọi được upload ảnh sự cố." }
+  canUploadPhotos: { type: boolean, description: "Người gọi được upload ảnh/video sự cố; false khi issue đã đóng hoặc đủ 5 file." }
 
 required:
   - id
