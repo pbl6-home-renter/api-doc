@@ -1,0 +1,61 @@
+get:
+  tags:
+  - User
+  x-apidog-folder: User
+  x-apidog-status: developing
+  operationId: getUserStatsAdmin
+  security:
+  - BearerAuth: []
+  summary: Get user account statistics
+  description: |-
+    Admin-only snapshot of Identity user accounts at request time. Counts include all
+    rows in `users`, including soft-deleted accounts, as defined by P11-D92.
+    `byRole` and `byStatus` always include every documented key, with zero for
+    an empty group. Each grouping sums to `totalUsers`. The response key
+    `pendingVerification` maps to the stored status `pending_verification`.
+    No date range or other query filter is supported.
+  responses:
+    '200':
+      description: User account statistics fetched.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required:
+            - statusCode
+            - code
+            - data
+            properties:
+              statusCode:
+                type: integer
+                enum: [200]
+              code:
+                type: string
+                enum: [USER_STATS_FETCHED]
+              data:
+                $ref: ../../openapi.yaml#/components/schemas/UserStatsResponseDto
+          example:
+            statusCode: 200
+            code: USER_STATS_FETCHED
+            data:
+              totalUsers: 9
+              byRole:
+                admin: 1
+                landlord: 3
+                tenant: 5
+              byStatus:
+                active: 6
+                locked: 1
+                pendingVerification: 2
+              generatedAt: '2026-11-21T09:30:00.000Z'
+    '401':
+      $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
+    '403':
+      $ref: ../../openapi.yaml#/components/responses/ForbiddenError
+    '429':
+      $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
+    '503':
+      $ref: ../../openapi.yaml#/components/responses/AuthUnavailableError
+    '500':
+      $ref: ../../openapi.yaml#/components/responses/InternalServerError

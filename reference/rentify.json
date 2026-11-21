@@ -3741,6 +3741,91 @@
         }
       }
     },
+    "/users/stats": {
+      "get": {
+        "tags": [
+          "User"
+        ],
+        "x-apidog-folder": "User",
+        "x-apidog-status": "developing",
+        "operationId": "getUserStatsAdmin",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "Get user account statistics",
+        "description": "Admin-only snapshot of Identity user accounts at request time. Counts include all\nrows in `users`, including soft-deleted accounts, as defined by P11-D92.\n`byRole` and `byStatus` always include every documented key, with zero for\nan empty group. Each grouping sums to `totalUsers`. The response key\n`pendingVerification` maps to the stored status `pending_verification`.\nNo date range or other query filter is supported.",
+        "responses": {
+          "200": {
+            "description": "User account statistics fetched.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code",
+                    "data"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        200
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "USER_STATS_FETCHED"
+                      ]
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/UserStatsResponseDto"
+                    }
+                  }
+                },
+                "example": {
+                  "statusCode": 200,
+                  "code": "USER_STATS_FETCHED",
+                  "data": {
+                    "totalUsers": 9,
+                    "byRole": {
+                      "admin": 1,
+                      "landlord": 3,
+                      "tenant": 5
+                    },
+                    "byStatus": {
+                      "active": 6,
+                      "locked": 1,
+                      "pendingVerification": 2
+                    },
+                    "generatedAt": "2026-11-21T09:30:00.000Z"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "403": {
+            "$ref": "#/components/responses/ForbiddenError"
+          },
+          "429": {
+            "$ref": "#/components/responses/TooManyRequestsError"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          },
+          "503": {
+            "$ref": "#/components/responses/AuthUnavailableError"
+          }
+        }
+      }
+    },
     "/users/{userId}": {
       "get": {
         "tags": [
@@ -25327,6 +25412,78 @@
           "avatarUrl"
         ],
         "additionalProperties": false
+      },
+      "UserStatsResponseDto": {
+        "type": "object",
+        "x-apidog-folder": "User/Response",
+        "title": "UserStatsResponseDto",
+        "description": "Admin-only snapshot of all Identity user rows, including soft-deleted accounts.",
+        "additionalProperties": false,
+        "required": [
+          "totalUsers",
+          "byRole",
+          "byStatus",
+          "generatedAt"
+        ],
+        "properties": {
+          "totalUsers": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Total rows in `users`, including soft-deleted accounts."
+          },
+          "byRole": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "admin",
+              "landlord",
+              "tenant"
+            ],
+            "properties": {
+              "admin": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "landlord": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "tenant": {
+                "type": "integer",
+                "minimum": 0
+              }
+            }
+          },
+          "byStatus": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "active",
+              "locked",
+              "pendingVerification"
+            ],
+            "properties": {
+              "active": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "locked": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "pendingVerification": {
+                "type": "integer",
+                "minimum": 0,
+                "description": "Count of users whose stored status is `pending_verification`."
+              }
+            }
+          },
+          "generatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "ISO 8601 time when the server calculated this snapshot."
+          }
+        }
       },
       "UserDirectoryResponseDto": {
         "type": "object",
