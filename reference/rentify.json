@@ -3755,7 +3755,7 @@
           }
         ],
         "summary": "Get user account statistics",
-        "description": "Admin-only snapshot of Identity user accounts at request time. Counts include all\nrows in `users`, including soft-deleted accounts, as defined by P11-D92.\n`byRole` and `byStatus` always include every documented key, with zero for\nan empty group. Each grouping sums to `totalUsers`. The response key\n`pendingVerification` maps to the stored status `pending_verification`.\nNo date range or other query filter is supported.",
+        "description": "Admin-only snapshot of Identity user accounts at request time. Counts include all\nrows in `users`, including soft-deleted accounts, as defined by P11-D92.\n`byRole` and `byStatus` always include every documented key, with zero for\nan empty group. Each grouping sums to `totalUsers`. The response key\n`pendingVerification` maps to the stored status `pending_verification`.\nNo date range or other query filter is supported.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-11-21 | 🟢 NON_BREAKING | Thêm endpoint mới. | [#77](https://github.com/pbl6-home-renter/api-doc/pull/77) |\n",
         "responses": {
           "200": {
             "description": "User account statistics fetched.",

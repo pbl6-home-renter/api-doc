@@ -5,11 +5,36 @@
 
 Báo cáo lưu lịch sử các entry đã phát hiện, mới nhất ở trên. `NO_CHANGE` không xóa entry cũ; exit code chỉ phản ánh lần chạy hiện tại.
 
-Công cụ: Redocly 2.64.1; oasdiff 1.34.1. Số entry: **59**.
+Công cụ: Redocly 2.64.1; oasdiff 1.34.1. Số entry: **60**.
 
 Phân loại: **BREAKING** = client cũ có thể hỏng; **NON_BREAKING** = tương thích theo contract; **NEEDS_REVIEW** = chưa đủ bằng chứng.
 
 Các vị trí dùng JSON Pointer trên bundle tạm (`~1` là `/`). JSON đi kèm giữ toàn bộ semantic diff, fingerprint và hash phục vụ truy vết.
+
+## Thay đổi contract từ Git — NON_BREAKING
+
+- ID: `3448844a94cec4c98065902e4eca0e0e56a549e85f2a351b75bd2e219caa4de8`
+- Contract: rentify-public; repository: https://github.com/pbl6-home-renter/api-doc
+- Nguồn: `src/openapi.yaml` → `src/openapi.yaml`
+- Phát hiện (UTC): 2026-11-21T14:48:31.609Z; commit time: 2026-11-21T21:48:21+07:00
+- Commit nền: 2e706d5d9e3c044df4e49090d0e0e4f5ea912c1f
+- Commit đích/bối cảnh: [47d6d2ace71bc5e357bcbff96f4bce8d78475cd0](https://github.com/pbl6-home-renter/api-doc/commit/47d6d2ace71bc5e357bcbff96f4bce8d78475cd0)
+- PR: [https://github.com/pbl6-home-renter/api-doc/pull/77](https://github.com/pbl6-home-renter/api-doc/pull/77)
+- Loại metadata: Git revision thực tế
+- Lý do: Theo P11-D92, Admin Dashboard cần endpoint riêng của Identity-Service để lấy thống kê tài khoản. Số liệu tính trên mọi bản ghi `users`, kể cả tài khoản đã xóa mềm. `byRole` và `byStatus` luôn có đủ key, trả `0` cho nhóm không có tài khoản.
+
+| Mức ảnh hưởng | Endpoint / vùng | Thay đổi | Hành động FE / Mobile |
+|---|---|---|---|
+| NON_BREAKING | GET /users/stats | Thêm endpoint mới. (`endpoint-added`) | FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI. |
+
+### Vị trí và giá trị trước/sau
+
+| Path / schema / field (JSON Pointer) | Trước | Sau |
+|---|---|---|
+| `/components/schemas/UserStatsResponseDto` | null | {"type":"object","x-apidog-folder":"User/Response","title":"UserStatsResponseDto","description":"Admin-only snapshot of all Identity user rows, including soft-deleted accounts.","additionalProperties":false,"required":["totalUsers","byRole","byStatus","generatedAt"],"properties":{"totalUsers":{"type":"integer","minimum":0,"description":"Total rows in `users`, including soft-deleted accounts."},"byRole":{"type":"object","additionalProperties":false,"required":["admin","landlord","tenant"],"properties":{"admin":{"type":"integer","minimum":0},"landlord":{"type":"integer","minimum":0},"tenant":{"type":"integer","minimum":0}}},"byStatus":{"type":"object","additionalProperties":false,"required":["active","locked","pendingVerification"],"properties":{"active":{"type":"integer","minimum":0},"locked":{"type":"integer","minimum":0},"pendingVerification":{"type":"integer","minimum":0,"description":"Count of users whose stored status is `pending_verification`."}}},"generatedAt":{"type":"string","format":"date-time","description":"ISO 8601 time when the server calculated this snapshot."}}} |
+| `/paths/~1users~1stats` | null | {"get":{"tags":["User"],"x-apidog-folder":"User","x-apidog-status":"developing","operationId":"getUserStatsAdmin","security":[{"BearerAuth":[]}],"summary":"Get user account statistics","description":"Admin-only snapshot of Identity user accounts at request time. Counts include all\nrows in `users`, including soft-deleted accounts, as defined by P11-D92.\n`byRole` and `byStatus` always include every documented key, with zero for\nan empty group. Each grouping sums to `totalUsers`. The response key\n`pendingVerification` maps to the stored status `pending_verification`.\nNo date range or other query filter is supported.","responses":{"200":{"description":"User account statistics fetched.","content":{"application/json":{"schema":{"type":"object","additionalProperties":false,"required":["statusCode","code","data"],"properties":{"statusCode":{"type":"integer","enum":[200]},"code":{"type":"string","enum":["USER_STATS_FETCHED"]},"data":{"$ref":"#/components/schemas/UserStatsResponseDto"}}},"example":{"statusCode":200,"code":"USER_STATS_FETCHED","data":{"totalUsers":9,"byRole":{"admin":1,"landlord":3,"tenant":5},"byStatus":{"active":6,"locked":1,"pendingVerification":2},"generatedAt":"2026-11-21T09:30:00.000Z"}}}}},"401":{"$ref":"#/components/responses/UnauthorizedError"},"403":{"$ref":"#/components/responses/ForbiddenError"},"429":{"$ref":"#/components/responses/TooManyRequestsError"},"500":{"$ref":"#/components/responses/InternalServerError"},"503":{"$ref":"#/components/responses/AuthUnavailableError"}}}} |
+
+**Kiểm tra thủ công:** BE xác nhận lý do, endpoint dùng schema chung, thay đổi role/ownership mô tả bằng văn bản và thời điểm triển khai. FE/Mobile xác nhận tác động với parser và phiên bản client đang hỗ trợ.
 
 ## Thay đổi contract từ Git — BREAKING
 
