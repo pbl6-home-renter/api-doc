@@ -1,0 +1,38 @@
+type: object
+x-apidog-folder: User/Response
+title: UserStatsResponseDto
+description: Admin-only snapshot of all Identity user rows, including soft-deleted accounts.
+additionalProperties: false
+required:
+- totalUsers
+- byRole
+- byStatus
+- generatedAt
+properties:
+  totalUsers:
+    type: integer
+    minimum: 0
+    description: Total rows in `users`, including soft-deleted accounts.
+  byRole:
+    type: object
+    additionalProperties: false
+    required: [admin, landlord, tenant]
+    properties:
+      admin: { type: integer, minimum: 0 }
+      landlord: { type: integer, minimum: 0 }
+      tenant: { type: integer, minimum: 0 }
+  byStatus:
+    type: object
+    additionalProperties: false
+    required: [active, locked, pendingVerification]
+    properties:
+      active: { type: integer, minimum: 0 }
+      locked: { type: integer, minimum: 0 }
+      pendingVerification:
+        type: integer
+        minimum: 0
+        description: Count of users whose stored status is `pending_verification`.
+  generatedAt:
+    type: string
+    format: date-time
+    description: ISO 8601 time when the server calculated this snapshot.
