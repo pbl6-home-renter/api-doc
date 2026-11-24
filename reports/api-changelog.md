@@ -5,11 +5,88 @@
 
 Báo cáo lưu lịch sử các entry đã phát hiện, mới nhất ở trên. `NO_CHANGE` không xóa entry cũ; exit code chỉ phản ánh lần chạy hiện tại.
 
-Công cụ: Redocly 2.64.1; oasdiff 1.34.1. Số entry: **60**.
+Công cụ: Redocly 2.64.1; oasdiff 1.34.1. Số entry: **61**.
 
 Phân loại: **BREAKING** = client cũ có thể hỏng; **NON_BREAKING** = tương thích theo contract; **NEEDS_REVIEW** = chưa đủ bằng chứng.
 
 Các vị trí dùng JSON Pointer trên bundle tạm (`~1` là `/`). JSON đi kèm giữ toàn bộ semantic diff, fingerprint và hash phục vụ truy vết.
+
+## Thay đổi contract từ Git — BREAKING
+
+- ID: `67f91720fead7768217621c97399053490a6a0a07cc68961c74adc9018b17e27`
+- Contract: rentify-public; repository: https://github.com/pbl6-home-renter/api-doc
+- Nguồn: `src/openapi.yaml` → `src/openapi.yaml`
+- Phát hiện (UTC): 2026-11-24T07:01:45.710Z; commit time: 2026-11-24T14:01:27+07:00
+- Commit nền: 1e82ea5991acb81135d1764a3a780c78e925a678
+- Commit đích/bối cảnh: [fa1111136d2dce55c2eb1686bf305c88fc31378b](https://github.com/pbl6-home-renter/api-doc/commit/fa1111136d2dce55c2eb1686bf305c88fc31378b)
+- PR: [https://github.com/pbl6-home-renter/api-doc/pull/78](https://github.com/pbl6-home-renter/api-doc/pull/78)
+- Loại metadata: Git revision thực tế
+- Lý do: P11-D92 chốt Admin Dashboard dùng hai endpoint snapshot: Identity-Service cung cấp số liệu tài khoản qua `GET /users/stats`, còn Tenancy-Service cung cấp số liệu tòa và phòng qua `GET /dashboard`. Vì số liệu được tính tại thời điểm gọi, endpoint không cần lọc theo khoảng ngày. Phòng và tòa đã xóa mềm không được tính; số phòng chỉ tính trong các tòa đã duyệt.
+
+| Mức ảnh hưởng | Endpoint / vùng | Thay đổi | Hành động FE / Mobile |
+|---|---|---|---|
+| BREAKING | GET /dashboard | the `data/occupancyRate` response's property `type` changed from `string` to `number` for status `200` (`response-property-type-changed`) | FE và Mobile: đối chiếu vị trí và thay đổi trước/sau trong entry này với API adapter, DTO, parser và validation; cùng BE xác nhận phương án tương thích trước merge/phát hành. |
+| BREAKING | GET /dashboard | removed the required property `data/systemTransactionVolume` from the response with the `200` status (`response-required-property-removed`) | FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ. |
+| BREAKING | GET /dashboard | removed the required property `data/totalLandlords` from the response with the `200` status (`response-required-property-removed`) | FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ. |
+| BREAKING | GET /dashboard | removed the required property `data/totalTenants` from the response with the `200` status (`response-required-property-removed`) | FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ. |
+| BREAKING | GET /dashboard | removed the required property `data/totalUsers` from the response with the `200` status (`response-required-property-removed`) | FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ. |
+| NEEDS_REVIEW | GET /dashboard | deleted the `query` request parameter `from` (`request-parameter-removed`) | FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ. |
+| NEEDS_REVIEW | GET /dashboard | deleted the `query` request parameter `to` (`request-parameter-removed`) | FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ. |
+| NON_BREAKING | info | Đã phát hiện breaking change nhưng info.version vẫn là `1.0.0`. (`api-version-not-bumped`) | BE: xem lại quy ước version trước khi chấp nhận breaking change. FE/Mobile: theo kế hoạch chuyển đổi của entry này; version trong OpenAPI chưa chứng minh backend đã triển khai. |
+| NON_BREAKING | GET /dashboard | Bỏ response lỗi HTTP 400. (`response-non-success-status-removed`) | FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ. |
+| NON_BREAKING | GET /dashboard | removed the `INVALID_DATE_RANGE` enum value from the `code` response property for the response status `422` (`response-property-enum-value-removed`) | FE và Mobile: đối chiếu enum trong DTO/validation và nhánh switch/when; xử lý giá trị chưa biết, kiểm thử dữ liệu cũ và mới; phối hợp BE trước khi phát hành. |
+| NON_BREAKING | GET /dashboard | the `data/occupancyRate` response property's max was set to `100.00` for the response status `200` (`response-property-max-set`) | FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI. |
+| NON_BREAKING | GET /dashboard | the `data/occupancyRate` response property's min was set to `0.00` for the response status `200` (`response-property-min-set`) | FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI. |
+| NON_BREAKING | GET /dashboard | added the required property `data/generatedAt` to the response with the `200` status (`response-required-property-added`) | FE: có thể bỏ qua field mới data/generatedAt; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại. |
+| NON_BREAKING | GET /dashboard | added the required property `data/rejectedBuildings` to the response with the `200` status (`response-required-property-added`) | FE: có thể bỏ qua field mới data/rejectedBuildings; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại. |
+| NON_BREAKING | GET /dashboard | added the required property `data/roomsByStatus` to the response with the `200` status (`response-required-property-added`) | FE: có thể bỏ qua field mới data/roomsByStatus; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại. |
+
+### Vị trí và giá trị trước/sau
+
+| Path / schema / field (JSON Pointer) | Trước | Sau |
+|---|---|---|
+| `/components/schemas/DashboardResponseDto/additionalProperties` | null | false |
+| `/components/schemas/DashboardResponseDto/description` | "Số liệu tổng hợp dashboard" | "Admin-only snapshot of non-deleted Tenancy buildings and rooms." |
+| `/components/schemas/DashboardResponseDto/properties/generatedAt` | null | {"type":"string","format":"date-time","description":"ISO 8601 time when the server calculated this snapshot."} |
+| `/components/schemas/DashboardResponseDto/properties/occupancyRate/description` | "Thông tin occupancy rate của tài nguyên trong ngữ cảnh DTO." | "Occupied rooms divided by totalRooms, times 100, rounded to one decimal; 0 when totalRooms is 0." |
+| `/components/schemas/DashboardResponseDto/properties/occupancyRate/maximum` | null | 100 |
+| `/components/schemas/DashboardResponseDto/properties/occupancyRate/minimum` | null | 0 |
+| `/components/schemas/DashboardResponseDto/properties/occupancyRate/type` | "string" | "number" |
+| `/components/schemas/DashboardResponseDto/properties/pendingApprovalBuildings/description` | "Thông tin pending approval buildings của tài nguyên trong ngữ cảnh DTO." | "Pending buildings that are not soft-deleted." |
+| `/components/schemas/DashboardResponseDto/properties/rejectedBuildings` | null | {"type":"integer","minimum":0,"description":"Rejected buildings that are not soft-deleted."} |
+| `/components/schemas/DashboardResponseDto/properties/roomsByStatus` | null | {"type":"object","additionalProperties":false,"description":"Counts of the rooms included in totalRooms, grouped by status.","required":["available","occupied","maintenance"],"properties":{"available":{"type":"integer","minimum":0},"occupied":{"type":"integer","minimum":0},"maintenance":{"type":"integer","minimum":0}}} |
+| `/components/schemas/DashboardResponseDto/properties/systemTransactionVolume` | {"type":"integer","minimum":0,"description":"Thông tin system transaction volume của tài nguyên trong ngữ cảnh DTO."} | null |
+| `/components/schemas/DashboardResponseDto/properties/totalBuildings/description` | "Thông tin total buildings của tài nguyên trong ngữ cảnh DTO." | "Approved buildings that are not soft-deleted." |
+| `/components/schemas/DashboardResponseDto/properties/totalLandlords` | {"type":"integer","minimum":0,"description":"Thông tin total landlords của tài nguyên trong ngữ cảnh DTO."} | null |
+| `/components/schemas/DashboardResponseDto/properties/totalRooms/description` | "Thông tin total rooms của tài nguyên trong ngữ cảnh DTO." | "Non-deleted rooms in non-deleted approved buildings." |
+| `/components/schemas/DashboardResponseDto/properties/totalTenants` | {"type":"integer","minimum":0,"description":"Thông tin total tenants của tài nguyên trong ngữ cảnh DTO."} | null |
+| `/components/schemas/DashboardResponseDto/properties/totalUsers` | {"type":"integer","minimum":0,"description":"Thông tin total users của tài nguyên trong ngữ cảnh DTO."} | null |
+| `/components/schemas/DashboardResponseDto/required` | ["totalUsers","totalLandlords","totalTenants","totalBuildings","pendingApprovalBuildings","totalRooms","occupancyRate","systemTransactionVolume"] | ["totalBuildings","pendingApprovalBuildings","rejectedBuildings","totalRooms","roomsByStatus","occupancyRate","generatedAt"] |
+| `/paths/~1dashboard/get/description` | "admin. Đọc số liệu tổng hợp hệ thống. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 INVALID DATE RANGE." | "Admin-only snapshot of Tenancy building and room data at request time.\nCounts exclude soft-deleted buildings and rooms. `totalBuildings` counts\napproved buildings only. `totalRooms` and `roomsByStatus` count rooms only\nin approved buildings. Every room status key is always present, including\ngroups with zero rooms, and their sum equals `totalRooms`.\n`occupancyRate` is `occupied / totalRooms * 100`, rounded to one decimal\nplace, or 0 when `totalRooms` is 0. No date range or other query filter\nis supported." |
+| `/paths/~1dashboard/get/parameters` | [{"name":"from","in":"query","schema":{"type":"string","format":"date"}},{"name":"to","in":"query","schema":{"type":"string","format":"date"}}] | null |
+| `/paths/~1dashboard/get/responses/200/content/application~1json/example/data/generatedAt` | null | "2026-11-24T09:30:00.000Z" |
+| `/paths/~1dashboard/get/responses/200/content/application~1json/example/data/occupancyRate` | "89.2" | 62.5 |
+| `/paths/~1dashboard/get/responses/200/content/application~1json/example/data/pendingApprovalBuildings` | 8 | 2 |
+| `/paths/~1dashboard/get/responses/200/content/application~1json/example/data/rejectedBuildings` | null | 1 |
+| `/paths/~1dashboard/get/responses/200/content/application~1json/example/data/roomsByStatus` | null | {"available":2,"occupied":5,"maintenance":1} |
+| `/paths/~1dashboard/get/responses/200/content/application~1json/example/data/systemTransactionVolume` | 3450000000 | null |
+| `/paths/~1dashboard/get/responses/200/content/application~1json/example/data/totalBuildings` | 145 | 2 |
+| `/paths/~1dashboard/get/responses/200/content/application~1json/example/data/totalLandlords` | 320 | null |
+| `/paths/~1dashboard/get/responses/200/content/application~1json/example/data/totalRooms` | 1580 | 8 |
+| `/paths/~1dashboard/get/responses/200/content/application~1json/example/data/totalTenants` | 930 | null |
+| `/paths/~1dashboard/get/responses/200/content/application~1json/example/data/totalUsers` | 1250 | null |
+| `/paths/~1dashboard/get/responses/200/description` | "Thành công: Đọc số liệu tổng hợp hệ thống." | "Building and room statistics fetched." |
+| `/paths/~1dashboard/get/responses/400` | {"$ref":"#/components/responses/BadRequestQueryError"} | null |
+| `/paths/~1dashboard/get/responses/422/content/application~1json/example` | null | {"statusCode":422,"code":"VALIDATION_FAILED"} |
+| `/paths/~1dashboard/get/responses/422/content/application~1json/examples` | {"invalid_date_range":{"summary":"INVALID_DATE_RANGE — Khoảng ngày không hợp lệ.","value":{"statusCode":422,"code":"INVALID_DATE_RANGE"}},"validation_failed":{"summary":"VALIDATION_FAILED — Dữ liệu vi phạm ràng buộc schema hoặc quy tắc nghiệp vụ khác chưa có mã riêng.","value":{"statusCode":422,"code":"VALIDATION_FAILED"}}} | null |
+| `/paths/~1dashboard/get/responses/422/content/application~1json/schema/properties/code/description` | "- INVALID_DATE_RANGE: Khoảng ngày không hợp lệ.\n- VALIDATION_FAILED: Dữ liệu vi phạm ràng buộc schema hoặc quy tắc nghiệp vụ khác chưa có mã riêng." | null |
+| `/paths/~1dashboard/get/responses/422/content/application~1json/schema/properties/code/enum` | ["INVALID_DATE_RANGE","VALIDATION_FAILED"] | ["VALIDATION_FAILED"] |
+| `/paths/~1dashboard/get/responses/422/description` | "Dữ liệu hợp lệ về cấu trúc nhưng vi phạm ràng buộc trường hoặc quy tắc nghiệp vụ." | "Request validation failed." |
+| `/paths/~1dashboard/get/responses/422/x-apidog-name` | "Unprocessable Entity" | null |
+| `/paths/~1dashboard/get/summary` | "Get system dashboard metrics" | "Get admin building and room statistics" |
+| `/paths/~1dashboard/get/x-apidog-status` | "designing" | "developing" |
+
+**Kiểm tra thủ công:** BE xác nhận lý do, endpoint dùng schema chung, thay đổi role/ownership mô tả bằng văn bản và thời điểm triển khai. FE/Mobile xác nhận tác động với parser và phiên bản client đang hỗ trợ.
 
 ## Thay đổi contract từ Git — NON_BREAKING
 

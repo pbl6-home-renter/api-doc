@@ -75002,6 +75002,714 @@
           }
         }
       }
+    },
+    {
+      "id": "67f91720fead7768217621c97399053490a6a0a07cc68961c74adc9018b17e27",
+      "label": "Thay đổi contract từ Git",
+      "classification": "BREAKING",
+      "contractId": "rentify-public",
+      "repository": "https://github.com/pbl6-home-renter/api-doc",
+      "baseHash": "facdb624b31d8b4859c359e984eb44b6fdc0c1fa2201ee9a67ed92b3e9145306",
+      "headHash": "2b371cbd6d91fbed0398f9191c2f7236323580ea483b145222a76efe9b80368a",
+      "baseSource": "src/openapi.yaml",
+      "headSource": "src/openapi.yaml",
+      "detectedAt": "2026-11-24T07:01:45.710Z",
+      "committedAt": "2026-11-24T14:01:27+07:00",
+      "baseCommit": "1e82ea5991acb81135d1764a3a780c78e925a678",
+      "headCommit": "fa1111136d2dce55c2eb1686bf305c88fc31378b",
+      "prUrl": "https://github.com/pbl6-home-renter/api-doc/pull/78",
+      "commitUrl": "https://github.com/pbl6-home-renter/api-doc/commit/fa1111136d2dce55c2eb1686bf305c88fc31378b",
+      "metadataKind": "Git revision thực tế",
+      "reason": "P11-D92 chốt Admin Dashboard dùng hai endpoint snapshot: Identity-Service cung cấp số liệu tài khoản qua `GET /users/stats`, còn Tenancy-Service cung cấp số liệu tòa và phòng qua `GET /dashboard`. Vì số liệu được tính tại thời điểm gọi, endpoint không cần lọc theo khoảng ngày. Phòng và tòa đã xóa mềm không được tính; số phòng chỉ tính trong các tòa đã duyệt.",
+      "tools": {
+        "redocly": "2.64.1",
+        "oasdiff": "1.34.1"
+      },
+      "changes": [
+        {
+          "id": "response-property-type-changed",
+          "text": "the `data/occupancyRate` response's property `type` changed from `string` to `number` for status `200`",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getDashboard",
+          "path": "/dashboard",
+          "section": "paths",
+          "fingerprint": "2b4bfb5332e2",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu vị trí và thay đổi trước/sau trong entry này với API adapter, DTO, parser và validation; cùng BE xác nhận phương án tương thích trước merge/phát hành."
+        },
+        {
+          "id": "response-required-property-removed",
+          "text": "removed the required property `data/systemTransactionVolume` from the response with the `200` status",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getDashboard",
+          "path": "/dashboard",
+          "section": "paths",
+          "fingerprint": "99b48ed9d036",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "response-required-property-removed",
+          "text": "removed the required property `data/totalLandlords` from the response with the `200` status",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getDashboard",
+          "path": "/dashboard",
+          "section": "paths",
+          "fingerprint": "5cebad3255c8",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "response-required-property-removed",
+          "text": "removed the required property `data/totalTenants` from the response with the `200` status",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getDashboard",
+          "path": "/dashboard",
+          "section": "paths",
+          "fingerprint": "87d9331b40cb",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "response-required-property-removed",
+          "text": "removed the required property `data/totalUsers` from the response with the `200` status",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getDashboard",
+          "path": "/dashboard",
+          "section": "paths",
+          "fingerprint": "c3a4f69c44bd",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "request-parameter-removed",
+          "text": "deleted the `query` request parameter `from`",
+          "comment": "This is a warning because some clients may return an error when receiving an unexpected parameter. It is recommended to deprecate the parameter first.",
+          "level": 2,
+          "operation": "GET",
+          "operationId": "getDashboard",
+          "path": "/dashboard",
+          "section": "paths",
+          "fingerprint": "b35296903a59",
+          "classification": "NEEDS_REVIEW",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "request-parameter-removed",
+          "text": "deleted the `query` request parameter `to`",
+          "comment": "This is a warning because some clients may return an error when receiving an unexpected parameter. It is recommended to deprecate the parameter first.",
+          "level": 2,
+          "operation": "GET",
+          "operationId": "getDashboard",
+          "path": "/dashboard",
+          "section": "paths",
+          "fingerprint": "af2132ae1761",
+          "classification": "NEEDS_REVIEW",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "api-version-not-bumped",
+          "text": "a breaking change was detected but the version is still `1.0.0`",
+          "level": 1,
+          "section": "info",
+          "fingerprint": "d3f96cd643c1",
+          "classification": "NON_BREAKING",
+          "clientImpact": "BE: xem lại quy ước version trước khi chấp nhận breaking change. FE/Mobile: theo kế hoạch chuyển đổi của entry này; version trong OpenAPI chưa chứng minh backend đã triển khai."
+        },
+        {
+          "id": "response-non-success-status-removed",
+          "text": "removed the non-success response with the status `400`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getDashboard",
+          "path": "/dashboard",
+          "section": "paths",
+          "fingerprint": "f8017634610c",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "response-property-enum-value-removed",
+          "text": "removed the `INVALID_DATE_RANGE` enum value from the `code` response property for the response status `422`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getDashboard",
+          "path": "/dashboard",
+          "section": "paths",
+          "fingerprint": "ed435f9bd21e",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu enum trong DTO/validation và nhánh switch/when; xử lý giá trị chưa biết, kiểm thử dữ liệu cũ và mới; phối hợp BE trước khi phát hành."
+        },
+        {
+          "id": "response-property-max-set",
+          "text": "the `data/occupancyRate` response property's max was set to `100.00` for the response status `200`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getDashboard",
+          "path": "/dashboard",
+          "section": "paths",
+          "fingerprint": "3723f2b24126",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        },
+        {
+          "id": "response-property-min-set",
+          "text": "the `data/occupancyRate` response property's min was set to `0.00` for the response status `200`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getDashboard",
+          "path": "/dashboard",
+          "section": "paths",
+          "fingerprint": "e3564f5bb3b1",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        },
+        {
+          "id": "response-required-property-added",
+          "text": "added the required property `data/generatedAt` to the response with the `200` status",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getDashboard",
+          "path": "/dashboard",
+          "section": "paths",
+          "fingerprint": "c834b851d856",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/generatedAt; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-required-property-added",
+          "text": "added the required property `data/rejectedBuildings` to the response with the `200` status",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getDashboard",
+          "path": "/dashboard",
+          "section": "paths",
+          "fingerprint": "7081398d3a89",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/rejectedBuildings; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-required-property-added",
+          "text": "added the required property `data/roomsByStatus` to the response with the `200` status",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getDashboard",
+          "path": "/dashboard",
+          "section": "paths",
+          "fingerprint": "7c311a57e635",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/roomsByStatus; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        }
+      ],
+      "locations": [
+        {
+          "pointer": "/components/schemas/DashboardResponseDto/additionalProperties",
+          "before": null,
+          "after": false
+        },
+        {
+          "pointer": "/components/schemas/DashboardResponseDto/description",
+          "before": "Số liệu tổng hợp dashboard",
+          "after": "Admin-only snapshot of non-deleted Tenancy buildings and rooms."
+        },
+        {
+          "pointer": "/components/schemas/DashboardResponseDto/properties/generatedAt",
+          "before": null,
+          "after": {
+            "type": "string",
+            "format": "date-time",
+            "description": "ISO 8601 time when the server calculated this snapshot."
+          }
+        },
+        {
+          "pointer": "/components/schemas/DashboardResponseDto/properties/occupancyRate/description",
+          "before": "Thông tin occupancy rate của tài nguyên trong ngữ cảnh DTO.",
+          "after": "Occupied rooms divided by totalRooms, times 100, rounded to one decimal; 0 when totalRooms is 0."
+        },
+        {
+          "pointer": "/components/schemas/DashboardResponseDto/properties/occupancyRate/maximum",
+          "before": null,
+          "after": 100
+        },
+        {
+          "pointer": "/components/schemas/DashboardResponseDto/properties/occupancyRate/minimum",
+          "before": null,
+          "after": 0
+        },
+        {
+          "pointer": "/components/schemas/DashboardResponseDto/properties/occupancyRate/type",
+          "before": "string",
+          "after": "number"
+        },
+        {
+          "pointer": "/components/schemas/DashboardResponseDto/properties/pendingApprovalBuildings/description",
+          "before": "Thông tin pending approval buildings của tài nguyên trong ngữ cảnh DTO.",
+          "after": "Pending buildings that are not soft-deleted."
+        },
+        {
+          "pointer": "/components/schemas/DashboardResponseDto/properties/rejectedBuildings",
+          "before": null,
+          "after": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Rejected buildings that are not soft-deleted."
+          }
+        },
+        {
+          "pointer": "/components/schemas/DashboardResponseDto/properties/roomsByStatus",
+          "before": null,
+          "after": {
+            "type": "object",
+            "additionalProperties": false,
+            "description": "Counts of the rooms included in totalRooms, grouped by status.",
+            "required": [
+              "available",
+              "occupied",
+              "maintenance"
+            ],
+            "properties": {
+              "available": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "occupied": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "maintenance": {
+                "type": "integer",
+                "minimum": 0
+              }
+            }
+          }
+        },
+        {
+          "pointer": "/components/schemas/DashboardResponseDto/properties/systemTransactionVolume",
+          "before": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Thông tin system transaction volume của tài nguyên trong ngữ cảnh DTO."
+          },
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/DashboardResponseDto/properties/totalBuildings/description",
+          "before": "Thông tin total buildings của tài nguyên trong ngữ cảnh DTO.",
+          "after": "Approved buildings that are not soft-deleted."
+        },
+        {
+          "pointer": "/components/schemas/DashboardResponseDto/properties/totalLandlords",
+          "before": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Thông tin total landlords của tài nguyên trong ngữ cảnh DTO."
+          },
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/DashboardResponseDto/properties/totalRooms/description",
+          "before": "Thông tin total rooms của tài nguyên trong ngữ cảnh DTO.",
+          "after": "Non-deleted rooms in non-deleted approved buildings."
+        },
+        {
+          "pointer": "/components/schemas/DashboardResponseDto/properties/totalTenants",
+          "before": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Thông tin total tenants của tài nguyên trong ngữ cảnh DTO."
+          },
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/DashboardResponseDto/properties/totalUsers",
+          "before": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Thông tin total users của tài nguyên trong ngữ cảnh DTO."
+          },
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/DashboardResponseDto/required",
+          "before": [
+            "totalUsers",
+            "totalLandlords",
+            "totalTenants",
+            "totalBuildings",
+            "pendingApprovalBuildings",
+            "totalRooms",
+            "occupancyRate",
+            "systemTransactionVolume"
+          ],
+          "after": [
+            "totalBuildings",
+            "pendingApprovalBuildings",
+            "rejectedBuildings",
+            "totalRooms",
+            "roomsByStatus",
+            "occupancyRate",
+            "generatedAt"
+          ]
+        },
+        {
+          "pointer": "/paths/~1dashboard/get/description",
+          "before": "admin. Đọc số liệu tổng hợp hệ thống. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 INVALID DATE RANGE.",
+          "after": "Admin-only snapshot of Tenancy building and room data at request time.\nCounts exclude soft-deleted buildings and rooms. `totalBuildings` counts\napproved buildings only. `totalRooms` and `roomsByStatus` count rooms only\nin approved buildings. Every room status key is always present, including\ngroups with zero rooms, and their sum equals `totalRooms`.\n`occupancyRate` is `occupied / totalRooms * 100`, rounded to one decimal\nplace, or 0 when `totalRooms` is 0. No date range or other query filter\nis supported."
+        },
+        {
+          "pointer": "/paths/~1dashboard/get/parameters",
+          "before": [
+            {
+              "name": "from",
+              "in": "query",
+              "schema": {
+                "type": "string",
+                "format": "date"
+              }
+            },
+            {
+              "name": "to",
+              "in": "query",
+              "schema": {
+                "type": "string",
+                "format": "date"
+              }
+            }
+          ],
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1dashboard/get/responses/200/content/application~1json/example/data/generatedAt",
+          "before": null,
+          "after": "2026-11-24T09:30:00.000Z"
+        },
+        {
+          "pointer": "/paths/~1dashboard/get/responses/200/content/application~1json/example/data/occupancyRate",
+          "before": "89.2",
+          "after": 62.5
+        },
+        {
+          "pointer": "/paths/~1dashboard/get/responses/200/content/application~1json/example/data/pendingApprovalBuildings",
+          "before": 8,
+          "after": 2
+        },
+        {
+          "pointer": "/paths/~1dashboard/get/responses/200/content/application~1json/example/data/rejectedBuildings",
+          "before": null,
+          "after": 1
+        },
+        {
+          "pointer": "/paths/~1dashboard/get/responses/200/content/application~1json/example/data/roomsByStatus",
+          "before": null,
+          "after": {
+            "available": 2,
+            "occupied": 5,
+            "maintenance": 1
+          }
+        },
+        {
+          "pointer": "/paths/~1dashboard/get/responses/200/content/application~1json/example/data/systemTransactionVolume",
+          "before": 3450000000,
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1dashboard/get/responses/200/content/application~1json/example/data/totalBuildings",
+          "before": 145,
+          "after": 2
+        },
+        {
+          "pointer": "/paths/~1dashboard/get/responses/200/content/application~1json/example/data/totalLandlords",
+          "before": 320,
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1dashboard/get/responses/200/content/application~1json/example/data/totalRooms",
+          "before": 1580,
+          "after": 8
+        },
+        {
+          "pointer": "/paths/~1dashboard/get/responses/200/content/application~1json/example/data/totalTenants",
+          "before": 930,
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1dashboard/get/responses/200/content/application~1json/example/data/totalUsers",
+          "before": 1250,
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1dashboard/get/responses/200/description",
+          "before": "Thành công: Đọc số liệu tổng hợp hệ thống.",
+          "after": "Building and room statistics fetched."
+        },
+        {
+          "pointer": "/paths/~1dashboard/get/responses/400",
+          "before": {
+            "$ref": "#/components/responses/BadRequestQueryError"
+          },
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1dashboard/get/responses/422/content/application~1json/example",
+          "before": null,
+          "after": {
+            "statusCode": 422,
+            "code": "VALIDATION_FAILED"
+          }
+        },
+        {
+          "pointer": "/paths/~1dashboard/get/responses/422/content/application~1json/examples",
+          "before": {
+            "invalid_date_range": {
+              "summary": "INVALID_DATE_RANGE — Khoảng ngày không hợp lệ.",
+              "value": {
+                "statusCode": 422,
+                "code": "INVALID_DATE_RANGE"
+              }
+            },
+            "validation_failed": {
+              "summary": "VALIDATION_FAILED — Dữ liệu vi phạm ràng buộc schema hoặc quy tắc nghiệp vụ khác chưa có mã riêng.",
+              "value": {
+                "statusCode": 422,
+                "code": "VALIDATION_FAILED"
+              }
+            }
+          },
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1dashboard/get/responses/422/content/application~1json/schema/properties/code/description",
+          "before": "- INVALID_DATE_RANGE: Khoảng ngày không hợp lệ.\n- VALIDATION_FAILED: Dữ liệu vi phạm ràng buộc schema hoặc quy tắc nghiệp vụ khác chưa có mã riêng.",
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1dashboard/get/responses/422/content/application~1json/schema/properties/code/enum",
+          "before": [
+            "INVALID_DATE_RANGE",
+            "VALIDATION_FAILED"
+          ],
+          "after": [
+            "VALIDATION_FAILED"
+          ]
+        },
+        {
+          "pointer": "/paths/~1dashboard/get/responses/422/description",
+          "before": "Dữ liệu hợp lệ về cấu trúc nhưng vi phạm ràng buộc trường hoặc quy tắc nghiệp vụ.",
+          "after": "Request validation failed."
+        },
+        {
+          "pointer": "/paths/~1dashboard/get/responses/422/x-apidog-name",
+          "before": "Unprocessable Entity",
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1dashboard/get/summary",
+          "before": "Get system dashboard metrics",
+          "after": "Get admin building and room statistics"
+        },
+        {
+          "pointer": "/paths/~1dashboard/get/x-apidog-status",
+          "before": "designing",
+          "after": "developing"
+        }
+      ],
+      "semanticDiff": {
+        "paths": {
+          "modified": {
+            "/dashboard": {
+              "operations": {
+                "modified": {
+                  "GET": {
+                    "extensions": {
+                      "modified": {
+                        "x-apidog-status": [
+                          {
+                            "oldValue": "designing",
+                            "value": "developing",
+                            "op": "replace",
+                            "from": "",
+                            "path": ""
+                          }
+                        ]
+                      }
+                    },
+                    "parameters": {
+                      "deleted": {
+                        "query": [
+                          "from",
+                          "to"
+                        ]
+                      }
+                    },
+                    "responses": {
+                      "deleted": [
+                        "400"
+                      ],
+                      "modified": {
+                        "200": {
+                          "content": {
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "properties": {
+                                    "modified": {
+                                      "data": {
+                                        "additionalPropertiesAllowed": {
+                                          "from": null,
+                                          "to": false
+                                        },
+                                        "required": {
+                                          "added": [
+                                            "rejectedBuildings",
+                                            "roomsByStatus",
+                                            "generatedAt"
+                                          ],
+                                          "deleted": [
+                                            "totalLandlords",
+                                            "totalTenants",
+                                            "systemTransactionVolume",
+                                            "totalUsers"
+                                          ]
+                                        },
+                                        "properties": {
+                                          "added": [
+                                            "roomsByStatus",
+                                            "generatedAt",
+                                            "rejectedBuildings"
+                                          ],
+                                          "deleted": [
+                                            "totalTenants",
+                                            "systemTransactionVolume",
+                                            "totalUsers",
+                                            "totalLandlords"
+                                          ],
+                                          "modified": {
+                                            "occupancyRate": {
+                                              "type": {
+                                                "added": [
+                                                  "number"
+                                                ],
+                                                "deleted": [
+                                                  "string"
+                                                ]
+                                              },
+                                              "min": {
+                                                "from": null,
+                                                "to": 0
+                                              },
+                                              "max": {
+                                                "from": null,
+                                                "to": 100
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "422": {
+                          "extensions": {
+                            "deleted": [
+                              "x-apidog-name"
+                            ]
+                          },
+                          "content": {
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "properties": {
+                                    "modified": {
+                                      "code": {
+                                        "enum": {
+                                          "deleted": [
+                                            "INVALID_DATE_RANGE"
+                                          ]
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "components": {
+          "schemas": {
+            "modified": {
+              "DashboardResponseDto": {
+                "additionalPropertiesAllowed": {
+                  "from": null,
+                  "to": false
+                },
+                "required": {
+                  "added": [
+                    "generatedAt",
+                    "rejectedBuildings",
+                    "roomsByStatus"
+                  ],
+                  "deleted": [
+                    "totalTenants",
+                    "systemTransactionVolume",
+                    "totalUsers",
+                    "totalLandlords"
+                  ]
+                },
+                "properties": {
+                  "added": [
+                    "rejectedBuildings",
+                    "roomsByStatus",
+                    "generatedAt"
+                  ],
+                  "deleted": [
+                    "systemTransactionVolume",
+                    "totalUsers",
+                    "totalLandlords",
+                    "totalTenants"
+                  ],
+                  "modified": {
+                    "occupancyRate": {
+                      "type": {
+                        "added": [
+                          "number"
+                        ],
+                        "deleted": [
+                          "string"
+                        ]
+                      },
+                      "min": {
+                        "from": null,
+                        "to": 0
+                      },
+                      "max": {
+                        "from": null,
+                        "to": 100
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   ]
 }
