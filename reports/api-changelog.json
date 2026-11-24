@@ -75710,6 +75710,1929 @@
           }
         }
       }
+    },
+    {
+      "id": "9a523dbd98adf6a42889683d00bdcbe2b6fc2c50ab4f2a8e9d4457f8700c8923",
+      "label": "Thay đổi contract từ Git",
+      "classification": "BREAKING",
+      "contractId": "rentify-public",
+      "repository": "https://github.com/pbl6-home-renter/api-doc",
+      "baseHash": "2b371cbd6d91fbed0398f9191c2f7236323580ea483b145222a76efe9b80368a",
+      "headHash": "6b7282ca00cbc393caed34b73460276dcd9dcf459c90afb2e0edad4e2eb0ebdb",
+      "baseSource": "src/openapi.yaml",
+      "headSource": "src/openapi.yaml",
+      "detectedAt": "2026-11-24T13:03:33.521Z",
+      "committedAt": "2026-11-24T20:03:19+07:00",
+      "baseCommit": "b862515c0a4ba4bd657c80e1ead099149c75b29a",
+      "headCommit": "22b583d2777108b704f17d727a10006ed07e5bb2",
+      "prUrl": "https://github.com/pbl6-home-renter/api-doc/pull/79",
+      "commitUrl": "https://github.com/pbl6-home-renter/api-doc/commit/22b583d2777108b704f17d727a10006ed07e5bb2",
+      "metadataKind": "Git revision thực tế",
+      "reason": "CHƯA CUNG CẤP — tác giả PR phải bổ sung lý do nghiệp vụ; không thể suy ra từ OpenAPI diff.",
+      "tools": {
+        "redocly": "2.64.1",
+        "oasdiff": "1.34.1"
+      },
+      "changes": [
+        {
+          "id": "response-media-type-removed",
+          "text": "removed the media type `application/pdf` for the response with the status `200`",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getAuditLogs",
+          "path": "/audit-logs",
+          "section": "paths",
+          "fingerprint": "eb1224391551",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "response-media-type-removed",
+          "text": "removed the media type `application/vnd.openxmlformats-officedocument.spreadsheetml.sheet` for the response with the status `200`",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getAuditLogs",
+          "path": "/audit-logs",
+          "section": "paths",
+          "fingerprint": "ce2c9f51fb59",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "response-media-type-removed",
+          "text": "removed the media type `text/csv` for the response with the status `200`",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getAuditLogs",
+          "path": "/audit-logs",
+          "section": "paths",
+          "fingerprint": "a68ba2875a29",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "response-property-enum-value-added",
+          "text": "added the new `UNEXPECTED_FIELD` enum value to the `code` response property for the response status `422`",
+          "comment": "The server may now return a value the previous contract excluded, so a client written against it may not handle the response. If the value set is meant to grow, declare it with x-extensible-enum.",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getAuditLogs",
+          "path": "/audit-logs",
+          "section": "paths",
+          "fingerprint": "df65609a3239",
+          "classification": "BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới UNEXPECTED_FIELD; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-property-max-length-unset",
+          "text": "the `data/items/action` response property's maxLength was unset from `100` for the response status `200`",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getAuditLogs",
+          "path": "/audit-logs",
+          "section": "paths",
+          "fingerprint": "96b992902906",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu vị trí và thay đổi trước/sau trong entry này với API adapter, DTO, parser và validation; cùng BE xác nhận phương án tương thích trước merge/phát hành."
+        },
+        {
+          "id": "response-property-max-length-unset",
+          "text": "the `data/items/entityType` response property's maxLength was unset from `50` for the response status `200`",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getAuditLogs",
+          "path": "/audit-logs",
+          "section": "paths",
+          "fingerprint": "59552e1a4da1",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu vị trí và thay đổi trước/sau trong entry này với API adapter, DTO, parser và validation; cùng BE xác nhận phương án tương thích trước merge/phát hành."
+        },
+        {
+          "id": "response-property-min-length-unset",
+          "text": "the `data/items/action` response property's minLength was unset from `1` for the response status `200`",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getAuditLogs",
+          "path": "/audit-logs",
+          "section": "paths",
+          "fingerprint": "d0f3029b7c2f",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu vị trí và thay đổi trước/sau trong entry này với API adapter, DTO, parser và validation; cùng BE xác nhận phương án tương thích trước merge/phát hành."
+        },
+        {
+          "id": "response-property-min-length-unset",
+          "text": "the `data/items/entityType` response property's minLength was unset from `1` for the response status `200`",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getAuditLogs",
+          "path": "/audit-logs",
+          "section": "paths",
+          "fingerprint": "156a68048a83",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu vị trí và thay đổi trước/sau trong entry này với API adapter, DTO, parser và validation; cùng BE xác nhận phương án tương thích trước merge/phát hành."
+        },
+        {
+          "id": "response-property-enum-value-added",
+          "text": "added the new `AUDIT_LOG_NOT_FOUND` enum value to the `code` response property for the response status `404`",
+          "comment": "The server may now return a value the previous contract excluded, so a client written against it may not handle the response. If the value set is meant to grow, declare it with x-extensible-enum.",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getAuditLogsAuditlogid",
+          "path": "/audit-logs/{auditLogId}",
+          "section": "paths",
+          "fingerprint": "1192686a883c",
+          "classification": "BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới AUDIT_LOG_NOT_FOUND; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-property-max-length-unset",
+          "text": "the `data/action` response property's maxLength was unset from `100` for the response status `200`",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getAuditLogsAuditlogid",
+          "path": "/audit-logs/{auditLogId}",
+          "section": "paths",
+          "fingerprint": "138fdb708bf0",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu vị trí và thay đổi trước/sau trong entry này với API adapter, DTO, parser và validation; cùng BE xác nhận phương án tương thích trước merge/phát hành."
+        },
+        {
+          "id": "response-property-max-length-unset",
+          "text": "the `data/entityType` response property's maxLength was unset from `50` for the response status `200`",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getAuditLogsAuditlogid",
+          "path": "/audit-logs/{auditLogId}",
+          "section": "paths",
+          "fingerprint": "002e1cebeba3",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu vị trí và thay đổi trước/sau trong entry này với API adapter, DTO, parser và validation; cùng BE xác nhận phương án tương thích trước merge/phát hành."
+        },
+        {
+          "id": "response-property-min-length-unset",
+          "text": "the `data/action` response property's minLength was unset from `1` for the response status `200`",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getAuditLogsAuditlogid",
+          "path": "/audit-logs/{auditLogId}",
+          "section": "paths",
+          "fingerprint": "83d6188690a6",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu vị trí và thay đổi trước/sau trong entry này với API adapter, DTO, parser và validation; cùng BE xác nhận phương án tương thích trước merge/phát hành."
+        },
+        {
+          "id": "response-property-min-length-unset",
+          "text": "the `data/entityType` response property's minLength was unset from `1` for the response status `200`",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getAuditLogsAuditlogid",
+          "path": "/audit-logs/{auditLogId}",
+          "section": "paths",
+          "fingerprint": "a746b4877cd7",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu vị trí và thay đổi trước/sau trong entry này với API adapter, DTO, parser và validation; cùng BE xác nhận phương án tương thích trước merge/phát hành."
+        },
+        {
+          "id": "response-required-property-removed",
+          "text": "removed the required property `data/afterData` from the response with the `200` status",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getAuditLogsAuditlogid",
+          "path": "/audit-logs/{auditLogId}",
+          "section": "paths",
+          "fingerprint": "cd5bbe8c36dd",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "response-required-property-removed",
+          "text": "removed the required property `data/beforeData` from the response with the `200` status",
+          "level": 3,
+          "operation": "GET",
+          "operationId": "getAuditLogsAuditlogid",
+          "path": "/audit-logs/{auditLogId}",
+          "section": "paths",
+          "fingerprint": "3759cfc597d9",
+          "classification": "BREAKING",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "request-parameter-removed",
+          "text": "deleted the `query` request parameter `filter`",
+          "comment": "This is a warning because some clients may return an error when receiving an unexpected parameter. It is recommended to deprecate the parameter first.",
+          "level": 2,
+          "operation": "GET",
+          "operationId": "getAuditLogs",
+          "path": "/audit-logs",
+          "section": "paths",
+          "fingerprint": "63c2852ba81a",
+          "classification": "NEEDS_REVIEW",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "request-parameter-removed",
+          "text": "deleted the `query` request parameter `format`",
+          "comment": "This is a warning because some clients may return an error when receiving an unexpected parameter. It is recommended to deprecate the parameter first.",
+          "level": 2,
+          "operation": "GET",
+          "operationId": "getAuditLogs",
+          "path": "/audit-logs",
+          "section": "paths",
+          "fingerprint": "e9cf3f936769",
+          "classification": "NEEDS_REVIEW",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "api-version-not-bumped",
+          "text": "a breaking change was detected but the version is still `1.0.0`",
+          "level": 1,
+          "section": "info",
+          "fingerprint": "d3f96cd643c1",
+          "classification": "NON_BREAKING",
+          "clientImpact": "BE: xem lại quy ước version trước khi chấp nhận breaking change. FE/Mobile: theo kế hoạch chuyển đổi của entry này; version trong OpenAPI chưa chứng minh backend đã triển khai."
+        },
+        {
+          "id": "new-optional-request-parameter",
+          "text": "added the new optional `query` request parameter `action`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getAuditLogs",
+          "path": "/audit-logs",
+          "section": "paths",
+          "fingerprint": "c278cb91f847",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        },
+        {
+          "id": "new-optional-request-parameter",
+          "text": "added the new optional `query` request parameter `actorId`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getAuditLogs",
+          "path": "/audit-logs",
+          "section": "paths",
+          "fingerprint": "26300774b04c",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        },
+        {
+          "id": "new-optional-request-parameter",
+          "text": "added the new optional `query` request parameter `entityId`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getAuditLogs",
+          "path": "/audit-logs",
+          "section": "paths",
+          "fingerprint": "32d98db411f9",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        },
+        {
+          "id": "new-optional-request-parameter",
+          "text": "added the new optional `query` request parameter `entityType`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getAuditLogs",
+          "path": "/audit-logs",
+          "section": "paths",
+          "fingerprint": "83d20b9520c7",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: kiểm tra vị trí thay đổi với DTO/parser hiện tại; chưa thấy yêu cầu sửa bắt buộc theo engine. BE xác nhận không có thay đổi hành vi ngoài OpenAPI."
+        },
+        {
+          "id": "response-non-success-status-removed",
+          "text": "removed the non-success response with the status `400`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getAuditLogs",
+          "path": "/audit-logs",
+          "section": "paths",
+          "fingerprint": "093275bfa63d",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: tìm các lời gọi/DTO đang dùng vị trí bị xóa, chuyển sang contract thay thế và kiểm thử màn hình liên quan; BE xác nhận thời gian duy trì phiên bản cũ."
+        },
+        {
+          "id": "response-property-became-enum",
+          "text": "the `data/items/action` response property for the response status `200` was restricted to a list of enum values",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getAuditLogs",
+          "path": "/audit-logs",
+          "section": "paths",
+          "fingerprint": "69bfa26530d3",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu enum trong DTO/validation và nhánh switch/when; xử lý giá trị chưa biết, kiểm thử dữ liệu cũ và mới; phối hợp BE trước khi phát hành."
+        },
+        {
+          "id": "response-property-became-enum",
+          "text": "the `data/items/entityType` response property for the response status `200` was restricted to a list of enum values",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getAuditLogs",
+          "path": "/audit-logs",
+          "section": "paths",
+          "fingerprint": "ea08b22f976c",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu enum trong DTO/validation và nhánh switch/when; xử lý giá trị chưa biết, kiểm thử dữ liệu cũ và mới; phối hợp BE trước khi phát hành."
+        },
+        {
+          "id": "response-required-property-added",
+          "text": "added the required property `data/items/actorName` to the response with the `200` status",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getAuditLogs",
+          "path": "/audit-logs",
+          "section": "paths",
+          "fingerprint": "cca8b46813e6",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/items/actorName; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-required-property-added",
+          "text": "added the required property `data/items/sourceService` to the response with the `200` status",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getAuditLogs",
+          "path": "/audit-logs",
+          "section": "paths",
+          "fingerprint": "43d36d1e1fc3",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/items/sourceService; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-property-became-enum",
+          "text": "the `data/action` response property for the response status `200` was restricted to a list of enum values",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getAuditLogsAuditlogid",
+          "path": "/audit-logs/{auditLogId}",
+          "section": "paths",
+          "fingerprint": "c296dd1762d1",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu enum trong DTO/validation và nhánh switch/when; xử lý giá trị chưa biết, kiểm thử dữ liệu cũ và mới; phối hợp BE trước khi phát hành."
+        },
+        {
+          "id": "response-property-became-enum",
+          "text": "the `data/entityType` response property for the response status `200` was restricted to a list of enum values",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getAuditLogsAuditlogid",
+          "path": "/audit-logs/{auditLogId}",
+          "section": "paths",
+          "fingerprint": "237f5da31362",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu enum trong DTO/validation và nhánh switch/when; xử lý giá trị chưa biết, kiểm thử dữ liệu cũ và mới; phối hợp BE trước khi phát hành."
+        },
+        {
+          "id": "response-property-enum-value-removed",
+          "text": "removed the `INVALID_HEADER` enum value from the `code` response property for the response status `400`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getAuditLogsAuditlogid",
+          "path": "/audit-logs/{auditLogId}",
+          "section": "paths",
+          "fingerprint": "13aace4c5387",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu enum trong DTO/validation và nhánh switch/when; xử lý giá trị chưa biết, kiểm thử dữ liệu cũ và mới; phối hợp BE trước khi phát hành."
+        },
+        {
+          "id": "response-property-enum-value-removed",
+          "text": "removed the `INVALID_PATH_PARAMETER` enum value from the `code` response property for the response status `400`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getAuditLogsAuditlogid",
+          "path": "/audit-logs/{auditLogId}",
+          "section": "paths",
+          "fingerprint": "f42064beb037",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu enum trong DTO/validation và nhánh switch/when; xử lý giá trị chưa biết, kiểm thử dữ liệu cũ và mới; phối hợp BE trước khi phát hành."
+        },
+        {
+          "id": "response-property-enum-value-removed",
+          "text": "removed the `RESOURCE_NOT_FOUND` enum value from the `code` response property for the response status `404`",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getAuditLogsAuditlogid",
+          "path": "/audit-logs/{auditLogId}",
+          "section": "paths",
+          "fingerprint": "f7346e3c89af",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE và Mobile: đối chiếu enum trong DTO/validation và nhánh switch/when; xử lý giá trị chưa biết, kiểm thử dữ liệu cũ và mới; phối hợp BE trước khi phát hành."
+        },
+        {
+          "id": "response-required-property-added",
+          "text": "added the required property `data/actorId` to the response with the `200` status",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getAuditLogsAuditlogid",
+          "path": "/audit-logs/{auditLogId}",
+          "section": "paths",
+          "fingerprint": "3821e2aaf578",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/actorId; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-required-property-added",
+          "text": "added the required property `data/actorName` to the response with the `200` status",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getAuditLogsAuditlogid",
+          "path": "/audit-logs/{auditLogId}",
+          "section": "paths",
+          "fingerprint": "57c739e9be57",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/actorName; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-required-property-added",
+          "text": "added the required property `data/createdAt` to the response with the `200` status",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getAuditLogsAuditlogid",
+          "path": "/audit-logs/{auditLogId}",
+          "section": "paths",
+          "fingerprint": "9a3b3815755f",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/createdAt; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-required-property-added",
+          "text": "added the required property `data/metadata` to the response with the `200` status",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getAuditLogsAuditlogid",
+          "path": "/audit-logs/{auditLogId}",
+          "section": "paths",
+          "fingerprint": "25449e3f45e8",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/metadata; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        },
+        {
+          "id": "response-required-property-added",
+          "text": "added the required property `data/sourceService` to the response with the `200` status",
+          "level": 1,
+          "operation": "GET",
+          "operationId": "getAuditLogsAuditlogid",
+          "path": "/audit-logs/{auditLogId}",
+          "section": "paths",
+          "fingerprint": "e262124a565d",
+          "classification": "NON_BREAKING",
+          "clientImpact": "FE: có thể bỏ qua field mới data/sourceService; chỉ thêm UI khi cần. Mobile: giữ decoder chấp nhận field lạ; khi thêm DTO, field optional phải có giá trị mặc định/null. Không bắt buộc nâng cấp đồng loạt; kiểm thử parser hiện tại."
+        }
+      ],
+      "locations": [
+        {
+          "pointer": "/components/schemas/AuditLog/additionalProperties",
+          "before": null,
+          "after": false
+        },
+        {
+          "pointer": "/components/schemas/AuditLog/description",
+          "before": "Nhật ký kiểm toán hệ thống (append-only, không có cập nhật hoặc xóa mềm)",
+          "after": "Nhật ký thao tác admin, chỉ đọc và giữ vĩnh viễn. Actor đã xóa hoặc không tồn tại có actorName null; giữ actorId đã lưu."
+        },
+        {
+          "pointer": "/components/schemas/AuditLog/properties/action/description",
+          "before": "Tên hành vi nghiệp vụ (vd user.lock, building.approve, payment.webhook)",
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/AuditLog/properties/action/enum",
+          "before": null,
+          "after": [
+            "user.locked",
+            "user.unlocked",
+            "user.updated",
+            "user.deleted",
+            "building.approved",
+            "building.rejected"
+          ]
+        },
+        {
+          "pointer": "/components/schemas/AuditLog/properties/action/example",
+          "before": "building.approve",
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/AuditLog/properties/action/maxLength",
+          "before": 100,
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/AuditLog/properties/action/minLength",
+          "before": 1,
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/AuditLog/properties/actorId/description",
+          "before": "ID người thực hiện hành động (null đối với system/webhook)",
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/AuditLog/properties/actorId/example",
+          "before": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/AuditLog/properties/actorName",
+          "before": null,
+          "after": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        {
+          "pointer": "/components/schemas/AuditLog/properties/afterData",
+          "before": {
+            "type": "object",
+            "nullable": true,
+            "description": "Snapshot trạng thái dữ liệu sau khi thay đổi",
+            "example": {
+              "status": "approved"
+            }
+          },
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/AuditLog/properties/beforeData",
+          "before": {
+            "type": "object",
+            "nullable": true,
+            "description": "Snapshot trạng thái dữ liệu trước khi thay đổi",
+            "example": null
+          },
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/AuditLog/properties/createdAt/description",
+          "before": "Thời điểm ghi nhận thao tác (UTC)",
+          "after": "Thời điểm lưu audit (UTC)."
+        },
+        {
+          "pointer": "/components/schemas/AuditLog/properties/createdAt/example",
+          "before": "2026-09-05T10:00:00Z",
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/AuditLog/properties/entityId/description",
+          "before": "ID tài nguyên bị tác động",
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/AuditLog/properties/entityId/example",
+          "before": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/AuditLog/properties/entityType/description",
+          "before": "Loại tài nguyên bị tác động",
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/AuditLog/properties/entityType/enum",
+          "before": null,
+          "after": [
+            "user",
+            "building"
+          ]
+        },
+        {
+          "pointer": "/components/schemas/AuditLog/properties/entityType/example",
+          "before": "building",
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/AuditLog/properties/entityType/maxLength",
+          "before": 50,
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/AuditLog/properties/entityType/minLength",
+          "before": 1,
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/AuditLog/properties/id/description",
+          "before": "Khóa chính duy nhất (UUID v4)",
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/AuditLog/properties/id/example",
+          "before": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/AuditLog/properties/metadata",
+          "before": null,
+          "after": {
+            "type": "object",
+            "additionalProperties": true,
+            "description": "Metadata theo allowlist của action; không chứa beforeData/afterData hoặc giá trị cũ/mới.",
+            "example": {
+              "lockReason": "Spam"
+            }
+          }
+        },
+        {
+          "pointer": "/components/schemas/AuditLog/properties/sourceService",
+          "before": null,
+          "after": {
+            "type": "string",
+            "enum": [
+              "identity",
+              "tenancy"
+            ]
+          }
+        },
+        {
+          "pointer": "/components/schemas/AuditLog/required",
+          "before": [
+            "id",
+            "createdAt",
+            "action",
+            "entityType"
+          ],
+          "after": [
+            "id",
+            "actorId",
+            "actorName",
+            "action",
+            "entityType",
+            "entityId",
+            "sourceService",
+            "createdAt",
+            "metadata"
+          ]
+        },
+        {
+          "pointer": "/components/schemas/AuditLogDetailResponseDto/additionalProperties",
+          "before": null,
+          "after": false
+        },
+        {
+          "pointer": "/components/schemas/AuditLogDetailResponseDto/description",
+          "before": "Chi tiết nhật ký kiểm toán",
+          "after": "Nhật ký thao tác admin, chỉ đọc và giữ vĩnh viễn. Actor đã xóa hoặc không tồn tại có actorName null; giữ actorId đã lưu."
+        },
+        {
+          "pointer": "/components/schemas/AuditLogDetailResponseDto/properties/action/description",
+          "before": "Thông tin action của tài nguyên trong ngữ cảnh DTO.",
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/AuditLogDetailResponseDto/properties/action/enum",
+          "before": null,
+          "after": [
+            "user.locked",
+            "user.unlocked",
+            "user.updated",
+            "user.deleted",
+            "building.approved",
+            "building.rejected"
+          ]
+        },
+        {
+          "pointer": "/components/schemas/AuditLogDetailResponseDto/properties/action/maxLength",
+          "before": 100,
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/AuditLogDetailResponseDto/properties/action/minLength",
+          "before": 1,
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/AuditLogDetailResponseDto/properties/actorId",
+          "before": null,
+          "after": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          }
+        },
+        {
+          "pointer": "/components/schemas/AuditLogDetailResponseDto/properties/actorName",
+          "before": null,
+          "after": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        {
+          "pointer": "/components/schemas/AuditLogDetailResponseDto/properties/afterData",
+          "before": {
+            "type": "object",
+            "nullable": true,
+            "description": "Thông tin after data của tài nguyên trong ngữ cảnh DTO."
+          },
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/AuditLogDetailResponseDto/properties/beforeData",
+          "before": {
+            "type": "object",
+            "nullable": true,
+            "description": "Thông tin before data của tài nguyên trong ngữ cảnh DTO."
+          },
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/AuditLogDetailResponseDto/properties/createdAt",
+          "before": null,
+          "after": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Thời điểm lưu audit (UTC)."
+          }
+        },
+        {
+          "pointer": "/components/schemas/AuditLogDetailResponseDto/properties/entityId/description",
+          "before": "Thông tin entity id của tài nguyên trong ngữ cảnh DTO.",
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/AuditLogDetailResponseDto/properties/entityType/description",
+          "before": "Thông tin entity type của tài nguyên trong ngữ cảnh DTO.",
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/AuditLogDetailResponseDto/properties/entityType/enum",
+          "before": null,
+          "after": [
+            "user",
+            "building"
+          ]
+        },
+        {
+          "pointer": "/components/schemas/AuditLogDetailResponseDto/properties/entityType/maxLength",
+          "before": 50,
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/AuditLogDetailResponseDto/properties/entityType/minLength",
+          "before": 1,
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/AuditLogDetailResponseDto/properties/id/description",
+          "before": "Định danh duy nhất của tài nguyên.",
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/AuditLogDetailResponseDto/properties/metadata",
+          "before": null,
+          "after": {
+            "type": "object",
+            "additionalProperties": true,
+            "description": "Metadata theo allowlist của action; không chứa beforeData/afterData hoặc giá trị cũ/mới.",
+            "example": {
+              "lockReason": "Spam"
+            }
+          }
+        },
+        {
+          "pointer": "/components/schemas/AuditLogDetailResponseDto/properties/sourceService",
+          "before": null,
+          "after": {
+            "type": "string",
+            "enum": [
+              "identity",
+              "tenancy"
+            ]
+          }
+        },
+        {
+          "pointer": "/components/schemas/AuditLogDetailResponseDto/required",
+          "before": [
+            "id",
+            "action",
+            "entityType",
+            "entityId",
+            "beforeData",
+            "afterData"
+          ],
+          "after": [
+            "id",
+            "actorId",
+            "actorName",
+            "action",
+            "entityType",
+            "entityId",
+            "sourceService",
+            "createdAt",
+            "metadata"
+          ]
+        },
+        {
+          "pointer": "/components/schemas/AuditLogListResponseDto/additionalProperties",
+          "before": null,
+          "after": false
+        },
+        {
+          "pointer": "/components/schemas/AuditLogListResponseDto/description",
+          "before": "Danh sách nhật ký kiểm toán",
+          "after": "Nhật ký thao tác admin, chỉ đọc và giữ vĩnh viễn. Actor đã xóa hoặc không tồn tại có actorName null; giữ actorId đã lưu."
+        },
+        {
+          "pointer": "/components/schemas/AuditLogListResponseDto/properties/action/description",
+          "before": "Thông tin action của tài nguyên trong ngữ cảnh DTO.",
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/AuditLogListResponseDto/properties/action/enum",
+          "before": null,
+          "after": [
+            "user.locked",
+            "user.unlocked",
+            "user.updated",
+            "user.deleted",
+            "building.approved",
+            "building.rejected"
+          ]
+        },
+        {
+          "pointer": "/components/schemas/AuditLogListResponseDto/properties/action/maxLength",
+          "before": 100,
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/AuditLogListResponseDto/properties/action/minLength",
+          "before": 1,
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/AuditLogListResponseDto/properties/actorId/description",
+          "before": "Thông tin actor id của tài nguyên trong ngữ cảnh DTO.",
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/AuditLogListResponseDto/properties/actorName",
+          "before": null,
+          "after": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        {
+          "pointer": "/components/schemas/AuditLogListResponseDto/properties/createdAt/description",
+          "before": "Thời điểm bản ghi được tạo, theo định dạng ngày giờ ISO 8601.",
+          "after": "Thời điểm lưu audit (UTC)."
+        },
+        {
+          "pointer": "/components/schemas/AuditLogListResponseDto/properties/entityId/description",
+          "before": "Thông tin entity id của tài nguyên trong ngữ cảnh DTO.",
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/AuditLogListResponseDto/properties/entityType/description",
+          "before": "Thông tin entity type của tài nguyên trong ngữ cảnh DTO.",
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/AuditLogListResponseDto/properties/entityType/enum",
+          "before": null,
+          "after": [
+            "user",
+            "building"
+          ]
+        },
+        {
+          "pointer": "/components/schemas/AuditLogListResponseDto/properties/entityType/maxLength",
+          "before": 50,
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/AuditLogListResponseDto/properties/entityType/minLength",
+          "before": 1,
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/AuditLogListResponseDto/properties/id/description",
+          "before": "Định danh duy nhất của tài nguyên.",
+          "after": null
+        },
+        {
+          "pointer": "/components/schemas/AuditLogListResponseDto/properties/sourceService",
+          "before": null,
+          "after": {
+            "type": "string",
+            "enum": [
+              "identity",
+              "tenancy"
+            ]
+          }
+        },
+        {
+          "pointer": "/components/schemas/AuditLogListResponseDto/required",
+          "before": [
+            "id",
+            "actorId",
+            "action",
+            "entityType",
+            "entityId",
+            "createdAt"
+          ],
+          "after": [
+            "id",
+            "actorId",
+            "actorName",
+            "action",
+            "entityType",
+            "entityId",
+            "sourceService",
+            "createdAt"
+          ]
+        },
+        {
+          "pointer": "/paths/~1audit-logs/get/description",
+          "before": "admin. Tìm kiếm nhật ký chỉ ghi thêm. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 VALIDATION FAILED.",
+          "after": "Chỉ admin. Filter kết hợp AND. from/to là date-time có timezone, lọc created_at >= from và <= to; so sánh theo thời điểm thực, cho phép bằng nhau. Sắp xếp cố định created_at DESC, id DESC. Chỉ hỗ trợ tám query parameter bên dưới; field khác trả 422 UNEXPECTED_FIELD. Không hỗ trợ export file."
+        },
+        {
+          "pointer": "/paths/~1audit-logs/get/parameters",
+          "before": [
+            {
+              "name": "filter",
+              "in": "query",
+              "required": false,
+              "style": "deepObject",
+              "explode": true,
+              "description": "Bộ lọc được endpoint hỗ trợ.",
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "actorUserId": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "entityType": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            {
+              "name": "pageSize",
+              "in": "query",
+              "schema": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 100,
+                "default": 20
+              }
+            },
+            {
+              "name": "pageNo",
+              "in": "query",
+              "schema": {
+                "type": "integer",
+                "minimum": 1,
+                "default": 1
+              }
+            },
+            {
+              "name": "format",
+              "in": "query",
+              "description": "json trả envelope; định dạng khác trả file stream.",
+              "schema": {
+                "type": "string",
+                "enum": [
+                  "json",
+                  "xlsx",
+                  "csv",
+                  "pdf"
+                ],
+                "default": "json"
+              }
+            },
+            {
+              "name": "from",
+              "in": "query",
+              "schema": {
+                "type": "string",
+                "format": "date-time"
+              }
+            },
+            {
+              "name": "to",
+              "in": "query",
+              "schema": {
+                "type": "string",
+                "format": "date-time"
+              }
+            }
+          ],
+          "after": [
+            {
+              "name": "action",
+              "in": "query",
+              "required": false,
+              "schema": {
+                "type": "string",
+                "enum": [
+                  "user.locked",
+                  "user.unlocked",
+                  "user.updated",
+                  "user.deleted",
+                  "building.approved",
+                  "building.rejected"
+                ]
+              }
+            },
+            {
+              "name": "entityType",
+              "in": "query",
+              "required": false,
+              "schema": {
+                "type": "string",
+                "enum": [
+                  "user",
+                  "building"
+                ]
+              }
+            },
+            {
+              "name": "actorId",
+              "in": "query",
+              "required": false,
+              "schema": {
+                "type": "string",
+                "format": "uuid"
+              }
+            },
+            {
+              "name": "entityId",
+              "in": "query",
+              "required": false,
+              "schema": {
+                "type": "string",
+                "format": "uuid"
+              }
+            },
+            {
+              "name": "from",
+              "in": "query",
+              "required": false,
+              "schema": {
+                "type": "string",
+                "format": "date-time"
+              }
+            },
+            {
+              "name": "to",
+              "in": "query",
+              "required": false,
+              "schema": {
+                "type": "string",
+                "format": "date-time"
+              }
+            },
+            {
+              "name": "pageNo",
+              "in": "query",
+              "required": false,
+              "schema": {
+                "type": "integer",
+                "minimum": 1,
+                "default": 1
+              }
+            },
+            {
+              "name": "pageSize",
+              "in": "query",
+              "required": false,
+              "schema": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 100,
+                "default": 20
+              }
+            }
+          ]
+        },
+        {
+          "pointer": "/paths/~1audit-logs/get/responses/200/content/application~1json/example/data",
+          "before": [
+            {
+              "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+              "actorId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+              "action": "user.lock",
+              "entityType": "user",
+              "entityId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+              "createdAt": "2026-09-23T11:55:00.000Z"
+            }
+          ],
+          "after": [
+            {
+              "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+              "actorId": "b13d28cf-b1c5-4e78-a54d-017637c47c30",
+              "actorName": "Admin Demo",
+              "action": "user.locked",
+              "entityType": "user",
+              "entityId": "7f94255a-2401-49b7-a0a4-88457633c89e",
+              "sourceService": "identity",
+              "createdAt": "2026-11-24T03:00:00.000Z"
+            }
+          ]
+        },
+        {
+          "pointer": "/paths/~1audit-logs/get/responses/200/content/application~1pdf",
+          "before": {
+            "schema": {
+              "type": "string",
+              "format": "binary"
+            }
+          },
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1audit-logs/get/responses/200/content/application~1vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+          "before": {
+            "schema": {
+              "type": "string",
+              "format": "binary"
+            }
+          },
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1audit-logs/get/responses/200/content/text~1csv",
+          "before": {
+            "schema": {
+              "type": "string",
+              "format": "binary"
+            }
+          },
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1audit-logs/get/responses/400",
+          "before": {
+            "$ref": "#/components/responses/BadRequestQueryError"
+          },
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1audit-logs/get/responses/422/$ref",
+          "before": "#/components/responses/ValidationError",
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1audit-logs/get/responses/422/content",
+          "before": null,
+          "after": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "statusCode",
+                  "code"
+                ],
+                "properties": {
+                  "statusCode": {
+                    "type": "integer",
+                    "enum": [
+                      422
+                    ]
+                  },
+                  "code": {
+                    "type": "string",
+                    "enum": [
+                      "VALIDATION_FAILED",
+                      "UNEXPECTED_FIELD"
+                    ]
+                  }
+                }
+              },
+              "example": {
+                "statusCode": 422,
+                "code": "VALIDATION_FAILED"
+              }
+            }
+          }
+        },
+        {
+          "pointer": "/paths/~1audit-logs/get/responses/422/description",
+          "before": null,
+          "after": "Enum, UUID query, date-time, phân trang sai hoặc from > to: VALIDATION_FAILED. Query ngoài contract: UNEXPECTED_FIELD."
+        },
+        {
+          "pointer": "/paths/~1audit-logs/get/x-apidog-status",
+          "before": "designing",
+          "after": "released"
+        },
+        {
+          "pointer": "/paths/~1audit-logs~1{auditLogId}/get/description",
+          "before": "admin. Đọc hoặc xuất một bản ghi kiểm toán. Lỗi nghiệp vụ: 403 FORBIDDEN · 404 NOT FOUND.",
+          "after": "Chỉ admin. Trả cùng field của list và thêm metadata. UUID path sai trả 400 BAD_REQUEST; ID hợp lệ không tồn tại trả 404 AUDIT_LOG_NOT_FOUND."
+        },
+        {
+          "pointer": "/paths/~1audit-logs~1{auditLogId}/get/responses/200/content/application~1json/example/data/action",
+          "before": "user.lock",
+          "after": "user.locked"
+        },
+        {
+          "pointer": "/paths/~1audit-logs~1{auditLogId}/get/responses/200/content/application~1json/example/data/actorId",
+          "before": null,
+          "after": "b13d28cf-b1c5-4e78-a54d-017637c47c30"
+        },
+        {
+          "pointer": "/paths/~1audit-logs~1{auditLogId}/get/responses/200/content/application~1json/example/data/actorName",
+          "before": null,
+          "after": "Admin Demo"
+        },
+        {
+          "pointer": "/paths/~1audit-logs~1{auditLogId}/get/responses/200/content/application~1json/example/data/afterData",
+          "before": {
+            "status": "locked"
+          },
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1audit-logs~1{auditLogId}/get/responses/200/content/application~1json/example/data/beforeData",
+          "before": {
+            "status": "active"
+          },
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1audit-logs~1{auditLogId}/get/responses/200/content/application~1json/example/data/createdAt",
+          "before": null,
+          "after": "2026-11-24T03:00:00.000Z"
+        },
+        {
+          "pointer": "/paths/~1audit-logs~1{auditLogId}/get/responses/200/content/application~1json/example/data/entityId",
+          "before": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+          "after": "7f94255a-2401-49b7-a0a4-88457633c89e"
+        },
+        {
+          "pointer": "/paths/~1audit-logs~1{auditLogId}/get/responses/200/content/application~1json/example/data/metadata",
+          "before": null,
+          "after": {
+            "lockReason": "Spam"
+          }
+        },
+        {
+          "pointer": "/paths/~1audit-logs~1{auditLogId}/get/responses/200/content/application~1json/example/data/sourceService",
+          "before": null,
+          "after": "identity"
+        },
+        {
+          "pointer": "/paths/~1audit-logs~1{auditLogId}/get/responses/200/description",
+          "before": "Thành công: Đọc hoặc xuất một bản ghi kiểm toán.",
+          "after": "Thành công: Đọc chi tiết nhật ký."
+        },
+        {
+          "pointer": "/paths/~1audit-logs~1{auditLogId}/get/responses/400/$ref",
+          "before": "#/components/responses/BadRequestPathError",
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1audit-logs~1{auditLogId}/get/responses/400/content",
+          "before": null,
+          "after": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "statusCode",
+                  "code"
+                ],
+                "properties": {
+                  "statusCode": {
+                    "type": "integer",
+                    "enum": [
+                      400
+                    ]
+                  },
+                  "code": {
+                    "type": "string",
+                    "enum": [
+                      "BAD_REQUEST"
+                    ]
+                  }
+                }
+              },
+              "example": {
+                "statusCode": 400,
+                "code": "BAD_REQUEST"
+              }
+            }
+          }
+        },
+        {
+          "pointer": "/paths/~1audit-logs~1{auditLogId}/get/responses/400/description",
+          "before": null,
+          "after": "UUID path không hợp lệ (ParseUUIDPipe theo convention hiện tại)."
+        },
+        {
+          "pointer": "/paths/~1audit-logs~1{auditLogId}/get/responses/404/$ref",
+          "before": "#/components/responses/NotFoundError",
+          "after": null
+        },
+        {
+          "pointer": "/paths/~1audit-logs~1{auditLogId}/get/responses/404/content",
+          "before": null,
+          "after": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "statusCode",
+                  "code"
+                ],
+                "properties": {
+                  "statusCode": {
+                    "type": "integer",
+                    "enum": [
+                      404
+                    ]
+                  },
+                  "code": {
+                    "type": "string",
+                    "enum": [
+                      "AUDIT_LOG_NOT_FOUND"
+                    ]
+                  }
+                }
+              },
+              "example": {
+                "statusCode": 404,
+                "code": "AUDIT_LOG_NOT_FOUND"
+              }
+            }
+          }
+        },
+        {
+          "pointer": "/paths/~1audit-logs~1{auditLogId}/get/responses/404/description",
+          "before": null,
+          "after": "Không tìm thấy audit log."
+        },
+        {
+          "pointer": "/paths/~1audit-logs~1{auditLogId}/get/x-apidog-status",
+          "before": "designing",
+          "after": "released"
+        },
+        {
+          "pointer": "/paths/~1contract-members~1{tenantId}~1leave-contract/post/description",
+          "before": "tenantId is not the contract_members record ID. Members with tenant_id = null cannot use this endpoint.\nLandlord must own the selected contract; it must be active (409 CONTRACT_NOT_ACTIVE).\nLock the contract before locking the member. Join contract_members with contracts and match both IDs,\nexcluding soft-deleted rows. Prefer a membership without a departure, then the latest departure\nwhen the tenant has left and rejoined. The response id remains the contract_members record ID. An already recorded departure returns\n409 MEMBER_ALREADY_LEFT, including a scheduled departure. leftOn must be >= joinedAt and\n<= contract endDate (422 LEFT_DATE_INVALID). leftOn = joinedAt is allowed.\nUnknown member/contract: 404 RESOURCE_NOT_FOUND; other landlord: 403 FORBIDDEN.\nSet left_at without deleting the record, and append contract_member.left in the same transaction.\nThe upper endDate limit belongs to this handler; the shared domain leave method permits checkout\nafter endDate (P6-D71 addendum). Response uses leftAt; request uses leftOn.\n\n**Sequence diagram**\n\n```mermaid\nsequenceDiagram\n    autonumber\n    actor Client\n    participant GW as API Gateway\n    participant S as Tenancy-Service\n    participant Guard as JWT/access guards\n    participant C as ContractMemberController\n    participant Bus as CQRS CommandBus\n    participant H as Application handler\n    Client->>GW: POST /api/v1/contract-members/{tenantId}/leave-contract\n    GW->>GW: Validate bearer token for protected route\n    GW->>S: Proxy original HTTP request\n    S->>Guard: Validate JWT, account state and route access\n    Guard-->>C: Continue with authenticated context\n    S->>C: Invoke postContractMembersTenantidLeaveContract\n    C->>Bus: Execute command for postContractMembersTenantidLeaveContract\n    Bus->>H: Dispatch command handler\n    H-->>Bus: Return use-case result\n    Bus-->>C: Result\n    C-->>S: Return documented response\n    S-->>GW: HTTP status and response body\n    GW-->>Client: Forward HTTP response\n```",
+          "after": "The tenantId path parameter accepts a tenant user ID or a contract_members record ID.\nMembers with tenant_id = null can use their membership record ID (P6-D74).\nLandlord must own the selected contract; it must be active (409 CONTRACT_NOT_ACTIVE).\nLock the contract before locking the member. First resolve by tenant user ID within the selected\ncontract, excluding soft-deleted rows. Prefer a membership without a departure, then the latest\ndeparture when the tenant has left and rejoined. If no tenant membership matches, resolve by\nmembership record ID and require it to belong to the selected contract.\nThe response id remains the contract_members record ID. An already recorded departure returns\n409 MEMBER_ALREADY_LEFT, including a scheduled departure. leftOn must be >= joinedAt and\n<= contract endDate (422 LEFT_DATE_INVALID). leftOn = joinedAt is allowed.\nUnknown member/contract: 404 RESOURCE_NOT_FOUND; other landlord: 403 FORBIDDEN.\nSet left_at without deleting the record, and append contract_member.left in the same transaction.\nThe upper endDate limit belongs to this handler; the shared domain leave method permits checkout\nafter endDate (P6-D71 addendum). Response uses leftAt; request uses leftOn.\n\n**Sequence diagram**\n\n```mermaid\nsequenceDiagram\n    autonumber\n    actor Client\n    participant GW as API Gateway\n    participant S as Tenancy-Service\n    participant Guard as JWT/access guards\n    participant C as ContractMemberController\n    participant Bus as CQRS CommandBus\n    participant H as Application handler\n    participant DB as Tenancy database\n    Client->>GW: POST /api/v1/contract-members/{tenantId}/leave-contract\n    GW->>GW: Validate bearer token for protected route\n    GW->>S: Proxy original HTTP request\n    S->>Guard: Validate JWT, account state and route access\n    Guard-->>C: Continue with authenticated context\n    S->>C: Invoke postContractMembersTenantidLeaveContract\n    C->>Bus: Execute command for postContractMembersTenantidLeaveContract\n    Bus->>H: Dispatch command handler\n    H->>DB: Begin transaction and lock selected contract\n    H->>H: Require landlord ownership and active contract\n    H->>DB: Lock membership by tenant user ID and contract ID\n    alt No matching tenant membership\n        H->>DB: Lock membership by record ID, excluding soft-deleted rows\n        H->>H: Require membership to belong to selected contract\n    end\n    H->>H: Validate leave date and record departure\n    H->>DB: Save member and append contract_member.left outbox event\n    H->>DB: Commit transaction\n    H-->>Bus: Return use-case result\n    Bus-->>C: Result\n    C-->>S: Return documented response\n    S-->>GW: HTTP status and response body\n    GW-->>Client: Forward HTTP response\n```"
+        },
+        {
+          "pointer": "/paths/~1contract-members~1{tenantId}~1leave-contract/post/parameters",
+          "before": [
+            {
+              "name": "tenantId",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string",
+                "format": "uuid"
+              }
+            }
+          ],
+          "after": [
+            {
+              "name": "tenantId",
+              "in": "path",
+              "required": true,
+              "description": "Tenant user ID or contract member ID; use the member ID when tenantId is null.",
+              "schema": {
+                "type": "string",
+                "format": "uuid"
+              }
+            }
+          ]
+        }
+      ],
+      "semanticDiff": {
+        "paths": {
+          "modified": {
+            "/audit-logs": {
+              "operations": {
+                "modified": {
+                  "GET": {
+                    "extensions": {
+                      "modified": {
+                        "x-apidog-status": [
+                          {
+                            "oldValue": "designing",
+                            "value": "released",
+                            "op": "replace",
+                            "from": "",
+                            "path": ""
+                          }
+                        ]
+                      }
+                    },
+                    "parameters": {
+                      "added": {
+                        "query": [
+                          "action",
+                          "entityType",
+                          "actorId",
+                          "entityId"
+                        ]
+                      },
+                      "deleted": {
+                        "query": [
+                          "filter",
+                          "format"
+                        ]
+                      }
+                    },
+                    "responses": {
+                      "deleted": [
+                        "400"
+                      ],
+                      "modified": {
+                        "200": {
+                          "content": {
+                            "deleted": [
+                              "text/csv",
+                              "application/pdf",
+                              "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                            ],
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "properties": {
+                                    "modified": {
+                                      "data": {
+                                        "items": {
+                                          "additionalPropertiesAllowed": {
+                                            "from": null,
+                                            "to": false
+                                          },
+                                          "required": {
+                                            "added": [
+                                              "sourceService",
+                                              "actorName"
+                                            ]
+                                          },
+                                          "properties": {
+                                            "added": [
+                                              "actorName",
+                                              "sourceService"
+                                            ],
+                                            "modified": {
+                                              "action": {
+                                                "enum": {
+                                                  "enumAdded": true,
+                                                  "added": [
+                                                    "user.locked",
+                                                    "user.unlocked",
+                                                    "user.updated",
+                                                    "user.deleted",
+                                                    "building.approved",
+                                                    "building.rejected"
+                                                  ]
+                                                },
+                                                "minLength": {
+                                                  "from": 1,
+                                                  "to": 0
+                                                },
+                                                "maxLength": {
+                                                  "from": 100,
+                                                  "to": null
+                                                }
+                                              },
+                                              "entityType": {
+                                                "enum": {
+                                                  "enumAdded": true,
+                                                  "added": [
+                                                    "user",
+                                                    "building"
+                                                  ]
+                                                },
+                                                "minLength": {
+                                                  "from": 1,
+                                                  "to": 0
+                                                },
+                                                "maxLength": {
+                                                  "from": 50,
+                                                  "to": null
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "422": {
+                          "extensions": {
+                            "deleted": [
+                              "x-apidog-name"
+                            ]
+                          },
+                          "content": {
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "properties": {
+                                    "modified": {
+                                      "code": {
+                                        "enum": {
+                                          "added": [
+                                            "UNEXPECTED_FIELD"
+                                          ]
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "/audit-logs/{auditLogId}": {
+              "operations": {
+                "modified": {
+                  "GET": {
+                    "extensions": {
+                      "modified": {
+                        "x-apidog-status": [
+                          {
+                            "oldValue": "designing",
+                            "value": "released",
+                            "op": "replace",
+                            "from": "",
+                            "path": ""
+                          }
+                        ]
+                      }
+                    },
+                    "responses": {
+                      "modified": {
+                        "200": {
+                          "content": {
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "properties": {
+                                    "modified": {
+                                      "data": {
+                                        "additionalPropertiesAllowed": {
+                                          "from": null,
+                                          "to": false
+                                        },
+                                        "required": {
+                                          "added": [
+                                            "sourceService",
+                                            "createdAt",
+                                            "actorName",
+                                            "metadata",
+                                            "actorId"
+                                          ],
+                                          "deleted": [
+                                            "beforeData",
+                                            "afterData"
+                                          ]
+                                        },
+                                        "properties": {
+                                          "added": [
+                                            "createdAt",
+                                            "metadata",
+                                            "sourceService",
+                                            "actorId",
+                                            "actorName"
+                                          ],
+                                          "deleted": [
+                                            "beforeData",
+                                            "afterData"
+                                          ],
+                                          "modified": {
+                                            "action": {
+                                              "enum": {
+                                                "enumAdded": true,
+                                                "added": [
+                                                  "user.locked",
+                                                  "user.unlocked",
+                                                  "user.updated",
+                                                  "user.deleted",
+                                                  "building.approved",
+                                                  "building.rejected"
+                                                ]
+                                              },
+                                              "minLength": {
+                                                "from": 1,
+                                                "to": 0
+                                              },
+                                              "maxLength": {
+                                                "from": 100,
+                                                "to": null
+                                              }
+                                            },
+                                            "entityType": {
+                                              "enum": {
+                                                "enumAdded": true,
+                                                "added": [
+                                                  "user",
+                                                  "building"
+                                                ]
+                                              },
+                                              "minLength": {
+                                                "from": 1,
+                                                "to": 0
+                                              },
+                                              "maxLength": {
+                                                "from": 50,
+                                                "to": null
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "400": {
+                          "extensions": {
+                            "deleted": [
+                              "x-apidog-name"
+                            ]
+                          },
+                          "content": {
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "properties": {
+                                    "modified": {
+                                      "code": {
+                                        "enum": {
+                                          "deleted": [
+                                            "INVALID_PATH_PARAMETER",
+                                            "INVALID_HEADER"
+                                          ]
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "404": {
+                          "extensions": {
+                            "deleted": [
+                              "x-apidog-name"
+                            ]
+                          },
+                          "content": {
+                            "modified": {
+                              "application/json": {
+                                "schema": {
+                                  "properties": {
+                                    "modified": {
+                                      "code": {
+                                        "enum": {
+                                          "added": [
+                                            "AUDIT_LOG_NOT_FOUND"
+                                          ],
+                                          "deleted": [
+                                            "RESOURCE_NOT_FOUND"
+                                          ]
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "components": {
+          "schemas": {
+            "modified": {
+              "AuditLog": {
+                "additionalPropertiesAllowed": {
+                  "from": null,
+                  "to": false
+                },
+                "required": {
+                  "added": [
+                    "actorName",
+                    "sourceService",
+                    "entityId",
+                    "metadata",
+                    "actorId"
+                  ]
+                },
+                "properties": {
+                  "added": [
+                    "sourceService",
+                    "metadata",
+                    "actorName"
+                  ],
+                  "deleted": [
+                    "beforeData",
+                    "afterData"
+                  ],
+                  "modified": {
+                    "action": {
+                      "enum": {
+                        "enumAdded": true,
+                        "added": [
+                          "user.locked",
+                          "user.unlocked",
+                          "user.updated",
+                          "user.deleted",
+                          "building.approved",
+                          "building.rejected"
+                        ]
+                      },
+                      "minLength": {
+                        "from": 1,
+                        "to": 0
+                      },
+                      "maxLength": {
+                        "from": 100,
+                        "to": null
+                      }
+                    },
+                    "entityType": {
+                      "enum": {
+                        "enumAdded": true,
+                        "added": [
+                          "user",
+                          "building"
+                        ]
+                      },
+                      "minLength": {
+                        "from": 1,
+                        "to": 0
+                      },
+                      "maxLength": {
+                        "from": 50,
+                        "to": null
+                      }
+                    }
+                  }
+                }
+              },
+              "AuditLogDetailResponseDto": {
+                "additionalPropertiesAllowed": {
+                  "from": null,
+                  "to": false
+                },
+                "required": {
+                  "added": [
+                    "createdAt",
+                    "metadata",
+                    "actorName",
+                    "sourceService",
+                    "actorId"
+                  ],
+                  "deleted": [
+                    "beforeData",
+                    "afterData"
+                  ]
+                },
+                "properties": {
+                  "added": [
+                    "createdAt",
+                    "metadata",
+                    "sourceService",
+                    "actorId",
+                    "actorName"
+                  ],
+                  "deleted": [
+                    "afterData",
+                    "beforeData"
+                  ],
+                  "modified": {
+                    "action": {
+                      "enum": {
+                        "enumAdded": true,
+                        "added": [
+                          "user.locked",
+                          "user.unlocked",
+                          "user.updated",
+                          "user.deleted",
+                          "building.approved",
+                          "building.rejected"
+                        ]
+                      },
+                      "minLength": {
+                        "from": 1,
+                        "to": 0
+                      },
+                      "maxLength": {
+                        "from": 100,
+                        "to": null
+                      }
+                    },
+                    "entityType": {
+                      "enum": {
+                        "enumAdded": true,
+                        "added": [
+                          "user",
+                          "building"
+                        ]
+                      },
+                      "minLength": {
+                        "from": 1,
+                        "to": 0
+                      },
+                      "maxLength": {
+                        "from": 50,
+                        "to": null
+                      }
+                    }
+                  }
+                }
+              },
+              "AuditLogListResponseDto": {
+                "additionalPropertiesAllowed": {
+                  "from": null,
+                  "to": false
+                },
+                "required": {
+                  "added": [
+                    "actorName",
+                    "sourceService"
+                  ]
+                },
+                "properties": {
+                  "added": [
+                    "sourceService",
+                    "actorName"
+                  ],
+                  "modified": {
+                    "action": {
+                      "enum": {
+                        "enumAdded": true,
+                        "added": [
+                          "user.locked",
+                          "user.unlocked",
+                          "user.updated",
+                          "user.deleted",
+                          "building.approved",
+                          "building.rejected"
+                        ]
+                      },
+                      "minLength": {
+                        "from": 1,
+                        "to": 0
+                      },
+                      "maxLength": {
+                        "from": 100,
+                        "to": null
+                      }
+                    },
+                    "entityType": {
+                      "enum": {
+                        "enumAdded": true,
+                        "added": [
+                          "user",
+                          "building"
+                        ]
+                      },
+                      "minLength": {
+                        "from": 1,
+                        "to": 0
+                      },
+                      "maxLength": {
+                        "from": 50,
+                        "to": null
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   ]
 }
