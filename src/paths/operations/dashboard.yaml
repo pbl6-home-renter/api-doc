@@ -2,26 +2,23 @@ get:
   tags:
   - Operation
   x-apidog-folder: Dashboard
-  x-apidog-status: designing
+  x-apidog-status: developing
   operationId: getDashboard
   security:
-    - BearerAuth: []
-  summary: Get system dashboard metrics
-  description: 'admin. Đọc số liệu tổng hợp hệ thống. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 INVALID DATE RANGE.'
-  parameters:
-  - name: from
-    in: query
-    schema:
-      type: string
-      format: date
-  - name: to
-    in: query
-    schema:
-      type: string
-      format: date
+  - BearerAuth: []
+  summary: Get admin building and room statistics
+  description: |-
+    Admin-only snapshot of Tenancy building and room data at request time.
+    Counts exclude soft-deleted buildings and rooms. `totalBuildings` counts
+    approved buildings only. `totalRooms` and `roomsByStatus` count rooms only
+    in approved buildings. Every room status key is always present, including
+    groups with zero rooms, and their sum equals `totalRooms`.
+    `occupancyRate` is `occupied / totalRooms * 100`, rounded to one decimal
+    place, or 0 when `totalRooms` is 0. No date range or other query filter
+    is supported.
   responses:
     '200':
-      description: 'Thành công: Đọc số liệu tổng hợp hệ thống.'
+      description: Building and room statistics fetched.
       content:
         application/json:
           schema:
@@ -46,25 +43,22 @@ get:
             statusCode: 200
             code: DASHBOARD_FETCHED
             data:
-              totalUsers: 1250
-              totalLandlords: 320
-              totalTenants: 930
-              totalBuildings: 145
-              pendingApprovalBuildings: 8
-              totalRooms: 1580
-              occupancyRate: '89.2'
-              systemTransactionVolume: 3450000000
-    '400':
-      $ref: ../../openapi.yaml#/components/responses/BadRequestQueryError
+              totalBuildings: 2
+              pendingApprovalBuildings: 2
+              rejectedBuildings: 1
+              totalRooms: 8
+              roomsByStatus:
+                available: 2
+                occupied: 5
+                maintenance: 1
+              occupancyRate: 62.5
+              generatedAt: '2026-11-24T09:30:00.000Z'
     '401':
       $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
-    '503':
-      $ref: ../../openapi.yaml#/components/responses/AuthUnavailableError
     '403':
       $ref: ../../openapi.yaml#/components/responses/ForbiddenError
     '422':
-      x-apidog-name: Unprocessable Entity
-      description: Dữ liệu hợp lệ về cấu trúc nhưng vi phạm ràng buộc trường hoặc quy tắc nghiệp vụ.
+      description: Request validation failed.
       content:
         application/json:
           schema:
@@ -77,24 +71,13 @@ get:
                 enum: [422]
               code:
                 type: string
-                enum:
-                  - INVALID_DATE_RANGE
-                  - VALIDATION_FAILED
-                description: |-
-                  - INVALID_DATE_RANGE: Khoảng ngày không hợp lệ.
-                  - VALIDATION_FAILED: Dữ liệu vi phạm ràng buộc schema hoặc quy tắc nghiệp vụ khác chưa có mã riêng.
-          examples:
-            invalid_date_range:
-              summary: INVALID_DATE_RANGE — Khoảng ngày không hợp lệ.
-              value:
-                statusCode: 422
-                code: INVALID_DATE_RANGE
-            validation_failed:
-              summary: VALIDATION_FAILED — Dữ liệu vi phạm ràng buộc schema hoặc quy tắc nghiệp vụ khác chưa có mã riêng.
-              value:
-                statusCode: 422
-                code: VALIDATION_FAILED
+                enum: [VALIDATION_FAILED]
+          example:
+            statusCode: 422
+            code: VALIDATION_FAILED
     '429':
       $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
+    '503':
+      $ref: ../../openapi.yaml#/components/responses/AuthUnavailableError
     '500':
       $ref: ../../openapi.yaml#/components/responses/InternalServerError

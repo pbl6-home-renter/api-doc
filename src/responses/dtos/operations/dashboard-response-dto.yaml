@@ -1,23 +1,48 @@
 type: object
-x-apidog-folder: "Dashboard/Response"
+x-apidog-folder: Dashboard/Response
 title: DashboardResponseDto
-description: Số liệu tổng hợp dashboard
-properties:
-  totalUsers: { type: integer, minimum: 0 , description: "Thông tin total users của tài nguyên trong ngữ cảnh DTO." }
-  totalLandlords: { type: integer, minimum: 0 , description: "Thông tin total landlords của tài nguyên trong ngữ cảnh DTO." }
-  totalTenants: { type: integer, minimum: 0 , description: "Thông tin total tenants của tài nguyên trong ngữ cảnh DTO." }
-  totalBuildings: { type: integer, minimum: 0 , description: "Thông tin total buildings của tài nguyên trong ngữ cảnh DTO." }
-  pendingApprovalBuildings: { type: integer, minimum: 0 , description: "Thông tin pending approval buildings của tài nguyên trong ngữ cảnh DTO." }
-  totalRooms: { type: integer, minimum: 0 , description: "Thông tin total rooms của tài nguyên trong ngữ cảnh DTO." }
-  occupancyRate: { type: string , description: "Thông tin occupancy rate của tài nguyên trong ngữ cảnh DTO." }
-  systemTransactionVolume: { type: integer, minimum: 0 , description: "Thông tin system transaction volume của tài nguyên trong ngữ cảnh DTO." }
-
+description: Admin-only snapshot of non-deleted Tenancy buildings and rooms.
+additionalProperties: false
 required:
-  - totalUsers
-  - totalLandlords
-  - totalTenants
-  - totalBuildings
-  - pendingApprovalBuildings
-  - totalRooms
-  - occupancyRate
-  - systemTransactionVolume
+- totalBuildings
+- pendingApprovalBuildings
+- rejectedBuildings
+- totalRooms
+- roomsByStatus
+- occupancyRate
+- generatedAt
+properties:
+  totalBuildings:
+    type: integer
+    minimum: 0
+    description: Approved buildings that are not soft-deleted.
+  pendingApprovalBuildings:
+    type: integer
+    minimum: 0
+    description: Pending buildings that are not soft-deleted.
+  rejectedBuildings:
+    type: integer
+    minimum: 0
+    description: Rejected buildings that are not soft-deleted.
+  totalRooms:
+    type: integer
+    minimum: 0
+    description: Non-deleted rooms in non-deleted approved buildings.
+  roomsByStatus:
+    type: object
+    additionalProperties: false
+    description: Counts of the rooms included in totalRooms, grouped by status.
+    required: [available, occupied, maintenance]
+    properties:
+      available: { type: integer, minimum: 0 }
+      occupied: { type: integer, minimum: 0 }
+      maintenance: { type: integer, minimum: 0 }
+  occupancyRate:
+    type: number
+    minimum: 0
+    maximum: 100
+    description: Occupied rooms divided by totalRooms, times 100, rounded to one decimal; 0 when totalRooms is 0.
+  generatedAt:
+    type: string
+    format: date-time
+    description: ISO 8601 time when the server calculated this snapshot.
