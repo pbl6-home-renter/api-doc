@@ -9,8 +9,9 @@ get:
   summary: List notifications
   description: |-
     Trả các business notification đã lưu cho người gọi. `type: system` gồm account lock/unlock và contract suspension của P9-06; không phải message chat.
-    `data` là snapshot từ producer: account notice có `{ userId, status, eventType, lockedAt }`; contract suspension notice có `{ landlordId, lockCycleId, contractIds, graceDeadline }`.
-    Account notice mới từ Identity dùng key dịch trong `title`/`body`: `USER_ACCOUNT_LOCKED_TITLE`/`USER_ACCOUNT_LOCKED_BODY` khi khóa và `USER_ACCOUNT_UNLOCKED_TITLE`/`USER_ACCOUNT_UNLOCKED_BODY` khi mở khóa. FE dịch các key này; notification đã lưu trước thay đổi có thể chứa nội dung văn bản.
+    `data` là snapshot từ producer: account notice có `{ messageKey, userId, status, eventType, lockedAt }`; contract suspension notice có `{ landlordId, lockCycleId, contractIds, graceDeadline }`.
+    Account notice mới từ Identity dùng `data.messageKey: user.locked | user.unlocked` để Web dịch. `title`/`body` giữ mã `USER_ACCOUNT_LOCKED_TITLE/BODY` hoặc `USER_ACCOUNT_UNLOCKED_TITLE/BODY` làm nội dung dự phòng; bản ghi cũ thiếu `messageKey` không được ánh xạ ngược.
+    Tài khoản bị khóa vẫn được đọc thông báo của chính mình tại endpoint này; hai endpoint mark-read cũng cho phép đánh dấu thông báo của chính mình. Các chức năng nghiệp vụ khác vẫn bị chặn. Kết nối Socket mới của tài khoản bị khóa chỉ vào room thông báo, không nhận chat.
     Contract suspension notice mới từ Tenancy dùng `title: CONTRACT_SUSPENDED_TITLE` và `body: CONTRACT_SUSPENDED_BODY` để FE dịch thông báo hợp đồng tạm ngưng do tài khoản chủ trọ bị khóa.
     Tắt push không ẩn notification khỏi danh sách; Socket sync được thực hiện độc lập với preference push.
 
