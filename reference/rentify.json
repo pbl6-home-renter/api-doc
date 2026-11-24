@@ -24223,36 +24223,18 @@
           "Operation"
         ],
         "x-apidog-folder": "Dashboard",
-        "x-apidog-status": "designing",
+        "x-apidog-status": "developing",
         "operationId": "getDashboard",
         "security": [
           {
             "BearerAuth": []
           }
         ],
-        "summary": "Get system dashboard metrics",
-        "description": "admin. Đọc số liệu tổng hợp hệ thống. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 INVALID DATE RANGE.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
-        "parameters": [
-          {
-            "name": "from",
-            "in": "query",
-            "schema": {
-              "type": "string",
-              "format": "date"
-            }
-          },
-          {
-            "name": "to",
-            "in": "query",
-            "schema": {
-              "type": "string",
-              "format": "date"
-            }
-          }
-        ],
+        "summary": "Get admin building and room statistics",
+        "description": "Admin-only snapshot of Tenancy building and room data at request time.\nCounts exclude soft-deleted buildings and rooms. `totalBuildings` counts\napproved buildings only. `totalRooms` and `roomsByStatus` count rooms only\nin approved buildings. Every room status key is always present, including\ngroups with zero rooms, and their sum equals `totalRooms`.\n`occupancyRate` is `occupied / totalRooms * 100`, rounded to one decimal\nplace, or 0 when `totalRooms` is 0. No date range or other query filter\nis supported.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "responses": {
           "200": {
-            "description": "Thành công: Đọc số liệu tổng hợp hệ thống.",
+            "description": "Building and room statistics fetched.",
             "content": {
               "application/json": {
                 "schema": {
@@ -24285,21 +24267,21 @@
                   "statusCode": 200,
                   "code": "DASHBOARD_FETCHED",
                   "data": {
-                    "totalUsers": 1250,
-                    "totalLandlords": 320,
-                    "totalTenants": 930,
-                    "totalBuildings": 145,
-                    "pendingApprovalBuildings": 8,
-                    "totalRooms": 1580,
-                    "occupancyRate": "89.2",
-                    "systemTransactionVolume": 3450000000
+                    "totalBuildings": 2,
+                    "pendingApprovalBuildings": 2,
+                    "rejectedBuildings": 1,
+                    "totalRooms": 8,
+                    "roomsByStatus": {
+                      "available": 2,
+                      "occupied": 5,
+                      "maintenance": 1
+                    },
+                    "occupancyRate": 62.5,
+                    "generatedAt": "2026-11-24T09:30:00.000Z"
                   }
                 }
               }
             }
-          },
-          "400": {
-            "$ref": "#/components/responses/BadRequestQueryError"
           },
           "401": {
             "$ref": "#/components/responses/UnauthorizedError"
@@ -24308,8 +24290,7 @@
             "$ref": "#/components/responses/ForbiddenError"
           },
           "422": {
-            "x-apidog-name": "Unprocessable Entity",
-            "description": "Dữ liệu hợp lệ về cấu trúc nhưng vi phạm ràng buộc trường hoặc quy tắc nghiệp vụ.",
+            "description": "Request validation failed.",
             "content": {
               "application/json": {
                 "schema": {
@@ -24329,28 +24310,14 @@
                     "code": {
                       "type": "string",
                       "enum": [
-                        "INVALID_DATE_RANGE",
                         "VALIDATION_FAILED"
-                      ],
-                      "description": "- INVALID_DATE_RANGE: Khoảng ngày không hợp lệ.\n- VALIDATION_FAILED: Dữ liệu vi phạm ràng buộc schema hoặc quy tắc nghiệp vụ khác chưa có mã riêng."
+                      ]
                     }
                   }
                 },
-                "examples": {
-                  "invalid_date_range": {
-                    "summary": "INVALID_DATE_RANGE — Khoảng ngày không hợp lệ.",
-                    "value": {
-                      "statusCode": 422,
-                      "code": "INVALID_DATE_RANGE"
-                    }
-                  },
-                  "validation_failed": {
-                    "summary": "VALIDATION_FAILED — Dữ liệu vi phạm ràng buộc schema hoặc quy tắc nghiệp vụ khác chưa có mã riêng.",
-                    "value": {
-                      "statusCode": 422,
-                      "code": "VALIDATION_FAILED"
-                    }
-                  }
+                "example": {
+                  "statusCode": 422,
+                  "code": "VALIDATION_FAILED"
                 }
               }
             }
@@ -33051,58 +33018,74 @@
         "type": "object",
         "x-apidog-folder": "Dashboard/Response",
         "title": "DashboardResponseDto",
-        "description": "Số liệu tổng hợp dashboard",
+        "description": "Admin-only snapshot of non-deleted Tenancy buildings and rooms.",
+        "additionalProperties": false,
+        "required": [
+          "totalBuildings",
+          "pendingApprovalBuildings",
+          "rejectedBuildings",
+          "totalRooms",
+          "roomsByStatus",
+          "occupancyRate",
+          "generatedAt"
+        ],
         "properties": {
-          "totalUsers": {
-            "type": "integer",
-            "minimum": 0,
-            "description": "Thông tin total users của tài nguyên trong ngữ cảnh DTO."
-          },
-          "totalLandlords": {
-            "type": "integer",
-            "minimum": 0,
-            "description": "Thông tin total landlords của tài nguyên trong ngữ cảnh DTO."
-          },
-          "totalTenants": {
-            "type": "integer",
-            "minimum": 0,
-            "description": "Thông tin total tenants của tài nguyên trong ngữ cảnh DTO."
-          },
           "totalBuildings": {
             "type": "integer",
             "minimum": 0,
-            "description": "Thông tin total buildings của tài nguyên trong ngữ cảnh DTO."
+            "description": "Approved buildings that are not soft-deleted."
           },
           "pendingApprovalBuildings": {
             "type": "integer",
             "minimum": 0,
-            "description": "Thông tin pending approval buildings của tài nguyên trong ngữ cảnh DTO."
+            "description": "Pending buildings that are not soft-deleted."
+          },
+          "rejectedBuildings": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Rejected buildings that are not soft-deleted."
           },
           "totalRooms": {
             "type": "integer",
             "minimum": 0,
-            "description": "Thông tin total rooms của tài nguyên trong ngữ cảnh DTO."
+            "description": "Non-deleted rooms in non-deleted approved buildings."
+          },
+          "roomsByStatus": {
+            "type": "object",
+            "additionalProperties": false,
+            "description": "Counts of the rooms included in totalRooms, grouped by status.",
+            "required": [
+              "available",
+              "occupied",
+              "maintenance"
+            ],
+            "properties": {
+              "available": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "occupied": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "maintenance": {
+                "type": "integer",
+                "minimum": 0
+              }
+            }
           },
           "occupancyRate": {
-            "type": "string",
-            "description": "Thông tin occupancy rate của tài nguyên trong ngữ cảnh DTO."
-          },
-          "systemTransactionVolume": {
-            "type": "integer",
+            "type": "number",
             "minimum": 0,
-            "description": "Thông tin system transaction volume của tài nguyên trong ngữ cảnh DTO."
+            "maximum": 100,
+            "description": "Occupied rooms divided by totalRooms, times 100, rounded to one decimal; 0 when totalRooms is 0."
+          },
+          "generatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "ISO 8601 time when the server calculated this snapshot."
           }
-        },
-        "required": [
-          "totalUsers",
-          "totalLandlords",
-          "totalTenants",
-          "totalBuildings",
-          "pendingApprovalBuildings",
-          "totalRooms",
-          "occupancyRate",
-          "systemTransactionVolume"
-        ]
+        }
       },
       "ContractMemberAddRequestDto": {
         "type": "object",
