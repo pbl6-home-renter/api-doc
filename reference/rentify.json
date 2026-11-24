@@ -16623,12 +16623,13 @@
           }
         ],
         "summary": "Record contract member leave",
-        "description": "tenantId is not the contract_members record ID. Members with tenant_id = null cannot use this endpoint.\nLandlord must own the selected contract; it must be active (409 CONTRACT_NOT_ACTIVE).\nLock the contract before locking the member. Join contract_members with contracts and match both IDs,\nexcluding soft-deleted rows. Prefer a membership without a departure, then the latest departure\nwhen the tenant has left and rejoined. The response id remains the contract_members record ID. An already recorded departure returns\n409 MEMBER_ALREADY_LEFT, including a scheduled departure. leftOn must be >= joinedAt and\n<= contract endDate (422 LEFT_DATE_INVALID). leftOn = joinedAt is allowed.\nUnknown member/contract: 404 RESOURCE_NOT_FOUND; other landlord: 403 FORBIDDEN.\nSet left_at without deleting the record, and append contract_member.left in the same transaction.\nThe upper endDate limit belongs to this handler; the shared domain leave method permits checkout\nafter endDate (P6-D71 addendum). Response uses leftAt; request uses leftOn.\n\n**Sequence diagram**\n\n```mermaid\nsequenceDiagram\n    autonumber\n    actor Client\n    participant GW as API Gateway\n    participant S as Tenancy-Service\n    participant Guard as JWT/access guards\n    participant C as ContractMemberController\n    participant Bus as CQRS CommandBus\n    participant H as Application handler\n    Client->>GW: POST /api/v1/contract-members/{tenantId}/leave-contract\n    GW->>GW: Validate bearer token for protected route\n    GW->>S: Proxy original HTTP request\n    S->>Guard: Validate JWT, account state and route access\n    Guard-->>C: Continue with authenticated context\n    S->>C: Invoke postContractMembersTenantidLeaveContract\n    C->>Bus: Execute command for postContractMembersTenantidLeaveContract\n    Bus->>H: Dispatch command handler\n    H-->>Bus: Return use-case result\n    Bus-->>C: Result\n    C-->>S: Return documented response\n    S-->>GW: HTTP status and response body\n    GW-->>Client: Forward HTTP response\n```",
+        "description": "The tenantId path parameter accepts a tenant user ID or a contract_members record ID.\nMembers with tenant_id = null can use their membership record ID (P6-D74).\nLandlord must own the selected contract; it must be active (409 CONTRACT_NOT_ACTIVE).\nLock the contract before locking the member. First resolve by tenant user ID within the selected\ncontract, excluding soft-deleted rows. Prefer a membership without a departure, then the latest\ndeparture when the tenant has left and rejoined. If no tenant membership matches, resolve by\nmembership record ID and require it to belong to the selected contract.\nThe response id remains the contract_members record ID. An already recorded departure returns\n409 MEMBER_ALREADY_LEFT, including a scheduled departure. leftOn must be >= joinedAt and\n<= contract endDate (422 LEFT_DATE_INVALID). leftOn = joinedAt is allowed.\nUnknown member/contract: 404 RESOURCE_NOT_FOUND; other landlord: 403 FORBIDDEN.\nSet left_at without deleting the record, and append contract_member.left in the same transaction.\nThe upper endDate limit belongs to this handler; the shared domain leave method permits checkout\nafter endDate (P6-D71 addendum). Response uses leftAt; request uses leftOn.\n\n**Sequence diagram**\n\n```mermaid\nsequenceDiagram\n    autonumber\n    actor Client\n    participant GW as API Gateway\n    participant S as Tenancy-Service\n    participant Guard as JWT/access guards\n    participant C as ContractMemberController\n    participant Bus as CQRS CommandBus\n    participant H as Application handler\n    participant DB as Tenancy database\n    Client->>GW: POST /api/v1/contract-members/{tenantId}/leave-contract\n    GW->>GW: Validate bearer token for protected route\n    GW->>S: Proxy original HTTP request\n    S->>Guard: Validate JWT, account state and route access\n    Guard-->>C: Continue with authenticated context\n    S->>C: Invoke postContractMembersTenantidLeaveContract\n    C->>Bus: Execute command for postContractMembersTenantidLeaveContract\n    Bus->>H: Dispatch command handler\n    H->>DB: Begin transaction and lock selected contract\n    H->>H: Require landlord ownership and active contract\n    H->>DB: Lock membership by tenant user ID and contract ID\n    alt No matching tenant membership\n        H->>DB: Lock membership by record ID, excluding soft-deleted rows\n        H->>H: Require membership to belong to selected contract\n    end\n    H->>H: Validate leave date and record departure\n    H->>DB: Save member and append contract_member.left outbox event\n    H->>DB: Commit transaction\n    H-->>Bus: Return use-case result\n    Bus-->>C: Result\n    C-->>S: Return documented response\n    S-->>GW: HTTP status and response body\n    GW-->>Client: Forward HTTP response\n```",
         "parameters": [
           {
             "name": "tenantId",
             "in": "path",
             "required": true,
+            "description": "Tenant user ID or contract member ID; use the member ID when tenantId is null.",
             "schema": {
               "type": "string",
               "format": "uuid"
@@ -23888,7 +23889,7 @@
           "Operation"
         ],
         "x-apidog-folder": "AuditLog",
-        "x-apidog-status": "designing",
+        "x-apidog-status": "released",
         "operationId": "getAuditLogs",
         "security": [
           {
@@ -23896,66 +23897,58 @@
           }
         ],
         "summary": "Search audit logs",
-        "description": "admin. Tìm kiếm nhật ký chỉ ghi thêm. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 VALIDATION FAILED.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
+        "description": "Chỉ admin. Filter kết hợp AND. from/to là date-time có timezone, lọc created_at >= from và <= to; so sánh theo thời điểm thực, cho phép bằng nhau. Sắp xếp cố định created_at DESC, id DESC. Chỉ hỗ trợ tám query parameter bên dưới; field khác trả 422 UNEXPECTED_FIELD. Không hỗ trợ export file.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "parameters": [
           {
-            "name": "filter",
+            "name": "action",
             "in": "query",
             "required": false,
-            "style": "deepObject",
-            "explode": true,
-            "description": "Bộ lọc được endpoint hỗ trợ.",
-            "schema": {
-              "type": "object",
-              "additionalProperties": false,
-              "properties": {
-                "actorUserId": {
-                  "type": "string",
-                  "format": "uuid"
-                },
-                "entityType": {
-                  "type": "string"
-                }
-              }
-            }
-          },
-          {
-            "name": "pageSize",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "minimum": 1,
-              "maximum": 100,
-              "default": 20
-            }
-          },
-          {
-            "name": "pageNo",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "minimum": 1,
-              "default": 1
-            }
-          },
-          {
-            "name": "format",
-            "in": "query",
-            "description": "json trả envelope; định dạng khác trả file stream.",
             "schema": {
               "type": "string",
               "enum": [
-                "json",
-                "xlsx",
-                "csv",
-                "pdf"
-              ],
-              "default": "json"
+                "user.locked",
+                "user.unlocked",
+                "user.updated",
+                "user.deleted",
+                "building.approved",
+                "building.rejected"
+              ]
+            }
+          },
+          {
+            "name": "entityType",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "user",
+                "building"
+              ]
+            }
+          },
+          {
+            "name": "actorId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "entityId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
             }
           },
           {
             "name": "from",
             "in": "query",
+            "required": false,
             "schema": {
               "type": "string",
               "format": "date-time"
@@ -23964,9 +23957,31 @@
           {
             "name": "to",
             "in": "query",
+            "required": false,
             "schema": {
               "type": "string",
               "format": "date-time"
+            }
+          },
+          {
+            "name": "pageNo",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20
             }
           }
         ],
@@ -24055,11 +24070,13 @@
                   "data": [
                     {
                       "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-                      "actorId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-                      "action": "user.lock",
+                      "actorId": "b13d28cf-b1c5-4e78-a54d-017637c47c30",
+                      "actorName": "Admin Demo",
+                      "action": "user.locked",
                       "entityType": "user",
-                      "entityId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-                      "createdAt": "2026-09-23T11:55:00.000Z"
+                      "entityId": "7f94255a-2401-49b7-a0a4-88457633c89e",
+                      "sourceService": "identity",
+                      "createdAt": "2026-11-24T03:00:00.000Z"
                     }
                   ],
                   "pagination": {
@@ -24072,29 +24089,8 @@
                     "hasPreviousPage": false
                   }
                 }
-              },
-              "text/csv": {
-                "schema": {
-                  "type": "string",
-                  "format": "binary"
-                }
-              },
-              "application/pdf": {
-                "schema": {
-                  "type": "string",
-                  "format": "binary"
-                }
-              },
-              "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": {
-                "schema": {
-                  "type": "string",
-                  "format": "binary"
-                }
               }
             }
-          },
-          "400": {
-            "$ref": "#/components/responses/BadRequestQueryError"
           },
           "401": {
             "$ref": "#/components/responses/UnauthorizedError"
@@ -24103,7 +24099,38 @@
             "$ref": "#/components/responses/ForbiddenError"
           },
           "422": {
-            "$ref": "#/components/responses/ValidationError"
+            "description": "Enum, UUID query, date-time, phân trang sai hoặc from > to: VALIDATION_FAILED. Query ngoài contract: UNEXPECTED_FIELD.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        422
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "VALIDATION_FAILED",
+                        "UNEXPECTED_FIELD"
+                      ]
+                    }
+                  }
+                },
+                "example": {
+                  "statusCode": 422,
+                  "code": "VALIDATION_FAILED"
+                }
+              }
+            }
           },
           "429": {
             "$ref": "#/components/responses/TooManyRequestsError"
@@ -24123,7 +24150,7 @@
           "Operation"
         ],
         "x-apidog-folder": "AuditLog",
-        "x-apidog-status": "designing",
+        "x-apidog-status": "released",
         "operationId": "getAuditLogsAuditlogid",
         "security": [
           {
@@ -24131,7 +24158,7 @@
           }
         ],
         "summary": "Get audit log details",
-        "description": "admin. Đọc hoặc xuất một bản ghi kiểm toán. Lỗi nghiệp vụ: 403 FORBIDDEN · 404 NOT FOUND.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
+        "description": "Chỉ admin. Trả cùng field của list và thêm metadata. UUID path sai trả 400 BAD_REQUEST; ID hợp lệ không tồn tại trả 404 AUDIT_LOG_NOT_FOUND.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "parameters": [
           {
             "name": "auditLogId",
@@ -24145,7 +24172,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Thành công: Đọc hoặc xuất một bản ghi kiểm toán.",
+            "description": "Thành công: Đọc chi tiết nhật ký.",
             "content": {
               "application/json": {
                 "schema": {
@@ -24179,14 +24206,15 @@
                   "code": "AUDIT_LOG_FETCHED",
                   "data": {
                     "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-                    "action": "user.lock",
+                    "actorId": "b13d28cf-b1c5-4e78-a54d-017637c47c30",
+                    "actorName": "Admin Demo",
+                    "action": "user.locked",
                     "entityType": "user",
-                    "entityId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-                    "beforeData": {
-                      "status": "active"
-                    },
-                    "afterData": {
-                      "status": "locked"
+                    "entityId": "7f94255a-2401-49b7-a0a4-88457633c89e",
+                    "sourceService": "identity",
+                    "createdAt": "2026-11-24T03:00:00.000Z",
+                    "metadata": {
+                      "lockReason": "Spam"
                     }
                   }
                 }
@@ -24194,7 +24222,37 @@
             }
           },
           "400": {
-            "$ref": "#/components/responses/BadRequestPathError"
+            "description": "UUID path không hợp lệ (ParseUUIDPipe theo convention hiện tại).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        400
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "BAD_REQUEST"
+                      ]
+                    }
+                  }
+                },
+                "example": {
+                  "statusCode": 400,
+                  "code": "BAD_REQUEST"
+                }
+              }
+            }
           },
           "401": {
             "$ref": "#/components/responses/UnauthorizedError"
@@ -24203,7 +24261,37 @@
             "$ref": "#/components/responses/ForbiddenError"
           },
           "404": {
-            "$ref": "#/components/responses/NotFoundError"
+            "description": "Không tìm thấy audit log.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        404
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "AUDIT_LOG_NOT_FOUND"
+                      ]
+                    }
+                  }
+                },
+                "example": {
+                  "statusCode": 404,
+                  "code": "AUDIT_LOG_NOT_FOUND"
+                }
+              }
+            }
           },
           "429": {
             "$ref": "#/components/responses/TooManyRequestsError"
@@ -32919,100 +33007,144 @@
         "type": "object",
         "x-apidog-folder": "AuditLog/Response",
         "title": "AuditLogListResponseDto",
-        "description": "Danh sách nhật ký kiểm toán",
+        "description": "Nhật ký thao tác admin, chỉ đọc và giữ vĩnh viễn. Actor đã xóa hoặc không tồn tại có actorName null; giữ actorId đã lưu.",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "actorId",
+          "actorName",
+          "action",
+          "entityType",
+          "entityId",
+          "sourceService",
+          "createdAt"
+        ],
         "properties": {
           "id": {
             "type": "string",
-            "format": "uuid",
-            "description": "Định danh duy nhất của tài nguyên."
+            "format": "uuid"
           },
           "actorId": {
             "type": "string",
             "format": "uuid",
-            "nullable": true,
-            "description": "Thông tin actor id của tài nguyên trong ngữ cảnh DTO."
+            "nullable": true
+          },
+          "actorName": {
+            "type": "string",
+            "nullable": true
           },
           "action": {
             "type": "string",
-            "minLength": 1,
-            "maxLength": 100,
-            "description": "Thông tin action của tài nguyên trong ngữ cảnh DTO."
+            "enum": [
+              "user.locked",
+              "user.unlocked",
+              "user.updated",
+              "user.deleted",
+              "building.approved",
+              "building.rejected"
+            ]
           },
           "entityType": {
             "type": "string",
-            "minLength": 1,
-            "maxLength": 50,
-            "description": "Thông tin entity type của tài nguyên trong ngữ cảnh DTO."
+            "enum": [
+              "user",
+              "building"
+            ]
           },
           "entityId": {
             "type": "string",
             "format": "uuid",
-            "nullable": true,
-            "description": "Thông tin entity id của tài nguyên trong ngữ cảnh DTO."
+            "nullable": true
+          },
+          "sourceService": {
+            "type": "string",
+            "enum": [
+              "identity",
+              "tenancy"
+            ]
           },
           "createdAt": {
             "type": "string",
             "format": "date-time",
-            "description": "Thời điểm bản ghi được tạo, theo định dạng ngày giờ ISO 8601."
+            "description": "Thời điểm lưu audit (UTC)."
           }
-        },
-        "required": [
-          "id",
-          "actorId",
-          "action",
-          "entityType",
-          "entityId",
-          "createdAt"
-        ]
+        }
       },
       "AuditLogDetailResponseDto": {
         "type": "object",
         "x-apidog-folder": "AuditLog/Response",
         "title": "AuditLogDetailResponseDto",
-        "description": "Chi tiết nhật ký kiểm toán",
+        "description": "Nhật ký thao tác admin, chỉ đọc và giữ vĩnh viễn. Actor đã xóa hoặc không tồn tại có actorName null; giữ actorId đã lưu.",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "actorId",
+          "actorName",
+          "action",
+          "entityType",
+          "entityId",
+          "sourceService",
+          "createdAt",
+          "metadata"
+        ],
         "properties": {
           "id": {
             "type": "string",
+            "format": "uuid"
+          },
+          "actorId": {
+            "type": "string",
             "format": "uuid",
-            "description": "Định danh duy nhất của tài nguyên."
+            "nullable": true
+          },
+          "actorName": {
+            "type": "string",
+            "nullable": true
           },
           "action": {
             "type": "string",
-            "minLength": 1,
-            "maxLength": 100,
-            "description": "Thông tin action của tài nguyên trong ngữ cảnh DTO."
+            "enum": [
+              "user.locked",
+              "user.unlocked",
+              "user.updated",
+              "user.deleted",
+              "building.approved",
+              "building.rejected"
+            ]
           },
           "entityType": {
             "type": "string",
-            "minLength": 1,
-            "maxLength": 50,
-            "description": "Thông tin entity type của tài nguyên trong ngữ cảnh DTO."
+            "enum": [
+              "user",
+              "building"
+            ]
           },
           "entityId": {
             "type": "string",
             "format": "uuid",
-            "nullable": true,
-            "description": "Thông tin entity id của tài nguyên trong ngữ cảnh DTO."
+            "nullable": true
           },
-          "beforeData": {
-            "type": "object",
-            "nullable": true,
-            "description": "Thông tin before data của tài nguyên trong ngữ cảnh DTO."
+          "sourceService": {
+            "type": "string",
+            "enum": [
+              "identity",
+              "tenancy"
+            ]
           },
-          "afterData": {
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Thời điểm lưu audit (UTC)."
+          },
+          "metadata": {
             "type": "object",
-            "nullable": true,
-            "description": "Thông tin after data của tài nguyên trong ngữ cảnh DTO."
+            "additionalProperties": true,
+            "description": "Metadata theo allowlist của action; không chứa beforeData/afterData hoặc giá trị cũ/mới.",
+            "example": {
+              "lockReason": "Spam"
+            }
           }
-        },
-        "required": [
-          "id",
-          "action",
-          "entityType",
-          "entityId",
-          "beforeData",
-          "afterData"
-        ]
+        }
       },
       "DashboardResponseDto": {
         "type": "object",
@@ -35124,69 +35256,77 @@
         "type": "object",
         "x-apidog-folder": "AuditLog",
         "title": "AuditLog",
-        "description": "Nhật ký kiểm toán hệ thống (append-only, không có cập nhật hoặc xóa mềm)",
+        "description": "Nhật ký thao tác admin, chỉ đọc và giữ vĩnh viễn. Actor đã xóa hoặc không tồn tại có actorName null; giữ actorId đã lưu.",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "actorId",
+          "actorName",
+          "action",
+          "entityType",
+          "entityId",
+          "sourceService",
+          "createdAt",
+          "metadata"
+        ],
         "properties": {
           "id": {
             "type": "string",
-            "format": "uuid",
-            "description": "Khóa chính duy nhất (UUID v4)",
-            "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
-          },
-          "createdAt": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Thời điểm ghi nhận thao tác (UTC)",
-            "example": "2026-09-05T10:00:00Z"
+            "format": "uuid"
           },
           "actorId": {
             "type": "string",
             "format": "uuid",
-            "nullable": true,
-            "description": "ID người thực hiện hành động (null đối với system/webhook)",
-            "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+            "nullable": true
+          },
+          "actorName": {
+            "type": "string",
+            "nullable": true
           },
           "action": {
             "type": "string",
-            "minLength": 1,
-            "maxLength": 100,
-            "description": "Tên hành vi nghiệp vụ (vd user.lock, building.approve, payment.webhook)",
-            "example": "building.approve"
+            "enum": [
+              "user.locked",
+              "user.unlocked",
+              "user.updated",
+              "user.deleted",
+              "building.approved",
+              "building.rejected"
+            ]
           },
           "entityType": {
             "type": "string",
-            "minLength": 1,
-            "maxLength": 50,
-            "description": "Loại tài nguyên bị tác động",
-            "example": "building"
+            "enum": [
+              "user",
+              "building"
+            ]
           },
           "entityId": {
             "type": "string",
             "format": "uuid",
-            "nullable": true,
-            "description": "ID tài nguyên bị tác động",
-            "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+            "nullable": true
           },
-          "beforeData": {
-            "type": "object",
-            "nullable": true,
-            "description": "Snapshot trạng thái dữ liệu trước khi thay đổi",
-            "example": null
+          "sourceService": {
+            "type": "string",
+            "enum": [
+              "identity",
+              "tenancy"
+            ]
           },
-          "afterData": {
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Thời điểm lưu audit (UTC)."
+          },
+          "metadata": {
             "type": "object",
-            "nullable": true,
-            "description": "Snapshot trạng thái dữ liệu sau khi thay đổi",
+            "additionalProperties": true,
+            "description": "Metadata theo allowlist của action; không chứa beforeData/afterData hoặc giá trị cũ/mới.",
             "example": {
-              "status": "approved"
+              "lockReason": "Spam"
             }
           }
-        },
-        "required": [
-          "id",
-          "createdAt",
-          "action",
-          "entityType"
-        ]
+        }
       },
       "MediaPresignUploadRequestDto": {
         "type": "object",

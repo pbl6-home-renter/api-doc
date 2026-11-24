@@ -8,11 +8,14 @@ post:
     - BearerAuth: []
   summary: Record contract member leave
   description: |-
-    tenantId is not the contract_members record ID. Members with tenant_id = null cannot use this endpoint.
+    The tenantId path parameter accepts a tenant user ID or a contract_members record ID.
+    Members with tenant_id = null can use their membership record ID (P6-D74).
     Landlord must own the selected contract; it must be active (409 CONTRACT_NOT_ACTIVE).
-    Lock the contract before locking the member. Join contract_members with contracts and match both IDs,
-    excluding soft-deleted rows. Prefer a membership without a departure, then the latest departure
-    when the tenant has left and rejoined. The response id remains the contract_members record ID. An already recorded departure returns
+    Lock the contract before locking the member. First resolve by tenant user ID within the selected
+    contract, excluding soft-deleted rows. Prefer a membership without a departure, then the latest
+    departure when the tenant has left and rejoined. If no tenant membership matches, resolve by
+    membership record ID and require it to belong to the selected contract.
+    The response id remains the contract_members record ID. An already recorded departure returns
     409 MEMBER_ALREADY_LEFT, including a scheduled departure. leftOn must be >= joinedAt and
     <= contract endDate (422 LEFT_DATE_INVALID). leftOn = joinedAt is allowed.
     Unknown member/contract: 404 RESOURCE_NOT_FOUND; other landlord: 403 FORBIDDEN.
@@ -32,6 +35,7 @@ post:
         participant C as ContractMemberController
         participant Bus as CQRS CommandBus
         participant H as Application handler
+        participant DB as Tenancy database
         Client->>GW: POST /api/v1/contract-members/{tenantId}/leave-contract
         GW->>GW: Validate bearer token for protected route
         GW->>S: Proxy original HTTP request
@@ -40,6 +44,16 @@ post:
         S->>C: Invoke postContractMembersTenantidLeaveContract
         C->>Bus: Execute command for postContractMembersTenantidLeaveContract
         Bus->>H: Dispatch command handler
+        H->>DB: Begin transaction and lock selected contract
+        H->>H: Require landlord ownership and active contract
+        H->>DB: Lock membership by tenant user ID and contract ID
+        alt No matching tenant membership
+            H->>DB: Lock membership by record ID, excluding soft-deleted rows
+            H->>H: Require membership to belong to selected contract
+        end
+        H->>H: Validate leave date and record departure
+        H->>DB: Save member and append contract_member.left outbox event
+        H->>DB: Commit transaction
         H-->>Bus: Return use-case result
         Bus-->>C: Result
         C-->>S: Return documented response
@@ -50,6 +64,7 @@ post:
   - name: tenantId
     in: path
     required: true
+    description: Tenant user ID or contract member ID; use the member ID when tenantId is null.
     schema:
       type: string
       format: uuid
