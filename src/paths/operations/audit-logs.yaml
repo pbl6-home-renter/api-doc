@@ -2,62 +2,73 @@ get:
   tags:
   - Operation
   x-apidog-folder: AuditLog
-  x-apidog-status: designing
+  x-apidog-status: released
   operationId: getAuditLogs
   security:
-    - BearerAuth: []
+  - BearerAuth: []
   summary: Search audit logs
-  description: 'admin. Tìm kiếm nhật ký chỉ ghi thêm. Lỗi nghiệp vụ: 403 FORBIDDEN · 422 VALIDATION FAILED.'
+  description: Chỉ admin. Filter kết hợp AND. from/to là date-time có timezone, lọc
+    created_at >= from và <= to; so sánh theo thời điểm thực, cho phép bằng nhau.
+    Sắp xếp cố định created_at DESC, id DESC. Chỉ hỗ trợ tám query parameter bên dưới;
+    field khác trả 422 UNEXPECTED_FIELD. Không hỗ trợ export file.
   parameters:
-  - name: filter
+  - name: action
     in: query
     required: false
-    style: deepObject
-    explode: true
-    description: Bộ lọc được endpoint hỗ trợ.
-    schema:
-      type: object
-      additionalProperties: false
-      properties:
-        actorUserId:
-          type: string
-          format: uuid
-        entityType:
-          type: string
-  - name: pageSize
-    in: query
-    schema:
-      type: integer
-      minimum: 1
-      maximum: 100
-      default: 20
-  - name: pageNo
-    in: query
-    schema:
-      type: integer
-      minimum: 1
-      default: 1
-  - name: format
-    in: query
-    description: json trả envelope; định dạng khác trả file stream.
     schema:
       type: string
       enum:
-      - json
-      - xlsx
-      - csv
-      - pdf
-      default: json
+      - user.locked
+      - user.unlocked
+      - user.updated
+      - user.deleted
+      - building.approved
+      - building.rejected
+  - name: entityType
+    in: query
+    required: false
+    schema:
+      type: string
+      enum:
+      - user
+      - building
+  - name: actorId
+    in: query
+    required: false
+    schema: &id001
+      type: string
+      format: uuid
+  - name: entityId
+    in: query
+    required: false
+    schema: *id001
   - name: from
     in: query
+    required: false
     schema:
       type: string
       format: date-time
   - name: to
     in: query
+    required: false
     schema:
       type: string
       format: date-time
+  - name: pageNo
+    in: query
+    required: false
+    schema:
+      type: integer
+      minimum: 1
+      default: 1
+  - name: pageSize
+    in: query
+    required: false
+    schema:
+      type: integer
+      minimum: 1
+      maximum: 100
+      default: 20
   responses:
     '200':
       description: 'Thành công: Tìm kiếm nhật ký chỉ ghi thêm.'
@@ -122,11 +133,13 @@ get:
             code: AUDIT_LOGS_FETCHED
             data:
             - id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
-              actorId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
-              action: user.lock
+              actorId: b13d28cf-b1c5-4e78-a54d-017637c47c30
+              actorName: Admin Demo
+              action: user.locked
               entityType: user
-              entityId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
-              createdAt: '2026-09-23T11:55:00.000Z'
+              entityId: 7f94255a-2401-49b7-a0a4-88457633c89e
+              sourceService: identity
+              createdAt: '2026-11-24T03:00:00.000Z'
             pagination:
               type: offset
               pageNo: 1
@@ -135,20 +148,6 @@ get:
               totalPages: 1
               hasNextPage: false
               hasPreviousPage: false
-        text/csv:
-          schema:
-            type: string
-            format: binary
-        application/pdf:
-          schema:
-            type: string
-            format: binary
-        application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
-          schema:
-            type: string
-            format: binary
-    '400':
-      $ref: ../../openapi.yaml#/components/responses/BadRequestQueryError
     '401':
       $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
     '503':
@@ -156,7 +155,29 @@ get:
     '403':
       $ref: ../../openapi.yaml#/components/responses/ForbiddenError
     '422':
-      $ref: ../../openapi.yaml#/components/responses/ValidationError
+      description: 'Enum, UUID query, date-time, phân trang sai hoặc from > to: VALIDATION_FAILED.
+        Query ngoài contract: UNEXPECTED_FIELD.'
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required:
+            - statusCode
+            - code
+            properties:
+              statusCode:
+                type: integer
+                enum:
+                - 422
+              code:
+                type: string
+                enum:
+                - VALIDATION_FAILED
+                - UNEXPECTED_FIELD
+          example:
+            statusCode: 422
+            code: VALIDATION_FAILED
     '429':
       $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
     '500':
