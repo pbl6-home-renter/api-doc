@@ -27,8 +27,8 @@ post:
 
     `notification.requested.payload` có `sourceService`, `recipientUserIds` và object `notification` gồm `type`, `title`, `body`, `data`. Đây là payload event; response HTTP của API lock vẫn là `UserLockResponseDto`.
 
-    - Account notice từ Identity: `sourceService: identity`, `recipientUserIds: [userId]`, `notification.type: system`; `notification.data` gồm `{ userId, status: locked, eventType: user.locked, lockedAt }`, trong đó `lockedAt` là ISO 8601 UTC.
-    - Account notice khi khóa dùng `notification.title: USER_ACCOUNT_LOCKED_TITLE` và `notification.body: USER_ACCOUNT_LOCKED_BODY`. Đây là key để FE dịch theo ngôn ngữ hiển thị.
+    - Account notice từ Identity: `sourceService: identity`, `recipientUserIds: [userId]`, `notification.type: system`; `notification.data` gồm `{ messageKey: user.locked, userId, status: locked, eventType: user.locked, lockedAt }`, trong đó `lockedAt` là ISO 8601 UTC.
+    - Account notice khi khóa giữ `notification.title: USER_ACCOUNT_LOCKED_TITLE` và `notification.body: USER_ACCOUNT_LOCKED_BODY` như mã backend; Web dịch theo `data.messageKey`.
     - Contract notice từ Tenancy: `sourceService: tenancy`, `notification.type: system`; `notification.data` gồm `{ landlordId, lockCycleId, contractIds, graceDeadline }`. Các ID là UUID, `contractIds` là mảng UUID, `graceDeadline` là ISO 8601 UTC. `lockCycleId` dùng ID envelope của event `user.locked` được xử lý.
     - Contract suspension notice dùng `notification.title: CONTRACT_SUSPENDED_TITLE` và `notification.body: CONTRACT_SUSPENDED_BODY` để FE dịch thông báo hợp đồng tạm ngưng do tài khoản chủ trọ bị khóa.
     - P9-07 adds `CONTRACT_LOCK_DECISION_REQUIRED_TITLE/BODY`, `CONTRACT_RESTORED_TITLE/BODY` and `CONTRACT_TERMINATED_TITLE/BODY`. Resolution data also includes `action` as `decision_required`, `restore` or `terminate`.
