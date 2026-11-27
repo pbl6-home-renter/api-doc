@@ -8,7 +8,9 @@ post:
     - BearerAuth: []
   summary: Complete checkout
   description: |-
-    P9-07 also allows handover of a contract terminated by a landlord-lock decision or grace expiry.
+    Legacy contracts already terminated by the removed landlord-lock saga can still complete handover.
+    No new lock termination marker is created (P13-D101). The retained lockTerminationCycleId and
+    handoverCompletedOn fields preserve legacy occupancy and checkout without looking up a lock cycle.
     Such termination keeps the room occupied and members present until this request. This handover bypasses
     settlement/payment checks, persists handoverCompletedOn, updates remaining members, moves the room to maintenance
     and appends existing contract_member.left and room.status_changed events atomically. Same-date replay returns

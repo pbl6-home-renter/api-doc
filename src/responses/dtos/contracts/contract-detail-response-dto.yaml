@@ -3,11 +3,11 @@ x-apidog-folder: "Contract/Response"
 title: ContractDetailResponseDto
 description: Chi tiết hợp đồng
 properties:
-  handoverRequired: { type: boolean, description: True for a P9-07 terminated contract awaiting room handover. }
+  handoverRequired: { type: boolean, description: True for a legacy terminated contract awaiting room handover. }
   handoverCompletedOn: { type: string, format: date, nullable: true }
   id: { type: string, format: uuid , description: "Định danh duy nhất của tài nguyên." }
   roomId: { type: string, format: uuid , description: "Định danh duy nhất của phòng liên quan." }
-  status: { type: string, enum: [draft, signed, active, suspended, expired, terminated] , description: "Trạng thái hiện tại của tài nguyên trong quy trình nghiệp vụ." }
+  status: { type: string, enum: [draft, signed, active, expired, terminated] , description: "Trạng thái hiện tại của tài nguyên trong quy trình nghiệp vụ." }
   templateKey: { type: string, nullable: true, maxLength: 100, description: "Mẫu đã áp dụng; null nếu chưa chọn mẫu." }
   tenantId: { type: string, format: uuid, nullable: true , description: "Thông tin tenant id của tài nguyên trong ngữ cảnh DTO." }
   tenantName: { type: string, nullable: true, minLength: 1, maxLength: 254 , description: "Thông tin tenant name của tài nguyên trong ngữ cảnh DTO." }

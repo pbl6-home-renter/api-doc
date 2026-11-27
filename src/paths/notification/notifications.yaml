@@ -8,11 +8,11 @@ get:
     - BearerAuth: []
   summary: List notifications
   description: |-
-    Trả các business notification đã lưu cho người gọi. `type: system` gồm account lock/unlock và contract suspension của P9-06; không phải message chat.
-    `data` là snapshot từ producer: account notice có `{ messageKey, userId, status, eventType, lockedAt }`; contract suspension notice có `{ landlordId, lockCycleId, contractIds, graceDeadline }`.
+    Trả các business notification đã lưu cho người gọi. `type: system` gồm account lock/unlock và notification hợp đồng thông thường; không phải message chat.
+    `data` là snapshot từ producer: account notice có `{ messageKey, userId, status, eventType, lockedAt }`.
     Account notice mới từ Identity dùng `data.messageKey: user.locked | user.unlocked` để Web dịch. `title`/`body` giữ mã `USER_ACCOUNT_LOCKED_TITLE/BODY` hoặc `USER_ACCOUNT_UNLOCKED_TITLE/BODY` làm nội dung dự phòng; bản ghi cũ thiếu `messageKey` không được ánh xạ ngược.
     Tài khoản bị khóa vẫn được đọc thông báo của chính mình tại endpoint này; hai endpoint mark-read cũng cho phép đánh dấu thông báo của chính mình. Các chức năng nghiệp vụ khác vẫn bị chặn. Kết nối Socket mới của tài khoản bị khóa chỉ vào room thông báo, không nhận chat.
-    Contract suspension notice mới từ Tenancy dùng `title: CONTRACT_SUSPENDED_TITLE` và `body: CONTRACT_SUSPENDED_BODY` để FE dịch thông báo hợp đồng tạm ngưng do tài khoản chủ trọ bị khóa.
+    Theo P13-D101, Tenancy không tạo notification hợp đồng khi khóa/mở khóa landlord. Notification hợp đồng thông thường và liên kết thành viên vẫn giữ nguyên. Snapshot thông báo đã lưu trước đây vẫn có thể được trả về.
     Tắt push không ẩn notification khỏi danh sách; Socket sync được thực hiện độc lập với preference push.
 
     **Sequence diagram**
