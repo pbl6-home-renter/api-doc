@@ -1,0 +1,12 @@
+type: "object"
+x-apidog-folder: "Moderation/Request"
+title: "AppealRejectRequestDto"
+description: "Từ chối khiếu nại."
+additionalProperties: false
+required:
+  - "rejectReason"
+properties:
+  rejectReason:
+    type: "string"
+    minLength: 1
+    maxLength: 500

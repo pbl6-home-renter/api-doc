@@ -35,6 +35,9 @@ tags:
   - name: Notification
     description: Thông báo người dùng và thiết bị push FCM
 
+  - name: Moderation
+    description: Khiếu nại khóa tài khoản và báo cáo vi phạm (P13-11)
+
   - name: Administrative Units
     description: Vietnamese administrative geography reference data
 
@@ -250,6 +253,25 @@ paths:
     $ref: './paths/operations/audit-logs.yaml'
   /audit-logs/{auditLogId}:
     $ref: './paths/operations/audit-logs-auditLogId.yaml'
+  # P13-11 Moderation: appeals and violation reports
+  /me/appeals/current:
+    $ref: './paths/moderation/me-appeals-current.yaml'
+  /me/appeals:
+    $ref: './paths/moderation/me-appeals.yaml'
+  /appeals:
+    $ref: './paths/moderation/appeals.yaml'
+  /appeals/{appealId}:
+    $ref: './paths/moderation/appeals-appealId.yaml'
+  /appeals/{appealId}/accept:
+    $ref: './paths/moderation/appeals-appealId-accept.yaml'
+  /appeals/{appealId}/reject:
+    $ref: './paths/moderation/appeals-appealId-reject.yaml'
+  /reports:
+    $ref: './paths/moderation/reports.yaml'
+  /reports/{reportId}:
+    $ref: './paths/moderation/reports-reportId.yaml'
+  /reports/{reportId}/resolve:
+    $ref: './paths/moderation/reports-reportId-resolve.yaml'
   /dashboard:
     $ref: './paths/operations/dashboard.yaml'
   /administrative-units/provinces:
@@ -611,6 +633,35 @@ components:
       $ref: './responses/dtos/operations/audit-log-list-response-dto.yaml'
     AuditLogDetailResponseDto:
       $ref: './responses/dtos/operations/audit-log-detail-response-dto.yaml'
+    # Moderation DTOs (P13-11)
+    ModerationUserSummaryDto:
+      $ref: './schemas/moderation/moderation-user-summary-dto.yaml'
+    AppealResponseDto:
+      $ref: './schemas/moderation/appeal-response-dto.yaml'
+    AppealCurrentResponseDto:
+      $ref: './schemas/moderation/appeal-current-response-dto.yaml'
+    AppealAdminListItemResponseDto:
+      $ref: './schemas/moderation/appeal-admin-list-item-response-dto.yaml'
+    AppealAdminDetailResponseDto:
+      $ref: './schemas/moderation/appeal-admin-detail-response-dto.yaml'
+    AppealReviewResponseDto:
+      $ref: './schemas/moderation/appeal-review-response-dto.yaml'
+    ReportResponseDto:
+      $ref: './schemas/moderation/report-response-dto.yaml'
+    ReportAdminListItemResponseDto:
+      $ref: './schemas/moderation/report-admin-list-item-response-dto.yaml'
+    ReportAdminDetailResponseDto:
+      $ref: './schemas/moderation/report-admin-detail-response-dto.yaml'
+    ReportResolveResponseDto:
+      $ref: './schemas/moderation/report-resolve-response-dto.yaml'
+    AppealSubmitRequestDto:
+      $ref: './requests/moderation/appeal-submit-request-dto.yaml'
+    AppealRejectRequestDto:
+      $ref: './requests/moderation/appeal-reject-request-dto.yaml'
+    ReportSubmitRequestDto:
+      $ref: './requests/moderation/report-submit-request-dto.yaml'
+    ReportResolveRequestDto:
+      $ref: './requests/moderation/report-resolve-request-dto.yaml'
     # Dashboard DTOs
     DashboardResponseDto:
       $ref: './responses/dtos/operations/dashboard-response-dto.yaml'

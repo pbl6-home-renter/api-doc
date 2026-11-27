@@ -1,0 +1,117 @@
+post:
+  tags:
+    - "Moderation"
+  x-apidog-folder: "Moderation"
+  x-apidog-status: "released"
+  operationId: "rejectAppeal"
+  security:
+    - BearerAuth: []
+  summary: "Reject appeal"
+  description: "Chỉ admin, **bắt buộc** `rejectReason`. Tài khoản vẫn bị khóa. Người dùng nhận thông báo và email; 7 ngày sau mới gửi lại được.\n\n**Notification** (`notification.requested`, type `system`): `title = ACCOUNT_APPEAL_REJECTED_TITLE`, `body = ACCOUNT_APPEAL_REJECTED_BODY`, `deepLink = /account-locked`, `data = { messageKey: appeal.rejected, appealId, rejectReason, nextSubmitAt }`.\n\nAudit: `appeal.rejected` (entity `user`) với metadata `{ appealId, rejectReason }`."
+  parameters:
+    - name: "appealId"
+      in: "path"
+      required: true
+      description: "UUID của khiếu nại."
+      schema:
+        type: "string"
+        format: "uuid"
+  requestBody:
+    required: true
+    content:
+      "application/json":
+        schema:
+          $ref: "../../openapi.yaml#/components/schemas/AppealRejectRequestDto"
+        example:
+          rejectReason: "Bằng chứng chưa đủ để mở khóa."
+  responses:
+    "200":
+      description: "Thành công."
+      content:
+        "application/json":
+          schema:
+            type: "object"
+            additionalProperties: false
+            required:
+              - "statusCode"
+              - "code"
+              - "data"
+            properties:
+              statusCode:
+                type: "integer"
+                enum:
+                  - 200
+              code:
+                type: "string"
+                enum:
+                  - "APPEAL_REJECTED"
+              data:
+                $ref: "../../openapi.yaml#/components/schemas/AppealReviewResponseDto"
+          example:
+            statusCode: 200
+            code: "APPEAL_REJECTED"
+            data:
+              id: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+              status: "rejected"
+              userId: "b13d28cf-b1c5-4e78-a54d-017637c47c30"
+              unlocked: false
+    "401":
+      $ref: "../../openapi.yaml#/components/responses/UnauthorizedError"
+    "403":
+      $ref: "../../openapi.yaml#/components/responses/ForbiddenError"
+    "404":
+      description: "Không tìm thấy khiếu nại."
+      content:
+        "application/json":
+          schema:
+            type: "object"
+            additionalProperties: false
+            required:
+              - "statusCode"
+              - "code"
+            properties:
+              statusCode:
+                type: "integer"
+                enum:
+                  - 404
+              code:
+                type: "string"
+                enum:
+                  - "APPEAL_NOT_FOUND"
+          examples:
+            appeal_not_found:
+              summary: "APPEAL_NOT_FOUND"
+              value:
+                statusCode: 404
+                code: "APPEAL_NOT_FOUND"
+    "409":
+      description: "Khiếu nại đã được xử lý."
+      content:
+        "application/json":
+          schema:
+            type: "object"
+            additionalProperties: false
+            required:
+              - "statusCode"
+              - "code"
+            properties:
+              statusCode:
+                type: "integer"
+                enum:
+                  - 409
+              code:
+                type: "string"
+                enum:
+                  - "APPEAL_NOT_PENDING"
+          examples:
+            appeal_not_pending:
+              summary: "APPEAL_NOT_PENDING"
+              value:
+                statusCode: 409
+                code: "APPEAL_NOT_PENDING"
+    "422":
+      $ref: "../../openapi.yaml#/components/responses/ValidationError"
+    "500":
+      $ref: "../../openapi.yaml#/components/responses/InternalServerError"
+    "503":
+      $ref: "../../openapi.yaml#/components/responses/AuthUnavailableError"

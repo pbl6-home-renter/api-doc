@@ -1,0 +1,103 @@
+get:
+  tags:
+    - "Moderation"
+  x-apidog-folder: "Moderation"
+  x-apidog-status: "released"
+  operationId: "getAppealAdmin"
+  security:
+    - BearerAuth: []
+  summary: "Get appeal detail"
+  description: "Chỉ admin."
+  parameters:
+    - name: "appealId"
+      in: "path"
+      required: true
+      description: "UUID của khiếu nại."
+      schema:
+        type: "string"
+        format: "uuid"
+  responses:
+    "200":
+      description: "Thành công."
+      content:
+        "application/json":
+          schema:
+            type: "object"
+            additionalProperties: false
+            required:
+              - "statusCode"
+              - "code"
+              - "data"
+            properties:
+              statusCode:
+                type: "integer"
+                enum:
+                  - 200
+              code:
+                type: "string"
+                enum:
+                  - "APPEAL_DETAIL_FETCHED"
+              data:
+                $ref: "../../openapi.yaml#/components/schemas/AppealAdminDetailResponseDto"
+          example:
+            statusCode: 200
+            code: "APPEAL_DETAIL_FETCHED"
+            data:
+              id: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+              user:
+                id: "b13d28cf-b1c5-4e78-a54d-017637c47c30"
+                name: "Lê Văn An"
+                email: "an@example.com"
+                role: "landlord"
+                status: "locked"
+              lockReason: "Tin đăng giả"
+              lockedAt: "2026-11-25T03:00:00.000Z"
+              content: "Tôi bị khóa nhầm, phòng đăng là phòng thật của tôi."
+              attachmentCount: 1
+              status: "rejected"
+              createdAt: "2026-11-27T03:00:00.000Z"
+              reviewedAt: "2026-11-28T03:00:00.000Z"
+              attachmentMediaIds:
+                - "7f94255a-2401-49b7-a0a4-88457633c89e"
+              contactEmail: null
+              contactPhone: "0901234567"
+              rejectReason: "Bằng chứng chưa đủ để mở khóa."
+              reviewedBy:
+                id: "7f94255a-2401-49b7-a0a4-88457633c89e"
+                name: "Admin Demo"
+                email: "admin@example.com"
+                role: "admin"
+                status: "active"
+    "401":
+      $ref: "../../openapi.yaml#/components/responses/UnauthorizedError"
+    "403":
+      $ref: "../../openapi.yaml#/components/responses/ForbiddenError"
+    "404":
+      description: "Không tìm thấy khiếu nại."
+      content:
+        "application/json":
+          schema:
+            type: "object"
+            additionalProperties: false
+            required:
+              - "statusCode"
+              - "code"
+            properties:
+              statusCode:
+                type: "integer"
+                enum:
+                  - 404
+              code:
+                type: "string"
+                enum:
+                  - "APPEAL_NOT_FOUND"
+          examples:
+            appeal_not_found:
+              summary: "APPEAL_NOT_FOUND"
+              value:
+                statusCode: 404
+                code: "APPEAL_NOT_FOUND"
+    "500":
+      $ref: "../../openapi.yaml#/components/responses/InternalServerError"
+    "503":
+      $ref: "../../openapi.yaml#/components/responses/AuthUnavailableError"

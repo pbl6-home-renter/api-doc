@@ -1,0 +1,35 @@
+type: "object"
+x-apidog-folder: "Moderation/Response"
+title: "ModerationUserSummaryDto"
+description: "Tóm tắt một tài khoản trong hàng chờ của admin."
+additionalProperties: false
+required:
+  - "id"
+  - "name"
+  - "email"
+  - "role"
+  - "status"
+properties:
+  id:
+    type: "string"
+    format: "uuid"
+  name:
+    type: "string"
+    nullable: true
+  email:
+    type: "string"
+    nullable: true
+  role:
+    type: "string"
+    enum:
+      - "tenant"
+      - "landlord"
+      - "admin"
+    nullable: true
+  status:
+    type: "string"
+    enum:
+      - "pending_verification"
+      - "active"
+      - "locked"
+    nullable: true

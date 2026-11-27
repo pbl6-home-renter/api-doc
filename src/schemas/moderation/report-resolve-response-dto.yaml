@@ -1,0 +1,26 @@
+type: "object"
+x-apidog-folder: "Moderation/Response"
+title: "ReportResolveResponseDto"
+description: "Kết quả xử lý báo cáo."
+additionalProperties: false
+required:
+  - "id"
+  - "status"
+  - "reportedUserId"
+  - "locked"
+properties:
+  id:
+    type: "string"
+    format: "uuid"
+  status:
+    type: "string"
+    enum:
+      - "pending"
+      - "dismissed"
+      - "actioned"
+  reportedUserId:
+    type: "string"
+    format: "uuid"
+  locked:
+    type: "boolean"
+    description: "True khi lần gọi này khóa tài khoản."

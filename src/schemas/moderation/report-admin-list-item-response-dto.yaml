@@ -1,0 +1,52 @@
+type: "object"
+x-apidog-folder: "Moderation/Response"
+title: "ReportAdminListItemResponseDto"
+description: "Một dòng trong hàng chờ báo cáo."
+additionalProperties: false
+required:
+  - "id"
+  - "reporter"
+  - "reportedUser"
+  - "category"
+  - "description"
+  - "evidenceCount"
+  - "status"
+  - "createdAt"
+  - "resolvedAt"
+properties:
+  id:
+    type: "string"
+    format: "uuid"
+  reporter:
+    $ref: "../../openapi.yaml#/components/schemas/ModerationUserSummaryDto"
+  reportedUser:
+    $ref: "../../openapi.yaml#/components/schemas/ModerationUserSummaryDto"
+  category:
+    type: "string"
+    enum:
+      - "fraud"
+      - "fake_listing"
+      - "harassment"
+      - "spam"
+      - "impersonation"
+      - "inappropriate_content"
+      - "other"
+    description: "6 loại gợi ý lý do khóa của P13-09 và `other`."
+  description:
+    type: "string"
+  evidenceCount:
+    type: "integer"
+    minimum: 0
+  status:
+    type: "string"
+    enum:
+      - "pending"
+      - "dismissed"
+      - "actioned"
+  createdAt:
+    type: "string"
+    format: "date-time"
+  resolvedAt:
+    type: "string"
+    format: "date-time"
+    nullable: true

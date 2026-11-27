@@ -1,0 +1,60 @@
+get:
+  tags:
+    - "Moderation"
+  x-apidog-folder: "Moderation"
+  x-apidog-status: "released"
+  operationId: "getMyCurrentAppeal"
+  security:
+    - BearerAuth: []
+  summary: "Get lock reason and current appeal"
+  description: "Cho tài khoản `tenant`/`landlord`, **kể cả khi đang bị khóa** (`@AllowLocked`). Trả lý do khóa và khiếu nại mới nhất của kỳ khóa hiện tại (xác định bằng `lockedAt`).\n\n- `canSubmit = false` khi đang có khiếu nại `pending`, khi khiếu nại vừa bị từ chối chưa đủ **7 ngày** (`nextSubmitAt`), hoặc khi tài khoản không bị khóa.\n- Màn hình hiển thị câu \"thường xử lý trong 3 ngày làm việc\"; hệ thống không có hạn xử lý (P13-D109)."
+  responses:
+    "200":
+      description: "Thành công."
+      content:
+        "application/json":
+          schema:
+            type: "object"
+            additionalProperties: false
+            required:
+              - "statusCode"
+              - "code"
+              - "data"
+            properties:
+              statusCode:
+                type: "integer"
+                enum:
+                  - 200
+              code:
+                type: "string"
+                enum:
+                  - "APPEAL_CURRENT_FETCHED"
+              data:
+                $ref: "../../openapi.yaml#/components/schemas/AppealCurrentResponseDto"
+          example:
+            statusCode: 200
+            code: "APPEAL_CURRENT_FETCHED"
+            data:
+              lockReason: "Tin đăng giả"
+              lockedAt: "2026-11-25T03:00:00.000Z"
+              appeal:
+                id: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                status: "pending"
+                content: "Tôi bị khóa nhầm, phòng đăng là phòng thật của tôi."
+                attachmentMediaIds:
+                  - "7f94255a-2401-49b7-a0a4-88457633c89e"
+                contactEmail: null
+                contactPhone: "0901234567"
+                rejectReason: null
+                createdAt: "2026-11-27T03:00:00.000Z"
+                reviewedAt: null
+              canSubmit: false
+              nextSubmitAt: null
+    "401":
+      $ref: "../../openapi.yaml#/components/responses/UnauthorizedError"
+    "403":
+      $ref: "../../openapi.yaml#/components/responses/ForbiddenError"
+    "500":
+      $ref: "../../openapi.yaml#/components/responses/InternalServerError"
+    "503":
+      $ref: "../../openapi.yaml#/components/responses/AuthUnavailableError"

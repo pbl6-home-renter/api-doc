@@ -1,0 +1,23 @@
+type: "object"
+x-apidog-folder: "Moderation/Request"
+title: "ReportResolveRequestDto"
+description: "Xử lý báo cáo."
+additionalProperties: false
+required:
+  - "action"
+properties:
+  action:
+    type: "string"
+    enum:
+      - "dismiss"
+      - "lock"
+  note:
+    type: "string"
+    maxLength: 500
+    nullable: true
+  lockReason:
+    type: "string"
+    minLength: 1
+    maxLength: 500
+    nullable: true
+    description: "Bắt buộc khi `action = lock`."
