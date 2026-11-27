@@ -10,7 +10,9 @@ post:
   description: |-
     Note rỗng hoặc chỉ có khoảng trắng trả 422 NOTE_REQUIRED (domain validation).
     Building không tồn tại/đã xóa trả 404 RESOURCE_NOT_FOUND; không còn pending trả 409 BUILDING_NOT_PENDING.
-    Cập nhật Building và ghi outbox building.rejected trong cùng transaction; relay publish sau commit, chưa gửi notification cho landlord.
+    Cập nhật Building và ghi outbox building.rejected cùng notification.requested trong cùng transaction.
+    Notification loại system gửi riêng cho landlord của tòa (trừ khi landlord là admin thao tác), với messageKey building.rejected và snapshot buildingId, buildingName, note.
+    Relay publish sau commit; Community lưu notification cho người nhận. Socket/push là best-effort, không phải điều kiện để API review thành công.
     
     **Sequence diagram**
     
@@ -24,6 +26,10 @@ post:
         participant C as BuildingController
         participant Bus as CQRS CommandBus
         participant H as Application handler
+        participant DB as Tenancy DB
+        participant Relay as Outbox relay
+        participant MQ as RabbitMQ
+        participant Community as community-service
         Client->>GW: POST /api/v1/buildings/{buildingId}/reject
         GW->>GW: Validate bearer token for protected route
         GW->>S: Proxy original HTTP request
@@ -32,11 +38,23 @@ post:
         S->>C: Invoke postBuildingsBuildingidReject
         C->>Bus: Execute command for postBuildingsBuildingidReject
         Bus->>H: Dispatch command handler
+        H->>DB: Begin transaction, findByIdForUpdate
+        H->>H: Validate review transition and note
+        H->>DB: Save Building + outbox building.rejected
+        opt Landlord differs from acting admin
+            H->>DB: Append outbox notification.requested (same transaction)
+        end
+        H->>DB: Commit transaction
         H-->>Bus: Return use-case result
         Bus-->>C: Result
         C-->>S: Return documented response
         S-->>GW: HTTP status and response body
         GW-->>Client: Forward HTTP response
+        Note over Relay,Community: Asynchronous delivery after commit
+        Relay->>DB: Claim committed outbox messages
+        Relay-->>MQ: Publish building.rejected and notification.requested (if any)
+        MQ-->>Community: Deliver notification.requested
+        Community->>Community: Inbox dedup + save notification for landlord
     ```
   parameters:
   - name: buildingId
