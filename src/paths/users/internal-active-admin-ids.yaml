@@ -1,0 +1,49 @@
+get:
+  tags:
+    - Internal
+  operationId: getInternalActiveAdminIds
+  summary: List IDs of active admins for building review notifications
+  description: |-
+    Internal service-to-service endpoint used by Tenancy before the building creation transaction.
+    Returns every non-deleted admin whose status is `active`, ordered by ID. An empty array is valid.
+    The endpoint requires the `x-service-token` header and is not exposed to end users.
+  security:
+    - ServiceTokenAuth: []
+  responses:
+    '200':
+      description: Active admin IDs.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [statusCode, code, data]
+            properties:
+              statusCode:
+                type: integer
+                enum: [200]
+              code:
+                type: string
+                enum: [USER_ACTIVE_ADMIN_IDS_FETCHED]
+              data:
+                type: object
+                additionalProperties: false
+                required: [ids]
+                properties:
+                  ids:
+                    type: array
+                    items:
+                      type: string
+                      format: uuid
+          example:
+            statusCode: 200
+            code: USER_ACTIVE_ADMIN_IDS_FETCHED
+            data:
+              ids:
+                - 3fa85f64-5717-4562-b3fc-2c963f66afa6
+    '401':
+      $ref: ../../openapi.yaml#/components/responses/UnauthorizedError
+    '403':
+      $ref: ../../openapi.yaml#/components/responses/ForbiddenError
+    '500':
+      $ref: ../../openapi.yaml#/components/responses/InternalServerError

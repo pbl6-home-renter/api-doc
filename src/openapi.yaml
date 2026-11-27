@@ -18,6 +18,8 @@ tags:
     description: Quản lý xác thực và phiên làm việc
   - name: User
     description: Hồ sơ người dùng, phân quyền và quản trị
+  - name: Internal
+    description: API nội bộ giữa các service
   - name: Property
     description: Tòa nhà, phòng trọ và phòng yêu thích
   - name: Contract
@@ -63,6 +65,8 @@ paths:
     $ref: './paths/users/users.yaml'
   /users/directory:
     $ref: './paths/users/users-directory.yaml'
+  /internal/users/admins/active-ids:
+    $ref: './paths/users/internal-active-admin-ids.yaml'
   /users/stats:
     $ref: './paths/users/users-stats.yaml'
   /users/{userId}:
@@ -1251,6 +1255,11 @@ components:
             statusCode: 500
             code: INTERNAL_SERVER_ERROR
   securitySchemes:
+    ServiceTokenAuth:
+      type: apiKey
+      in: header
+      name: x-service-token
+      description: Shared service token for internal calls.
     BearerAuth:
       type: http
       scheme: bearer

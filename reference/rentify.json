@@ -26,6 +26,10 @@
       "description": "Hồ sơ người dùng, phân quyền và quản trị"
     },
     {
+      "name": "Internal",
+      "description": "API nội bộ giữa các service"
+    },
+    {
       "name": "Property",
       "description": "Tòa nhà, phòng trọ và phòng yêu thích"
     },
@@ -3741,6 +3745,87 @@
         }
       }
     },
+    "/internal/users/admins/active-ids": {
+      "get": {
+        "tags": [
+          "Internal"
+        ],
+        "operationId": "getInternalActiveAdminIds",
+        "summary": "List IDs of active admins for building review notifications",
+        "description": "Internal service-to-service endpoint used by Tenancy before the building creation transaction.\nReturns every non-deleted admin whose status is `active`, ordered by ID. An empty array is valid.\nThe endpoint requires the `x-service-token` header and is not exposed to end users.",
+        "security": [
+          {
+            "ServiceTokenAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Active admin IDs.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code",
+                    "data"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        200
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "USER_ACTIVE_ADMIN_IDS_FETCHED"
+                      ]
+                    },
+                    "data": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "required": [
+                        "ids"
+                      ],
+                      "properties": {
+                        "ids": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "format": "uuid"
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "statusCode": 200,
+                  "code": "USER_ACTIVE_ADMIN_IDS_FETCHED",
+                  "data": {
+                    "ids": [
+                      "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "403": {
+            "$ref": "#/components/responses/ForbiddenError"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
     "/users/stats": {
       "get": {
         "tags": [
@@ -6581,7 +6666,7 @@
           }
         ],
         "summary": "Create building for approval",
-        "description": "Client không gửi `landlordId`, `status`, `district`, `latitude` hoặc `longitude`.\nBackend geocode từ `address` + `ward` + `province` qua TrackAsia trước transaction, không ghi đè địa chỉ.\nGeocode lỗi thì không tạo Building. Building và outbox `building.created` được ghi trong cùng transaction;\nrelay publish sau khi commit. Trả `201 BUILDING_CREATED`.\n\nBody chỉ gồm `name`, `province`, `ward`, `address`; trường ngoài contract trả `422 UNEXPECTED_FIELD`.\nLỗi: `401 UNAUTHORIZED`, `403 FORBIDDEN` / `ACCOUNT_LOCKED`,\n`422 VALIDATION_FAILED` / `UNEXPECTED_FIELD` / `GEOCODING_FAILED`,\n`503 AUTH_UNAVAILABLE` / `GEOCODING_UNAVAILABLE`.\n\n**Sequence diagram**\n\n```mermaid\nsequenceDiagram\n    autonumber\n    actor Client\n    participant GW as API Gateway\n    participant S as Tenancy-Service\n    participant Guard as JWT/access guards\n    participant C as BuildingController\n    participant Bus as CQRS CommandBus\n    participant H as Application handler\n    Client->>GW: POST /api/v1/buildings\n    GW->>GW: Validate bearer token for protected route\n    GW->>S: Proxy original HTTP request\n    S->>Guard: Validate JWT, account state and route access\n    Guard-->>C: Continue with authenticated context\n    S->>C: Invoke postBuildings\n    C->>Bus: Execute command for postBuildings\n    Bus->>H: Dispatch command handler\n    H-->>Bus: Return use-case result\n    Bus-->>C: Result\n    C-->>S: Return documented response\n    S-->>GW: HTTP status and response body\n    GW-->>Client: Forward HTTP response\n```\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-27 | 🔴 BREAKING | added the new `UNEXPECTED_FIELD` enum value to the `code` response property for the response status `422` | [#22](https://github.com/pbl6-home-renter/api-doc/pull/22) |\n| 2026-10-27 | 🟡 NEEDS_REVIEW | removed the request property `amenities` | [#22](https://github.com/pbl6-home-renter/api-doc/pull/22) |\n| 2026-10-27 | 🟡 NEEDS_REVIEW | removed the request property `description` | [#22](https://github.com/pbl6-home-renter/api-doc/pull/22) |\n| 2026-10-27 | 🟡 NEEDS_REVIEW | removed the request property `district` | [#22](https://github.com/pbl6-home-renter/api-doc/pull/22) |\n| 2026-10-27 | 🟡 NEEDS_REVIEW | removed the request property `ownershipCertificateMediaIds` | [#22](https://github.com/pbl6-home-renter/api-doc/pull/22) |\n| 2026-10-27 | 🟡 NEEDS_REVIEW | removed the request property `totalFloors` | [#22](https://github.com/pbl6-home-renter/api-doc/pull/22) |\n| 2026-10-27 | 🟢 NON_BREAKING | the optional response header `location` removed for the status `201` | [#22](https://github.com/pbl6-home-renter/api-doc/pull/22) |\n| 2026-10-26 | 🔴 BREAKING | added the new `GEOCODING_FAILED` enum value to the `code` response property for the response status `422` | [#19](https://github.com/pbl6-home-renter/api-doc/pull/19) |\n| 2026-10-26 | 🔴 BREAKING | added the new `GEOCODING_UNAVAILABLE` enum value to the `code` response property for the response status `503` | [#19](https://github.com/pbl6-home-renter/api-doc/pull/19) |\n| 2026-10-26 | 🟢 NON_BREAKING | the response property `data/latitude` became not nullable for the status `201` | [#19](https://github.com/pbl6-home-renter/api-doc/pull/19) |\n| 2026-10-26 | 🟢 NON_BREAKING | the response property `data/longitude` became not nullable for the status `201` | [#19](https://github.com/pbl6-home-renter/api-doc/pull/19) |\n| 2026-10-26 | 🟢 NON_BREAKING | the response property `data/latitude` became required for the status `201` | [#19](https://github.com/pbl6-home-renter/api-doc/pull/19) |\n| 2026-10-26 | 🟢 NON_BREAKING | the response property `data/longitude` became required for the status `201` | [#19](https://github.com/pbl6-home-renter/api-doc/pull/19) |\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
+        "description": "Client không gửi `landlordId`, `status`, `district`, `latitude` hoặc `longitude`.\nBackend geocode từ `address` + `ward` + `province` qua TrackAsia trước transaction, không ghi đè địa chỉ.\nGeocode lỗi thì không tạo Building. Trước transaction, Tenancy gọi Identity để lấy ID của tất cả admin `active`\nlàm người nhận thông báo `building.pending_review`. Danh sách người nhận được tra cứu theo trạng thái hiện tại,\nkhông hardcode ID hay giới hạn một admin.\nBuilding và outbox `building.created` được ghi trong cùng transaction. Khi lấy được người nhận,\nTenancy cũng ghi outbox `notification.requested` trong transaction đó: `recipientUserIds` là các admin `active`,\n`notification.type` là `system`, và `notification.data` gồm `messageKey: building.pending_review`,\n`buildingId`, `buildingName`, `landlordName`. Web mở `/admin/buildings/{id}` khi bấm thông báo.\nRelay publish các event sau commit. Trả `201 BUILDING_CREATED`.\n\nNếu Identity lỗi trong bước lấy admin, Tenancy vẫn tạo Building, ghi warning và bỏ qua thông báo cho lần tạo đó;\nkhông retry hay tự gửi bù. Response HTTP vẫn là `201 BUILDING_CREATED` khi tạo tòa thành công.\nTra cứu admin qua `GET /internal/users/admins/active-ids` với service token;\nresponse `data: { ids: uuid[] }` được mô tả trong contract nội bộ. Nếu có admin nhận thông báo,\nTenancy còn tra tên landlord qua `GET /internal/users?ids={landlordId}` trước transaction;\nlỗi tra cứu này cũng áp dụng cách bỏ qua thông báo như trên.\n\nBody chỉ gồm `name`, `province`, `ward`, `address`; trường ngoài contract trả `422 UNEXPECTED_FIELD`.\nLỗi: `401 UNAUTHORIZED`, `403 FORBIDDEN` / `ACCOUNT_LOCKED`,\n`422 VALIDATION_FAILED` / `UNEXPECTED_FIELD` / `GEOCODING_FAILED`,\n`503 AUTH_UNAVAILABLE` / `GEOCODING_UNAVAILABLE`.\n\n**Sequence diagram**\n\n```mermaid\nsequenceDiagram\n    autonumber\n    actor Client\n    participant GW as API Gateway\n    participant S as Tenancy-Service\n    participant Guard as JWT/access guards\n    participant C as BuildingController\n    participant Bus as CQRS CommandBus\n    participant H as Application handler\n    participant ID as Identity-Service\n    participant DB as Tenancy DB/outbox\n    Client->>GW: POST /api/v1/buildings\n    GW->>GW: Validate bearer token for protected route\n    GW->>S: Proxy original HTTP request\n    S->>Guard: Validate JWT, account state and route access\n    Guard-->>C: Continue with authenticated context\n    S->>C: Invoke postBuildings\n    C->>Bus: Execute command for postBuildings\n    Bus->>H: Dispatch command handler\n    H->>H: Geocode address before transaction\n    H->>ID: GET /internal/users/admins/active-ids (service token)\n    alt Identity lookups respond and active admins exist\n        ID-->>H: Admin recipient IDs\n        H->>ID: GET /internal/users?ids=landlordId\n        ID-->>H: Landlord display name\n        H->>DB: Transaction: create Building + building.created + notification.requested\n    else No active admins\n        ID-->>H: Empty admin IDs\n        H->>DB: Transaction: create Building + building.created\n    else Identity lookup fails\n        ID--xH: Lookup fails\n        H->>H: Log warning; skip notification\n        H->>DB: Transaction: create Building + building.created\n    end\n    H-->>Bus: Return use-case result\n    Bus-->>C: Result\n    C-->>S: Return documented response\n    S-->>GW: HTTP status and response body\n    GW-->>Client: Forward HTTP response\n```\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-27 | 🔴 BREAKING | added the new `UNEXPECTED_FIELD` enum value to the `code` response property for the response status `422` | [#22](https://github.com/pbl6-home-renter/api-doc/pull/22) |\n| 2026-10-27 | 🟡 NEEDS_REVIEW | removed the request property `amenities` | [#22](https://github.com/pbl6-home-renter/api-doc/pull/22) |\n| 2026-10-27 | 🟡 NEEDS_REVIEW | removed the request property `description` | [#22](https://github.com/pbl6-home-renter/api-doc/pull/22) |\n| 2026-10-27 | 🟡 NEEDS_REVIEW | removed the request property `district` | [#22](https://github.com/pbl6-home-renter/api-doc/pull/22) |\n| 2026-10-27 | 🟡 NEEDS_REVIEW | removed the request property `ownershipCertificateMediaIds` | [#22](https://github.com/pbl6-home-renter/api-doc/pull/22) |\n| 2026-10-27 | 🟡 NEEDS_REVIEW | removed the request property `totalFloors` | [#22](https://github.com/pbl6-home-renter/api-doc/pull/22) |\n| 2026-10-27 | 🟢 NON_BREAKING | the optional response header `location` removed for the status `201` | [#22](https://github.com/pbl6-home-renter/api-doc/pull/22) |\n| 2026-10-26 | 🔴 BREAKING | added the new `GEOCODING_FAILED` enum value to the `code` response property for the response status `422` | [#19](https://github.com/pbl6-home-renter/api-doc/pull/19) |\n| 2026-10-26 | 🔴 BREAKING | added the new `GEOCODING_UNAVAILABLE` enum value to the `code` response property for the response status `503` | [#19](https://github.com/pbl6-home-renter/api-doc/pull/19) |\n| 2026-10-26 | 🟢 NON_BREAKING | the response property `data/latitude` became not nullable for the status `201` | [#19](https://github.com/pbl6-home-renter/api-doc/pull/19) |\n| 2026-10-26 | 🟢 NON_BREAKING | the response property `data/longitude` became not nullable for the status `201` | [#19](https://github.com/pbl6-home-renter/api-doc/pull/19) |\n| 2026-10-26 | 🟢 NON_BREAKING | the response property `data/latitude` became required for the status `201` | [#19](https://github.com/pbl6-home-renter/api-doc/pull/19) |\n| 2026-10-26 | 🟢 NON_BREAKING | the response property `data/longitude` became required for the status `201` | [#19](https://github.com/pbl6-home-renter/api-doc/pull/19) |\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "requestBody": {
           "required": true,
           "content": {
@@ -37539,6 +37624,12 @@
       }
     },
     "securitySchemes": {
+      "ServiceTokenAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "x-service-token",
+        "description": "Shared service token for internal calls."
+      },
       "BearerAuth": {
         "type": "http",
         "scheme": "bearer",

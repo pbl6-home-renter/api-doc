@@ -197,8 +197,21 @@ post:
   description: |-
     Client không gửi `landlordId`, `status`, `district`, `latitude` hoặc `longitude`.
     Backend geocode từ `address` + `ward` + `province` qua TrackAsia trước transaction, không ghi đè địa chỉ.
-    Geocode lỗi thì không tạo Building. Building và outbox `building.created` được ghi trong cùng transaction;
-    relay publish sau khi commit. Trả `201 BUILDING_CREATED`.
+    Geocode lỗi thì không tạo Building. Trước transaction, Tenancy gọi Identity để lấy ID của tất cả admin `active`
+    làm người nhận thông báo `building.pending_review`. Danh sách người nhận được tra cứu theo trạng thái hiện tại,
+    không hardcode ID hay giới hạn một admin.
+    Building và outbox `building.created` được ghi trong cùng transaction. Khi lấy được người nhận,
+    Tenancy cũng ghi outbox `notification.requested` trong transaction đó: `recipientUserIds` là các admin `active`,
+    `notification.type` là `system`, và `notification.data` gồm `messageKey: building.pending_review`,
+    `buildingId`, `buildingName`, `landlordName`. Web mở `/admin/buildings/{id}` khi bấm thông báo.
+    Relay publish các event sau commit. Trả `201 BUILDING_CREATED`.
+
+    Nếu Identity lỗi trong bước lấy admin, Tenancy vẫn tạo Building, ghi warning và bỏ qua thông báo cho lần tạo đó;
+    không retry hay tự gửi bù. Response HTTP vẫn là `201 BUILDING_CREATED` khi tạo tòa thành công.
+    Tra cứu admin qua `GET /internal/users/admins/active-ids` với service token;
+    response `data: { ids: uuid[] }` được mô tả trong contract nội bộ. Nếu có admin nhận thông báo,
+    Tenancy còn tra tên landlord qua `GET /internal/users?ids={landlordId}` trước transaction;
+    lỗi tra cứu này cũng áp dụng cách bỏ qua thông báo như trên.
     
     Body chỉ gồm `name`, `province`, `ward`, `address`; trường ngoài contract trả `422 UNEXPECTED_FIELD`.
     Lỗi: `401 UNAUTHORIZED`, `403 FORBIDDEN` / `ACCOUNT_LOCKED`,
@@ -217,6 +230,8 @@ post:
         participant C as BuildingController
         participant Bus as CQRS CommandBus
         participant H as Application handler
+        participant ID as Identity-Service
+        participant DB as Tenancy DB/outbox
         Client->>GW: POST /api/v1/buildings
         GW->>GW: Validate bearer token for protected route
         GW->>S: Proxy original HTTP request
@@ -225,6 +240,21 @@ post:
         S->>C: Invoke postBuildings
         C->>Bus: Execute command for postBuildings
         Bus->>H: Dispatch command handler
+        H->>H: Geocode address before transaction
+        H->>ID: GET /internal/users/admins/active-ids (service token)
+        alt Identity lookups respond and active admins exist
+            ID-->>H: Admin recipient IDs
+            H->>ID: GET /internal/users?ids=landlordId
+            ID-->>H: Landlord display name
+            H->>DB: Transaction: create Building + building.created + notification.requested
+        else No active admins
+            ID-->>H: Empty admin IDs
+            H->>DB: Transaction: create Building + building.created
+        else Identity lookup fails
+            ID--xH: Lookup fails
+            H->>H: Log warning; skip notification
+            H->>DB: Transaction: create Building + building.created
+        end
         H-->>Bus: Return use-case result
         Bus-->>C: Result
         C-->>S: Return documented response
