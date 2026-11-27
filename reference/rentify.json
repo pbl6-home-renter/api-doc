@@ -58,6 +58,10 @@
       "description": "Thông báo người dùng và thiết bị push FCM"
     },
     {
+      "name": "Moderation",
+      "description": "Khiếu nại khóa tài khoản và báo cáo vi phạm (P13-11)"
+    },
+    {
       "name": "Administrative Units",
       "description": "Vietnamese administrative geography reference data"
     }
@@ -2050,6 +2054,8 @@
                     "phone": "0901234567",
                     "role": "tenant",
                     "status": "active",
+                    "lockReason": null,
+                    "lockedAt": null,
                     "avatarUrl": null,
                     "payoutAccount": null
                   }
@@ -5513,7 +5519,7 @@
           }
         ],
         "summary": "Request presigned upload URL",
-        "description": "**Luồng upload**\n\n1. `POST /media/presign-upload` → nhận `id`, `uploadUrl`, `requiredHeaders`, `expiresIn`.\n2. `PUT {uploadUrl}` với body là file (binary) và đúng `requiredHeaders` (không gửi `Authorization`).\n3. `POST /media/{id}/complete-upload` → server kiểm tra object trên storage và trả `url` để đọc.\n\nLiên kết file với thực thể cha được xác định ngay lúc presign qua `ownerType` + `ownerId` + `purpose`; không có bước \"gắn\" riêng. Các API nghiệp vụ khác (ví dụ `photoMediaIds` khi tạo phòng) nhận `id` của Media đã complete.\n\n**Quy tắc theo `purpose`** (admin luôn được upload; người upload luôn đọc được file của mình)\n\n| purpose | ownerType hợp lệ | MIME cho phép | Hiển thị | Ai được upload | Ghi chú |\n|---|---|---|---|---|---|\n| `avatar` | `user` | jpeg, png, webp | public | chính user đó | 1 file/owner, file mới thay file cũ |\n| `cover_photo` | `building`, `room` | jpeg, png, webp | public | landlord sở hữu | 1 file/owner, file mới thay file cũ |\n| `gallery_photo` | `building`, `room` | jpeg, png, webp | public | landlord sở hữu | |\n| `ownership_proof` | `building` | jpeg, png, webp, pdf | private | landlord sở hữu | không xóa được khi building `approved` |\n| `cccd_front`, `cccd_back` | `user`, `contract_member` | jpeg, png, webp | private | chính user, thành viên HĐ, landlord sở hữu | |\n| `contract_template` | `contract` | pdf | private | landlord sở hữu | |\n| `contract_signed` | `contract` | jpeg, png, webp, pdf | private | landlord sở hữu | không xóa được khi HĐ `signed/active/suspended/expired/terminated` |\n| `meter_reading_evidence` | `meter_reading` | jpeg, png, webp | private | landlord sở hữu; tenant của HĐ chỉ với `captureSource = camera_direct` | |\n| `issue_photo` | `issue_report` | jpeg, png, webp, mp4, webm | private | người trong HĐ, landlord sở hữu | tối đa 5 file/issue; chỉ upload khi issue `open` hoặc `in_progress` |\n| `chat_attachment` | `conversation` | jpeg, png, webp, pdf, mp4, webm | private | upload: active member; download: member allowed to read the message that references the media | Community verifies active membership on upload and message linkage on read |\n| `conversation_avatar` | `conversation` | jpeg, png, webp | private | active member may upload | Community validates active group admin and media ownership on metadata update; old media remains valid so uploading a replacement cannot break the current avatar before the metadata update commits |\n\nKích thước tối đa 10 MiB cho mọi purpose. `issue_photo` và `chat_attachment` hỗ trợ video MP4/WebM; không hỗ trợ SVG/HTML.\n\nLỗi nghiệp vụ: 403 FORBIDDEN (không có quyền với thực thể cha, hoặc thực thể cha không tồn tại) · 422 INVALID_PURPOSE (`purpose` không hợp lệ với `ownerType`) · 422 MEDIA_TYPE_NOT_ALLOWED (MIME, đuôi file hoặc kích thước không hợp lệ) · 503 SERVICE_UNAVAILABLE.\n\n**Sequence diagram**\n\n```mermaid\nsequenceDiagram\n    autonumber\n    actor Client\n    participant GW as API Gateway\n    participant S as Identity-Service\n    participant Guard as JWT/access guards\n    participant C as MediaController\n    participant Bus as CQRS CommandBus\n    participant H as Application handler\n    Client->>GW: POST /api/v1/media/presign-upload\n    GW->>GW: Validate bearer token for protected route\n    GW->>S: Proxy original HTTP request\n    S->>Guard: Validate JWT, account state and route access\n    Guard-->>C: Continue with authenticated context\n    S->>C: Invoke postMediaPresignUpload\n    C->>Bus: Execute command for postMediaPresignUpload\n    Bus->>H: Dispatch command handler\n    H-->>Bus: Return use-case result\n    Bus-->>C: Result\n    C-->>S: Return documented response\n    S-->>GW: HTTP status and response body\n    GW-->>Client: Forward HTTP response\n```\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-11-18 | 🔴 BREAKING | added the new `MEDIA_FILE_LIMIT_EXCEEDED` enum value to the `code` response property for the response status `422` | [0eaf2d9](https://github.com/pbl6-home-renter/api-doc/commit/0eaf2d9dde2fce83978f91e24a25a1ef6b6f8f76) |\n| 2026-11-13 | 🔴 BREAKING | added the new `video/mp4` enum value to the `data/requiredHeaders/Content-Type` response property for the response status `201` | [#59](https://github.com/pbl6-home-renter/api-doc/pull/59) |\n| 2026-11-13 | 🔴 BREAKING | added the new `video/webm` enum value to the `data/requiredHeaders/Content-Type` response property for the response status `201` | [#59](https://github.com/pbl6-home-renter/api-doc/pull/59) |\n| 2026-11-13 | 🟢 NON_BREAKING | added the new `video/mp4` enum value to the request property `contentType` | [#59](https://github.com/pbl6-home-renter/api-doc/pull/59) |\n| 2026-11-13 | 🟢 NON_BREAKING | added the new `video/webm` enum value to the request property `contentType` | [#59](https://github.com/pbl6-home-renter/api-doc/pull/59) |\n| 2026-11-02 | 🟢 NON_BREAKING | added the new `conversation_avatar` enum value to the request property `purpose` | [#44](https://github.com/pbl6-home-renter/api-doc/pull/44) |\n| 2026-11-02 | 🟢 NON_BREAKING | added the new `conversation` enum value to the request property `ownerType` | [#36](https://github.com/pbl6-home-renter/api-doc/pull/36) |\n| 2026-10-30 | 🔴 BREAKING | the `fileName` request property's maxLength was set to `255` | [#27](https://github.com/pbl6-home-renter/api-doc/pull/27) |\n| 2026-10-30 | 🔴 BREAKING | the `size` request property's max was set to `10485760.00` | [#27](https://github.com/pbl6-home-renter/api-doc/pull/27) |\n| 2026-10-30 | 🔴 BREAKING | the `fileName` request property's minLength was set to `1` | [#27](https://github.com/pbl6-home-renter/api-doc/pull/27) |\n| 2026-10-30 | 🔴 BREAKING | the `size` request property's min was set to `1.00` | [#27](https://github.com/pbl6-home-renter/api-doc/pull/27) |\n| 2026-10-30 | 🔴 BREAKING | removed the enum constraint from the `data/expiresIn` response property for the response status `201` | [#27](https://github.com/pbl6-home-renter/api-doc/pull/27) |\n| 2026-10-30 | 🔴 BREAKING | added the new `SERVICE_UNAVAILABLE` enum value to the `code` response property for the response status `503` | [#27](https://github.com/pbl6-home-renter/api-doc/pull/27) |\n| 2026-10-30 | 🔴 BREAKING | added the new `UNEXPECTED_FIELD` enum value to the `code` response property for the response status `422` | [#27](https://github.com/pbl6-home-renter/api-doc/pull/27) |\n| 2026-10-30 | 🟢 NON_BREAKING | the `data/expiresIn` response property's min was set to `1.00` for the response status `201` | [#27](https://github.com/pbl6-home-renter/api-doc/pull/27) |\n| 2026-10-30 | 🟢 NON_BREAKING | the `data/uploadUrl` response's property `format` was narrowed from `none` to `uri` for status `201` | [#27](https://github.com/pbl6-home-renter/api-doc/pull/27) |\n",
+        "description": "**Luồng upload**\n\n1. `POST /media/presign-upload` → nhận `id`, `uploadUrl`, `requiredHeaders`, `expiresIn`.\n2. `PUT {uploadUrl}` với body là file (binary) và đúng `requiredHeaders` (không gửi `Authorization`).\n3. `POST /media/{id}/complete-upload` → server kiểm tra object trên storage và trả `url` để đọc.\n\nLiên kết file với thực thể cha được xác định ngay lúc presign qua `ownerType` + `ownerId` + `purpose`; không có bước \"gắn\" riêng. Các API nghiệp vụ khác (ví dụ `photoMediaIds` khi tạo phòng) nhận `id` của Media đã complete.\n\n**Quy tắc theo `purpose`** (admin luôn được upload; người upload luôn đọc được file của mình)\n\n| purpose | ownerType hợp lệ | MIME cho phép | Hiển thị | Ai được upload | Ghi chú |\n|---|---|---|---|---|---|\n| `avatar` | `user` | jpeg, png, webp | public | chính user đó | 1 file/owner, file mới thay file cũ |\n| `cover_photo` | `building`, `room` | jpeg, png, webp | public | landlord sở hữu | 1 file/owner, file mới thay file cũ |\n| `gallery_photo` | `building`, `room` | jpeg, png, webp | public | landlord sở hữu | |\n| `ownership_proof` | `building` | jpeg, png, webp, pdf | private | landlord sở hữu | không xóa được khi building `approved` |\n| `cccd_front`, `cccd_back` | `user`, `contract_member` | jpeg, png, webp | private | chính user, thành viên HĐ, landlord sở hữu | |\n| `contract_template` | `contract` | pdf | private | landlord sở hữu | |\n| `contract_signed` | `contract` | jpeg, png, webp, pdf | private | landlord sở hữu | không xóa được khi HĐ `signed/active/suspended/expired/terminated` |\n| `meter_reading_evidence` | `meter_reading` | jpeg, png, webp | private | landlord sở hữu; tenant của HĐ chỉ với `captureSource = camera_direct` | |\n| `issue_photo` | `issue_report` | jpeg, png, webp, mp4, webm | private | người trong HĐ, landlord sở hữu | tối đa 5 file/issue; chỉ upload khi issue `open` hoặc `in_progress` |\n| `chat_attachment` | `conversation` | jpeg, png, webp, pdf, mp4, webm | private | upload: active member; download: member allowed to read the message that references the media | Community verifies active membership on upload and message linkage on read |\n| `conversation_avatar` | `conversation` | jpeg, png, webp | private | active member may upload | Community validates active group admin and media ownership on metadata update; old media remains valid so uploading a replacement cannot break the current avatar before the metadata update commits |\n| `appeal_attachment` | `user` (self) | jpeg, png, webp, pdf | private | owner only; **also allowed while the account is locked** (P13-D109) | Attached to `POST /me/appeals`; admins read it through the admin bypass |\n| `report_evidence` | `user` (self) | jpeg, png, webp | private | owner only | Attached to `POST /reports`; admins read it through the admin bypass |\n\nKích thước tối đa 10 MiB cho mọi purpose. `issue_photo` và `chat_attachment` hỗ trợ video MP4/WebM; không hỗ trợ SVG/HTML.\n\nLỗi nghiệp vụ: 403 FORBIDDEN (không có quyền với thực thể cha, hoặc thực thể cha không tồn tại) · 422 INVALID_PURPOSE (`purpose` không hợp lệ với `ownerType`) · 422 MEDIA_TYPE_NOT_ALLOWED (MIME, đuôi file hoặc kích thước không hợp lệ) · 503 SERVICE_UNAVAILABLE.\n\n**Sequence diagram**\n\n```mermaid\nsequenceDiagram\n    autonumber\n    actor Client\n    participant GW as API Gateway\n    participant S as Identity-Service\n    participant Guard as JWT/access guards\n    participant C as MediaController\n    participant Bus as CQRS CommandBus\n    participant H as Application handler\n    Client->>GW: POST /api/v1/media/presign-upload\n    GW->>GW: Validate bearer token for protected route\n    GW->>S: Proxy original HTTP request\n    S->>Guard: Validate JWT, account state and route access\n    Guard-->>C: Continue with authenticated context\n    S->>C: Invoke postMediaPresignUpload\n    C->>Bus: Execute command for postMediaPresignUpload\n    Bus->>H: Dispatch command handler\n    H-->>Bus: Return use-case result\n    Bus-->>C: Result\n    C-->>S: Return documented response\n    S-->>GW: HTTP status and response body\n    GW-->>Client: Forward HTTP response\n```\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-11-18 | 🔴 BREAKING | added the new `MEDIA_FILE_LIMIT_EXCEEDED` enum value to the `code` response property for the response status `422` | [0eaf2d9](https://github.com/pbl6-home-renter/api-doc/commit/0eaf2d9dde2fce83978f91e24a25a1ef6b6f8f76) |\n| 2026-11-13 | 🔴 BREAKING | added the new `video/mp4` enum value to the `data/requiredHeaders/Content-Type` response property for the response status `201` | [#59](https://github.com/pbl6-home-renter/api-doc/pull/59) |\n| 2026-11-13 | 🔴 BREAKING | added the new `video/webm` enum value to the `data/requiredHeaders/Content-Type` response property for the response status `201` | [#59](https://github.com/pbl6-home-renter/api-doc/pull/59) |\n| 2026-11-13 | 🟢 NON_BREAKING | added the new `video/mp4` enum value to the request property `contentType` | [#59](https://github.com/pbl6-home-renter/api-doc/pull/59) |\n| 2026-11-13 | 🟢 NON_BREAKING | added the new `video/webm` enum value to the request property `contentType` | [#59](https://github.com/pbl6-home-renter/api-doc/pull/59) |\n| 2026-11-02 | 🟢 NON_BREAKING | added the new `conversation_avatar` enum value to the request property `purpose` | [#44](https://github.com/pbl6-home-renter/api-doc/pull/44) |\n| 2026-11-02 | 🟢 NON_BREAKING | added the new `conversation` enum value to the request property `ownerType` | [#36](https://github.com/pbl6-home-renter/api-doc/pull/36) |\n| 2026-10-30 | 🔴 BREAKING | the `fileName` request property's maxLength was set to `255` | [#27](https://github.com/pbl6-home-renter/api-doc/pull/27) |\n| 2026-10-30 | 🔴 BREAKING | the `size` request property's max was set to `10485760.00` | [#27](https://github.com/pbl6-home-renter/api-doc/pull/27) |\n| 2026-10-30 | 🔴 BREAKING | the `fileName` request property's minLength was set to `1` | [#27](https://github.com/pbl6-home-renter/api-doc/pull/27) |\n| 2026-10-30 | 🔴 BREAKING | the `size` request property's min was set to `1.00` | [#27](https://github.com/pbl6-home-renter/api-doc/pull/27) |\n| 2026-10-30 | 🔴 BREAKING | removed the enum constraint from the `data/expiresIn` response property for the response status `201` | [#27](https://github.com/pbl6-home-renter/api-doc/pull/27) |\n| 2026-10-30 | 🔴 BREAKING | added the new `SERVICE_UNAVAILABLE` enum value to the `code` response property for the response status `503` | [#27](https://github.com/pbl6-home-renter/api-doc/pull/27) |\n| 2026-10-30 | 🔴 BREAKING | added the new `UNEXPECTED_FIELD` enum value to the `code` response property for the response status `422` | [#27](https://github.com/pbl6-home-renter/api-doc/pull/27) |\n| 2026-10-30 | 🟢 NON_BREAKING | the `data/expiresIn` response property's min was set to `1.00` for the response status `201` | [#27](https://github.com/pbl6-home-renter/api-doc/pull/27) |\n| 2026-10-30 | 🟢 NON_BREAKING | the `data/uploadUrl` response's property `format` was narrowed from `none` to `uri` for status `201` | [#27](https://github.com/pbl6-home-renter/api-doc/pull/27) |\n",
         "requestBody": {
           "required": true,
           "content": {
@@ -23995,6 +24001,7 @@
                 "user.unlocked",
                 "user.updated",
                 "user.deleted",
+                "appeal.rejected",
                 "building.approved",
                 "building.rejected"
               ]
@@ -24380,6 +24387,1768 @@
           },
           "429": {
             "$ref": "#/components/responses/TooManyRequestsError"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          },
+          "503": {
+            "$ref": "#/components/responses/AuthUnavailableError"
+          }
+        }
+      }
+    },
+    "/me/appeals/current": {
+      "get": {
+        "tags": [
+          "Moderation"
+        ],
+        "x-apidog-folder": "Moderation",
+        "x-apidog-status": "released",
+        "operationId": "getMyCurrentAppeal",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "Get lock reason and current appeal",
+        "description": "Cho tài khoản `tenant`/`landlord`, **kể cả khi đang bị khóa** (`@AllowLocked`). Trả lý do khóa và khiếu nại mới nhất của kỳ khóa hiện tại (xác định bằng `lockedAt`).\n\n- `canSubmit = false` khi đang có khiếu nại `pending`, khi khiếu nại vừa bị từ chối chưa đủ **7 ngày** (`nextSubmitAt`), hoặc khi tài khoản không bị khóa.\n- Màn hình hiển thị câu \"thường xử lý trong 3 ngày làm việc\"; hệ thống không có hạn xử lý (P13-D109).",
+        "responses": {
+          "200": {
+            "description": "Thành công.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code",
+                    "data"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        200
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "APPEAL_CURRENT_FETCHED"
+                      ]
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/AppealCurrentResponseDto"
+                    }
+                  }
+                },
+                "example": {
+                  "statusCode": 200,
+                  "code": "APPEAL_CURRENT_FETCHED",
+                  "data": {
+                    "lockReason": "Tin đăng giả",
+                    "lockedAt": "2026-11-25T03:00:00.000Z",
+                    "appeal": {
+                      "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                      "status": "pending",
+                      "content": "Tôi bị khóa nhầm, phòng đăng là phòng thật của tôi.",
+                      "attachmentMediaIds": [
+                        "7f94255a-2401-49b7-a0a4-88457633c89e"
+                      ],
+                      "contactEmail": null,
+                      "contactPhone": "0901234567",
+                      "rejectReason": null,
+                      "createdAt": "2026-11-27T03:00:00.000Z",
+                      "reviewedAt": null
+                    },
+                    "canSubmit": false,
+                    "nextSubmitAt": null
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "403": {
+            "$ref": "#/components/responses/ForbiddenError"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          },
+          "503": {
+            "$ref": "#/components/responses/AuthUnavailableError"
+          }
+        }
+      }
+    },
+    "/me/appeals": {
+      "post": {
+        "tags": [
+          "Moderation"
+        ],
+        "x-apidog-folder": "Moderation",
+        "x-apidog-status": "released",
+        "operationId": "submitMyAppeal",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "Submit an appeal",
+        "description": "Người dùng **đang bị khóa** gửi khiếu nại (P13-D109). Lý do khóa và `lockedAt` được chụp lại vào khiếu nại.\n\n- Mỗi người chỉ có 1 khiếu nại `pending` (`409 APPEAL_ALREADY_PENDING`).\n- Bị từ chối thì 7 ngày sau (tính từ lúc từ chối, trong cùng kỳ khóa) mới gửi lại được (`409 APPEAL_COOLDOWN`).\n- File đính kèm: upload trước bằng `POST /media/presign-upload` với `ownerType=user`, `ownerId=<chính mình>`, `purpose=appeal_attachment`. Tài khoản bị khóa chỉ được presign purpose này.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AppealSubmitRequestDto"
+              },
+              "example": {
+                "content": "Tôi bị khóa nhầm, phòng đăng là phòng thật của tôi.",
+                "attachmentMediaIds": [
+                  "7f94255a-2401-49b7-a0a4-88457633c89e"
+                ],
+                "contactPhone": "0901234567"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Thành công.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code",
+                    "data"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        201
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "APPEAL_SUBMITTED"
+                      ]
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/AppealResponseDto"
+                    }
+                  }
+                },
+                "example": {
+                  "statusCode": 201,
+                  "code": "APPEAL_SUBMITTED",
+                  "data": {
+                    "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                    "status": "pending",
+                    "content": "Tôi bị khóa nhầm, phòng đăng là phòng thật của tôi.",
+                    "attachmentMediaIds": [
+                      "7f94255a-2401-49b7-a0a4-88457633c89e"
+                    ],
+                    "contactEmail": null,
+                    "contactPhone": "0901234567",
+                    "rejectReason": null,
+                    "createdAt": "2026-11-27T03:00:00.000Z",
+                    "reviewedAt": null
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "403": {
+            "$ref": "#/components/responses/ForbiddenError"
+          },
+          "409": {
+            "description": "Không thể gửi khiếu nại lúc này.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        409
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "ACCOUNT_NOT_LOCKED",
+                        "APPEAL_ALREADY_PENDING",
+                        "APPEAL_COOLDOWN"
+                      ]
+                    }
+                  }
+                },
+                "examples": {
+                  "account_not_locked": {
+                    "summary": "ACCOUNT_NOT_LOCKED",
+                    "value": {
+                      "statusCode": 409,
+                      "code": "ACCOUNT_NOT_LOCKED"
+                    }
+                  },
+                  "appeal_already_pending": {
+                    "summary": "APPEAL_ALREADY_PENDING",
+                    "value": {
+                      "statusCode": 409,
+                      "code": "APPEAL_ALREADY_PENDING"
+                    }
+                  },
+                  "appeal_cooldown": {
+                    "summary": "APPEAL_COOLDOWN",
+                    "value": {
+                      "statusCode": 409,
+                      "code": "APPEAL_COOLDOWN"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Dữ liệu không hợp lệ hoặc file đính kèm không phải của người gửi.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        422
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "VALIDATION_FAILED",
+                        "MODERATION_ATTACHMENT_INVALID"
+                      ]
+                    }
+                  }
+                },
+                "examples": {
+                  "validation_failed": {
+                    "summary": "VALIDATION_FAILED",
+                    "value": {
+                      "statusCode": 422,
+                      "code": "VALIDATION_FAILED"
+                    }
+                  },
+                  "moderation_attachment_invalid": {
+                    "summary": "MODERATION_ATTACHMENT_INVALID",
+                    "value": {
+                      "statusCode": 422,
+                      "code": "MODERATION_ATTACHMENT_INVALID"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          },
+          "503": {
+            "$ref": "#/components/responses/AuthUnavailableError"
+          }
+        }
+      }
+    },
+    "/appeals": {
+      "get": {
+        "tags": [
+          "Moderation"
+        ],
+        "x-apidog-folder": "Moderation",
+        "x-apidog-status": "released",
+        "operationId": "getAppealsAdmin",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "List appeals",
+        "description": "Chỉ admin. Lọc theo `status`, `userId`. Lọc `status=pending` thì sắp xếp cũ nhất trước (hàng chờ); còn lại mới nhất trước.",
+        "parameters": [
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "pending",
+                "accepted",
+                "rejected"
+              ]
+            }
+          },
+          {
+            "name": "userId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "pageNo",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Thành công.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code",
+                    "data",
+                    "pagination"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        200
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "APPEAL_LIST_FETCHED"
+                      ]
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/AppealAdminListItemResponseDto"
+                      }
+                    },
+                    "pagination": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "required": [
+                        "type",
+                        "pageNo",
+                        "pageSize",
+                        "totalItems",
+                        "totalPages",
+                        "hasNextPage",
+                        "hasPreviousPage"
+                      ],
+                      "properties": {
+                        "type": {
+                          "type": "string",
+                          "enum": [
+                            "offset"
+                          ]
+                        },
+                        "pageNo": {
+                          "type": "integer",
+                          "minimum": 1
+                        },
+                        "pageSize": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 100
+                        },
+                        "totalItems": {
+                          "type": "integer",
+                          "minimum": 0
+                        },
+                        "totalPages": {
+                          "type": "integer",
+                          "minimum": 0
+                        },
+                        "hasNextPage": {
+                          "type": "boolean"
+                        },
+                        "hasPreviousPage": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "statusCode": 200,
+                  "code": "APPEAL_LIST_FETCHED",
+                  "data": [
+                    {
+                      "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                      "user": {
+                        "id": "b13d28cf-b1c5-4e78-a54d-017637c47c30",
+                        "name": "Lê Văn An",
+                        "email": "an@example.com",
+                        "role": "landlord",
+                        "status": "locked"
+                      },
+                      "lockReason": "Tin đăng giả",
+                      "lockedAt": "2026-11-25T03:00:00.000Z",
+                      "content": "Tôi bị khóa nhầm, phòng đăng là phòng thật của tôi.",
+                      "attachmentCount": 1,
+                      "status": "pending",
+                      "createdAt": "2026-11-27T03:00:00.000Z",
+                      "reviewedAt": null
+                    }
+                  ],
+                  "pagination": {
+                    "type": "offset",
+                    "pageNo": 1,
+                    "pageSize": 20,
+                    "totalItems": 1,
+                    "totalPages": 1,
+                    "hasNextPage": false,
+                    "hasPreviousPage": false
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "403": {
+            "$ref": "#/components/responses/ForbiddenError"
+          },
+          "422": {
+            "$ref": "#/components/responses/ValidationError"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          },
+          "503": {
+            "$ref": "#/components/responses/AuthUnavailableError"
+          }
+        }
+      }
+    },
+    "/appeals/{appealId}": {
+      "get": {
+        "tags": [
+          "Moderation"
+        ],
+        "x-apidog-folder": "Moderation",
+        "x-apidog-status": "released",
+        "operationId": "getAppealAdmin",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "Get appeal detail",
+        "description": "Chỉ admin.",
+        "parameters": [
+          {
+            "name": "appealId",
+            "in": "path",
+            "required": true,
+            "description": "UUID của khiếu nại.",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Thành công.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code",
+                    "data"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        200
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "APPEAL_DETAIL_FETCHED"
+                      ]
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/AppealAdminDetailResponseDto"
+                    }
+                  }
+                },
+                "example": {
+                  "statusCode": 200,
+                  "code": "APPEAL_DETAIL_FETCHED",
+                  "data": {
+                    "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                    "user": {
+                      "id": "b13d28cf-b1c5-4e78-a54d-017637c47c30",
+                      "name": "Lê Văn An",
+                      "email": "an@example.com",
+                      "role": "landlord",
+                      "status": "locked"
+                    },
+                    "lockReason": "Tin đăng giả",
+                    "lockedAt": "2026-11-25T03:00:00.000Z",
+                    "content": "Tôi bị khóa nhầm, phòng đăng là phòng thật của tôi.",
+                    "attachmentCount": 1,
+                    "status": "rejected",
+                    "createdAt": "2026-11-27T03:00:00.000Z",
+                    "reviewedAt": "2026-11-28T03:00:00.000Z",
+                    "attachmentMediaIds": [
+                      "7f94255a-2401-49b7-a0a4-88457633c89e"
+                    ],
+                    "contactEmail": null,
+                    "contactPhone": "0901234567",
+                    "rejectReason": "Bằng chứng chưa đủ để mở khóa.",
+                    "reviewedBy": {
+                      "id": "7f94255a-2401-49b7-a0a4-88457633c89e",
+                      "name": "Admin Demo",
+                      "email": "admin@example.com",
+                      "role": "admin",
+                      "status": "active"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "403": {
+            "$ref": "#/components/responses/ForbiddenError"
+          },
+          "404": {
+            "description": "Không tìm thấy khiếu nại.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        404
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "APPEAL_NOT_FOUND"
+                      ]
+                    }
+                  }
+                },
+                "examples": {
+                  "appeal_not_found": {
+                    "summary": "APPEAL_NOT_FOUND",
+                    "value": {
+                      "statusCode": 404,
+                      "code": "APPEAL_NOT_FOUND"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          },
+          "503": {
+            "$ref": "#/components/responses/AuthUnavailableError"
+          }
+        }
+      }
+    },
+    "/appeals/{appealId}/accept": {
+      "post": {
+        "tags": [
+          "Moderation"
+        ],
+        "x-apidog-folder": "Moderation",
+        "x-apidog-status": "released",
+        "operationId": "acceptAppeal",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "Accept appeal",
+        "description": "Chỉ admin. Trong **một transaction**: khiếu nại → `accepted`, mở khóa tài khoản (như `POST /users/{userId}/unlock`: ghi `user.unlocked`, đóng kỳ khóa, thông báo `user.unlocked`) và gửi email kết quả.\n\n- Nếu tài khoản đã được mở khóa trước đó (hoặc đang ở kỳ khóa khác), chỉ đóng khiếu nại, `unlocked = false`.\n- Ngược lại, admin mở khóa trực tiếp cũng tự đóng khiếu nại `pending` thành `accepted`.\n- Audit: `user.unlocked` với metadata `{ appealId }`.",
+        "parameters": [
+          {
+            "name": "appealId",
+            "in": "path",
+            "required": true,
+            "description": "UUID của khiếu nại.",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Thành công.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code",
+                    "data"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        200
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "APPEAL_ACCEPTED"
+                      ]
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/AppealReviewResponseDto"
+                    }
+                  }
+                },
+                "example": {
+                  "statusCode": 200,
+                  "code": "APPEAL_ACCEPTED",
+                  "data": {
+                    "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                    "status": "accepted",
+                    "userId": "b13d28cf-b1c5-4e78-a54d-017637c47c30",
+                    "unlocked": true
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "403": {
+            "$ref": "#/components/responses/ForbiddenError"
+          },
+          "404": {
+            "description": "Không tìm thấy khiếu nại hoặc người dùng.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        404
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "APPEAL_NOT_FOUND",
+                        "USER_NOT_FOUND"
+                      ]
+                    }
+                  }
+                },
+                "examples": {
+                  "appeal_not_found": {
+                    "summary": "APPEAL_NOT_FOUND",
+                    "value": {
+                      "statusCode": 404,
+                      "code": "APPEAL_NOT_FOUND"
+                    }
+                  },
+                  "user_not_found": {
+                    "summary": "USER_NOT_FOUND",
+                    "value": {
+                      "statusCode": 404,
+                      "code": "USER_NOT_FOUND"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Khiếu nại đã được xử lý.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        409
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "APPEAL_NOT_PENDING"
+                      ]
+                    }
+                  }
+                },
+                "examples": {
+                  "appeal_not_pending": {
+                    "summary": "APPEAL_NOT_PENDING",
+                    "value": {
+                      "statusCode": 409,
+                      "code": "APPEAL_NOT_PENDING"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          },
+          "503": {
+            "$ref": "#/components/responses/AuthUnavailableError"
+          }
+        }
+      }
+    },
+    "/appeals/{appealId}/reject": {
+      "post": {
+        "tags": [
+          "Moderation"
+        ],
+        "x-apidog-folder": "Moderation",
+        "x-apidog-status": "released",
+        "operationId": "rejectAppeal",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "Reject appeal",
+        "description": "Chỉ admin, **bắt buộc** `rejectReason`. Tài khoản vẫn bị khóa. Người dùng nhận thông báo và email; 7 ngày sau mới gửi lại được.\n\n**Notification** (`notification.requested`, type `system`): `title = ACCOUNT_APPEAL_REJECTED_TITLE`, `body = ACCOUNT_APPEAL_REJECTED_BODY`, `deepLink = /account-locked`, `data = { messageKey: appeal.rejected, appealId, rejectReason, nextSubmitAt }`.\n\nAudit: `appeal.rejected` (entity `user`) với metadata `{ appealId, rejectReason }`.",
+        "parameters": [
+          {
+            "name": "appealId",
+            "in": "path",
+            "required": true,
+            "description": "UUID của khiếu nại.",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AppealRejectRequestDto"
+              },
+              "example": {
+                "rejectReason": "Bằng chứng chưa đủ để mở khóa."
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Thành công.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code",
+                    "data"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        200
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "APPEAL_REJECTED"
+                      ]
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/AppealReviewResponseDto"
+                    }
+                  }
+                },
+                "example": {
+                  "statusCode": 200,
+                  "code": "APPEAL_REJECTED",
+                  "data": {
+                    "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                    "status": "rejected",
+                    "userId": "b13d28cf-b1c5-4e78-a54d-017637c47c30",
+                    "unlocked": false
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "403": {
+            "$ref": "#/components/responses/ForbiddenError"
+          },
+          "404": {
+            "description": "Không tìm thấy khiếu nại.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        404
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "APPEAL_NOT_FOUND"
+                      ]
+                    }
+                  }
+                },
+                "examples": {
+                  "appeal_not_found": {
+                    "summary": "APPEAL_NOT_FOUND",
+                    "value": {
+                      "statusCode": 404,
+                      "code": "APPEAL_NOT_FOUND"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Khiếu nại đã được xử lý.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        409
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "APPEAL_NOT_PENDING"
+                      ]
+                    }
+                  }
+                },
+                "examples": {
+                  "appeal_not_pending": {
+                    "summary": "APPEAL_NOT_PENDING",
+                    "value": {
+                      "statusCode": 409,
+                      "code": "APPEAL_NOT_PENDING"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "422": {
+            "$ref": "#/components/responses/ValidationError"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          },
+          "503": {
+            "$ref": "#/components/responses/AuthUnavailableError"
+          }
+        }
+      }
+    },
+    "/reports": {
+      "post": {
+        "tags": [
+          "Moderation"
+        ],
+        "x-apidog-folder": "Moderation",
+        "x-apidog-status": "released",
+        "operationId": "submitUserReport",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "Report an account",
+        "description": "`tenant`/`landlord` đang hoạt động báo cáo một tài khoản khác (P13-D109). Tài khoản bị khóa không gửi được (`403 ACCOUNT_LOCKED`).\n\n- Không báo cáo chính mình (`422 REPORT_SELF`). Admin hoặc user không tồn tại trả `404 USER_NOT_FOUND`.\n- Mỗi cặp người báo cáo – người bị báo cáo chỉ có 1 báo cáo `pending` (`409 REPORT_ALREADY_PENDING`).\n- Ảnh bằng chứng: presign `ownerType=user`, `ownerId=<chính mình>`, `purpose=report_evidence`.\n- `contextType` + `contextId` (ví dụ conversation) không bắt buộc; thiếu một trong hai thì bỏ cả hai.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReportSubmitRequestDto"
+              },
+              "example": {
+                "reportedUserId": "b13d28cf-b1c5-4e78-a54d-017637c47c30",
+                "category": "fake_listing",
+                "description": "Ảnh phòng không đúng thực tế.",
+                "evidenceMediaIds": [
+                  "7f94255a-2401-49b7-a0a4-88457633c89e"
+                ],
+                "contextType": "conversation",
+                "contextId": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Thành công.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code",
+                    "data"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        201
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "REPORT_SUBMITTED"
+                      ]
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/ReportResponseDto"
+                    }
+                  }
+                },
+                "example": {
+                  "statusCode": 201,
+                  "code": "REPORT_SUBMITTED",
+                  "data": {
+                    "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                    "reportedUserId": "b13d28cf-b1c5-4e78-a54d-017637c47c30",
+                    "category": "fake_listing",
+                    "status": "pending",
+                    "createdAt": "2026-11-27T03:00:00.000Z"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "403": {
+            "$ref": "#/components/responses/ForbiddenError"
+          },
+          "404": {
+            "description": "Không tìm thấy người bị báo cáo.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        404
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "USER_NOT_FOUND"
+                      ]
+                    }
+                  }
+                },
+                "examples": {
+                  "user_not_found": {
+                    "summary": "USER_NOT_FOUND",
+                    "value": {
+                      "statusCode": 404,
+                      "code": "USER_NOT_FOUND"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Đã có báo cáo đang chờ.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        409
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "REPORT_ALREADY_PENDING"
+                      ]
+                    }
+                  }
+                },
+                "examples": {
+                  "report_already_pending": {
+                    "summary": "REPORT_ALREADY_PENDING",
+                    "value": {
+                      "statusCode": 409,
+                      "code": "REPORT_ALREADY_PENDING"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Dữ liệu không hợp lệ.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        422
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "VALIDATION_FAILED",
+                        "REPORT_SELF",
+                        "MODERATION_ATTACHMENT_INVALID"
+                      ]
+                    }
+                  }
+                },
+                "examples": {
+                  "validation_failed": {
+                    "summary": "VALIDATION_FAILED",
+                    "value": {
+                      "statusCode": 422,
+                      "code": "VALIDATION_FAILED"
+                    }
+                  },
+                  "report_self": {
+                    "summary": "REPORT_SELF",
+                    "value": {
+                      "statusCode": 422,
+                      "code": "REPORT_SELF"
+                    }
+                  },
+                  "moderation_attachment_invalid": {
+                    "summary": "MODERATION_ATTACHMENT_INVALID",
+                    "value": {
+                      "statusCode": 422,
+                      "code": "MODERATION_ATTACHMENT_INVALID"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          },
+          "503": {
+            "$ref": "#/components/responses/AuthUnavailableError"
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Moderation"
+        ],
+        "x-apidog-folder": "Moderation",
+        "x-apidog-status": "released",
+        "operationId": "getUserReportsAdmin",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "List reports",
+        "description": "Chỉ admin. Lọc theo `status`, `category`, `reportedUserId`; sắp xếp mới nhất trước.",
+        "parameters": [
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "pending",
+                "dismissed",
+                "actioned"
+              ]
+            }
+          },
+          {
+            "name": "category",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "fraud",
+                "fake_listing",
+                "harassment",
+                "spam",
+                "impersonation",
+                "inappropriate_content",
+                "other"
+              ],
+              "description": "6 loại gợi ý lý do khóa của P13-09 và `other`."
+            }
+          },
+          {
+            "name": "reportedUserId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "pageNo",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Thành công.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code",
+                    "data",
+                    "pagination"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        200
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "REPORT_LIST_FETCHED"
+                      ]
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/ReportAdminListItemResponseDto"
+                      }
+                    },
+                    "pagination": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "required": [
+                        "type",
+                        "pageNo",
+                        "pageSize",
+                        "totalItems",
+                        "totalPages",
+                        "hasNextPage",
+                        "hasPreviousPage"
+                      ],
+                      "properties": {
+                        "type": {
+                          "type": "string",
+                          "enum": [
+                            "offset"
+                          ]
+                        },
+                        "pageNo": {
+                          "type": "integer",
+                          "minimum": 1
+                        },
+                        "pageSize": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 100
+                        },
+                        "totalItems": {
+                          "type": "integer",
+                          "minimum": 0
+                        },
+                        "totalPages": {
+                          "type": "integer",
+                          "minimum": 0
+                        },
+                        "hasNextPage": {
+                          "type": "boolean"
+                        },
+                        "hasPreviousPage": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "statusCode": 200,
+                  "code": "REPORT_LIST_FETCHED",
+                  "data": [
+                    {
+                      "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                      "reporter": {
+                        "id": "7f94255a-2401-49b7-a0a4-88457633c89e",
+                        "name": "Lê Văn An",
+                        "email": "an@example.com",
+                        "role": "tenant",
+                        "status": "active"
+                      },
+                      "reportedUser": {
+                        "id": "b13d28cf-b1c5-4e78-a54d-017637c47c30",
+                        "name": "Lê Văn An",
+                        "email": "an@example.com",
+                        "role": "landlord",
+                        "status": "active"
+                      },
+                      "category": "fake_listing",
+                      "description": "Ảnh phòng không đúng thực tế.",
+                      "evidenceCount": 2,
+                      "status": "pending",
+                      "createdAt": "2026-11-27T03:00:00.000Z",
+                      "resolvedAt": null
+                    }
+                  ],
+                  "pagination": {
+                    "type": "offset",
+                    "pageNo": 1,
+                    "pageSize": 20,
+                    "totalItems": 1,
+                    "totalPages": 1,
+                    "hasNextPage": false,
+                    "hasPreviousPage": false
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "403": {
+            "$ref": "#/components/responses/ForbiddenError"
+          },
+          "422": {
+            "$ref": "#/components/responses/ValidationError"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          },
+          "503": {
+            "$ref": "#/components/responses/AuthUnavailableError"
+          }
+        }
+      }
+    },
+    "/reports/{reportId}": {
+      "get": {
+        "tags": [
+          "Moderation"
+        ],
+        "x-apidog-folder": "Moderation",
+        "x-apidog-status": "released",
+        "operationId": "getUserReportAdmin",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "Get report detail",
+        "description": "Chỉ admin.",
+        "parameters": [
+          {
+            "name": "reportId",
+            "in": "path",
+            "required": true,
+            "description": "UUID của báo cáo.",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Thành công.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code",
+                    "data"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        200
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "REPORT_DETAIL_FETCHED"
+                      ]
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/ReportAdminDetailResponseDto"
+                    }
+                  }
+                },
+                "example": {
+                  "statusCode": 200,
+                  "code": "REPORT_DETAIL_FETCHED",
+                  "data": {
+                    "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                    "reporter": {
+                      "id": "7f94255a-2401-49b7-a0a4-88457633c89e",
+                      "name": "Lê Văn An",
+                      "email": "an@example.com",
+                      "role": "tenant",
+                      "status": "active"
+                    },
+                    "reportedUser": {
+                      "id": "b13d28cf-b1c5-4e78-a54d-017637c47c30",
+                      "name": "Lê Văn An",
+                      "email": "an@example.com",
+                      "role": "landlord",
+                      "status": "active"
+                    },
+                    "category": "fake_listing",
+                    "description": "Ảnh phòng không đúng thực tế.",
+                    "evidenceCount": 2,
+                    "status": "dismissed",
+                    "createdAt": "2026-11-27T03:00:00.000Z",
+                    "resolvedAt": "2026-11-28T03:00:00.000Z",
+                    "evidenceMediaIds": [
+                      "7f94255a-2401-49b7-a0a4-88457633c89e"
+                    ],
+                    "contextType": "conversation",
+                    "contextId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                    "resolutionNote": "Không đủ căn cứ.",
+                    "resolvedBy": {
+                      "id": "7f94255a-2401-49b7-a0a4-88457633c89e",
+                      "name": "Admin Demo",
+                      "email": "admin@example.com",
+                      "role": "admin",
+                      "status": "active"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "403": {
+            "$ref": "#/components/responses/ForbiddenError"
+          },
+          "404": {
+            "description": "Không tìm thấy báo cáo.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        404
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "REPORT_NOT_FOUND"
+                      ]
+                    }
+                  }
+                },
+                "examples": {
+                  "report_not_found": {
+                    "summary": "REPORT_NOT_FOUND",
+                    "value": {
+                      "statusCode": 404,
+                      "code": "REPORT_NOT_FOUND"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          },
+          "503": {
+            "$ref": "#/components/responses/AuthUnavailableError"
+          }
+        }
+      }
+    },
+    "/reports/{reportId}/resolve": {
+      "post": {
+        "tags": [
+          "Moderation"
+        ],
+        "x-apidog-folder": "Moderation",
+        "x-apidog-status": "released",
+        "operationId": "resolveUserReport",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "Resolve report",
+        "description": "Chỉ admin.\n\n- `dismiss`: báo cáo → `dismissed`.\n- `lock` (bắt buộc `lockReason`): trong một transaction, khóa tài khoản bị báo cáo theo đúng luồng `POST /users/{userId}/lock` (event `user.locked`, thông báo, kỳ khóa) và chuyển **mọi** báo cáo `pending` về người đó sang `actioned`. Nếu tài khoản đã bị khóa sẵn thì chỉ đóng các báo cáo, `locked = false`.\n- Audit khi khóa: `user.locked` với metadata `{ lockReason, reportId }`.",
+        "parameters": [
+          {
+            "name": "reportId",
+            "in": "path",
+            "required": true,
+            "description": "UUID của báo cáo.",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReportResolveRequestDto"
+              },
+              "example": {
+                "action": "lock",
+                "note": null,
+                "lockReason": "Tin đăng giả, ảnh và thông tin phòng không đúng thực tế"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Thành công.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code",
+                    "data"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        200
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "REPORT_RESOLVED"
+                      ]
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/ReportResolveResponseDto"
+                    }
+                  }
+                },
+                "example": {
+                  "statusCode": 200,
+                  "code": "REPORT_RESOLVED",
+                  "data": {
+                    "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                    "status": "actioned",
+                    "reportedUserId": "b13d28cf-b1c5-4e78-a54d-017637c47c30",
+                    "locked": true
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "403": {
+            "$ref": "#/components/responses/ForbiddenError"
+          },
+          "404": {
+            "description": "Không tìm thấy báo cáo hoặc người dùng.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        404
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "REPORT_NOT_FOUND",
+                        "USER_NOT_FOUND"
+                      ]
+                    }
+                  }
+                },
+                "examples": {
+                  "report_not_found": {
+                    "summary": "REPORT_NOT_FOUND",
+                    "value": {
+                      "statusCode": 404,
+                      "code": "REPORT_NOT_FOUND"
+                    }
+                  },
+                  "user_not_found": {
+                    "summary": "USER_NOT_FOUND",
+                    "value": {
+                      "statusCode": 404,
+                      "code": "USER_NOT_FOUND"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Báo cáo đã được xử lý hoặc tài khoản chưa xác thực email.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "statusCode",
+                    "code"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        409
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "REPORT_NOT_PENDING",
+                        "EMAIL_NOT_VERIFIED"
+                      ]
+                    }
+                  }
+                },
+                "examples": {
+                  "report_not_pending": {
+                    "summary": "REPORT_NOT_PENDING",
+                    "value": {
+                      "statusCode": 409,
+                      "code": "REPORT_NOT_PENDING"
+                    }
+                  },
+                  "email_not_verified": {
+                    "summary": "EMAIL_NOT_VERIFIED",
+                    "value": {
+                      "statusCode": 409,
+                      "code": "EMAIL_NOT_VERIFIED"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "422": {
+            "$ref": "#/components/responses/ValidationError"
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
@@ -25375,6 +27144,20 @@
             ],
             "example": "active"
           },
+          "lockReason": {
+            "type": "string",
+            "nullable": true,
+            "maxLength": 500,
+            "description": "Lý do khóa tài khoản do admin nhập; null khi tài khoản không bị khóa (P13-D109).",
+            "example": null
+          },
+          "lockedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "description": "Thời điểm khóa; null khi tài khoản không bị khóa.",
+            "example": null
+          },
           "avatarUrl": {
             "type": "string",
             "format": "uri",
@@ -25420,6 +27203,8 @@
           "phone",
           "role",
           "status",
+          "lockReason",
+          "lockedAt",
           "avatarUrl",
           "payoutAccount"
         ]
@@ -33125,6 +34910,7 @@
               "user.unlocked",
               "user.updated",
               "user.deleted",
+              "appeal.rejected",
               "building.approved",
               "building.rejected"
             ]
@@ -33193,6 +34979,7 @@
               "user.unlocked",
               "user.updated",
               "user.deleted",
+              "appeal.rejected",
               "building.approved",
               "building.rejected"
             ]
@@ -33228,6 +35015,747 @@
             "example": {
               "lockReason": "Spam"
             }
+          }
+        }
+      },
+      "ModerationUserSummaryDto": {
+        "type": "object",
+        "x-apidog-folder": "Moderation/Response",
+        "title": "ModerationUserSummaryDto",
+        "description": "Tóm tắt một tài khoản trong hàng chờ của admin.",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "name",
+          "email",
+          "role",
+          "status"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "tenant",
+              "landlord",
+              "admin"
+            ],
+            "nullable": true
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pending_verification",
+              "active",
+              "locked"
+            ],
+            "nullable": true
+          }
+        }
+      },
+      "AppealResponseDto": {
+        "type": "object",
+        "x-apidog-folder": "Moderation/Response",
+        "title": "AppealResponseDto",
+        "description": "Khiếu nại của chính người dùng.",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "status",
+          "content",
+          "attachmentMediaIds",
+          "contactEmail",
+          "contactPhone",
+          "rejectReason",
+          "createdAt",
+          "reviewedAt"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "accepted",
+              "rejected"
+            ]
+          },
+          "content": {
+            "type": "string"
+          },
+          "attachmentMediaIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "contactEmail": {
+            "type": "string",
+            "nullable": true
+          },
+          "contactPhone": {
+            "type": "string",
+            "nullable": true
+          },
+          "rejectReason": {
+            "type": "string",
+            "nullable": true,
+            "description": "Chỉ có khi `status = rejected`."
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "reviewedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        }
+      },
+      "AppealCurrentResponseDto": {
+        "type": "object",
+        "x-apidog-folder": "Moderation/Response",
+        "title": "AppealCurrentResponseDto",
+        "description": "Lý do khóa và khiếu nại gần nhất của kỳ khóa hiện tại. Tài khoản không bị khóa: mọi trường null, `canSubmit = false`.",
+        "additionalProperties": false,
+        "required": [
+          "lockReason",
+          "lockedAt",
+          "appeal",
+          "canSubmit",
+          "nextSubmitAt"
+        ],
+        "properties": {
+          "lockReason": {
+            "type": "string",
+            "nullable": true
+          },
+          "lockedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "appeal": {
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/AppealResponseDto"
+              }
+            ],
+            "nullable": true
+          },
+          "canSubmit": {
+            "type": "boolean",
+            "description": "Có thể gửi khiếu nại mới ngay bây giờ."
+          },
+          "nextSubmitAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "description": "Có giá trị khi khiếu nại vừa bị từ chối chưa đủ 7 ngày."
+          }
+        }
+      },
+      "AppealAdminListItemResponseDto": {
+        "type": "object",
+        "x-apidog-folder": "Moderation/Response",
+        "title": "AppealAdminListItemResponseDto",
+        "description": "Một dòng trong hàng chờ khiếu nại.",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "user",
+          "lockReason",
+          "lockedAt",
+          "content",
+          "attachmentCount",
+          "status",
+          "createdAt",
+          "reviewedAt"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "user": {
+            "$ref": "#/components/schemas/ModerationUserSummaryDto"
+          },
+          "lockReason": {
+            "type": "string",
+            "nullable": true
+          },
+          "lockedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "content": {
+            "type": "string"
+          },
+          "attachmentCount": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "accepted",
+              "rejected"
+            ]
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "reviewedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        }
+      },
+      "AppealAdminDetailResponseDto": {
+        "type": "object",
+        "x-apidog-folder": "Moderation/Response",
+        "title": "AppealAdminDetailResponseDto",
+        "description": "Chi tiết khiếu nại cho admin.",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "user",
+          "lockReason",
+          "lockedAt",
+          "content",
+          "attachmentCount",
+          "status",
+          "createdAt",
+          "reviewedAt",
+          "attachmentMediaIds",
+          "contactEmail",
+          "contactPhone",
+          "rejectReason",
+          "reviewedBy"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "user": {
+            "$ref": "#/components/schemas/ModerationUserSummaryDto"
+          },
+          "lockReason": {
+            "type": "string",
+            "nullable": true
+          },
+          "lockedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "content": {
+            "type": "string"
+          },
+          "attachmentCount": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "accepted",
+              "rejected"
+            ]
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "reviewedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "attachmentMediaIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "Media private; admin đọc qua `GET /media/{mediaId}/download-url`."
+          },
+          "contactEmail": {
+            "type": "string",
+            "nullable": true
+          },
+          "contactPhone": {
+            "type": "string",
+            "nullable": true
+          },
+          "rejectReason": {
+            "type": "string",
+            "nullable": true
+          },
+          "reviewedBy": {
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ModerationUserSummaryDto"
+              }
+            ],
+            "nullable": true
+          }
+        }
+      },
+      "AppealReviewResponseDto": {
+        "type": "object",
+        "x-apidog-folder": "Moderation/Response",
+        "title": "AppealReviewResponseDto",
+        "description": "Kết quả chấp nhận/từ chối khiếu nại.",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "status",
+          "userId",
+          "unlocked"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "accepted",
+              "rejected"
+            ]
+          },
+          "userId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "unlocked": {
+            "type": "boolean",
+            "description": "Chấp nhận: false khi tài khoản đã được mở khóa trước đó (chỉ đóng khiếu nại). Từ chối: luôn false."
+          }
+        }
+      },
+      "ReportResponseDto": {
+        "type": "object",
+        "x-apidog-folder": "Moderation/Response",
+        "title": "ReportResponseDto",
+        "description": "Báo cáo vừa gửi.",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "reportedUserId",
+          "category",
+          "status",
+          "createdAt"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "reportedUserId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "category": {
+            "type": "string",
+            "enum": [
+              "fraud",
+              "fake_listing",
+              "harassment",
+              "spam",
+              "impersonation",
+              "inappropriate_content",
+              "other"
+            ],
+            "description": "6 loại gợi ý lý do khóa của P13-09 và `other`."
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "dismissed",
+              "actioned"
+            ]
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "ReportAdminListItemResponseDto": {
+        "type": "object",
+        "x-apidog-folder": "Moderation/Response",
+        "title": "ReportAdminListItemResponseDto",
+        "description": "Một dòng trong hàng chờ báo cáo.",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "reporter",
+          "reportedUser",
+          "category",
+          "description",
+          "evidenceCount",
+          "status",
+          "createdAt",
+          "resolvedAt"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "reporter": {
+            "$ref": "#/components/schemas/ModerationUserSummaryDto"
+          },
+          "reportedUser": {
+            "$ref": "#/components/schemas/ModerationUserSummaryDto"
+          },
+          "category": {
+            "type": "string",
+            "enum": [
+              "fraud",
+              "fake_listing",
+              "harassment",
+              "spam",
+              "impersonation",
+              "inappropriate_content",
+              "other"
+            ],
+            "description": "6 loại gợi ý lý do khóa của P13-09 và `other`."
+          },
+          "description": {
+            "type": "string"
+          },
+          "evidenceCount": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "dismissed",
+              "actioned"
+            ]
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "resolvedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        }
+      },
+      "ReportAdminDetailResponseDto": {
+        "type": "object",
+        "x-apidog-folder": "Moderation/Response",
+        "title": "ReportAdminDetailResponseDto",
+        "description": "Chi tiết báo cáo cho admin.",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "reporter",
+          "reportedUser",
+          "category",
+          "description",
+          "evidenceCount",
+          "status",
+          "createdAt",
+          "resolvedAt",
+          "evidenceMediaIds",
+          "contextType",
+          "contextId",
+          "resolutionNote",
+          "resolvedBy"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "reporter": {
+            "$ref": "#/components/schemas/ModerationUserSummaryDto"
+          },
+          "reportedUser": {
+            "$ref": "#/components/schemas/ModerationUserSummaryDto"
+          },
+          "category": {
+            "type": "string",
+            "enum": [
+              "fraud",
+              "fake_listing",
+              "harassment",
+              "spam",
+              "impersonation",
+              "inappropriate_content",
+              "other"
+            ],
+            "description": "6 loại gợi ý lý do khóa của P13-09 và `other`."
+          },
+          "description": {
+            "type": "string"
+          },
+          "evidenceCount": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "dismissed",
+              "actioned"
+            ]
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "resolvedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "evidenceMediaIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "contextType": {
+            "type": "string",
+            "enum": [
+              "conversation",
+              "contract"
+            ],
+            "nullable": true
+          },
+          "contextId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "resolutionNote": {
+            "type": "string",
+            "nullable": true
+          },
+          "resolvedBy": {
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ModerationUserSummaryDto"
+              }
+            ],
+            "nullable": true
+          }
+        }
+      },
+      "ReportResolveResponseDto": {
+        "type": "object",
+        "x-apidog-folder": "Moderation/Response",
+        "title": "ReportResolveResponseDto",
+        "description": "Kết quả xử lý báo cáo.",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "status",
+          "reportedUserId",
+          "locked"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "dismissed",
+              "actioned"
+            ]
+          },
+          "reportedUserId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "locked": {
+            "type": "boolean",
+            "description": "True khi lần gọi này khóa tài khoản."
+          }
+        }
+      },
+      "AppealSubmitRequestDto": {
+        "type": "object",
+        "x-apidog-folder": "Moderation/Request",
+        "title": "AppealSubmitRequestDto",
+        "description": "Gửi khiếu nại khóa tài khoản.",
+        "additionalProperties": false,
+        "required": [
+          "content"
+        ],
+        "properties": {
+          "content": {
+            "type": "string",
+            "minLength": 10,
+            "maxLength": 2000,
+            "description": "Nội dung giải trình (trim trước khi kiểm tra)."
+          },
+          "attachmentMediaIds": {
+            "type": "array",
+            "maxItems": 3,
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "Media đã upload xong, purpose `appeal_attachment`, owner là chính người gửi."
+          },
+          "contactEmail": {
+            "type": "string",
+            "format": "email",
+            "maxLength": 254,
+            "nullable": true
+          },
+          "contactPhone": {
+            "type": "string",
+            "pattern": "^\\+?\\d{8,15}$",
+            "nullable": true
+          }
+        }
+      },
+      "AppealRejectRequestDto": {
+        "type": "object",
+        "x-apidog-folder": "Moderation/Request",
+        "title": "AppealRejectRequestDto",
+        "description": "Từ chối khiếu nại.",
+        "additionalProperties": false,
+        "required": [
+          "rejectReason"
+        ],
+        "properties": {
+          "rejectReason": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 500
+          }
+        }
+      },
+      "ReportSubmitRequestDto": {
+        "type": "object",
+        "x-apidog-folder": "Moderation/Request",
+        "title": "ReportSubmitRequestDto",
+        "description": "Báo cáo vi phạm một tài khoản.",
+        "additionalProperties": false,
+        "required": [
+          "reportedUserId",
+          "category",
+          "description"
+        ],
+        "properties": {
+          "reportedUserId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "category": {
+            "type": "string",
+            "enum": [
+              "fraud",
+              "fake_listing",
+              "harassment",
+              "spam",
+              "impersonation",
+              "inappropriate_content",
+              "other"
+            ],
+            "description": "6 loại gợi ý lý do khóa của P13-09 và `other`."
+          },
+          "description": {
+            "type": "string",
+            "minLength": 10,
+            "maxLength": 1000
+          },
+          "evidenceMediaIds": {
+            "type": "array",
+            "maxItems": 3,
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "Media đã upload xong, purpose `report_evidence`, owner là chính người gửi."
+          },
+          "contextType": {
+            "type": "string",
+            "enum": [
+              "conversation",
+              "contract"
+            ],
+            "nullable": true
+          },
+          "contextId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          }
+        }
+      },
+      "ReportResolveRequestDto": {
+        "type": "object",
+        "x-apidog-folder": "Moderation/Request",
+        "title": "ReportResolveRequestDto",
+        "description": "Xử lý báo cáo.",
+        "additionalProperties": false,
+        "required": [
+          "action"
+        ],
+        "properties": {
+          "action": {
+            "type": "string",
+            "enum": [
+              "dismiss",
+              "lock"
+            ]
+          },
+          "note": {
+            "type": "string",
+            "maxLength": 500,
+            "nullable": true
+          },
+          "lockReason": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 500,
+            "nullable": true,
+            "description": "Bắt buộc khi `action = lock`."
           }
         }
       },
@@ -35289,7 +37817,9 @@
                   "meter_reading_evidence",
                   "issue_photo",
                   "chat_attachment",
-                  "conversation_avatar"
+                  "conversation_avatar",
+                  "appeal_attachment",
+                  "report_evidence"
                 ],
                 "description": "Mục đích sử dụng của file đối với thực thể sở hữu",
                 "example": "cover_photo"
@@ -35375,6 +37905,7 @@
               "user.unlocked",
               "user.updated",
               "user.deleted",
+              "appeal.rejected",
               "building.approved",
               "building.rejected"
             ]
@@ -35456,7 +37987,9 @@
               "meter_reading_evidence",
               "issue_photo",
               "chat_attachment",
-              "conversation_avatar"
+              "conversation_avatar",
+              "appeal_attachment",
+              "report_evidence"
             ],
             "description": "Mục đích sử dụng của file đối với thực thể sở hữu",
             "example": "cover_photo"

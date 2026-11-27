@@ -1,0 +1,29 @@
+type: "object"
+x-apidog-folder: "Moderation/Request"
+title: "AppealSubmitRequestDto"
+description: "Gửi khiếu nại khóa tài khoản."
+additionalProperties: false
+required:
+  - "content"
+properties:
+  content:
+    type: "string"
+    minLength: 10
+    maxLength: 2000
+    description: "Nội dung giải trình (trim trước khi kiểm tra)."
+  attachmentMediaIds:
+    type: "array"
+    maxItems: 3
+    items:
+      type: "string"
+      format: "uuid"
+    description: "Media đã upload xong, purpose `appeal_attachment`, owner là chính người gửi."
+  contactEmail:
+    type: "string"
+    format: "email"
+    maxLength: 254
+    nullable: true
+  contactPhone:
+    type: "string"
+    pattern: "^\\+?\\d{8,15}$"
+    nullable: true

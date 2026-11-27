@@ -1,0 +1,136 @@
+get:
+  tags:
+    - "Moderation"
+  x-apidog-folder: "Moderation"
+  x-apidog-status: "released"
+  operationId: "getAppealsAdmin"
+  security:
+    - BearerAuth: []
+  summary: "List appeals"
+  description: "Chỉ admin. Lọc theo `status`, `userId`. Lọc `status=pending` thì sắp xếp cũ nhất trước (hàng chờ); còn lại mới nhất trước."
+  parameters:
+    - name: "status"
+      in: "query"
+      required: false
+      schema:
+        type: "string"
+        enum:
+          - "pending"
+          - "accepted"
+          - "rejected"
+    - name: "userId"
+      in: "query"
+      required: false
+      schema:
+        type: "string"
+        format: "uuid"
+    - name: "pageNo"
+      in: "query"
+      required: false
+      schema:
+        type: "integer"
+        minimum: 1
+        default: 1
+    - name: "pageSize"
+      in: "query"
+      required: false
+      schema:
+        type: "integer"
+        minimum: 1
+        maximum: 100
+        default: 20
+  responses:
+    "200":
+      description: "Thành công."
+      content:
+        "application/json":
+          schema:
+            type: "object"
+            additionalProperties: false
+            required:
+              - "statusCode"
+              - "code"
+              - "data"
+              - "pagination"
+            properties:
+              statusCode:
+                type: "integer"
+                enum:
+                  - 200
+              code:
+                type: "string"
+                enum:
+                  - "APPEAL_LIST_FETCHED"
+              data:
+                type: "array"
+                items:
+                  $ref: "../../openapi.yaml#/components/schemas/AppealAdminListItemResponseDto"
+              pagination:
+                type: "object"
+                additionalProperties: false
+                required:
+                  - "type"
+                  - "pageNo"
+                  - "pageSize"
+                  - "totalItems"
+                  - "totalPages"
+                  - "hasNextPage"
+                  - "hasPreviousPage"
+                properties:
+                  type:
+                    type: "string"
+                    enum:
+                      - "offset"
+                  pageNo:
+                    type: "integer"
+                    minimum: 1
+                  pageSize:
+                    type: "integer"
+                    minimum: 1
+                    maximum: 100
+                  totalItems:
+                    type: "integer"
+                    minimum: 0
+                  totalPages:
+                    type: "integer"
+                    minimum: 0
+                  hasNextPage:
+                    type: "boolean"
+                  hasPreviousPage:
+                    type: "boolean"
+          example:
+            statusCode: 200
+            code: "APPEAL_LIST_FETCHED"
+            data:
+              - id: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                user:
+                  id: "b13d28cf-b1c5-4e78-a54d-017637c47c30"
+                  name: "Lê Văn An"
+                  email: "an@example.com"
+                  role: "landlord"
+                  status: "locked"
+                lockReason: "Tin đăng giả"
+                lockedAt: "2026-11-25T03:00:00.000Z"
+                content: "Tôi bị khóa nhầm, phòng đăng là phòng thật của tôi."
+                attachmentCount: 1
+                status: "pending"
+                createdAt: "2026-11-27T03:00:00.000Z"
+                reviewedAt: null
+            pagination:
+              type: "offset"
+              pageNo: 1
+              pageSize: 20
+              totalItems: 1
+              totalPages: 1
+              hasNextPage: false
+              hasPreviousPage: false
+    "401":
+      $ref: "../../openapi.yaml#/components/responses/UnauthorizedError"
+    "403":
+      $ref: "../../openapi.yaml#/components/responses/ForbiddenError"
+    "422":
+      $ref: "../../openapi.yaml#/components/responses/ValidationError"
+    "500":
+      $ref: "../../openapi.yaml#/components/responses/InternalServerError"
+    "503":
+      $ref: "../../openapi.yaml#/components/responses/AuthUnavailableError"

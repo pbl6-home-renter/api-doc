@@ -31,6 +31,8 @@ post:
     | `issue_photo` | `issue_report` | jpeg, png, webp, mp4, webm | private | người trong HĐ, landlord sở hữu | tối đa 5 file/issue; chỉ upload khi issue `open` hoặc `in_progress` |
     | `chat_attachment` | `conversation` | jpeg, png, webp, pdf, mp4, webm | private | upload: active member; download: member allowed to read the message that references the media | Community verifies active membership on upload and message linkage on read |
     | `conversation_avatar` | `conversation` | jpeg, png, webp | private | active member may upload | Community validates active group admin and media ownership on metadata update; old media remains valid so uploading a replacement cannot break the current avatar before the metadata update commits |
+    | `appeal_attachment` | `user` (self) | jpeg, png, webp, pdf | private | owner only; **also allowed while the account is locked** (P13-D109) | Attached to `POST /me/appeals`; admins read it through the admin bypass |
+    | `report_evidence` | `user` (self) | jpeg, png, webp | private | owner only | Attached to `POST /reports`; admins read it through the admin bypass |
     
     Kích thước tối đa 10 MiB cho mọi purpose. `issue_photo` và `chat_attachment` hỗ trợ video MP4/WebM; không hỗ trợ SVG/HTML.
     

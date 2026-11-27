@@ -1,0 +1,70 @@
+type: "object"
+x-apidog-folder: "Moderation/Response"
+title: "AppealAdminDetailResponseDto"
+description: "Chi tiết khiếu nại cho admin."
+additionalProperties: false
+required:
+  - "id"
+  - "user"
+  - "lockReason"
+  - "lockedAt"
+  - "content"
+  - "attachmentCount"
+  - "status"
+  - "createdAt"
+  - "reviewedAt"
+  - "attachmentMediaIds"
+  - "contactEmail"
+  - "contactPhone"
+  - "rejectReason"
+  - "reviewedBy"
+properties:
+  id:
+    type: "string"
+    format: "uuid"
+  user:
+    $ref: "../../openapi.yaml#/components/schemas/ModerationUserSummaryDto"
+  lockReason:
+    type: "string"
+    nullable: true
+  lockedAt:
+    type: "string"
+    format: "date-time"
+  content:
+    type: "string"
+  attachmentCount:
+    type: "integer"
+    minimum: 0
+  status:
+    type: "string"
+    enum:
+      - "pending"
+      - "accepted"
+      - "rejected"
+  createdAt:
+    type: "string"
+    format: "date-time"
+  reviewedAt:
+    type: "string"
+    format: "date-time"
+    nullable: true
+  attachmentMediaIds:
+    type: "array"
+    items:
+      type: "string"
+      format: "uuid"
+    description: "Media private; admin đọc qua `GET /media/{mediaId}/download-url`."
+  contactEmail:
+    type: "string"
+    nullable: true
+  contactPhone:
+    type: "string"
+    nullable: true
+  rejectReason:
+    type: "string"
+    nullable: true
+  reviewedBy:
+    type: "object"
+    allOf:
+      - $ref: "../../openapi.yaml#/components/schemas/ModerationUserSummaryDto"
+    nullable: true

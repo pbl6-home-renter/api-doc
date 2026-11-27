@@ -1,0 +1,45 @@
+type: "object"
+x-apidog-folder: "Moderation/Response"
+title: "AppealAdminListItemResponseDto"
+description: "Một dòng trong hàng chờ khiếu nại."
+additionalProperties: false
+required:
+  - "id"
+  - "user"
+  - "lockReason"
+  - "lockedAt"
+  - "content"
+  - "attachmentCount"
+  - "status"
+  - "createdAt"
+  - "reviewedAt"
+properties:
+  id:
+    type: "string"
+    format: "uuid"
+  user:
+    $ref: "../../openapi.yaml#/components/schemas/ModerationUserSummaryDto"
+  lockReason:
+    type: "string"
+    nullable: true
+  lockedAt:
+    type: "string"
+    format: "date-time"
+  content:
+    type: "string"
+  attachmentCount:
+    type: "integer"
+    minimum: 0
+  status:
+    type: "string"
+    enum:
+      - "pending"
+      - "accepted"
+      - "rejected"
+  createdAt:
+    type: "string"
+    format: "date-time"
+  reviewedAt:
+    type: "string"
+    format: "date-time"
+    nullable: true

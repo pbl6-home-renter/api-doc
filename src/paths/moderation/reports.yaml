@@ -1,0 +1,306 @@
+post:
+  tags:
+    - "Moderation"
+  x-apidog-folder: "Moderation"
+  x-apidog-status: "released"
+  operationId: "submitUserReport"
+  security:
+    - BearerAuth: []
+  summary: "Report an account"
+  description: "`tenant`/`landlord` đang hoạt động báo cáo một tài khoản khác (P13-D109). Tài khoản bị khóa không gửi được (`403 ACCOUNT_LOCKED`).\n\n- Không báo cáo chính mình (`422 REPORT_SELF`). Admin hoặc user không tồn tại trả `404 USER_NOT_FOUND`.\n- Mỗi cặp người báo cáo – người bị báo cáo chỉ có 1 báo cáo `pending` (`409 REPORT_ALREADY_PENDING`).\n- Ảnh bằng chứng: presign `ownerType=user`, `ownerId=<chính mình>`, `purpose=report_evidence`.\n- `contextType` + `contextId` (ví dụ conversation) không bắt buộc; thiếu một trong hai thì bỏ cả hai."
+  requestBody:
+    required: true
+    content:
+      "application/json":
+        schema:
+          $ref: "../../openapi.yaml#/components/schemas/ReportSubmitRequestDto"
+        example:
+          reportedUserId: "b13d28cf-b1c5-4e78-a54d-017637c47c30"
+          category: "fake_listing"
+          description: "Ảnh phòng không đúng thực tế."
+          evidenceMediaIds:
+            - "7f94255a-2401-49b7-a0a4-88457633c89e"
+          contextType: "conversation"
+          contextId: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+  responses:
+    "201":
+      description: "Thành công."
+      content:
+        "application/json":
+          schema:
+            type: "object"
+            additionalProperties: false
+            required:
+              - "statusCode"
+              - "code"
+              - "data"
+            properties:
+              statusCode:
+                type: "integer"
+                enum:
+                  - 201
+              code:
+                type: "string"
+                enum:
+                  - "REPORT_SUBMITTED"
+              data:
+                $ref: "../../openapi.yaml#/components/schemas/ReportResponseDto"
+          example:
+            statusCode: 201
+            code: "REPORT_SUBMITTED"
+            data:
+              id: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+              reportedUserId: "b13d28cf-b1c5-4e78-a54d-017637c47c30"
+              category: "fake_listing"
+              status: "pending"
+              createdAt: "2026-11-27T03:00:00.000Z"
+    "401":
+      $ref: "../../openapi.yaml#/components/responses/UnauthorizedError"
+    "403":
+      $ref: "../../openapi.yaml#/components/responses/ForbiddenError"
+    "404":
+      description: "Không tìm thấy người bị báo cáo."
+      content:
+        "application/json":
+          schema:
+            type: "object"
+            additionalProperties: false
+            required:
+              - "statusCode"
+              - "code"
+            properties:
+              statusCode:
+                type: "integer"
+                enum:
+                  - 404
+              code:
+                type: "string"
+                enum:
+                  - "USER_NOT_FOUND"
+          examples:
+            user_not_found:
+              summary: "USER_NOT_FOUND"
+              value:
+                statusCode: 404
+                code: "USER_NOT_FOUND"
+    "409":
+      description: "Đã có báo cáo đang chờ."
+      content:
+        "application/json":
+          schema:
+            type: "object"
+            additionalProperties: false
+            required:
+              - "statusCode"
+              - "code"
+            properties:
+              statusCode:
+                type: "integer"
+                enum:
+                  - 409
+              code:
+                type: "string"
+                enum:
+                  - "REPORT_ALREADY_PENDING"
+          examples:
+            report_already_pending:
+              summary: "REPORT_ALREADY_PENDING"
+              value:
+                statusCode: 409
+                code: "REPORT_ALREADY_PENDING"
+    "422":
+      description: "Dữ liệu không hợp lệ."
+      content:
+        "application/json":
+          schema:
+            type: "object"
+            additionalProperties: false
+            required:
+              - "statusCode"
+              - "code"
+            properties:
+              statusCode:
+                type: "integer"
+                enum:
+                  - 422
+              code:
+                type: "string"
+                enum:
+                  - "VALIDATION_FAILED"
+                  - "REPORT_SELF"
+                  - "MODERATION_ATTACHMENT_INVALID"
+          examples:
+            validation_failed:
+              summary: "VALIDATION_FAILED"
+              value:
+                statusCode: 422
+                code: "VALIDATION_FAILED"
+            report_self:
+              summary: "REPORT_SELF"
+              value:
+                statusCode: 422
+                code: "REPORT_SELF"
+            moderation_attachment_invalid:
+              summary: "MODERATION_ATTACHMENT_INVALID"
+              value:
+                statusCode: 422
+                code: "MODERATION_ATTACHMENT_INVALID"
+    "500":
+      $ref: "../../openapi.yaml#/components/responses/InternalServerError"
+    "503":
+      $ref: "../../openapi.yaml#/components/responses/AuthUnavailableError"
+get:
+  tags:
+    - "Moderation"
+  x-apidog-folder: "Moderation"
+  x-apidog-status: "released"
+  operationId: "getUserReportsAdmin"
+  security:
+    - BearerAuth: []
+  summary: "List reports"
+  description: "Chỉ admin. Lọc theo `status`, `category`, `reportedUserId`; sắp xếp mới nhất trước."
+  parameters:
+    - name: "status"
+      in: "query"
+      required: false
+      schema:
+        type: "string"
+        enum:
+          - "pending"
+          - "dismissed"
+          - "actioned"
+    - name: "category"
+      in: "query"
+      required: false
+      schema:
+        type: "string"
+        enum:
+          - "fraud"
+          - "fake_listing"
+          - "harassment"
+          - "spam"
+          - "impersonation"
+          - "inappropriate_content"
+          - "other"
+        description: "6 loại gợi ý lý do khóa của P13-09 và `other`."
+    - name: "reportedUserId"
+      in: "query"
+      required: false
+      schema:
+        type: "string"
+        format: "uuid"
+    - name: "pageNo"
+      in: "query"
+      required: false
+      schema:
+        type: "integer"
+        minimum: 1
+        default: 1
+    - name: "pageSize"
+      in: "query"
+      required: false
+      schema:
+        type: "integer"
+        minimum: 1
+        maximum: 100
+        default: 20
+  responses:
+    "200":
+      description: "Thành công."
+      content:
+        "application/json":
+          schema:
+            type: "object"
+            additionalProperties: false
+            required:
+              - "statusCode"
+              - "code"
+              - "data"
+              - "pagination"
+            properties:
+              statusCode:
+                type: "integer"
+                enum:
+                  - 200
+              code:
+                type: "string"
+                enum:
+                  - "REPORT_LIST_FETCHED"
+              data:
+                type: "array"
+                items:
+                  $ref: "../../openapi.yaml#/components/schemas/ReportAdminListItemResponseDto"
+              pagination:
+                type: "object"
+                additionalProperties: false
+                required:
+                  - "type"
+                  - "pageNo"
+                  - "pageSize"
+                  - "totalItems"
+                  - "totalPages"
+                  - "hasNextPage"
+                  - "hasPreviousPage"
+                properties:
+                  type:
+                    type: "string"
+                    enum:
+                      - "offset"
+                  pageNo:
+                    type: "integer"
+                    minimum: 1
+                  pageSize:
+                    type: "integer"
+                    minimum: 1
+                    maximum: 100
+                  totalItems:
+                    type: "integer"
+                    minimum: 0
+                  totalPages:
+                    type: "integer"
+                    minimum: 0
+                  hasNextPage:
+                    type: "boolean"
+                  hasPreviousPage:
+                    type: "boolean"
+          example:
+            statusCode: 200
+            code: "REPORT_LIST_FETCHED"
+            data:
+              - id: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                reporter:
+                  id: "7f94255a-2401-49b7-a0a4-88457633c89e"
+                  name: "Lê Văn An"
+                  email: "an@example.com"
+                  role: "tenant"
+                  status: "active"
+                reportedUser:
+                  id: "b13d28cf-b1c5-4e78-a54d-017637c47c30"
+                  name: "Lê Văn An"
+                  email: "an@example.com"
+                  role: "landlord"
+                  status: "active"
+                category: "fake_listing"
+                description: "Ảnh phòng không đúng thực tế."
+                evidenceCount: 2
+                status: "pending"
+                createdAt: "2026-11-27T03:00:00.000Z"
+                resolvedAt: null
+            pagination:
+              type: "offset"
+              pageNo: 1
+              pageSize: 20
+              totalItems: 1
+              totalPages: 1
+              hasNextPage: false
+              hasPreviousPage: false
+    "401":
+      $ref: "../../openapi.yaml#/components/responses/UnauthorizedError"
+    "403":
+      $ref: "../../openapi.yaml#/components/responses/ForbiddenError"
+    "422":
+      $ref: "../../openapi.yaml#/components/responses/ValidationError"
+    "500":
+      $ref: "../../openapi.yaml#/components/responses/InternalServerError"
+    "503":
+      $ref: "../../openapi.yaml#/components/responses/AuthUnavailableError"

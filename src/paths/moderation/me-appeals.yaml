@@ -1,0 +1,134 @@
+post:
+  tags:
+    - "Moderation"
+  x-apidog-folder: "Moderation"
+  x-apidog-status: "released"
+  operationId: "submitMyAppeal"
+  security:
+    - BearerAuth: []
+  summary: "Submit an appeal"
+  description: "Người dùng **đang bị khóa** gửi khiếu nại (P13-D109). Lý do khóa và `lockedAt` được chụp lại vào khiếu nại.\n\n- Mỗi người chỉ có 1 khiếu nại `pending` (`409 APPEAL_ALREADY_PENDING`).\n- Bị từ chối thì 7 ngày sau (tính từ lúc từ chối, trong cùng kỳ khóa) mới gửi lại được (`409 APPEAL_COOLDOWN`).\n- File đính kèm: upload trước bằng `POST /media/presign-upload` với `ownerType=user`, `ownerId=<chính mình>`, `purpose=appeal_attachment`. Tài khoản bị khóa chỉ được presign purpose này."
+  requestBody:
+    required: true
+    content:
+      "application/json":
+        schema:
+          $ref: "../../openapi.yaml#/components/schemas/AppealSubmitRequestDto"
+        example:
+          content: "Tôi bị khóa nhầm, phòng đăng là phòng thật của tôi."
+          attachmentMediaIds:
+            - "7f94255a-2401-49b7-a0a4-88457633c89e"
+          contactPhone: "0901234567"
+  responses:
+    "201":
+      description: "Thành công."
+      content:
+        "application/json":
+          schema:
+            type: "object"
+            additionalProperties: false
+            required:
+              - "statusCode"
+              - "code"
+              - "data"
+            properties:
+              statusCode:
+                type: "integer"
+                enum:
+                  - 201
+              code:
+                type: "string"
+                enum:
+                  - "APPEAL_SUBMITTED"
+              data:
+                $ref: "../../openapi.yaml#/components/schemas/AppealResponseDto"
+          example:
+            statusCode: 201
+            code: "APPEAL_SUBMITTED"
+            data:
+              id: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+              status: "pending"
+              content: "Tôi bị khóa nhầm, phòng đăng là phòng thật của tôi."
+              attachmentMediaIds:
+                - "7f94255a-2401-49b7-a0a4-88457633c89e"
+              contactEmail: null
+              contactPhone: "0901234567"
+              rejectReason: null
+              createdAt: "2026-11-27T03:00:00.000Z"
+              reviewedAt: null
+    "401":
+      $ref: "../../openapi.yaml#/components/responses/UnauthorizedError"
+    "403":
+      $ref: "../../openapi.yaml#/components/responses/ForbiddenError"
+    "409":
+      description: "Không thể gửi khiếu nại lúc này."
+      content:
+        "application/json":
+          schema:
+            type: "object"
+            additionalProperties: false
+            required:
+              - "statusCode"
+              - "code"
+            properties:
+              statusCode:
+                type: "integer"
+                enum:
+                  - 409
+              code:
+                type: "string"
+                enum:
+                  - "ACCOUNT_NOT_LOCKED"
+                  - "APPEAL_ALREADY_PENDING"
+                  - "APPEAL_COOLDOWN"
+          examples:
+            account_not_locked:
+              summary: "ACCOUNT_NOT_LOCKED"
+              value:
+                statusCode: 409
+                code: "ACCOUNT_NOT_LOCKED"
+            appeal_already_pending:
+              summary: "APPEAL_ALREADY_PENDING"
+              value:
+                statusCode: 409
+                code: "APPEAL_ALREADY_PENDING"
+            appeal_cooldown:
+              summary: "APPEAL_COOLDOWN"
+              value:
+                statusCode: 409
+                code: "APPEAL_COOLDOWN"
+    "422":
+      description: "Dữ liệu không hợp lệ hoặc file đính kèm không phải của người gửi."
+      content:
+        "application/json":
+          schema:
+            type: "object"
+            additionalProperties: false
+            required:
+              - "statusCode"
+              - "code"
+            properties:
+              statusCode:
+                type: "integer"
+                enum:
+                  - 422
+              code:
+                type: "string"
+                enum:
+                  - "VALIDATION_FAILED"
+                  - "MODERATION_ATTACHMENT_INVALID"
+          examples:
+            validation_failed:
+              summary: "VALIDATION_FAILED"
+              value:
+                statusCode: 422
+                code: "VALIDATION_FAILED"
+            moderation_attachment_invalid:
+              summary: "MODERATION_ATTACHMENT_INVALID"
+              value:
+                statusCode: 422
+                code: "MODERATION_ATTACHMENT_INVALID"
+    "500":
+      $ref: "../../openapi.yaml#/components/responses/InternalServerError"
+    "503":
+      $ref: "../../openapi.yaml#/components/responses/AuthUnavailableError"

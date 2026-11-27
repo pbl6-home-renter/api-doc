@@ -1,0 +1,26 @@
+type: "object"
+x-apidog-folder: "Moderation/Response"
+title: "AppealReviewResponseDto"
+description: "Kết quả chấp nhận/từ chối khiếu nại."
+additionalProperties: false
+required:
+  - "id"
+  - "status"
+  - "userId"
+  - "unlocked"
+properties:
+  id:
+    type: "string"
+    format: "uuid"
+  status:
+    type: "string"
+    enum:
+      - "pending"
+      - "accepted"
+      - "rejected"
+  userId:
+    type: "string"
+    format: "uuid"
+  unlocked:
+    type: "boolean"
+    description: "Chấp nhận: false khi tài khoản đã được mở khóa trước đó (chỉ đóng khiếu nại). Từ chối: luôn false."

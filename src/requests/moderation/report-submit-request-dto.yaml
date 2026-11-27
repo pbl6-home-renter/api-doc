@@ -1,0 +1,45 @@
+type: "object"
+x-apidog-folder: "Moderation/Request"
+title: "ReportSubmitRequestDto"
+description: "Báo cáo vi phạm một tài khoản."
+additionalProperties: false
+required:
+  - "reportedUserId"
+  - "category"
+  - "description"
+properties:
+  reportedUserId:
+    type: "string"
+    format: "uuid"
+  category:
+    type: "string"
+    enum:
+      - "fraud"
+      - "fake_listing"
+      - "harassment"
+      - "spam"
+      - "impersonation"
+      - "inappropriate_content"
+      - "other"
+    description: "6 loại gợi ý lý do khóa của P13-09 và `other`."
+  description:
+    type: "string"
+    minLength: 10
+    maxLength: 1000
+  evidenceMediaIds:
+    type: "array"
+    maxItems: 3
+    items:
+      type: "string"
+      format: "uuid"
+    description: "Media đã upload xong, purpose `report_evidence`, owner là chính người gửi."
+  contextType:
+    type: "string"
+    enum:
+      - "conversation"
+      - "contract"
+    nullable: true
+  contextId:
+    type: "string"
+    format: "uuid"
+    nullable: true

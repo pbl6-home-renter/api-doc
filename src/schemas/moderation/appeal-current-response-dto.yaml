@@ -1,0 +1,32 @@
+type: "object"
+x-apidog-folder: "Moderation/Response"
+title: "AppealCurrentResponseDto"
+description: "Lý do khóa và khiếu nại gần nhất của kỳ khóa hiện tại. Tài khoản không bị khóa: mọi trường null, `canSubmit = false`."
+additionalProperties: false
+required:
+  - "lockReason"
+  - "lockedAt"
+  - "appeal"
+  - "canSubmit"
+  - "nextSubmitAt"
+properties:
+  lockReason:
+    type: "string"
+    nullable: true
+  lockedAt:
+    type: "string"
+    format: "date-time"
+    nullable: true
+  appeal:
+    type: "object"
+    allOf:
+      - $ref: "../../openapi.yaml#/components/schemas/AppealResponseDto"
+    nullable: true
+  canSubmit:
+    type: "boolean"
+    description: "Có thể gửi khiếu nại mới ngay bây giờ."
+  nextSubmitAt:
+    type: "string"
+    format: "date-time"
+    nullable: true
+    description: "Có giá trị khi khiếu nại vừa bị từ chối chưa đủ 7 ngày."

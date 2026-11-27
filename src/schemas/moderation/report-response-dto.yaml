@@ -1,0 +1,38 @@
+type: "object"
+x-apidog-folder: "Moderation/Response"
+title: "ReportResponseDto"
+description: "Báo cáo vừa gửi."
+additionalProperties: false
+required:
+  - "id"
+  - "reportedUserId"
+  - "category"
+  - "status"
+  - "createdAt"
+properties:
+  id:
+    type: "string"
+    format: "uuid"
+  reportedUserId:
+    type: "string"
+    format: "uuid"
+  category:
+    type: "string"
+    enum:
+      - "fraud"
+      - "fake_listing"
+      - "harassment"
+      - "spam"
+      - "impersonation"
+      - "inappropriate_content"
+      - "other"
+    description: "6 loại gợi ý lý do khóa của P13-09 và `other`."
+  status:
+    type: "string"
+    enum:
+      - "pending"
+      - "dismissed"
+      - "actioned"
+  createdAt:
+    type: "string"
+    format: "date-time"

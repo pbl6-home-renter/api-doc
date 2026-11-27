@@ -1,0 +1,131 @@
+post:
+  tags:
+    - "Moderation"
+  x-apidog-folder: "Moderation"
+  x-apidog-status: "released"
+  operationId: "resolveUserReport"
+  security:
+    - BearerAuth: []
+  summary: "Resolve report"
+  description: "Chỉ admin.\n\n- `dismiss`: báo cáo → `dismissed`.\n- `lock` (bắt buộc `lockReason`): trong một transaction, khóa tài khoản bị báo cáo theo đúng luồng `POST /users/{userId}/lock` (event `user.locked`, thông báo, kỳ khóa) và chuyển **mọi** báo cáo `pending` về người đó sang `actioned`. Nếu tài khoản đã bị khóa sẵn thì chỉ đóng các báo cáo, `locked = false`.\n- Audit khi khóa: `user.locked` với metadata `{ lockReason, reportId }`."
+  parameters:
+    - name: "reportId"
+      in: "path"
+      required: true
+      description: "UUID của báo cáo."
+      schema:
+        type: "string"
+        format: "uuid"
+  requestBody:
+    required: true
+    content:
+      "application/json":
+        schema:
+          $ref: "../../openapi.yaml#/components/schemas/ReportResolveRequestDto"
+        example:
+          action: "lock"
+          note: null
+          lockReason: "Tin đăng giả, ảnh và thông tin phòng không đúng thực tế"
+  responses:
+    "200":
+      description: "Thành công."
+      content:
+        "application/json":
+          schema:
+            type: "object"
+            additionalProperties: false
+            required:
+              - "statusCode"
+              - "code"
+              - "data"
+            properties:
+              statusCode:
+                type: "integer"
+                enum:
+                  - 200
+              code:
+                type: "string"
+                enum:
+                  - "REPORT_RESOLVED"
+              data:
+                $ref: "../../openapi.yaml#/components/schemas/ReportResolveResponseDto"
+          example:
+            statusCode: 200
+            code: "REPORT_RESOLVED"
+            data:
+              id: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+              status: "actioned"
+              reportedUserId: "b13d28cf-b1c5-4e78-a54d-017637c47c30"
+              locked: true
+    "401":
+      $ref: "../../openapi.yaml#/components/responses/UnauthorizedError"
+    "403":
+      $ref: "../../openapi.yaml#/components/responses/ForbiddenError"
+    "404":
+      description: "Không tìm thấy báo cáo hoặc người dùng."
+      content:
+        "application/json":
+          schema:
+            type: "object"
+            additionalProperties: false
+            required:
+              - "statusCode"
+              - "code"
+            properties:
+              statusCode:
+                type: "integer"
+                enum:
+                  - 404
+              code:
+                type: "string"
+                enum:
+                  - "REPORT_NOT_FOUND"
+                  - "USER_NOT_FOUND"
+          examples:
+            report_not_found:
+              summary: "REPORT_NOT_FOUND"
+              value:
+                statusCode: 404
+                code: "REPORT_NOT_FOUND"
+            user_not_found:
+              summary: "USER_NOT_FOUND"
+              value:
+                statusCode: 404
+                code: "USER_NOT_FOUND"
+    "409":
+      description: "Báo cáo đã được xử lý hoặc tài khoản chưa xác thực email."
+      content:
+        "application/json":
+          schema:
+            type: "object"
+            additionalProperties: false
+            required:
+              - "statusCode"
+              - "code"
+            properties:
+              statusCode:
+                type: "integer"
+                enum:
+                  - 409
+              code:
+                type: "string"
+                enum:
+                  - "REPORT_NOT_PENDING"
+                  - "EMAIL_NOT_VERIFIED"
+          examples:
+            report_not_pending:
+              summary: "REPORT_NOT_PENDING"
+              value:
+                statusCode: 409
+                code: "REPORT_NOT_PENDING"
+            email_not_verified:
+              summary: "EMAIL_NOT_VERIFIED"
+              value:
+                statusCode: 409
+                code: "EMAIL_NOT_VERIFIED"
+    "422":
+      $ref: "../../openapi.yaml#/components/responses/ValidationError"
+    "500":
+      $ref: "../../openapi.yaml#/components/responses/InternalServerError"
+    "503":
+      $ref: "../../openapi.yaml#/components/responses/AuthUnavailableError"

@@ -1,0 +1,49 @@
+type: "object"
+x-apidog-folder: "Moderation/Response"
+title: "AppealResponseDto"
+description: "Khiếu nại của chính người dùng."
+additionalProperties: false
+required:
+  - "id"
+  - "status"
+  - "content"
+  - "attachmentMediaIds"
+  - "contactEmail"
+  - "contactPhone"
+  - "rejectReason"
+  - "createdAt"
+  - "reviewedAt"
+properties:
+  id:
+    type: "string"
+    format: "uuid"
+  status:
+    type: "string"
+    enum:
+      - "pending"
+      - "accepted"
+      - "rejected"
+  content:
+    type: "string"
+  attachmentMediaIds:
+    type: "array"
+    items:
+      type: "string"
+      format: "uuid"
+  contactEmail:
+    type: "string"
+    nullable: true
+  contactPhone:
+    type: "string"
+    nullable: true
+  rejectReason:
+    type: "string"
+    nullable: true
+    description: "Chỉ có khi `status = rejected`."
+  createdAt:
+    type: "string"
+    format: "date-time"
+  reviewedAt:
+    type: "string"
+    format: "date-time"
+    nullable: true
