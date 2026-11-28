@@ -8,6 +8,9 @@ get:
     - BearerAuth: []
   summary: Get contract details
   description: |-
+    P13-D101 / P13-01: landlord account lock/unlock leaves contract statuses unchanged.
+    Existing suspended contracts are migrated to active; previously terminated contracts retain their status and legacy handover behavior.
+
     Landlord chỉ xem hợp đồng có landlordId = user.id.
     Tenant xem được khi tenantId = user.id hoặc là member chưa rời của hợp đồng:
     member có tenant_id = user.id, is_deleted = false và left_at IS NULL hoặc left_at > hôm nay (UTC).

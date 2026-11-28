@@ -12,8 +12,8 @@ properties:
   tenantPhone: { type: string, nullable: true, description: "Số điện thoại người thuê; có thể null khi liên kết tenantId và chưa lưu thông tin liên hệ." }
   status:
     type: string
-    enum: [draft, signed, active, suspended, expired, terminated]
-    description: "Trạng thái hợp đồng (draft: nháp, signed: đã ký, active: đang hiệu lực, suspended: tạm dừng, expired: hết hạn, terminated: đã thanh lý)."
+    enum: [draft, signed, active, expired, terminated]
+    description: "Trạng thái hợp đồng (draft: nháp, signed: đã ký, active: đang hiệu lực, expired: hết hạn, terminated: đã thanh lý)."
   rentPrice: { type: number, minimum: 0, description: "Giá thuê dài hạn (VNĐ)." }
   depositAmount: { type: number, minimum: 0, description: "Tiền đặt cọc phòng (VNĐ)." }
   startDate: { type: string, format: date, description: "Thời điểm bắt đầu hợp đồng." }

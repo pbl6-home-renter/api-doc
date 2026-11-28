@@ -7,15 +7,15 @@ properties:
   recipientUserId: { type: string, format: uuid }
   sourceService: { type: string }
   eventId: { type: string, format: uuid }
-  type: { type: string, enum: [invoice, issue, system], description: "system dùng cho notification building/account/contract, gồm account lock/unlock và contract suspension của P9-06." }
+  type: { type: string, enum: [invoice, issue, system], description: "system dùng cho notification building/account/contract, gồm account lock/unlock và các thông báo nghiệp vụ hợp đồng." }
   title:
     type: string
     maxLength: 255
-    description: "Account notice từ Identity giữ mã USER_ACCOUNT_LOCKED_TITLE hoặc USER_ACCOUNT_UNLOCKED_TITLE; Web dịch theo data.messageKey. Contract suspension notice từ Tenancy dùng CONTRACT_SUSPENDED_TITLE; P9-07 dùng CONTRACT_LOCK_DECISION_REQUIRED_TITLE, CONTRACT_RESTORED_TITLE hoặc CONTRACT_TERMINATED_TITLE. Các notice khác hoặc notice cũ có thể chứa nội dung văn bản."
+    description: "Account notice từ Identity giữ mã USER_ACCOUNT_LOCKED_TITLE hoặc USER_ACCOUNT_UNLOCKED_TITLE; Web dịch theo data.messageKey. P13-01 không phát thông báo hợp đồng do khóa/mở khóa; thông báo cũ vẫn được giữ. Các notice khác hoặc notice cũ có thể chứa nội dung văn bản."
   body:
     type: string
     maxLength: 2000
-    description: "Account notice từ Identity giữ mã USER_ACCOUNT_LOCKED_BODY hoặc USER_ACCOUNT_UNLOCKED_BODY; Web dịch theo data.messageKey. Contract suspension notice từ Tenancy dùng CONTRACT_SUSPENDED_BODY; P9-07 dùng CONTRACT_LOCK_DECISION_REQUIRED_BODY, CONTRACT_RESTORED_BODY hoặc CONTRACT_TERMINATED_BODY. Các notice khác hoặc notice cũ có thể chứa nội dung văn bản."
+    description: "Account notice từ Identity giữ mã USER_ACCOUNT_LOCKED_BODY hoặc USER_ACCOUNT_UNLOCKED_BODY; Web dịch theo data.messageKey. P13-01 không phát thông báo hợp đồng do khóa/mở khóa; thông báo cũ vẫn được giữ. Các notice khác hoặc notice cũ có thể chứa nội dung văn bản."
   deepLink: { type: string, nullable: true }
   data:
     type: object
@@ -25,11 +25,9 @@ properties:
       Snapshot tùy theo producer. Với P9-06, account notice từ identity chứa
       { messageKey, userId, status, eventType, lockedAt }; messageKey là
       user.locked hoặc user.unlocked, unlock có lockedAt = null.
-      Contract suspension notice từ tenancy chứa
-      { landlordId, lockCycleId, contractIds, graceDeadline }; contractIds chỉ
-      gồm hợp đồng liên quan đến recipient. P9-07 resolution notices add
-      action = decision_required, restore or terminate. ID là UUID, các timestamp khác null
-      là ISO 8601 UTC. Không có phone trong các snapshot P9-06 này.
+      P13-01 no longer emits contract lock notifications. Existing notification data
+      remains a historical snapshot and is not rewritten. IDs are UUIDs and non-null
+      timestamps use ISO 8601 UTC. Account notice snapshots do not include phone.
   createdAt: { type: string, format: date-time }
   readAt: { type: string, format: date-time, nullable: true }
 required: [id, recipientUserId, sourceService, eventId, type, title, body, createdAt, readAt]

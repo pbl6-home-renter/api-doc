@@ -8,6 +8,9 @@ get:
     - BearerAuth: []
   summary: List my contracts
   description: |-
+    P13-D101 / P13-01: landlord account lock/unlock leaves contract statuses unchanged.
+    Existing suspended contracts are migrated to active; previously terminated contracts retain their status and legacy handover behavior.
+
     Returns contracts where the caller is the named tenant (contracts.tenant_id) or a member who has not left.
     A member has not left when is_deleted = false and left_at IS NULL or left_at is after today (UTC),
     matching the contract-member status definition. Leaving today or earlier does not grant member access.
@@ -61,7 +64,7 @@ get:
       properties:
         status:
           type: string
-          enum: [draft, signed, active, suspended, expired, terminated]
+          enum: [draft, signed, active, expired, terminated]
         roomId:
           type: string
           format: uuid

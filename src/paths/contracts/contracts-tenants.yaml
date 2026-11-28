@@ -15,7 +15,7 @@ get:
     Các member có cùng tenantId trong phạm vi landlord là một khách; tenantId null là từng khách riêng
     bằng contractMemberId. Không gom theo tên/phone, không tạo user hay lookup Identity.
     Một membership đang ở khi leftAt null hoặc > hôm nay UTC và contract giữ phòng:
-    active, suspended, hoặc terminated có lockTerminationCycleId và handoverCompletedOn null (P9-07).
+    active, hoặc hợp đồng terminated từ saga cũ có lockTerminationCycleId và handoverCompletedOn null. P13-01 không tạo thêm hợp đồng chấm dứt do khóa tài khoản.
     leftAt = hôm nay đã rời. Không suy trạng thái từ endDate.
     Khách current nếu bất kỳ membership nào đang ở, còn lại history; hai scope loại trừ nhau.
     Tên hiển thị là snapshot khác rỗng đầu tiên theo joinedAt asc, member.id asc;
