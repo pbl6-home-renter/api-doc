@@ -7,7 +7,9 @@ get:
   security:
     - BearerAuth: []
   summary: Get roommate profile details
-  description: 'tenant. Đọc một hồ sơ theo định danh. Lỗi nghiệp vụ: 404 NOT FOUND · 403 PROFILE NOT VISIBLE.'
+  description: |
+    Active tenant only. Public detail uses the same projection, Identity and discoverability conditions as search (P10-D88). A locked tenant's profile returns 404 ROOMMATE_PROFILE_NOT_FOUND after the lock lifecycle event removes their tenant_user_projections row. Missing, hidden or full-room profiles also return 404.
+    This does not change isVisible. Unlock restores eligibility after projection processing, subject to the existing rules. The separate GET /me/roommate-profile keeps its current own-profile behavior and guards.
   parameters:
   - name: roommateProfileId
     in: path
@@ -59,7 +61,7 @@ get:
       $ref: ../../openapi.yaml#/components/responses/AuthUnavailableError
     '403':
       x-apidog-name: Forbidden
-      description: Người gọi sai vai trò hoặc hồ sơ không công khai cho người gọi.
+      description: Caller has the wrong role or their own account is locked.
       content:
         application/json:
           schema:
@@ -75,7 +77,6 @@ get:
                 enum:
                   - FORBIDDEN
                   - ACCOUNT_LOCKED
-                  - PROFILE_NOT_VISIBLE
           examples:
             forbidden:
               summary: FORBIDDEN — Vai trò không được phép đọc hồ sơ tìm bạn ở.
@@ -87,13 +88,16 @@ get:
               value:
                 statusCode: 403
                 code: ACCOUNT_LOCKED
-            profile_not_visible:
-              summary: PROFILE_NOT_VISIBLE — Hồ sơ không được phép hiển thị cho người gọi.
-              value:
-                statusCode: 403
-                code: PROFILE_NOT_VISIBLE
     '404':
-      $ref: ../../openapi.yaml#/components/responses/NotFoundError
+      description: Profile missing or not discoverable, including a tenant unavailable in the lifecycle projection.
+      content:
+        application/json:
+          schema:
+            type: object
+            required: [statusCode, code]
+            properties:
+              statusCode: { type: integer, enum: [404] }
+              code: { type: string, enum: [ROOMMATE_PROFILE_NOT_FOUND] }
     '429':
       $ref: ../../openapi.yaml#/components/responses/TooManyRequestsError
     '500':

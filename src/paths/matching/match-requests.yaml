@@ -7,7 +7,7 @@ get:
     - BearerAuth: []
   summary: List my match requests
   description: |
-    Active tenant only. Returns requests involving the caller, newest first with ID as a tie breaker. No phone, AI data or conversation is disclosed.
+    Active tenant only. Returns requests involving the caller, newest first with ID as a tie breaker. No phone, AI data or conversation is disclosed. Existing limitation: missing active participant summaries still return 404 MATCH_REQUEST_PARTICIPANT_UNAVAILABLE; requests remain stored and can be listed again once active summaries are available after unlock.
 
     ```mermaid
     sequenceDiagram
@@ -99,7 +99,10 @@ post:
     - BearerAuth: []
   summary: Send a match request
   description: |
-    Active tenant only. The target must be a different active tenant with a currently discoverable profile. A UUID Idempotency-Key is required per new intent. Replaying the same key and target returns the current request with 201 and does not emit another notification, even after its status changes. A different key is allowed after rejection or withdrawal, while only one pending request is allowed per unordered pair. The requester comes from the access token; Tenancy verifies the target through Identity and the local profile table. Tenancy emits `match_request.created` with `matchRequestId`, `actorUserId`, Identity `actorDisplayName`, and `recipientUserId`; Community forwards the actor to the Web notification and adds deep link `/roommates?matchRequestId=<id>`. The Web route currently shows a placeholder, and mobile navigation is not implemented. Deploy the Community consumer before the Tenancy producer.
+    Active tenant only. The target must be a different active tenant with a currently discoverable profile. A UUID Idempotency-Key is required per new intent. Replaying the same key and target returns the current request with 201 and does not emit another notification, even after its status changes. A different key is allowed after rejection or withdrawal, while only one pending request is allowed per unordered pair. The requester comes from the access token; Tenancy keeps Identity validation, requires the target to exist in the lifecycle-owned `tenant_user_projections` projection in the current transaction, and checks profile discoverability. Identity cannot bypass projection eligibility. Tenancy emits `match_request.created` with `matchRequestId`, `actorUserId`, Identity `actorDisplayName`, and `recipientUserId`; Community forwards the actor to the Web notification and adds deep link `/roommates?matchRequestId=<id>`. The Web route currently shows a placeholder, and mobile navigation is not implemented. Deploy the Community consumer before the Tenancy producer.
+
+    New requests to a locked/unavailable target return 409 MATCH_REQUEST_COUNTERPART_UNAVAILABLE, with no committed request or outbox event. A missing projection row is unavailable and is not proof of a lock; historical projection completeness must be verified before rollout. If the projection exists but Identity already reports a locked tenant, the same 409 applies. Other missing/inactive target accounts or missing/hidden/full profiles retain 404 ROOMMATE_PROFILE_NOT_FOUND. Idempotent replays return the existing request before rechecking target eligibility.
+    Pending requests are never cancelled on lock. Once unlock is processed by the existing lifecycle consumer, those requests remain usable. Lifecycle projection updates are asynchronous and do not change token TTL.
 
     ```mermaid
     sequenceDiagram
@@ -114,7 +117,8 @@ post:
       ID-->>TEN: Active requester
       TEN->>DB: Transaction: insert or replay by request key and pending pair
       TEN->>ID: GET /internal/users?ids=target (new requests only)
-      ID-->>TEN: Active target
+      ID-->>TEN: Active target (locked tenant returns 409; other missing/inactive accounts return 404)
+      TEN->>DB: New requests only: require target in tenant_user_projections (else rollback, 409)
       TEN->>DB: Lock discoverable target profile; append outbox
       DB-->>TEN: Committed pending request
       TEN-->>T: 201 MATCH_REQUEST_CREATED
@@ -154,9 +158,17 @@ post:
     '403':
       $ref: ../../openapi.yaml#/components/responses/ForbiddenError
     '404':
-      $ref: ../../openapi.yaml#/components/responses/NotFoundError
+      description: Target account/profile missing or profile hidden/full; a locked or projection-unavailable account returns 409.
+      content:
+        application/json:
+          schema:
+            type: object
+            required: [statusCode, code]
+            properties:
+              statusCode: { type: integer, enum: [404] }
+              code: { type: string, enum: [ROOMMATE_PROFILE_NOT_FOUND] }
     '409':
-      description: Pending pair exists or key reused for another target.
+      description: Pending pair exists, key reused for another target, or counterpart account unavailable (pending requests are preserved).
       content:
         application/json:
           schema:
@@ -164,7 +176,7 @@ post:
             required: [statusCode, code]
             properties:
               statusCode: { type: integer, enum: [409] }
-              code: { type: string, enum: [DUPLICATE_MATCH_REQUEST, IDEMPOTENCY_KEY_REUSED] }
+              code: { type: string, enum: [DUPLICATE_MATCH_REQUEST, IDEMPOTENCY_KEY_REUSED, MATCH_REQUEST_COUNTERPART_UNAVAILABLE] }
     '422':
       description: Invalid request or self matching.
       content:
