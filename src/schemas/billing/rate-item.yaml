@@ -1,6 +1,11 @@
 type: object
 title: RateItem
-description: Một đơn giá hoặc phí trong bộ RatePolicy.
+description: >-
+  A rate or fee in a RatePolicy. Electricity and water support flat, tiered and
+  per_head. Utility per_head rates require billingUnit person, a unitPrice and no
+  steps; they do not require meter readings and are prorated over the invoice
+  service window. Flat/tiered utility charges use metered consumption without
+  proration. Other fee kinds and their existing unit constraints are unchanged.
 additionalProperties: false
 properties:
   type:
