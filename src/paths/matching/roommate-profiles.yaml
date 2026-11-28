@@ -7,7 +7,9 @@ get:
   security:
     - BearerAuth: []
   summary: Search roommate profiles
-  description: 'tenant. Duyệt feed hồ sơ tìm bạn ở. Lỗi nghiệp vụ: 422 VALIDATION FAILED.'
+  description: |
+    Active tenant only. Search excludes tenants absent from the existing `tenant_user_projections` projection, including locked tenants once their lifecycle event is processed. This condition applies before pagination and totalItems, alongside existing Identity validation, area filters and room-vacancy rules (P10-D88).
+    Lock/unlock never changes the saved isVisible choice. After unlock is projected, the profile is eligible again according to isVisible and the existing search rules. Lifecycle delivery is asynchronous; this does not change token TTL or guarantee instant cross-service updates.
   parameters:
   - name: filter
     in: query

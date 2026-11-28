@@ -10550,7 +10550,7 @@
           }
         ],
         "summary": "Search roommate profiles",
-        "description": "tenant. Duyệt feed hồ sơ tìm bạn ở. Lỗi nghiệp vụ: 422 VALIDATION FAILED.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
+        "description": "Active tenant only. Search excludes tenants absent from the existing `tenant_user_projections` projection, including locked tenants once their lifecycle event is processed. This condition applies before pagination and totalItems, alongside existing Identity validation, area filters and room-vacancy rules (P10-D88).\nLock/unlock never changes the saved isVisible choice. After unlock is projected, the profile is eligible again according to isVisible and the existing search rules. Lifecycle delivery is asynchronous; this does not change token TTL or guarantee instant cross-service updates.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "parameters": [
           {
             "name": "filter",
@@ -10734,7 +10734,7 @@
           }
         ],
         "summary": "Get roommate profile details",
-        "description": "tenant. Đọc một hồ sơ theo định danh. Lỗi nghiệp vụ: 404 NOT FOUND · 403 PROFILE NOT VISIBLE.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
+        "description": "Active tenant only. Public detail uses the same projection, Identity and discoverability conditions as search (P10-D88). A locked tenant's profile returns 404 ROOMMATE_PROFILE_NOT_FOUND after the lock lifecycle event removes their tenant_user_projections row. Missing, hidden or full-room profiles also return 404.\nThis does not change isVisible. Unlock restores eligibility after projection processing, subject to the existing rules. The separate GET /me/roommate-profile keeps its current own-profile behavior and guards.\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "parameters": [
           {
             "name": "roommateProfileId",
@@ -10803,7 +10803,7 @@
           },
           "403": {
             "x-apidog-name": "Forbidden",
-            "description": "Người gọi sai vai trò hoặc hồ sơ không công khai cho người gọi.",
+            "description": "Caller has the wrong role or their own account is locked.",
             "content": {
               "application/json": {
                 "schema": {
@@ -10824,8 +10824,7 @@
                       "type": "string",
                       "enum": [
                         "FORBIDDEN",
-                        "ACCOUNT_LOCKED",
-                        "PROFILE_NOT_VISIBLE"
+                        "ACCOUNT_LOCKED"
                       ]
                     }
                   }
@@ -10844,20 +10843,38 @@
                       "statusCode": 403,
                       "code": "ACCOUNT_LOCKED"
                     }
-                  },
-                  "profile_not_visible": {
-                    "summary": "PROFILE_NOT_VISIBLE — Hồ sơ không được phép hiển thị cho người gọi.",
-                    "value": {
-                      "statusCode": 403,
-                      "code": "PROFILE_NOT_VISIBLE"
-                    }
                   }
                 }
               }
             }
           },
           "404": {
-            "$ref": "#/components/responses/NotFoundError"
+            "description": "Profile missing or not discoverable, including a tenant unavailable in the lifecycle projection.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "statusCode",
+                    "code"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        404
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "ROOMMATE_PROFILE_NOT_FOUND"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "429": {
             "$ref": "#/components/responses/TooManyRequestsError"
@@ -11120,7 +11137,7 @@
           }
         ],
         "summary": "List my match requests",
-        "description": "Active tenant only. Returns requests involving the caller, newest first with ID as a tie breaker. No phone, AI data or conversation is disclosed.\n\n```mermaid\nsequenceDiagram\n  participant T as Tenant\n  participant TEN as Tenancy\n  participant ID as Identity\n  participant DB as Tenancy DB\n  T->>TEN: GET /match-requests\n  TEN->>ID: GET /internal/users?ids=actor\n  ID-->>TEN: Active caller summary\n  TEN->>DB: Page by requester/target and optional filters\n  DB-->>TEN: Caller-owned requests and total\n  TEN->>ID: GET /internal/users?ids=other participants\n  ID-->>TEN: Active requester and target summaries\n  TEN-->>T: 200 MATCH_REQUESTS_FETCHED with summaries\n```\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-11-18 | 🟢 NON_BREAKING | added the non-success response with the status `404` | [#76](https://github.com/pbl6-home-renter/api-doc/pull/76) |\n| 2026-11-18 | 🟢 NON_BREAKING | added the required property `data/items/requester` to the response with the `200` status | [#76](https://github.com/pbl6-home-renter/api-doc/pull/76) |\n| 2026-11-18 | 🟢 NON_BREAKING | added the required property `data/items/target` to the response with the `200` status | [#76](https://github.com/pbl6-home-renter/api-doc/pull/76) |\n| 2026-11-16 | 🔴 BREAKING | removed the required property `data/items/requester` from the response with the `200` status | [#73](https://github.com/pbl6-home-renter/api-doc/pull/73) |\n| 2026-11-16 | 🔴 BREAKING | removed the required property `data/items/target` from the response with the `200` status | [#73](https://github.com/pbl6-home-renter/api-doc/pull/73) |\n| 2026-11-16 | 🟢 NON_BREAKING | added the enum value `accepted` to the property `status` of the `query` request parameter `filter` | [#73](https://github.com/pbl6-home-renter/api-doc/pull/73) |\n| 2026-11-16 | 🟢 NON_BREAKING | added the enum value `pending` to the property `status` of the `query` request parameter `filter` | [#73](https://github.com/pbl6-home-renter/api-doc/pull/73) |\n| 2026-11-16 | 🟢 NON_BREAKING | added the enum value `rejected` to the property `status` of the `query` request parameter `filter` | [#73](https://github.com/pbl6-home-renter/api-doc/pull/73) |\n| 2026-11-16 | 🟢 NON_BREAKING | added the enum value `withdrawn` to the property `status` of the `query` request parameter `filter` | [#73](https://github.com/pbl6-home-renter/api-doc/pull/73) |\n| 2026-11-16 | 🟢 NON_BREAKING | Bỏ response lỗi HTTP 429. | [#73](https://github.com/pbl6-home-renter/api-doc/pull/73) |\n| 2026-11-16 | 🟢 NON_BREAKING | Bỏ response lỗi HTTP 500. | [#73](https://github.com/pbl6-home-renter/api-doc/pull/73) |\n| 2026-11-16 | 🟢 NON_BREAKING | removed the optional property `data/items/matchScore` from the response with the `200` status | [#73](https://github.com/pbl6-home-renter/api-doc/pull/73) |\n| 2026-11-16 | 🟢 NON_BREAKING | removed the optional property `data/items/message` from the response with the `200` status | [#73](https://github.com/pbl6-home-renter/api-doc/pull/73) |\n| 2026-11-16 | 🟢 NON_BREAKING | added the required property `data/items/respondedAt` to the response with the `200` status | [#73](https://github.com/pbl6-home-renter/api-doc/pull/73) |\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
+        "description": "Active tenant only. Returns requests involving the caller, newest first with ID as a tie breaker. No phone, AI data or conversation is disclosed. Existing limitation: missing active participant summaries still return 404 MATCH_REQUEST_PARTICIPANT_UNAVAILABLE; requests remain stored and can be listed again once active summaries are available after unlock.\n\n```mermaid\nsequenceDiagram\n  participant T as Tenant\n  participant TEN as Tenancy\n  participant ID as Identity\n  participant DB as Tenancy DB\n  T->>TEN: GET /match-requests\n  TEN->>ID: GET /internal/users?ids=actor\n  ID-->>TEN: Active caller summary\n  TEN->>DB: Page by requester/target and optional filters\n  DB-->>TEN: Caller-owned requests and total\n  TEN->>ID: GET /internal/users?ids=other participants\n  ID-->>TEN: Active requester and target summaries\n  TEN-->>T: 200 MATCH_REQUESTS_FETCHED with summaries\n```\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-11-18 | 🟢 NON_BREAKING | added the non-success response with the status `404` | [#76](https://github.com/pbl6-home-renter/api-doc/pull/76) |\n| 2026-11-18 | 🟢 NON_BREAKING | added the required property `data/items/requester` to the response with the `200` status | [#76](https://github.com/pbl6-home-renter/api-doc/pull/76) |\n| 2026-11-18 | 🟢 NON_BREAKING | added the required property `data/items/target` to the response with the `200` status | [#76](https://github.com/pbl6-home-renter/api-doc/pull/76) |\n| 2026-11-16 | 🔴 BREAKING | removed the required property `data/items/requester` from the response with the `200` status | [#73](https://github.com/pbl6-home-renter/api-doc/pull/73) |\n| 2026-11-16 | 🔴 BREAKING | removed the required property `data/items/target` from the response with the `200` status | [#73](https://github.com/pbl6-home-renter/api-doc/pull/73) |\n| 2026-11-16 | 🟢 NON_BREAKING | added the enum value `accepted` to the property `status` of the `query` request parameter `filter` | [#73](https://github.com/pbl6-home-renter/api-doc/pull/73) |\n| 2026-11-16 | 🟢 NON_BREAKING | added the enum value `pending` to the property `status` of the `query` request parameter `filter` | [#73](https://github.com/pbl6-home-renter/api-doc/pull/73) |\n| 2026-11-16 | 🟢 NON_BREAKING | added the enum value `rejected` to the property `status` of the `query` request parameter `filter` | [#73](https://github.com/pbl6-home-renter/api-doc/pull/73) |\n| 2026-11-16 | 🟢 NON_BREAKING | added the enum value `withdrawn` to the property `status` of the `query` request parameter `filter` | [#73](https://github.com/pbl6-home-renter/api-doc/pull/73) |\n| 2026-11-16 | 🟢 NON_BREAKING | Bỏ response lỗi HTTP 429. | [#73](https://github.com/pbl6-home-renter/api-doc/pull/73) |\n| 2026-11-16 | 🟢 NON_BREAKING | Bỏ response lỗi HTTP 500. | [#73](https://github.com/pbl6-home-renter/api-doc/pull/73) |\n| 2026-11-16 | 🟢 NON_BREAKING | removed the optional property `data/items/matchScore` from the response with the `200` status | [#73](https://github.com/pbl6-home-renter/api-doc/pull/73) |\n| 2026-11-16 | 🟢 NON_BREAKING | removed the optional property `data/items/message` from the response with the `200` status | [#73](https://github.com/pbl6-home-renter/api-doc/pull/73) |\n| 2026-11-16 | 🟢 NON_BREAKING | added the required property `data/items/respondedAt` to the response with the `200` status | [#73](https://github.com/pbl6-home-renter/api-doc/pull/73) |\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "parameters": [
           {
             "name": "filter",
@@ -11311,7 +11328,7 @@
           }
         ],
         "summary": "Send a match request",
-        "description": "Active tenant only. The target must be a different active tenant with a currently discoverable profile. A UUID Idempotency-Key is required per new intent. Replaying the same key and target returns the current request with 201 and does not emit another notification, even after its status changes. A different key is allowed after rejection or withdrawal, while only one pending request is allowed per unordered pair. The requester comes from the access token; Tenancy verifies the target through Identity and the local profile table. Tenancy emits `match_request.created` with `matchRequestId`, `actorUserId`, Identity `actorDisplayName`, and `recipientUserId`; Community forwards the actor to the Web notification and adds deep link `/roommates?matchRequestId=<id>`. The Web route currently shows a placeholder, and mobile navigation is not implemented. Deploy the Community consumer before the Tenancy producer.\n\n```mermaid\nsequenceDiagram\n  participant T as Tenant\n  participant TEN as Tenancy\n  participant ID as Identity\n  participant DB as Tenancy DB\n  participant MQ as RabbitMQ\n  participant COM as Community\n  T->>TEN: POST /match-requests + Idempotency-Key\n  TEN->>ID: GET /internal/users?ids=requester\n  ID-->>TEN: Active requester\n  TEN->>DB: Transaction: insert or replay by request key and pending pair\n  TEN->>ID: GET /internal/users?ids=target (new requests only)\n  ID-->>TEN: Active target\n  TEN->>DB: Lock discoverable target profile; append outbox\n  DB-->>TEN: Committed pending request\n  TEN-->>T: 201 MATCH_REQUEST_CREATED\n  TEN-)MQ: match_request.created to target\n  MQ-)COM: Inbox dedup + system notification\n```\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-11-16 | 🔴 BREAKING | added the new required `header` request parameter `idempotency-key` | [#73](https://github.com/pbl6-home-renter/api-doc/pull/73) |\n| 2026-11-16 | 🔴 BREAKING | added the new `IDEMPOTENCY_KEY_REUSED` enum value to the `code` response property for the response status `409` | [#73](https://github.com/pbl6-home-renter/api-doc/pull/73) |\n| 2026-11-16 | 🔴 BREAKING | added the new `UNEXPECTED_FIELD` enum value to the `code` response property for the response status `422` | [#73](https://github.com/pbl6-home-renter/api-doc/pull/73) |\n| 2026-11-16 | 🔴 BREAKING | added the new `accepted` enum value to the `data/status` response property for the response status `201` | [#73](https://github.com/pbl6-home-renter/api-doc/pull/73) |\n| 2026-11-16 | 🔴 BREAKING | added the new `rejected` enum value to the `data/status` response property for the response status `201` | [#73](https://github.com/pbl6-home-renter/api-doc/pull/73) |\n| 2026-11-16 | 🔴 BREAKING | added the new `withdrawn` enum value to the `data/status` response property for the response status `201` | [#73](https://github.com/pbl6-home-renter/api-doc/pull/73) |\n| 2026-11-16 | 🟢 NON_BREAKING | the optional response header `location` removed for the status `201` | [#73](https://github.com/pbl6-home-renter/api-doc/pull/73) |\n| 2026-11-16 | 🟢 NON_BREAKING | Bỏ response lỗi HTTP 429. | [#73](https://github.com/pbl6-home-renter/api-doc/pull/73) |\n| 2026-11-16 | 🟢 NON_BREAKING | Bỏ response lỗi HTTP 500. | [#73](https://github.com/pbl6-home-renter/api-doc/pull/73) |\n| 2026-11-16 | 🟢 NON_BREAKING | added the required property `data/createdAt` to the response with the `201` status | [#73](https://github.com/pbl6-home-renter/api-doc/pull/73) |\n| 2026-11-16 | 🟢 NON_BREAKING | added the required property `data/requesterId` to the response with the `201` status | [#73](https://github.com/pbl6-home-renter/api-doc/pull/73) |\n| 2026-11-16 | 🟢 NON_BREAKING | added the required property `data/targetId` to the response with the `201` status | [#73](https://github.com/pbl6-home-renter/api-doc/pull/73) |\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
+        "description": "Active tenant only. The target must be a different active tenant with a currently discoverable profile. A UUID Idempotency-Key is required per new intent. Replaying the same key and target returns the current request with 201 and does not emit another notification, even after its status changes. A different key is allowed after rejection or withdrawal, while only one pending request is allowed per unordered pair. The requester comes from the access token; Tenancy keeps Identity validation, requires the target to exist in the lifecycle-owned `tenant_user_projections` projection in the current transaction, and checks profile discoverability. Identity cannot bypass projection eligibility. Tenancy emits `match_request.created` with `matchRequestId`, `actorUserId`, Identity `actorDisplayName`, and `recipientUserId`; Community forwards the actor to the Web notification and adds deep link `/roommates?matchRequestId=<id>`. The Web route currently shows a placeholder, and mobile navigation is not implemented. Deploy the Community consumer before the Tenancy producer.\n\nNew requests to a locked/unavailable target return 409 MATCH_REQUEST_COUNTERPART_UNAVAILABLE, with no committed request or outbox event. A missing projection row is unavailable and is not proof of a lock; historical projection completeness must be verified before rollout. If the projection exists but Identity already reports a locked tenant, the same 409 applies. Other missing/inactive target accounts or missing/hidden/full profiles retain 404 ROOMMATE_PROFILE_NOT_FOUND. Idempotent replays return the existing request before rechecking target eligibility.\nPending requests are never cancelled on lock. Once unlock is processed by the existing lifecycle consumer, those requests remain usable. Lifecycle projection updates are asynchronous and do not change token TTL.\n\n```mermaid\nsequenceDiagram\n  participant T as Tenant\n  participant TEN as Tenancy\n  participant ID as Identity\n  participant DB as Tenancy DB\n  participant MQ as RabbitMQ\n  participant COM as Community\n  T->>TEN: POST /match-requests + Idempotency-Key\n  TEN->>ID: GET /internal/users?ids=requester\n  ID-->>TEN: Active requester\n  TEN->>DB: Transaction: insert or replay by request key and pending pair\n  TEN->>ID: GET /internal/users?ids=target (new requests only)\n  ID-->>TEN: Active target (locked tenant returns 409; other missing/inactive accounts return 404)\n  TEN->>DB: New requests only: require target in tenant_user_projections (else rollback, 409)\n  TEN->>DB: Lock discoverable target profile; append outbox\n  DB-->>TEN: Committed pending request\n  TEN-->>T: 201 MATCH_REQUEST_CREATED\n  TEN-)MQ: match_request.created to target\n  MQ-)COM: Inbox dedup + system notification\n```\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-11-16 | 🔴 BREAKING | added the new required `header` request parameter `idempotency-key` | [#73](https://github.com/pbl6-home-renter/api-doc/pull/73) |\n| 2026-11-16 | 🔴 BREAKING | added the new `IDEMPOTENCY_KEY_REUSED` enum value to the `code` response property for the response status `409` | [#73](https://github.com/pbl6-home-renter/api-doc/pull/73) |\n| 2026-11-16 | 🔴 BREAKING | added the new `UNEXPECTED_FIELD` enum value to the `code` response property for the response status `422` | [#73](https://github.com/pbl6-home-renter/api-doc/pull/73) |\n| 2026-11-16 | 🔴 BREAKING | added the new `accepted` enum value to the `data/status` response property for the response status `201` | [#73](https://github.com/pbl6-home-renter/api-doc/pull/73) |\n| 2026-11-16 | 🔴 BREAKING | added the new `rejected` enum value to the `data/status` response property for the response status `201` | [#73](https://github.com/pbl6-home-renter/api-doc/pull/73) |\n| 2026-11-16 | 🔴 BREAKING | added the new `withdrawn` enum value to the `data/status` response property for the response status `201` | [#73](https://github.com/pbl6-home-renter/api-doc/pull/73) |\n| 2026-11-16 | 🟢 NON_BREAKING | the optional response header `location` removed for the status `201` | [#73](https://github.com/pbl6-home-renter/api-doc/pull/73) |\n| 2026-11-16 | 🟢 NON_BREAKING | Bỏ response lỗi HTTP 429. | [#73](https://github.com/pbl6-home-renter/api-doc/pull/73) |\n| 2026-11-16 | 🟢 NON_BREAKING | Bỏ response lỗi HTTP 500. | [#73](https://github.com/pbl6-home-renter/api-doc/pull/73) |\n| 2026-11-16 | 🟢 NON_BREAKING | added the required property `data/createdAt` to the response with the `201` status | [#73](https://github.com/pbl6-home-renter/api-doc/pull/73) |\n| 2026-11-16 | 🟢 NON_BREAKING | added the required property `data/requesterId` to the response with the `201` status | [#73](https://github.com/pbl6-home-renter/api-doc/pull/73) |\n| 2026-11-16 | 🟢 NON_BREAKING | added the required property `data/targetId` to the response with the `201` status | [#73](https://github.com/pbl6-home-renter/api-doc/pull/73) |\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "parameters": [
           {
             "name": "Idempotency-Key",
@@ -11378,10 +11395,35 @@
             "$ref": "#/components/responses/ForbiddenError"
           },
           "404": {
-            "$ref": "#/components/responses/NotFoundError"
+            "description": "Target account/profile missing or profile hidden/full; a locked or projection-unavailable account returns 409.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "statusCode",
+                    "code"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "enum": [
+                        404
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "ROOMMATE_PROFILE_NOT_FOUND"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "409": {
-            "description": "Pending pair exists or key reused for another target.",
+            "description": "Pending pair exists, key reused for another target, or counterpart account unavailable (pending requests are preserved).",
             "content": {
               "application/json": {
                 "schema": {
@@ -11401,7 +11443,8 @@
                       "type": "string",
                       "enum": [
                         "DUPLICATE_MATCH_REQUEST",
-                        "IDEMPOTENCY_KEY_REUSED"
+                        "IDEMPOTENCY_KEY_REUSED",
+                        "MATCH_REQUEST_COUNTERPART_UNAVAILABLE"
                       ]
                     }
                   }
@@ -11459,7 +11502,7 @@
           }
         ],
         "summary": "Accept a pending match request",
-        "description": "Only the active recipient can accept. Repeating accept returns the current accepted request without another notification. Another terminal state returns 409 MATCH_REQUEST_NOT_PENDING. No conversation or contact details are created.\n\n```mermaid\nsequenceDiagram\n  participant T as Recipient\n  participant TEN as Tenancy\n  participant DB as Tenancy DB\n  participant MQ as RabbitMQ\n  participant COM as Community\n  T->>TEN: POST /match-requests/{id}/accept-request\n  TEN->>DB: Transaction: lock request, verify actor and pending state\n  TEN->>DB: Save accepted + match_request.accepted outbox\n  TEN-->>T: 200 MATCH_REQUEST_ACCEPTED\n  TEN-)MQ: match_request.accepted to requester\n  MQ-)COM: Inbox dedup + system notification\n```\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-11-16 | 🔴 BREAKING | added the new `pending` enum value to the `data/status` response property for the response status `200` | [#73](https://github.com/pbl6-home-renter/api-doc/pull/73) |\n| 2026-11-16 | 🔴 BREAKING | added the new `rejected` enum value to the `data/status` response property for the response status `200` | [#73](https://github.com/pbl6-home-renter/api-doc/pull/73) |\n| 2026-11-16 | 🔴 BREAKING | added the new `withdrawn` enum value to the `data/status` response property for the response status `200` | [#73](https://github.com/pbl6-home-renter/api-doc/pull/73) |\n| 2026-11-16 | 🔴 BREAKING | removed the required property `data/conversationId` from the response with the `200` status | [#73](https://github.com/pbl6-home-renter/api-doc/pull/73) |\n| 2026-11-16 | 🟢 NON_BREAKING | Bỏ response lỗi HTTP 429. | [#73](https://github.com/pbl6-home-renter/api-doc/pull/73) |\n| 2026-11-16 | 🟢 NON_BREAKING | Bỏ response lỗi HTTP 500. | [#73](https://github.com/pbl6-home-renter/api-doc/pull/73) |\n| 2026-11-16 | 🟢 NON_BREAKING | added the required property `data/createdAt` to the response with the `200` status | [#73](https://github.com/pbl6-home-renter/api-doc/pull/73) |\n| 2026-11-16 | 🟢 NON_BREAKING | added the required property `data/requesterId` to the response with the `200` status | [#73](https://github.com/pbl6-home-renter/api-doc/pull/73) |\n| 2026-11-16 | 🟢 NON_BREAKING | added the required property `data/respondedAt` to the response with the `200` status | [#73](https://github.com/pbl6-home-renter/api-doc/pull/73) |\n| 2026-11-16 | 🟢 NON_BREAKING | added the required property `data/targetId` to the response with the `200` status | [#73](https://github.com/pbl6-home-renter/api-doc/pull/73) |\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
+        "description": "Only the active recipient can accept. Repeating accept returns the current accepted request without another notification. Another terminal state returns 409 MATCH_REQUEST_NOT_PENDING. No conversation or contact details are created.\n\nFor an actual change from pending, Tenancy checks the other tenant in `tenant_user_projections` inside the existing transaction after verifying the actor and terminal-state/replay rules, before mutating the request. An unavailable counterpart returns 409 MATCH_REQUEST_COUNTERPART_UNAVAILABLE: the request stays pending and no notification/outbox event is created. After unlock is processed by the lifecycle consumer, retry the same pending request. Profile visibility and room capacity are not rechecked for existing requests. Replays of a completed action keep their existing behavior even if the counterpart later becomes unavailable.\n\n```mermaid\nsequenceDiagram\n  participant T as Recipient\n  participant TEN as Tenancy\n  participant DB as Tenancy DB\n  participant MQ as RabbitMQ\n  participant COM as Community\n  T->>TEN: POST /match-requests/{id}/accept-request\n  TEN->>DB: Transaction: lock request, verify actor and pending state\n  TEN->>DB: Pending changes only: require requester in tenant_user_projections (else 409, no save/outbox)\n  TEN->>DB: Save accepted + match_request.accepted outbox\n  TEN-->>T: 200 MATCH_REQUEST_ACCEPTED\n  TEN-)MQ: match_request.accepted to requester\n  MQ-)COM: Inbox dedup + system notification\n```\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-11-16 | 🔴 BREAKING | added the new `pending` enum value to the `data/status` response property for the response status `200` | [#73](https://github.com/pbl6-home-renter/api-doc/pull/73) |\n| 2026-11-16 | 🔴 BREAKING | added the new `rejected` enum value to the `data/status` response property for the response status `200` | [#73](https://github.com/pbl6-home-renter/api-doc/pull/73) |\n| 2026-11-16 | 🔴 BREAKING | added the new `withdrawn` enum value to the `data/status` response property for the response status `200` | [#73](https://github.com/pbl6-home-renter/api-doc/pull/73) |\n| 2026-11-16 | 🔴 BREAKING | removed the required property `data/conversationId` from the response with the `200` status | [#73](https://github.com/pbl6-home-renter/api-doc/pull/73) |\n| 2026-11-16 | 🟢 NON_BREAKING | Bỏ response lỗi HTTP 429. | [#73](https://github.com/pbl6-home-renter/api-doc/pull/73) |\n| 2026-11-16 | 🟢 NON_BREAKING | Bỏ response lỗi HTTP 500. | [#73](https://github.com/pbl6-home-renter/api-doc/pull/73) |\n| 2026-11-16 | 🟢 NON_BREAKING | added the required property `data/createdAt` to the response with the `200` status | [#73](https://github.com/pbl6-home-renter/api-doc/pull/73) |\n| 2026-11-16 | 🟢 NON_BREAKING | added the required property `data/requesterId` to the response with the `200` status | [#73](https://github.com/pbl6-home-renter/api-doc/pull/73) |\n| 2026-11-16 | 🟢 NON_BREAKING | added the required property `data/respondedAt` to the response with the `200` status | [#73](https://github.com/pbl6-home-renter/api-doc/pull/73) |\n| 2026-11-16 | 🟢 NON_BREAKING | added the required property `data/targetId` to the response with the `200` status | [#73](https://github.com/pbl6-home-renter/api-doc/pull/73) |\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "parameters": [
           {
             "name": "matchRequestId",
@@ -11517,7 +11560,7 @@
             "$ref": "#/components/responses/NotFoundError"
           },
           "409": {
-            "description": "Request is no longer pending.",
+            "description": "Request is no longer pending, or the counterpart is unavailable; blocked pending requests are preserved.",
             "content": {
               "application/json": {
                 "schema": {
@@ -11536,7 +11579,8 @@
                     "code": {
                       "type": "string",
                       "enum": [
-                        "MATCH_REQUEST_NOT_PENDING"
+                        "MATCH_REQUEST_NOT_PENDING",
+                        "MATCH_REQUEST_COUNTERPART_UNAVAILABLE"
                       ]
                     }
                   }
@@ -11564,7 +11608,7 @@
           }
         ],
         "summary": "Reject a pending match request",
-        "description": "Only the active recipient can reject. Repeating reject returns the current rejected request without another notification. Another terminal state returns 409 MATCH_REQUEST_NOT_PENDING.\n\n```mermaid\nsequenceDiagram\n  participant T as Recipient\n  participant TEN as Tenancy\n  participant DB as Tenancy DB\n  participant MQ as RabbitMQ\n  participant COM as Community\n  T->>TEN: POST /match-requests/{id}/reject-request\n  TEN->>DB: Transaction: lock request, verify actor and pending state\n  TEN->>DB: Save rejected + match_request.rejected outbox\n  TEN-->>T: 200 MATCH_REQUEST_REJECTED\n  TEN-)MQ: match_request.rejected to requester\n  MQ-)COM: Inbox dedup + system notification\n```\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-11-16 | 🔴 BREAKING | added the new `accepted` enum value to the `data/status` response property for the response status `200` | [#73](https://github.com/pbl6-home-renter/api-doc/pull/73) |\n| 2026-11-16 | 🔴 BREAKING | added the new `pending` enum value to the `data/status` response property for the response status `200` | [#73](https://github.com/pbl6-home-renter/api-doc/pull/73) |\n| 2026-11-16 | 🔴 BREAKING | added the new `withdrawn` enum value to the `data/status` response property for the response status `200` | [#73](https://github.com/pbl6-home-renter/api-doc/pull/73) |\n| 2026-11-16 | 🟢 NON_BREAKING | Bỏ response lỗi HTTP 429. | [#73](https://github.com/pbl6-home-renter/api-doc/pull/73) |\n| 2026-11-16 | 🟢 NON_BREAKING | Bỏ response lỗi HTTP 500. | [#73](https://github.com/pbl6-home-renter/api-doc/pull/73) |\n| 2026-11-16 | 🟢 NON_BREAKING | added the required property `data/createdAt` to the response with the `200` status | [#73](https://github.com/pbl6-home-renter/api-doc/pull/73) |\n| 2026-11-16 | 🟢 NON_BREAKING | added the required property `data/requesterId` to the response with the `200` status | [#73](https://github.com/pbl6-home-renter/api-doc/pull/73) |\n| 2026-11-16 | 🟢 NON_BREAKING | added the required property `data/respondedAt` to the response with the `200` status | [#73](https://github.com/pbl6-home-renter/api-doc/pull/73) |\n| 2026-11-16 | 🟢 NON_BREAKING | added the required property `data/targetId` to the response with the `200` status | [#73](https://github.com/pbl6-home-renter/api-doc/pull/73) |\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
+        "description": "Only the active recipient can reject. Repeating reject returns the current rejected request without another notification. Another terminal state returns 409 MATCH_REQUEST_NOT_PENDING.\n\nFor an actual change from pending, Tenancy checks the other tenant in `tenant_user_projections` inside the existing transaction after verifying the actor and terminal-state/replay rules, before mutating the request. An unavailable counterpart returns 409 MATCH_REQUEST_COUNTERPART_UNAVAILABLE: the request stays pending and no notification/outbox event is created. After unlock is processed by the lifecycle consumer, retry the same pending request. Profile visibility and room capacity are not rechecked for existing requests. Replays of a completed action keep their existing behavior even if the counterpart later becomes unavailable.\n\n```mermaid\nsequenceDiagram\n  participant T as Recipient\n  participant TEN as Tenancy\n  participant DB as Tenancy DB\n  participant MQ as RabbitMQ\n  participant COM as Community\n  T->>TEN: POST /match-requests/{id}/reject-request\n  TEN->>DB: Transaction: lock request, verify actor and pending state\n  TEN->>DB: Pending changes only: require requester in tenant_user_projections (else 409, no save/outbox)\n  TEN->>DB: Save rejected + match_request.rejected outbox\n  TEN-->>T: 200 MATCH_REQUEST_REJECTED\n  TEN-)MQ: match_request.rejected to requester\n  MQ-)COM: Inbox dedup + system notification\n```\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-11-16 | 🔴 BREAKING | added the new `accepted` enum value to the `data/status` response property for the response status `200` | [#73](https://github.com/pbl6-home-renter/api-doc/pull/73) |\n| 2026-11-16 | 🔴 BREAKING | added the new `pending` enum value to the `data/status` response property for the response status `200` | [#73](https://github.com/pbl6-home-renter/api-doc/pull/73) |\n| 2026-11-16 | 🔴 BREAKING | added the new `withdrawn` enum value to the `data/status` response property for the response status `200` | [#73](https://github.com/pbl6-home-renter/api-doc/pull/73) |\n| 2026-11-16 | 🟢 NON_BREAKING | Bỏ response lỗi HTTP 429. | [#73](https://github.com/pbl6-home-renter/api-doc/pull/73) |\n| 2026-11-16 | 🟢 NON_BREAKING | Bỏ response lỗi HTTP 500. | [#73](https://github.com/pbl6-home-renter/api-doc/pull/73) |\n| 2026-11-16 | 🟢 NON_BREAKING | added the required property `data/createdAt` to the response with the `200` status | [#73](https://github.com/pbl6-home-renter/api-doc/pull/73) |\n| 2026-11-16 | 🟢 NON_BREAKING | added the required property `data/requesterId` to the response with the `200` status | [#73](https://github.com/pbl6-home-renter/api-doc/pull/73) |\n| 2026-11-16 | 🟢 NON_BREAKING | added the required property `data/respondedAt` to the response with the `200` status | [#73](https://github.com/pbl6-home-renter/api-doc/pull/73) |\n| 2026-11-16 | 🟢 NON_BREAKING | added the required property `data/targetId` to the response with the `200` status | [#73](https://github.com/pbl6-home-renter/api-doc/pull/73) |\n| 2026-10-24 | 🔴 BREAKING | added the new `ACCOUNT_LOCKED` enum value to the `code` response property for the response status `403` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n| 2026-10-24 | 🟢 NON_BREAKING | added the non-success response with the status `503` | [#14](https://github.com/pbl6-home-renter/api-doc/pull/14) |\n",
         "parameters": [
           {
             "name": "matchRequestId",
@@ -11622,7 +11666,7 @@
             "$ref": "#/components/responses/NotFoundError"
           },
           "409": {
-            "description": "Request is no longer pending.",
+            "description": "Request is no longer pending, or the counterpart is unavailable; blocked pending requests are preserved.",
             "content": {
               "application/json": {
                 "schema": {
@@ -11641,7 +11685,8 @@
                     "code": {
                       "type": "string",
                       "enum": [
-                        "MATCH_REQUEST_NOT_PENDING"
+                        "MATCH_REQUEST_NOT_PENDING",
+                        "MATCH_REQUEST_COUNTERPART_UNAVAILABLE"
                       ]
                     }
                   }
