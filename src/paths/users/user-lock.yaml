@@ -13,14 +13,10 @@ post:
     - User bị khóa **vẫn đăng nhập được**. Các service chặn chức năng dựa vào claim `status` trong access token (tự verify); token cấp trước khi khóa còn mang `status=active` tối đa 15 phút.
     - Admin tự khóa trả `400 USER_LOCK_CANNOT_SELF` trước khi mở transaction. User không tồn tại/đã xóa trả `404 USER_NOT_FOUND`; đã khóa trả `409 USER_LOCK_ALREADY_LOCKED`; chưa xác thực email (`pending_verification`) trả `409 EMAIL_NOT_VERIFIED`. Các nhánh lỗi không lưu thay đổi hoặc phát account notice.
     - Theo P9-D83/P9-06, Identity ghi `user.locked` và `notification.requested` type `system` tới chính user trong cùng transaction khóa tài khoản.
-    - Tenancy nhận `user.locked` qua `tenancy.identity-lifecycle`, dedup bằng inbox. Với landlord, một transaction tạm ngưng contract active, lưu lock cycle/grace deadline và ghi notification outbox tới landlord cùng tenant/member đang hoạt động đã link. Khóa tenant không tạm ngưng contract của landlord.
-    - Duplicate lock không tạo cycle hoặc notice trùng; cycle mới giữ các contract còn suspended từ cycle trước. Scheduled job trong Tenancy tìm deadline bền vững sau restart. Khôi phục/chấm dứt contract thuộc P9-07; P9-06 không hoàn cọc hoặc thay đổi contract chat.
-    - Tenancy uses the constant `LANDLORD_LOCK_GRACE_PERIOD_MS = 604800000` (7 days). Each cycle persists `graceDeadline = lockedAt + gracePeriodMs` using Identity's lock timestamp.
-    - P9-07 scans at startup and every 60 seconds, taking up to 100 due pending or legacy elapsed cycles. Each cycle is rechecked under the landlord/cycle lock. Identity evidence is read through authenticated `GET /internal/users/{userId}/lock-period?lockedAt=...`.
-    - Identity stores lock-period history and serializes evidence reads with account lock/unlock writes. An unlock strictly before the deadline moves the cycle to `decision_pending` and requests landlord choices. The event may arrive after the deadline. Unlock exactly at or after the deadline permits expiry processing.
-    - The service-token protected internal GET returns `{ lockedAt, unlockedAt, latestLockedAt, observedAt, state }` inside the normal response envelope. Timestamps are ISO 8601 UTC; state is `locked`, `unlocked` or `unknown`. Unknown historical periods retain null unlockedAt; the current account status alone is not unlock evidence.
-    - A confirmed expiry terminates only suspended contracts belonging to the current cycle and requests system notices in the same transaction. Rooms remain occupied and members retain their residence until explicit checkout. Missing evidence or an unavailable Identity preserves the cycle for reconciliation. A newer Identity lock defers processing until its lock event is received.
-    - Legacy elapsed cycles use the same evidence checks. An active account without historical proof is insufficient to determine its unlock time. Unresolved cycles rotate through the scan using updatedAt so they cannot starve later deadlines.
+    - P13-D101 / P13-01: Tenancy consumes `user.locked` through `tenancy.identity-lifecycle` with transactional inbox deduplication. Locking a landlord leaves all contract statuses unchanged and emits no contract lock notifications.
+    - Locking a tenant removes that tenant from the lookup projection without changing contracts. Tenant linking resumes on unlock using the existing rules.
+    - There is no landlord lock cycle, seven-day deadline, expiry scheduler or restore/terminate decision. The removed `PUT /contracts/{contractId}/lock-cycles/{lockCycleId}/decision` route returns 404.
+    - The P13-01 migration restores existing suspended contracts to active. Previously terminated contracts remain terminated; their legacy room handover remains available through complete-checkout.
     - Khóa không revoke refresh token.
 
     **Payload notification P9-06**
@@ -29,10 +25,6 @@ post:
 
     - Account notice từ Identity: `sourceService: identity`, `recipientUserIds: [userId]`, `notification.type: system`; `notification.data` gồm `{ messageKey: user.locked, userId, status: locked, eventType: user.locked, lockedAt }`, trong đó `lockedAt` là ISO 8601 UTC.
     - Account notice khi khóa giữ `notification.title: USER_ACCOUNT_LOCKED_TITLE` và `notification.body: USER_ACCOUNT_LOCKED_BODY` như mã backend; Web dịch theo `data.messageKey`.
-    - Contract notice từ Tenancy: `sourceService: tenancy`, `notification.type: system`; `notification.data` gồm `{ landlordId, lockCycleId, contractIds, graceDeadline }`. Các ID là UUID, `contractIds` là mảng UUID, `graceDeadline` là ISO 8601 UTC. `lockCycleId` dùng ID envelope của event `user.locked` được xử lý.
-    - Contract suspension notice dùng `notification.title: CONTRACT_SUSPENDED_TITLE` và `notification.body: CONTRACT_SUSPENDED_BODY` để FE dịch thông báo hợp đồng tạm ngưng do tài khoản chủ trọ bị khóa.
-    - P9-07 adds `CONTRACT_LOCK_DECISION_REQUIRED_TITLE/BODY`, `CONTRACT_RESTORED_TITLE/BODY` and `CONTRACT_TERMINATED_TITLE/BODY`. Resolution data also includes `action` as `decision_required`, `restore` or `terminate`.
-    - Mỗi contract notice có một recipient. Landlord nhận danh sách contract vừa bị suspend của mình; tenant chính và ContractMember đang hoạt động, đã link chỉ nhận contract IDs liên quan đến họ. Người chưa link không có recipient ID. Contract đã suspended được giữ tham chiếu trong cycle mới nhưng không bị suspend hoặc gửi lại notice tạm ngưng.
     - Community lưu snapshot vào inbox notification, trả `type: system` và `data` qua `GET /notifications`, đồng thời gửi Socket sau commit và push theo preference. Không đưa phone vào notification payload.
 
     **Sequence diagram**
@@ -50,7 +42,6 @@ post:
         participant DB as Identity DB
         participant MQ as RabbitMQ
         participant TEN as Tenancy
-        participant TDB as Tenancy DB
         participant COM as Community
         Client->>GW: POST /api/v1/users/{userId}/lock
         GW->>GW: Validate bearer token for protected route
@@ -77,8 +68,7 @@ post:
         S-)MQ: user.locked {userId, role, status, lockReason, lockedAt}
         MQ-)TEN: user.locked (tenancy.identity-lifecycle)
         alt role=landlord
-            TEN->>TEN: [Transaction] Inbox dedup + khóa landlord/cycle/contracts<br/>+ active → suspended + lưu cycle/deadline + notification outbox
-            TEN-)MQ: notification.requested {sourceService: tenancy, recipientUserIds, notification: {type: system, data}}
+            TEN->>TEN: [Transaction] Inbox dedup; contract statuses unchanged; no contract notice
         else role=tenant
             TEN->>TEN: [Transaction] Inbox dedup + xóa tenant lookup; giữ contract
         end
@@ -86,20 +76,6 @@ post:
         MQ-)COM: notification.requested (community.notification)
         COM->>COM: [Transaction] Inbox dedup + lưu notice từng recipient
         COM->>COM: Sau commit: Socket sync / FCM theo preference
-        opt P9-07 deadline scan, including after restart
-            TEN->>S: Service-token GET lock-period for the matching lockedAt
-            S->>DB: Serialize evidence read with lock/unlock writes
-            S-->>TEN: Historical unlock time, latest lock and observation time
-            alt Exact evidence is available and cycle is still current
-                TEN->>TDB: Transaction: lock landlord/cycle/contracts and recheck deadline
-                TEN->>TDB: Early unlock → decision_pending; otherwise terminate suspended contracts<br/>save decisions, cycle and notification outbox; commit
-                TEN-)MQ: notification.requested, room and members unchanged
-            else Evidence is unavailable, unknown or a newer lock exists
-                TEN->>TDB: Retain cycle and contracts for reconciliation
-            end
-        end
-        TEN->>S: GET /internal/users/{userId}/lock-period?lockedAt=... (service token)
-        Note over TEN: Transaction rechecks cycle and proof<br/>early unlock → decision_pending; expiry → terminate and notify<br/>room remains occupied until checkout
     ```
   parameters:
   - name: userId

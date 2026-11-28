@@ -8,7 +8,8 @@ post:
     - BearerAuth: []
   summary: Complete checkout
   description: |-
-    P9-07 also allows handover of a contract terminated by a landlord-lock decision or grace expiry.
+    P13-01 preserves handover only for legacy contracts already terminated by a landlord-lock decision or grace expiry.
+    Account lock/unlock no longer terminates contracts or creates new lock cycles.
     Such termination keeps the room occupied and members present until this request. This handover bypasses
     settlement/payment checks, persists handoverCompletedOn, updates remaining members, moves the room to maintenance
     and appends existing contract_member.left and room.status_changed events atomically. Same-date replay returns
@@ -33,7 +34,7 @@ post:
     A member has not left when left_at IS NULL or after today (UTC). A future scheduled leave is replaced by completedOn;
     previous departures and soft-deleted members are preserved. A room already in maintenance stays there.
     This endpoint does not schedule a future chat access change; P9-04 only applies delivered leave events.
-    Ordinary checkout echoes completedOn. P9-07 handover persists its handoverCompletedOn for replay and room reservation checks.
+    Ordinary checkout echoes completedOn. Legacy handover persists its handoverCompletedOn for replay and room reservation checks.
     No deposit settlement, early termination fee or automatic checkout-date prorating is performed.
     Call POST /rooms/{roomId}/mark-ready after cleaning to make the room available again.
     Field outside the request DTO returns 422 UNEXPECTED_FIELD, matching existing project validation.
