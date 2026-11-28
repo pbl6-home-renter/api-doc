@@ -1,7 +1,7 @@
 type: object
 x-apidog-folder: "Invoice"
 title: Invoice
-description: Hóa đơn tiền phòng và chi phí dịch vụ theo từng kỳ
+description: Invoice snapshot for room rent and services per period. Generation skips issued invoices without recalculating or saving them.
 allOf:
   - $ref: '../../common/base-entity.yaml'
   - type: object
@@ -57,6 +57,10 @@ allOf:
               type: string
               format: date
             prorateRatio:
+              description: >-
+                Service-window ratio, formatted to six decimal places. Electricity
+                and water per_head charges use headCount and are prorated like
+                other per_head fees; metered consumption charges use 1.000000.
               type: string
               pattern: '^(0|[1-9][0-9]*)(\.[0-9]+)?$'
             amount:

@@ -18023,7 +18023,7 @@
           }
         ],
         "summary": "Generate or recalculate pending invoices",
-        "description": "Landlord generates or recalculates pending invoices by building and period. Existing issued invoices are skipped; recalculation preserves otherFees and note. A replacement after void links to the voided invoice. Missing inputs are reported in blocked; no meter event automatically generates invoices.\n\nSequence diagram\n\n```mermaid\nsequenceDiagram\n    actor User\n    participant API as Tenancy-Service\n    User->>API: POST /invoices/generate\n    API->>API: Verify building ownership and period\n    API->>API: Find active contracts and calculate each eligible invoice\n    API->>API: Save generated/recalculated invoices; collect blocked reasons\n    API-->>User: 200 INVOICES_GENERATED\n```\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-11-11 | 🟢 NON_BREAKING | Thêm endpoint mới. | [#55](https://github.com/pbl6-home-renter/api-doc/pull/55) |\n",
+        "description": "Landlord generates or recalculates pending invoices by building and period. Existing issued invoices are skipped before loading calculation inputs and are never recalculated or saved; recalculation preserves otherFees and note. A replacement after void links to the voided invoice. Only electricity/water utilities whose selected rateKind is not per_head require meter readings. Per-head electricity/water use headCount with the existing service-window proration, while metered utilities use actual consumption without proration. The active room policy takes precedence over the active building policy without merging rates. A missing required reading is reported as READING_MISSING before lower-priority rate configuration errors; when a utility rate kind is unknown, its reading remains required. Missing inputs are reported in blocked; no meter event automatically generates invoices.\n\nSequence diagram\n\n```mermaid\nsequenceDiagram\n    actor User\n    participant API as Tenancy-Service\n    User->>API: POST /invoices/generate\n    API->>API: Verify building ownership and period\n    API->>API: Find active contracts and calculate each eligible invoice\n    API->>API: Save generated/recalculated invoices; collect blocked reasons\n    API-->>User: 200 INVOICES_GENERATED\n```\n\n<!-- contract-changelog -->\n**Lịch sử thay đổi contract**\n\n| Ngày | Mức | Thay đổi | PR |\n|---|---|---|---|\n| 2026-11-11 | 🟢 NON_BREAKING | Thêm endpoint mới. | [#55](https://github.com/pbl6-home-renter/api-doc/pull/55) |\n",
         "requestBody": {
           "required": true,
           "content": {
@@ -32201,6 +32201,7 @@
                   "format": "uuid"
                 },
                 "reasonCode": {
+                  "description": "READING_MISSING means a required metered utility reading is absent. Confirmed electricity/water per_head rates do not require readings; unknown rate kinds conservatively do. Missing required readings take precedence over rate configuration errors.",
                   "type": "string",
                   "enum": [
                     "READING_MISSING",
@@ -32301,6 +32302,7 @@
                   "format": "date"
                 },
                 "prorateRatio": {
+                  "description": "Service-window ratio to six decimal places. Electricity/water per_head charges use headCount and this ratio; metered consumption is not prorated and uses 1.000000.",
                   "type": "string"
                 },
                 "amount": {
@@ -32497,6 +32499,7 @@
                   "format": "date"
                 },
                 "prorateRatio": {
+                  "description": "Service-window ratio to six decimal places. Electricity/water per_head charges use headCount and this ratio; metered consumption is not prorated and uses 1.000000.",
                   "type": "string"
                 },
                 "amount": {
@@ -36850,7 +36853,7 @@
       "RateItem": {
         "type": "object",
         "title": "RateItem",
-        "description": "Một đơn giá hoặc phí trong bộ RatePolicy.",
+        "description": "A rate or fee in a RatePolicy. Electricity and water support flat, tiered and per_head. Utility per_head rates require billingUnit person, a unitPrice and no steps; they do not require meter readings and are prorated over the invoice service window. Flat/tiered utility charges use metered consumption without proration. Other fee kinds and their existing unit constraints are unchanged.",
         "additionalProperties": false,
         "properties": {
           "type": {
@@ -37159,7 +37162,7 @@
         "type": "object",
         "x-apidog-folder": "Invoice",
         "title": "Invoice",
-        "description": "Hóa đơn tiền phòng và chi phí dịch vụ theo từng kỳ",
+        "description": "Invoice snapshot for room rent and services per period. Generation skips issued invoices without recalculating or saving them.",
         "allOf": [
           {
             "$ref": "#/components/schemas/BaseEntity"
@@ -37230,6 +37233,7 @@
                       "format": "date"
                     },
                     "prorateRatio": {
+                      "description": "Service-window ratio, formatted to six decimal places. Electricity and water per_head charges use headCount and are prorated like other per_head fees; metered consumption charges use 1.000000.",
                       "type": "string",
                       "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]+)?$"
                     },

@@ -42,6 +42,11 @@ properties:
         roomId: *id001
         contractId: *id001
         reasonCode:
+          description: >-
+            READING_MISSING means a required metered utility reading is absent.
+            Confirmed electricity/water per_head rates do not require readings;
+            unknown rate kinds conservatively do. Missing required readings take
+            precedence over rate configuration errors.
           type: string
           enum:
           - READING_MISSING
